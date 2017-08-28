@@ -1,0 +1,9 @@
+! Define storage transformer
+new Transformer.storagexfmr phases=3 windings=2 
+~ wdg=1 Bus=bp_591_57349.1.2.3 conn=wye kV=12 kva=6000
+~ wdg=2 Bus=storagebus conn=wye kV=0.48 kva=6000
+
+! Define storage unit at 591_57349.1.2.3
+New Storage.ESSC591 phases=3 Bus1=storagebus kV=0.48 kWRated=2000 kVA=3000 kWhRated=8000 kWhStored=8000 %reserve=0 kW=2000 kVAR=2000 dispmode=follow Yearly=storagetest
+!~ ChargeTrigger=0.7 DischargeTrigger=0.9
+!~ %discharge=45 %charge=45
