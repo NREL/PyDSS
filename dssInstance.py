@@ -20,7 +20,9 @@ class OpenDSS:
     __dssObjects = {}
     __dssObjectsByClass = {}
     __DelFlag = 0
-    def __init__(self , SimType = 'rSnapshot', rootPath = os.getcwd(), dssMainFile = 'MasterCircuit_C591.dss', ExportList = {}, ControllerList = None):
+    __pyPlotObjects = {}
+    def __init__(self , SimType = 'rSnapshot', rootPath = os.getcwd(), dssMainFile = 'MasterCircuit_C591.dss',
+                 ExportList = {}, ControllerList = None, PlotList = None):
 
         self.__dssPath = {
             'root': rootPath,
@@ -54,12 +56,34 @@ class OpenDSS:
             self.__CreateControllers(ControllerList)
             self.__dssSolver.customControlLoop = self.__UpdateControllers
 
-        self.__GeneratePlots()
+        self.__CreatePlots(PlotList)
 
         return
 
-    def __GeneratePlots(self):
-        pyPlots.Plot_Topology(self.__dssBuses,self.__dssObjectsByClass)
+    def __CreateControllers(self,ControllerDict):
+        self.__pyControls = {}
+        for ControllerType, ElmNames in ControllerDict.iteritems():
+            for ElmName in ElmNames:
+                 Controller = pyController.Create(ElmName, ControllerType, self.__dssObjects)
+                 if Controller != -1:
+                    self.__pyControls['Controller.' + ElmName] = Controller
+        return
+
+
+    def __CreatePlots(self, PlotsDict):
+        __pyPlotObjects= {}
+        for PlotType, PlotSettings in PlotsDict.iteritems():
+            if PlotSettings == None:
+                self.__pyPlotObjects[PlotType] = pyPlots.Create(PlotType, None,
+                                                self.__dssBuses, self.__dssObjectsByClass)
+            else:
+                self.__pyPlotObjects[PlotType+str(PlotSettings)] = pyPlots.Create(PlotType, PlotSettings,
+                                                                self.__dssBuses, self.__dssObjectsByClass)
+        return
+
+    def __UpdateControllers(self):
+        for Key, Controller in self.__pyControls.iteritems():
+            Controller.Update()
         return
 
     def __CreateBusObjects(self):
@@ -146,20 +170,6 @@ class OpenDSS:
         self.__TempResultList.append(Results)
         return
 
-    def __UpdateControllers(self):
-        for Key, Controller in self.__pyControls.iteritems():
-            Controller.Update()
-        return
-
-    def __CreateControllers(self,ControllerDict):
-        self.__pyControls = {}
-        for ControllerType, ElmNames in ControllerDict.iteritems():
-            for ElmName in ElmNames:
-                 Controller = pyController.Create(ElmName, ControllerType, self.__dssObjects)
-                 if Controller != -1:
-                    self.__pyControls['Controller.' + ElmName] = Controller
-        return
-
     def DeleteInstance(self):
         self.__DelFlag = 1
         self.__del__()
@@ -182,7 +192,15 @@ CL = {
     'LoadController': ['Load.load1'],
 }
 
-DSS = OpenDSS(SimType = 'Snapshot' , ExportList = EL, ControllerList = CL)
+PL = {
+    'Network layout': { 'FileName': 'Network layout.html',
+                        'Path' : None,
+                        'Width' : 800,
+                        'Height' : 600
+                        },
+}
+
+DSS = OpenDSS(SimType = 'Snapshot' , ExportList = EL, ControllerList = CL, PlotList = PL )
 #DSS.RunSimulation(3000)
 DSS.DeleteInstance()
 os.system("pause")
