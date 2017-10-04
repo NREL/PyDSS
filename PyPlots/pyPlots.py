@@ -14,10 +14,11 @@ PlotTypes ={
 
 
 def Create(PlotType, PlotPropertyDict, dssBuses, dssObjectsByClass):
-    try:
-        PlotObject = PlotTypes[PlotType](PlotPropertyDict,dssBuses,dssObjectsByClass)
-    except:
-        print 'The object dictionary does not contain ' + PlotType
-        return -1
+    PlotObject = PlotTypes[PlotType](PlotPropertyDict, dssBuses, dssObjectsByClass)
+    # try:
+    #     PlotObject = PlotTypes[PlotType](PlotPropertyDict,dssBuses,dssObjectsByClass)
+    # except:
+    #     print 'The object dictionary does not contain ' + PlotType
+    #     return -1
     return PlotObject
 

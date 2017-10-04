@@ -1,0 +1,6 @@
+// efficiency curve is per unit eff vs per unit power
+New XYCurve.MyEff npts=1 xarray=[1.0] yarray=[.95]
+
+// per unit irradiance curve (per unit if "irradiance" property)
+New Loadshape.MyIrrad npts=8760 interval=1 mult=(File=\\\\psf\Home\Documents\GitRepos\publication\isgt-2016\data\pv_opendss.csv)
+

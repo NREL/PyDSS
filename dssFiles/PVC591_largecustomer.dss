@@ -1,9 +1,0 @@
-! Script for PVC591.dss
-
-! PV DEFINITIONS
-New generator.591_21960_MCa Bus1=PM_591_65.1 Phases=1 kV=6.92820323028 Model=1 kW=61.566667
-New generator.591_21960_MCb Bus1=PM_591_65.2 Phases=1 kV=6.92820323028 Model=1 kW=61.566667
-New generator.591_21960_MCc Bus1=PM_591_65.3 Phases=1 kV=6.92820323028 Model=1 kW=61.566667
-New generator.591_42078_MCa Bus1=PM_591_71.1 Phases=1 kV=6.92820323028 Model=1 kW=209.700000
-New generator.591_42078_MCb Bus1=PM_591_71.2 Phases=1 kV=6.92820323028 Model=1 kW=209.700000
-New generator.591_42078_MCc Bus1=PM_591_71.3 Phases=1 kV=6.92820323028 Model=1 kW=209.700000

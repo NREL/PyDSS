@@ -1,6 +1,0 @@
-! Script for RelaysC591.dss
-
-! Relay DEFINITIONS
-!New TCC_Curve.591_ground_tcc npts=5 C_array=(750.000000,750.000000,750.000000,750.000000,750.000000,) T_array=(300,100, 10.1, 4, 1.4, 0.1, 0.02)
-!New TCC_Curve.591_phase_tcc npts=5 C_array=(1500.000000,1500.000000,1500.000000,1500.000000,1500.000000,) T_array=(300,100, 10.1, 4, 1.4, 0.1, 0.02)
-!New Relay.591 enabled=True Groundcurve=591_ground_tcc Phasecurve=591_phase_tcc MonitoredObj=Line.591_12661_UG MonitoredTerm=1 switchedobj=Line.591_12661_UG switchedterm=1 ! relay

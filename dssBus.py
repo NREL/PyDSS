@@ -48,10 +48,10 @@ class dssBus:
             try:
                 return self.__Variables[VarName]()
             except:
-                print 'Unexpected error'
+                print ('Unexpected error')
                 return None
         else:
-            print 'Invalid variable name'
+            print ('Invalid variable name')
             return None
 
     def SetVariable(self,VarName,Value):
@@ -60,8 +60,8 @@ class dssBus:
             try:
                 return self.__Variables[VarName](Value)
             except:
-                print 'Error settinf Value'
+                print ('Error settinf Value')
                 return None
         else:
-            print 'Invalid variable name'
+            print ('Invalid variable name')
             return None

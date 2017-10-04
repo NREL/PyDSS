@@ -1,19 +1,28 @@
 import LoadController
+import StorageController
+from dssElement import dssElement
 
 ControllerTypes ={
-    'LoadController': LoadController.LoadController
+    'Load Controller'   : LoadController.LoadController,
+    'Storage Controller': StorageController.StorageController
 }
 
 
-def Create(ElmName, ControllerType, ElmObjectList):
+def Create(ElmName, ControllerType, Settings, ElmObjectList, dssInstance, dssSolver):
     try:
         relObject = ElmObjectList[ElmName]
     except:
-        print 'The object dictionary does not contain ' + ElmName
-        return -1
-    try:
-        ObjectController = ControllerTypes[ControllerType](relObject)
-    except:
-        print 'The controller dictionary does not contain ' + ControllerType
-        return -1
+        Index = dssInstance.Circuit.SetActiveElement(ElmName)
+        if int(Index) >= 0:
+            ElmObjectList[ElmName] = dssElement(dssInstance)
+            relObject = ElmObjectList[ElmName]
+        else:
+            print ('The object dictionary does not contain ' + ElmName)
+            return -1
+    # try:
+    #     print('sdfsdfasdfasdf')
+    ObjectController = ControllerTypes[ControllerType](relObject, Settings, dssInstance, ElmObjectList, dssSolver)
+    # except:
+    #     print ('The controller dictionary does not contain ' + ControllerType)
+    #     return -1
     return ObjectController
