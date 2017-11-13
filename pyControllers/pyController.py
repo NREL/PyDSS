@@ -1,8 +1,10 @@
+import PvController
 import LoadController
 import StorageController
 from dssElement import dssElement
 
 ControllerTypes ={
+    'PV Controller'     : PvController.PvController,
     'Load Controller'   : LoadController.LoadController,
     'Storage Controller': StorageController.StorageController
 }

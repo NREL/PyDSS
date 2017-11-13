@@ -1,5 +1,4 @@
 from opendssdirect.utils import run_command
-from CostBenefitAnalysis import CBA
 from dssElement import dssElement
 import opendssdirect as dss
 from dssBus import dssBus
@@ -15,7 +14,6 @@ import pyController
 import pyPlots
 
 class OpenDSS:
-
     __TempResultList = []
 
     print ('An instance of OpenDSS version ' + dss.__version__ + ' has ben created.')
@@ -43,7 +41,6 @@ class OpenDSS:
             }
         }
         self.__dssFilePath = self.__dssPath['dssFiles'] + '\\' + dssMainFile
-        self.__CBA = CBA(self.__dssPath['dssFiles'], 'LMP.xlsx')
 
         self.__dssInstance.Basic.ClearAll()
         run_command('Clear')
@@ -104,10 +101,16 @@ class OpenDSS:
                                                                 self.__dssBuses, self.__dssObjectsByClass)
         return
 
-    def __UpdateControllers(self,Time):
+    def __UpdateControllers(self, Time, UpdateResults):
+
+        NewError = 0
         for Key, Controller in self.__pyControls.items():
-            Controller.Update(Time)
-        return
+            NewError += Controller.Update(Time, UpdateResults)
+
+        if abs(NewError) < 1e-4:
+            return True
+
+        return False
 
     def __CreateBusObjects(self):
         BusNames = self.__dssCircuit.AllBusNames()
@@ -166,63 +169,32 @@ class OpenDSS:
         self.__ExportResults.columns = pd.MultiIndex.from_tuples(list(zip(self.__ExportResults.columns, HeaderName, HeaderPpty, HeaderPhase)), sortorder=None)
         return
 
-
-
-    def RunSimulation(self, Steps):
+    def RunSimulation(self, Steps, ControllerMaxItrs = 25):
         startTime = time.time()
         for i in range(Steps):
-            self.__UpdateControllers(i)
+            print ('Time - ', i)
+            for j in range(ControllerMaxItrs):
 
+                hasConverged = self.__UpdateControllers(i, UpdateResults = False)
+
+                if hasConverged or j == ControllerMaxItrs - 1:
+                    self.__UpdateControllers(i, UpdateResults = True)
+                    if not hasConverged:
+                        print('No convergance @ ', i)
+                    break
+                elif not hasConverged:
+                    self.__dssSolver.reSolve()
             self.__dssSolver.IncStep(i)
-            self.__CBA.CalculateCost(self.__dssObjects['Storage.671'])
-
             if self.__ExportList:
                 self.__UpdateResults()
-        self.__CBA.PlotLMPsignals()
-        if self.__ExportList:
-            self.__ExportResults = pd.DataFrame(self.__TempResultList, columns = self.__ExportResults.columns)
+
         import matplotlib.pyplot as plt
         plt.show()
+
+        if self.__ExportList:
+            self.__ExportResults = pd.DataFrame(self.__TempResultList, columns = self.__ExportResults.columns)
         print ('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
         print ('End of simulation')
-
-    def CalcState(self,mTime ,initkWh ,BatteryOutput, mTimeStep=60):
-        kWhRated = self.__dssObjects['Storage.671'].GetParameter2('kWhrated')
-        initSOC =  initkWh / float(kWhRated) * 100
-
-        self.__dssObjects['Storage.671'].SetParameter('%stored', str(initSOC))
-        self.__pyControls['Controller.Storage.671'].SetSetting('%kWOut', BatteryOutput)
-
-        intkWhStored = self.__dssObjects['Storage.671'].GetParameter2('kWhstored')
-        InitSOC = self.__dssObjects['Storage.671'].GetParameter2('%stored')
-
-        self.__UpdateControllers(mTime)
-        CircuitEnergy = 0
-        mtimeStep = 1
-        # print('Solving from ' + str((mTime-1)*60) + 'm to ' + str((mTime-1)*60 + mTimeStep) + 'm')
-        for i in range(mTimeStep):
-            self.__dssSolver.SolveFor((mTime-1)*60+i, mtimeStep)
-            CircuitPower = self.__dssCircuit.TotalPower()[0]
-            CircuitEnergy += CircuitPower * mtimeStep / 60
-
-        if CircuitEnergy < 0 :
-            reversekWh = 0
-        else:
-            reversekWh = CircuitEnergy
-
-        #self.__CBA.CalculateCost(self.__dssObjects['Storage.671'])
-
-        endSOC =  self.__dssObjects['Storage.671'].GetParameter2('%stored')
-        endkWhStored = self.__dssObjects['Storage.671'].GetParameter2('kWhstored')
-
-        # print('Init SOC --> ', InitSOC)
-        # print('End  SOC --> ', endSOC)
-        # print('Init kWh Stored --> ', intkWhStored)
-        # print('End  kWh Stored --> ', endkWhStored)
-
-        ChangeInKWH = (float(intkWhStored)-float(endkWhStored))
-        Results = [endkWhStored, ChangeInKWH, reversekWh]
-        return Results
 
     def __UpdateResults(self):
         ClassNames = list(self.__ExportResults.columns.get_level_values(0))
