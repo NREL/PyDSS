@@ -1,3 +1,5 @@
+from dssBus import dssBus
+
 class dssElement:
     __Name = None
     __Class = None
@@ -5,6 +7,7 @@ class dssElement:
     __Variables = {}
     Bus = None
     BusCount = None
+    sBus = []
     def __init__(self, dssInstance):
         self.__Class,  self.__Name =  dssInstance.Element.Name().split('.',1)
         self.__dssInstance = dssInstance
@@ -27,6 +30,12 @@ class dssElement:
                     pass
             self.Bus = dssInstance.CktElement.BusNames()
             self.BusCount = len(self.Bus)
+
+            for BusName in self.Bus:
+                self.__dssInstance.Circuit.SetActiveBus(BusName)
+                self.sBus.append(dssBus(self.__dssInstance))
+            return
+
 
 
     def GetInfo(self):
@@ -67,7 +76,7 @@ class dssElement:
 
     def SetParameter(self, Param, Value):
         self.__dssInstance.utils.run_command(self.__Class + '.' + self.__Name + '.' + Param + ' = ' + str(Value))
-        self.GetParameter2(Param)
+        return self.GetParameter2(Param)
 
 
     def GetParameter2(self, Param):

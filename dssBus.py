@@ -29,6 +29,7 @@ class dssBus:
             return False
 
     def DataLength(self,VarName):
+        self.__dssInstance.Circuit.SetActiveBus(self.__Name)
         VarValue = self.GetVariable(VarName)
         if  isinstance(VarValue, list):
             return len(VarValue) , 'List'

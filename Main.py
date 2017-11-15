@@ -8,47 +8,55 @@ import sys
 # }
 
 CL = {
-    'PV Controller'     : {'PVSystem.645.2' :  {'Measured Element'  : 'Line.650632',
-                                                'Measured Variable' : 'Powers',
-                                                'Qcontrol'          : 'None', # CPF, VPF, VV, Legacy
-                                                'Pcontrol'          : 'None', #None, VW
-                                                'Priority'          : 'Equal', # Equal, Var, Watt
+    'PV Controller'     : {'PVSystem.675_1' :  {'Qcontrol'          : 'None',  # CPF, VPF, VVar, None
+                                                'Pcontrol'          : 'VW',    # None, VW
+                                                'HasConnLoad'       : True,
                                                 'DampCoef'          : 0.9,
-                                                'pfMax'             : 1,
-                                                'pfMin'             : 0.95,
-                                                'uMax'              : 1.05,
-                                                'uMin'              : 0.95,
-                                                'uDbMax'            : 1.00,
-                                                'uDbMin'            : 1.00,
-                                                'QlimPU'            : 0.4,
-                                                'PFlim'             : 0.85,}},
-
-    'Storage Controller': {'Storage.671'    :  {'Meas from Circuit' : True,
-                                                'Measured Element'  : 'Line.650632',
-                                                'Measured Variable' : 'Powers',
-                                                'Qcontrol'          : 'Constant Power Factor', #'Variable Power Factor','None', 'Volt Var Control'
-                                                'Pcontrol'          : 'Peak Shaving', #, 'None',#'Real Time', 'Time Triggered','Scheduled','Peak Shaving','Capacity Firming'
-                                                'PS_ub'             : 3000,
-                                                'PS_lb'             : 1100,
-                                                'DampCoef'          : 0.5,
-                                                'CF_dP_ub'          : 50,
-                                                'CF_dP_lb'          : -50,
-                                                'HrCharge'          : 2,
-                                                'HrDischarge'       : 15,
-                                                '%rateCharge'       : 100,
-                                                '%rateDischarge'    : 100,
-                                                '%kWOut'            : 50,
                                                 'pf'                : 0.95,
-                                                'pfMax'             : 1,
-                                                'pfMin'             : 0.95,
+                                                'Pmin'              : 0.15,
+                                                'Pmax'              : 0.85,
+                                                'pfMax'             : 0.95,
+                                                'pfMin'             : -0.95,
+                                                'uMinC'             : 1.00,
+                                                'uMaxC'             : 1.07,
                                                 'uMax'              : 1.05,
                                                 'uMin'              : 0.95,
                                                 'uDbMax'            : 1.00,
                                                 'uDbMin'            : 1.00,
                                                 'QlimPU'            : 0.4,
-                                                'PFlim'             : 0.85,
-                                                'Days'              : 1,
-                                                'Schedule'          : [0, 0, -1, 0, 1, 0, 0]}},
+                                                'PFlim'             : 0.9,
+                                                'Ambient Temp'      : 30,
+                                                'Efficiency'        : 100,
+                                                '%Cutin'            : 0,
+                                                '%Cutout'           : 0,
+                                                'Irradiance'        : 1}},
+
+    # 'Storage Controller': {'Storage.671'    :  {'Meas from Circuit' : True,
+    #                                             'Measured Element'  : 'Line.650632',
+    #                                             'Measured Variable' : 'Powers',
+    #                                             'Qcontrol'          : 'None', #'Variable Power Factor','None', 'Volt Var Control'
+    #                                             'Pcontrol'          : 'None', #, 'None',#'Real Time', 'Time Triggered','Scheduled','Peak Shaving','Capacity Firming'
+    #                                             'PS_ub'             : 3000,
+    #                                             'PS_lb'             : 1100,
+    #                                             'DampCoef'          : 0.5,
+    #                                             'CF_dP_ub'          : 50,
+    #                                             'CF_dP_lb'          : -50,
+    #                                             'HrCharge'          : 2,
+    #                                             'HrDischarge'       : 15,
+    #                                             '%rateCharge'       : 100,
+    #                                             '%rateDischarge'    : 100,
+    #                                             '%kWOut'            : 50,
+    #                                             'pf'                : 0.95,
+    #                                             'pfMax'             : 1,
+    #                                             'pfMin'             : 0.95,
+    #                                             'uMax'              : 1.05,
+    #                                             'uMin'              : 0.95,
+    #                                             'uDbMax'            : 1.00,
+    #                                             'uDbMin'            : 1.00,
+    #                                             'QlimPU'            : 0.4,
+    #                                             'PFlim'             : 0.85,
+    #                                             'Days'              : 1,
+    #                                             'Schedule'          : [0, 0, -1, 0, 1, 0, 0]}},
     }
 
 PL = {

@@ -68,14 +68,20 @@ class OpenDSS:
     def __ModifyNetwork(self):
         from NetworkModifier import Modifier
         self.__Modifier = Modifier(dss, run_command)
-        self.__Modifier.Add_Elements('PVSystem', {'bus' : ['671.1','671.2','671.3','645.2','675.1',
-                                                           '675.2','675.3','670.1','670.2','670.3'],
-                                                  'kVA' : ['500','500','500','200','50',
-                                                           '200','300','100','75','125']})
+        # self.__Modifier.Add_Elements('PVSystem', {'bus' : ['671.1','671.2','671.3','645.2','675.1',
+        #                                                    '675.2','675.3','670.1','670.2','670.3'],
+        #                                           'kVA' : ['500','500','500','200','50',
+        #                                                    '200','300','100','75','125'],
+        #                                           'Pmpp': ['500', '500', '500', '200', '50',
+        #                                                   '200', '300', '100', '75', '125'],})
 
-        self.__Modifier.Add_Elements('Storage', {'bus' : ['671'], 'kWRated' : ['500'], 'kWhRated'  : ['2000']},
-                                     True, self.__dssObjects)
+        self.__Modifier.Add_Elements('PVSystem', {'bus': ['675.1'], 'kVA': ['1000'], 'Pmpp': ['1000'] })
 
+        #self.__Modifier.Add_Elements('Storage', {'bus' : ['671'], 'kWRated' : ['500'], 'kWhRated'  : ['2000']},
+        #                             True, self.__dssObjects)
+
+        self.__Modifier.Edit_Elements('regcontrol', 'enabled' ,'False')
+        #self.__Modifier.Edit_Elements('Load', 'enabled', 'False')
         return
 
     def __CreateControllers(self,ControllerDict):
