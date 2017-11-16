@@ -242,26 +242,23 @@ class PvController:
         Pcalc = sum(-(float(x)) for x in self.__ControlledElm.GetVariable('Powers')[0:nPhases:2])
         Pcalc = Pcalc / self.__Srated
 
-        # Qlim = abs((Pcalc / PFlim) * math.sin(math.acos(PFlim)))
-        # if Qcalc < -Qlim:
-        #     Qcalc = -Qlim
-        # elif Qcalc > Qlim:
-        #     Qcalc = Qlim
+        Qlim = abs((Pcalc / PFlim) * math.sin(math.acos(PFlim)))
+        if Qcalc < -Qlim:
+            Qcalc = -Qlim
+        elif Qcalc > Qlim:
+            Qcalc = Qlim
 
         Scalc = (Pcalc ** 2 + Qcalc ** 2) ** (0.5)
-
-        # Pinv = 1
-        # Pnew = 1
-        # if Scalc > 1:
-        #     Scaler = (1 - ((Scalc - 1)/Scalc))
-        #     Pnew   = (1 - Qcalc ** 2) ** (0.5)
-        #     Pinv   =  1 - (Pcalc - Pnew)/Pcalc
+        if Scalc > 1:
+            Scaler = (1 - (Scalc - 1) / Scalc)
+        else:
+            Scaler = 1
         print(uIn)
         #print (Pcalc, Pnew, Pinv)
         #PFout  = math.cos(math.atan2(Qcalc,Pcalc))
 
-        #self.__ControlledElm.SetParameter('irradiance', Pnew)
-        self.__ControlledElm.SetParameter('kvar', 0.5*Qcalc*self.__Srated)
+        #self.__ControlledElm.SetParameter('irradiance', Pinv)
+        self.__ControlledElm.SetParameter('kvar', self.__Settings['DampCoef']*Qcalc*self.__Srated)
 
         #self.__ControlledElm.SetParameter('pf', PFout)
 

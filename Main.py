@@ -11,7 +11,7 @@ CL = {
     'PV Controller'     : {'PVSystem.675_1' :  {'Qcontrol'          : 'VVar',  # CPF, VPF, VVar, None
                                                 'Pcontrol'          : 'None',    # None, VW
                                                 'HasConnLoad'       : True,
-                                                'DampCoef'          : 0.9,
+                                                'DampCoef'          : 1.00,
                                                 'pf'                : 0.85,
                                                 'Pmin'              : 0.15,
                                                 'Pmax'              : 0.85,
