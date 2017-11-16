@@ -1,32 +1,39 @@
 import matplotlib.pyplot as plt
 
-uMinC = 1.02
-uMaxC = 1.05
+uMin = 0.95
+uMax = 1.05
+uDbMin = 0.98
+uDbMax = 1.02
+QlimPU = 0.40
 
 
 m = 0
 c = 0
 x = []
-PFhist = []
+Qhist = []
 
-for i in range (60):
-    uIn = 1.0+ i/1000
+for i in range (150):
+    uIn = 0.925 + i/1000
     print('uIn : ', uIn)
     x.append(uIn)
-    m = 1 / (uMinC - uMaxC)
-    c = uMaxC / (uMaxC - uMinC)
+    m1 = QlimPU / (uMin - uDbMin)
+    m2 = QlimPU / (uDbMax - uMax)
+    c1 = QlimPU * uDbMin / (uDbMin - uMin)
+    c2 = QlimPU * uDbMax / (uMax - uDbMax)
 
-    if uIn < uMinC:
-        Pcalc = 1
-    elif uIn < uMaxC and uIn >= uMinC:
-        Pcalc = m * uIn + c
-    elif uIn >= uMaxC:
-        Pcalc = 0
+    if uIn <= uMin:
+        Qcalc = QlimPU
+    elif uIn <= uDbMin and uIn > uMin:
+        Qcalc = uIn * m1 + c1
+    elif uIn <= uDbMax and uIn > uDbMin:
+        Qcalc = 0
+    elif uIn <= uMax and uIn > uDbMax:
+        Qcalc = uIn * m2 + c2
+    else:
+        Qcalc = -QlimPU
 
-    PFhist.append(Pcalc)
+    Qhist.append(Qcalc)
 
-print ('Umin : '+ str(uMinC))
-print ('Umax : '+ str(uMaxC))
-print ('y='+str(m)+'.x+' +str(c))
-plt.plot(x,PFhist)
+
+plt.plot(x,Qhist)
 plt.show()

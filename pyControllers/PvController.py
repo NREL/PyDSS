@@ -7,6 +7,8 @@ class PvController:
     pOld = 0
     PmaxOld = 0
     PloadOld = 0
+    Qvar = 0
+    Pvar = 0
     Load = None
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
         self.__ElmObjectList = ElmObjectList
@@ -151,9 +153,27 @@ class PvController:
 
     def CPFcontrol(self):
         PF = self.__Settings['pf']
-        self.__ControlledElm.SetParameter('pf',-PF)
+
+        nPhases = int(self.__ControlledElm.GetParameter2('phases'))
+        Pcalc = sum(-(float(x)) for x in self.__ControlledElm.GetVariable('Powers')[0:nPhases:2]) / self.__Srated
+        Qcalc = Pcalc* math.tan(math.acos(PF))
+        Scalc = (Pcalc ** 2 + Qcalc ** 2) ** (0.5)
+        #print(Pcalc, Qcalc, Scalc)
+
+        if Scalc > 1:
+            Scaler = (1 - (Scalc - 1) / Scalc)
+            Pcalc = Scaler
+        else:
+            Pcalc = 1
+
+        self.__ControlledElm.SetParameter('irradiance', Pcalc)
+        self.__ControlledElm.SetParameter('pf', -PF)
         print(PF, self.__ControlledElm.GetParameter2('PF'))
-        return 0
+
+
+        Error = abs(Pcalc - self.Pvar)
+        self.Pvar = Pcalc
+        return Error
 
     def VPFcontrol(self):
         Pmin = self.__Settings['Pmin']
@@ -161,7 +181,7 @@ class PvController:
         PFmin = self.__Settings['pfMin']
         PFmax = self.__Settings['pfMax']
         nPhases = int(self.__ControlledElm.GetParameter2('phases'))
-        Pcalc = sum(-(float(x)) for x in self.__ControlledElm.GetVariable('Powers')[0:nPhases:2])
+        Pcalc = sum(-(float(x)) for x in self.__ControlledElm.GetVariable('Powers')[0:nPhases:2]) / self.__Srated
 
         Ppu = Pcalc / self.__Srated
         m1 = (PFmin + 1) / (Pmin - 0.5)
@@ -175,10 +195,21 @@ class PvController:
             PF = (m1 * Ppu + c2)
         else:
             PF = PFmax
-        self.__ControlledElm.SetParameter('pf', -PF)
-        Error = abs(Pcalc - self.pOld)
-        self.pOld = Pcalc
-        return Error
+
+        Qcalc = Pcalc * math.tan(math.acos(PF))
+        Scalc = (Pcalc ** 2 + Qcalc ** 2) ** (0.5)
+        #print(Pcalc, Qcalc, Scalc)
+        if Scalc > 1:
+            Scaler = (1 - (Scalc - 1) / Scalc)
+            Pcalc = Scaler
+        else:
+            Pcalc = 1
+
+        self.__ControlledElm.SetParameter('irradiance', Pcalc)
+        self.__ControlledElm.SetParameter('pf', PF)
+        Error = abs(Pcalc - self.Pvar)
+        self.Pvar = Pcalc
+        return 0
 
     def VVARcontrol(self):
         uMin = self.__Settings['uMin']
@@ -207,35 +238,34 @@ class PvController:
         elif uIn >= uMax:
             Qcalc = -QlimPU
 
-        print(uIn, Qcalc)
-
         nPhases = int(self.__ControlledElm.GetParameter2('phases'))
         Pcalc = sum(-(float(x)) for x in self.__ControlledElm.GetVariable('Powers')[0:nPhases:2])
         Pcalc = Pcalc / self.__Srated
-        Qlim = abs((Pcalc / PFlim) * math.sin(math.acos(PFlim)))
 
-        if Qcalc < -Qlim:
-            Qcalc = -Qlim
-        elif Qcalc > Qlim:
-            Qcalc = Qlim
+        # Qlim = abs((Pcalc / PFlim) * math.sin(math.acos(PFlim)))
+        # if Qcalc < -Qlim:
+        #     Qcalc = -Qlim
+        # elif Qcalc > Qlim:
+        #     Qcalc = Qlim
 
-        Scalc = (Pcalc**2 + Qcalc**2)**(0.5)
-        if Scalc > 1:
-            Scaler = (1 - (Scalc - 1)/Scalc)
-            Pcalc = Pcalc * Scaler
-            Qcalc = Qcalc * Scaler
+        Scalc = (Pcalc ** 2 + Qcalc ** 2) ** (0.5)
 
-        if Pcalc != 0:
-            PFout  = math.cos(math.atan(Qcalc/Pcalc))
-        else:
-            PFout = 1
-        print(PFout)
+        # Pinv = 1
+        # Pnew = 1
+        # if Scalc > 1:
+        #     Scaler = (1 - ((Scalc - 1)/Scalc))
+        #     Pnew   = (1 - Qcalc ** 2) ** (0.5)
+        #     Pinv   =  1 - (Pcalc - Pnew)/Pcalc
+        print(uIn)
+        #print (Pcalc, Pnew, Pinv)
+        #PFout  = math.cos(math.atan2(Qcalc,Pcalc))
 
-        if uIn <= uDbMin and uIn > uMin:
-            self.__ControlledElm.SetParameter('pf', +PFout)
-        else:
-            self.__ControlledElm.SetParameter('pf', -PFout)
-        Error = abs(uIn-self.uOld)
-        self.uOld = uIn
+        #self.__ControlledElm.SetParameter('irradiance', Pnew)
+        self.__ControlledElm.SetParameter('kvar', 0.5*Qcalc*self.__Srated)
+
+        #self.__ControlledElm.SetParameter('pf', PFout)
+
+        Error = abs(Qcalc-self.Qvar)
+        self.Qvar = Qcalc
         return Error
 

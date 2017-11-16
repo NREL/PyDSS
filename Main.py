@@ -8,15 +8,15 @@ import sys
 # }
 
 CL = {
-    'PV Controller'     : {'PVSystem.675_1' :  {'Qcontrol'          : 'None',  # CPF, VPF, VVar, None
-                                                'Pcontrol'          : 'VW',    # None, VW
+    'PV Controller'     : {'PVSystem.675_1' :  {'Qcontrol'          : 'VVar',  # CPF, VPF, VVar, None
+                                                'Pcontrol'          : 'None',    # None, VW
                                                 'HasConnLoad'       : True,
                                                 'DampCoef'          : 0.9,
-                                                'pf'                : 0.95,
+                                                'pf'                : 0.85,
                                                 'Pmin'              : 0.15,
                                                 'Pmax'              : 0.85,
-                                                'pfMax'             : 0.95,
-                                                'pfMin'             : -0.95,
+                                                'pfMax'             : 0.8,
+                                                'pfMin'             : -0.8,
                                                 'uMinC'             : 1.00,
                                                 'uMaxC'             : 1.07,
                                                 'uMax'              : 1.05,
@@ -24,7 +24,7 @@ CL = {
                                                 'uDbMax'            : 1.00,
                                                 'uDbMin'            : 1.00,
                                                 'QlimPU'            : 0.4,
-                                                'PFlim'             : 0.9,
+                                                'PFlim'             : 0.8,
                                                 'Ambient Temp'      : 30,
                                                 'Efficiency'        : 100,
                                                 '%Cutin'            : 0,
