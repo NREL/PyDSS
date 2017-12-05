@@ -1,0 +1,9 @@
+New Load.BB_262469a Bus1=DEV_262470.3 Phases=1 kV =7.19955785679 Model=1 kW=13.930089 pf=0.98 yearly=m3loadmult
+New Load.BB_263551a Bus1=DEV_263554.3 Phases=1 kV =7.19955785679 Model=1 kW=17.161023 pf=0.98 yearly=m3loadmult
+New Load.BB_263552a Bus1=DEV_263557.3 Phases=1 kV =7.19955785679 Model=1 kW=14.565683 pf=0.98 yearly=m3loadmult
+New Load.BB_263790a Bus1=DEV_263915.3 Phases=1 kV =7.19955785679 Model=1 kW=9.163139 pf=0.98 yearly=m3loadmult
+New Load.BB_263791a Bus1=DEV_263919.3 Phases=1 kV =7.19955785679 Model=1 kW=17.902548 pf=0.98 yearly=m3loadmult
+New Load.BB_263792a Bus1=DEV_263556.3 Phases=1 kV =7.19955785679 Model=1 kW=17.002124 pf=0.98 yearly=m3loadmult
+New Load.BB_263833a Bus1=DEV_263923.1 Phases=1 kV =7.19955785679 Model=1 kW=8.262715 pf=0.98 yearly=m3loadmult
+New Load.BB_263833b Bus1=DEV_263923.2 Phases=1 kV =7.19955785679 Model=1 kW=8.262715 pf=0.98 yearly=m3loadmult
+New Load.BB_263833c Bus1=DEV_263923.3 Phases=1 kV =7.19955785679 Model=1 kW=8.262715 pf=0.98 yearly=m3loadmult

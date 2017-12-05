@@ -1,0 +1,13 @@
+Hour=0, Sec=900, ControlIter=1, Element=Regulator.subxfrmr, Action= CHANGED -1 TAPS TO 0.99375.
+Hour=0, Sec=900, ControlIter=1, Element=Regulator.subxfrmr, Action= CHANGED -1 TAPS TO 0.9875.
+Hour=9, Sec=0, ControlIter=1, Element=Regulator.subxfrmr, Action= CHANGED -1 TAPS TO 0.98125.
+Hour=10, Sec=0, ControlIter=1, Element=Regulator.subxfrmr, Action= CHANGED -1 TAPS TO 0.975.
+Hour=10, Sec=900, ControlIter=1, Element=Regulator.subxfrmr, Action= CHANGED 1 TAPS TO 0.98125.
+Hour=10, Sec=1800, ControlIter=1, Element=Regulator.subxfrmr, Action= CHANGED -1 TAPS TO 0.975.
+Hour=11, Sec=0, ControlIter=1, Element=Regulator.subxfrmr, Action= CHANGED -1 TAPS TO 0.96875.
+Hour=12, Sec=1800, ControlIter=1, Element=Regulator.subxfrmr, Action= CHANGED 1 TAPS TO 0.975.
+Hour=13, Sec=0, ControlIter=1, Element=Regulator.subxfrmr, Action= CHANGED 1 TAPS TO 0.98125.
+Hour=15, Sec=900, ControlIter=1, Element=Regulator.subxfrmr, Action= CHANGED -2 TAPS TO 0.96875.
+Hour=16, Sec=900, ControlIter=1, Element=Regulator.subxfrmr, Action= CHANGED 1 TAPS TO 0.975.
+Hour=16, Sec=2700, ControlIter=1, Element=Regulator.subxfrmr, Action= CHANGED 1 TAPS TO 0.98125.
+Hour=17, Sec=0, ControlIter=1, Element=Regulator.subxfrmr, Action= CHANGED 1 TAPS TO 0.9875.

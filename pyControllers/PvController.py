@@ -250,6 +250,7 @@ class PvController:
 
         Scalc = (Pcalc ** 2 + Qcalc ** 2) ** (0.5)
         if Scalc > 1:
+            Pnew = (1 - Qcalc**2)**0.5
             Scaler = (1 - (Scalc - 1) / Scalc)
         else:
             Scaler = 1

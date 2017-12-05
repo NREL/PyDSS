@@ -5,9 +5,9 @@ class Modifier():
     PV_defaultDict = {'phases':'1', 'kV':'2.2',  'irradiance':'1', 'Temperature':'30',
                       'daily':'m3pvmult', '%cutin':'0.0', '%cutout':'0.0'}
 
-    Storge_defaultDict = {'bus' : '671', 'kV':'4.12', 'kWRated' : '2000', '%IdlingkW' : '3' ,
-                          'phases':'3', '%EffCharge': '90', 'kWhRated'  : '8000', '%reserve': '0',
-                          '%EffDischarge': '90', 'state': 'IDLE', '%stored' : '50'}
+    Storge_defaultDict = {'bus' : 'storagebus', 'kV':'0.48', 'kWRated' : '2000', '%IdlingkW' : '3' ,
+                          'phases':'3', '%EffCharge': '100', 'kWhRated'  : '2000', '%reserve': '0',
+                          '%EffDischarge': '100', 'state': 'IDLE', '%stored' : '50'}
 
     DefaultDictSelector ={
         'PVSystem' : PV_defaultDict,

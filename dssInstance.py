@@ -1,4 +1,6 @@
+from pyContrReader import pyContrReader as pcr
 from opendssdirect.utils import run_command
+import pyContrReader as pyControllers
 from dssElement import dssElement
 import opendssdirect as dss
 from dssBus import dssBus
@@ -23,8 +25,8 @@ class OpenDSS:
     __dssObjectsByClass = {}
     __DelFlag = 0
     __pyPlotObjects = {}
-    def __init__(self , SimType = 'Daily', rootPath = os.getcwd(), dssMainFile = 'IEEE13Nodeckt.dss',
-                 ExportList = None, ControllerList = None, PlotList = None):
+    def __init__(self , SimType = 'Daily', rootPath = os.getcwd(), dssMainFile = 'MasterCircuit_Mikilua_keep.dss',
+                 ExportList = None, PlotList = None):
 
         self.__ExportList = ExportList
         self.__PlotDict = PlotList
@@ -38,7 +40,8 @@ class OpenDSS:
                 'WT': rootPath + '\\Profiles\\WT',
                 'GN': rootPath + '\\Profiles\\GN',
                 'LD': rootPath + '\\Profiles\\LD'
-            }
+            },
+            'pyControllers': rootPath + '\\Import\\pyControllerList',
         }
         self.__dssFilePath = self.__dssPath['dssFiles'] + '\\' + dssMainFile
 
@@ -52,7 +55,7 @@ class OpenDSS:
         self.__dssClass = dss.ActiveClass
         self.__dssCommand = run_command
         self.__dssSolution = dss.Solution
-        self.__dssSolver = SolveMode.GetSolver(SimType, self.__dssInstance)
+        self.__dssSolver = SolveMode.GetSolver(SimType, self.__dssInstance, mStepResolution = 15)
 
         self.__ModifyNetwork()
         self.__UpdateDictionary()
@@ -60,27 +63,22 @@ class OpenDSS:
 
         if self.__ExportList:
             self.__PrepareExportList(self.__ExportList)
-        if ControllerList is not None and isinstance(ControllerList, dict):
+
+        PyCtrlReader = pcr(self.__dssPath['pyControllers'])
+        ControllerList = PyCtrlReader.pyControllers
+        print(ControllerList)
+        if ControllerList is not None:
             self.__CreateControllers(ControllerList)
-        #self.__CreatePlots(PlotList)
+        self.__CreatePlots(PlotList)
         return
 
     def __ModifyNetwork(self):
         from NetworkModifier import Modifier
         self.__Modifier = Modifier(dss, run_command)
-        # self.__Modifier.Add_Elements('PVSystem', {'bus' : ['671.1','671.2','671.3','645.2','675.1',
-        #                                                    '675.2','675.3','670.1','670.2','670.3'],
-        #                                           'kVA' : ['500','500','500','200','50',
-        #                                                    '200','300','100','75','125'],
-        #                                           'Pmpp': ['500', '500', '500', '200', '50',
-        #                                                   '200', '300', '100', '75', '125'],})
 
-        self.__Modifier.Add_Elements('PVSystem', {'bus': ['675.1'], 'kVA': ['1000'], 'Pmpp': ['1000'] })
-
-        #self.__Modifier.Add_Elements('Storage', {'bus' : ['671'], 'kWRated' : ['500'], 'kWhRated'  : ['2000']},
-        #                             True, self.__dssObjects)
-
-        self.__Modifier.Edit_Elements('regcontrol', 'enabled' ,'False')
+        self.__Modifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
+                                     True, self.__dssObjects)
+        #self.__Modifier.Edit_Elements('regcontrol', 'enabled' ,'False')
         #self.__Modifier.Edit_Elements('Load', 'enabled', 'False')
         return
 
@@ -103,7 +101,7 @@ class OpenDSS:
                 self.__pyPlotObjects[PlotType] = pyPlots.Create(PlotType, None,
                                                 self.__dssBuses, self.__dssObjectsByClass)
             else:
-                self.__pyPlotObjects[PlotType+str(PlotSettings)] = pyPlots.Create(PlotType, PlotSettings,
+                self.__pyPlotObjects[PlotType] = pyPlots.Create(PlotType, PlotSettings,
                                                                 self.__dssBuses, self.__dssObjectsByClass)
         return
 
@@ -113,7 +111,7 @@ class OpenDSS:
         for Key, Controller in self.__pyControls.items():
             NewError += Controller.Update(Time, UpdateResults)
 
-        if abs(NewError) < 1e-4:
+        if abs(NewError) < 1:
             return True
 
         return False
@@ -178,11 +176,8 @@ class OpenDSS:
     def RunSimulation(self, Steps, ControllerMaxItrs = 25):
         startTime = time.time()
         for i in range(Steps):
-            print ('Time - ', i)
             for j in range(ControllerMaxItrs):
-
                 hasConverged = self.__UpdateControllers(i, UpdateResults = False)
-
                 if hasConverged or j == ControllerMaxItrs - 1:
                     self.__UpdateControllers(i, UpdateResults = True)
                     if not hasConverged:
@@ -190,7 +185,9 @@ class OpenDSS:
                     break
                 elif not hasConverged:
                     self.__dssSolver.reSolve()
-            self.__dssSolver.IncStep(i)
+            self.__UpdatePlots()
+            self.__dssSolver.IncStep()
+            #self.__UpdateControllers(i, UpdateResults=True)
             if self.__ExportList:
                 self.__UpdateResults()
 
@@ -199,8 +196,14 @@ class OpenDSS:
 
         if self.__ExportList:
             self.__ExportResults = pd.DataFrame(self.__TempResultList, columns = self.__ExportResults.columns)
+            self.__ExportResults.to_excel(self.__dssPath['Export']+'\\'+'Results.xlsx')
         print ('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
         print ('End of simulation')
+
+    def __UpdatePlots(self):
+        if 'Network layout' in self.__pyPlotObjects:
+            self.__pyPlotObjects['Network layout'].UpdatePlot()
+        return
 
     def __UpdateResults(self):
         ClassNames = list(self.__ExportResults.columns.get_level_values(0))
@@ -228,3 +231,4 @@ class OpenDSS:
         else:
             print ('An intstance of OpenDSS (' + str(self) + ') crashed.')
         return
+##

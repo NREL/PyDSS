@@ -11,19 +11,18 @@ class StorageController:
     def __init__(self, StorageObj, Settings, dssInstance, ElmObjectList, dssSolver):
         self.__ElmObjectList = ElmObjectList
         self.P_ControlDict = {
-            'None'             : lambda : 0,
-            'Peak Shaving'     : self.PeakShavingControl,
-            'Capacity Firming' : self.CapacityFirmimgControl,
-            'Load Following'   : self.LoadFollowingControl,
-            'Time Triggered'   : self.TimeTriggeredControl,
-            'Real Time'        : self.RealTimeControl,
-            'Scheduled'        : self.ScheduledControl,}
+            'None' : lambda : 0,
+            'PS'   : self.PeakShavingControl,
+            'CF'   : self.CapacityFirmimgControl,
+            'TT'   : self.TimeTriggeredControl,
+            'RT'   : self.RealTimeControl,
+            'SH'   : self.ScheduledControl,}
 
         self.Q_ControlDict = {
-            'None'                   : lambda : 0,
-            'Constant Power Factor'  : self.ConstantPowerFactorControl,
-            'Variable Power Factor'  : self.VariablePowerFactorControl,
-            'Volt Var Control'       : self.VoltVarControl,}
+            'None' : lambda : 0,
+            'CPF'  : self.ConstantPowerFactorControl,
+            'VPF'  : self.VariablePowerFactorControl,
+            'VVar' : self.VoltVarControl,}
 
         self.__ElmObjectList = ElmObjectList
         self.__ControlledElm = StorageObj
@@ -56,10 +55,12 @@ class StorageController:
 
             if UpdateResults:
                 self.UpdateResults()
-            dP = self.P_update()
-            dQ = self.Q_update()
-            Error = dP + dQ
-            if Time == 1439:
+                Error = 0
+            else:
+                dP = self.P_update()
+                dQ = self.Q_update()
+                Error = dP + dQ
+            if Time == 95:
                 for ax in self.Axs:
                     ax.clear()
                     ax.grid()
@@ -76,11 +77,11 @@ class StorageController:
         return Error
 
     def UpdateResults(self):
-        if self.__Settings['Meas from Circuit']:
+        if self.__Settings['PowerMeaElem'] == 'Total':
             Sin = self.__dssInstance.Circuit.TotalPower()
-            Pin = -Sin[0]
+            Pin = -sum(Sin[0:5:2])
         else:
-            Sin = self.__ElmObjectList[self.__Settings['Measured Element']].GetVariable(self.__Settings['Measured Variable'])
+            Sin = self.__ElmObjectList[self.__Settings['PowerMeaElem']].GetVariable('Powers')
             Pin = sum(Sin[0:5:2])
         busName = self.__ControlledElm.GetParameter2('bus1')
         self.__dssInstance.Circuit.SetActiveBus(busName)
@@ -134,13 +135,13 @@ class StorageController:
         Plb = self.__Settings['PS_lb']
         IdlingkWPercent = float(self.__ControlledElm.GetParameter2('%IdlingkW'))
         IdlingkW = -IdlingkWPercent/100*self.__Prated
-        if self.__Settings['Meas from Circuit']:
+        if self.__Settings['PowerMeaElem'] == 'Total':
             Sin = self.__dssInstance.Circuit.TotalPower()
-            Pin = -Sin[0]
+            Pin = -sum(Sin[0:5:2])
         else:
-            Sin = self.__ElmObjectList[self.__Settings['Measured Element']].GetVariable(self.__Settings['Measured Variable'])
+            Sin = self.__ElmObjectList[self.__Settings['PowerMeaElem']].GetVariable('Powers')
             Pin = sum(Sin[0:5:2])
-        Pbatt = float(self.__ControlledElm.GetParameter2('kw'))
+        Pbatt = -float(self.__ControlledElm.GetVariable('Powers')[0])*3
 
         if Pin > Pub:
             dP = Pin - Pub
@@ -205,13 +206,8 @@ class StorageController:
         effChg = float(self.__ControlledElm.GetParameter2('%EffCharge')) / 100
         IdlingkWPercent = float(self.__ControlledElm.GetParameter2('%IdlingkW'))
         IdlingkW = IdlingkWPercent / 100 * self.__Prated
-        if self.__Settings['Meas from Circuit']:
-            Sin = self.__dssInstance.Circuit.TotalPower()
-            Pin = -Sin[0]
-        else:
-            Sin = self.__ElmObjectList[self.__Settings['Measured Element']].GetVariable(
-                self.__Settings['Measured Variable'])
-            Pin = sum(Sin[0:5:2])
+        Sin = self.__ElmObjectList[self.__Settings['PowerMeaElem']].GetVariable('Powers')
+        Pin = sum(Sin[0:5:2])
         Pbatt = float(self.__ControlledElm.GetParameter2('kw'))
         Pbatt  = -float(self.__ControlledElm.GetVariable('Powers')[0])*3
         #print (PbattTest ,Pbatt)
@@ -248,9 +244,6 @@ class StorageController:
         if self.doUpdate:
             self.__PinOld = Pin
         return Error
-
-    def LoadFollowingControl(self):
-        return
 
     def ConstantPowerFactorControl(self):
         PF = self.__Settings['pf']
