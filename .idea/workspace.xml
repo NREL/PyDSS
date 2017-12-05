@@ -4,41 +4,7 @@
     <bookmark url="file://$PROJECT_DIR$/PyPlots/pyPlots.py" description="# for name, Line in Lines.iteritems():" line="24" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b79688ef-3a77-4e51-b147-ffcfcf4493ad" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Exports/New Text Document.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Import/New Text Document.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/SolveMode - Copy.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/5mLoadProfile.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/5mPVProfile.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/5mPVProfileOld2.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/IEEE13Node_BusXY.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/IEEE13Nodeckt.dss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/IEEE13Nodeckt_Profile9998.DSV" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/IEEE13Nodeckt_Profile9998.dbl" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/IEEE13Nodeckt_VLN_Node.Txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/IEEE13_Assets.dss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/IEEE13_CDPSM.dss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/IEEE13_LineAndCableSpacing.dss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/IEEE13_LineGeometry.dss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/IEEE13_LineSpacing.dss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/IEEE13_SpacingGeometry.dss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/IEEELineCodes.dss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/LMP.xlsx" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/MTR_em1.CSV" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/New Microsoft Excel Worksheet.xlsx" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/ieee13_asset_guids.dss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/ieee13_elec_guids.dss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dssFiles/templates/pv_init.dss" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Main.py" afterPath="$PROJECT_DIR$/Main.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/NetworkModifier.py" afterPath="$PROJECT_DIR$/NetworkModifier.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PyPlots/Topology.py" afterPath="$PROJECT_DIR$/PyPlots/Topology.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SolveMode.py" afterPath="$PROJECT_DIR$/SolveMode.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dssFiles/Network layout.html" afterPath="$PROJECT_DIR$/dssFiles/Network layout.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dssInstance.py" afterPath="$PROJECT_DIR$/dssInstance.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyControllers/PvController.py" afterPath="$PROJECT_DIR$/pyControllers/PvController.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyControllers/StorageController.py" afterPath="$PROJECT_DIR$/pyControllers/StorageController.py" />
-    </list>
+    <list default="true" id="b79688ef-3a77-4e51-b147-ffcfcf4493ad" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -61,7 +27,7 @@
         <entry file="file://$PROJECT_DIR$/Main.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="510">
-              <caret line="17" column="26" lean-forward="true" selection-start-line="17" selection-start-column="26" selection-end-line="17" selection-end-column="26" />
+              <caret line="17" column="26" lean-forward="false" selection-start-line="17" selection-start-column="26" selection-end-line="17" selection-end-column="26" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -82,8 +48,8 @@
       <file leaf-file-name="dssInstance.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dssInstance.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3450">
-              <caret line="194" column="18" lean-forward="true" selection-start-line="194" selection-start-column="18" selection-end-line="194" selection-end-column="18" />
+            <state relative-caret-position="4080">
+              <caret line="194" column="18" lean-forward="false" selection-start-line="194" selection-start-column="18" selection-end-line="194" selection-end-column="18" />
               <folding>
                 <element signature="e#0#46#0" expanded="true" />
                 <element signature="e#3566#4078#0" expanded="false" />
@@ -102,7 +68,7 @@
       <file leaf-file-name="multi.py" pinned="false" current-in-tab="false">
         <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/indexes/multi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
+            <state relative-caret-position="32460">
               <caret line="1123" column="0" lean-forward="false" selection-start-line="1123" selection-start-column="0" selection-end-line="1123" selection-end-column="0" />
               <folding />
             </state>
@@ -112,7 +78,7 @@
       <file leaf-file-name="StorageController.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pyControllers/StorageController.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1360">
+            <state relative-caret-position="4170">
               <caret line="163" column="0" lean-forward="false" selection-start-line="163" selection-start-column="0" selection-end-line="163" selection-end-column="0" />
               <folding>
                 <element signature="e#3703#3751#0" expanded="false" />
@@ -142,7 +108,7 @@
       <file leaf-file-name="SolveMode.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SolveMode.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="50">
+            <state relative-caret-position="1260">
               <caret line="42" column="42" lean-forward="false" selection-start-line="42" selection-start-column="42" selection-end-line="42" selection-end-column="42" />
               <folding />
             </state>
@@ -262,7 +228,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -284,6 +249,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -546,7 +512,7 @@
   <component name="ToolWindowManager">
     <frame x="-2409" y="-9" width="2418" height="1318" extended-state="6" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18104185" sideWeight="0.4749164" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18317677" sideWeight="0.4749164" order="2" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3291592" sideWeight="0.49573562" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6255507" sideWeight="0.54228187" order="6" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.8121646" sideWeight="0.45771813" order="2" side_tool="false" content_ui="tabs" />
@@ -925,7 +891,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -933,13 +898,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1980">
           <caret line="66" column="119" lean-forward="false" selection-start-line="66" selection-start-column="119" selection-end-line="66" selection-end-column="119" />
-          <folding>
-            <element signature="e#1#74#0" expanded="false" />
-            <element signature="e#6560#6958#0" expanded="false" />
-            <element signature="e#6999#8803#0" expanded="false" />
-            <element signature="e#8839#9461#0" expanded="false" />
-            <element signature="e#9498#10310#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -947,9 +905,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#73#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -957,13 +912,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="660">
           <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/SolveMode.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="50">
+        <state relative-caret-position="1260">
           <caret line="42" column="42" lean-forward="false" selection-start-line="42" selection-start-column="42" selection-end-line="42" selection-end-column="42" />
           <folding />
         </state>
@@ -971,7 +925,7 @@
     </entry>
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/indexes/multi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
+        <state relative-caret-position="32460">
           <caret line="1123" column="0" lean-forward="false" selection-start-line="1123" selection-start-column="0" selection-end-line="1123" selection-end-column="0" />
           <folding />
         </state>
@@ -979,7 +933,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pyControllers/StorageController.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1360">
+        <state relative-caret-position="4170">
           <caret line="163" column="0" lean-forward="false" selection-start-line="163" selection-start-column="0" selection-end-line="163" selection-end-column="0" />
           <folding>
             <element signature="e#3703#3751#0" expanded="false" />
@@ -997,8 +951,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dssInstance.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3450">
-          <caret line="194" column="18" lean-forward="true" selection-start-line="194" selection-start-column="18" selection-end-line="194" selection-end-column="18" />
+        <state relative-caret-position="4080">
+          <caret line="194" column="18" lean-forward="false" selection-start-line="194" selection-start-column="18" selection-end-line="194" selection-end-column="18" />
           <folding>
             <element signature="e#0#46#0" expanded="true" />
             <element signature="e#3566#4078#0" expanded="false" />
@@ -1032,7 +986,7 @@
     <entry file="file://$PROJECT_DIR$/Main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="510">
-          <caret line="17" column="26" lean-forward="true" selection-start-line="17" selection-start-column="26" selection-end-line="17" selection-end-column="26" />
+          <caret line="17" column="26" lean-forward="false" selection-start-line="17" selection-start-column="26" selection-end-line="17" selection-end-column="26" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
