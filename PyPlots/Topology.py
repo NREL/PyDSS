@@ -1,8 +1,5 @@
-
-from bokeh.models.widgets import Button, RadioButtonGroup, Select, Slider
-from bokeh.plotting import figure, curdoc, output_file, show
-from bokeh.io import output_file, show
-from bokeh.layouts import widgetbox, gridplot, column
+from bokeh.plotting import figure, curdoc
+from bokeh.io import output_file
 from bokeh.models import ColumnDataSource, ColorBar, \
     LinearColorMapper, HoverTool, BoxSelectTool, BoxZoomTool, \
     PanTool, WheelZoomTool, ResetTool, SaveTool, Label
@@ -10,8 +7,7 @@ from bokeh.palettes import Viridis, Plasma
 from bokeh.client import push_session
 import pandas as pd
 import numpy as np
-from threading import Thread
-import time
+
 class Plot:
     Vmin = 0.95
     Vmax = 1.05
@@ -19,7 +15,7 @@ class Plot:
     Imax = 100
     VoltagePhase = 0
     CurrentPhase = 0
-    def __init__(self,PlotProperties,dssBuses,dssObjectsByClass):
+    def __init__(self,PlotProperties,dssBuses,dssObjectsByClass,dssCircuit):
         self.__dssBuses = dssBuses
         self.__PlotProperties = PlotProperties
         self.__dssObjectsByClass = dssObjectsByClass

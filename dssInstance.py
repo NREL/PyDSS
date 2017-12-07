@@ -66,9 +66,9 @@ class OpenDSS:
 
         PyCtrlReader = pcr(self.__dssPath['pyControllers'])
         ControllerList = PyCtrlReader.pyControllers
-        print(ControllerList)
         if ControllerList is not None:
             self.__CreateControllers(ControllerList)
+        self.__dssSolver.reSolve()
         self.__CreatePlots(PlotList)
         return
 
@@ -93,16 +93,15 @@ class OpenDSS:
                     print('Created pyController -> Controller.' + ElmName)
         return
 
-
     def __CreatePlots(self, PlotsDict):
-        __pyPlotObjects= {}
         for PlotType, PlotSettings in PlotsDict.items():
-            if PlotSettings == None:
-                self.__pyPlotObjects[PlotType] = pyPlots.Create(PlotType, None,
-                                                self.__dssBuses, self.__dssObjectsByClass)
+            if PlotType == 'Network layout':
+                self.__pyPlotObjects[PlotType] = pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
+                                                                self.__dssObjectsByClass,self.__dssCircuit)
             else:
-                self.__pyPlotObjects[PlotType] = pyPlots.Create(PlotType, PlotSettings,
-                                                                self.__dssBuses, self.__dssObjectsByClass)
+                actPlotType = PlotType.split('.')[0]
+                self.__pyPlotObjects[PlotType] = pyPlots.Create(actPlotType, PlotSettings,
+                                                                self.__dssBuses, self.__dssObjects, self.__dssCircuit)
         return
 
     def __UpdateControllers(self, Time, UpdateResults):
@@ -201,8 +200,10 @@ class OpenDSS:
         print ('End of simulation')
 
     def __UpdatePlots(self):
-        if 'Network layout' in self.__pyPlotObjects:
-            self.__pyPlotObjects['Network layout'].UpdatePlot()
+        # if 'Network layout' in self.__pyPlotObjects:
+        #     self.__pyPlotObjects['Network layout'].UpdatePlot()
+        for Plot in self.__pyPlotObjects:
+            self.__pyPlotObjects[Plot].UpdatePlot()
         return
 
     def __UpdateResults(self):

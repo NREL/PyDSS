@@ -5,20 +5,19 @@ import TimeSeries
 import XYPlot
 
 PlotTypes ={
-    'Network layout': Topology.Plot,
-	'Sag plot': SagPlot.Plot,
-	'Heat map': HeatMap.Plot,
-	'Time series': TimeSeries.Plot,
-	'Heat map': XYPlot.Plot,
+    'Network layout' : Topology.Plot,
+	'Sag plot'       : SagPlot.Plot,
+	'Heat map'       : HeatMap.Plot,
+	'Time series'    : TimeSeries.Plot,
+	'XY plot'        : XYPlot.Plot,
 }
 
 
-def Create(PlotType, PlotPropertyDict, dssBuses, dssObjectsByClass):
-    PlotObject = PlotTypes[PlotType](PlotPropertyDict, dssBuses, dssObjectsByClass)
+def Create(PlotType, PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit):
+    PlotObject = PlotTypes[PlotType](PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit)
     # try:
     #     PlotObject = PlotTypes[PlotType](PlotPropertyDict,dssBuses,dssObjectsByClass)
     # except:
     #     print 'The object dictionary does not contain ' + PlotType
     #     return -1
     return PlotObject
-
