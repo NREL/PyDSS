@@ -21,3 +21,8 @@ def Create(PlotType, PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit):
     #     print 'The object dictionary does not contain ' + PlotType
     #     return -1
     return PlotObject
+
+defalultPO = {
+        'Network layout': False,
+        'Time series': False
+    }

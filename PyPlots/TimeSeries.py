@@ -3,6 +3,7 @@ from bokeh.io import output_file
 from bokeh.client import push_session
 from bokeh.layouts import  column
 from bokeh.palettes import Set1
+from ast import literal_eval as LE
 
 class Plot:
     def __init__(self,PlotProperties, dssBuses, dssObjects, dssCircuit):
@@ -10,6 +11,9 @@ class Plot:
         self.__dssBuses = dssBuses
         self.__dssObjs = dssObjects
         self.__PlotProperties = PlotProperties
+        self.__Properties =  LE(PlotProperties['Properties'])
+        self.__index = LE(PlotProperties['index'])
+        self.__multiplier = LE(PlotProperties['yScaler'])
 
         if self.__PlotProperties['yObjectType'] == 'Element':
             self.yObj = self.__dssObjs[self.__PlotProperties['yObjName']]
@@ -19,12 +23,12 @@ class Plot:
             self.yObj = dssCircuit
 
         self.Figures = []
-        self.Y = [[] for x in self.__PlotProperties['Properties']]
-        self.X = [[] for x in self.__PlotProperties['Properties']]
-        self.Lines = [None for x in self.__PlotProperties['Properties']]
+        self.Y = [[] for x in self.__Properties]
+        self.X = [[] for x in self.__Properties]
+        self.Lines = [None for x in self.__Properties]
         output_file(PlotProperties['FileName'])
-        for i, yProperties in enumerate(self.__PlotProperties['Properties']):
-            Multiplier = self.__PlotProperties['yScaler'][i]
+        for i, yProperties in enumerate(self.__Properties):
+            Multiplier = self.__multiplier[i]
             pptyType ,Property = yProperties.split('.')
             if pptyType == 'p':
                 newValue = self.yObj.GetParameter2(Property)
@@ -36,16 +40,16 @@ class Plot:
             if newValue is not None:
                 if isinstance(newValue, list):
 
-                    if self.__PlotProperties['index'][i] == 'SumEven':
+                    if self.__index[i] == 'SumEven':
                         self.Y[i].append(Multiplier * sum(newValue[::2]))
-                    elif self.__PlotProperties['index'][i] == 'SumOdd':
+                    elif self.__index[i] == 'SumOdd':
                         self.Y[i].append(Multiplier * sum(newValue[1::2]))
-                    elif self.__PlotProperties['index'][i] == 'Even' :
+                    elif self.__index[i] == 'Even' :
                         self.Y[i]= [[Multiplier * x] for x in newValue[::2]]
-                    elif self.__PlotProperties['index'][i] == 'Odd':
+                    elif self.__index[i] == 'Odd':
                         self.Y[i] = [[Multiplier * x] for x in newValue[1::2]]
-                    elif 'Index=' in self.__PlotProperties['index'][i]:
-                        c = int(self.__PlotProperties['index'][i].replace('Index=', ''))
+                    elif 'Index=' in self.__index[i]:
+                        c = int(self.__index[i].replace('Index=', ''))
                         self.Y[i].append(Multiplier * newValue[c])
                 else:
                     self.Y[i].append(Multiplier * newValue)
@@ -75,8 +79,8 @@ class Plot:
         return
 
     def UpdatePlot(self):
-        for i, yProperties in enumerate(self.__PlotProperties['Properties']):
-            Multiplier = self.__PlotProperties['yScaler'][i]
+        for i, yProperties in enumerate(self.__Properties):
+            Multiplier = self.__multiplier[i]
             pptyType ,Property = yProperties.split('.')
             if pptyType == 'p':
                 newValue = self.yObj.GetParameter2(Property)
@@ -87,20 +91,20 @@ class Plot:
 
             if newValue is not None:
                 if isinstance(newValue, list):
-                    if self.__PlotProperties['index'][i] == 'SumEven':
+                    if self.__index[i] == 'SumEven':
                         self.Y[i].append(Multiplier * sum(newValue[::2]))
-                    elif self.__PlotProperties['index'][i] == 'SumOdd':
+                    elif self.__index[i] == 'SumOdd':
                         self.Y[i].append(Multiplier * sum(newValue[1::2]))
-                    elif self.__PlotProperties['index'][i] == 'Even':
+                    elif self.__index[i] == 'Even':
                         for j, Value in enumerate(newValue[::2]):
                             self.Y[i][j].append(Multiplier * Value)
-                    elif self.__PlotProperties['index'][i] == 'Odd':
+                    elif self.__index[i] == 'Odd':
                         for j, Value in enumerate(newValue[1::2]):
                             self.Y[i][j].append(Multiplier * Value)
-                    elif 'Index=' in self.__PlotProperties['index'][i]:
-                        c = int(self.__PlotProperties['index'][i].replace('Index=',''))
+                    elif 'Index=' in self.__index[i]:
+                        print(self.__index[i])
+                        c = int(self.__index[i].replace('Index=',''))
                         self.Y[i].append(Multiplier * newValue[c])
-
                 else:
                     self.Y[i].append(Multiplier * newValue)
                 self.X[i] = range(len(self.Y[i])+1)

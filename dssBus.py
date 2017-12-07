@@ -61,7 +61,7 @@ class dssBus:
             try:
                 return self.__Variables[VarName](Value)
             except:
-                print ('Error settinf Value')
+                print ('Error setting Value')
                 return None
         else:
             print ('Invalid variable name')

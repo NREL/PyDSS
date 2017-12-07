@@ -1,6 +1,6 @@
 from pyContrReader import pyContrReader as pcr
+from pyPlotReader import pyPlotReader as ppr
 from opendssdirect.utils import run_command
-import pyContrReader as pyControllers
 from dssElement import dssElement
 import opendssdirect as dss
 from dssBus import dssBus
@@ -25,11 +25,12 @@ class OpenDSS:
     __dssObjectsByClass = {}
     __DelFlag = 0
     __pyPlotObjects = {}
+
     def __init__(self , SimType = 'Daily', rootPath = os.getcwd(), dssMainFile = 'MasterCircuit_Mikilua_keep.dss',
-                 ExportList = None, PlotList = None):
+                 ExportList = None, PlotOptions = pyPlots.defalultPO):
 
         self.__ExportList = ExportList
-        self.__PlotDict = PlotList
+        self.__PlotOptions = PlotOptions
         self.__dssPath = {
             'root': rootPath,
             'Import': rootPath + '\\Import',
@@ -41,11 +42,14 @@ class OpenDSS:
                 'GN': rootPath + '\\Profiles\\GN',
                 'LD': rootPath + '\\Profiles\\LD'
             },
+            'pyPlots': rootPath + '\\Import\\pyPlotList',
             'pyControllers': rootPath + '\\Import\\pyControllerList',
+
         }
         self.__dssFilePath = self.__dssPath['dssFiles'] + '\\' + dssMainFile
 
         self.__dssInstance.Basic.ClearAll()
+        self.__dssInstance.utils.run_command('Log=NO')
         run_command('Clear')
         run_command('compile ' + self.__dssFilePath)
 
@@ -64,12 +68,17 @@ class OpenDSS:
         if self.__ExportList:
             self.__PrepareExportList(self.__ExportList)
 
-        PyCtrlReader = pcr(self.__dssPath['pyControllers'])
-        ControllerList = PyCtrlReader.pyControllers
+        pyCtrlReader = pcr(self.__dssPath['pyControllers'])
+        ControllerList = pyCtrlReader.pyControllers
         if ControllerList is not None:
             self.__CreateControllers(ControllerList)
+
         self.__dssSolver.reSolve()
-        self.__CreatePlots(PlotList)
+
+        pyPlotReader = ppr(self.__dssPath['pyPlots'])
+        PlotList = pyPlotReader.pyPlots
+        if PlotList is not None:
+            self.__CreatePlots(PlotList)
         return
 
     def __ModifyNetwork(self):
@@ -94,14 +103,18 @@ class OpenDSS:
         return
 
     def __CreatePlots(self, PlotsDict):
-        for PlotType, PlotSettings in PlotsDict.items():
-            if PlotType == 'Network layout':
-                self.__pyPlotObjects[PlotType] = pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
-                                                                self.__dssObjectsByClass,self.__dssCircuit)
-            else:
-                actPlotType = PlotType.split('.')[0]
-                self.__pyPlotObjects[PlotType] = pyPlots.Create(actPlotType, PlotSettings,
-                                                                self.__dssBuses, self.__dssObjects, self.__dssCircuit)
+        for PlotType, PlotNames in PlotsDict.items():
+            newPlotNames = list(PlotNames)
+            for Name in newPlotNames:
+                PlotSettings = PlotNames[Name]
+                print (PlotType, Name)
+                PlotSettings['FileName'] = Name
+                if PlotType == 'Network layout' and self.__PlotOptions[PlotType]:
+                    self.__pyPlotObjects[PlotType] = pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
+                                                                    self.__dssObjectsByClass,self.__dssCircuit)
+                elif PlotType != 'Network layout'  and self.__PlotOptions[PlotType]:
+                    self.__pyPlotObjects[PlotType+Name] = pyPlots.Create(PlotType, PlotSettings,
+                                                                     self.__dssBuses, self.__dssObjects, self.__dssCircuit)
         return
 
     def __UpdateControllers(self, Time, UpdateResults):
@@ -186,12 +199,9 @@ class OpenDSS:
                     self.__dssSolver.reSolve()
             self.__UpdatePlots()
             self.__dssSolver.IncStep()
-            #self.__UpdateControllers(i, UpdateResults=True)
+
             if self.__ExportList:
                 self.__UpdateResults()
-
-        import matplotlib.pyplot as plt
-        plt.show()
 
         if self.__ExportList:
             self.__ExportResults = pd.DataFrame(self.__TempResultList, columns = self.__ExportResults.columns)
@@ -232,4 +242,4 @@ class OpenDSS:
         else:
             print ('An intstance of OpenDSS (' + str(self) + ') crashed.')
         return
-##
+#
