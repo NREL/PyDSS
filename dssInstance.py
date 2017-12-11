@@ -1,3 +1,4 @@
+from ResultContainer import ResultContainer  as RC
 from pyContrReader import pyContrReader as pcr
 from pyPlotReader import pyPlotReader as ppr
 from opendssdirect.utils import run_command
@@ -27,10 +28,8 @@ class OpenDSS:
     __pyPlotObjects = {}
 
     def __init__(self , SimType = 'Daily', rootPath = os.getcwd(), dssMainFile = 'MasterCircuit_Mikilua_keep.dss',
-                 ExportList = None, PlotOptions = pyPlots.defalultPO):
+                 ResultOptions = None, PlotOptions = pyPlots.defalultPO):
 
-        self.__ExportList = ExportList
-        self.__PlotOptions = PlotOptions
         self.__dssPath = {
             'root': rootPath,
             'Import': rootPath + '\\Import',
@@ -43,9 +42,13 @@ class OpenDSS:
                 'LD': rootPath + '\\Profiles\\LD'
             },
             'pyPlots': rootPath + '\\Import\\pyPlotList',
+            'ExportLists': rootPath + '\\Import\\ExportLists',
             'pyControllers': rootPath + '\\Import\\pyControllerList',
-
         }
+
+
+        self.__ResultOptions = ResultOptions
+        self.__PlotOptions = PlotOptions
         self.__dssFilePath = self.__dssPath['dssFiles'] + '\\' + dssMainFile
 
         self.__dssInstance.Basic.ClearAll()
@@ -65,15 +68,15 @@ class OpenDSS:
         self.__UpdateDictionary()
         self.__CreateBusObjects()
 
-        if self.__ExportList:
-            self.__PrepareExportList(self.__ExportList)
+        self.__dssSolver.reSolve()
+
+        if self.__ResultOptions and self.__ResultOptions['Log Results']:
+            self.ResultContainer = RC(ResultOptions, self.__dssPath, self.__dssObjects, self.__dssObjectsByClass)
 
         pyCtrlReader = pcr(self.__dssPath['pyControllers'])
         ControllerList = pyCtrlReader.pyControllers
         if ControllerList is not None:
             self.__CreateControllers(ControllerList)
-
-        self.__dssSolver.reSolve()
 
         pyPlotReader = ppr(self.__dssPath['pyPlots'])
         PlotList = pyPlotReader.pyPlots
@@ -156,35 +159,6 @@ class OpenDSS:
             Elem = ElmCollection.Next()
         return ObjectList
 
-    def __PrepareExportList(self,ExportDictionary, ElmWise = False, FileName = None):
-        HeaderClass = []
-        HeaderName = []
-        HeaderPpty = []
-        HeaderPhase = []
-
-        if ElmWise == False:
-            for ClassName, VariableNames in ExportDictionary.items():
-                for VariableName in VariableNames:
-                    if ClassName in self.__dssObjectsByClass and self.__dssObjectsByClass[ClassName]:
-                        for ElmName in self.__dssObjectsByClass[ClassName].keys():
-                            if self.__dssObjectsByClass[ClassName][ElmName].inVariableDict(VariableName):
-                                DataLength, DataType = self.__dssObjectsByClass[ClassName][ElmName].DataLength(VariableName)
-                                if DataType == 'List':
-                                    for i in range(DataLength):
-                                        HeaderClass.append(ClassName)
-                                        HeaderName.append(ElmName)
-                                        HeaderPpty.append(VariableName)
-                                        HeaderPhase.append(i)
-                                else:
-                                    HeaderClass.append(ClassName)
-                                    HeaderName.append(ElmName)
-                                    HeaderPpty.append(VariableName)
-                                    HeaderPhase.append('-N/A-')
-
-        self.__ExportResults = pd.DataFrame(columns=HeaderClass)
-        self.__ExportResults.columns = pd.MultiIndex.from_tuples(list(zip(self.__ExportResults.columns, HeaderName, HeaderPpty, HeaderPhase)), sortorder=None)
-        return
-
     def RunSimulation(self, Steps, ControllerMaxItrs = 25):
         startTime = time.time()
         for i in range(Steps):
@@ -200,12 +174,13 @@ class OpenDSS:
             self.__UpdatePlots()
             self.__dssSolver.IncStep()
 
-            if self.__ExportList:
-                self.__UpdateResults()
+            if self.__ResultOptions and self.__ResultOptions['Log Results']:
+                self.ResultContainer.UpdateResults()
 
-        if self.__ExportList:
-            self.__ExportResults = pd.DataFrame(self.__TempResultList, columns = self.__ExportResults.columns)
-            self.__ExportResults.to_excel(self.__dssPath['Export']+'\\'+'Results.xlsx')
+        if self.__ResultOptions and self.__ResultOptions['Log Results']:
+            self.ResultContainer.ExportResults()
+
+
         print ('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
         print ('End of simulation')
 
@@ -214,21 +189,6 @@ class OpenDSS:
         #     self.__pyPlotObjects['Network layout'].UpdatePlot()
         for Plot in self.__pyPlotObjects:
             self.__pyPlotObjects[Plot].UpdatePlot()
-        return
-
-    def __UpdateResults(self):
-        ClassNames = list(self.__ExportResults.columns.get_level_values(0))
-        ElemNames = list(self.__ExportResults.columns.get_level_values(1))
-        PptyNames = list(self.__ExportResults.columns.get_level_values(2))
-        ZippedHeader = set(zip(ClassNames,ElemNames, PptyNames))
-        Results = []
-        for ClassName,ElemName, PptyName in ZippedHeader:
-            ReturnedData = self.__dssObjectsByClass[ClassName][ElemName].GetVariable(PptyName)
-            if isinstance(ReturnedData, list):
-                Results.extend(ReturnedData)
-            else:
-                Results.extend([ReturnedData])
-        self.__TempResultList.append(Results)
         return
 
     def DeleteInstance(self):

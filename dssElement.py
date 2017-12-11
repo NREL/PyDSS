@@ -48,7 +48,13 @@ class dssElement:
             return False
 
     def DataLength(self,VarName):
-        VarValue = self.GetVariable(VarName)
+        if VarName in self.__Variables:
+            VarValue = self.GetVariable(VarName)
+        elif VarName in self.__Parameters:
+            VarValue = self.GetParameter2(VarName)
+        else:
+            return 0, None
+
         if  isinstance(VarValue, list):
             return len(VarValue) , 'List'
         elif isinstance(VarValue, str):
@@ -57,6 +63,28 @@ class dssElement:
             return 1, 'Number'
         else:
             return 0, None
+
+    def GetValue(self,VarName):
+        if VarName in self.__Variables:
+            VarValue = self.GetVariable(VarName)
+        elif VarName in self.__Parameters:
+            VarValue = self.GetParameter2(VarName)
+            if VarValue is not None:
+                VarValue = float(VarValue)
+            else:
+                VarValue = 0
+        else:
+            VarValue = 0
+        return VarValue
+
+    def IsValidAttribute(self,VarName):
+        if VarName in self.__Variables:
+            return True
+        elif VarName in self.__Parameters:
+            return True
+        else:
+            return False
+
 
     def GetVariable(self,VarName):
         self.__dssInstance.Circuit.SetActiveElement(self.__Class + '.' + self.__Name)
@@ -68,7 +96,7 @@ class dssElement:
                     print ('Unexpected error')
                     return None
             else:
-                print ('Invalid variable name')
+                print (VarName + ' is an invalid variable name for element ' + self.__Class + '.' + self.__Name)
                 return None
         else:
             print ('Object is not a circuit element')
@@ -89,7 +117,7 @@ class dssElement:
                     X =self.__dssInstance.Properties.Value(str(i))
                     #print(self.__Class + '.' + self.__Name + '.' + Param + ' -> ' + str(X))
                     return X
-            print('Invalid parameter for ' + self.__Class + ' class.')
+            print(Param + ' ia an invalid parameter for ' + self.__Class + ' class.')
             return None
         else:
             print('Could not set ' + self.__Class + '.' + self.__Name + ' as active element.')
@@ -105,4 +133,4 @@ class dssElement:
                 return None
         else:
             print ('Invalid parameter for ' + self.__Class + ' class.')
-            return None
+            return No

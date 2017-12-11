@@ -16,9 +16,9 @@ PlotTypes ={
 def Create(PlotType, PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit):
     PlotObject = PlotTypes[PlotType](PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit)
     # try:
-    #     PlotObject = PlotTypes[PlotType](PlotPropertyDict,dssBuses,dssObjectsByClass)
+    #
     # except:
-    #     print 'The object dictionary does not contain ' + PlotType
+    #     print ('The object dictionary does not contain ' + PlotType)
     #     return -1
     return PlotObject
 
