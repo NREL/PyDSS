@@ -36,7 +36,6 @@ Redirect loads_multifamily.dss
 
 Redirect ESSM34.dss
 
-
 Redirect PVgens-E.dss
 Redirect PVgens-PE-PER.dss
 Redirect PVgens-FIT.dss
@@ -67,7 +66,7 @@ Redirect PVgens-FIT-PE.dss
 
 
 
-!New EnergyMeter.m_Section_0001 line.Section_0001
+New EnergyMeter.m_Section_0001 line.Section_0001
 !Redirect MonitorsGrid2020.dss
 
 
@@ -108,3 +107,4 @@ BusCoords BusCoordsMikilua.csv
 
 !Plot Profile phases=all
 !Plot Circuit
+C:\Users\alatif\Desktop\HYWIND\HYWIND.dss

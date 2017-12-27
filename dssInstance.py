@@ -115,9 +115,13 @@ class OpenDSS:
                 if PlotType == 'Network layout' and self.__PlotOptions[PlotType]:
                     self.__pyPlotObjects[PlotType] = pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
                                                                     self.__dssObjectsByClass,self.__dssCircuit)
+                elif (PlotType == 'Sag plot' or PlotType == 'Histogram')and self.__PlotOptions[PlotType]:
+                    self.__pyPlotObjects[PlotType + Name] = pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
+                                                                           self.__dssObjectsByClass, self.__dssCircuit)
+
                 elif PlotType != 'Network layout'  and self.__PlotOptions[PlotType]:
-                    self.__pyPlotObjects[PlotType+Name] = pyPlots.Create(PlotType, PlotSettings,
-                                                                     self.__dssBuses, self.__dssObjects, self.__dssCircuit)
+                    self.__pyPlotObjects[PlotType+Name] = pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
+                                                                         self.__dssObjects, self.__dssCircuit)
         return
 
     def __UpdateControllers(self, Time, UpdateResults):

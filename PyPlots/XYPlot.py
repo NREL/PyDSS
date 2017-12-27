@@ -48,7 +48,7 @@ class Plot:
                         plot_height=self.__PlotProperties['Height'],
                         title= 'XY Plot: Color - ' + PlotProperties['cObjName'] + ' - ' + PlotProperties['cProperty'])
 
-        self.ScatterPlot = self.__Figure.scatter(x= Data['X'], y=Data['Y'], fill_color=Plasma[256],
+        self.ScatterPlot = self.__Figure.scatter(x= Data['X'], y=Data['Y'], fill_color=Plasma[256][1],
                                                  fill_alpha=0.6, line_color=None, size=7)
 
         self.__Figure.yaxis.axis_label = PlotProperties['yObjName'] + ' - ' + PlotProperties['yProperty']
@@ -82,7 +82,7 @@ class Plot:
     def getObjectValue(self, Obj, ObjType, ObjPpty, Index, Multiplier):
         pptyType, Property = ObjPpty.split('.')
         if pptyType == 'p':
-            pptyValue = Obj.GetParameter2(Property)
+            pptyValue = float(Obj.GetParameter2(Property))
         elif pptyType == 'v' and ObjType != 'Circuit':
             pptyValue = Obj.GetVariable(Property)
         elif pptyType == 'v' and ObjType == 'Circuit':
@@ -104,7 +104,7 @@ class Plot:
             else:
                 result = Multiplier * pptyValue
 
-        return float(result)
+        return result
 
     def getObject(self, ObjName, ObjType):
         if ObjType == 'Element':
@@ -134,8 +134,7 @@ class Plot:
                                columns=['X', 'Y', 'C'])
         Data = Data.sort_values('X')
         Data = Data.drop_duplicates(subset=Data.columns)
-        ColorArray = self.GetColorArray(Data['X'].astype(float), Plasma[256])
-        print(len(Data['X']),len(Data['Y']),len(ColorArray))
+        #ColorArray = self.GetColorArray(Data['X'].astype(float), Plasma[256])
         self.ScatterPlot.data_source.data['x'] = Data['X']
         self.ScatterPlot.data_source.data['y'] = Data['Y']
-        self.ScatterPlot
+        #self.ScatterPlot

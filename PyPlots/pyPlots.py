@@ -1,13 +1,13 @@
 import Topology
 import SagPlot
-import HeatMap
+import Histogram
 import TimeSeries
 import XYPlot
 
 PlotTypes ={
     'Network layout' : Topology.Plot,
 	'Sag plot'       : SagPlot.Plot,
-	'Heat map'       : HeatMap.Plot,
+	'Histogram'      : Histogram.Plot,
 	'Time series'    : TimeSeries.Plot,
 	'XY plot'        : XYPlot.Plot,
 }
@@ -15,6 +15,7 @@ PlotTypes ={
 
 def Create(PlotType, PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit):
     PlotObject = PlotTypes[PlotType](PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit)
+    print(PlotType)
     # try:
     #
     # except:

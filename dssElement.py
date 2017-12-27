@@ -36,8 +36,6 @@ class dssElement:
                 self.sBus.append(dssBus(self.__dssInstance))
             return
 
-
-
     def GetInfo(self):
         return self.__Class,  self.__Name
 

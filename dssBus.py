@@ -6,6 +6,7 @@ class dssBus:
     def __init__(self, dssInstance):
         self.__Name =  dssInstance.Bus.Name()
         self.__dssInstance = dssInstance
+        self.Distance = dssInstance.Bus.Distance()
         BusVarDict = dssInstance.Bus.__dict__
         for key in BusVarDict.keys():
             try:
