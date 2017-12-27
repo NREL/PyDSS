@@ -14,7 +14,7 @@ PO = {
     'Network layout' : False,
     'Time series'    : False,
     'XY plot'        : False,
-    'Sag plot'       : False,
+    'Sag plot'       : True,
     'Histogram'      : True,
 }
 
