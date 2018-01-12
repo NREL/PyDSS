@@ -47,29 +47,7 @@ class PvController:
         self.P_update = self.P_ControlDict[Settings['Pcontrol']]
         self.Q_update = self.Q_ControlDict[Settings['Qcontrol']]
 
-        #self.ConnectedLoads = self.FindConnectedLoads()
         return
-
-    def FindConnectedLoads(self):
-        Loads = []
-        BusName = self.__ControlledElm.sBus[0].GetInfo()
-        self.__dssInstance.Circuit.SetActiveClass('Load')
-        Load = self.__dssInstance.ActiveClass.First()
-        while Load:
-            for Bus in self.__dssInstance.CktElement.BusNames():
-                if BusName in Bus:
-                    Loadname = self.__dssInstance.CktElement.Name()
-                    if self.Phase in Bus.split('.')[1:]:
-                        Loads.append([Loadname,Bus.split('.')[1:]])
-            Load = self.__dssInstance.ActiveClass.Next()
-        return Loads
-
-    def GetLoadPowers(self):
-        for LoadInfo in self.ConnectedLoads:
-            LoadName = LoadInfo[0]
-            self.__dssInstance.Circuit.SetActiveElement(LoadName)
-            #print(LoadName , self.__dssInstance.CktElement.Powers())
-        return float(self.__dssInstance.CktElement.Powers()[0])
 
     def Update(self, Time, Update):
         if Time >= 1:
@@ -83,39 +61,45 @@ class PvController:
         return Error
 
     def VWcontrol(self):
-        uMinC = 0.99 #self.__Settings['uMinC']
-        uMaxC = 1.0 #self.__Settings['uMaxC']
-        Pmin  = 0    #self.__Settings['PminVW'] / 100
+        uMinC = self.__Settings['uMinC']
+        uMaxC = self.__Settings['uMaxC']
+        Pmin  = self.__Settings['PminVW'] / 100
+
         self.__ControlledElm.SetParameter('pctPmpp', 100)
-        self.__dssSolver.reSolve()
+        for i in range(4):
+            self.__dssSolver.reSolve()
+            uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle'))
+            Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))
+            PpvoutPU= Ppv / self.__Prated
+            m = (1 - Pmin) / (uMinC - uMaxC)
+            c = ((Pmin * uMinC) - uMaxC) / (uMinC - uMaxC)
 
-        uIn = self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[0]
-        Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))
-        PpvPercentage = Ppv / self.__Prated * 100
-        m = (1 - Pmin) / (uMinC - uMaxC)
-        c = ((Pmin * uMinC) - uMaxC) / (uMinC - uMaxC)
+            if uIn < uMinC:
+                Pmax = 1
+            elif uIn < uMaxC and uIn > uMinC:
+                Pmax = m * uIn + c
+            else:
+                Pmax = Pmin
 
-        if uIn < uMinC:
-            Pmax = 1
-        elif uIn < uMaxC and uIn > uMinC:
-            Pmax = m * uIn + c
-        else:
-            Pmax = Pmin
+            if self.__Settings['VWtype'] == 'Rated Power':
+                self.__ControlledElm.SetParameter('pctPmpp', Pmax * 100)
+            elif self.__Settings['VWtype'] == 'Available Power':
+                self.__ControlledElm.SetParameter('pctPmpp', Pmax * PpvoutPU * 0.7 * 100)
+                print(uIn ,Pmax)
 
-        PperOfPmmt = Pmax * Ppv / self.__Srated * 100
-        print(Ppv, self.__Prated, PpvPercentage, PperOfPmmt)
+
+
         # Error = abs(Pmax - self.PmaxOld)
         # # if Error < 1E-4:
         # #     break
         # self.PmaxOld = Pmax
-        self.__ControlledElm.SetParameter('pctPmpp',  30)
-        self.__dssSolver.reSolve()
+
 
         return 0
 
     def CPFcontrol(self):
         PF = self.__Settings['pf']
-        #self.__dssSolver.reSolve()
+        self.__dssSolver.reSolve()
 
         self.__ControlledElm.SetParameter('irradiance', 1)
         self.__ControlledElm.SetParameter('pf', -PF)
@@ -170,54 +154,42 @@ class PvController:
         PFlim = self.__Settings['PFlim']
 
         kVBase = self.__ControlledElm.sBus[0].GetVariable('kVBase')
-        if 'bb_258064_1_5' in self.__Name.lower():
-            k = 10
-        else:
-            k = 1
 
-        for i in range(k):
-            uIn = max([x/(self.__BaseKV*1000) for x in self.__ControlledElm.GetVariable('VoltagesMagAng')[::2]])
+        uIn = max([x/(self.__BaseKV*1000) for x in self.__ControlledElm.GetVariable('VoltagesMagAng')[::2]])
 
-            m1 = QlimPU / (uMin - uDbMin)
-            m2 = QlimPU / (uDbMax - uMax)
-            c1 = QlimPU * uDbMin / (uDbMin - uMin)
-            c2 = QlimPU * uDbMax / (uMax - uDbMax)
+        m1 = QlimPU / (uMin - uDbMin)
+        m2 = QlimPU / (uDbMax - uMax)
+        c1 = QlimPU * uDbMin / (uDbMin - uMin)
+        c2 = QlimPU * uDbMax / (uMax - uDbMax)
 
+        Qcalc = 0
+        if uIn <= uMin:
+            Qcalc = QlimPU
+        elif uIn <= uDbMin and uIn > uMin:
+            Qcalc = uIn * m1 + c1
+        elif uIn <= uDbMax and uIn > uDbMin:
             Qcalc = 0
-            if uIn <= uMin:
-                Qcalc = QlimPU
-            elif uIn <= uDbMin and uIn > uMin:
-                Qcalc = uIn * m1 + c1
-            elif uIn <= uDbMax and uIn > uDbMin:
-                Qcalc = 0
-            elif uIn <= uMax and uIn > uDbMax:
-                Qcalc = uIn * m2 + c2
-            elif uIn >= uMax:
-                Qcalc = -QlimPU
+        elif uIn <= uMax and uIn > uDbMax:
+            Qcalc = uIn * m2 + c2
+        elif uIn >= uMax:
+            Qcalc = -QlimPU
 
-            nPhases = int(self.__ControlledElm.GetParameter2('phases'))
-            Pcalc = sum(-(float(x)) for x in self.__ControlledElm.GetVariable('Powers')[0:nPhases:2])
-            # Pcalc = abs(Pcalc / self.__Srated)
-            #
-            # Qlim = abs((Pcalc / PFlim) * math.sin(math.acos(PFlim)))
-            # if Qcalc < -Qlim:
-            #     Qcalc = -Qlim
-            # elif Qcalc > Qlim:
-            #     Qcalc = Qlim
+        nPhases = int(self.__ControlledElm.GetParameter2('phases'))
+        Pcalc = sum(-(float(x)) for x in self.__ControlledElm.GetVariable('Powers')[0:nPhases:2])
+        # Pcalc = abs(Pcalc / self.__Srated)
+        #
+        # Qlim = abs((Pcalc / PFlim) * math.sin(math.acos(PFlim)))
+        # if Qcalc < -Qlim:
+        #     Qcalc = -Qlim
+        # elif Qcalc > Qlim:
+        #     Qcalc = Qlim
 
-            if Pcalc > 0:
-                PFout = math.cos(math.atan(Qcalc / Pcalc))
-                self.__ControlledElm.SetParameter('pf', str(-PFout))
-            elif Pcalc <= 0:
-                PFout = 1
-                self.__ControlledElm.SetParameter('pf', str(PFout))
+        if Pcalc > 0:
+            PFout = math.cos(math.atan(Qcalc / Pcalc))
+            self.__ControlledElm.SetParameter('pf', str(-PFout))
+        elif Pcalc <= 0:
+            PFout = 1
+            self.__ControlledElm.SetParameter('pf', str(PFout))
 
-            if uIn > 1.03:
-                print('uIn - ', str(uIn) , '  Qcalc - ', str(Qcalc), '  Pcalc - ', str(Pcalc))
-            if k == 10:
-                self.__dssSolver.reSolve()
 
-            Error = (Qcalc - self.Qvar)**2
-            self.Qvar = Qcalc
-        return Error
-
+            #Error = (

@@ -44,7 +44,7 @@ class __Daily:
 
     def reSolve(self):
         self.__dssSolution.StepSize(0)
-        self.__dssSolution.Solve()
+        self.__dssSolution.SolveNoControl()
 
     def customControlLoop(self):
         return

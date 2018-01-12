@@ -178,9 +178,8 @@ class OpenDSS:
                     break
                 elif not hasConverged:
                     self.__dssSolver.reSolve()
-            self.__UpdatePlots()
             self.__dssSolver.IncStep()
-
+            self.__UpdatePlots()
             if self.__ResultOptions and self.__ResultOptions['Log Results']:
                 self.ResultContainer.UpdateResults()
 

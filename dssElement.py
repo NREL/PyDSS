@@ -32,7 +32,7 @@ class dssElement:
                     pass
             self.Bus = dssInstance.CktElement.BusNames()
             self.BusCount = len(self.Bus)
-
+            self.sBus = []
             for BusName in self.Bus:
                 self.__dssInstance.Circuit.SetActiveBus(BusName)
                 self.sBus.append(dssBus(self.__dssInstance))

@@ -62,7 +62,7 @@ class Plot:
         map_options = GMapOptions(lat=PlotProperties['Longitude'], lng=PlotProperties['Latitute'],
                                   map_type=PlotProperties['MapType'], zoom=PlotProperties['Zoom level'])
         self.__Figure = GMapPlot(x_range=Range1d(), y_range=Range1d(), map_options=map_options)
-        self.__Figure.api_key = 'AIzaSyDpK5w8dAlRzjGMkw63rYSnXyFDM_hfLik'
+        self.__Figure.api_key = PlotProperties['Google Key']
 
         self.LineDataSource = ColumnDataSource(self.LineDict)
         self.Lineplot = MultiLine(xs="x", ys="y", line_color='green')
