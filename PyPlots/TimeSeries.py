@@ -65,7 +65,7 @@ class Plot:
                     self.Lines[i].append(a)
             else:
                 self.Lines[i] = Figure.line(self.X[i], self.Y[i], line_width=3, line_alpha=1)
-            Figure.yaxis.axis_label = Property
+            Figure.yaxis.axis_label = Property + '-' + self.__index[i]
             Figure.xaxis.axis_label = 'Timesteps'
             self.Figures.append(Figure)
 
@@ -114,6 +114,9 @@ class Plot:
                     self.Lines[i][j].data_source.data['x'] = range(len(Y)+1)
                     self.Lines[i][j].data_source.data['y'] = Y
             else:
+                if self.__PlotProperties['Dynamic'] and len(self.X[i]) > self.__PlotProperties['nSamples']:
+                    self.X[i] = self.X[i][-self.__PlotProperties['nSamples']:]
+                    self.Y[i] = self.Y[i][-self.__PlotProperties['nSamples']:]
                 self.Lines[i].data_source.data['x'] = self.X[i]
                 self.Lines[i].data_source.data['y'] = self.Y[i]
 

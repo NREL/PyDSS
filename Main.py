@@ -12,10 +12,11 @@ RO = {
 
 PO = {
     'Network layout' : False,
-    'Time series'    : False,
+    'Time series'    : True,
     'XY plot'        : False,
-    'Sag plot'       : True,
-    'Histogram'      : True,
+    'Sag plot'       : False,
+    'Histogram'      : False,
+    'GIS overlay'    : False,
 }
 
 SS = {
@@ -26,9 +27,18 @@ SS = {
     'MaxCtrlItrs'    : 20,
 }
 
+DssFile =  {
+    0 : 'MasterCircuit_Mikilua_keep.dss',
+    1 : 'MasterCircuit_Mikilua_baseline3.dss',
+}
+
 DSS = dssInstance.OpenDSS(SimType = 'Daily', PlotOptions = PO , ResultOptions=RO,
-                          dssMainFile = 'MasterCircuit_Mikilua_keep.dss')
-DSS.RunSimulation(Steps = 96*3, ControllerMaxItrs = 20) #8760
+                          dssMainFile = DssFile[1])
+
+# DSS = dssInstance.OpenDSS(SimType = 'Daily', PlotOptions = PO , ResultOptions=RO,
+#                           dssMainFile = 'MasterCircuit_Mikilua_keep.dss')
+
+DSS.RunSimulation(Steps = 96*5, ControllerMaxItrs = 10) #8760
 
 os.system('pause')
 DSS.DeleteInstance()

@@ -3,6 +3,7 @@ import SagPlot
 import Histogram
 import TimeSeries
 import XYPlot
+import GISplot
 
 PlotTypes ={
     'Network layout' : Topology.Plot,
@@ -10,6 +11,7 @@ PlotTypes ={
 	'Histogram'      : Histogram.Plot,
 	'Time series'    : TimeSeries.Plot,
 	'XY plot'        : XYPlot.Plot,
+    'GIS overlay'    : GISplot.Plot,
 }
 
 

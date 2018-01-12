@@ -36,6 +36,7 @@ Redirect loads_multifamily.dss
 
 Redirect ESSM34.dss
 
+
 Redirect PVgens-E.dss
 Redirect PVgens-PE-PER.dss
 Redirect PVgens-FIT.dss
@@ -107,4 +108,3 @@ BusCoords BusCoordsMikilua.csv
 
 !Plot Profile phases=all
 !Plot Circuit
-C:\Users\alatif\Desktop\HYWIND\HYWIND.dss

@@ -46,7 +46,6 @@ class OpenDSS:
             'pyControllers': rootPath + '\\Import\\pyControllerList',
         }
 
-
         self.__ResultOptions = ResultOptions
         self.__PlotOptions = PlotOptions
         self.__dssFilePath = self.__dssPath['dssFiles'] + '\\' + dssMainFile
@@ -96,6 +95,7 @@ class OpenDSS:
 
     def __CreateControllers(self,ControllerDict):
         self.__pyControls = {}
+
         for ControllerType, ElmentsDict in ControllerDict.items():
             for ElmName, SettingsDict in ElmentsDict.items():
                  Controller = pyController.Create(ElmName, ControllerType, SettingsDict, self.__dssObjects,
@@ -108,18 +108,20 @@ class OpenDSS:
     def __CreatePlots(self, PlotsDict):
         for PlotType, PlotNames in PlotsDict.items():
             newPlotNames = list(PlotNames)
+            PlotType1= ['Network layout', 'GIS overlay']
+            PlotType2 = ['Sag plot', 'GIS Histogram']
+            PlotType3 = ['XY plot', 'Time series']
             for Name in newPlotNames:
                 PlotSettings = PlotNames[Name]
                 print (PlotType, Name)
                 PlotSettings['FileName'] = Name
-                if PlotType == 'Network layout' and self.__PlotOptions[PlotType]:
+                if PlotType in PlotType1 and self.__PlotOptions[PlotType]:
                     self.__pyPlotObjects[PlotType] = pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
                                                                     self.__dssObjectsByClass,self.__dssCircuit)
-                elif (PlotType == 'Sag plot' or PlotType == 'Histogram')and self.__PlotOptions[PlotType]:
+                elif PlotType in PlotType2 and self.__PlotOptions[PlotType]:
                     self.__pyPlotObjects[PlotType + Name] = pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
                                                                            self.__dssObjectsByClass, self.__dssCircuit)
-
-                elif PlotType != 'Network layout'  and self.__PlotOptions[PlotType]:
+                elif PlotType in PlotType3  and self.__PlotOptions[PlotType]:
                     self.__pyPlotObjects[PlotType+Name] = pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
                                                                          self.__dssObjects, self.__dssCircuit)
         return
@@ -127,6 +129,7 @@ class OpenDSS:
     def __UpdateControllers(self, Time, UpdateResults):
 
         NewError = 0
+
         for Key, Controller in self.__pyControls.items():
             NewError += Controller.Update(Time, UpdateResults)
 

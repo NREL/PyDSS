@@ -9,6 +9,8 @@ class dssElement:
     BusCount = None
     sBus = []
     def __init__(self, dssInstance):
+
+
         self.__Class,  self.__Name =  dssInstance.Element.Name().split('.',1)
         self.__dssInstance = dssInstance
 
@@ -35,6 +37,7 @@ class dssElement:
                 self.__dssInstance.Circuit.SetActiveBus(BusName)
                 self.sBus.append(dssBus(self.__dssInstance))
             return
+
 
     def GetInfo(self):
         return self.__Class,  self.__Name

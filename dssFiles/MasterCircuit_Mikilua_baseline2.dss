@@ -34,6 +34,9 @@ Redirect load_rural.dss
 Redirect loads_commercial.dss
 Redirect loads_multifamily.dss
 
+Redirect ESSM34.dss
+
+
 Redirect PVgens-E.dss
 Redirect PVgens-PE-PER-NEW100.dss
 Redirect PVgens-FIT.dss
