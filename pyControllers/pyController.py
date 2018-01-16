@@ -1,4 +1,5 @@
 import PvController
+import xfmrController
 import LoadController
 import StorageController
 from dssElement import dssElement
@@ -6,7 +7,8 @@ from dssElement import dssElement
 ControllerTypes ={
     'PV Controller'     : PvController.PvController,
     'Load Controller'   : LoadController.LoadController,
-    'Storage Controller': StorageController.StorageController
+    'XFMR Controller'   : xfmrController.xfmrController,
+    'Storage Controller': StorageController.StorageController,
 }
 
 

@@ -66,7 +66,7 @@ class PvController:
         Pmin  = self.__Settings['PminVW'] / 100
 
         self.__ControlledElm.SetParameter('pctPmpp', 100)
-        for i in range(4):
+        for i in range(10):
             self.__dssSolver.reSolve()
             uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle'))
             Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))
