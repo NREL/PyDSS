@@ -28,7 +28,7 @@ class OpenDSS:
     __pyPlotObjects = {}
 
     def __init__(self , SimType = 'Daily', rootPath = os.getcwd(), dssMainFile = 'MasterCircuit_Mikilua_keep.dss',
-                 ResultOptions = None, PlotOptions = pyPlots.defalultPO):
+                 ResultOptions = None, PlotOptions = pyPlots.defalultPO , SimulationSettings =  None):
 
         self.__dssPath = {
             'root': rootPath,
@@ -45,7 +45,7 @@ class OpenDSS:
             'ExportLists': rootPath + '\\Import\\ExportLists',
             'pyControllers': rootPath + '\\Import\\pyControllerList',
         }
-
+        self.__SimulationOptions = SimulationSettings
         self.__ResultOptions = ResultOptions
         self.__PlotOptions = PlotOptions
         self.__dssFilePath = self.__dssPath['dssFiles'] + '\\' + dssMainFile
@@ -61,7 +61,9 @@ class OpenDSS:
         self.__dssClass = dss.ActiveClass
         self.__dssCommand = run_command
         self.__dssSolution = dss.Solution
-        self.__dssSolver = SolveMode.GetSolver(SimType, self.__dssInstance, mStepResolution = 15)
+        self.__dssSolver = SolveMode.GetSolver(SimulationSettings['Simulation Type'], self.__dssInstance
+                                               , mStepResolution = SimulationSettings['Step resolution (min)'],
+                                               StartDay = SimulationSettings['Start Day'])
 
         self.__ModifyNetwork()
         self.__UpdateDictionary()
@@ -126,16 +128,22 @@ class OpenDSS:
                                                                          self.__dssObjects, self.__dssCircuit)
         return
 
-    def __UpdateControllers(self, Time, UpdateResults):
-
+    def __UpdateControllers_Q(self, Time, UpdateResults):
         NewError = 0
-
         for Key, Controller in self.__pyControls.items():
-            NewError += Controller.Update(Time, UpdateResults)
+            NewError += Controller.Update_Q(Time, UpdateResults)
 
-        if abs(NewError) < 1:
+        if abs(NewError) < 0.01:
             return True
+        return False
 
+    def __UpdateControllers_P(self, Time, UpdateResults):
+        NewError = 0
+        for Key, Controller in self.__pyControls.items():
+            NewError += Controller.Update_P(Time, UpdateResults)
+
+        if abs(NewError) < 0.01:
+            return True
         return False
 
     def __CreateBusObjects(self):
@@ -166,20 +174,33 @@ class OpenDSS:
             Elem = ElmCollection.Next()
         return ObjectList
 
-    def RunSimulation(self, Steps, ControllerMaxItrs = 25):
+    def RunSimulation(self):
         startTime = time.time()
+        TotalDays = self.__SimulationOptions['End Day'] - self.__SimulationOptions['Start Day']
+        Steps = int(TotalDays * 24 * 60 / self.__SimulationOptions['Step resolution (min)'])
+        print ('Steps - ', Steps)
         for i in range(Steps):
-            for j in range(ControllerMaxItrs):
-                hasConverged = self.__UpdateControllers(i, UpdateResults = False)
-                if hasConverged or j == ControllerMaxItrs - 1:
-                    self.__UpdateControllers(i, UpdateResults = True)
-                    if not hasConverged:
+            for j in range(self.__SimulationOptions['Max Control Iterations']):
+                has_Q_Converged = self.__UpdateControllers_Q(i, UpdateResults = False)
+                if has_Q_Converged or j == self.__SimulationOptions['Max Control Iterations'] - 1:
+                    if not has_Q_Converged:
                         print('No convergance @ ', i)
                     break
-                elif not hasConverged:
+                elif not has_Q_Converged:
                     self.__dssSolver.reSolve()
-            self.__dssSolver.IncStep()
+            self.__dssSolver.reSolve()
+            for j in range(self.__SimulationOptions['Max Control Iterations']):
+                has_P_Converged = self.__UpdateControllers_P(i, UpdateResults = False)
+                if has_P_Converged or j == self.__SimulationOptions['Max Control Iterations'] - 1:
+                    if not has_P_Converged:
+                        print('No convergance @ ', i)
+                    break
+                elif not has_P_Converged:
+                    self.__dssSolver.reSolve()
+            self.__dssSolver.reSolve()
             self.__UpdatePlots()
+            self.__dssSolver.IncStep()
+
             if self.__ResultOptions and self.__ResultOptions['Log Results']:
                 self.ResultContainer.UpdateResults()
 

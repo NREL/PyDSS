@@ -102,7 +102,6 @@ class Plot:
                         for j, Value in enumerate(newValue[1::2]):
                             self.Y[i][j].append(Multiplier * Value)
                     elif 'Index=' in self.__index[i]:
-                        print(self.__index[i])
                         c = int(self.__index[i].replace('Index=',''))
                         self.Y[i].append(Multiplier * newValue[c])
                 else:
@@ -119,6 +118,4 @@ class Plot:
                     self.Y[i] = self.Y[i][-self.__PlotProperties['nSamples']:]
                 self.Lines[i].data_source.data['x'] = self.X[i]
                 self.Lines[i].data_source.data['y'] = self.Y[i]
-
-
         return

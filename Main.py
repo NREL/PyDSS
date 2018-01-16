@@ -20,11 +20,11 @@ PO = {
 }
 
 SS = {
-    'SimType'        : 'Daily',
-    'StartTime'      : 0,
-    'Time Steps'     : 96,
-    'Min/Time step'  : 15,
-    'MaxCtrlItrs'    : 20,
+    'Simulation Type'        : 'Daily',
+    'Start Day'              : 4,
+    'End Day'                : 5,
+    'Step resolution (min)'  : 15,
+    'Max Control Iterations' : 10,
 }
 
 DssFile =  {
@@ -32,10 +32,10 @@ DssFile =  {
     1 : 'MasterCircuit_Mikilua_baseline3.dss',
 }
 
-DSS = dssInstance.OpenDSS(SimType = 'Daily', PlotOptions = PO , ResultOptions=RO,
+DSS = dssInstance.OpenDSS(SimType = 'Daily', PlotOptions = PO , ResultOptions=RO, SimulationSettings=SS,
                           dssMainFile = DssFile[1])
 
-DSS.RunSimulation(Steps = 96*5, ControllerMaxItrs = 10) #8760
+DSS.RunSimulation()
 
 os.system('pause')
 DSS.DeleteInstance()

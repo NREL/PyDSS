@@ -1,9 +1,9 @@
 
 
-def GetSolver(SimulationType,dssInstance, mStepResolution):
+def GetSolver(SimulationType,dssInstance, mStepResolution, StartDay):
     SolverDict = {
         'Snapshot': __Shapshot(dssInstance,  20),
-        'Daily': __Daily(dssInstance, mStepResolution = mStepResolution),
+        'Daily': __Daily(dssInstance, StartDay = StartDay, mStepResolution = mStepResolution),
     }
     try:
         Solver = SolverDict[SimulationType]
@@ -14,12 +14,12 @@ def GetSolver(SimulationType,dssInstance, mStepResolution):
         return -1
 
 class __Daily:
-    def __init__(self, dssInstance, hour = 0, mStepResolution = 15):
+    def __init__(self, dssInstance, StartDay = 0, mStepResolution = 15):
         self.mStepRes = mStepResolution
         self.__dssIntance = dssInstance
         self.__dssSolution = dssInstance.Solution
         self.__dssSolution.Mode(2)
-        self.__dssSolution.Hour(hour)
+        self.__dssSolution.Hour(StartDay * 24)
         self.__dssSolution.Number(1)
         #self.__dssSolution.StepSizeHr = 0
         #self.__dssSolution.StepSizeMin = 5

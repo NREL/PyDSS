@@ -47,58 +47,23 @@ class StorageController:
         self.Axs = list(chain.from_iterable(self.Axs))
         return
 
-    def Update(self, Time, UpdateResults):
+    def Update_Q(self, Time, UpdateResults):
         if Time >= 1:
             self.Time = Time
             self.doUpdate = UpdateResults
-
-            if UpdateResults:
-                self.UpdateResults()
-                Error = 0
-            else:
-                dP = self.P_update()
-                dQ = self.Q_update()
-                Error = dP + dQ
-            if Time == 95:
-                for ax in self.Axs:
-                    ax.clear()
-                    ax.grid()
-
-                self.Axs[0].plot(self.PbattHist)
-                self.Axs[2].plot(self.VarBattHist)
-                self.Axs[4].plot(self.PFbattHist)
-                self.Axs[1].plot(self.PinHist)
-                self.Axs[3].plot(self.SOChist)
-                self.Axs[5].plot(self.uInHist)
-                self.Fig.subplots_adjust(hspace=0)
+            dQ = self.Q_update()
         else:
-            Error = 0
-        return Error
+            dQ = 0
+        return dQ
 
-    def UpdateResults(self):
-        if self.__Settings['PowerMeaElem'] == 'Total':
-            Sin = self.__dssInstance.Circuit.TotalPower()
-            Pin = -sum(Sin[0:5:2])
+    def Update_P(self, Time, UpdateResults):
+        if Time >= 1:
+            self.Time = Time
+            self.doUpdate = UpdateResults
+            dP = self.P_update()
         else:
-            Sin = self.__ElmObjectList[self.__Settings['PowerMeaElem']].GetVariable('Powers')
-            Pin = sum(Sin[0:5:2])
-        busName = self.__ControlledElm.GetParameter2('bus1')
-        self.__dssInstance.Circuit.SetActiveBus(busName)
-        uIn = max(self.__dssInstance.Bus.puVmagAngle()[0::2])
-        SOC = self.__ControlledElm.GetParameter2('%stored')
-        PF = abs(float(self.__ControlledElm.GetParameter2('pf')))
-        Pbatt = -float(self.__ControlledElm.GetVariable('Powers')[0])*3
-        Qbatt = -float(self.__ControlledElm.GetVariable('Powers')[1])*3
-
-        self.PinHist.append(Pin)
-        self.PbattHist.append(Pbatt)
-        self.SOChist.append(SOC)
-        self.uInHist.append(uIn)
-        if len(self.PinHist) >= 2:
-            self.PFbattHist.append(self.PinHist[-1] - self.PinHist[-2])
-        self.VarBattHist.append(Qbatt)
-
-        return
+            dP = 0
+        return dP
 
     def SetSetting(self, Property, Value):
         self.__Settings[Property] = Value
@@ -240,7 +205,6 @@ class StorageController:
             return 0
 
         Error =  abs(dPbatt)
-        #print(self.__PinOld, Pin, Pbatt, Error)
         if self.doUpdate:
             self.__PinOld = Pin
         return Error

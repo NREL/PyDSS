@@ -2,14 +2,20 @@ import matplotlib.pyplot as plt
 import math
 
 class PvController:
-    doCurtail = 0
-    uOld = 1
-    pOld = 0
-    PmaxOld = 0
-    PloadOld = 0
-    Qvar = 0
-    Pvar = 0
-    Load = None
+    Time = 0
+    TimeChange = False
+    oldPout = 0
+    oldQcalc = 0
+
+    # doCurtail = 0
+    # uOld = 1
+    # pOld = 0
+    # PloadOld = 0
+    #
+    # Qvar = 0
+    # Pvar = 0
+
+
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
         self.__ElmObjectList = ElmObjectList
         self.P_ControlDict = {
@@ -39,8 +45,8 @@ class PvController:
         self.__Srated = float(PvObj.GetParameter2('kVA'))
         self.__Prated = float(PvObj.GetParameter2('Pmpp'))
         self.__Qrated = float(PvObj.GetParameter2('kVARlimit'))
-        #self.__Qrated = PvObj.SetParameter('%cutin', Settings['%Cutin'])
-        #self.__Qrated = PvObj.SetParameter('%cutout',Settings['%Cutout'])
+        self.__cutin = PvObj.SetParameter('%cutin', Settings['%Cutin'])
+        self.__cutout = PvObj.SetParameter('%cutout',Settings['%Cutout'])
 
         self.__PFrated = Settings['PFlim']
 
@@ -49,53 +55,56 @@ class PvController:
 
         return
 
-    def Update(self, Time, Update):
+    def Update_Q(self, Time, Update):
+        if Time >= 1:
+            if self.Time != Time:
+                self.TimeChange = True
+            else:
+                self.TimeChange = False
+            self.Time = Time
+
+            self.doUpdate = Update
+            dQ = self.Q_update()
+        else:
+            dQ = 0
+        return dQ
+
+    def Update_P(self, Time, Update):
         if Time >= 1:
             self.Time = Time
             self.doUpdate = Update
             dP = self.P_update()
-            dQ = self.Q_update()
-            Error = dP + dQ
         else:
-            Error = 0
-        return Error
+            dP = 0
+        return dP
 
     def VWcontrol(self):
         uMinC = self.__Settings['uMinC']
         uMaxC = self.__Settings['uMaxC']
         Pmin  = self.__Settings['PminVW'] / 100
 
-        self.__ControlledElm.SetParameter('pctPmpp', 100)
-        for i in range(10):
-            self.__dssSolver.reSolve()
-            uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle'))
-            Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))
-            PpvoutPU= Ppv / self.__Prated
-            m = (1 - Pmin) / (uMinC - uMaxC)
-            c = ((Pmin * uMinC) - uMaxC) / (uMinC - uMaxC)
+        uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle'))
+        Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))
+        PpvoutPU= Ppv / self.__Prated
+        m = (1 - Pmin) / (uMinC - uMaxC)
+        c = ((Pmin * uMinC) - uMaxC) / (uMinC - uMaxC)
 
-            if uIn < uMinC:
-                Pmax = 1
-            elif uIn < uMaxC and uIn > uMinC:
-                Pmax = m * uIn + c
-            else:
-                Pmax = Pmin
+        if uIn < uMinC:
+            Pmax = 1
+        elif uIn < uMaxC and uIn > uMinC:
+            Pmax = m * uIn + c
+        else:
+            Pmax = Pmin
 
-            if self.__Settings['VWtype'] == 'Rated Power':
-                self.__ControlledElm.SetParameter('pctPmpp', Pmax * 100)
-            elif self.__Settings['VWtype'] == 'Available Power':
-                self.__ControlledElm.SetParameter('pctPmpp', Pmax * PpvoutPU * 0.7 * 100)
-                print(uIn ,Pmax)
-
-
-
-        # Error = abs(Pmax - self.PmaxOld)
-        # # if Error < 1E-4:
-        # #     break
-        # self.PmaxOld = Pmax
-
-
-        return 0
+        DampCoef = self.__Settings['DampCoef']
+        if self.__Settings['VWtype'] == 'Rated Power':
+            Pout = Pmax * 100 * DampCoef
+        elif self.__Settings['VWtype'] == 'Available Power':
+            Pout = Pmax * PpvoutPU * DampCoef * 100
+        self.__ControlledElm.SetParameter('pctPmpp', Pout)
+        Error = abs(Pout - self.oldPout)
+        self.oldPout = Pout
+        return Error
 
     def CPFcontrol(self):
         PF = self.__Settings['pf']
@@ -150,12 +159,10 @@ class PvController:
         uMax = self.__Settings['uMax']
         uDbMin = self.__Settings['uDbMin']
         uDbMax = self.__Settings['uDbMax']
-        QlimPU = self.__Settings['QlimPU']
-        PFlim = self.__Settings['PFlim']
+        Priority = self.__Settings['Priority']
+        QlimPU = self.__Qrated / self.__Srated if self.__Qrated < self.__Srated else 1
 
-        kVBase = self.__ControlledElm.sBus[0].GetVariable('kVBase')
-
-        uIn = max([x/(self.__BaseKV*1000) for x in self.__ControlledElm.GetVariable('VoltagesMagAng')[::2]])
+        uIn = self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[0]
 
         m1 = QlimPU / (uMin - uDbMin)
         m2 = QlimPU / (uDbMax - uMax)
@@ -174,22 +181,29 @@ class PvController:
         elif uIn >= uMax:
             Qcalc = -QlimPU
 
-        nPhases = int(self.__ControlledElm.GetParameter2('phases'))
-        Pcalc = sum(-(float(x)) for x in self.__ControlledElm.GetVariable('Powers')[0:nPhases:2])
-        # Pcalc = abs(Pcalc / self.__Srated)
-        #
-        # Qlim = abs((Pcalc / PFlim) * math.sin(math.acos(PFlim)))
-        # if Qcalc < -Qlim:
-        #     Qcalc = -Qlim
-        # elif Qcalc > Qlim:
-        #     Qcalc = Qlim
+        Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))
+        Pcalc = Ppv / self.__Srated
+        Ppu = Ppv / self.__Prated
+
+        if Priority == 'Var':
+            Plim = (1 - Qcalc**2)**0.5
+            if Pcalc > Plim:
+                self.Pmppt =Plim / Pcalc * Ppu * 100
+                #self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
+                Pcalc = Plim
+                print(self.Pmppt)
+            else :
+                if self.TimeChange:
+                    self.Pmppt = 100
+            self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
 
         if Pcalc > 0:
-            PFout = math.cos(math.atan(Qcalc / Pcalc))
-            self.__ControlledElm.SetParameter('pf', str(-PFout))
-        elif Pcalc <= 0:
+            PFout = -math.cos(math.atan(Qcalc / Pcalc))
+        else:
             PFout = 1
-            self.__ControlledElm.SetParameter('pf', str(PFout))
+        self.__ControlledElm.SetParameter('pf', str(PFout))
 
-
-            #Error = (
+        Error = abs(Qcalc - self.oldQcalc)
+        self.oldQcalc = Qcalc
+        print(Error)
+        return Error
