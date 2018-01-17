@@ -1,4 +1,3 @@
-
 import dssInstance
 import logging
 import os
@@ -27,15 +26,16 @@ SS = {
     'Simulation Type'        : 'Daily',
     'Active Project'         : 'HECO',
     'Active Scenario'        : 'HP-VV',
-    'DSS File'               : 'MasterCircuit_Mikilua_baseline3.dss',
+    'DSS File'               : 'MasterCircuit_Mikilua_baseline3.dss',   #'MasterCircuit_Mikilua_keep.dss'
 }
 
-# DssFile =  {
-#     0 : 'MasterCircuit_Mikilua_keep.dss',
-#     1 : 'MasterCircuit_Mikilua_baseline3.dss',
-# }
+LO =  {
+    'Logging Level'          : logging.DEBUG,
+    'Log to external file'   : True,
+    'Display on screen'      : True
+}
 
-DSS = dssInstance.OpenDSS(PlotOptions = PO , ResultOptions=RO, SimulationSettings=SS, LogLevel=logging.INFO)
+DSS = dssInstance.OpenDSS(PlotOptions = PO , ResultOptions=RO, SimulationSettings=SS, LoggerOptions=LO)
 DSS.RunSimulation()
 
 os.system('pause')

@@ -28,9 +28,9 @@ class OpenDSS:
     __pyPlotObjects = {}
 
     def __init__(self, rootPath = os.getcwd(), ResultOptions = None, PlotOptions = pyPlots.defalultPO ,
-                 SimulationSettings =  None, LogLevel = logging.DEBUG):
+                 SimulationSettings =  None, LoggerOptions = None):
 
-        self.__Logger = pyLogger.getLogger(SimulationSettings['Active Project'], LogLevel)
+        self.__Logger = pyLogger.getLogger(SimulationSettings['Active Project'], LoggerOptions=LoggerOptions)
         self.__Logger.info('An instance of OpenDSS version ' + dss.__version__ + ' has ben created.')
 
         self.__dssPath = {
