@@ -1,4 +1,5 @@
 import dssElement as dE
+import logging
 
 class Modifier():
 
@@ -14,7 +15,8 @@ class Modifier():
         'Storage'  : Storge_defaultDict,
      }
 
-    def __init__(self, dss, run_command):
+    def __init__(self, dss, run_command, SimulationSettings):
+        self.pyLogger = logging.getLogger(SimulationSettings['Active Project'])
         self.__dssInstance = dss
         self.__dssCircuit = dss.Circuit
         self.__dssElement = dss.Element
@@ -46,7 +48,7 @@ class Modifier():
             if PptyVal is not None:
                 tCMD = ' ' + PptyName + '=' + PptyVal
                 Cmd += tCMD
-        print('Added -> ' + Cmd)
+        self.pyLogger.info('Added -> ' + Cmd)
         self.__dssCommand(Cmd)
         return dE.dssElement(self.__dssInstance)
 
@@ -63,14 +65,8 @@ class Modifier():
         self.__dssInstance.Circuit.SetActiveClass(Class)
         Element = self.__dssInstance.ActiveClass.First()
         while Element:
-            #self.__dssInstance.Circuit.SetActiveElement()
             ElmName = self.__dssInstance.ActiveClass.Name()
             self.__dssInstance.utils.run_command(Class + '.' + ElmName + '.' + Property + ' = ' + str(Value))
             Element = self.__dssInstance.ActiveClass.Next()
-        # Cmd = 'Edit ' + Class + '.' + Name
-        # for PptyName, PptyVal in Properties.items():
-        #     if PptyVal is not None:
-        #         tCMD = ' ' + PptyName + '=' + PptyVal
-        #         Cmd += tCMD
-        # self.__dssCommand(Cmd)
+
 

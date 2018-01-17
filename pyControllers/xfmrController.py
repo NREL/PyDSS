@@ -12,7 +12,6 @@ class xfmrController:
         self.__RPFlocking = Settings['RPF locking']
         Class, Name = self.__ControlledElm.GetInfo()
         self.__Name = 'pyCont_' + Class + '_' + Name
-        print('Connected XFMR - ', self.__ControlledElm.GetParameter2('transformer'))
         return
 
     def Update_Q(self, Time, UpdateResults):

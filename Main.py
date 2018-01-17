@@ -12,7 +12,7 @@ RO = {
 # Plot Settings
 PO = {
     'Network layout' : False,
-    'Time series'    : True,
+    'Time series'    : False,
     'XY plot'        : False,
     'Sag plot'       : False,
     'Histogram'      : False,

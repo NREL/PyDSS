@@ -1,11 +1,12 @@
 from pyContrReader import pyContrReader as PCR
 import numpy as np
 import pathlib
+import logging
 import os
 class ResultContainer:
     Results = {}
     def __init__(self, ResultSettings, SimulationSettings, SystemPaths, dssObjects, dssObjectsByClass):
-
+        self.pyLogger = logging.getLogger(SimulationSettings['Active Project'])
         self.ObjectsByElement = dssObjects
         self.ObjectsByClass = dssObjectsByClass
         self.SystemPaths = SystemPaths
@@ -89,7 +90,7 @@ class ResultContainer:
                         np.savetxt(self.ExportFolder + '\\' + Class + '_' +  Property +
                                    '-' + Element + ".csv", Data,
                                    delimiter=',', header=ElmLvlHeader, comments='', fmt='%f')
-                        print(Class + '-' + Property  + '-' + Element + ".csv exported to " + self.ExportFolder)
+                        self.pyLogger.info(Class + '-' + Property  + '-' + Element + ".csv exported to " + self.ExportFolder)
                     elif self.__Settings['Export Style'] == 'Single file':
                         Class_ElementDatasets.append(Data)
                     PptyLvlHeader += ElmLvlHeader
@@ -100,7 +101,7 @@ class ResultContainer:
                             Dataset = np.append(Dataset, D, axis=1)
                     np.savetxt(self.ExportFolder + '\\' + Class +'-' + Property+ ".csv", Dataset,
                                delimiter=',', header=PptyLvlHeader, comments='', fmt='%f')
-                    print(Class + '-' + Property + ".csv exported to " + self.ExportFolder)
+                    self.pyLogger.info(Class + '-' + Property + ".csv exported to " + self.ExportFolder)
         return
 
 
@@ -123,7 +124,7 @@ class ResultContainer:
                 if self.__Settings['Export Style'] == 'Seperate files':
                     np.savetxt(self.ExportFolder + '\\' + Element + '-' + Property + ".csv", Data,
                                delimiter=',', header=Header, comments='', fmt='%f')
-                    print(Element + '-' + Property + ".csv exported to " + self.ExportFolder)
+                    self.pyLogger.info(Element + '-' + Property + ".csv exported to " + self.ExportFolder)
                 elif self.__Settings['Export Style'] == 'Single file':
                     ElementDatasets.append(Data)
                 AllHeader += Header
@@ -134,5 +135,5 @@ class ResultContainer:
                         Dataset = np.append(Dataset, D, axis=1)
                 np.savetxt(self.ExportFolder + '\\' + Element + ".csv", Dataset,
                            delimiter=',', header=AllHeader, comments='', fmt='%f')
-                print(Element + ".csv exported to " + self.ExportFolder)
+                self.pyLogger.info(Element + ".csv exported to " + self.ExportFolder)
         return

@@ -1,20 +1,24 @@
+import logging
 
-
-def GetSolver(SimulationType,dssInstance, mStepResolution, StartDay):
+def GetSolver(SimulationSettings ,dssInstance):
+    pyLogger = logging.getLogger(SimulationSettings['Active Project'])
     SolverDict = {
         'Snapshot': __Shapshot(dssInstance,  20),
-        'Daily': __Daily(dssInstance, StartDay = StartDay, mStepResolution = mStepResolution),
+        'Daily': __Daily(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger),
     }
     try:
-        Solver = SolverDict[SimulationType]
-        print ('Solver set to ' + SimulationType + ' mode.')
+        Solver = SolverDict[SimulationSettings['Simulation Type']]
+        pyLogger.info('Solver set to ' + SimulationSettings['Simulation Type'] + ' mode.')
         return Solver
     except:
-        print ('Incorrect simulation type passed to the function.')
+        pyLogger.error('Incorrect simulation type passed to the function.')
         return -1
 
 class __Daily:
-    def __init__(self, dssInstance, StartDay = 0, mStepResolution = 15):
+    def __init__(self, dssInstance, SimulationSettings, Logger):
+        self.pyLogger = Logger
+        StartDay = SimulationSettings['Start Day']
+        mStepResolution = SimulationSettings['Step resolution (min)']
         self.mStepRes = mStepResolution
         self.__dssIntance = dssInstance
         self.__dssSolution = dssInstance.Solution
@@ -40,7 +44,7 @@ class __Daily:
     def IncStep(self):
         self.__dssSolution.StepSize(self.mStepRes*60)
         self.__dssSolution.Solve()
-        print('Simululation time [h] - ', self.__dssSolution.DblHour())
+        self.pyLogger.info('Simululation time [h] - ' + str(self.__dssSolution.DblHour()))
 
     def reSolve(self):
         self.__dssSolution.StepSize(0)

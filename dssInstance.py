@@ -15,11 +15,11 @@ sys.path.insert(0, './pyControllers')
 sys.path.insert(0, './pyPlots')
 import pyController
 import pyPlots
+import pyLogger
+import logging
 
 class OpenDSS:
     __TempResultList = []
-
-    print ('An instance of OpenDSS version ' + dss.__version__ + ' has ben created.')
     __dssInstance = dss
     __dssBuses = {}
     __dssObjects = {}
@@ -28,7 +28,10 @@ class OpenDSS:
     __pyPlotObjects = {}
 
     def __init__(self, rootPath = os.getcwd(), ResultOptions = None, PlotOptions = pyPlots.defalultPO ,
-                 SimulationSettings =  None):
+                 SimulationSettings =  None, LogLevel = logging.DEBUG):
+
+        self.__Logger = pyLogger.getLogger(SimulationSettings['Active Project'], LogLevel)
+        self.__Logger.info('An instance of OpenDSS version ' + dss.__version__ + ' has ben created.')
 
         self.__dssPath = {
             'root': rootPath,
@@ -57,14 +60,11 @@ class OpenDSS:
         self.__dssClass = dss.ActiveClass
         self.__dssCommand = run_command
         self.__dssSolution = dss.Solution
-        self.__dssSolver = SolveMode.GetSolver(SimulationSettings['Simulation Type'], self.__dssInstance
-                                               , mStepResolution = SimulationSettings['Step resolution (min)'],
-                                               StartDay = SimulationSettings['Start Day'])
+        self.__dssSolver = SolveMode.GetSolver(SimulationSettings=SimulationSettings, dssInstance=self.__dssInstance)
 
         self.__ModifyNetwork()
         self.__UpdateDictionary()
         self.__CreateBusObjects()
-
         self.__dssSolver.reSolve()
 
         if self.__ResultOptions and self.__ResultOptions['Log Results']:
@@ -84,7 +84,7 @@ class OpenDSS:
 
     def __ModifyNetwork(self):
         from NetworkModifier import Modifier
-        self.__Modifier = Modifier(dss, run_command)
+        self.__Modifier = Modifier(dss, run_command, self.__SimulationOptions)
 
         self.__Modifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
                                      True, self.__dssObjects)
@@ -101,7 +101,7 @@ class OpenDSS:
                                                   self.__dssInstance, self.__dssSolver)
                  if Controller != -1:
                     self.__pyControls['Controller.' + ElmName] = Controller
-                    print('Created pyController -> Controller.' + ElmName)
+                    self.__Logger.info('Created pyController -> Controller.' + ElmName)
         return
 
     def __CreatePlots(self, PlotsDict):
@@ -112,17 +112,19 @@ class OpenDSS:
             PlotType3 = ['XY plot', 'Time series']
             for Name in newPlotNames:
                 PlotSettings = PlotNames[Name]
-                print (PlotType, Name)
                 PlotSettings['FileName'] = Name
                 if PlotType in PlotType1 and self.__PlotOptions[PlotType]:
                     self.__pyPlotObjects[PlotType] = pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
                                                                     self.__dssObjectsByClass,self.__dssCircuit)
+                    self.__Logger.info('Created pyPlot -> ' + PlotType)
                 elif PlotType in PlotType2 and self.__PlotOptions[PlotType]:
                     self.__pyPlotObjects[PlotType + Name] = pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
                                                                            self.__dssObjectsByClass, self.__dssCircuit)
+                    self.__Logger.info('Created pyPlot -> ' + PlotType)
                 elif PlotType in PlotType3  and self.__PlotOptions[PlotType]:
                     self.__pyPlotObjects[PlotType+Name] = pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
                                                                          self.__dssObjects, self.__dssCircuit)
+                    self.__Logger.info('Created pyPlot -> ' + PlotType)
         return
 
     def __UpdateControllers_Q(self, Time, UpdateResults):
@@ -175,13 +177,13 @@ class OpenDSS:
         startTime = time.time()
         TotalDays = self.__SimulationOptions['End Day'] - self.__SimulationOptions['Start Day']
         Steps = int(TotalDays * 24 * 60 / self.__SimulationOptions['Step resolution (min)'])
-        print ('Steps - ', Steps)
+        self.__Logger.info('Running simulation for ' + str(Steps) + ' time steps')
         for i in range(Steps):
             for j in range(self.__SimulationOptions['Max Control Iterations']):
                 has_Q_Converged = self.__UpdateControllers_Q(i, UpdateResults = False)
                 if has_Q_Converged or j == self.__SimulationOptions['Max Control Iterations'] - 1:
                     if not has_Q_Converged:
-                        print('No convergance @ ', i)
+                        self.__Logger.warning('No convergance @ ', i)
                     break
                 elif not has_Q_Converged:
                     self.__dssSolver.reSolve()
@@ -190,7 +192,7 @@ class OpenDSS:
                 has_P_Converged = self.__UpdateControllers_P(i, UpdateResults = False)
                 if has_P_Converged or j == self.__SimulationOptions['Max Control Iterations'] - 1:
                     if not has_P_Converged:
-                        print('No convergance @ ', i)
+                        self.__Logger.warning('No convergance @ ', i)
                     break
                 elif not has_P_Converged:
                     self.__dssSolver.reSolve()
@@ -204,13 +206,10 @@ class OpenDSS:
         if self.__ResultOptions and self.__ResultOptions['Log Results']:
             self.ResultContainer.ExportResults()
 
-
-        print ('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
-        print ('End of simulation')
+        self.__Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
+        self.__Logger.info('End of simulation')
 
     def __UpdatePlots(self):
-        # if 'Network layout' in self.__pyPlotObjects:
-        #     self.__pyPlotObjects['Network layout'].UpdatePlot()
         for Plot in self.__pyPlotObjects:
             self.__pyPlotObjects[Plot].UpdatePlot()
         return
@@ -222,8 +221,8 @@ class OpenDSS:
 
     def __del__(self):
         if self.__DelFlag == 1:
-            print ('An intstance of OpenDSS (' + str(self) +') has been deleted.')
+            self.__Logger.info('An intstance of OpenDSS (' + str(self) +') has been deleted.')
         else:
-            print ('An intstance of OpenDSS (' + str(self) + ') crashed.')
+            self.__Logger.error('An intstance of OpenDSS (' + str(self) + ') crashed.')
         return
 #
