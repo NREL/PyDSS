@@ -1,8 +1,8 @@
 
 import dssInstance
-import warnings
+import logging
 import os
-warnings.filterwarnings('ignore')
+
 # Settings for exporting results
 RO = {
     'Log Results'    : True,
@@ -35,7 +35,7 @@ SS = {
 #     1 : 'MasterCircuit_Mikilua_baseline3.dss',
 # }
 
-DSS = dssInstance.OpenDSS(PlotOptions = PO , ResultOptions=RO, SimulationSettings=SS)
+DSS = dssInstance.OpenDSS(PlotOptions = PO , ResultOptions=RO, SimulationSettings=SS, LogLevel=logging.INFO)
 DSS.RunSimulation()
 
 os.system('pause')
