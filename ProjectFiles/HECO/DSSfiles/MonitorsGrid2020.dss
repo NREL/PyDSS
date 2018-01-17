@@ -1,0 +1,73 @@
+New monitor.VSourceBus Line.Section_0001 Terminal =1 mode=0 Ppolar=No
+New monitor.PSourceBus Line.Section_0001 Terminal =1 mode=1 Ppolar=No
+
+
+New monitor.G2020_M31400 Line.BB_263625 Terminal =1 mode=0 Ppolar=No
+New monitor.G2020_M31400_PV generator.BB_263625a Terminal =1 mode=1 ppolar=no
+New monitor.G2020_M31413 Line.OH_264059 Terminal =1 mode=0 Ppolar=No
+New monitor.G2020_M31413_PV generator.OH_264059c Terminal =1 mode=1 ppolar=no
+
+New monitor.G2020_M41401 Line.BB_51046018 Terminal =1 mode=0 Ppolar=No
+New monitor.G2020_M41401_PV generator.BB_51046018b Terminal =1 mode=1 ppolar=no
+New monitor.G2020_M41401_L load.BB_51046018b Terminal =1 mode=1 ppolar=no
+
+New monitor.G2020_M41403 Line.OH_261576 Terminal =1 mode=0 Ppolar=No
+New monitor.G2020_M41403_PV1 generator.OH_261576a Terminal =1 mode=1 ppolar=no
+New monitor.G2020_M41403_PV2 generator.OH_261576c Terminal =1 mode=1 ppolar=no
+New monitor.G2020_M41403_L1 load.OH_261576a Terminal =1 mode=1 ppolar=no
+New monitor.G2020_M41403_L2 load.OH_261576c Terminal =1 mode=1 ppolar=no
+
+New monitor.G2020_M41404 Line.OH_262662 Terminal =1 mode=0 Ppolar=No
+New monitor.G2020_M41414 Line.OH_261663 Terminal =1 mode=0 Ppolar=No
+New monitor.G2020_M41579 Line.OH_260930 Terminal =1 mode=0 Ppolar=No
+New monitor.G2020_M41584 Line.OH_51241841 Terminal =1 mode=0 Ppolar=No
+New monitor.G2020_M41585 Line.OH_262648 Terminal =1 mode=0 Ppolar=No
+New monitor.G2020_M41586 Line.OH_263105 Terminal =1 mode=0 Ppolar=No
+New monitor.G2020_M41587 Line.OH_51048147 Terminal =1 mode=0 Ppolar=No
+
+New monitor.G2020_M31400_P Line.BB_263625 Terminal =1 mode=1 Ppolar=No
+New monitor.G2020_M31413_P Line.OH_264059 Terminal =1 mode=1 Ppolar=No
+
+New monitor.G2020_M41401_P Line.BB_51046018 Terminal =1 mode=1 Ppolar=No
+
+New monitor.G2020_M41403_P Line.OH_261576 Terminal =1 mode=1 Ppolar=No
+New monitor.G2020_M41404_P Line.OH_262662 Terminal =1 mode=1 Ppolar=No
+New monitor.G2020_M41404_L1 Load.OH_262662a Terminal =1 mode=1 Ppolar=No
+New monitor.G2020_M41404_L2 Load.OH_262662c Terminal =1 mode=1 Ppolar=No
+!New monitor.G2020_M41404_PV1 generator.OH_262662a Terminal =1 mode=1 Ppolar=No
+!New monitor.G2020_M41404_PV2 generator.OH_262662c Terminal =1 mode=1 Ppolar=No
+
+New monitor.G2020_M41414_P Line.OH_261663 Terminal =1 mode=1 Ppolar=No
+New monitor.G2020_M41414_L Load.OH_261663a Terminal =1 mode=1 Ppolar=No
+New monitor.G2020_M41414_PV generator.OH_261663a Terminal =1 mode=1 Ppolar=No
+
+New monitor.G2020_M41579_P Line.OH_260930 Terminal =1 mode=1 Ppolar=No
+New monitor.G2020_M41579_L1 Load.OH_260930a Terminal =1 mode=1 Ppolar=No
+New monitor.G2020_M41579_L2 Load.OH_260930c Terminal =1 mode=1 Ppolar=No
+New monitor.G2020_M41579_PV1 generator.OH_260930a Terminal =1 mode=1 Ppolar=No
+New monitor.G2020_M41579_PV2 generator.OH_260930c Terminal =1 mode=1 Ppolar=No
+
+New monitor.G2020_M41584_P Line.OH_51241841 Terminal =1 mode=1 Ppolar=No
+New monitor.G2020_M41584_L Load.OH_51241841a Terminal =1 mode=1 Ppolar=No
+!New monitor.G2020_M41584_PV generator.OH_51241841a Terminal =1 mode=1 Ppolar=No
+
+New monitor.G2020_M41585_P Line.OH_262648 Terminal =1 mode=1 Ppolar=No
+New monitor.G2020_M41585_L1 Load.OH_262648a Terminal =1 mode=1 Ppolar=No
+New monitor.G2020_M41585_L2 Load.OH_262648c Terminal =1 mode=1 Ppolar=No
+!New monitor.G2020_M41585_PV1 generator.OH_262648a Terminal =1 mode=1 Ppolar=No
+!New monitor.G2020_M41585_PV2 generator.OH_262648c Terminal =1 mode=1 Ppolar=No
+
+New monitor.G2020_M41586_P Line.OH_263105 Terminal =1 mode=1 Ppolar=No
+New monitor.G2020_M41586_L1 Load.OH_263105b Terminal =1 mode=1 Ppolar=No
+New monitor.G2020_M41586_L2 Load.OH_263105c Terminal =1 mode=1 Ppolar=No
+!New monitor.G2020_M41586_PV1 generator.OH_263105b Terminal =1 mode=1 Ppolar=No
+!New monitor.G2020_M41586_PV2 generator.OH_263105c Terminal =1 mode=1 Ppolar=No
+
+New monitor.G2020_M41587_P Line.OH_51048147 Terminal =1 mode=1 Ppolar=No
+New monitor.G2020_M41587_L Load.OH_51048147c Terminal =1 mode=1 Ppolar=No
+!New monitor.G2020_M41587_PV generator.OH_51048147c Terminal =1 mode=1 Ppolar=No
+
+
+!New monitor.SubXfrmr_Tap Transformer.SubXfrmr Terminal =2 mode=2
+!New monitor.SubXfrmr_V Transformer.SubXfrmr Terminal =1 mode=0 Ppolar=No
+!New monitor.SubXfrmr_P Transformer.SubXfrmr Terminal =1 mode=1 Ppolar=No

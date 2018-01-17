@@ -27,28 +27,24 @@ class OpenDSS:
     __DelFlag = 0
     __pyPlotObjects = {}
 
-    def __init__(self , SimType = 'Daily', rootPath = os.getcwd(), dssMainFile = 'MasterCircuit_Mikilua_keep.dss',
-                 ResultOptions = None, PlotOptions = pyPlots.defalultPO , SimulationSettings =  None):
+    def __init__(self, rootPath = os.getcwd(), ResultOptions = None, PlotOptions = pyPlots.defalultPO ,
+                 SimulationSettings =  None):
 
         self.__dssPath = {
             'root': rootPath,
-            'Import': rootPath + '\\Import',
+            'Import': rootPath + '\\ProjectFiles\\' + SimulationSettings['Active Project'] + '\\PyDSS Settings',
             'Export': rootPath + '\\Export',
-            'dssFiles': rootPath + '\\dssFiles',
-            'Profiles': {
-                'PV': rootPath + '\\Profiles\\PV',
-                'WT': rootPath + '\\Profiles\\WT',
-                'GN': rootPath + '\\Profiles\\GN',
-                'LD': rootPath + '\\Profiles\\LD'
-            },
-            'pyPlots': rootPath + '\\Import\\pyPlotList',
-            'ExportLists': rootPath + '\\Import\\ExportLists',
-            'pyControllers': rootPath + '\\Import\\pyControllerList',
+            'dssFiles': rootPath + '\\ProjectFiles\\' + SimulationSettings['Active Project'] + '\\DSSfiles',
         }
+
+        self.__dssPath['pyPlots'] = self.__dssPath['Import'] + '\\' + SimulationSettings['Active Scenario'] + '\\pyPlotList'
+        self.__dssPath['ExportLists'] = self.__dssPath['Import']+ '\\'  + SimulationSettings['Active Scenario'] + '\\ExportLists'
+        self.__dssPath['pyControllers'] = self.__dssPath['Import']+ '\\'  + SimulationSettings['Active Scenario'] + '\\pyControllerList'
+
         self.__SimulationOptions = SimulationSettings
         self.__ResultOptions = ResultOptions
         self.__PlotOptions = PlotOptions
-        self.__dssFilePath = self.__dssPath['dssFiles'] + '\\' + dssMainFile
+        self.__dssFilePath = self.__dssPath['dssFiles'] + '\\' + SimulationSettings['DSS File']
 
         self.__dssInstance.Basic.ClearAll()
         self.__dssInstance.utils.run_command('Log=NO')
@@ -72,7 +68,8 @@ class OpenDSS:
         self.__dssSolver.reSolve()
 
         if self.__ResultOptions and self.__ResultOptions['Log Results']:
-            self.ResultContainer = RC(ResultOptions, self.__dssPath, self.__dssObjects, self.__dssObjectsByClass)
+            self.ResultContainer = RC(ResultOptions, SimulationSettings, self.__dssPath,
+                                      self.__dssObjects, self.__dssObjectsByClass)
 
         pyCtrlReader = pcr(self.__dssPath['pyControllers'])
         ControllerList = pyCtrlReader.pyControllers

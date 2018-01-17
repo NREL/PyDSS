@@ -1,0 +1,21 @@
+! Define storage transformer
+new Transformer.storagexfmr phases=3 windings=2 
+~ wdg=1 Bus=XfmrM34.1.2.3 conn=wye kV=12.47 kva=5000
+~ wdg=2 Bus=storagebus conn=wye kV=0.415 kva=6000
+
+! Define storage unit at 591_57349.1.2.3
+New Storage.ESSM34 phases=3 Bus1=storagebus kV=0.415
+~ kWRated=2000 kVA=3000 kWhRated=2000 kWhStored=2000  !assume ess starting with depleted status
+
+! Confirm the efficiency and the aux power
+~ %IdlingkW=12 basefreq=60 TimeChargeTrig=-1 !overestimate aux power
+~ %EffCharge=95 %EffDischarge=95 ! 0.82(batter)*0.95(inv)=0.78
+~ State=IDLING
+! ~ ChargeTrigger=0.7 DischargeTrigger=0.9
+! ~ %discharge=45 %charge=45
+~ %reserve=0
+
+! Define pv system unit at 591_57349.1.2.3
+! This pv system is used to easily implement VoltVAR function for storage
+New PVSystem.PV_ESSM34.1.2.3 phases=3 bus1=storagebus kV=0.48 kVA=3000
+~ irrad=1 Pmpp=0

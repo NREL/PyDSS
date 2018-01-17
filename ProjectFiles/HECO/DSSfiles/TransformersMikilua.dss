@@ -1,0 +1,6 @@
+! Script for TransformersMikilua.dss
+
+! TRANSFORMER DEFINITIONS
+New Transformer.51058545 xfmrcode=12/11.5KV 2000KVA 3PH Buses=[DEV_265710.1.2.3 DEV_51058545.1.2.3]
+New Transformer.51058546 xfmrcode=12.47/11.5KV 3000KVA 3PH Buses=[DEV_51058546.1.2.3 DEV_51080616.1.2.3]
+New Transformer.mikilua 2 tsf Tran xfmrcode=MIKILUA 2_347 Buses=[mikilua 2 tsf.1.2.3 Node_5134289310.1.2.3]

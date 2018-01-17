@@ -1,7 +1,0 @@
-! Script for MeterMikilua.dss
-
-! METER DEFINITIONS
-New EnergyMeter.m_OH_51077154 line.OH_51077154
-New EnergyMeter.m_Section_0001 line.Section_0001
-New EnergyMeter.m_UG_261825 line.UG_261825
-New EnergyMeter.m_UG_261804 line.UG_261804

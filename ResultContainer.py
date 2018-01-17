@@ -1,9 +1,10 @@
 from pyContrReader import pyContrReader as PCR
-import pandas as pd
 import numpy as np
+import pathlib
+import os
 class ResultContainer:
     Results = {}
-    def __init__(self, ResultSettings, SystemPaths, dssObjects, dssObjectsByClass):
+    def __init__(self, ResultSettings, SimulationSettings, SystemPaths, dssObjects, dssObjectsByClass):
 
         self.ObjectsByElement = dssObjects
         self.ObjectsByClass = dssObjectsByClass
@@ -11,6 +12,12 @@ class ResultContainer:
         self.__Settings = ResultSettings
 
         self.FileReader = PCR(SystemPaths['ExportLists'])
+
+        self.ExportFolder = os.path.join(self.SystemPaths['Export'], SimulationSettings['Active Project'],
+                                         SimulationSettings['Active Scenario'])
+
+
+        pathlib.Path(self.ExportFolder).mkdir(parents=True, exist_ok=True)
 
         if self.__Settings['Export Mode'] == 'byElement':
             self.ExportList = self.FileReader.pyControllers['ExportMode-byElement']
@@ -79,10 +86,10 @@ class ResultContainer:
                         ElmLvlHeader = Element + ','
 
                     if self.__Settings['Export Style'] == 'Seperate files':
-                        np.savetxt(self.SystemPaths['Export'] + '\\' + Class + '_' +  Property +
+                        np.savetxt(self.ExportFolder + '\\' + Class + '_' +  Property +
                                    '-' + Element + ".csv", Data,
                                    delimiter=',', header=ElmLvlHeader, comments='', fmt='%f')
-                        print(Class + '-' + Property  + '-' + Element + ".csv exported to " + self.SystemPaths['Export'])
+                        print(Class + '-' + Property  + '-' + Element + ".csv exported to " + self.ExportFolder)
                     elif self.__Settings['Export Style'] == 'Single file':
                         Class_ElementDatasets.append(Data)
                     PptyLvlHeader += ElmLvlHeader
@@ -91,9 +98,9 @@ class ResultContainer:
                     if len(Class_ElementDatasets) > 0:
                         for D in Class_ElementDatasets[1:]:
                             Dataset = np.append(Dataset, D, axis=1)
-                    np.savetxt(self.SystemPaths['Export'] + '\\' + Class +'-' + Property+ ".csv", Dataset,
+                    np.savetxt(self.ExportFolder + '\\' + Class +'-' + Property+ ".csv", Dataset,
                                delimiter=',', header=PptyLvlHeader, comments='', fmt='%f')
-                    print(Class + '-' + Property + ".csv exported to " + self.SystemPaths['Export'])
+                    print(Class + '-' + Property + ".csv exported to " + self.ExportFolder)
         return
 
 
@@ -114,9 +121,9 @@ class ResultContainer:
                     Header = Property + ','
 
                 if self.__Settings['Export Style'] == 'Seperate files':
-                    np.savetxt(self.SystemPaths['Export'] + '\\' + Element + '-' + Property + ".csv", Data,
+                    np.savetxt(self.ExportFolder + '\\' + Element + '-' + Property + ".csv", Data,
                                delimiter=',', header=Header, comments='', fmt='%f')
-                    print(Element + '-' + Property + ".csv exported to " + self.SystemPaths['Export'])
+                    print(Element + '-' + Property + ".csv exported to " + self.ExportFolder)
                 elif self.__Settings['Export Style'] == 'Single file':
                     ElementDatasets.append(Data)
                 AllHeader += Header
@@ -125,7 +132,7 @@ class ResultContainer:
                 if len(ElementDatasets) > 0:
                     for D in ElementDatasets[1:]:
                         Dataset = np.append(Dataset, D, axis=1)
-                np.savetxt(self.SystemPaths['Export'] + '\\' + Element + ".csv", Dataset,
+                np.savetxt(self.ExportFolder + '\\' + Element + ".csv", Dataset,
                            delimiter=',', header=AllHeader, comments='', fmt='%f')
-                print(Element + ".csv exported to " + self.SystemPaths['Export'])
+                print(Element + ".csv exported to " + self.ExportFolder)
         return

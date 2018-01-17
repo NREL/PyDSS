@@ -1,0 +1,82 @@
+! Script for LinecodesMikilua.dss
+
+! LINECODES
+New linecode.lc1 nphases=1 r1=0.005 x1=0.374 r0=0.005 x0=0.374 b0=7.2 b1=7.2 units=MI
+
+New linecode.lc2 nphases=3 r1=0.001 x1=0.208 r0=0.014 x0=0.704 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc3 nphases=1 r1=0.003 x1=0.308 r0=0.003 x0=0.308 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc4 nphases=3 r1=0.000 x1=0.169 r0=0.009 x0=0.587 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc5 nphases=3 r1=0.000 x1=0.169 r0=0.009 x0=0.587 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc6 nphases=1 r1=1.160 x1=1.221 r0=1.160 x0=1.221 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc7 nphases=3 r1=0.305 x1=0.637 r0=0.635 x0=1.729 b0=3.23 b1=6.2 units=MI
+
+New linecode.lc8 nphases=3 r1=0.970 x1=0.714 r0=1.638 x0=2.130 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc9 nphases=1 r1=1.193 x1=1.186 r0=1.193 x0=1.186 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc10 nphases=3 r1=0.476 x1=0.662 r0=0.928 x0=1.830 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc11 nphases=3 r1=1.503 x1=0.777 r0=2.241 x0=2.432 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc12 nphases=2 r1=1.503 x1=0.777 r0=2.241 x0=2.432 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc13 nphases=2 r1=1.503 x1=0.777 r0=2.241 x0=2.432 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc14 nphases=2 r1=0.970 x1=0.714 r0=1.638 x0=2.130 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc15 nphases=3 r1=0.602 x1=0.676 r0=1.127 x0=1.904 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc16 nphases=3 r1=2.390 x1=0.805 r0=3.124 x0=2.718 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc17 nphases=2 r1=0.602 x1=0.676 r0=1.127 x0=1.904 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc18 nphases=1 r1=0.777 x1=1.085 r0=0.777 x0=1.085 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc19 nphases=2 r1=2.390 x1=0.805 r0=3.124 x0=2.718 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc20 nphases=1 r1=0.415 x1=1.001 r0=0.415 x0=1.001 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc21 nphases=1 r1=1.749 x1=1.329 r0=1.749 x0=1.329 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc22 nphases=3 r1=1.503 x1=0.777 r0=2.241 x0=2.432 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc23 nphases=3 r1=1.054 x1=0.253 r0=2.536 x0=0.253 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc24 nphases=3 r1=0.945 x1=0.749 r0=1.589 x0=2.165 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc25 nphases=1 r1=2.635 x1=1.443 r0=2.635 x0=1.443 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc26 nphases=3 r1=0.000 x1=0.208 r0=0.010 x0=0.534 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc27 nphases=3 r1=0.109 x1=0.172 r0=0.924 x0=0.172 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc28 nphases=1 r1=1.160 x1=1.221 r0=1.160 x0=1.221 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc29 nphases=3 r1=0.303 x1=0.671 r0=0.623 x0=1.790 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc30 nphases=1 r1=2.598 x1=0.505 r0=2.598 x0=0.505 b0=68 b1=68 units=MI
+
+New linecode.lc31 nphases=3 r1=0.945 x1=0.749 r0=1.589 x0=2.165 b0=0.001 b1=0.001 units=MI
+
+New linecode.lc32 nphases=3 r1=0.560 x1=0.227 r0=2.450 x0=1.230 b0=0.001 b1=153 units=MI
+
+New linecode.lc33 nphases=3 r1=0.239 x1=0.364 r0=0.986 x0=0.410 b0=0.001 b1=122 units=MI
+
+New linecode.lc34 nphases=3 r1=1.769 x1=0.269 r0=4.256 x0=0.977 b0=0.001 b1=100 units=MI
+
+New linecode.lc35 nphases=3 r1=0.243 x1=0.195 r0=1.452 x0=0.338 b0=0.001 b1=203 units=MI
+
+New linecode.lc36 nphases=1 r1=1.190 x1=0.561 r0=1.190 x0=0.561 b0=100 b1=100 units=MI
+
+New linecode.lc37 nphases=1 r1=2.733 x1=0.311 r0=2.733 x0=0.311 b0=69 b1=69 units=MI
+
+New linecode.lc38 nphases=1 r1=2.733 x1=0.311 r0=2.733 x0=0.311 b0=69 b1=69 units=MI
+
+New linecode.1/0_AL_TRIPLEX_1PH nphases=1 r1=2.733 x1=0.311 r0=2.733 x0=0.311 b0=0.001 b1=0.001 units=MI
+
+New linecode.4/0_1PH nphases=1 r1=2.733 x1=0.311 r0=2.733 x0=0.311 b0=0.001 b1=0.001 units=MI
