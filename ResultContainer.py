@@ -6,7 +6,8 @@ import os
 class ResultContainer:
     Results = {}
     def __init__(self, ResultSettings, SimulationSettings, SystemPaths, dssObjects, dssObjectsByClass):
-        self.pyLogger = logging.getLogger(SimulationSettings['Active Project'])
+        LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
+        self.pyLogger = logging.getLogger(LoggerTag)
         self.ObjectsByElement = dssObjects
         self.ObjectsByClass = dssObjectsByClass
         self.SystemPaths = SystemPaths

@@ -1,7 +1,8 @@
 import logging
 
 def GetSolver(SimulationSettings ,dssInstance):
-    pyLogger = logging.getLogger(SimulationSettings['Active Project'])
+    LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
+    pyLogger = logging.getLogger(LoggerTag)
     SolverDict = {
         'Snapshot': __Shapshot(dssInstance,  20),
         'Daily': __Daily(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger),

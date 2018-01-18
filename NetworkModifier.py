@@ -16,7 +16,8 @@ class Modifier():
      }
 
     def __init__(self, dss, run_command, SimulationSettings):
-        self.pyLogger = logging.getLogger(SimulationSettings['Active Project'])
+        LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
+        self.pyLogger = logging.getLogger(LoggerTag)
         self.__dssInstance = dss
         self.__dssCircuit = dss.Circuit
         self.__dssElement = dss.Element
