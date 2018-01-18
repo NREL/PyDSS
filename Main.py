@@ -1,4 +1,5 @@
 import dssInstance
+import subprocess
 import logging
 import os
 
@@ -28,13 +29,14 @@ SS = {
     'Active Scenario'        : 'HP-VV',
     'DSS File'               : 'MasterCircuit_Mikilua_baseline3.dss',   #'MasterCircuit_Mikilua_keep.dss'
 }
-
+# Logger settings
 LO =  {
     'Logging Level'          : logging.DEBUG,
     'Log to external file'   : True,
     'Display on screen'      : True
 }
 
+p = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
 DSS = dssInstance.OpenDSS(PlotOptions = PO , ResultOptions=RO, SimulationSettings=SS, LoggerOptions=LO)
 DSS.RunSimulation()
 

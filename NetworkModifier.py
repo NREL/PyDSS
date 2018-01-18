@@ -55,12 +55,13 @@ class Modifier():
 
     def Edit_Element(self, Class, Name, Properties):
         Cmd = 'Edit ' + Class + '.' + Name
-
         for PptyName, PptyVal in Properties.items():
             if PptyVal is not None:
                 tCMD = ' ' + PptyName + '=' + PptyVal
                 Cmd += tCMD
         self.__dssCommand(Cmd)
+        self.pyLogger.info('Edited -> ' + Cmd)
+        return
 
     def Edit_Elements(self, Class, Property=None, Value=None):
         self.__dssInstance.Circuit.SetActiveClass(Class)

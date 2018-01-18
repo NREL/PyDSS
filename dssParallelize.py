@@ -1,7 +1,7 @@
 from multiprocessing import Pool
 import dssInstance
+import subprocess
 import logging
-import time
 import os
 
 def pyDSSinstance(Scenario):
@@ -14,7 +14,7 @@ def pyDSSinstance(Scenario):
     # Plot Settings
     PO = {
         'Network layout' : False,
-        'Time series'    : False,
+        'Time series'    : True,
         'XY plot'        : False,
         'Sag plot'       : False,
         'Histogram'      : False,
@@ -45,7 +45,12 @@ def pyDSSinstance(Scenario):
     DSS.DeleteInstance()
     return
 
+def RunBokehServer():
+    p = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
+    return
+
 if __name__ == '__main__':
     Scenarios = ['HP-VV', 'HP-VW']
+    RunBokehServer()
     pool = Pool(processes=len(Scenarios))
     pool.map(pyDSSinstance, Scenarios)
