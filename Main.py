@@ -6,7 +6,7 @@ import os
 # Settings for exporting results
 RO = {
     'Log Results'    : True,
-    'Export Mode'    : 'byElement',           # 'byClass'        , 'byElement'
+    'Export Mode'    : 'byClass',           # 'byClass'        , 'byElement'
     'Export Style'   : 'Single file',         # 'Seperate files' , 'Single file'
 }
 # Plot Settings

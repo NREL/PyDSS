@@ -134,4 +134,4 @@ class dssElement:
                 return None
         else:
             print ('Invalid parameter for ' + self.__Class + ' class.')
-            return No
+            return None

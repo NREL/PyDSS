@@ -191,7 +191,7 @@ class PvController:
                 self.Pmppt =Plim / Pcalc * Ppu * 100
                 #self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
                 Pcalc = Plim
-                print(self.Pmppt)
+                #print(self.Pmppt)
             else :
                 if self.TimeChange:
                     self.Pmppt = 100
@@ -205,5 +205,5 @@ class PvController:
 
         Error = abs(Qcalc - self.oldQcalc)
         self.oldQcalc = Qcalc
-        print(Error)
+        #print(Error)
         return Error

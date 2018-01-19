@@ -8,7 +8,7 @@ def pyDSSinstance(Scenario):
     # Settings for exporting results
     RO = {
         'Log Results'    : True,
-        'Export Mode'    : 'byElement',           # 'byClass'        , 'byElement'
+        'Export Mode'    : 'byClass',             # 'byClass'        , 'byElement'
         'Export Style'   : 'Single file',         # 'Seperate files' , 'Single file'
     }
     # Plot Settings
@@ -22,8 +22,8 @@ def pyDSSinstance(Scenario):
     }
     # Simulation Settings
     SS = {
-        'Start Day'              : 4,
-        'End Day'                : 5,
+        'Start Day'              : 157,
+        'End Day'                : 164,
         'Step resolution (min)'  : 15,
         'Max Control Iterations' : 10,
         'Simulation Type'        : 'Daily',
@@ -50,7 +50,7 @@ def RunBokehServer():
     return
 
 if __name__ == '__main__':
-    Scenarios = ['HP-VV', 'HP-VW']
+    Scenarios = ['HP-VV']
     RunBokehServer()
     pool = Pool(processes=len(Scenarios))
     pool.map(pyDSSinstance, Scenarios)
