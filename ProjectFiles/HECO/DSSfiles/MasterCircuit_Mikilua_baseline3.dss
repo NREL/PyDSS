@@ -1,0 +1,104 @@
+! Master File for Circuit : Mikilua
+! Master File for Circuit : Mikilua
+
+Clear
+!!########################################################################################
+!!                  System without LTC
+!!########################################################################################
+!New Circuit.Mikilua bus1=SourceBus BasekV=46 pu=1.05 r1=0.02048  x1=0.1387  r0=0.0271  x0=1.3135 !! Default source impedance, check in SynerGEE if source impedance is defined and change 
+!!########################################################################################
+!!                  System with LTC
+!!########################################################################################
+New Circuit.Mikilua bus1=SourceBus BasekV=46 pu=1.03 r1=0.02048  x1=0.1387  r0=0.0271  x0=1.3135 ! Default source impedance, check in SynerGEE if source impedance is defined and change 
+
+!New Transformer.SubXfrmr phases=3  windings=2  buses= "SourceBus.1.2.3 , XfmrM34.1.2.3"
+!~ conns=(wye, wye)  kvs=(46, 12.47)  kvas=(10000,10000)  xhl=0.00001    %loadloss=0    Wdg=2    
+!~ Maxtap=1.1    Mintap=0.9 ppm=0 numtaps=32
+
+New Transformer.Subxfrmr phases=3 XHL=0.00001 kVAs=[10000 10000] conns=(wye, wye)
+~ Buses=[SourceBus.1.2.3 XfmrM34.1.2.3] kVs=[46  12.47] %LoadLoss=0.01
+new regcontrol.Subxfrmr  transformer=Subxfrmr winding=2  vreg=120  band=1.5  ptratio=60 ctprim=600  R=7   X=7
+Redirect LinecodesMikilua_2_OpenDSS.dss
+
+Redirect LinesMikilua_keep_upgrade.dss
+Redirect LoadshapesMikilua_reg.dss
+
+Redirect Xfmrcodes.dss
+Redirect linecodes_sec.dss
+Redirect transformers_rural.dss
+Redirect transformers_res.dss
+Redirect line_res.dss
+Redirect load_res.dss
+Redirect line_rural_branches.dss
+Redirect load_rural.dss
+Redirect loads_commercial.dss
+Redirect loads_multifamily.dss
+
+Redirect ESSM34.dss
+
+
+Redirect PVgens-E.dss
+Redirect PVgens-PE-PER-NEW100.dss
+Redirect PVgens-FIT.dss
+Redirect PVgens-FIT-PE.dss
+
+!New PVSystem.OH_263105_1_1 bus1=DEV_263108_1_1.2 Phases=1 kV=0.24 kVA=40.8 irradiance=1 Pmpp=51 kvar=0 %cutin=0.1 %cutout=0.1 yearly=m3pvmult kvarlimit=17.952
+
+
+!New XYCurve.VoltVarCurve npts=6 Yarray=(1.0,1.0,0.0,0.0,-1.0,-1.0) Xarray=(0.5,0.93,0.97,1.03,1.06,1.5)
+!New XYCurve.VoltWattCurve npts=4  Yarray=(1.0,1.0,0.0,0.0) XArray=(0.5,1.06,1.1,1.5)
+
+
+!New InvControl.InvPVCtr mode=VOLTVAR voltage_curvex_ref=rated vvc_curve1=VoltVarCurve VV_RefReactivePower=VARMAX_VARS deltaQ_factor=0.5 PVSystemlist=[OH_263105_1_1]
+!new InvControl.VoltVar_VoltwattCtrl combimode=VV_VW VoltwattYAxis=PAVAILABLEPU VV_RefReactivePower=VARMAX_VARS DeltaP_factor=0.5 DeltaQ_factor=0.3
+!~ VoltageChangeTolerance=0.05 VarChangeTolerance=0.001 vvc_curve1=VoltVarCurve voltwatt_curve=VoltWattCurve PVSystemlist=[OH_263105_1_1,OH_263105_1_2,OH_263105_2_2]
+
+!New InvControl.InvPVCtrVV mode=VOLTVAR voltage_curvex_ref=rated vvc_curve1=VoltVarCurve VV_RefReactivePower=VARMAX_VARS DeltaQ_factor=0.5
+!New InvControl.InvPVCtr mode=VOLTWATT voltage_curvex_ref=rated VoltwattYAxis=PAVAILABLEPU voltwatt_curve=VoltWattCurve eventlog=yes DeltaP_factor=0.25 PVSystemlist=[OH_263105_1_1]
+
+
+
+
+
+
+New EnergyMeter.m_Section_0001 line.Section_0001
+!Redirect MonitorsGrid2020.dss
+
+
+
+set Voltagebases=[46 12.470000 .415 .240] 
+calcVoltagebases
+
+!select Line.OH_261725
+!show yprim
+
+!set mode=yearly
+!set number=60
+
+!set maxcontroliter=50
+!solve
+
+
+
+
+!InvControl.InvPVCtr.mode=VOLTVAR 
+!InvControl.InvPVCtr.vvc_curve1=VoltVarCurve
+!InvControl.InvPVCtr.VV_RefReactivePower=VARMAX_VARS
+
+
+!solve
+
+BusCoords BusCoordsMikilua.csv 
+
+!Redirect ExportMonitorsGrid2020.dss
+
+!Export Voltages
+!Export Powers
+!Show voltages ln node
+!Show voltages ln elem
+!Show powers kva elem
+!Show Currents Elem
+!Show losses
+
+!Plot Profile phases=all
+Plot Circuit
