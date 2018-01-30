@@ -8613,3 +8613,7 @@
 2018-01-26 10:48:48,027 - INFO - SolveMode - Simululation time [h] - 3886.25
 2018-01-26 10:48:48,031 - DEBUG - dssInstance - Q convergance error 0
 2018-01-26 10:48:48,109 - DEBUG - dssInstance - P convergance error 0
+2018-01-28 21:02:01,992 - INFO - dssInstance - An instance of OpenDSS version 0.2.9 has ben created.
+2018-01-28 21:02:02,356 - INFO - SolveMode - Solver set to Daily mode.
+2018-01-28 21:02:02,358 - INFO - NetworkModifier - Added -> New Storage.storagebus bus=storagebus kV=0.48 kWRated=2000 %IdlingkW=3 phases=3 %EffCharge=100 kWhRated=2000 %reserve=0 %EffDischarge=100 state=IDLE %stored=50
+2018-01-28 21:02:07,641 - ERROR - dssInstance - An intstance of OpenDSS (<dssInstance.OpenDSS object at 0x00000292E7824F98>) crashed.

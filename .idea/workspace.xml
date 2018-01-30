@@ -2,36 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4d158a37-460e-4f32-90b0-7874bee38a84" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/Socket/ExportLists/ExportMode-byClass.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/Socket/ExportLists/ExportMode-byElement.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/Socket/pyControllerList/Socket Controller.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/Socket/pyControllerList/XFMR Controller.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/Socket/pyPlotList/GIS overlay.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/Socket/pyPlotList/Histogram.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/Socket/pyPlotList/Network layout.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/Socket/pyPlotList/Sag plot.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/Socket/pyPlotList/Time series.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/Socket/pyPlotList/XY plot.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Export/HECO/MetricCalculation.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/HECO_HP-Legacy.log" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/HECO_Socket.log" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyControllers/SocketController.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Export/HECO/HP-VV/Loads-kW.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/pyControllers/LoadController.py" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Export/HECO/HP-Legacy/Loads-VoltagesMagAng.csv" afterPath="$PROJECT_DIR$/Export/HECO/HP-Legacy/Loads-VoltagesMagAng.csv" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Export/HECO/HP-Legacy/PVsystems-Powers.csv" afterPath="$PROJECT_DIR$/Export/HECO/HP-Legacy/PVsystems-Powers.csv" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Export/HECO/HP-VV/Loads-VoltagesMagAng.csv" afterPath="$PROJECT_DIR$/Export/HECO/HP-VV/Loads-VoltagesMagAng.csv" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Export/HECO/HP-VV/PVsystems-Powers.csv" afterPath="$PROJECT_DIR$/Export/HECO/HP-VV/PVsystems-Powers.csv" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/HECO_HP-VV.log" afterPath="$PROJECT_DIR$/HECO_HP-VV.log" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/HECO_Socket.log" afterPath="$PROJECT_DIR$/HECO_Socket.log" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Main.py" afterPath="$PROJECT_DIR$/Main.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/DSSfiles/MasterCircuit_Mikilua_baseline2.dss" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/DSSfiles/MasterCircuit_Mikilua_baseline2.dss" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/DSSfiles/MasterCircuit_Mikilua_baseline3.dss" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/DSSfiles/MasterCircuit_Mikilua_baseline3.dss" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dssInstance.py" afterPath="$PROJECT_DIR$/dssInstance.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dssParallelize.py" afterPath="$PROJECT_DIR$/dssParallelize.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyControllers/PvController.py" afterPath="$PROJECT_DIR$/pyControllers/PvController.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyControllers/pyController.py" afterPath="$PROJECT_DIR$/pyControllers/pyController.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyControllers/xfmrController.py" afterPath="$PROJECT_DIR$/pyControllers/xfmrController.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -48,7 +21,7 @@
       <file leaf-file-name="pyController.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pyControllers/pyController.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
+            <state relative-caret-position="120">
               <caret line="8" column="59" lean-forward="false" selection-start-line="8" selection-start-column="59" selection-end-line="8" selection-end-column="59" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
@@ -60,14 +33,14 @@
       <file leaf-file-name="dssInstance.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dssInstance.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="483">
+            <state relative-caret-position="6480">
               <caret line="227" column="0" lean-forward="false" selection-start-line="227" selection-start-column="0" selection-end-line="227" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SocketController.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="SocketController.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pyControllers/SocketController.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="520">
@@ -82,8 +55,8 @@
       <file leaf-file-name="PvController.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pyControllers/PvController.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="160">
-              <caret line="85" column="73" lean-forward="true" selection-start-line="85" selection-start-column="38" selection-end-line="85" selection-end-column="73" />
+            <state relative-caret-position="2520">
+              <caret line="85" column="73" lean-forward="false" selection-start-line="85" selection-start-column="38" selection-end-line="85" selection-end-column="73" />
               <folding>
                 <element signature="e#5102#6787#0" expanded="false" />
               </folding>
@@ -94,8 +67,8 @@
       <file leaf-file-name="Socket.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../Socket.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="880">
-              <caret line="30" column="0" lean-forward="true" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+            <state relative-caret-position="870">
+              <caret line="30" column="0" lean-forward="false" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -106,7 +79,7 @@
       <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
         <entry file="file://C:/ProgramData/Anaconda3/Lib/logging/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="241">
+            <state relative-caret-position="39960">
               <caret line="1334" column="0" lean-forward="false" selection-start-line="1334" selection-start-column="0" selection-end-line="1334" selection-end-column="0" />
               <folding />
             </state>
@@ -116,7 +89,7 @@
       <file leaf-file-name="dssElement.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dssElement.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="633">
+            <state relative-caret-position="3150">
               <caret line="105" column="20" lean-forward="false" selection-start-line="105" selection-start-column="8" selection-end-line="105" selection-end-column="20" />
               <folding />
             </state>
@@ -126,9 +99,21 @@
       <file leaf-file-name="Main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="393">
-              <caret line="41" column="0" lean-forward="false" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+            <state relative-caret-position="330">
+              <caret line="18" column="28" lean-forward="false" selection-start-line="18" selection-start-column="28" selection-end-line="18" selection-end-column="28" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Plots.py" pinned="false" current-in-tab="true">
+        <entry file="file://$USER_HOME$/Google Drive/NREL/Papers/LossModeling/Results/Plots.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#31#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -136,8 +121,8 @@
       <file leaf-file-name="xfmrController.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pyControllers/xfmrController.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="17" column="61" lean-forward="true" selection-start-line="17" selection-start-column="40" selection-end-line="17" selection-end-column="61" />
+            <state relative-caret-position="480">
+              <caret line="17" column="61" lean-forward="false" selection-start-line="17" selection-start-column="40" selection-end-line="17" selection-end-column="61" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -194,20 +179,20 @@
         <option value="$PROJECT_DIR$/Export/HECO/MetricCalculation.py" />
         <option value="$PROJECT_DIR$/dssInstance.py" />
         <option value="$PROJECT_DIR$/pyControllers/xfmrController.py" />
-        <option value="$PROJECT_DIR$/Main.py" />
         <option value="$PROJECT_DIR$/../Distribution_Fitting.py" />
         <option value="$PROJECT_DIR$/../Socket Serever Tester.py" />
         <option value="$PROJECT_DIR$/pyControllers/pyController.py" />
         <option value="$PROJECT_DIR$/../Socket.py" />
         <option value="$PROJECT_DIR$/pyControllers/SocketController.py" />
+        <option value="$PROJECT_DIR$/Main.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-2409" />
+    <option name="x" value="-9" />
     <option name="y" value="-9" />
-    <option name="width" value="2418" />
-    <option name="height" value="1318" />
+    <option name="width" value="1938" />
+    <option name="height" value="1048" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -224,6 +209,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -256,7 +242,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -384,13 +369,13 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-2409" y="-9" width="2418" height="1318" extended-state="6" />
+    <frame x="-9" y="-9" width="2418" height="1318" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12297182" sideWeight="0.8518519" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.09906063" sideWeight="0.8518519" order="2" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3291592" sideWeight="0.49573562" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.9693396" sideWeight="0.083243825" order="6" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30143112" sideWeight="0.45059076" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22808586" sideWeight="0.45059076" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900944" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32887402" sideWeight="0.4978678" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2185501" sideWeight="0.4916388" order="0" side_tool="false" content_ui="tabs" />
@@ -449,13 +434,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/bokeh/core/property/descriptors.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="186">
-          <caret line="494" column="0" lean-forward="false" selection-start-line="494" selection-start-column="0" selection-end-line="494" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/bokeh/plotting/figure.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
@@ -679,21 +657,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../Socket Serever Tester.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/../Socket Serever Tester.py" />
     <entry file="file://$PROJECT_DIR$/../Distribution_Fitting.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2880">
           <caret line="96" column="2" lean-forward="false" selection-start-line="96" selection-start-column="2" selection-end-line="96" selection-end-column="90" />
-          <folding>
-            <element signature="e#1124#1172#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -701,16 +669,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pyControllers/xfmrController.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="17" column="61" lean-forward="true" selection-start-line="17" selection-start-column="40" selection-end-line="17" selection-end-column="61" />
+        <state relative-caret-position="480">
+          <caret line="17" column="61" lean-forward="false" selection-start-line="17" selection-start-column="40" selection-end-line="17" selection-end-column="61" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>
@@ -721,14 +686,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1082">
           <caret line="264" column="6" lean-forward="false" selection-start-line="264" selection-start-column="6" selection-end-line="264" selection-end-column="6" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pyControllers/PvController.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="85" column="73" lean-forward="true" selection-start-line="85" selection-start-column="38" selection-end-line="85" selection-end-column="73" />
+        <state relative-caret-position="2520">
+          <caret line="85" column="73" lean-forward="false" selection-start-line="85" selection-start-column="38" selection-end-line="85" selection-end-column="73" />
           <folding>
             <element signature="e#5102#6787#0" expanded="false" />
           </folding>
@@ -737,7 +701,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pyControllers/pyController.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
+        <state relative-caret-position="120">
           <caret line="8" column="59" lean-forward="false" selection-start-line="8" selection-start-column="59" selection-end-line="8" selection-end-column="59" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
@@ -747,23 +711,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dssElement.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="633">
+        <state relative-caret-position="3150">
           <caret line="105" column="20" lean-forward="false" selection-start-line="105" selection-start-column="8" selection-end-line="105" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="393">
-          <caret line="41" column="0" lean-forward="false" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dssInstance.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="483">
+        <state relative-caret-position="6480">
           <caret line="227" column="0" lean-forward="false" selection-start-line="227" selection-start-column="0" selection-end-line="227" selection-end-column="0" />
           <folding />
         </state>
@@ -771,7 +727,7 @@
     </entry>
     <entry file="file://C:/ProgramData/Anaconda3/Lib/logging/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="241">
+        <state relative-caret-position="39960">
           <caret line="1334" column="0" lean-forward="false" selection-start-line="1334" selection-start-column="0" selection-end-line="1334" selection-end-column="0" />
           <folding />
         </state>
@@ -779,8 +735,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../Socket.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="880">
-          <caret line="30" column="0" lean-forward="true" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+        <state relative-caret-position="870">
+          <caret line="30" column="0" lean-forward="false" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
@@ -793,6 +749,24 @@
           <caret line="34" column="0" lean-forward="false" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="18" column="28" lean-forward="false" selection-start-line="18" selection-start-column="28" selection-end-line="18" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Google Drive/NREL/Papers/LossModeling/Results/Plots.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>

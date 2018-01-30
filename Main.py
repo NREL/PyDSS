@@ -17,7 +17,7 @@ PO = {
     'XY plot'        : False,
     'Sag plot'       : False,
     'Histogram'      : False,
-    'GIS overlay'    : False,
+    'GIS overlay'    : True,
 }
 # Simulation Settings
 SS = {
@@ -27,7 +27,7 @@ SS = {
     'Max Control Iterations' : 10,
     'Simulation Type'        : 'Daily',
     'Active Project'         : 'HECO',
-    'Active Scenario'        : 'Socket',
+    'Active Scenario'        : 'HP-VV',
     'DSS File'               : 'MasterCircuit_Mikilua_baseline3.dss',   #'MasterCircuit_Mikilua_keep.dss'
 }
 # Logger settings
