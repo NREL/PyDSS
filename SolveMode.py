@@ -4,7 +4,7 @@ def GetSolver(SimulationSettings ,dssInstance):
     LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
     pyLogger = logging.getLogger(LoggerTag)
     SolverDict = {
-        'Snapshot': __Shapshot(dssInstance,  20),
+        'Snapshot': __Shapshot(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger),
         'Daily': __Daily(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger),
     }
     try:
@@ -26,8 +26,6 @@ class __Daily:
         self.__dssSolution.Mode(2)
         self.__dssSolution.Hour(StartDay * 24)
         self.__dssSolution.Number(1)
-        #self.__dssSolution.StepSizeHr = 0
-        #self.__dssSolution.StepSizeMin = 5
         self.__dssSolution.StepSize(self.mStepRes*60)
         self.__dssSolution.MaxControlIterations(200)
         return
@@ -35,7 +33,6 @@ class __Daily:
     def SolveFor(self, mStartTime, mTimeStep):
         Hour = int(mStartTime/60)
         Min = mStartTime%60
-        #print('Solving from '+ str(mStartTime)+ 'm to '+ str(mStartTime+mTimeStep)+ 'm')
         self.__dssSolution.Hour(Hour)
         self.__dssSolution.Seconds(Min*60)
         self.__dssSolution.Number(mTimeStep)
@@ -55,25 +52,23 @@ class __Daily:
         return
 
 class __Shapshot:
-    def __init__(self, dssInstance, MaxIter = 2000):
-        self.__dssIntance = dssInstance
+    def __init__(self, dssInstance, SimulationSettings, Logger):
+        self.__dssInstance = dssInstance
         self.__dssSolution = dssInstance.Solution
-        self.__dssSolution.MaxControlIterations(MaxIter)
+        self.__dssSolution.Mode(0)
+        self.__dssSolution.MaxControlIterations(100)
         self.OriginalStep = self.__dssSolution.Number()
         return
 
     def IncStep(self,CurrentTimeStep):
-        self.__dssSolution.InitSnap()
-        iteration = 0
-        while not self.__dssSolution.ControlActionsDone():
-            self.__dssSolution.SolveNoControl()
-            self.customControlLoop()
-            self.__dssSolution.CheckControls()
-            iteration += 1
-            if iteration > self.__dssSolution.MaxControlIterations():
-                print('No convergence @ time step - ' + str(CurrentTimeStep))
-                break
-        self.__dssSolution.FinishTimeStep()  # cleanup and increment time
+        self.timestep = timestep
+        self.__dssSolution.Number(self.number)
+        self.__dssSolution.Hour(timestep)
+        self.__dssSolution.Seconds(0)
 
-    def customControlLoop(self):
-        return
+    def reSolve(self):
+        self.__dssSolution.StepSizeMin(0)
+        self.__dssSolution.StepSize(0)
+        self.__dssSolution.SolveNoControl()
+
+

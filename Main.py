@@ -6,18 +6,18 @@ import os
 
 # Settings for exporting results
 RO = {
-    'Log Results'    : False,
+    'Log Results'    : True,
     'Export Mode'    : 'byClass',           # 'byClass'        , 'byElement'
     'Export Style'   : 'Single file',         # 'Seperate files' , 'Single file'
 }
 # Plot Settings
 PO = {
     'Network layout' : False,
-    'Time series'    : False,
+    'Time series'    : True,
     'XY plot'        : False,
     'Sag plot'       : False,
     'Histogram'      : False,
-    'GIS overlay'    : True,
+    'GIS overlay'    : False,
 }
 # Simulation Settings
 SS = {
@@ -27,14 +27,15 @@ SS = {
     'Max Control Iterations' : 10,
     'Simulation Type'        : 'Daily',
     'Active Project'         : 'HECO',
-    'Active Scenario'        : 'HP-VV',
+    'Active Scenario'        : 'HP-VV-VW',
     'DSS File'               : 'MasterCircuit_Mikilua_baseline3.dss',   #'MasterCircuit_Mikilua_keep.dss'
 }
 # Logger settings
 LO =  {
     'Logging Level'          : logging.DEBUG,
     'Log to external file'   : True,
-    'Display on screen'      : True
+    'Display on screen'      : False,
+    'Clear old log files'    : True,
 }
 
 p = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)

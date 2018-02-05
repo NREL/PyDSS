@@ -244,7 +244,7 @@ New Line.OH_261597 Bus1=DEV_261605.1.2.3 Bus2=NODE_609910.1.2.3 phases=3 Linecod
 New Line.OH_261598 Bus1=DEV_261606.1.2.3 Bus2=NODE_11021903.1.2.3 phases=3 Linecode=lc8 Length=182.000000 units=ft !overhead line
 New Line.OH_261600 Bus1=NODE_30111899.1.2.3 Bus2=DEV_261605.1.2.3 phases=3 Linecode=lc7 Length=362.000000 units=ft !overhead line
 New Line.OH_261601 Bus1=NODE_609901.1.2.3 Bus2=NODE_30111899.1.2.3 phases=3 Linecode=lc7 Length=5.000000 units=ft !overhead line
-New Line.OH_261604 Bus1=DEV_261619.1.2.3 Bus2=DEV_261599.1.2.3 phases=3 Linecode=lc7 Length=639.000000 units=ft !overhead line!upgrade 3-phase 336 AAC
+New Line.OH_261604 Bus1=DEV_261619.1.2.3 Bus2=NODE_609901.1.2.3 phases=3 Linecode=lc7 Length=639.000000 units=ft !overhead line!upgrade 3-phase 336 AAC New Interconnection
 New Line.OH_261613 Bus1=DEV_261615.1.2.3 Bus2=PRI_261613.1.2.3 phases=3 Linecode=lc8 Length=214.000000 units=ft !overhead line
 New Line.OH_261659 Bus1=DEV_261652.1.2.3 Bus2=NODE_11021903.1.2.3 phases=3 Linecode=lc8 Length=109.000000 units=ft !overhead line
 New Line.OH_261662 Bus1=DEV_261703.1.2.3 Bus2=DEV_261667.1.2.3 phases=3 Linecode=lc7 Length=40.000000 units=ft !overhead line

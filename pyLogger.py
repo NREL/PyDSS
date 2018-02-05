@@ -1,9 +1,15 @@
 import logging
+import sys
+import os
+from os import listdir
 
 def getLogger(name, LoggerOptions=None):
+    if LoggerOptions['Clear old log files']:
+        test = os.listdir(os.getcwd())
+        for item in test:
+            if item.endswith(".log"):
+                os.remove(item)
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(module)s - %(message)s')
-
-
 
     logger = logging.getLogger(name)
     logger.setLevel(LoggerOptions['Logging Level'])
