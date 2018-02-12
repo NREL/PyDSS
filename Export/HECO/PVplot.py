@@ -4,7 +4,7 @@ import numpy as np
 import os
 
 FileList = ['PVsystems-VoltagesMagAng.csv', 'PVsystems-Powers.csv']
-Folder = 'HP-VW'
+Folder = 'HP-VV-VW-R'
 Root = os.getcwd()
 
 Voltages = pd.read_csv(os.path.join(Root,Folder,FileList[0]), dtype=float)

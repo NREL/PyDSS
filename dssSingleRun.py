@@ -28,7 +28,7 @@ SS = {
     'Max Control Iterations' : 10,
     'Simulation Type'        : 'Daily',
     'Active Project'         : 'HECO',
-    'Active Scenario'        : 'HP-VW',
+    'Active Scenario'        : 'HP-VV-VW-R',
     'DSS File'               : 'MasterCircuit_Mikilua_baseline2.dss',   #'MasterCircuit_Mikilua_keep.dss'
 }
 # Logger settings
