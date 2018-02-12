@@ -1,20 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4d158a37-460e-4f32-90b0-7874bee38a84" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/HECO_HP-Legacy.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/HECO_HP-VV.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/HECO_Socket.log" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV-VW/ExportLists/ExportMode-byClass.xlsx" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV-VW/ExportLists/ExportMode-byClass.xlsx" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV-VW/pyControllerList/PV Controller.xlsx" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV-VW/pyControllerList/PV Controller.xlsx" />
+    <list default="true" id="a36e9dc1-9053-46dd-a663-a351f8c2cd89" name="N O" comment="" />
+    <list id="4d158a37-460e-4f32-90b0-7874bee38a84" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Export/HECO/HP-VV-VW/PVsystems-Powers.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Export/HECO/HP-VV-VW/PVsystems-VoltagesMagAng.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/HECO_HP-VV-VW.log" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Main.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV-VW/ExportLists/ExportMode-byClass.xlsx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV-VW/ExportLists/ExportMode-byElement.xlsx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV-VW/pyControllerList/PV Controller.xlsx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV-VW/pyControllerList/Storage Controller.xlsx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV-VW/pyControllerList/XFMR Controller.xlsx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV-VW/pyPlotList/GIS overlay.xlsx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV-VW/pyPlotList/Histogram.xlsx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV-VW/pyPlotList/Network layout.xlsx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV-VW/pyPlotList/Sag plot.xlsx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV-VW/pyPlotList/Time series.xlsx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV-VW/pyPlotList/XY plot.xlsx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/dssParallelize.py" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/DSSfiles/Mikilua_Power.dbl" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/DSSfiles/Mikilua_Power.dbl" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV/ExportLists/ExportMode-byClass.xlsx" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV/ExportLists/ExportMode-byClass.xlsx" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV/pyControllerList/PV Controller.xlsx" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV/pyControllerList/PV Controller.xlsx" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VW/ExportLists/ExportMode-byClass.xlsx" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VW/ExportLists/ExportMode-byClass.xlsx" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VW/pyControllerList/PV Controller.xlsx" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VW/pyControllerList/PV Controller.xlsx" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Main.py" afterPath="$PROJECT_DIR$/Main.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/DSSfiles/LinesMikilua_keep_upgrade.dss" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/DSSfiles/LinesMikilua_keep_upgrade.dss" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SolveMode.py" afterPath="$PROJECT_DIR$/SolveMode.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyLogger.py" afterPath="$PROJECT_DIR$/pyLogger.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Export/HECO/HP-VV/PVsystems-Powers.csv" afterPath="$PROJECT_DIR$/Export/HECO/HP-VV/PVsystems-Powers.csv" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/DSSfiles/DSSViewIntercom.Txt" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/DSSfiles/DSSViewIntercom.Txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/DSSfiles/MasterCircuit_Mikilua_baseline2.dss" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/DSSfiles/MasterCircuit_Mikilua_baseline2.dss" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/DSSfiles/Mikilua_Power.DSV" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/DSSfiles/Mikilua_Power.DSV" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dssInstance.py" afterPath="$PROJECT_DIR$/dssInstance.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyControllers/PvController.py" afterPath="$PROJECT_DIR$/pyControllers/PvController.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyControllers/xfmrController.py" afterPath="$PROJECT_DIR$/pyControllers/xfmrController.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <file path="$PROJECT_DIR$/pyControllers/PvController.py" ignored="false" />
+    <file path="$PROJECT_DIR$/dssInstance.py" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,66 +47,67 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Main.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Main.py">
+      <file leaf-file-name="dssSingleRun.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dssSingleRun.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="324">
-              <caret line="26" column="34" lean-forward="false" selection-start-line="26" selection-start-column="34" selection-end-line="26" selection-end-column="34" />
+            <state relative-caret-position="775">
+              <caret line="43" column="19" lean-forward="true" selection-start-line="43" selection-start-column="19" selection-end-line="43" selection-end-column="19" />
               <folding>
-                <element signature="e#1#19#0" expanded="true" />
+                <element signature="e#0#52#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dssInstance.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Plots.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Export/HECO/Plots.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="374">
+              <caret line="20" column="26" lean-forward="false" selection-start-line="20" selection-start-column="26" selection-end-line="20" selection-end-column="26" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MetricCalculation.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Export/HECO/MetricCalculation.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="606">
+              <caret line="28" column="59" lean-forward="false" selection-start-line="28" selection-start-column="59" selection-end-line="28" selection-end-column="59" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="dssInstance.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dssInstance.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="179" column="33" lean-forward="false" selection-start-line="179" selection-start-column="33" selection-end-line="179" selection-end-column="33" />
+            <state relative-caret-position="525">
+              <caret line="189" column="43" lean-forward="false" selection-start-line="189" selection-start-column="43" selection-end-line="189" selection-end-column="43" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SolveMode.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/SolveMode.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1025">
-              <caret line="41" column="22" lean-forward="false" selection-start-line="41" selection-start-column="22" selection-end-line="41" selection-end-column="22" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PvController.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="PvController.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pyControllers/PvController.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="25">
-              <caret line="99" column="46" lean-forward="false" selection-start-line="99" selection-start-column="41" selection-end-line="99" selection-end-column="46" />
+            <state relative-caret-position="297">
+              <caret line="86" column="20" lean-forward="true" selection-start-line="86" selection-start-column="20" selection-end-line="86" selection-end-column="20" />
               <folding>
-                <element signature="e#3322#3798#0" expanded="false" />
-                <element signature="e#3834#5065#0" expanded="false" />
+                <element signature="e#3588#4064#0" expanded="false" />
+                <element signature="e#4100#5331#0" expanded="false" />
+                <element signature="e#5368#7108#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="pyLogger.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pyLogger.py">
+      <file leaf-file-name="PVplot.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Export/HECO/PVplot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="6" lean-forward="false" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="6" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="sources.py" pinned="false" current-in-tab="false">
-        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/bokeh/models/sources.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="595">
-              <caret line="140" column="13" lean-forward="false" selection-start-line="140" selection-start-column="13" selection-end-line="140" selection-end-column="13" />
+            <state relative-caret-position="424">
+              <caret line="33" column="25" lean-forward="false" selection-start-line="33" selection-start-column="25" selection-end-line="33" selection-end-column="25" />
               <folding />
             </state>
           </provider>
@@ -114,6 +136,11 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -134,26 +161,33 @@
         <option value="$PROJECT_DIR$/ResultContainer.py" />
         <option value="$PROJECT_DIR$/NetworkModifier.py" />
         <option value="$PROJECT_DIR$/dssElement.py" />
-        <option value="$PROJECT_DIR$/dssParallelize.py" />
-        <option value="$PROJECT_DIR$/pyControllers/PvController.py" />
         <option value="$PROJECT_DIR$/Export/HECO/MetricCalculation.py" />
-        <option value="$PROJECT_DIR$/dssInstance.py" />
-        <option value="$PROJECT_DIR$/pyControllers/xfmrController.py" />
         <option value="$PROJECT_DIR$/../Distribution_Fitting.py" />
         <option value="$PROJECT_DIR$/../Socket Serever Tester.py" />
         <option value="$PROJECT_DIR$/pyControllers/pyController.py" />
         <option value="$PROJECT_DIR$/../Socket.py" />
         <option value="$PROJECT_DIR$/pyControllers/SocketController.py" />
         <option value="$PROJECT_DIR$/pyLogger.py" />
+        <option value="$PROJECT_DIR$/Export/HECO/MetricCalculation - Copy.py" />
+        <option value="$PROJECT_DIR$/dssParallelize.py" />
         <option value="$PROJECT_DIR$/Main.py" />
+        <option value="$PROJECT_DIR$/pyControllers/xfmrController.py" />
+        <option value="$PROJECT_DIR$/../Time Series Clustering/Distribution_Fitting.py" />
+        <option value="$PROJECT_DIR$/../Time Series Clustering/PlotDistance Matrices.py" />
+        <option value="$PROJECT_DIR$/../Time Series Clustering/tsClustering.py" />
+        <option value="$PROJECT_DIR$/dssSingleRun.py" />
+        <option value="$PROJECT_DIR$/Export/HECO/Plots.py" />
+        <option value="$PROJECT_DIR$/dssInstance.py" />
+        <option value="$PROJECT_DIR$/pyControllers/PvController.py" />
+        <option value="$PROJECT_DIR$/Export/HECO/PVplot.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="142" />
-    <option name="y" value="-9" />
-    <option name="width" value="1938" />
-    <option name="height" value="1048" />
+  <component name="ProjectFrameBounds" extendedState="7">
+    <option name="x" value="-1813" />
+    <option name="y" value="-22" />
+    <option name="width" value="1548" />
+    <option name="height" value="876" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -223,25 +257,8 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Main">
-    <configuration name="Main" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="PyDSS-heco" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Main.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-    </configuration>
-    <configuration name="MetricCalculation" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.PVplot">
+    <configuration name="PVplot" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -253,12 +270,29 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="PyDSS-heco" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Export/HECO/MetricCalculation.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Export/HECO/PVplot.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
     </configuration>
-    <configuration name="SocketController" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="Plots" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Export/HECO" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="PyDSS-heco" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Export/HECO/Plots.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="PvController" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -270,12 +304,12 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="PyDSS-heco" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/pyControllers/SocketController.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/pyControllers/PvController.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
     </configuration>
-    <configuration name="dssParallelize" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="dssParallelizedRun" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -287,23 +321,42 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="PyDSS-heco" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/dssParallelize.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/dssParallelizedRun.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
     </configuration>
-    <list size="4">
-      <item index="0" class="java.lang.String" itemvalue="Python.Main" />
-      <item index="1" class="java.lang.String" itemvalue="Python.dssParallelize" />
-      <item index="2" class="java.lang.String" itemvalue="Python.MetricCalculation" />
-      <item index="3" class="java.lang.String" itemvalue="Python.SocketController" />
+    <configuration name="dssSingleRun" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="PyDSS-heco" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/dssSingleRun.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <list size="5">
+      <item index="0" class="java.lang.String" itemvalue="Python.dssSingleRun" />
+      <item index="1" class="java.lang.String" itemvalue="Python.PVplot" />
+      <item index="2" class="java.lang.String" itemvalue="Python.dssParallelizedRun" />
+      <item index="3" class="java.lang.String" itemvalue="Python.Plots" />
+      <item index="4" class="java.lang.String" itemvalue="Python.PvController" />
     </list>
     <recent_temporary>
-      <list size="4">
-        <item index="0" class="java.lang.String" itemvalue="Python.Main" />
-        <item index="1" class="java.lang.String" itemvalue="Python.SocketController" />
-        <item index="2" class="java.lang.String" itemvalue="Python.MetricCalculation" />
-        <item index="3" class="java.lang.String" itemvalue="Python.dssParallelize" />
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Python.PVplot" />
+        <item index="1" class="java.lang.String" itemvalue="Python.dssSingleRun" />
+        <item index="2" class="java.lang.String" itemvalue="Python.Plots" />
+        <item index="3" class="java.lang.String" itemvalue="Python.PvController" />
+        <item index="4" class="java.lang.String" itemvalue="Python.dssParallelizedRun" />
       </list>
     </recent_temporary>
   </component>
@@ -311,13 +364,25 @@
     <option name="remove_strategy" value="false" />
   </component>
   <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
+    <task id="Default" summary="Default task">
+      <branch name="master" repository="C:\Users\alatif\Desktop\PyDSS-heco" />
       <changelist id="4d158a37-460e-4f32-90b0-7874bee38a84" name="Default" comment="" />
       <created>1512665411969</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1512665411969</updated>
+      <updated>1518314124197</updated>
     </task>
+    <task active="true" id="LOCAL-00001" summary="N O">
+      <branch name="master" repository="C:\Users\alatif\Desktop\PyDSS-heco" original="true" />
+      <branch name="990" repository="C:\Users\alatif\Desktop\PyDSS-heco" />
+      <changelist id="a36e9dc1-9053-46dd-a663-a351f8c2cd89" name="N O" comment="" />
+      <created>1518314123336</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1518314124228</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TodoView" selected-index="3">
@@ -330,19 +395,20 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-1928" y="-8" width="1936" height="1056" extended-state="7" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.10074627" sideWeight="0.8518519" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1652452" sideWeight="0.4452555" order="2" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3291592" sideWeight="0.49573562" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.9693396" sideWeight="0.083243825" order="6" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="1.0" sideWeight="0.45059076" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6098105" sideWeight="0.45059076" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900944" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32887402" sideWeight="0.4978678" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2185501" sideWeight="0.4916388" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32998884" sideWeight="0.4978678" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3881932" sideWeight="0.91675615" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29661018" sideWeight="0.14814815" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.08208955" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32826477" sideWeight="0.4978678" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21733561" sideWeight="0.4916388" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3291592" sideWeight="0.4978678" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3876652" sideWeight="0.91675615" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3868243" sideWeight="0.44970414" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.08198121" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -360,18 +426,18 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.9693396" sideWeight="0.083243825" order="6" side_tool="true" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" x="2064" y="290" width="1736" height="896" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22742476" sideWeight="0.45059076" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.6098105" sideWeight="0.45059076" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900944" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32887402" sideWeight="0.4978678" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32998884" sideWeight="0.4978678" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.10074627" sideWeight="0.8518519" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32826477" sideWeight="0.4978678" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3291592" sideWeight="0.4978678" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1652452" sideWeight="0.4452555" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32983795" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2185501" sideWeight="0.4916388" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21733561" sideWeight="0.4916388" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3881932" sideWeight="0.91675615" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29661018" sideWeight="0.14814815" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.08208955" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3876652" sideWeight="0.91675615" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3868243" sideWeight="0.44970414" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.08198121" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -379,6 +445,13 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/pyControllers/PvController.py</url>
+          <line>156</line>
+          <option name="timeStamp" value="207" />
+        </line-breakpoint>
+      </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
@@ -389,76 +462,11 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="201" />
+      <option name="time" value="208" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/bokeh/core/property/bases.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="186">
-          <caret line="355" column="0" lean-forward="false" selection-start-line="355" selection-start-column="0" selection-end-line="355" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/internals.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="4298" column="0" lean-forward="true" selection-start-line="4298" selection-start-column="0" selection-end-line="4298" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/xlrd/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="93">
-          <caret line="394" column="0" lean-forward="false" selection-start-line="394" selection-start-column="0" selection-end-line="394" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Synergie2DSS/Synergi_Reader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyPlots/Histogram.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="799">
-          <caret line="104" column="16" lean-forward="false" selection-start-line="104" selection-start-column="16" selection-end-line="104" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Synergie2DSS/OpenDSS_Writer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyPlots/SagPlot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-301">
-          <caret line="87" column="0" lean-forward="false" selection-start-line="87" selection-start-column="0" selection-end-line="87" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/bokeh/core/has_props.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3059">
-          <caret line="240" column="0" lean-forward="false" selection-start-line="240" selection-start-column="0" selection-end-line="240" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/bokeh/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1566">
-          <caret line="225" column="0" lean-forward="false" selection-start-line="225" selection-start-column="0" selection-end-line="225" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Test.py" />
-    <entry file="file://$PROJECT_DIR$/../HECO/OpenDSS.py" />
     <entry file="file://$PROJECT_DIR$/pyControllers/LoadController.py" />
     <entry file="file://C:/ProgramData/Anaconda3/Lib/ast.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -496,13 +504,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dssBus.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pyContrReader.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="529">
@@ -514,13 +515,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
           <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ResultContainer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4050">
-          <caret line="139" column="14" lean-forward="false" selection-start-line="139" selection-start-column="14" selection-end-line="139" selection-end-column="14" />
         </state>
       </provider>
     </entry>
@@ -561,20 +555,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Export/HECO/MetricCalculation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="650">
-          <caret line="28" column="59" lean-forward="false" selection-start-line="28" selection-start-column="59" selection-end-line="28" selection-end-column="59" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dssParallelize.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1150">
-          <caret line="50" column="0" lean-forward="false" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pyControllers/StorageController.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="606">
@@ -590,13 +570,7 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../Socket Serever Tester.py" />
-    <entry file="file://$PROJECT_DIR$/../Distribution_Fitting.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2880">
-          <caret line="96" column="2" lean-forward="false" selection-start-line="96" selection-start-column="2" selection-end-line="96" selection-end-column="90" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/../Distribution_Fitting.py" />
     <entry file="file://$PROJECT_DIR$/../PyDSS-Socket/CostBenefitAnalysis.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -604,24 +578,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pyControllers/xfmrController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="17" column="61" lean-forward="false" selection-start-line="17" selection-start-column="40" selection-end-line="17" selection-end-column="61" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/win32com/demos/excelRTDServer.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1082">
           <caret line="264" column="6" lean-forward="false" selection-start-line="264" selection-start-column="6" selection-end-line="264" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/logging/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="33300">
-          <caret line="1334" column="0" lean-forward="false" selection-start-line="1334" selection-start-column="0" selection-end-line="1334" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -646,20 +606,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dssElement.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="595">
-          <caret line="105" column="20" lean-forward="false" selection-start-line="105" selection-start-column="8" selection-end-line="105" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyControllers/pyController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="99">
-          <caret line="8" column="59" lean-forward="false" selection-start-line="8" selection-start-column="59" selection-end-line="8" selection-end-column="59" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/PyPlots/pyPlots.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -667,56 +613,166 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="26" column="34" lean-forward="false" selection-start-line="26" selection-start-column="34" selection-end-line="26" selection-end-column="34" />
-          <folding>
-            <element signature="e#1#19#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/bokeh/models/sources.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="595">
-          <caret line="140" column="13" lean-forward="false" selection-start-line="140" selection-start-column="13" selection-end-line="140" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pyLogger.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="6" lean-forward="false" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyControllers/PvController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="25">
-          <caret line="99" column="46" lean-forward="false" selection-start-line="99" selection-start-column="41" selection-end-line="99" selection-end-column="46" />
-          <folding>
-            <element signature="e#3322#3798#0" expanded="false" />
-            <element signature="e#3834#5065#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/SolveMode.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1025">
+        <state relative-caret-position="1230">
           <caret line="41" column="22" lean-forward="false" selection-start-line="41" selection-start-column="22" selection-end-line="41" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/bokeh/models/sources.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3900">
+          <caret line="140" column="13" lean-forward="false" selection-start-line="140" selection-start-column="13" selection-end-line="140" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dssElement.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="960">
+          <caret line="32" column="20" lean-forward="false" selection-start-line="32" selection-start-column="17" selection-end-line="32" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dssBus.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="690">
+          <caret line="23" column="15" lean-forward="false" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Export/HECO/MetricCalculation - Copy.py" />
+    <entry file="file://$PROJECT_DIR$/dssParallelize.py" />
+    <entry file="file://$PROJECT_DIR$/Main.py" />
+    <entry file="file://$PROJECT_DIR$/pyControllers/xfmrController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="430">
+          <caret line="27" column="12" lean-forward="false" selection-start-line="27" selection-start-column="12" selection-end-line="27" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Time Series Clustering/Distribution_Fitting.py" />
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/indexes/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3075">
+          <caret line="2394" column="0" lean-forward="false" selection-start-line="2394" selection-start-column="0" selection-end-line="2394" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Time Series Clustering/PlotDistance Matrices.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="14" column="0" lean-forward="false" selection-start-line="14" selection-start-column="0" selection-end-line="20" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ResultContainer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="28">
+          <caret line="98" column="0" lean-forward="false" selection-start-line="98" selection-start-column="0" selection-end-line="98" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dssGUI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Time Series Clustering/tsClustering.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="165" column="25" lean-forward="false" selection-start-line="165" selection-start-column="25" selection-end-line="165" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/multiprocessing/pool.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7440">
+          <caret line="259" column="0" lean-forward="false" selection-start-line="259" selection-start-column="0" selection-end-line="259" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dssParallelizedRun.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="56" column="0" lean-forward="false" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/logging/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="25125">
+          <caret line="1007" column="26" lean-forward="false" selection-start-line="1007" selection-start-column="26" selection-end-line="1007" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyControllers/pyController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Export/HECO/MetricCalculation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="606">
+          <caret line="28" column="59" lean-forward="false" selection-start-line="28" selection-start-column="59" selection-end-line="28" selection-end-column="59" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dssInstance.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="179" column="33" lean-forward="false" selection-start-line="179" selection-start-column="33" selection-end-line="179" selection-end-column="33" />
+        <state relative-caret-position="525">
+          <caret line="189" column="43" lean-forward="false" selection-start-line="189" selection-start-column="43" selection-end-line="189" selection-end-column="43" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dssSingleRun.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="775">
+          <caret line="43" column="19" lean-forward="true" selection-start-line="43" selection-start-column="19" selection-end-line="43" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Export/HECO/Plots.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="20" column="26" lean-forward="false" selection-start-line="20" selection-start-column="26" selection-end-line="20" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Export/HECO/PVplot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="424">
+          <caret line="33" column="25" lean-forward="false" selection-start-line="33" selection-start-column="25" selection-end-line="33" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyControllers/PvController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="86" column="20" lean-forward="true" selection-start-line="86" selection-start-column="20" selection-end-line="86" selection-end-column="20" />
+          <folding>
+            <element signature="e#3588#4064#0" expanded="false" />
+            <element signature="e#4100#5331#0" expanded="false" />
+            <element signature="e#5368#7108#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

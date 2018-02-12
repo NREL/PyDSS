@@ -61,7 +61,7 @@ Redirect PVgens-FIT-PE.dss
 
 
 
-!New EnergyMeter.m_Section_0001 line.Section_0001
+New EnergyMeter.m_Section_0001 line.Section_0001
 !Redirect MonitorsGrid2020.dss
 
 
@@ -76,7 +76,7 @@ calcVoltagebases
 !set number=60
 
 !set maxcontroliter=50
-!solve
+solve
 
 
 
@@ -101,4 +101,4 @@ BusCoords BusCoordsMikilua.csv
 !Show losses
 
 !Plot Profile phases=all
-!Plot Circuit
+Plot Circuit

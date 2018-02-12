@@ -4,20 +4,13 @@ import math
 class PvController:
     Time = 0
     TimeChange = False
-    oldPout = 0
+    dPoutOld = 0
     oldQcalc = 0
-
-    # doCurtail = 0
-    # uOld = 1
-    # pOld = 0
-    # PloadOld = 0
-    #
-    # Qvar = 0
-    # Pvar = 0
 
 
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
         self.__ElmObjectList = ElmObjectList
+        #print(PvObj.Bus[0] + ' - ' + PvObj.sBus[0].GetInfo())
         self.P_ControlDict = {
             'None'           : lambda: 0,
             'VW'             : self.VWcontrol,}
@@ -79,6 +72,7 @@ class PvController:
         return dP
 
     def VWcontrol(self):
+        DampCoef = self.__Settings['pDampCoef']
         uMinC = self.__Settings['uMinC']
         uMaxC = self.__Settings['uMaxC']
         Pmin  = self.__Settings['PminVW'] / 100
@@ -96,14 +90,20 @@ class PvController:
         else:
             Pmax = Pmin
 
-        DampCoef = self.__Settings['DampCoef']
+        pctPmpp = self.__ControlledElm.GetValue('pctPmpp')
         if self.__Settings['VWtype'] == 'Rated Power':
-            Pout = Pmax * 100 * DampCoef
+            Pout = Pmax * 100
+            dP = (pctPmpp - Pout) * DampCoef
+            Pout = pctPmpp - dP
         elif self.__Settings['VWtype'] == 'Available Power':
-            Pout = Pmax * PpvoutPU * DampCoef * 100
+            Pout = Pmax * PpvoutPU * 100
+            dP = (pctPmpp - Pout) * DampCoef
+            Pout = pctPmpp - dP
         self.__ControlledElm.SetParameter('pctPmpp', Pout)
-        Error = abs(Pout - self.oldPout)
-        self.oldPout = Pout
+        PFout = -math.cos(math.atan(self.oldQcalc / Pmax))
+        self.__ControlledElm.SetParameter('pf', str(PFout))
+        Error = abs(dP - self.dPoutOld)
+        self.oldPout = dP
         return Error
 
     def CPFcontrol(self):
@@ -188,18 +188,20 @@ class PvController:
         if Priority == 'Var':
             Plim = (1 - Qcalc**2)**0.5
             if Pcalc > Plim and self.TimeChange is False:
-                self.Pmppt =Plim / Pcalc * Ppu * 100
+                self.Pmppt = Plim / Pcalc * Ppu * 100
                 Pcalc = Plim
             else :
                 if self.TimeChange:
                     self.Pmppt = 100
             self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
 
+        Qcalc = self.__Settings['qDampCoef'] * Qcalc
         if Pcalc > 0:
             PFout = -math.cos(math.atan(Qcalc / Pcalc))
         else:
             PFout = 1
         self.__ControlledElm.SetParameter('pf', str(PFout))
+
 
         Error = abs(Qcalc - self.oldQcalc)
         self.oldQcalc = Qcalc

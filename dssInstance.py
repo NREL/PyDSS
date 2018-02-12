@@ -131,7 +131,7 @@ class OpenDSS:
         NewError = 0
         for Key, Controller in self.__pyControls.items():
             NewError += Controller.Update_Q(Time, UpdateResults)
-        if abs(NewError) < 0.01:
+        if abs(NewError) < 0.1:
             return True, NewError
         return False, NewError
 
@@ -139,7 +139,7 @@ class OpenDSS:
         NewError = 0
         for Key, Controller in self.__pyControls.items():
             NewError += Controller.Update_P(Time, UpdateResults)
-        if abs(NewError) < 0.01:
+        if abs(NewError) < 1:
             return True, NewError
         return False, NewError
 
@@ -177,6 +177,7 @@ class OpenDSS:
         Steps = int(TotalDays * 24 * 60 / self.__SimulationOptions['Step resolution (min)'])
         self.__Logger.info('Running simulation for ' + str(Steps) + ' time steps')
         for i in range(Steps):
+            print('Running simulation @ time step: ', i)
             self.__dssSolver.IncStep()
             for j in range(self.__SimulationOptions['Max Control Iterations']):
                 has_Q_Converged, Error = self.__UpdateControllers_Q(i, UpdateResults = False)
@@ -187,7 +188,7 @@ class OpenDSS:
                     break
                 elif not has_Q_Converged:
                     self.__dssSolver.reSolve()
-            self.__dssSolver.reSolve()
+            #self.__dssSolver.reSolve()
             for j in range(self.__SimulationOptions['Max Control Iterations']):
                 has_P_Converged, Error = self.__UpdateControllers_P(i, UpdateResults = False)
                 self.__Logger.debug('P convergance error ' + str(Error))
@@ -197,12 +198,12 @@ class OpenDSS:
                     break
                 elif not has_P_Converged:
                     self.__dssSolver.reSolve()
-            self.__dssSolver.reSolve()
-            self.__UpdatePlots()
+            #self.__dssSolver.reSolve()
 
+            self.__UpdatePlots()
             if self.__ResultOptions and self.__ResultOptions['Log Results']:
                 self.ResultContainer.UpdateResults()
-
+            #self.__dssSolver.IncStep()
 
 
         if self.__ResultOptions and self.__ResultOptions['Log Results']:
