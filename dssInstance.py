@@ -223,6 +223,13 @@ class OpenDSS:
         return
 
     def __del__(self):
+
+        x = list(self.__Logger.handlers)
+        for i in x:
+            self.__Logger.removeHandler(i)
+            i.flush()
+            i.close()
+
         if self.__DelFlag == 1:
             self.__Logger.info('An intstance of OpenDSS (' + str(self) +') has been deleted.')
         else:

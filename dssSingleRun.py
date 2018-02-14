@@ -22,20 +22,20 @@ PO = {
 }
 # Simulation Settings
 SS = {
-    'Start Day'              : 158,
-    'End Day'                : 159,
+    'Start Day'              : 157,
+    'End Day'                : 164,
     'Step resolution (min)'  : 15,
     'Max Control Iterations' : 10,
     'Simulation Type'        : 'Daily',
     'Active Project'         : 'HECO',
-    'Active Scenario'        : 'HP-VV',
+    'Active Scenario'        : 'HP-VV-VW-R',
     'DSS File'               : 'MasterCircuit_Mikilua_baseline2.dss',   #'MasterCircuit_Mikilua_keep.dss'
 }
 # Logger settings
 LO =  {
     'Logging Level'          : logging.DEBUG,
     'Log to external file'   : True,
-    'Display on screen'      : False,
+    'Display on screen'      : True,
     'Clear old log files'    : True,
 }
 

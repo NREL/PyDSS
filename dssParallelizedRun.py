@@ -23,7 +23,7 @@ def pyDSSinstance(Scenario):
     # Simulation Settings
     SS = {
         'Start Day'              : 157,
-        'End Day'                : 158,
+        'End Day'                : 164,
         'Step resolution (min)'  : 15,
         'Max Control Iterations' : 10,
         'Simulation Type'        : 'Daily',
@@ -51,7 +51,7 @@ def RunBokehServer():
     return
 
 if __name__ == '__main__':
-    Scenarios = ['HP-VV-VW-A', 'HP-VV-VW-R']
+    Scenarios = ['HP-Legacy', 'HP-VW']
     RunBokehServer()
     pool = Pool(processes=len(Scenarios))
     pool.map(pyDSSinstance, Scenarios)
