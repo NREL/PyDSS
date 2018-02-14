@@ -6,6 +6,7 @@ class PvController:
     TimeChange = False
     dPoutOld = 0
     oldQcalc = 0
+    dQOld = 0
 
 
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
@@ -46,6 +47,7 @@ class PvController:
         self.P_update = self.P_ControlDict[Settings['Pcontrol']]
         self.Q_update = self.Q_ControlDict[Settings['Qcontrol']]
 
+        self.QlimPU = self.__Qrated / self.__Srated if self.__Qrated < self.__Srated else 1
         return
 
     def Update_Q(self, Time, Update):
@@ -160,18 +162,17 @@ class PvController:
         uDbMin = self.__Settings['uDbMin']
         uDbMax = self.__Settings['uDbMax']
         Priority = self.__Settings['Priority']
-        QlimPU = self.__Qrated / self.__Srated if self.__Qrated < self.__Srated else 1
 
         uIn = self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[0]
 
-        m1 = QlimPU / (uMin - uDbMin)
-        m2 = QlimPU / (uDbMax - uMax)
-        c1 = QlimPU * uDbMin / (uDbMin - uMin)
-        c2 = QlimPU * uDbMax / (uMax - uDbMax)
+        m1 = self.QlimPU / (uMin - uDbMin)
+        m2 = self.QlimPU / (uDbMax - uMax)
+        c1 = self.QlimPU * uDbMin / (uDbMin - uMin)
+        c2 = self.QlimPU * uDbMax / (uMax - uDbMax)
 
         Qcalc = 0
         if uIn <= uMin:
-            Qcalc = QlimPU
+            Qcalc = self.QlimPU
         elif uIn <= uDbMin and uIn > uMin:
             Qcalc = uIn * m1 + c1
         elif uIn <= uDbMax and uIn > uDbMin:
@@ -179,23 +180,27 @@ class PvController:
         elif uIn <= uMax and uIn > uDbMax:
             Qcalc = uIn * m2 + c2
         elif uIn >= uMax:
-            Qcalc = -QlimPU
+            Qcalc = -self.QlimPU
 
         Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))
         Pcalc = Ppv / self.__Srated
-        Ppu = Ppv / self.__Prated
 
+        Class, Name = self.__ControlledElm.GetInfo()
+        # if Name.lower()== 'oh_261584_2_4':
+        #     print(QlimPU)
         if Priority == 'Var':
-            Plim = (1 - Qcalc**2)**0.5
+            Plim = (1 - Qcalc ** 2) ** 0.5
             if Pcalc > Plim and self.TimeChange is False:
-                self.Pmppt = Plim / Pcalc * Ppu * 100
+                self.Pmppt = Plim / self.__Prated * self.__Srated * 100
                 Pcalc = Plim
-            else :
+            else:
                 if self.TimeChange:
                     self.Pmppt = 100
             self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
 
-        Qcalc = self.__Settings['qDampCoef'] * Qcalc
+        dQ = (Qcalc - self.oldQcalc)
+        Qcalc = self.oldQcalc + dQ * self.__Settings['qDampCoef']
+        # Qcalc = self.__Settings['qDampCoef'] * Qcalc
         if Pcalc > 0:
             PFout = -math.cos(math.atan(Qcalc / Pcalc))
         else:
@@ -203,7 +208,8 @@ class PvController:
         self.__ControlledElm.SetParameter('pf', str(PFout))
 
 
-        Error = abs(Qcalc - self.oldQcalc)
+        Error = abs(dQ - self.dQOld)
         self.oldQcalc = Qcalc
-        #print(Error)
+        self.dQOld = dQ
+        # print(Error)
         return Error

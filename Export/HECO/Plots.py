@@ -4,7 +4,7 @@ import numpy as np
 import os
 
 FileList = ['PVsystems-VoltagesMagAng.csv', 'PVsystems-Powers.csv']
-FolderList = ['HP-VV-VW-R']
+FolderList = ['HP-VV']
 Root = os.getcwd()
 Data = {}
 for i, Folder in enumerate(FolderList):

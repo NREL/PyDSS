@@ -14,7 +14,7 @@ RO = {
 # Plot Settings
 PO = {
     'Network layout' : False,
-    'Time series'    : False,
+    'Time series'    : True,
     'XY plot'        : False,
     'Sag plot'       : False,
     'Histogram'      : False,
@@ -22,13 +22,13 @@ PO = {
 }
 # Simulation Settings
 SS = {
-    'Start Day'              : 157,
-    'End Day'                : 158,
+    'Start Day'              : 158,
+    'End Day'                : 159,
     'Step resolution (min)'  : 15,
     'Max Control Iterations' : 10,
     'Simulation Type'        : 'Daily',
     'Active Project'         : 'HECO',
-    'Active Scenario'        : 'HP-VV-VW-R',
+    'Active Scenario'        : 'HP-VV',
     'DSS File'               : 'MasterCircuit_Mikilua_baseline2.dss',   #'MasterCircuit_Mikilua_keep.dss'
 }
 # Logger settings
