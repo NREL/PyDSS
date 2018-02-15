@@ -163,9 +163,17 @@ class OpenDSS:
             for ElmName in self.__dssObjectsByClass[ClassType].keys():
                 self.__dssObjects[ElmName] = self.__dssObjectsByClass[ClassType][ElmName]
 
-        self.__dssObjects[self.__dssCircuit.Name()] = dssCircuit(self.__dssInstance)
-        self.__dssObjectsByClass['Circuit'] = {self.__dssCircuit.Name() : self.__dssObjects[self.__dssCircuit.Name()]}
+        for ObjName in self.__dssObjects.keys():
+            Class = ObjName.split('.')[0] + 's'
+            if Class not in self.__dssObjectsByClass:
+                self.__dssObjectsByClass[Class] = {}
+            if  ObjName not in self.__dssObjectsByClass[Class]:
+                self.__dssObjectsByClass[Class][ObjName] = self.__dssObjects[ObjName]
 
+        self.__dssObjects['Circuit.' + self.__dssCircuit.Name()] = dssCircuit(self.__dssInstance)
+        self.__dssObjectsByClass['Circuits'] = {
+            'Circuit.' + self.__dssCircuit.Name() : self.__dssObjects['Circuit.' + self.__dssCircuit.Name()]
+        }
         return
 
     def __GetRelaventObjectDict(self, key):

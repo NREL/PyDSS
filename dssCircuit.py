@@ -47,6 +47,13 @@ class dssCircuit:
         else:
             return False
 
+    def GetValue(self,VarName):
+        if VarName in self.__Variables:
+            VarValue = self.GetVariable(VarName)
+        else:
+            VarValue = -1
+        return VarValue
+
     def GetVariable(self,VarName):
         if VarName in self.__Variables:
             try:
@@ -55,10 +62,6 @@ class dssCircuit:
                 print ('Unexpected error')
                 return None
         else:
-            print (VarName + ' is an invalid variable name for element ' + self.__Class + '.' + self.__Name)
+            print (VarName + ' is an invalid variable name for element ' + self.__Name)
             return None
-
-    def SetVariable(self, Param, Value):
-        self.__dssInstance.utils.run_command(self.__Class + '.' + self.__Name + '.' + Param + ' = ' + str(Value))
-        return self.GetVariable(Param)
 
