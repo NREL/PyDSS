@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a36e9dc1-9053-46dd-a663-a351f8c2cd89" name="N O" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Export/HECO/PVplot.py" afterPath="$PROJECT_DIR$/Export/HECO/PVplot.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ResultContainer.py" afterPath="$PROJECT_DIR$/ResultContainer.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dssInstance.py" afterPath="$PROJECT_DIR$/dssInstance.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dssParallelizedRun.py" afterPath="$PROJECT_DIR$/dssParallelizedRun.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dssSingleRun.py" afterPath="$PROJECT_DIR$/dssSingleRun.py" />
     </list>
     <list id="4d158a37-460e-4f32-90b0-7874bee38a84" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,7 +18,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="dssSingleRun.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="dssSingleRun.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dssSingleRun.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="625">
@@ -33,31 +30,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ResultContainer.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ResultContainer.py">
+      <file leaf-file-name="dssInstance.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/dssInstance.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="749">
-              <caret line="142" column="14" lean-forward="true" selection-start-line="142" selection-start-column="14" selection-end-line="142" selection-end-column="14" />
-              <folding />
+            <state relative-caret-position="342">
+              <caret line="173" column="37" lean-forward="true" selection-start-line="173" selection-start-column="37" selection-end-line="173" selection-end-column="37" />
+              <folding>
+                <element signature="e#0#50#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dssParallelizedRun.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dssParallelizedRun.py">
+      <file leaf-file-name="dssCircuit.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dssCircuit.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="274">
-              <caret line="28" column="33" lean-forward="false" selection-start-line="28" selection-start-column="33" selection-end-line="28" selection-end-column="33" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SolveMode.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/SolveMode.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="25">
-              <caret line="41" column="22" lean-forward="false" selection-start-line="41" selection-start-column="22" selection-end-line="41" selection-end-column="22" />
+            <state relative-caret-position="174">
+              <caret line="49" column="19" lean-forward="false" selection-start-line="49" selection-start-column="8" selection-end-line="49" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -66,8 +55,8 @@
       <file leaf-file-name="PvController.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pyControllers/PvController.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2250">
-              <caret line="109" column="23" lean-forward="false" selection-start-line="109" selection-start-column="23" selection-end-line="109" selection-end-column="23" />
+            <state relative-caret-position="242">
+              <caret line="76" column="0" lean-forward="false" selection-start-line="76" selection-start-column="0" selection-end-line="76" selection-end-column="0" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
                 <element signature="e#1863#2156#0" expanded="false" />
@@ -75,16 +64,6 @@
                 <element signature="e#3748#4224#0" expanded="false" />
                 <element signature="e#4260#5491#0" expanded="false" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="dssInstance.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dssInstance.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="139" column="57" lean-forward="true" selection-start-line="139" selection-start-column="57" selection-end-line="139" selection-end-column="57" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -175,17 +154,18 @@
         <option value="$PROJECT_DIR$/Export/HECO/Plots.py" />
         <option value="$PROJECT_DIR$/SolveMode.py" />
         <option value="$PROJECT_DIR$/dssParallelizedRun.py" />
-        <option value="$PROJECT_DIR$/dssInstance.py" />
-        <option value="$PROJECT_DIR$/ResultContainer.py" />
         <option value="$PROJECT_DIR$/dssSingleRun.py" />
+        <option value="$PROJECT_DIR$/ResultContainer.py" />
+        <option value="$PROJECT_DIR$/dssCircuit.py" />
+        <option value="$PROJECT_DIR$/dssInstance.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-1928" />
+    <option name="x" value="-2048" />
     <option name="y" value="-8" />
-    <option name="width" value="1936" />
-    <option name="height" value="1056" />
+    <option name="width" value="1242" />
+    <option name="height" value="704" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -435,13 +415,9 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/pyControllers/PvController.py</url>
-          <option name="timeStamp" value="215" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/pyControllers/PvController.py</url>
-          <line>76</line>
-          <option name="timeStamp" value="217" />
+          <url>file://$PROJECT_DIR$/dssInstance.py</url>
+          <line>168</line>
+          <option name="timeStamp" value="219" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
@@ -454,18 +430,11 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="218" />
+      <option name="time" value="220" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/PyPlots/Topology.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5850">
-          <caret line="203" column="10" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="216" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/opendssdirect/utils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="362">
@@ -714,20 +683,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pyControllers/PvController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2250">
-          <caret line="109" column="23" lean-forward="false" selection-start-line="109" selection-start-column="23" selection-end-line="109" selection-end-column="23" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-            <element signature="e#1863#2156#0" expanded="false" />
-            <element signature="e#2204#2365#0" expanded="false" />
-            <element signature="e#3748#4224#0" expanded="false" />
-            <element signature="e#4260#5491#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Export/HECO/Plots.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="200">
@@ -744,14 +699,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dssInstance.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="139" column="57" lean-forward="true" selection-start-line="139" selection-start-column="57" selection-end-line="139" selection-end-column="57" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dssParallelizedRun.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="274">
@@ -762,8 +709,32 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ResultContainer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="749">
-          <caret line="142" column="14" lean-forward="true" selection-start-line="142" selection-start-column="14" selection-end-line="142" selection-end-column="14" />
+        <state relative-caret-position="649">
+          <caret line="140" column="44" lean-forward="false" selection-start-line="140" selection-start-column="44" selection-end-line="140" selection-end-column="44" />
+          <folding>
+            <element signature="e#0#46#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyControllers/PvController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="242">
+          <caret line="76" column="0" lean-forward="false" selection-start-line="76" selection-start-column="0" selection-end-line="76" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+            <element signature="e#1863#2156#0" expanded="false" />
+            <element signature="e#2204#2365#0" expanded="false" />
+            <element signature="e#3748#4224#0" expanded="false" />
+            <element signature="e#4260#5491#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dssCircuit.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="174">
+          <caret line="49" column="19" lean-forward="false" selection-start-line="49" selection-start-column="8" selection-end-line="49" selection-end-column="19" />
           <folding />
         </state>
       </provider>
@@ -774,6 +745,16 @@
           <caret line="37" column="28" lean-forward="false" selection-start-line="37" selection-start-column="28" selection-end-line="37" selection-end-column="28" />
           <folding>
             <element signature="e#0#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dssInstance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="173" column="37" lean-forward="true" selection-start-line="173" selection-start-column="37" selection-end-line="173" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#50#0" expanded="true" />
           </folding>
         </state>
       </provider>

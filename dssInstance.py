@@ -3,6 +3,7 @@ from pyContrReader import pyContrReader as pcr
 from pyPlotReader import pyPlotReader as ppr
 from opendssdirect.utils import run_command
 from dssElement import dssElement
+from dssCircuit import dssCircuit
 import opendssdirect as dss
 from dssBus import dssBus
 import pandas as pd
@@ -64,6 +65,7 @@ class OpenDSS:
 
         self.__ModifyNetwork()
         self.__UpdateDictionary()
+
         self.__CreateBusObjects()
         self.__dssSolver.reSolve()
 
@@ -160,6 +162,10 @@ class OpenDSS:
         for ClassType in self.__dssObjectsByClass.keys():
             for ElmName in self.__dssObjectsByClass[ClassType].keys():
                 self.__dssObjects[ElmName] = self.__dssObjectsByClass[ClassType][ElmName]
+
+        self.__dssObjects[self.__dssCircuit.Name()] = dssCircuit(self.__dssInstance)
+        self.__dssObjectsByClass['Circuit'] = {self.__dssCircuit.Name() : self.__dssObjects[self.__dssCircuit.Name()]}
+
         return
 
     def __GetRelaventObjectDict(self, key):
