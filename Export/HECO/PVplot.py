@@ -4,7 +4,7 @@ import numpy as np
 import os
 
 FileList = ['PVsystems-VoltagesMagAng.csv', 'PVsystems-Powers.csv']
-Folder = 'HP-VV'
+Folder = 'HP-VV-VW-R'
 Root = os.getcwd()
 
 Voltages = pd.read_csv(os.path.join(Root,Folder,FileList[0]), dtype=float)
@@ -31,7 +31,7 @@ for PVname in PVlist:
         else:
             U = np.divide(U, 7200)
 
-        if  max(U) > 1.05:
+        if  max(U) > 1.07 and max(abs(Q))> 0.1:
             fig, axs = plt.subplots(3,1)
             plt.title(PVname)
             axs[0].plot(U)

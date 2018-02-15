@@ -131,7 +131,7 @@ class OpenDSS:
         NewError = 0
         for Key, Controller in self.__pyControls.items():
             NewError += Controller.Update_Q(Time, UpdateResults)
-        if abs(NewError) < 0.1:
+        if abs(NewError) < self.__SimulationOptions['Error tolerance']:
             return True, NewError
         return False, NewError
 
@@ -139,7 +139,7 @@ class OpenDSS:
         NewError = 0
         for Key, Controller in self.__pyControls.items():
             NewError += Controller.Update_P(Time, UpdateResults)
-        if abs(NewError) < 1:
+        if abs(NewError) < self.__SimulationOptions['Error tolerance']:
             return True, NewError
         return False, NewError
 

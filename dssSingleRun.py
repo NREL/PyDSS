@@ -23,9 +23,10 @@ PO = {
 # Simulation Settings
 SS = {
     'Start Day'              : 157,
-    'End Day'                : 164,
+    'End Day'                : 158,
     'Step resolution (min)'  : 15,
     'Max Control Iterations' : 10,
+    'Error tolerance'        : 1,
     'Simulation Type'        : 'Daily',
     'Active Project'         : 'HECO',
     'Active Scenario'        : 'HP-VV-VW-R',

@@ -26,6 +26,7 @@ def pyDSSinstance(Scenario):
         'End Day'                : 164,
         'Step resolution (min)'  : 15,
         'Max Control Iterations' : 10,
+        'Error tolerance'        : 1,
         'Simulation Type'        : 'Daily',
         'Active Project'         : 'HECO',
         'Active Scenario'        : Scenario,
