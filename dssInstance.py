@@ -86,11 +86,11 @@ class OpenDSS:
 
     def __ModifyNetwork(self):
         from NetworkModifier import Modifier
-        self.__Modifier = Modifier(dss, run_command, self.__SimulationOptions)
-
-        self.__Modifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
-                                     True, self.__dssObjects)
-        #self.__Modifier.Edit_Elements('regcontrol', 'enabled' ,'False')
+        # self.__Modifier = Modifier(dss, run_command, self.__SimulationOptions)
+        #
+        # self.__Modifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
+        #                              True, self.__dssObjects)
+        # #self.__Modifier.Edit_Elements('regcontrol', 'enabled' ,'False')
         #self.__Modifier.Edit_Elements('Load', 'enabled', 'False')
         return
 

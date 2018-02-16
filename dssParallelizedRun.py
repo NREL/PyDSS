@@ -36,7 +36,7 @@ def pyDSSinstance(Scenario):
     LO =  {
         'Logging Level'          : logging.DEBUG,
         'Log to external file'   : True,
-        'Display on screen'      : False,
+        'Display on screen'      : True,
         'Clear old log files'    : False,
     }
 
@@ -52,7 +52,7 @@ def RunBokehServer():
     return
 
 if __name__ == '__main__':
-    Scenarios = ['HP-Legacy', 'HP-VW']
+    Scenarios = ['HP-VV', 'HP-VW']
     RunBokehServer()
     pool = Pool(processes=len(Scenarios))
     pool.map(pyDSSinstance, Scenarios)

@@ -151,7 +151,7 @@ class Plot:
     def GetResourceData(self):
         ResourceXYbyClass = {}
         for ObjectClass in self.__dssObjectsByClass.keys():
-            if self.__dssObjectsByClass[ObjectClass]:
+            if self.__dssObjectsByClass[ObjectClass] and ObjectClass != 'Circuits':
                 ResourceXYbyClass[ObjectClass] = [[], [], [], [], []]
                 for dssObject in self.__dssObjectsByClass[ObjectClass]:
                     Object = self.__dssObjectsByClass[ObjectClass][dssObject]

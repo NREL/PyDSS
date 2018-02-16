@@ -1,0 +1,64 @@
+! Master File for Circuit : C591
+
+Clear
+
+New Circuit.C591 bus1=SourceBus BasekV=12.000000 pu=1.025  r1=0.0202  x1=0.4212  r0=0.0007  x0=1.4560 ! Default source impedance, check in SynerGEE if source impedance is defined and change 
+
+Redirect linecodesC591.dss
+
+Redirect ESSC591.dss
+
+Redirect LinesC591.dss
+
+! Redirect SwitchesC591.dss
+
+Redirect TransformersC591.dss
+
+New loadshape.m3loadmult npts= 526981 mInterval=1 mult = (file=./load-PV-shapes/C591loadmult_Jan01toDec31.csv )
+New loadshape.m3pvmult npts= 526981 mInterval=1 mult = (file=./load-PV-shapes/C591PVgenmult_Jan01toDec31.csv )
+
+
+Redirect LoadsC591_unbalanced.dss
+
+Redirect FusesC591.dss
+
+Redirect RelaysC591.dss
+
+Redirect PVC591_largecustomer.dss
+
+Redirect PVC591_NEM.dss
+
+! Redirect CapacitorsC591.dss
+
+Redirect MeterC591.dss
+
+
+
+
+
+
+set Voltagebases=[12.000000,0.48] 
+calcVoltagebases
+
+
+
+BusCoords BusCoordsC591.csv 
+
+!Export Voltages
+!Export Powers
+!Show voltages ln node
+!Show voltages ln elem
+!Show powers kva elem
+!Show Currents Elem
+!Show losse
+!Plot Profile
+Plot Circuit
+
+! Plot type=monitor object=VI channels=[1 3 5]
+! Plot type=monitor object=PQ channels=[1 3 5]
+! Plot type=monitor object=Vars channels=[1]
+! Plot type=monitor object=TotalLoad1 channels=[1 3 5]
+! export mon VI
+! export mon PQ
+! export mon vars
+! export mon TotalLoad1

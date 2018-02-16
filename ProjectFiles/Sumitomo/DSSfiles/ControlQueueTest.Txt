@@ -1,0 +1,1 @@
+Starting Capacitor Step States=You must create a new circuit object first: "new circuit.mycktname" to execute this command.

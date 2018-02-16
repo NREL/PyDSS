@@ -21,9 +21,8 @@ class xfmrController:
         if self.__RPFlocking and self.P_old < 0:
             self.__Locked = self.__EnableLock()
         elif self.__RPFlocking and self.P_old > 0:
-            self.__Locked = self.__EnableLock()
+            self.__Locked = self.__DisableLock()
         else:
-            self.__Locked = self.__EnableLock()
             pass
         self.P_old = P_new
         return 0

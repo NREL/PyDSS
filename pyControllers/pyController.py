@@ -23,11 +23,5 @@ def Create(ElmName, ControllerType, Settings, ElmObjectList, dssInstance, dssSol
         else:
             print ('The object dictionary does not contain ' + ElmName)
             return -1
-    # try:
-    #     print('sdfsdfasdfasdf')
     ObjectController = ControllerTypes[ControllerType](relObject, Settings, dssInstance, ElmObjectList, dssSolver)
-
-    # except:
-    #     print ('The controller dictionary does not contain ' + ControllerType)
-    #     return -1
     return ObjectController

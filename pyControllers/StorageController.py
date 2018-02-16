@@ -106,7 +106,7 @@ class StorageController:
             Sin = self.__ElmObjectList[self.__Settings['PowerMeaElem']].GetVariable('Powers')
             Pin = sum(Sin[0:5:2])
         #Pbatt = -float(self.__ControlledElm.GetVariable('Powers')[0])*3 + IdlingkW
-        # #Does not cork as well as KW parameter for come reason
+        #Does not work as well as KW parameter for come reason
         Pbatt = float(self.__ControlledElm.GetParameter2('kw'))
         if Pin > Pub:
             dP = Pin - Pub

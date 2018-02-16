@@ -1,0 +1,295 @@
+2018-02-16 12:54:12,581 - INFO - dssInstance - An instance of OpenDSS version 0.2.9 has ben created.
+2018-02-16 12:54:13,081 - INFO - SolveMode - Solver set to Daily mode.
+2018-02-16 12:54:18,253 - INFO - dssInstance - Created pyController -> Controller.Transformer.subxfrmr
+2018-02-16 12:54:18,253 - INFO - dssInstance - Created pyController -> Controller.RegControl.subxfrmr
+2018-02-16 12:54:29,093 - INFO - dssInstance - Running simulation for 96 time steps
+2018-02-16 12:54:29,171 - INFO - SolveMode - Simululation time [h] - 3768.25
+2018-02-16 12:54:29,171 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:29,171 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:29,296 - INFO - SolveMode - Simululation time [h] - 3768.5
+2018-02-16 12:54:29,296 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:29,296 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:29,421 - INFO - SolveMode - Simululation time [h] - 3768.75
+2018-02-16 12:54:29,421 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:29,421 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:29,546 - INFO - SolveMode - Simululation time [h] - 3769.0
+2018-02-16 12:54:29,546 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:29,546 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:29,671 - INFO - SolveMode - Simululation time [h] - 3769.25
+2018-02-16 12:54:29,671 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:29,671 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:29,780 - INFO - SolveMode - Simululation time [h] - 3769.5
+2018-02-16 12:54:29,796 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:29,796 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:29,905 - INFO - SolveMode - Simululation time [h] - 3769.75
+2018-02-16 12:54:29,905 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:29,905 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:30,030 - INFO - SolveMode - Simululation time [h] - 3770.0
+2018-02-16 12:54:30,030 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:30,030 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:30,171 - INFO - SolveMode - Simululation time [h] - 3770.25
+2018-02-16 12:54:30,171 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:30,171 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:30,312 - INFO - SolveMode - Simululation time [h] - 3770.5
+2018-02-16 12:54:30,312 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:30,312 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:30,452 - INFO - SolveMode - Simululation time [h] - 3770.75
+2018-02-16 12:54:30,452 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:30,452 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:30,593 - INFO - SolveMode - Simululation time [h] - 3771.0
+2018-02-16 12:54:30,593 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:30,593 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:30,733 - INFO - SolveMode - Simululation time [h] - 3771.25
+2018-02-16 12:54:30,733 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:30,733 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:30,874 - INFO - SolveMode - Simululation time [h] - 3771.5
+2018-02-16 12:54:30,874 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:30,874 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:31,015 - INFO - SolveMode - Simululation time [h] - 3771.75
+2018-02-16 12:54:31,015 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:31,015 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:31,155 - INFO - SolveMode - Simululation time [h] - 3772.0
+2018-02-16 12:54:31,155 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:31,155 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:31,296 - INFO - SolveMode - Simululation time [h] - 3772.25
+2018-02-16 12:54:31,296 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:31,296 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:31,437 - INFO - SolveMode - Simululation time [h] - 3772.5
+2018-02-16 12:54:31,452 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:31,452 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:31,577 - INFO - SolveMode - Simululation time [h] - 3772.75
+2018-02-16 12:54:31,593 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:31,593 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:31,733 - INFO - SolveMode - Simululation time [h] - 3773.0
+2018-02-16 12:54:31,733 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:31,733 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:31,874 - INFO - SolveMode - Simululation time [h] - 3773.25
+2018-02-16 12:54:31,874 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:31,874 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:32,015 - INFO - SolveMode - Simululation time [h] - 3773.5
+2018-02-16 12:54:32,015 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:32,015 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:32,140 - INFO - SolveMode - Simululation time [h] - 3773.75
+2018-02-16 12:54:32,140 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:32,140 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:32,280 - INFO - SolveMode - Simululation time [h] - 3774.0
+2018-02-16 12:54:32,296 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:32,296 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:32,421 - INFO - SolveMode - Simululation time [h] - 3774.25
+2018-02-16 12:54:32,421 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:32,421 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:32,562 - INFO - SolveMode - Simululation time [h] - 3774.5
+2018-02-16 12:54:32,562 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:32,562 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:32,718 - INFO - SolveMode - Simululation time [h] - 3774.75
+2018-02-16 12:54:32,718 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:32,718 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:32,843 - INFO - SolveMode - Simululation time [h] - 3775.0
+2018-02-16 12:54:32,858 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:32,858 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:32,999 - INFO - SolveMode - Simululation time [h] - 3775.25
+2018-02-16 12:54:32,999 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:32,999 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:33,124 - INFO - SolveMode - Simululation time [h] - 3775.5
+2018-02-16 12:54:33,124 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:33,124 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:33,265 - INFO - SolveMode - Simululation time [h] - 3775.75
+2018-02-16 12:54:33,265 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:33,265 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:33,390 - INFO - SolveMode - Simululation time [h] - 3776.0
+2018-02-16 12:54:33,405 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:33,405 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:33,546 - INFO - SolveMode - Simululation time [h] - 3776.25
+2018-02-16 12:54:33,546 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:33,546 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:33,718 - INFO - SolveMode - Simululation time [h] - 3776.5
+2018-02-16 12:54:33,718 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:33,718 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:33,905 - INFO - SolveMode - Simululation time [h] - 3776.75
+2018-02-16 12:54:33,905 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:33,905 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:34,015 - INFO - SolveMode - Simululation time [h] - 3777.0
+2018-02-16 12:54:34,015 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:34,015 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:34,077 - INFO - SolveMode - Simululation time [h] - 3777.25
+2018-02-16 12:54:34,077 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:34,077 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:34,140 - INFO - SolveMode - Simululation time [h] - 3777.5
+2018-02-16 12:54:34,140 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:34,140 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:34,202 - INFO - SolveMode - Simululation time [h] - 3777.75
+2018-02-16 12:54:34,202 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:34,202 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:34,265 - INFO - SolveMode - Simululation time [h] - 3778.0
+2018-02-16 12:54:34,265 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:34,265 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:34,327 - INFO - SolveMode - Simululation time [h] - 3778.25
+2018-02-16 12:54:34,327 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:34,343 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:34,390 - INFO - SolveMode - Simululation time [h] - 3778.5
+2018-02-16 12:54:34,390 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:34,405 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:34,452 - INFO - SolveMode - Simululation time [h] - 3778.75
+2018-02-16 12:54:34,468 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:34,468 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:34,515 - INFO - SolveMode - Simululation time [h] - 3779.0
+2018-02-16 12:54:34,530 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:34,530 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:34,624 - INFO - SolveMode - Simululation time [h] - 3779.25
+2018-02-16 12:54:34,624 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:34,624 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:34,702 - INFO - SolveMode - Simululation time [h] - 3779.5
+2018-02-16 12:54:34,702 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:34,702 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:34,765 - INFO - SolveMode - Simululation time [h] - 3779.75
+2018-02-16 12:54:34,765 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:34,765 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:34,827 - INFO - SolveMode - Simululation time [h] - 3780.0
+2018-02-16 12:54:34,827 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:34,843 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:34,905 - INFO - SolveMode - Simululation time [h] - 3780.25
+2018-02-16 12:54:34,921 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:34,921 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:34,983 - INFO - SolveMode - Simululation time [h] - 3780.5
+2018-02-16 12:54:34,983 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:34,983 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:35,046 - INFO - SolveMode - Simululation time [h] - 3780.75
+2018-02-16 12:54:35,046 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:35,046 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:35,108 - INFO - SolveMode - Simululation time [h] - 3781.0
+2018-02-16 12:54:35,108 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:35,108 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:35,171 - INFO - SolveMode - Simululation time [h] - 3781.25
+2018-02-16 12:54:35,171 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:35,171 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:35,233 - INFO - SolveMode - Simululation time [h] - 3781.5
+2018-02-16 12:54:35,233 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:35,233 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:35,296 - INFO - SolveMode - Simululation time [h] - 3781.75
+2018-02-16 12:54:35,296 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:35,296 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:35,358 - INFO - SolveMode - Simululation time [h] - 3782.0
+2018-02-16 12:54:35,358 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:35,358 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:35,421 - INFO - SolveMode - Simululation time [h] - 3782.25
+2018-02-16 12:54:35,421 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:35,421 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:35,483 - INFO - SolveMode - Simululation time [h] - 3782.5
+2018-02-16 12:54:35,483 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:35,483 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:35,546 - INFO - SolveMode - Simululation time [h] - 3782.75
+2018-02-16 12:54:35,546 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:35,546 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:35,608 - INFO - SolveMode - Simululation time [h] - 3783.0
+2018-02-16 12:54:35,608 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:35,608 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:35,671 - INFO - SolveMode - Simululation time [h] - 3783.25
+2018-02-16 12:54:35,671 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:35,671 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:35,765 - INFO - SolveMode - Simululation time [h] - 3783.5
+2018-02-16 12:54:35,765 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:35,765 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:35,843 - INFO - SolveMode - Simululation time [h] - 3783.75
+2018-02-16 12:54:35,858 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:35,858 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:35,905 - INFO - SolveMode - Simululation time [h] - 3784.0
+2018-02-16 12:54:35,921 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:35,921 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:35,999 - INFO - SolveMode - Simululation time [h] - 3784.25
+2018-02-16 12:54:36,015 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:36,015 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:36,077 - INFO - SolveMode - Simululation time [h] - 3784.5
+2018-02-16 12:54:36,077 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:36,077 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:36,140 - INFO - SolveMode - Simululation time [h] - 3784.75
+2018-02-16 12:54:36,155 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:36,155 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:36,249 - INFO - SolveMode - Simululation time [h] - 3785.0
+2018-02-16 12:54:36,249 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:36,249 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:36,327 - INFO - SolveMode - Simululation time [h] - 3785.25
+2018-02-16 12:54:36,327 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:36,327 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:36,390 - INFO - SolveMode - Simululation time [h] - 3785.5
+2018-02-16 12:54:36,390 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:36,390 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:36,452 - INFO - SolveMode - Simululation time [h] - 3785.75
+2018-02-16 12:54:36,468 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:36,468 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:36,530 - INFO - SolveMode - Simululation time [h] - 3786.0
+2018-02-16 12:54:36,530 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:36,530 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:36,655 - INFO - SolveMode - Simululation time [h] - 3786.25
+2018-02-16 12:54:36,655 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:36,655 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:36,796 - INFO - SolveMode - Simululation time [h] - 3786.5
+2018-02-16 12:54:36,796 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:36,812 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:36,937 - INFO - SolveMode - Simululation time [h] - 3786.75
+2018-02-16 12:54:36,937 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:36,937 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:37,077 - INFO - SolveMode - Simululation time [h] - 3787.0
+2018-02-16 12:54:37,077 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:37,077 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:37,218 - INFO - SolveMode - Simululation time [h] - 3787.25
+2018-02-16 12:54:37,218 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:37,218 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:37,358 - INFO - SolveMode - Simululation time [h] - 3787.5
+2018-02-16 12:54:37,358 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:37,358 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:37,515 - INFO - SolveMode - Simululation time [h] - 3787.75
+2018-02-16 12:54:37,515 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:37,515 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:37,640 - INFO - SolveMode - Simululation time [h] - 3788.0
+2018-02-16 12:54:37,640 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:37,640 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:37,765 - INFO - SolveMode - Simululation time [h] - 3788.25
+2018-02-16 12:54:37,780 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:37,780 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:37,905 - INFO - SolveMode - Simululation time [h] - 3788.5
+2018-02-16 12:54:37,905 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:37,905 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:38,030 - INFO - SolveMode - Simululation time [h] - 3788.75
+2018-02-16 12:54:38,030 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:38,030 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:38,155 - INFO - SolveMode - Simululation time [h] - 3789.0
+2018-02-16 12:54:38,155 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:38,155 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:38,296 - INFO - SolveMode - Simululation time [h] - 3789.25
+2018-02-16 12:54:38,296 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:38,296 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:38,452 - INFO - SolveMode - Simululation time [h] - 3789.5
+2018-02-16 12:54:38,452 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:38,452 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:38,593 - INFO - SolveMode - Simululation time [h] - 3789.75
+2018-02-16 12:54:38,593 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:38,593 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:38,718 - INFO - SolveMode - Simululation time [h] - 3790.0
+2018-02-16 12:54:38,718 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:38,733 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:38,858 - INFO - SolveMode - Simululation time [h] - 3790.25
+2018-02-16 12:54:38,858 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:38,858 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:38,983 - INFO - SolveMode - Simululation time [h] - 3790.5
+2018-02-16 12:54:38,983 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:38,983 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:39,108 - INFO - SolveMode - Simululation time [h] - 3790.75
+2018-02-16 12:54:39,108 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:39,108 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:39,249 - INFO - SolveMode - Simululation time [h] - 3791.0
+2018-02-16 12:54:39,249 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:39,249 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:39,390 - INFO - SolveMode - Simululation time [h] - 3791.25
+2018-02-16 12:54:39,390 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:39,390 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:39,530 - INFO - SolveMode - Simululation time [h] - 3791.5
+2018-02-16 12:54:39,546 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:39,546 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:39,702 - INFO - SolveMode - Simululation time [h] - 3791.75
+2018-02-16 12:54:39,718 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:39,718 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:39,843 - INFO - SolveMode - Simululation time [h] - 3792.0
+2018-02-16 12:54:39,843 - DEBUG - dssInstance - Q convergance error 0
+2018-02-16 12:54:39,843 - DEBUG - dssInstance - P convergance error 0
+2018-02-16 12:54:39,843 - INFO - dssInstance - Simulation completed in 10.74992299079895 seconds
+2018-02-16 12:54:39,843 - INFO - dssInstance - End of simulation
