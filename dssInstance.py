@@ -27,7 +27,6 @@ class OpenDSS:
     __dssObjectsByClass = {}
     __DelFlag = 0
     __pyPlotObjects = {}
-
     def __init__(self, rootPath = os.getcwd(), ResultOptions = None, PlotOptions = pyPlots.defalultPO ,
                  SimulationSettings =  None, LoggerOptions = None):
         LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
@@ -82,6 +81,13 @@ class OpenDSS:
         PlotList = pyPlotReader.pyPlots
         if PlotList is not None:
             self.__CreatePlots(PlotList)
+
+        for Plot in self.__pyPlotObjects:
+            self.BokehSessionID = self.__pyPlotObjects[Plot].GetSessionID()
+            if SimulationSettings['Open plots in browser']:
+                self.__pyPlotObjects[Plot].session.show()
+            break
+
         return
 
     def __ModifyNetwork(self):

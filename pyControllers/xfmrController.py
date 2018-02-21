@@ -14,7 +14,7 @@ class xfmrController:
         self.__Name = 'pyCont_' + Class + '_' + Name
         return
 
-    def Update_Q(self, Time, UpdateResults):
+    def Update_P(self, Time, UpdateResults):
         Powers = self.__ConnTransformer.GetVariable('Powers')
         Powers = Powers[:int(len(Powers)/2)][::2]
         P_new = sum((float(x)) for x in Powers)
@@ -27,7 +27,7 @@ class xfmrController:
         self.P_old = P_new
         return 0
 
-    def Update_P(self, Time, UpdateResults):
+    def Update_Q(self, Time, UpdateResults):
         return 0
 
     def __EnableLock(self):

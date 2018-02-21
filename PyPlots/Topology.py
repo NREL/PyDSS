@@ -97,11 +97,13 @@ class Plot:
         doc.add_root(self.__Figure)
         doc.title = "PyDSS"
 
-        session = push_session(doc)
-        session.show(self.__Figure)  # open the document in a browser
+        self.session = push_session(doc)
+        #self.session.show(self.__Figure)  # open the document in a browser
 
         return
 
+    def GetSessionID(self):
+        return self.session.id
 
     def UpdatePlot(self):
 

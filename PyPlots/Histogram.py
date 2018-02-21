@@ -62,9 +62,12 @@ class Plot:
 		curdoc().add_root(self.__Figure)
 		curdoc().title = "PyDSS"
 
-		session = push_session(curdoc())
-		session.show(self.__Figure)
+		self.session = push_session(curdoc())
+		#self.session.show(self.__Figure)
 		return
+
+	def GetSessionID(self):
+		return self.session.id
 
 	def UpdatePlot(self):
 		Data = []

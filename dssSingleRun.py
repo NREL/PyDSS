@@ -14,7 +14,7 @@ import os
 @click.option('--export_style',default='Single file', type=click.STRING, help='possible options "Single_file" and "Seperate_files"')
 # Plot Settings
 @click.option('--network_layout',default=False, type=click.BOOL, help='Display network layout plot')
-@click.option('--time_series', default=False, type=click.BOOL, help='Display time series plot')
+@click.option('--time_series', default=True, type=click.BOOL, help='Display time series plot')
 @click.option('--xy_plot', default=False, type=click.BOOL, help='Display XY plot plot')
 @click.option('--sag_plot', default=False, type=click.BOOL, help='Display voltage / distance plot')
 @click.option('--histogram', default=False, type=click.BOOL, help='Display histogram plot')
@@ -63,6 +63,7 @@ def RunSimulation(**kwargs):
         'Active Project'         : kwargs.get('active_project'),
         'Active Scenario'        : kwargs.get('active_scenario'),
         'DSS File'               : kwargs.get('dss_file'),
+        'Open plots in browser'  : True,
     }
     # Logger settings
     LO =  {

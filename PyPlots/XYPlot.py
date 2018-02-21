@@ -58,8 +58,11 @@ class Plot:
         self.doc.add_root(self.__Figure)
         self.doc.title = "PyDSS"
         self.session = push_session(self.doc)
-        self.session.show(self.__Figure)  # open the document in a browser
+        #self.session.show(self.__Figure)  # open the document in a browser
         return
+
+    def GetSessionID(self):
+        return self.session.id
 
     def GetColorArray(self, DataSeries, Pallete):
         if len(DataSeries)> 10:

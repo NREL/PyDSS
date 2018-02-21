@@ -31,6 +31,7 @@ def pyDSSinstance(Scenario):
         'Active Project'         : 'HECO',
         'Active Scenario'        : Scenario,
         'DSS File'               : 'MasterCircuit_Mikilua_baseline2.dss',   #'MasterCircuit_Mikilua_keep.dss'
+        'Open plots in browser'  : True,
     }
     # Logger settings
     LO =  {

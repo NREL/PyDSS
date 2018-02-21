@@ -74,9 +74,12 @@ class Plot:
         self.doc.add_root(self.Layout)
         self.doc.title = "PyDSS"
         self.session = push_session(self.doc)
-        self.session.show(self.Layout)  # open the document in a browser
+        #self.session.show()  # open the document in a browser
 
         return
+
+    def GetSessionID(self):
+        return self.session.id
 
     def UpdatePlot(self):
         for i, yProperties in enumerate(self.__Properties):

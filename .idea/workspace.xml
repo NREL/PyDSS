@@ -2,18 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a36e9dc1-9053-46dd-a663-a351f8c2cd89" name="N O" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Export/HECO/HP-VV/Loads-VoltagesMagAng.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Export/HECO/HP-VV/PVsystems-Powers.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Export/HECO/HP-VV/PVsystems-VoltagesMagAng.csv" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV-VW-R/pyControllerList/PV Controller.xlsx" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-VV-VW-R/pyControllerList/PV Controller.xlsx" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/HECO_HP-VV.log" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/HECO_HP-VW.log" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/HECO_Socket.log" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/PyDSS.ui" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Sumitomo_ESS-PS.log" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-Legacy/pyPlotList/Time series.xlsx" afterPath="$PROJECT_DIR$/ProjectFiles/HECO/PyDSS Settings/HP-Legacy/pyPlotList/Time series.xlsx" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/HECO_HP-Legacy.log" afterPath="$PROJECT_DIR$/HECO_HP-Legacy.log" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PyPlots/GISplot.py" afterPath="$PROJECT_DIR$/PyPlots/GISplot.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PyPlots/Histogram.py" afterPath="$PROJECT_DIR$/PyPlots/Histogram.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PyPlots/SagPlot.py" afterPath="$PROJECT_DIR$/PyPlots/SagPlot.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PyPlots/TimeSeries.py" afterPath="$PROJECT_DIR$/PyPlots/TimeSeries.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PyPlots/Topology.py" afterPath="$PROJECT_DIR$/PyPlots/Topology.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PyPlots/XYPlot.py" afterPath="$PROJECT_DIR$/PyPlots/XYPlot.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dssGUI.py" afterPath="$PROJECT_DIR$/dssGUI.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dssInstance.py" afterPath="$PROJECT_DIR$/dssInstance.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dssParallelizedRun.py" afterPath="$PROJECT_DIR$/dssParallelizedRun.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dssSingleRun.py" afterPath="$PROJECT_DIR$/dssSingleRun.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyControllers/StorageController.py" afterPath="$PROJECT_DIR$/pyControllers/StorageController.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyControllers/pyController.py" afterPath="$PROJECT_DIR$/pyControllers/pyController.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyControllers/PvController.py" afterPath="$PROJECT_DIR$/pyControllers/PvController.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyControllers/xfmrController.py" afterPath="$PROJECT_DIR$/pyControllers/xfmrController.py" />
     </list>
     <list id="4d158a37-460e-4f32-90b0-7874bee38a84" name="Default" comment="" />
@@ -29,11 +36,49 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="dssSingleRun.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="PyDSS.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PyDSS.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="299">
+              <caret line="92" column="45" lean-forward="true" selection-start-line="92" selection-start-column="12" selection-end-line="92" selection-end-column="45" />
+              <folding>
+                <element signature="e#0#97#0" expanded="true" />
+                <element signature="e#1761#1782#0" expanded="false" />
+                <element signature="e#4969#5501#0" expanded="false" />
+                <element signature="e#5544#5746#0" expanded="false" />
+                <element signature="e#5787#6009#0" expanded="false" />
+                <element signature="e#6056#6102#0" expanded="false" />
+                <element signature="e#6162#7924#0" expanded="false" />
+                <element signature="e#7969#8769#0" expanded="false" />
+                <element signature="e#8815#9623#0" expanded="false" />
+                <element signature="e#9668#10468#0" expanded="false" />
+                <element signature="e#10517#10824#0" expanded="false" />
+                <element signature="e#10874#11023#0" expanded="false" />
+                <element signature="e#11069#14010#0" expanded="false" />
+                <element signature="e#14060#14800#0" expanded="false" />
+                <element signature="e#14846#15206#0" expanded="false" />
+                <element signature="e#15249#15667#0" expanded="false" />
+                <element signature="e#15697#15715#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="dssCircuit.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dssCircuit.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="459">
+              <caret line="66" column="0" lean-forward="false" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="dssSingleRun.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dssSingleRun.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="25">
-              <caret line="41" column="53" lean-forward="false" selection-start-line="41" selection-start-column="53" selection-end-line="41" selection-end-column="53" />
+            <state relative-caret-position="925">
+              <caret line="57" column="57" lean-forward="true" selection-start-line="57" selection-start-column="57" selection-end-line="57" selection-end-column="57" />
               <folding>
                 <element signature="e#0#52#0" expanded="true" />
               </folding>
@@ -41,100 +86,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dssInstance.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dssInstance.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2375">
-              <caret line="95" column="0" lean-forward="false" selection-start-line="95" selection-start-column="0" selection-end-line="95" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#50#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TimeSeries.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PyPlots/TimeSeries.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="25">
-              <caret line="14" column="4" lean-forward="false" selection-start-line="14" selection-start-column="4" selection-end-line="14" selection-end-column="4" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PvController.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pyControllers/PvController.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="50">
-              <caret line="21" column="47" lean-forward="true" selection-start-line="21" selection-start-column="47" selection-end-line="21" selection-end-column="47" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="dssParallelizedRun.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dssParallelizedRun.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="249">
-              <caret line="41" column="0" lean-forward="false" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+            <state relative-caret-position="309">
+              <caret line="33" column="39" lean-forward="false" selection-start-line="33" selection-start-column="8" selection-end-line="33" selection-end-column="39" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Topology.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PyPlots/Topology.py">
+      <file leaf-file-name="dssInstance.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dssInstance.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="799">
-              <caret line="147" column="13" lean-forward="false" selection-start-line="147" selection-start-column="13" selection-end-line="147" selection-end-column="13" />
+            <state relative-caret-position="275">
+              <caret line="86" column="57" lean-forward="false" selection-start-line="86" selection-start-column="34" selection-end-line="86" selection-end-column="57" />
               <folding>
-                <element signature="e#0#41#0" expanded="true" />
+                <element signature="e#0#50#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="xfmrController.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pyControllers/xfmrController.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="149">
-              <caret line="19" column="13" lean-forward="false" selection-start-line="19" selection-start-column="8" selection-end-line="19" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pyController.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/pyControllers/pyController.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="6" column="18" lean-forward="true" selection-start-line="6" selection-start-column="18" selection-end-line="6" selection-end-column="18" />
-              <folding>
-                <element signature="e#0#19#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pyPlots.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PyPlots/pyPlots.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#15#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="GISplot.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PyPlots/GISplot.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3000">
-              <caret line="127" column="82" lean-forward="false" selection-start-line="127" selection-start-column="53" selection-end-line="127" selection-end-column="82" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -155,6 +124,10 @@
       <find>runVW</find>
       <find>get_regulator</find>
       <find>print</find>
+      <find>self.tab</find>
+      <find>treeView_Results</find>
+      <find>textBrowser_Log</find>
+      <find>tab_6</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -173,13 +146,9 @@
       <list>
         <option value="$PROJECT_DIR$/pyPlotReader.py" />
         <option value="$PROJECT_DIR$/../HYWIND/Simulation Run.py" />
-        <option value="$PROJECT_DIR$/PyPlots/XYPlot.py" />
-        <option value="$PROJECT_DIR$/PyPlots/SagPlot.py" />
-        <option value="$PROJECT_DIR$/PyPlots/Histogram.py" />
         <option value="$PROJECT_DIR$/PyPlots/pyPlots.py" />
         <option value="$PROJECT_DIR$/dssBus.py" />
         <option value="$PROJECT_DIR$/../HECO/main.py" />
-        <option value="$PROJECT_DIR$/PyPlots/TimeSeries.py" />
         <option value="$PROJECT_DIR$/NetworkModifier.py" />
         <option value="$PROJECT_DIR$/dssElement.py" />
         <option value="$PROJECT_DIR$/Export/HECO/MetricCalculation.py" />
@@ -194,29 +163,36 @@
         <option value="$PROJECT_DIR$/../Time Series Clustering/Distribution_Fitting.py" />
         <option value="$PROJECT_DIR$/../Time Series Clustering/PlotDistance Matrices.py" />
         <option value="$PROJECT_DIR$/../Time Series Clustering/tsClustering.py" />
-        <option value="$PROJECT_DIR$/../Socket - Copy.py" />
         <option value="$PROJECT_DIR$/Export/HECO/PVplot.py" />
-        <option value="$PROJECT_DIR$/pyControllers/PvController.py" />
         <option value="$PROJECT_DIR$/Export/HECO/Plots.py" />
         <option value="$PROJECT_DIR$/SolveMode.py" />
         <option value="$PROJECT_DIR$/ResultContainer.py" />
         <option value="$PROJECT_DIR$/dssCircuit.py" />
-        <option value="$PROJECT_DIR$/PyPlots/GISplot.py" />
-        <option value="$PROJECT_DIR$/PyPlots/Topology.py" />
         <option value="$PROJECT_DIR$/pyControllers/StorageController.py" />
+        <option value="$PROJECT_DIR$/pyControllers/pyController.py" />
+        <option value="C:/ProgramData/Anaconda3/Library/bin/dssGUI.py" />
+        <option value="$PROJECT_DIR$/../Socket - Copy.py" />
+        <option value="$PROJECT_DIR$/pyControllers/PvController.py" />
+        <option value="$PROJECT_DIR$/pyControllers/xfmrController.py" />
+        <option value="$PROJECT_DIR$/dssGUI.py" />
+        <option value="$PROJECT_DIR$/PyPlots/GISplot.py" />
+        <option value="$PROJECT_DIR$/PyPlots/Histogram.py" />
+        <option value="$PROJECT_DIR$/PyPlots/SagPlot.py" />
+        <option value="$PROJECT_DIR$/PyPlots/TimeSeries.py" />
+        <option value="$PROJECT_DIR$/PyPlots/Topology.py" />
+        <option value="$PROJECT_DIR$/PyPlots/XYPlot.py" />
+        <option value="$PROJECT_DIR$/dssInstance.py" />
+        <option value="$PROJECT_DIR$/PyDSS.py" />
         <option value="$PROJECT_DIR$/dssParallelizedRun.py" />
         <option value="$PROJECT_DIR$/dssSingleRun.py" />
-        <option value="$PROJECT_DIR$/dssInstance.py" />
-        <option value="$PROJECT_DIR$/pyControllers/xfmrController.py" />
-        <option value="$PROJECT_DIR$/pyControllers/pyController.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-3846" />
-    <option name="y" value="-6" />
-    <option name="width" value="1242" />
-    <option name="height" value="672" />
+    <option name="x" value="-1451" />
+    <option name="y" value="-8" />
+    <option name="width" value="971" />
+    <option name="height" value="831" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -233,6 +209,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -245,17 +222,11 @@
               <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
               <item name="pyControllers" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="PyDSS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
-              <item name="PyPlots" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
       <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -275,24 +246,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.dssParallelizedRun">
-    <configuration name="PVplot" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Export/HECO" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="PyDSS-heco" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Export/HECO/PVplot.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-    </configuration>
+  <component name="RunManager" selected="Python.dssSingleRun">
     <configuration name="Plots" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -306,6 +260,23 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="PyDSS-heco" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Export/HECO/Plots.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="PyDSS" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="PyDSS-heco" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PyDSS.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -363,18 +334,18 @@
     </configuration>
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.dssSingleRun" />
-      <item index="1" class="java.lang.String" itemvalue="Python.PVplot" />
-      <item index="2" class="java.lang.String" itemvalue="Python.Plots" />
-      <item index="3" class="java.lang.String" itemvalue="Python.Socket - Copy" />
-      <item index="4" class="java.lang.String" itemvalue="Python.dssParallelizedRun" />
+      <item index="1" class="java.lang.String" itemvalue="Python.Plots" />
+      <item index="2" class="java.lang.String" itemvalue="Python.dssParallelizedRun" />
+      <item index="3" class="java.lang.String" itemvalue="Python.PyDSS" />
+      <item index="4" class="java.lang.String" itemvalue="Python.Socket - Copy" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.dssParallelizedRun" />
-        <item index="1" class="java.lang.String" itemvalue="Python.dssSingleRun" />
-        <item index="2" class="java.lang.String" itemvalue="Python.Plots" />
-        <item index="3" class="java.lang.String" itemvalue="Python.PVplot" />
-        <item index="4" class="java.lang.String" itemvalue="Python.Socket - Copy" />
+        <item index="0" class="java.lang.String" itemvalue="Python.dssSingleRun" />
+        <item index="1" class="java.lang.String" itemvalue="Python.PyDSS" />
+        <item index="2" class="java.lang.String" itemvalue="Python.Socket - Copy" />
+        <item index="3" class="java.lang.String" itemvalue="Python.dssParallelizedRun" />
+        <item index="4" class="java.lang.String" itemvalue="Python.Plots" />
       </list>
     </recent_temporary>
   </component>
@@ -413,19 +384,20 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-3846" y="-6" width="1242" height="672" extended-state="6" />
+    <frame x="-1928" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33248731" sideWeight="0.4452555" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.11886994" sideWeight="0.4452555" order="2" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3291592" sideWeight="0.49573562" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.9693396" sideWeight="0.083243825" order="6" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32887402" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900944" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32826477" sideWeight="0.4978678" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.59030837" sideWeight="0.45059076" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21733561" sideWeight="0.4916388" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40468228" sideWeight="0.45059076" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21715818" sideWeight="0.4916388" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3291592" sideWeight="0.4978678" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3868243" sideWeight="0.44970414" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6086956" sideWeight="0.91675615" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.60535115" sideWeight="0.91675615" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.08198121" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -433,7 +405,6 @@
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" x="2064" y="290" width="1736" height="896" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32983795" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
@@ -444,16 +415,16 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.9693396" sideWeight="0.083243825" order="6" side_tool="true" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" x="2064" y="290" width="1736" height="896" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5908584" sideWeight="0.45059076" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.7723935" sideWeight="0.45059076" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900944" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32826477" sideWeight="0.4978678" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3291592" sideWeight="0.4978678" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.45759717" sideWeight="0.4452555" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.40858725" sideWeight="0.4452555" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32983795" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21733561" sideWeight="0.4916388" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21715818" sideWeight="0.4916388" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6086956" sideWeight="0.91675615" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6064611" sideWeight="0.91675615" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3868243" sideWeight="0.44970414" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.08198121" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
@@ -465,9 +436,14 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/dssInstance.py</url>
-          <line>84</line>
-          <option name="timeStamp" value="220" />
+          <url>file://$PROJECT_DIR$/PyDSS.py</url>
+          <line>5</line>
+          <option name="timeStamp" value="246" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/PyPlots/Histogram.py</url>
+          <line>72</line>
+          <option name="timeStamp" value="247" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
@@ -480,96 +456,15 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="227" />
+      <option name="time" value="248" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/pyContrReader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="529">
-          <caret line="21" column="0" lean-forward="true" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyPlotReader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/NetworkModifier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="73" column="0" lean-forward="false" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Export/HECO/Metric Calculation.py" />
-    <entry file="file://$PROJECT_DIR$/MetricCalculation.py" />
-    <entry file="file://$USER_HOME$/Google Drive/NREL/Papers/DP Paper/Results/BoxPlotExcectedProfit.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1125">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../GIS2DSS/Synergi2DSS.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="11" column="40" lean-forward="false" selection-start-line="11" selection-start-column="35" selection-end-line="11" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../GIS2DSS/OpenDSS_Writer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../PyDSS-Socket/Main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="760">
-          <caret line="72" column="56" lean-forward="false" selection-start-line="72" selection-start-column="32" selection-end-line="72" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Socket Serever Tester.py" />
-    <entry file="file://$PROJECT_DIR$/../Distribution_Fitting.py" />
-    <entry file="file://$PROJECT_DIR$/../PyDSS-Socket/CostBenefitAnalysis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/win32com/demos/excelRTDServer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1082">
-          <caret line="264" column="6" lean-forward="false" selection-start-line="264" selection-start-column="6" selection-end-line="264" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyControllers/SocketController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="825">
-          <caret line="34" column="0" lean-forward="false" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Google Drive/NREL/Papers/LossModeling/Results/Plots.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyLogger.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="6" lean-forward="false" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="6" />
         </state>
       </provider>
     </entry>
@@ -595,13 +490,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
           <caret line="14" column="0" lean-forward="false" selection-start-line="14" selection-start-column="0" selection-end-line="20" selection-end-column="61" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dssGUI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -655,18 +543,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../Socket - Copy.py" />
     <entry file="file://$PROJECT_DIR$/Export/HECO/Plots.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="200">
           <caret line="11" column="25" lean-forward="false" selection-start-line="11" selection-start-column="25" selection-end-line="11" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SolveMode.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="25">
-          <caret line="41" column="22" lean-forward="false" selection-start-line="41" selection-start-column="22" selection-end-line="41" selection-end-column="22" />
         </state>
       </provider>
     </entry>
@@ -691,113 +571,250 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ResultContainer.py">
+    <entry file="file://$USER_HOME$/AppData/Local/Temp/1/Rar$DIa12980.7084/main.py" />
+    <entry file="file://$USER_HOME$/AppData/Local/Temp/1/Rar$DIa12980.9958/stamp_model.py" />
+    <entry file="file://$USER_HOME$/AppData/Local/Temp/1/Rar$DIa12980.10073/stamp_model.py" />
+    <entry file="file://C:/ProgramData/Anaconda3/Library/bin/dssGUI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="799">
-          <caret line="140" column="44" lean-forward="false" selection-start-line="140" selection-start-column="44" selection-end-line="140" selection-end-column="44" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dssCircuit.py">
+    <entry file="file://$PROJECT_DIR$/SolveMode.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1575">
-          <caret line="66" column="0" lean-forward="false" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
+        <state relative-caret-position="150">
+          <caret line="6" column="17" lean-forward="false" selection-start-line="6" selection-start-column="9" selection-end-line="6" selection-end-column="17" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pyControllers/StorageController.py">
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/xlrd/sheet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="583">
-          <caret line="330" column="0" lean-forward="true" selection-start-line="330" selection-start-column="0" selection-end-line="330" selection-end-column="0" />
+        <state relative-caret-position="12500">
+          <caret line="507" column="8" lean-forward="false" selection-start-line="507" selection-start-column="8" selection-end-line="507" selection-end-column="8" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PyPlots/GISplot.py">
+    <entry file="file://$USER_HOME$/Google Drive/NREL/Papers/DP Paper/Results/Bar Plot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3000">
-          <caret line="127" column="82" lean-forward="false" selection-start-line="127" selection-start-column="53" selection-end-line="127" selection-end-column="82" />
+        <state relative-caret-position="140">
+          <caret line="22" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/matplotlib/backends/backend_qt5.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="600" column="0" lean-forward="false" selection-start-line="600" selection-start-column="0" selection-end-line="600" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dssSingleRun.py">
+    <entry file="file://$PROJECT_DIR$/pyLogger.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="25">
-          <caret line="41" column="53" lean-forward="false" selection-start-line="41" selection-start-column="53" selection-end-line="41" selection-end-column="53" />
-          <folding>
-            <element signature="e#0#52#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="325">
+          <caret line="13" column="36" lean-forward="true" selection-start-line="13" selection-start-column="4" selection-end-line="13" selection-end-column="36" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dssInstance.py">
+    <entry file="file://$PROJECT_DIR$/ResultContainer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2375">
-          <caret line="95" column="0" lean-forward="false" selection-start-line="95" selection-start-column="0" selection-end-line="95" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#50#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="625">
+          <caret line="29" column="0" lean-forward="false" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PyPlots/TimeSeries.py">
+    <entry file="file://$PROJECT_DIR$/../Socket - Copy.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="6" column="53" lean-forward="true" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="53" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/PyQt5/QtCore.pyi">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="25">
-          <caret line="14" column="4" lean-forward="false" selection-start-line="14" selection-start-column="4" selection-end-line="14" selection-end-column="4" />
+          <caret line="7358" column="8" lean-forward="false" selection-start-line="7358" selection-start-column="8" selection-end-line="7358" selection-end-column="8" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pyControllers/PvController.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="50">
-          <caret line="21" column="47" lean-forward="true" selection-start-line="21" selection-start-column="47" selection-end-line="21" selection-end-column="47" />
+        <state relative-caret-position="375">
+          <caret line="48" column="0" lean-forward="true" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dssParallelizedRun.py">
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/matplotlib/backends/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="249">
-          <caret line="41" column="0" lean-forward="false" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyPlots/Topology.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="799">
-          <caret line="147" column="13" lean-forward="false" selection-start-line="147" selection-start-column="13" selection-end-line="147" selection-end-column="13" />
-          <folding>
-            <element signature="e#0#41#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pyControllers/xfmrController.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="149">
-          <caret line="19" column="13" lean-forward="false" selection-start-line="19" selection-start-column="8" selection-end-line="19" selection-end-column="13" />
+        <state relative-caret-position="334">
+          <caret line="31" column="0" lean-forward="true" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyControllers/desktop.ini">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PyPlots/pyPlots.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
+        <state relative-caret-position="325">
           <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dssGUI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="912">
+          <caret line="301" column="41" lean-forward="true" selection-start-line="301" selection-start-column="41" selection-end-line="301" selection-end-column="41" />
           <folding>
-            <element signature="e#0#15#0" expanded="true" />
+            <element signature="e#193#235#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pyControllers/pyController.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="6" column="18" lean-forward="true" selection-start-line="6" selection-start-column="18" selection-end-line="6" selection-end-column="18" />
+        <state relative-caret-position="-214">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyControllers/StorageController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="330" column="0" lean-forward="true" selection-start-line="330" selection-start-column="0" selection-end-line="330" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyPlots/XYPlot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="359">
+          <caret line="60" column="41" lean-forward="false" selection-start-line="60" selection-start-column="14" selection-end-line="60" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyPlots/Topology.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="334">
+          <caret line="100" column="27" lean-forward="false" selection-start-line="100" selection-start-column="13" selection-end-line="100" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyPlots/TimeSeries.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="384">
+          <caret line="76" column="9" lean-forward="false" selection-start-line="76" selection-start-column="9" selection-end-line="76" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyPlots/SagPlot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="384">
+          <caret line="55" column="9" lean-forward="false" selection-start-line="55" selection-start-column="9" selection-end-line="55" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyPlots/Histogram.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="65" column="9" lean-forward="false" selection-start-line="65" selection-start-column="9" selection-end-line="65" selection-end-column="9" />
           <folding>
-            <element signature="e#0#19#0" expanded="true" />
+            <element signature="e#0#41#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyPlots/GISplot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="434">
+          <caret line="82" column="9" lean-forward="false" selection-start-line="82" selection-start-column="9" selection-end-line="82" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dssInstance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="86" column="57" lean-forward="false" selection-start-line="86" selection-start-column="34" selection-end-line="86" selection-end-column="57" />
+          <folding>
+            <element signature="e#0#50#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dssParallelizedRun.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="309">
+          <caret line="33" column="39" lean-forward="false" selection-start-line="33" selection-start-column="8" selection-end-line="33" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="299">
+          <caret line="92" column="45" lean-forward="true" selection-start-line="92" selection-start-column="12" selection-end-line="92" selection-end-column="45" />
+          <folding>
+            <element signature="e#0#97#0" expanded="true" />
+            <element signature="e#1761#1782#0" expanded="false" />
+            <element signature="e#4969#5501#0" expanded="false" />
+            <element signature="e#5544#5746#0" expanded="false" />
+            <element signature="e#5787#6009#0" expanded="false" />
+            <element signature="e#6056#6102#0" expanded="false" />
+            <element signature="e#6162#7924#0" expanded="false" />
+            <element signature="e#7969#8769#0" expanded="false" />
+            <element signature="e#8815#9623#0" expanded="false" />
+            <element signature="e#9668#10468#0" expanded="false" />
+            <element signature="e#10517#10824#0" expanded="false" />
+            <element signature="e#10874#11023#0" expanded="false" />
+            <element signature="e#11069#14010#0" expanded="false" />
+            <element signature="e#14060#14800#0" expanded="false" />
+            <element signature="e#14846#15206#0" expanded="false" />
+            <element signature="e#15249#15667#0" expanded="false" />
+            <element signature="e#15697#15715#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dssCircuit.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="66" column="0" lean-forward="false" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dssSingleRun.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="925">
+          <caret line="57" column="57" lean-forward="true" selection-start-line="57" selection-start-column="57" selection-end-line="57" selection-end-column="57" />
+          <folding>
+            <element signature="e#0#52#0" expanded="true" />
           </folding>
         </state>
       </provider>
