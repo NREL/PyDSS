@@ -97,10 +97,13 @@ class PvController:
             Pcalc = Pmax * 100
             dP = (pctPmpp - Pcalc) * DampCoef
             Pcalc = pctPmpp - dP
+            Pcalc = self.Pmppt if Pcalc >  self.Pmppt else Pcalc
+
         elif self.__Settings['VWtype'] == 'Available Power':
             Pcalc = Pmax * PpvoutPU * 100
             dP = (pctPmpp - Pcalc) * DampCoef
             Pcalc = pctPmpp - dP
+            Pcalc = self.Pmppt if Pcalc > self.Pmppt else Pcalc
         self.__ControlledElm.SetParameter('pctPmpp', Pcalc)
         PFout = -math.cos(math.atan(self.oldQcalc / Pmax))
         self.__ControlledElm.SetParameter('pf', str(PFout))
@@ -205,7 +208,6 @@ class PvController:
             PFout = -math.cos(math.atan(Qcalc / Pcalc))
             if self.__Settings['Enable PF limit'] and abs(PFout) < pfLim:
                 PFout = -pfLim
-
         else:
             PFout = 1
         self.__ControlledElm.SetParameter('pf', str(PFout))
@@ -213,5 +215,4 @@ class PvController:
         Error = abs(dQ - self.dQOld)
         self.oldQcalc = Qcalc
         self.dQOld = dQ
-        # print(Error)
         return Error

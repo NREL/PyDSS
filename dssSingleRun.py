@@ -6,10 +6,9 @@ import logging
 import click
 import os
 
-
 @click.command()
 # Settings for exporting results
-@click.option('--log_results',default=False, type=click.BOOL, help='Set true if results need to be exported')
+@click.option('--log_results',default=True, type=click.BOOL, help='Set true if results need to be exported')
 @click.option('--export_mode',default='byClass', type=click.STRING, help='possible options "byClass" and "byElement"')
 @click.option('--export_style',default='Single file', type=click.STRING, help='possible options "Single_file" and "Seperate_files"')
 # Plot Settings
@@ -27,7 +26,7 @@ import os
 @click.option('--error_tolerance', default=1.0, type=click.FLOAT, help='Error tolerance in KVA')
 @click.option('--simulation_type', default='Daily', type=click.STRING, help='possible modes "Daily" and "Snapshot"')
 @click.option('--active_project', default='HECO', type=click.STRING, help='Name of project to run')
-@click.option('--active_scenario', default='HP-VV-VW-R', type=click.STRING, help='Project scenario to use')
+@click.option('--active_scenario', default='HP-Legacy', type=click.STRING, help='Project scenario to use')
 @click.option('--dss_file', default='MasterCircuit_Mikilua_baseline2.dss', type=click.STRING, help='The main OpenDSS file')
 # Logger settings
 @click.option('--logging_level', default='DEBUG', type=click.STRING, help='possible options "DEBUG" and "INFO"')

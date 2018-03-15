@@ -4,10 +4,11 @@ import pathlib
 import logging
 import os
 class ResultContainer:
-    Results = {}
-    def __init__(self, ResultSettings, SimulationSettings, SystemPaths, dssObjects, dssObjectsByClass):
+    def __init__(self, ResultSettings, SimulationSettings, SystemPaths, dssObjects, dssObjectsByClass, dssBuses):
         LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
+        self.Results = {}
         self.pyLogger = logging.getLogger(LoggerTag)
+        self.Buses = dssBuses
         self.ObjectsByElement = dssObjects
         self.ObjectsByClass = dssObjectsByClass
         self.SystemPaths = SystemPaths
@@ -20,7 +21,6 @@ class ResultContainer:
         self.ExportFolder = os.path.join(self.SystemPaths['Export'], SimulationSettings['Active Project'],
                                          SimulationSettings['Active Scenario'])
 
-
         pathlib.Path(self.ExportFolder).mkdir(parents=True, exist_ok=True)
 
         if self.__Settings['Export Mode'] == 'byElement':
@@ -29,18 +29,28 @@ class ResultContainer:
         elif self.__Settings['Export Mode'] == 'byClass':
             self.ExportList = self.FileReader.pyControllers['ExportMode-byClass']
             self.CreateListByClass()
+        return
 
     def CreateListByClass(self):
         self.Results = {}
         for Class , Properties in self.ExportList.items():
-            if Class in self.ObjectsByClass:
+            if Class == 'Buses':
                 self.Results[Class] = {}
                 for PptyIndex, PptyName in Properties.items():
                     if isinstance(PptyName, str):
                         self.Results[Class][PptyName] = {}
-                        for ElementName, ElmObj in self.ObjectsByClass[Class].items():
-                            if self.ObjectsByClass[Class][ElementName].IsValidAttribute(PptyName):
-                                self.Results[Class][PptyName][ElementName] = []
+                        for BusName, BusObj in self.Buses.items():
+                            if self.Buses[BusName].inVariableDict(PptyName):
+                                self.Results[Class][PptyName][BusName] = []
+            else:
+                if Class in self.ObjectsByClass:
+                    self.Results[Class] = {}
+                    for PptyIndex, PptyName in Properties.items():
+                        if isinstance(PptyName, str):
+                            self.Results[Class][PptyName] = {}
+                            for ElementName, ElmObj in self.ObjectsByClass[Class].items():
+                                if self.ObjectsByClass[Class][ElementName].IsValidAttribute(PptyName):
+                                    self.Results[Class][PptyName][ElementName] = []
         return
 
     def CreateListByElement(self):
@@ -52,27 +62,39 @@ class ResultContainer:
                     if isinstance(PptyName, str):
                         if self.ObjectsByElement[Element].IsValidAttribute(PptyName):
                             self.Results[Element][PptyName] = []
+            elif Element in self.Buses:
+                self.Results[Element] = {}
+                for PptyIndex, PptyName in Properties.items():
+                    if isinstance(PptyName, str):
+                        if self.Buses[Element].inVariableDict(PptyName):
+                            self.Results[Element][PptyName] = []
         return
 
     def UpdateResults(self):
         if self.__Settings['Export Mode'] == 'byElement':
             for Element in self.Results.keys():
                 for Property in self.Results[Element].keys():
-                    self.Results[Element][Property].append(self.ObjectsByElement[Element].GetValue(Property))
+                    if '.' in Element:
+                        self.Results[Element][Property].append(self.ObjectsByElement[Element].GetValue(Property))
+                    else:
+                        self.Results[Element][Property].append(self.Buses[Element].GetVariable(Property))
         elif self.__Settings['Export Mode'] == 'byClass':
             for Class in self.Results.keys():
                 for Property in self.Results[Class].keys():
                     for Element in self.Results[Class][Property].keys():
-                        self.Results[Class][Property][Element].append(self.ObjectsByClass[Class][Element].GetValue(Property))
+                        if Class == 'Buses':
+                            self.Results[Class][Property][Element].append(self.Buses[Element].GetVariable(Property))
+                        else:
+                            self.Results[Class][Property][Element].append(
+                                self.ObjectsByClass[Class][Element].GetValue(Property)
+                            )
         return
-
 
     def ExportResults(self):
         if self.__Settings['Export Mode'] == 'byElement':
             self.__ExportResultsByElements()
         elif self.__Settings['Export Mode'] == 'byClass':
             self.__ExportResultsByClass()
-
 
     def __ExportResultsByClass(self):
         for Class in self.Results.keys():

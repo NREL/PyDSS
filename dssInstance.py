@@ -27,6 +27,7 @@ class OpenDSS:
     __dssObjectsByClass = {}
     __DelFlag = 0
     __pyPlotObjects = {}
+    BokehSessionID = None
     def __init__(self, rootPath = os.getcwd(), ResultOptions = None, PlotOptions = pyPlots.defalultPO ,
                  SimulationSettings =  None, LoggerOptions = None):
         LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
@@ -70,16 +71,17 @@ class OpenDSS:
 
         if self.__ResultOptions and self.__ResultOptions['Log Results']:
             self.ResultContainer = RC(ResultOptions, SimulationSettings, self.__dssPath,
-                                      self.__dssObjects, self.__dssObjectsByClass)
+                                      self.__dssObjects, self.__dssObjectsByClass, self.__dssBuses)
 
         pyCtrlReader = pcr(self.__dssPath['pyControllers'])
         ControllerList = pyCtrlReader.pyControllers
         if ControllerList is not None:
             self.__CreateControllers(ControllerList)
 
+
         pyPlotReader = ppr(self.__dssPath['pyPlots'])
         PlotList = pyPlotReader.pyPlots
-        if PlotList is not None:
+        if PlotList is not None and not all(value == False for value in PlotOptions.values()):
             self.__CreatePlots(PlotList)
 
         for Plot in self.__pyPlotObjects:
@@ -161,13 +163,14 @@ class OpenDSS:
     def __UpdateDictionary(self):
         InvalidSelection = ['Settings', 'ActiveClass', 'dss', 'utils', 'PDElements', 'XYCurves', 'Bus', 'Properties']
         self.__dssObjectsByClass={'LoadShape' : self.__GetRelaventObjectDict('LoadShape')}
-        for key in dss.__dict__.keys():
-            if key[-1] == 's' and (key not in InvalidSelection):
-                self.__dssObjectsByClass[key] = self.__GetRelaventObjectDict(key)
 
-        for ClassType in self.__dssObjectsByClass.keys():
-            for ElmName in self.__dssObjectsByClass[ClassType].keys():
-                self.__dssObjects[ElmName] = self.__dssObjectsByClass[ClassType][ElmName]
+        for ElmName in self.__dssInstance.Circuit.AllElementNames():
+            Class, Name =  ElmName.split('.', 1)
+            if Class + 's' not in self.__dssObjectsByClass:
+                self.__dssObjectsByClass[Class + 's'] = {}
+            self.__dssInstance.Circuit.SetActiveElement(ElmName)
+            self.__dssObjectsByClass[Class + 's'][ElmName] = dssElement(self.__dssInstance)
+            self.__dssObjects[ElmName] = self.__dssObjectsByClass[Class + 's'][ElmName]
 
         for ObjName in self.__dssObjects.keys():
             Class = ObjName.split('.')[0] + 's'
@@ -255,4 +258,3 @@ class OpenDSS:
         else:
             self.__Logger.error('An intstance of OpenDSS (' + str(self) + ') crashed.')
         return
-#

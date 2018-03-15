@@ -701,7 +701,7 @@
       <rect>
        <x>10</x>
        <y>490</y>
-       <width>256</width>
+       <width>121</width>
        <height>28</height>
       </rect>
      </property>
@@ -712,14 +712,40 @@
     <widget class="QPushButton" name="pushButton_Exit">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>144</x>
        <y>530</y>
-       <width>255</width>
+       <width>121</width>
        <height>28</height>
       </rect>
      </property>
      <property name="text">
       <string>E&amp;xit</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_CreateProject">
+     <property name="geometry">
+      <rect>
+       <x>144</x>
+       <y>490</y>
+       <width>121</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Create new project</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_StopSimulation">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>530</y>
+       <width>121</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Stop simulation</string>
      </property>
     </widget>
    </widget>
@@ -768,7 +794,7 @@
       <rect>
        <x>9</x>
        <y>490</y>
-       <width>191</width>
+       <width>91</width>
        <height>31</height>
       </rect>
      </property>
@@ -776,17 +802,17 @@
       <string>Save settings file</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_CtrlNew">
+    <widget class="QPushButton" name="pushButton_CtrlAddRow">
      <property name="geometry">
       <rect>
        <x>9</x>
        <y>530</y>
-       <width>191</width>
+       <width>91</width>
        <height>31</height>
       </rect>
      </property>
      <property name="text">
-      <string>Create new settings file</string>
+      <string>Add new row</string>
      </property>
     </widget>
     <widget class="QListWidget" name="listWidget_CtrlFiles">
@@ -797,6 +823,32 @@
        <width>191</width>
        <height>431</height>
       </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_CtrlDel_2">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>490</y>
+       <width>91</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Delete file</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_CtrlAddCol">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>530</y>
+       <width>91</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Add new column</string>
      </property>
     </widget>
    </widget>
@@ -855,7 +907,7 @@
       <rect>
        <x>10</x>
        <y>490</y>
-       <width>191</width>
+       <width>91</width>
        <height>31</height>
       </rect>
      </property>
@@ -863,17 +915,43 @@
       <string>Save settings file</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_PltNew">
+    <widget class="QPushButton" name="pushButton_PltAddRow">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>530</y>
-       <width>191</width>
+       <width>91</width>
        <height>31</height>
       </rect>
      </property>
      <property name="text">
-      <string>Create new settings file</string>
+      <string>Add new row</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_PltAddCol">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>530</y>
+       <width>91</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Add new column</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_pltdel_2">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>490</y>
+       <width>91</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Delete file</string>
      </property>
     </widget>
    </widget>
@@ -922,7 +1000,7 @@
       <rect>
        <x>10</x>
        <y>490</y>
-       <width>191</width>
+       <width>91</width>
        <height>31</height>
       </rect>
      </property>
@@ -930,17 +1008,17 @@
       <string>Save settings file</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_ExpNew">
+    <widget class="QPushButton" name="pushButton_ExpAddRow">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>530</y>
-       <width>191</width>
+       <width>91</width>
        <height>31</height>
       </rect>
      </property>
      <property name="text">
-      <string>Create new settings file</string>
+      <string>Add new row</string>
      </property>
     </widget>
     <widget class="QListWidget" name="listWidget_ExpFiles">
@@ -951,6 +1029,32 @@
        <width>191</width>
        <height>431</height>
       </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_ExpAddCol">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>530</y>
+       <width>91</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Add new column</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_ExpDel_2">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>490</y>
+       <width>91</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Delete file</string>
      </property>
     </widget>
    </widget>
@@ -968,7 +1072,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_NewPython">
+    <widget class="QPushButton" name="pushButton_DelPython">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -978,7 +1082,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Create new Python file</string>
+      <string>Delete Python file</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_PythonEdit">
@@ -1035,42 +1139,6 @@
     <attribute name="title">
      <string>Plots</string>
     </attribute>
-    <widget class="QTreeView" name="treeView_PlotBrowser">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>40</y>
-       <width>201</width>
-       <height>521</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_17">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>191</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>List of plots</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_45">
-     <property name="geometry">
-      <rect>
-       <x>220</x>
-       <y>10</y>
-       <width>191</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Plot </string>
-     </property>
-    </widget>
    </widget>
    <widget class="QWidget" name="tab_15">
     <attribute name="title">
@@ -1146,34 +1214,8 @@
        <x>10</x>
        <y>41</y>
        <width>1051</width>
-       <height>481</height>
+       <height>521</height>
       </rect>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_ClearLog">
-     <property name="geometry">
-      <rect>
-       <x>807</x>
-       <y>530</y>
-       <width>255</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Clear log file</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_SaveLog">
-     <property name="geometry">
-      <rect>
-       <x>540</x>
-       <y>530</y>
-       <width>255</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Save log file</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_16">
@@ -1189,6 +1231,287 @@
       <string>List of export files</string>
      </property>
     </widget>
+   </widget>
+   <widget class="QWidget" name="tab_8">
+    <attribute name="title">
+     <string>Network Analysis</string>
+    </attribute>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QTabWidget" name="tabWidget_2">
+       <property name="tabPosition">
+        <enum>QTabWidget::West</enum>
+       </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="tab_9">
+        <attribute name="title">
+         <string>Create NetworkX Graph</string>
+        </attribute>
+        <widget class="QGroupBox" name="groupBox_7">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>4</y>
+           <width>1011</width>
+           <height>71</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Export settings</string>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+         <widget class="QLabel" name="label_23">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>14</y>
+            <width>191</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="text">
+           <string>Line color</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_25">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>44</y>
+            <width>191</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Node color</string>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="comboBox_LineColor">
+          <property name="geometry">
+           <rect>
+            <x>80</x>
+            <y>10</y>
+            <width>181</width>
+            <height>23</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="comboBox_CodeColor">
+          <property name="geometry">
+           <rect>
+            <x>80</x>
+            <y>40</y>
+            <width>181</width>
+            <height>23</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_26">
+          <property name="geometry">
+           <rect>
+            <x>270</x>
+            <y>40</y>
+            <width>191</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Layout</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_24">
+          <property name="geometry">
+           <rect>
+            <x>270</x>
+            <y>10</y>
+            <width>191</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="text">
+           <string>Show reference node</string>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="comboBox_RefNode">
+          <property name="geometry">
+           <rect>
+            <x>370</x>
+            <y>10</y>
+            <width>181</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <item>
+           <property name="text">
+            <string>True</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>False</string>
+           </property>
+          </item>
+         </widget>
+         <widget class="QComboBox" name="comboBox_GraphLayout">
+          <property name="geometry">
+           <rect>
+            <x>370</x>
+            <y>40</y>
+            <width>181</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <item>
+           <property name="text">
+            <string>Circular</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Spring</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Fruchterman</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Spectral</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Random</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Shell</string>
+           </property>
+          </item>
+         </widget>
+         <widget class="QLabel" name="label_27">
+          <property name="geometry">
+           <rect>
+            <x>560</x>
+            <y>40</y>
+            <width>191</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Node size</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_28">
+          <property name="geometry">
+           <rect>
+            <x>560</x>
+            <y>10</y>
+            <width>191</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="text">
+           <string>Iterations</string>
+          </property>
+         </widget>
+         <widget class="QSpinBox" name="spinBox_GraphItrs">
+          <property name="geometry">
+           <rect>
+            <x>630</x>
+            <y>10</y>
+            <width>181</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="maximum">
+           <number>10000</number>
+          </property>
+          <property name="value">
+           <number>50</number>
+          </property>
+         </widget>
+         <widget class="QSpinBox" name="spinBox_NodeSize">
+          <property name="geometry">
+           <rect>
+            <x>630</x>
+            <y>40</y>
+            <width>181</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="maximum">
+           <number>10000</number>
+          </property>
+          <property name="value">
+           <number>7</number>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="pushButton_CreateNXgraph">
+          <property name="geometry">
+           <rect>
+            <x>840</x>
+            <y>20</y>
+            <width>161</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Create NetworkX Graph</string>
+          </property>
+         </widget>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="tab_10">
+        <attribute name="title">
+         <string>Graph Report</string>
+        </attribute>
+        <widget class="QTableView" name="tableView_GraphResults">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>15</x>
+           <y>11</y>
+           <width>1001</width>
+           <height>491</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_SaveNXreport">
+         <property name="geometry">
+          <rect>
+           <x>840</x>
+           <y>510</y>
+           <width>181</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Save network report</string>
+         </property>
+        </widget>
+       </widget>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
  </widget>
