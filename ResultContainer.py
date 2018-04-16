@@ -7,6 +7,7 @@ class ResultContainer:
     def __init__(self, ResultSettings, SimulationSettings, SystemPaths, dssObjects, dssObjectsByClass, dssBuses):
         LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
         self.Results = {}
+        self.FileNumber = None
         self.pyLogger = logging.getLogger(LoggerTag)
         self.Buses = dssBuses
         self.ObjectsByElement = dssObjects
@@ -90,13 +91,19 @@ class ResultContainer:
                             )
         return
 
-    def ExportResults(self):
+    def ClearResults(self):
         if self.__Settings['Export Mode'] == 'byElement':
-            self.__ExportResultsByElements()
+            self.CreateListByElement()
         elif self.__Settings['Export Mode'] == 'byClass':
-            self.__ExportResultsByClass()
+            self.CreateListByClass()
 
-    def __ExportResultsByClass(self):
+    def ExportResults(self, RunNumber = None):
+        if self.__Settings['Export Mode'] == 'byElement':
+            self.__ExportResultsByElements(RunNumber)
+        elif self.__Settings['Export Mode'] == 'byClass':
+            self.__ExportResultsByClass(RunNumber)
+
+    def __ExportResultsByClass(self, RunNumber = None):
         for Class in self.Results.keys():
             for Property in self.Results[Class].keys():
                 Class_ElementDatasets = []
@@ -112,9 +119,14 @@ class ResultContainer:
                         ElmLvlHeader = Element + ','
 
                     if self.__Settings['Export Style'] == 'Seperate files':
-                        np.savetxt(self.ExportFolder + '\\' + Class + '_' +  Property + '-' + Element + '-' +
-                                   str(self.__StartDay) + '-' + str(self.__EndDay)+ ".csv", Data,
-                                   delimiter=',', header=ElmLvlHeader, comments='', fmt='%f')
+                        if RunNumber:
+                            np.savetxt(self.ExportFolder + '\\' + Class + '_' + Property + '-' + Element + '-' +
+                                       str(self.__StartDay) + '-' + str(self.__EndDay) + '-' + str(RunNumber) +
+                                       ".csv", Data, delimiter=',', header=ElmLvlHeader, comments='', fmt='%f')
+                        else:
+                            np.savetxt(self.ExportFolder + '\\' + Class + '_' +  Property + '-' + Element + '-' +
+                                        str(self.__StartDay) + '-' + str(self.__EndDay)+ ".csv", Data,
+                                        delimiter=',', header=ElmLvlHeader, comments='', fmt='%f')
                         self.pyLogger.info(Class + '-' + Property  + '-' + Element + ".csv exported to " + self.ExportFolder)
                     elif self.__Settings['Export Style'] == 'Single file':
                         Class_ElementDatasets.append(Data)
@@ -124,14 +136,19 @@ class ResultContainer:
                     if len(Class_ElementDatasets) > 0:
                         for D in Class_ElementDatasets[1:]:
                             Dataset = np.append(Dataset, D, axis=1)
-                    np.savetxt(self.ExportFolder + '\\' + Class +'-' + Property + '-' + str(self.__StartDay) + '-' +
-                               str(self.__EndDay)+ ".csv", Dataset, delimiter=',', header=PptyLvlHeader, comments='',
-                               fmt='%f')
+                    if RunNumber:
+                        np.savetxt(self.ExportFolder + '\\' + Class + '-' + Property + '-' + str(self.__StartDay) +
+                                   '-' + str(self.__EndDay) + '-' + str(RunNumber) + ".csv", Dataset,
+                                   delimiter=',', header=PptyLvlHeader, comments='',fmt='%f')
+                    else:
+                        np.savetxt(self.ExportFolder + '\\' + Class +'-' + Property + '-' + str(self.__StartDay) + '-' +
+                                   str(self.__EndDay)+ ".csv", Dataset, delimiter=',', header=PptyLvlHeader, comments='',
+                                   fmt='%f')
                     self.pyLogger.info(Class + '-' + Property + ".csv exported to " + self.ExportFolder)
         return
 
 
-    def __ExportResultsByElements(self):
+    def __ExportResultsByElements(self, RunNumber = None):
         for Element in self.Results.keys():
             ElementDatasets = []
             AllHeader = ''
@@ -148,8 +165,14 @@ class ResultContainer:
                     Header = Property + ','
 
                 if self.__Settings['Export Style'] == 'Seperate files':
-                    np.savetxt(self.ExportFolder + '\\' + Element + '-' + Property + '-' + str(self.__StartDay) + '-' +
-                               str(self.__EndDay) + ".csv", Data, delimiter=',', header=Header, comments='', fmt='%f')
+                    if RunNumber:
+                        np.savetxt(self.ExportFolder + '\\' + Element + '-' + Property + '-' + str(self.__StartDay) +
+                                   '-' + str(self.__EndDay) + '- ' + str(RunNumber) + ".csv", Data, delimiter=',',
+                                   header=Header, comments='', fmt='%f')
+                    else:
+                        np.savetxt(self.ExportFolder + '\\' + Element + '-' + Property + '-' + str(self.__StartDay) +
+                                   '-' + str(self.__EndDay) + ".csv", Data, delimiter=',', header=Header, comments='',
+                                   fmt='%f')
                     self.pyLogger.info(Element + '-' + Property + ".csv exported to " + self.ExportFolder)
                 elif self.__Settings['Export Style'] == 'Single file':
                     ElementDatasets.append(Data)
@@ -159,7 +182,13 @@ class ResultContainer:
                 if len(ElementDatasets) > 0:
                     for D in ElementDatasets[1:]:
                         Dataset = np.append(Dataset, D, axis=1)
-                np.savetxt(self.ExportFolder + '\\' + Element + '-' + str(self.__StartDay) + '-' + str(self.__EndDay)+
-                           ".csv", Dataset, delimiter=',', header=AllHeader, comments='', fmt='%f')
+                if RunNumber:
+                    np.savetxt(self.ExportFolder + '\\' + Element + '-' + str(self.__StartDay) + '-' +
+                               str(self.__EndDay) + '- ' + str(RunNumber) + ".csv", Dataset, delimiter=',',
+                               header=AllHeader, comments='', fmt='%f')
+                else:
+                    np.savetxt(self.ExportFolder + '\\' + Element + '-' + str(self.__StartDay) + '-' +
+                               str(self.__EndDay)+ ".csv", Dataset, delimiter=',', header=AllHeader, comments='',
+                               fmt='%f')
                 self.pyLogger.info(Element + ".csv exported to " + self.ExportFolder)
         return

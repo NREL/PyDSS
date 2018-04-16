@@ -1,7 +1,9 @@
 from ResultContainer import ResultContainer  as RC
 from pyContrReader import pyContrReader as pcr
 from pyPlotReader import pyPlotReader as ppr
+from MonteCarlo import MonteCarloSim as MCS
 from opendssdirect.utils import run_command
+from NetworkModifier import Modifier
 from dssElement import dssElement
 from dssCircuit import dssCircuit
 import opendssdirect as dss
@@ -61,14 +63,18 @@ class OpenDSS:
         self.__dssClass = dss.ActiveClass
         self.__dssCommand = run_command
         self.__dssSolution = dss.Solution
+
+        self.__UpdateDictionary()
+        self.__CreateBusObjects()
+
         self.__dssSolver = SolveMode.GetSolver(SimulationSettings=SimulationSettings, dssInstance=self.__dssInstance)
 
-        self.__ModifyNetwork()
-        self.__UpdateDictionary()
+        self.NetworkModifier = Modifier(dss, run_command, self.__SimulationOptions,
+                                        self.__dssObjects, self.__dssObjectsByClass)
+        self.__MCScenarioGenerator = MCS(dss, run_command, self.__SimulationOptions, self.__dssPath,
+                                 self.__dssObjects, self.__dssObjectsByClass, self.__dssSolver)
 
-        self.__CreateBusObjects()
         self.__dssSolver.reSolve()
-
         if self.__ResultOptions and self.__ResultOptions['Log Results']:
             self.ResultContainer = RC(ResultOptions, SimulationSettings, self.__dssPath,
                                       self.__dssObjects, self.__dssObjectsByClass, self.__dssBuses)
@@ -92,15 +98,14 @@ class OpenDSS:
 
         return
 
-    def __ModifyNetwork(self):
-        from NetworkModifier import Modifier
-        # self.__Modifier = Modifier(dss, run_command, self.__SimulationOptions)
-        #
-        # self.__Modifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
-        #                              True, self.__dssObjects)
-        # #self.__Modifier.Edit_Elements('regcontrol', 'enabled' ,'False')
-        #self.__Modifier.Edit_Elements('Load', 'enabled', 'False')
-        return
+    # def __ModifyNetwork(self):
+    #
+    #
+    #     self.NetworkModifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
+    #                                  self.__dssObjects, )
+    #     # self.__Modifier.Edit_Elements('regcontrol', 'enabled' ,'False')
+    #     # self.__Modifier.Edit_Elements('Load', 'enabled', 'False')
+    #     return
 
     def __CreateControllers(self,ControllerDict):
         self.__pyControls = {}
@@ -161,7 +166,6 @@ class OpenDSS:
         return
 
     def __UpdateDictionary(self):
-        InvalidSelection = ['Settings', 'ActiveClass', 'dss', 'utils', 'PDElements', 'XYCurves', 'Bus', 'Properties']
         self.__dssObjectsByClass={'LoadShape' : self.__GetRelaventObjectDict('LoadShape')}
 
         for ElmName in self.__dssInstance.Circuit.AllElementNames():
@@ -194,8 +198,18 @@ class OpenDSS:
             Elem = ElmCollection.Next()
         return ObjectList
 
-    def RunSimulation(self):
+    def RunMCsimulation(self,MCscenarios = 10):
+        for i in range(MCscenarios):
+            self.ResultContainer.ClearResults()
+            self.__Logger.info('Running scenario number ' + str(i))
+            self.__MCScenarioGenerator.Create_Scenario()
+            self.RunSimulation('MC[' + str(i) + ']')
+        return
+
+
+    def RunSimulation(self, RunNumber = None):
         startTime = time.time()
+        self.__dssSolver.ResetTime()
         TotalDays = self.__SimulationOptions['End Day'] - self.__SimulationOptions['Start Day']
         Steps = int(TotalDays * 24 * 60 / self.__SimulationOptions['Step resolution (min)'])
         self.__Logger.info('Running simulation for ' + str(Steps) + ' time steps')
@@ -230,7 +244,7 @@ class OpenDSS:
 
 
         if self.__ResultOptions and self.__ResultOptions['Log Results']:
-            self.ResultContainer.ExportResults()
+            self.ResultContainer.ExportResults(RunNumber)
 
         self.__Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
         self.__Logger.info('End of simulation')

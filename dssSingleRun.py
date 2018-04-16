@@ -13,7 +13,7 @@ import os
 @click.option('--export_style',default='Single file', type=click.STRING, help='possible options "Single_file" and "Seperate_files"')
 # Plot Settings
 @click.option('--network_layout',default=False, type=click.BOOL, help='Display network layout plot')
-@click.option('--time_series', default=True, type=click.BOOL, help='Display time series plot')
+@click.option('--time_series', default=False, type=click.BOOL, help='Display time series plot')
 @click.option('--xy_plot', default=False, type=click.BOOL, help='Display XY plot plot')
 @click.option('--sag_plot', default=False, type=click.BOOL, help='Display voltage / distance plot')
 @click.option('--histogram', default=False, type=click.BOOL, help='Display histogram plot')
@@ -26,7 +26,7 @@ import os
 @click.option('--error_tolerance', default=1.0, type=click.FLOAT, help='Error tolerance in KVA')
 @click.option('--simulation_type', default='Daily', type=click.STRING, help='possible modes "Daily" and "Snapshot"')
 @click.option('--active_project', default='HECO', type=click.STRING, help='Name of project to run')
-@click.option('--active_scenario', default='HP-Legacy', type=click.STRING, help='Project scenario to use')
+@click.option('--active_scenario', default='15-days_Legacy', type=click.STRING, help='Project scenario to use')
 @click.option('--dss_file', default='MasterCircuit_Mikilua_baseline2.dss', type=click.STRING, help='The main OpenDSS file')
 # Logger settings
 @click.option('--logging_level', default='DEBUG', type=click.STRING, help='possible options "DEBUG" and "INFO"')
@@ -74,7 +74,8 @@ def RunSimulation(**kwargs):
 
     BokehServer = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
     DSS = dssInstance.OpenDSS(PlotOptions = PO , ResultOptions=RO, SimulationSettings=SS, LoggerOptions=LO)
-    DSS.RunSimulation()
+    DSS.RunMCsimulation(MCscenarios = 3)
+    #DSS.RunSimulation()
     BokehServer.terminate()
 
 if __name__ == '__main__':

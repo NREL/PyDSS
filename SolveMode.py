@@ -18,13 +18,13 @@ def GetSolver(SimulationSettings ,dssInstance):
 class __Daily:
     def __init__(self, dssInstance, SimulationSettings, Logger):
         self.pyLogger = Logger
-        StartDay = SimulationSettings['Start Day']
-        mStepResolution = SimulationSettings['Step resolution (min)']
-        self.mStepRes = mStepResolution
+        self.StartDay = SimulationSettings['Start Day']
+        self.mStepResolution = SimulationSettings['Step resolution (min)']
+        self.mStepRes = self.mStepResolution
         self.__dssIntance = dssInstance
         self.__dssSolution = dssInstance.Solution
         self.__dssSolution.Mode(2)
-        self.__dssSolution.Hour(StartDay * 24)
+        self.__dssSolution.Hour(self.StartDay * 24)
         self.__dssSolution.Number(1)
         self.__dssSolution.StepSize(self.mStepRes*60)
         self.__dssSolution.MaxControlIterations(200)
@@ -48,7 +48,12 @@ class __Daily:
         self.__dssSolution.StepSize(0)
         self.__dssSolution.SolveNoControl()
 
-    def customControlLoop(self):
+    def ResetTime(self):
+        self.__dssSolution.Mode(2)
+        self.__dssSolution.Hour(self.StartDay * 24)
+        self.__dssSolution.Number(1)
+        self.__dssSolution.StepSize(self.mStepRes * 60)
+        self.__dssSolution.MaxControlIterations(200)
         return
 
 class __Shapshot:
