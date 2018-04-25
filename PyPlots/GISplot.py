@@ -69,7 +69,7 @@ class Plot:
         self.__Figure.add_glyph(self.busDataSource, self.BusPlot)
 
         self.PlotElementClass('Transformers', 'black', 'circle')
-        self.PlotElementClass('PVsystems', 'yellow', 'square')
+        self.PlotElementClass('PVSystems', 'yellow', 'square')
         self.PlotElementClass('Loads', 'red', 'triangle')
 
         self.__Figure.add_tools(PanTool(), WheelZoomTool(), BoxSelectTool())
