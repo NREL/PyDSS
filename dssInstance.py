@@ -142,18 +142,18 @@ class OpenDSS:
                     self.__Logger.info('Created pyPlot -> ' + PlotType)
         return
 
-    def __UpdateControllers_Q(self, Time, UpdateResults):
+    def __UpdateControllers_Q(self, Time, Iteration):
         NewError = 0
         for Key, Controller in self.__pyControls.items():
-            NewError += Controller.Update_Q(Time, UpdateResults)
+            NewError += Controller.Update_Q(Time, Iteration)
         if abs(NewError) < self.__SimulationOptions['Error tolerance']:
             return True, NewError
         return False, NewError
 
-    def __UpdateControllers_P(self, Time, UpdateResults):
+    def __UpdateControllers_P(self, Time, Iteration):
         NewError = 0
         for Key, Controller in self.__pyControls.items():
-            NewError += Controller.Update_P(Time, UpdateResults)
+            NewError += Controller.Update_P(Time, Iteration)
         if abs(NewError) < self.__SimulationOptions['Error tolerance']:
             return True, NewError
         return False, NewError
@@ -209,15 +209,14 @@ class OpenDSS:
 
     def RunSimulation(self, RunNumber = None):
         startTime = time.time()
-        self.__dssSolver.ResetTime()
         TotalDays = self.__SimulationOptions['End Day'] - self.__SimulationOptions['Start Day']
         Steps = int(TotalDays * 24 * 60 / self.__SimulationOptions['Step resolution (min)'])
         self.__Logger.info('Running simulation for ' + str(Steps) + ' time steps')
         for i in range(Steps):
-            print('Running simulation @ time step: ', i)
+            self.__Logger.info('Running simulation @ time step: ' + str(i))
             self.__dssSolver.IncStep()
             for j in range(self.__SimulationOptions['Max Control Iterations']):
-                has_Q_Converged, Error = self.__UpdateControllers_Q(i, UpdateResults = False)
+                has_Q_Converged, Error = self.__UpdateControllers_Q(i, j)
                 self.__Logger.debug('Q convergance error ' + str(Error))
                 if has_Q_Converged or j == self.__SimulationOptions['Max Control Iterations'] - 1:
                     if not has_Q_Converged:
@@ -227,7 +226,7 @@ class OpenDSS:
                     self.__dssSolver.reSolve()
             #self.__dssSolver.reSolve()
             for j in range(self.__SimulationOptions['Max Control Iterations']):
-                has_P_Converged, Error = self.__UpdateControllers_P(i, UpdateResults = False)
+                has_P_Converged, Error = self.__UpdateControllers_P(i, j)
                 self.__Logger.debug('P convergance error ' + str(Error))
                 if has_P_Converged or j == self.__SimulationOptions['Max Control Iterations'] - 1:
                     if not has_P_Converged:
@@ -235,7 +234,7 @@ class OpenDSS:
                     break
                 elif not has_P_Converged:
                     self.__dssSolver.reSolve()
-            #self.__dssSolver.reSolve()
+
 
             self.__UpdatePlots()
             if self.__ResultOptions and self.__ResultOptions['Log Results']:

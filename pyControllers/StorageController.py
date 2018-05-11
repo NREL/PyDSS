@@ -1,13 +1,15 @@
-import matplotlib.pyplot as plt
+import numpy as np
 import math
 
 class StorageController:
-    I = 0.9
-    Time = 0
-    __PinOld = 0
-    QcalcOld = 0
-    PbattOld = 0
+
     def __init__(self, StorageObj, Settings, dssInstance, ElmObjectList, dssSolver):
+        self.Time = 0
+        self.__Pin = 0
+        self.__PinOld = 0
+        self.PbattOld = 0
+        self.QcalcOld = 0
+
         self.__ElmObjectList = ElmObjectList
         self.P_ControlDict = {
             'None' : lambda : 0,
@@ -35,34 +37,31 @@ class StorageController:
 
         Class, Name = self.__ControlledElm.GetInfo()
         self.__Name = 'pyCont_' + Class + '_' + Name
+        #self.__Convergance = np.zeros((1440,10))
 
-        self.PinHist = []
-        self.PbattHist = []
-        self.SOChist = []
-        self.uInHist = []
-        self.PFbattHist = []
-        self.VarBattHist = []
-        self.Fig, self.Axs = plt.subplots(3,2, sharex=True)
-        from itertools import chain
-        self.Axs = list(chain.from_iterable(self.Axs))
         return
 
-    def Update_Q(self, Time, UpdateResults):
+    def Update_Q(self, Time, Iteration):
         if Time >= 1:
-            self.Time = Time
-            self.doUpdate = UpdateResults
+            #self.Time = Time
+            #elf.doUpdate = UpdateResults
             dQ = self.Q_update()
         else:
             dQ = 0
         return dQ
 
-    def Update_P(self, Time, UpdateResults):
+    def Update_P(self, Time, Iteration):
+        self.Itr = Iteration
         if Time >= 1:
             self.Time = Time
-            self.doUpdate = UpdateResults
             dP = self.P_update()
+            # self.__Convergance[Time, Iteration] = dP
         else:
             dP = 0
+
+        # if Time == 1439:
+        #     np.savetxt(r'C:\Users\alatif\Desktop\PyDSS\Export\Sumitomo-Validation\ESS-CF\Convergance.csv',
+        #                self.__Convergance.transpose(), delimiter=',')
         return dP
 
     def SetSetting(self, Property, Value):
@@ -127,7 +126,7 @@ class StorageController:
             self.__ControlledElm.SetParameter('State', 'CHARGING')
             self.__ControlledElm.SetParameter('%charge', str(pctcharge))
 
-        Error = (Pbatt - self.PbattOld)*2
+        Error = abs(Pbatt - self.PbattOld)
         self.PbattOld = Pbatt
         return Error
 
@@ -167,46 +166,45 @@ class StorageController:
     def CapacityFirmimgControl(self):
         dPub = self.__Settings['CF_dP_ub']
         dPlb = self.__Settings['CF_dP_lb']
-        effDchg = float(self.__ControlledElm.GetParameter2('%EffDischarge')) / 100
-        effChg = float(self.__ControlledElm.GetParameter2('%EffCharge')) / 100
-        IdlingkWPercent = float(self.__ControlledElm.GetParameter2('%IdlingkW'))
-        IdlingkW = IdlingkWPercent / 100 * self.__Prated
-        Sin = self.__ElmObjectList[self.__Settings['PowerMeaElem']].GetVariable('Powers')
-        Pin = sum(Sin[0:5:2])
-        Pbatt = float(self.__ControlledElm.GetParameter2('kw'))
-        Pbatt  = -float(self.__ControlledElm.GetVariable('Powers')[0])*3
-        #print (PbattTest ,Pbatt)
-        dPbatt = 0
+
+        if self.Itr == 0:
+            self.__PinOld = self.__Pin
+        print(self.Itr, self.__PinOld, self.__Pin)
+        if self.__Settings['PowerMeaElem'] == 'Total':
+            Sin = self.__dssInstance.Circuit.TotalPower()
+            Pin = -sum(Sin[0:5:2])
+        else:
+            Sin = self.__ElmObjectList[self.__Settings['PowerMeaElem']].GetVariable('Powers')
+            Pin = sum(Sin[0:5:2])
+        Pbatt = -float(self.__ControlledElm.GetVariable('Powers')[0]) * 3
         ramp = (Pin - self.__PinOld)
-        a = 1
         if self.Time > 1:
-            if ramp < dPub and ramp > dPlb:
+            if ramp >= dPub:
+                dPbatt = self.__Settings['DampCoef'] * (ramp - dPub)
+                Pbatt += dPbatt
+            elif ramp <= dPlb:
+                dPbatt = self.__Settings['DampCoef'] * (ramp - dPlb)
+                Pbatt += dPbatt
+            else:
                 dPbatt = 0
                 Pbatt = 0
-            elif ramp >= dPub:
-                dPbatt = a * (ramp - dPub)
-                Pbatt = dPbatt
-            elif ramp <= dPlb:
-                dPbatt = a * (ramp - dPlb)
-                Pbatt = dPbatt
-
-            if Pbatt > IdlingkW:
+            if Pbatt > 0:
                 pctdischarge = Pbatt / self.__Prated * 100
                 self.__ControlledElm.SetParameter('State', 'DISCHARGING')
                 self.__ControlledElm.SetParameter('%Discharge', str(pctdischarge))
-            elif Pbatt < IdlingkW:
-                pctcharge = -(Pbatt) / self.__Prated * 100
+            elif Pbatt < 0:
+                pctcharge = -Pbatt / self.__Prated * 100
                 self.__ControlledElm.SetParameter('State', 'CHARGING')
                 self.__ControlledElm.SetParameter('%charge', str(pctcharge))
-            elif Pbatt == -IdlingkW:
+            elif Pbatt == 0:
                 self.__ControlledElm.SetParameter('State', 'IDLING')
+            self.__Pin = Pin
         else:
             self.__PinOld = Pin
+            self.__Pin = Pin
             return 0
 
-        Error =  abs(dPbatt)
-        if self.doUpdate:
-            self.__PinOld = Pin
+        Error = abs(dPbatt)
         return Error
 
     def ConstantPowerFactorControl(self):
