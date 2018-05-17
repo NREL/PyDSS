@@ -1,6 +1,6 @@
 import math
 
-class PvController:
+class Controller:
     TimeChange = False
     Time = 0
 

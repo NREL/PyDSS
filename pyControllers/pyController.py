@@ -2,13 +2,15 @@ import PvController
 import xfmrController
 import SocketController
 import StorageController
+import PVstorageController
 from dssElement import dssElement
 
 ControllerTypes ={
-    'PV Controller'     : PvController.PvController,
-    'Socket Controller' : SocketController.SocketController,
-    'XFMR Controller'   : xfmrController.xfmrController,
-    'Storage Controller': StorageController.StorageController,
+    'PV Controller'         : PvController.Controller,
+    'Socket Controller'     : SocketController.Controller,
+    'XFMR Controller'       : xfmrController.Controller,
+    'Storage Controller'    : StorageController.Controller,
+    'PV-Storage Controller' : PVstorageController.Controller,
 }
 
 

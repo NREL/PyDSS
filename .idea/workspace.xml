@@ -2,7 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a36e9dc1-9053-46dd-a663-a351f8c2cd89" name="N O" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectFiles/IEEE13/DSSfiles/IEEE13Nodeckt.dss" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/IEEE13/DSSfiles/IEEE13Nodeckt.dss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dssSingleRun.py" beforeDir="false" afterPath="$PROJECT_DIR$/dssSingleRun.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyControllers/PvController.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyControllers/PvController.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyControllers/SocketController.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyControllers/SocketController.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pyControllers/StorageController.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyControllers/StorageController.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyControllers/pyController.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyControllers/pyController.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyControllers/xfmrController.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyControllers/xfmrController.py" afterDir="false" />
     </list>
     <list id="4d158a37-460e-4f32-90b0-7874bee38a84" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,11 +24,65 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="StorageController.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="StorageController.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pyControllers/StorageController.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="110" column="8" selection-start-line="110" selection-start-column="8" selection-end-line="110" selection-end-column="8" />
+            <state relative-caret-position="775">
+              <caret line="35" column="8" selection-start-line="35" selection-start-column="8" selection-end-line="36" selection-end-column="64" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="xfmrController.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pyControllers/xfmrController.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="50">
+              <caret line="2" column="6" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="6" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PVstorageController.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/pyControllers/PVstorageController.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="375">
+              <caret line="48" column="53" lean-forward="true" selection-start-line="48" selection-start-column="53" selection-end-line="48" selection-end-column="53" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PvController.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pyControllers/PvController.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="50">
+              <caret line="2" column="6" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="6" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pyController.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pyControllers/pyController.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="300">
+              <caret line="12" column="26" selection-start-line="12" selection-start-column="5" selection-end-line="12" selection-end-column="26" />
+              <folding>
+                <element signature="e#0#19#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SocketController.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pyControllers/SocketController.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-130">
+              <caret line="3" column="6" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="6" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -29,8 +90,8 @@
       <file leaf-file-name="dssSingleRun.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dssSingleRun.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1175">
-              <caret line="53" column="23" selection-start-line="53" selection-start-column="23" selection-end-line="53" selection-end-column="23" />
+            <state relative-caret-position="275">
+              <caret line="23" column="47" lean-forward="true" selection-start-line="23" selection-start-column="47" selection-end-line="23" selection-end-column="47" />
             </state>
           </provider>
         </entry>
@@ -82,13 +143,11 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/PyPlots/pyPlots.py" />
         <option value="$PROJECT_DIR$/dssBus.py" />
         <option value="$PROJECT_DIR$/../HECO/main.py" />
         <option value="$PROJECT_DIR$/../Distribution_Fitting.py" />
         <option value="$PROJECT_DIR$/../Socket Serever Tester.py" />
         <option value="$PROJECT_DIR$/../Socket.py" />
-        <option value="$PROJECT_DIR$/pyControllers/SocketController.py" />
         <option value="$PROJECT_DIR$/pyLogger.py" />
         <option value="$PROJECT_DIR$/Export/HECO/MetricCalculation - Copy.py" />
         <option value="$PROJECT_DIR$/dssParallelize.py" />
@@ -99,7 +158,6 @@
         <option value="$PROJECT_DIR$/Export/HECO/PVplot.py" />
         <option value="$PROJECT_DIR$/Export/HECO/Plots.py" />
         <option value="$PROJECT_DIR$/dssCircuit.py" />
-        <option value="$PROJECT_DIR$/pyControllers/pyController.py" />
         <option value="C:/ProgramData/Anaconda3/Library/bin/dssGUI.py" />
         <option value="$PROJECT_DIR$/../Socket - Copy.py" />
         <option value="$PROJECT_DIR$/PyPlots/Histogram.py" />
@@ -108,7 +166,6 @@
         <option value="$PROJECT_DIR$/PyPlots/XYPlot.py" />
         <option value="$PROJECT_DIR$/dssParallelizedRun.py" />
         <option value="$PROJECT_DIR$/pyControllers/test.py" />
-        <option value="$PROJECT_DIR$/pyControllers/PvController.py" />
         <option value="C:/ProgramData/Anaconda3/Lib/site-packages/bokeh/models/sources.py" />
         <option value="$PROJECT_DIR$/PyPlots/TimeSeries.py" />
         <option value="$PROJECT_DIR$/dssGUI.py" />
@@ -122,7 +179,6 @@
         <option value="$PROJECT_DIR$/../New folder/PlotsPS.py" />
         <option value="$PROJECT_DIR$/../Sumitomo Plots/PlotsPS.py" />
         <option value="$PROJECT_DIR$/../Sumitomo Plots/PlotsCF.py" />
-        <option value="$PROJECT_DIR$/pyControllers/xfmrController.py" />
         <option value="$PROJECT_DIR$/../ADMS/Main.py" />
         <option value="$PROJECT_DIR$/Export/Sumitomo-Validation/ESS-PS/Convergance/ConvergancePLot.py" />
         <option value="$PROJECT_DIR$/SolveMode.py" />
@@ -131,16 +187,21 @@
         <option value="$USER_HOME$/Google Drive/NREL/Projects/Sumitomo Plots/for paper/PlotsCF.py" />
         <option value="$USER_HOME$/Google Drive/NREL/Projects/Sumitomo Plots/for paper/PlotsPS.py" />
         <option value="$PROJECT_DIR$/Export/HECO/MetricCalculation.py" />
-        <option value="$PROJECT_DIR$/dssSingleRun.py" />
+        <option value="$PROJECT_DIR$/pyControllers/PvController.py" />
+        <option value="$PROJECT_DIR$/pyControllers/SocketController.py" />
         <option value="$PROJECT_DIR$/pyControllers/StorageController.py" />
+        <option value="$PROJECT_DIR$/pyControllers/xfmrController.py" />
+        <option value="$PROJECT_DIR$/pyControllers/pyController.py" />
+        <option value="$PROJECT_DIR$/dssSingleRun.py" />
+        <option value="$PROJECT_DIR$/pyControllers/PVstorageController.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-2088" />
-    <option name="y" value="-17" />
-    <option name="width" value="1938" />
-    <option name="height" value="1098" />
+    <option name="x" value="-1010" />
+    <option name="y" value="-30" />
+    <option name="width" value="665" />
+    <option name="height" value="502" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -331,13 +392,13 @@
       <window_info content_ui="combo" id="Project" order="2" sideWeight="0.47241378" visible="true" weight="0.15331928" />
       <window_info anchor="bottom" id="TODO" order="7" sideWeight="0.49573562" weight="0.3041145" />
       <window_info anchor="bottom" id="Event Log" order="6" sideWeight="0.083243825" side_tool="true" weight="0.9693396" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.45059076" weight="0.3224401" />
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.33903134" />
       <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.4978678" weight="0.3278867" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.45059076" weight="0.3233618" />
       <window_info id="Structure" order="0" sideWeight="0.4916388" side_tool="true" weight="0.10642782" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.4978678" weight="0.3291592" />
-      <window_info id="Favorites" order="1" sideWeight="0.5275862" side_tool="true" weight="0.15542677" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.91675615" weight="0.29956427" />
+      <window_info id="Favorites" order="1" sideWeight="0.5275862" side_tool="true" weight="0.15542677" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -352,22 +413,22 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info active="true" content_ui="combo" id="Project" order="2" sideWeight="0.47241378" visible="true" weight="0.1548999" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.45059076" visible="true" weight="0.36601308" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="right" id="Data View" order="4" weight="0.08198121" />
       <window_info id="Structure" order="0" sideWeight="0.4916388" side_tool="true" weight="0.10642782" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="7" sideWeight="0.49573562" weight="0.3041145" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32887402" />
-      <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.4978678" weight="0.3278867" />
+      <window_info anchor="bottom" id="Version Control" order="10" weight="0.33903134" />
+      <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.91675615" weight="0.29956427" />
       <window_info anchor="right" x="2064" y="290" width="1736" height="896" id="Documentation" order="3" type="FLOATING" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.4978678" weight="0.3291592" />
       <window_info anchor="bottom" id="Event Log" order="6" sideWeight="0.083243825" side_tool="true" weight="0.9693396" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Version Control" order="10" weight="0.33903134" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info id="Favorites" order="1" sideWeight="0.5275862" side_tool="true" weight="0.15542677" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32887402" />
+      <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.4978678" weight="0.3278867" />
     </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -412,7 +473,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="321" />
+      <option name="time" value="322" />
     </breakpoint-manager>
   </component>
   <component name="debuggerHistoryManager">
@@ -430,20 +491,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/matplotlib/backends/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="125">
-          <caret line="13" selection-start-line="13" selection-end-line="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyPlotReader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="22" selection-start-line="22" selection-end-line="22" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pyControllers/test.py" />
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/matplotlib/pyplot.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -572,13 +619,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pyControllers/SocketController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret lean-forward="true" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="750">
@@ -652,24 +692,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pyControllers/xfmrController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="16" column="17" selection-start-line="16" selection-start-column="17" selection-end-line="16" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/ProgramData/Anaconda3/Lib/logging/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="604">
           <caret line="65" column="1" lean-forward="true" selection-start-line="65" selection-start-column="1" selection-end-line="65" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyControllers/PvController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="482">
-          <caret line="188" column="32" selection-start-line="188" selection-start-column="32" selection-end-line="188" selection-end-column="32" />
         </state>
       </provider>
     </entry>
@@ -778,17 +804,61 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dssSingleRun.py">
+    <entry file="file://$PROJECT_DIR$/pyControllers/xfmrController.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1175">
-          <caret line="53" column="23" selection-start-line="53" selection-start-column="23" selection-end-line="53" selection-end-column="23" />
+        <state relative-caret-position="50">
+          <caret line="2" column="6" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyControllers/PvController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="50">
+          <caret line="2" column="6" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyControllers/pyController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="12" column="26" selection-start-line="12" selection-start-column="5" selection-end-line="12" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyControllers/SocketController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-130">
+          <caret line="3" column="6" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="6" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pyControllers/StorageController.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="110" column="8" selection-start-line="110" selection-start-column="8" selection-end-line="110" selection-end-column="8" />
+        <state relative-caret-position="775">
+          <caret line="35" column="8" selection-start-line="35" selection-start-column="8" selection-end-line="36" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dssSingleRun.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="23" column="47" lean-forward="true" selection-start-line="23" selection-start-column="47" selection-end-line="23" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyControllers/PVstorageController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="48" column="53" lean-forward="true" selection-start-line="48" selection-start-column="53" selection-end-line="48" selection-end-column="53" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

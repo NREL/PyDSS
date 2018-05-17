@@ -1,7 +1,7 @@
 import socket
 import struct
 
-class SocketController:
+class Controller:
     def __init__(self, ElmObject, Settings, dssInstance, ElmObjectList,dssSolver):
         self.__ControlledElm = ElmObject
         Class, Name = self.__ControlledElm.GetInfo()

@@ -1,7 +1,7 @@
 import numpy as np
 import math
 
-class StorageController:
+class Controller:
 
     def __init__(self, StorageObj, Settings, dssInstance, ElmObjectList, dssSolver):
         self.Time = 0

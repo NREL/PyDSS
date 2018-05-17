@@ -1,6 +1,6 @@
 import math
 
-class xfmrController:
+class Controller:
     P_old = 0
     __Locked = False
     def __init__(self, RegulatorObj, Settings, dssInstance, ElmObjectList, dssSolver):
