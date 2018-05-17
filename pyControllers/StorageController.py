@@ -6,10 +6,11 @@ class StorageController:
     def __init__(self, StorageObj, Settings, dssInstance, ElmObjectList, dssSolver):
         self.Time = 0
         self.__Pin = 0
+        self.Pbatt = 0
         self.__PinOld = 0
         self.PbattOld = 0
         self.QcalcOld = 0
-
+        self.ExportOld = False
         self.__ElmObjectList = ElmObjectList
         self.P_ControlDict = {
             'None' : lambda : 0,
@@ -17,7 +18,8 @@ class StorageController:
             'CF'   : self.CapacityFirmimgControl,
             'TT'   : self.TimeTriggeredControl,
             'RT'   : self.RealTimeControl,
-            'SH'   : self.ScheduledControl,}
+            'SH'   : self.ScheduledControl,
+            'NETT' : self.NonExportTimeTriggered,}
 
         self.Q_ControlDict = {
             'None' : lambda : 0,
@@ -92,6 +94,79 @@ class StorageController:
         else:
             self.__ControlledElm.SetParameter('State', 'IDLE')
         return 0
+
+    def NonExportTimeTriggered(self):
+
+        Plb = self.__Settings['BaseLoadLim']
+        #perDischarge = self.__Settings['%DischargeRate']
+        sTime = self.__Settings['ExpWindowStart']
+        eTime = self.__Settings['ExpWindowEnd']
+        KWHrated = float(self.__ControlledElm.GetParameter2('kWhrated'))
+        perIdle = float(self.__ControlledElm.GetParameter2('%IdlingkW'))
+        effDchg = float(self.__ControlledElm.GetParameter2('%EffDischarge'))
+
+        Minutes = int(self.__dssInstance.Solution.Seconds() / 60)
+        Hour = self.__dssInstance.Solution.Hour() % 24
+
+        if sTime.hour < eTime.hour:
+            Twindow = ((eTime.hour * 60 + eTime.minute) - (sTime.hour * 60 + sTime.minute))/60
+            if (Hour * 60 + Minutes) > (sTime.hour * 60 + sTime.minute) and \
+                (Hour * 60 + Minutes) < (eTime.hour * 60 + eTime.minute):
+                Export = True
+            else:
+                Export = False
+        else:
+            Twindow = 24-((sTime.hour * 60 + sTime.minute) - (eTime.hour * 60 + eTime.minute) )/60
+            if (Hour * 60 + Minutes) > (sTime.hour * 60 + sTime.minute) or \
+                (Hour * 60 + Minutes) < (eTime.hour * 60 + eTime.minute):
+                Export = True
+            else:
+                Export = False
+
+        if self.ExportOld == False and Export == True:
+            perKWHstored = float(self.__ControlledElm.GetParameter2('%stored'))
+            kWhrem = KWHrated * (perKWHstored / 100)
+            self.Pbatt = kWhrem / (Twindow) * effDchg/100 -  perIdle * self.__Prated / 100
+            print(perKWHstored, kWhrem, self.Pbatt)
+
+        #print(self.__ControlledElm.GetParameter2('%stored'))
+        self.ExportOld = Export
+
+        if Export:
+            pctcharge = self.Pbatt / (self.__Prated) * 100
+            rT = ((eTime.hour * 60 + eTime.minute) - (Hour * 60 + Minutes))/60
+            self.__ControlledElm.SetParameter('State', 'DISCHARGING')
+            self.__ControlledElm.SetParameter('%Discharge', str(pctcharge))
+            Error = 0
+        else:
+            if self.__Settings['PowerMeaElem'] == 'Total':
+                Sin = self.__dssInstance.Circuit.TotalPower()
+                Pin = -sum(Sin[0:5:2])
+            else:
+                Sin = self.__ElmObjectList[self.__Settings['PowerMeaElem']].GetVariable('Powers')
+                Sin2 = Sin[:int(len(Sin) / 2)]
+                Pin = -sum(Sin2[0::2])
+            # Pbatt = -float(self.__ControlledElm.GetVariable('Powers')[0])*3 + IdlingkW
+            # #Does not cork as well as KW parameter for come reason
+            Pbatt = float(self.__ControlledElm.GetParameter2('kw'))
+            if Pin < Plb:
+                dP = Pin - Plb
+                Pbatt = Pbatt + dP * self.__Settings['DampCoef']
+            else:
+                Pbatt = 0
+
+            if Pbatt >= 0:
+               pctdischarge = Pbatt / (self.__Prated) * 100
+               self.__ControlledElm.SetParameter('State', 'DISCHARGING')
+               self.__ControlledElm.SetParameter('%Discharge', str(pctdischarge))
+            if Pbatt < 0:
+                pctcharge = -Pbatt / (self.__Prated) * 100
+                self.__ControlledElm.SetParameter('State', 'CHARGING')
+                self.__ControlledElm.SetParameter('%charge', str(pctcharge))
+
+            Error = abs(Pbatt - self.PbattOld)
+            self.PbattOld = Pbatt
+        return Error
 
     def PeakShavingControl(self):
         Pub = self.__Settings['PS_ub']

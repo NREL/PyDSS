@@ -2,23 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a36e9dc1-9053-46dd-a663-a351f8c2cd89" name="N O" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/PyDSS-heco.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PyDSS-heco.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GIS.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/HECO_HP-Legacy.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PVcontr.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Paralell.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Socket.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SolveMode.py" beforeDir="false" afterPath="$PROJECT_DIR$/SolveMode.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Storage.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Topology.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dssGUI.ui" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dssInstance.py" beforeDir="false" afterPath="$PROJECT_DIR$/dssInstance.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dssSingleRun.py" beforeDir="false" afterPath="$PROJECT_DIR$/dssSingleRun.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pyControllers/StorageController.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyControllers/StorageController.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyControllers/xfmrController.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyControllers/xfmrController.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uSag.bat" beforeDir="false" />
     </list>
     <list id="4d158a37-460e-4f32-90b0-7874bee38a84" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -33,56 +17,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="StorageController.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="StorageController.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pyControllers/StorageController.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-199">
-              <caret line="115" column="13" selection-start-line="115" selection-start-column="13" selection-end-line="115" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PlotsCF.py" pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/Google Drive/NREL/Projects/Sumitomo Plots/for paper/PlotsCF.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="140">
-              <caret line="57" column="80" selection-start-line="57" selection-start-column="60" selection-end-line="57" selection-end-column="80" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PlotsPS.py" pinned="false" current-in-tab="true">
-        <entry file="file://$USER_HOME$/Google Drive/NREL/Projects/Sumitomo Plots/for paper/PlotsPS.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="404">
-              <caret line="79" column="23" lean-forward="true" selection-start-line="79" selection-start-column="23" selection-end-line="79" selection-end-column="23" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="base.py" pinned="false" current-in-tab="false">
-        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/indexes/base.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="151">
-              <caret line="2526" selection-start-line="2526" selection-end-line="2526" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_decorators.py" pinned="false" current-in-tab="false">
-        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/util/_decorators.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1051">
-              <caret line="117" selection-start-line="117" selection-end-line="117" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="dssInstance.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dssInstance.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="470">
-              <caret line="262" selection-start-line="262" selection-end-line="262" />
+            <state relative-caret-position="170">
+              <caret line="110" column="8" selection-start-line="110" selection-start-column="8" selection-end-line="110" selection-end-column="8" />
             </state>
           </provider>
         </entry>
@@ -90,40 +29,8 @@
       <file leaf-file-name="dssSingleRun.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dssSingleRun.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="350">
-              <caret line="20" column="21" lean-forward="true" selection-start-line="20" selection-start-column="21" selection-end-line="20" selection-end-column="21" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="dssNetworkX.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dssNetworkX.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="404">
-              <caret line="47" selection-start-line="47" selection-end-line="47" />
-              <folding>
-                <element signature="e#1213#1641#0" />
-                <element signature="e#1707#2209#0" />
-                <element signature="e#2258#2569#0" />
-                <element signature="e#2618#2827#0" />
-                <element signature="e#2941#3217#0" />
-                <element signature="e#4399#4891#0" />
-                <element signature="e#4978#5488#0" />
-                <element signature="e#5599#5967#0" />
-                <element signature="e#7877#8848#0" />
-                <element signature="e#8901#9446#0" />
-                <element signature="e#9487#11937#0" />
-                <element signature="e#11976#13525#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SolveMode.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/SolveMode.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="825">
-              <caret line="33" column="33" selection-start-line="33" selection-start-column="33" selection-end-line="33" selection-end-column="33" />
+            <state relative-caret-position="1175">
+              <caret line="53" column="23" selection-start-line="53" selection-start-column="23" selection-end-line="53" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -158,6 +65,7 @@
       <find>boke</find>
       <find>Qlim</find>
       <find>print</find>
+      <find>kwh</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -177,7 +85,6 @@
         <option value="$PROJECT_DIR$/PyPlots/pyPlots.py" />
         <option value="$PROJECT_DIR$/dssBus.py" />
         <option value="$PROJECT_DIR$/../HECO/main.py" />
-        <option value="$PROJECT_DIR$/Export/HECO/MetricCalculation.py" />
         <option value="$PROJECT_DIR$/../Distribution_Fitting.py" />
         <option value="$PROJECT_DIR$/../Socket Serever Tester.py" />
         <option value="$PROJECT_DIR$/../Socket.py" />
@@ -221,16 +128,17 @@
         <option value="$PROJECT_DIR$/SolveMode.py" />
         <option value="$PROJECT_DIR$/dssInstance.py" />
         <option value="$PROJECT_DIR$/Export/Sumitomo-Validation/ESS-CF/ConvergancePlot.py" />
-        <option value="$PROJECT_DIR$/pyControllers/StorageController.py" />
-        <option value="$PROJECT_DIR$/dssSingleRun.py" />
         <option value="$USER_HOME$/Google Drive/NREL/Projects/Sumitomo Plots/for paper/PlotsCF.py" />
         <option value="$USER_HOME$/Google Drive/NREL/Projects/Sumitomo Plots/for paper/PlotsPS.py" />
+        <option value="$PROJECT_DIR$/Export/HECO/MetricCalculation.py" />
+        <option value="$PROJECT_DIR$/dssSingleRun.py" />
+        <option value="$PROJECT_DIR$/pyControllers/StorageController.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
-    <option name="x" value="-9" />
-    <option name="y" value="-9" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-2088" />
+    <option name="y" value="-17" />
     <option name="width" value="1938" />
     <option name="height" value="1098" />
   </component>
@@ -239,6 +147,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -255,7 +164,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -275,7 +183,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.PlotsPS">
+  <component name="RunManager" selected="Python.dssSingleRun">
     <configuration name="ConvergancePLot" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="PyDSS-heco" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -375,9 +283,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.dssSingleRun" />
         <item itemvalue="Python.PlotsPS" />
         <item itemvalue="Python.PlotsCF" />
-        <item itemvalue="Python.dssSingleRun" />
         <item itemvalue="Python.ConvergancePlot" />
         <item itemvalue="Python.ConvergancePLot" />
       </list>
@@ -418,15 +326,14 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="838" extended-state="7" />
-    <editor active="true" />
+    <frame x="-1928" y="-8" width="1936" height="1056" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="2" sideWeight="0.47241378" visible="true" weight="0.19431593" />
+      <window_info content_ui="combo" id="Project" order="2" sideWeight="0.47241378" visible="true" weight="0.15331928" />
       <window_info anchor="bottom" id="TODO" order="7" sideWeight="0.49573562" weight="0.3041145" />
       <window_info anchor="bottom" id="Event Log" order="6" sideWeight="0.083243825" side_tool="true" weight="0.9693396" />
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.33903134" />
       <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.4978678" weight="0.3278867" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.45059076" weight="0.5925926" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.45059076" weight="0.3233618" />
       <window_info id="Structure" order="0" sideWeight="0.4916388" side_tool="true" weight="0.10642782" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.4978678" weight="0.3291592" />
       <window_info id="Favorites" order="1" sideWeight="0.5275862" side_tool="true" weight="0.15542677" />
@@ -451,10 +358,10 @@
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="7" sideWeight="0.49573562" weight="0.3041145" />
-      <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.4978678" weight="0.3278867" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32887402" />
-      <window_info anchor="right" x="2064" y="290" width="1736" height="896" id="Documentation" order="3" type="FLOATING" />
+      <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.4978678" weight="0.3278867" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.91675615" weight="0.29956427" />
+      <window_info anchor="right" x="2064" y="290" width="1736" height="896" id="Documentation" order="3" type="FLOATING" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.4978678" weight="0.3291592" />
       <window_info anchor="bottom" id="Event Log" order="6" sideWeight="0.083243825" side_tool="true" weight="0.9693396" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -494,11 +401,6 @@
           <line>61</line>
           <option name="timeStamp" value="313" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/SolveMode.py</url>
-          <line>23</line>
-          <option name="timeStamp" value="317" />
-        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
@@ -510,7 +412,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="320" />
+      <option name="time" value="321" />
     </breakpoint-manager>
   </component>
   <component name="debuggerHistoryManager">
@@ -757,11 +659,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Export/HECO/MetricCalculation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-525" />
-      </provider>
-    </entry>
     <entry file="file://C:/ProgramData/Anaconda3/Lib/logging/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="604">
@@ -811,44 +708,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pyControllers/StorageController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-199">
-          <caret line="115" column="13" selection-start-line="115" selection-start-column="13" selection-end-line="115" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/indexes/base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="2526" selection-start-line="2526" selection-end-line="2526" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/util/_decorators.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1051">
-          <caret line="117" selection-start-line="117" selection-end-line="117" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dssInstance.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="470">
-          <caret line="262" selection-start-line="262" selection-end-line="262" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dssSingleRun.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="20" column="21" lean-forward="true" selection-start-line="20" selection-start-column="21" selection-end-line="20" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dssNetworkX.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="404">
+        <state relative-caret-position="525">
           <caret line="47" selection-start-line="47" selection-end-line="47" />
           <folding>
             <element signature="e#1213#1641#0" />
@@ -867,24 +729,66 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/Google Drive/NREL/Projects/Sumitomo Plots/for paper/PlotsPS.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1850">
+          <caret line="74" selection-start-line="74" selection-end-line="74" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/indexes/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="61650">
+          <caret line="2526" selection-start-line="2526" selection-end-line="2526" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/util/_decorators.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2775">
+          <caret line="117" selection-start-line="117" selection-end-line="117" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dssInstance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6200">
+          <caret line="262" selection-start-line="262" selection-end-line="262" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/SolveMode.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="825">
-          <caret line="33" column="33" selection-start-line="33" selection-start-column="33" selection-end-line="33" selection-end-column="33" />
+        <state relative-caret-position="25">
+          <caret line="51" column="24" lean-forward="true" selection-start-line="51" selection-start-column="24" selection-end-line="51" selection-end-column="24" />
         </state>
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/Google Drive/NREL/Projects/Sumitomo Plots/for paper/PlotsCF.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
+        <state relative-caret-position="604">
           <caret line="57" column="80" selection-start-line="57" selection-start-column="60" selection-end-line="57" selection-end-column="80" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Google Drive/NREL/Projects/Sumitomo Plots/for paper/PlotsPS.py">
+    <entry file="file://$PROJECT_DIR$/Export/HECO/MetricCalculation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="404">
-          <caret line="79" column="23" lean-forward="true" selection-start-line="79" selection-start-column="23" selection-end-line="79" selection-end-column="23" />
+        <state relative-caret-position="604">
+          <caret line="47" lean-forward="true" selection-start-line="47" selection-end-line="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dssSingleRun.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1175">
+          <caret line="53" column="23" selection-start-line="53" selection-start-column="23" selection-end-line="53" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyControllers/StorageController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="110" column="8" selection-start-line="110" selection-start-column="8" selection-end-line="110" selection-end-column="8" />
         </state>
       </provider>
     </entry>
