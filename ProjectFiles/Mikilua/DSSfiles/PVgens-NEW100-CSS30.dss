@@ -10,7 +10,6 @@ New PVSystem.OH_261663_0_6 bus1=DEV_261702_0_6.1 Phases=1 kV=0.24 kVA=11.8602932
 New PVSystem.BB_258073_1_4 bus1=DEV_258195_48.1 Phases=1 kV=0.24 kVA=5.570627269 irradiance=1 Pmpp=6.96328408677962 kvar=0 kvarlimit=1.225538 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
 New PVSystem.BB_264037_1_4 bus1=DEV_264038_1564.2 Phases=1 kV=0.24 kVA=8.960543955 irradiance=1 Pmpp=11.2006799438748 kvar=0 kvarlimit=1.97131967 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
 New PVSystem.OH_262987_1_3 bus1=NODE_31208075_1_3.1 Phases=1 kV=0.24 kVA=7.468438137 irradiance=1 Pmpp=9.33554767147395 kvar=0 kvarlimit=1.64305639 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
-New PVSystem.OH_264579b bus1=NODE_602347.2 Phases=1 kV=7.199557857 kVA=16.3269149 irradiance=1 Pmpp=20.4086436208078 kvar=0 kvarlimit=3.591921278 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
 New PVSystem.BB_258073_1_10 bus1=DEV_258195_116.1 Phases=1 kV=0.24 kVA=6.528849165 irradiance=1 Pmpp=8.16106145663382 kvar=0 kvarlimit=1.436346817 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
 New PVSystem.OH_264057_1_8 bus1=DEV_264122_1315.3 Phases=1 kV=0.24 kVA=6.906469633 irradiance=1 Pmpp=8.63308704171036 kvar=0 kvarlimit=1.51942332 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
 New PVSystem.BB_259176_1_4 bus1=DEV_259178_138.1 Phases=1 kV=0.24 kVA=9.65253114 irradiance=1 Pmpp=12.0656639249799 kvar=0 kvarlimit=2.123556851 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
@@ -112,3 +111,5 @@ New PVSystem.OH_257796_1_7 bus1=NODE_559690_4.3 Phases=1 kV=0.24 kVA=7.909947214
 New PVSystem.BB_263793_1_7 bus1=DEV_263717_796.1 Phases=1 kV=0.24 kVA=6.455500613 irradiance=1 Pmpp=8.06937576576461 kvar=0 kvarlimit=2.84042027 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
 New PVSystem.BB_263789_1_7 bus1=DEV_263879_144.3 Phases=1 kV=0.24 kVA=7.008652084 irradiance=1 Pmpp=8.76081510529049 kvar=0 kvarlimit=3.083806917 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
 New PVSystem.BB_258073_1_9 bus1=DEV_258195_115.1 Phases=1 kV=0.24 kVA=6.481976093 irradiance=1 Pmpp=8.10247011577069 kvar=0 kvarlimit=2.852069481 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
+New PVSystem.BB_263806_1_2 bus1=DEV_263865_246.3 Phases=1 kV=0.24 kVA=5.880460728 irradiance=1 Pmpp=7.35057591 kvar=0 kvarlimit=2.58740272 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
+New PVSystem.OH_263400_0_5 bus1=DEV_263398_0_5.2 Phases=1 kV=0.24 kVA=6.166943298 irradiance=1 Pmpp=7.708679123 kvar=0 kvarlimit=2.713455051 %cutin=0.1 %cutout=0.1 yearly=m3pvmult

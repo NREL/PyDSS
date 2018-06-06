@@ -10,7 +10,6 @@ New PVSystem.PV_ESS_OH_261663_0_6 bus1=DEV_261702_0_6.1 Phases=1 kV=0.24 kVA=11.
 New PVSystem.PV_ESS_BB_258073_1_4 bus1=DEV_258195_48.1 Phases=1 kV=0.24 kVA=5.570627269 irradiance=1 Pmpp=0 kvar=0 kvarlimit=1.225538 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
 New PVSystem.PV_ESS_BB_264037_1_4 bus1=DEV_264038_1564.2 Phases=1 kV=0.24 kVA=8.960543955 irradiance=1 Pmpp=0 kvar=0 kvarlimit=1.97131967 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
 New PVSystem.PV_ESS_OH_262987_1_3 bus1=NODE_31208075_1_3.1 Phases=1 kV=0.24 kVA=7.468438137 irradiance=1 Pmpp=0 kvar=0 kvarlimit=1.64305639 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
-New PVSystem.PV_ESS_OH_264579b bus1=NODE_602347.2 Phases=1 kV=7.199557857 kVA=16.3269149 irradiance=1 Pmpp=0 kvar=0 kvarlimit=3.591921278 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
 New PVSystem.PV_ESS_BB_258073_1_10 bus1=DEV_258195_116.1 Phases=1 kV=0.24 kVA=6.528849165 irradiance=1 Pmpp=0 kvar=0 kvarlimit=1.436346817 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
 New PVSystem.PV_ESS_OH_264057_1_8 bus1=DEV_264122_1315.3 Phases=1 kV=0.24 kVA=6.906469633 irradiance=1 Pmpp=0 kvar=0 kvarlimit=1.51942332 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
 New PVSystem.PV_ESS_BB_259176_1_4 bus1=DEV_259178_138.1 Phases=1 kV=0.24 kVA=9.65253114 irradiance=1 Pmpp=0 kvar=0 kvarlimit=2.123556851 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
