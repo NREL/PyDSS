@@ -1,9 +1,7 @@
 from ResultContainer import ResultContainer  as RC
 from pyContrReader import pyContrReader as pcr
 from pyPlotReader import pyPlotReader as ppr
-from MonteCarlo import MonteCarloSim as MCS
 from opendssdirect.utils import run_command
-from NetworkModifier import Modifier
 from dssElement import dssElement
 from dssCircuit import dssCircuit
 import opendssdirect as dss
@@ -38,19 +36,19 @@ class OpenDSS:
 
         self.__dssPath = {
             'root': rootPath,
-            'Import': rootPath + '\\ProjectFiles\\' + SimulationSettings['Active Project'] + '\\PyDSS Settings',
-            'Export': rootPath + '\\Export',
-            'dssFiles': rootPath + '\\ProjectFiles\\' + SimulationSettings['Active Project'] + '\\DSSfiles',
+            'Import': rootPath + '/ProjectFiles/' + SimulationSettings['Active Project'] + '/PyDSS Settings',
+            'Export': rootPath + '/Export',
+            'dssFiles': rootPath + '/ProjectFiles/' + SimulationSettings['Active Project'] + '/DSSfiles',
         }
 
-        self.__dssPath['pyPlots'] = self.__dssPath['Import'] + '\\' + SimulationSettings['Active Scenario'] + '\\pyPlotList'
-        self.__dssPath['ExportLists'] = self.__dssPath['Import']+ '\\'  + SimulationSettings['Active Scenario'] + '\\ExportLists'
-        self.__dssPath['pyControllers'] = self.__dssPath['Import']+ '\\'  + SimulationSettings['Active Scenario'] + '\\pyControllerList'
+        self.__dssPath['pyPlots'] = self.__dssPath['Import'] + '/' + SimulationSettings['Active Scenario'] + '/pyPlotList'
+        self.__dssPath['ExportLists'] = self.__dssPath['Import']+ '/'  + SimulationSettings['Active Scenario'] + '/ExportLists'
+        self.__dssPath['pyControllers'] = self.__dssPath['Import']+ '/'  + SimulationSettings['Active Scenario'] + '/pyControllerList'
 
         self.__SimulationOptions = SimulationSettings
         self.__ResultOptions = ResultOptions
         self.__PlotOptions = PlotOptions
-        self.__dssFilePath = self.__dssPath['dssFiles'] + '\\' + SimulationSettings['DSS File']
+        self.__dssFilePath = self.__dssPath['dssFiles'] + '/' + SimulationSettings['DSS File']
 
         self.__dssInstance.Basic.ClearAll()
         self.__dssInstance.utils.run_command('Log=NO')
@@ -63,18 +61,14 @@ class OpenDSS:
         self.__dssClass = dss.ActiveClass
         self.__dssCommand = run_command
         self.__dssSolution = dss.Solution
-
-        self.__UpdateDictionary()
-        self.__CreateBusObjects()
-
         self.__dssSolver = SolveMode.GetSolver(SimulationSettings=SimulationSettings, dssInstance=self.__dssInstance)
 
-        self.NetworkModifier = Modifier(dss, run_command, self.__SimulationOptions,
-                                        self.__dssObjects, self.__dssObjectsByClass)
-        self.__MCScenarioGenerator = MCS(dss, run_command, self.__SimulationOptions, self.__dssPath,
-                                 self.__dssObjects, self.__dssObjectsByClass, self.__dssSolver)
+        self.__ModifyNetwork()
+        self.__UpdateDictionary()
 
+        self.__CreateBusObjects()
         self.__dssSolver.reSolve()
+
         if self.__ResultOptions and self.__ResultOptions['Log Results']:
             self.ResultContainer = RC(ResultOptions, SimulationSettings, self.__dssPath,
                                       self.__dssObjects, self.__dssObjectsByClass, self.__dssBuses)
@@ -98,14 +92,15 @@ class OpenDSS:
 
         return
 
-    # def __ModifyNetwork(self):
-    #
-    #
-    #     self.NetworkModifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
-    #                                  self.__dssObjects, )
-    #     # self.__Modifier.Edit_Elements('regcontrol', 'enabled' ,'False')
-    #     # self.__Modifier.Edit_Elements('Load', 'enabled', 'False')
-    #     return
+    def __ModifyNetwork(self):
+        from NetworkModifier import Modifier
+        # self.__Modifier = Modifier(dss, run_command, self.__SimulationOptions)
+        #
+        # self.__Modifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
+        #                              True, self.__dssObjects)
+        # #self.__Modifier.Edit_Elements('regcontrol', 'enabled' ,'False')
+        #self.__Modifier.Edit_Elements('Load', 'enabled', 'False')
+        return
 
     def __CreateControllers(self,ControllerDict):
         self.__pyControls = {}
@@ -142,18 +137,18 @@ class OpenDSS:
                     self.__Logger.info('Created pyPlot -> ' + PlotType)
         return
 
-    def __UpdateControllers_Q(self, Time, Iteration):
+    def __UpdateControllers_Q(self, Time, UpdateResults):
         NewError = 0
         for Key, Controller in self.__pyControls.items():
-            NewError += Controller.Update_Q(Time, Iteration)
+            NewError += Controller.Update_Q(Time, UpdateResults)
         if abs(NewError) < self.__SimulationOptions['Error tolerance']:
             return True, NewError
         return False, NewError
 
-    def __UpdateControllers_P(self, Time, Iteration):
+    def __UpdateControllers_P(self, Time, UpdateResults):
         NewError = 0
         for Key, Controller in self.__pyControls.items():
-            NewError += Controller.Update_P(Time, Iteration)
+            NewError += Controller.Update_P(Time, UpdateResults)
         if abs(NewError) < self.__SimulationOptions['Error tolerance']:
             return True, NewError
         return False, NewError
@@ -166,6 +161,7 @@ class OpenDSS:
         return
 
     def __UpdateDictionary(self):
+        InvalidSelection = ['Settings', 'ActiveClass', 'dss', 'utils', 'PDElements', 'XYCurves', 'Bus', 'Properties']
         self.__dssObjectsByClass={'LoadShape' : self.__GetRelaventObjectDict('LoadShape')}
 
         for ElmName in self.__dssInstance.Circuit.AllElementNames():
@@ -198,25 +194,16 @@ class OpenDSS:
             Elem = ElmCollection.Next()
         return ObjectList
 
-    def RunMCsimulation(self,MCscenarios = 10):
-        for i in range(MCscenarios):
-            self.ResultContainer.ClearResults()
-            self.__Logger.info('Running scenario number ' + str(i))
-            self.__MCScenarioGenerator.Create_Scenario()
-            self.RunSimulation('MC[' + str(i) + ']')
-        return
-
-
-    def RunSimulation(self, RunNumber = None):
+    def RunSimulation(self):
         startTime = time.time()
         TotalDays = self.__SimulationOptions['End Day'] - self.__SimulationOptions['Start Day']
         Steps = int(TotalDays * 24 * 60 / self.__SimulationOptions['Step resolution (min)'])
         self.__Logger.info('Running simulation for ' + str(Steps) + ' time steps')
         for i in range(Steps):
-            self.__Logger.info('Running simulation @ time step: ' + str(i))
+            print('Running simulation @ time step: ', i)
             self.__dssSolver.IncStep()
             for j in range(self.__SimulationOptions['Max Control Iterations']):
-                has_Q_Converged, Error = self.__UpdateControllers_Q(i, j)
+                has_Q_Converged, Error = self.__UpdateControllers_Q(i, UpdateResults = False)
                 self.__Logger.debug('Q convergance error ' + str(Error))
                 if has_Q_Converged or j == self.__SimulationOptions['Max Control Iterations'] - 1:
                     if not has_Q_Converged:
@@ -226,7 +213,7 @@ class OpenDSS:
                     self.__dssSolver.reSolve()
             #self.__dssSolver.reSolve()
             for j in range(self.__SimulationOptions['Max Control Iterations']):
-                has_P_Converged, Error = self.__UpdateControllers_P(i, j)
+                has_P_Converged, Error = self.__UpdateControllers_P(i, UpdateResults = False)
                 self.__Logger.debug('P convergance error ' + str(Error))
                 if has_P_Converged or j == self.__SimulationOptions['Max Control Iterations'] - 1:
                     if not has_P_Converged:
@@ -234,7 +221,7 @@ class OpenDSS:
                     break
                 elif not has_P_Converged:
                     self.__dssSolver.reSolve()
-
+            #self.__dssSolver.reSolve()
 
             self.__UpdatePlots()
             if self.__ResultOptions and self.__ResultOptions['Log Results']:
@@ -243,7 +230,7 @@ class OpenDSS:
 
 
         if self.__ResultOptions and self.__ResultOptions['Log Results']:
-            self.ResultContainer.ExportResults(RunNumber)
+            self.ResultContainer.ExportResults()
 
         self.__Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
         self.__Logger.info('End of simulation')

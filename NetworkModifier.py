@@ -1,11 +1,8 @@
-from ast import literal_eval
 import dssElement as dE
-from scipy import stats
-import pandas as pd
-import numpy as np
 import logging
 
 class Modifier():
+
     PV_defaultDict = {'phases':'1', 'kV':'2.2',  'irradiance':'1', 'Temperature':'30',
                       'daily':'m3pvmult', '%cutin':'0.0', '%cutout':'0.0'}
 
@@ -18,7 +15,7 @@ class Modifier():
         'Storage'  : Storge_defaultDict,
      }
 
-    def __init__(self, dss, run_command, SimulationSettings, dssObjects, dssObjectsByClass):
+    def __init__(self, dss, run_command, SimulationSettings):
         LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
         self.pyLogger = logging.getLogger(LoggerTag)
         self.__dssInstance = dss
@@ -27,12 +24,8 @@ class Modifier():
         self.__dssBus = dss.Bus
         self.__dssClass = dss.ActiveClass
         self.__dssCommand = run_command
-        self.__Settings = SimulationSettings
-        self.__dssObjects = dssObjects
-        self.__dssObjectsByClass = dssObjectsByClass
-        return
 
-    def Add_Elements(self, Class, Properties):
+    def Add_Elements(self, Class, Properties, Add2dssObjects = False, dssObjects = None):
         DefaultDict  =  self.DefaultDictSelector[Class]
         ElmNames = []
         Values = []
@@ -47,6 +40,8 @@ class Modifier():
             for j in range(len(Values)):
                 DefaultDict[ElmNames[j]] = Values[j][i]
             Obj = self.Add_Element(Class, ElementName, DefaultDict)
+            if Add2dssObjects is True:
+                dssObjects[Class + '.' + ElementName] = Obj
 
     def Add_Element(self, Class, Name, Properties):
         Cmd = 'New ' + Class + '.' + Name
@@ -75,3 +70,5 @@ class Modifier():
             ElmName = self.__dssInstance.ActiveClass.Name()
             self.__dssInstance.utils.run_command(Class + '.' + ElmName + '.' + Property + ' = ' + str(Value))
             Element = self.__dssInstance.ActiveClass.Next()
+
+

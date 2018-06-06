@@ -1,6 +1,7 @@
+import matplotlib.pyplot as plt
 import math
 
-class Controller:
+class xfmrController:
     P_old = 0
     __Locked = False
     def __init__(self, RegulatorObj, Settings, dssInstance, ElmObjectList, dssSolver):
@@ -22,6 +23,7 @@ class Controller:
         elif self.__RPFlocking and self.P_old > 0:
             self.__Locked = self.__DisableLock()
         else:
+           # self.__Locked = self.__EnableLock()
             pass
         self.P_old = P_new
         return 0

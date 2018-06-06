@@ -22,22 +22,20 @@ def pyDSSinstance(Scenario):
     }
     # Simulation Settings
     SS = {
-        'Start Day'              : 157,
-        'End Day'                : 164,
+        'Start Day'              : 156,
+        'End Day'                : 163,
         'Step resolution (min)'  : 15,
         'Max Control Iterations' : 10,
-        'Error tolerance'        : 1,
         'Simulation Type'        : 'Daily',
         'Active Project'         : 'HECO',
         'Active Scenario'        : Scenario,
-        'DSS File'               : 'MasterCircuit_Mikilua_baseline2.dss',   #'MasterCircuit_Mikilua_keep.dss'
-        'Open plots in browser'  : True,
+        'DSS File'               : 'MasterCircuit_Mikilua_baseline3.dss',   #'MasterCircuit_Mikilua_keep.dss'
     }
     # Logger settings
     LO =  {
         'Logging Level'          : logging.DEBUG,
         'Log to external file'   : True,
-        'Display on screen'      : True,
+        'Display on screen'      : False,
         'Clear old log files'    : False,
     }
 
@@ -53,8 +51,9 @@ def RunBokehServer():
     return
 
 if __name__ == '__main__':
-    Scenarios = ['HP-VV', 'HP-VW']
+    Scenarios = ['HP-legacy-B3','HP-VV-B3', 'HP-VV-VW-B3']
     RunBokehServer()
     pool = Pool(processes=len(Scenarios))
     pool.map(pyDSSinstance, Scenarios)
+
 

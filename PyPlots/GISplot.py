@@ -43,6 +43,9 @@ class Plot:
         if PlotProperties['Projection']:
             self.BusData['X'], self.BusData['Y'] = self.__transform(self.BusData['X'].tolist(),
                                                                     self.BusData['Y'].tolist())
+
+
+
         self.ResourceXYbyClass = self.GetResourceData()
         self.busDataSource = ColumnDataSource(self.BusData)
 
@@ -69,7 +72,7 @@ class Plot:
         self.__Figure.add_glyph(self.busDataSource, self.BusPlot)
 
         self.PlotElementClass('Transformers', 'black', 'circle')
-        self.PlotElementClass('PVSystems', 'yellow', 'square')
+        self.PlotElementClass('PVsystems', 'yellow', 'square')
         self.PlotElementClass('Loads', 'red', 'triangle')
 
         self.__Figure.add_tools(PanTool(), WheelZoomTool(), BoxSelectTool())
@@ -79,13 +82,10 @@ class Plot:
         doc.add_root(self.__Figure)
         doc.title = "PyDSS"
 
-        self.session = push_session(doc)
-        #self.session.show(self.__Figure)  # open the document in a browser
+        session = push_session(doc)
+        session.show(self.__Figure)  # open the document in a browser
 
         return
-
-    def GetSessionID(self):
-        return self.session.id
 
     def __transform(self, X, Y):
         Xt = []
@@ -94,7 +94,7 @@ class Plot:
             for x1, y1 in zip(X, Y):
                 Ans = pyproj.transform(self.__source_proj, self.__target_proj, float(x1) * self.__meter_factor,
                                        float(y1) * self.__meter_factor)
-                #print(x1, y1, ' - ', Ans[0], Ans[1])
+                print(x1, y1, ' - ', Ans[0], Ans[1])
                 Xt.append(Ans[0])
                 Yt.append(Ans[1])
         else:
@@ -128,7 +128,7 @@ class Plot:
     def GetResourceData(self):
         ResourceXYbyClass = {}
         for ObjectClass in self.__dssObjectsByClass.keys():
-            if self.__dssObjectsByClass[ObjectClass] and ObjectClass != 'Circuits':
+            if self.__dssObjectsByClass[ObjectClass]:
                 ResourceXYbyClass[ObjectClass] = [[], [], [], [], []]
                 for dssObject in self.__dssObjectsByClass[ObjectClass]:
                     Object = self.__dssObjectsByClass[ObjectClass][dssObject]
@@ -153,7 +153,6 @@ class Plot:
                         elif (X1 != 0 and Y1 != 0) and (X2 != 0 and Y2 != 0):
                             ResourceXYbyClass[ObjectClass][0].append((X1 + X2) / 2)
                             ResourceXYbyClass[ObjectClass][1].append((Y1 + Y2) / 2)
-
         return ResourceXYbyClass
 
     def GetBusData(self):

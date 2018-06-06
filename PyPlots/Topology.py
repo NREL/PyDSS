@@ -97,13 +97,11 @@ class Plot:
         doc.add_root(self.__Figure)
         doc.title = "PyDSS"
 
-        self.session = push_session(doc)
-        #self.session.show(self.__Figure)  # open the document in a browser
+        session = push_session(doc)
+        session.show(self.__Figure)  # open the document in a browser
 
         return
 
-    def GetSessionID(self):
-        return self.session.id
 
     def UpdatePlot(self):
 
@@ -153,7 +151,7 @@ class Plot:
     def GetResourceData(self):
         ResourceXYbyClass = {}
         for ObjectClass in self.__dssObjectsByClass.keys():
-            if self.__dssObjectsByClass[ObjectClass] and ObjectClass != 'Circuits':
+            if self.__dssObjectsByClass[ObjectClass]:
                 ResourceXYbyClass[ObjectClass] = [[], [], [], [], []]
                 for dssObject in self.__dssObjectsByClass[ObjectClass]:
                     Object = self.__dssObjectsByClass[ObjectClass][dssObject]
