@@ -90,7 +90,6 @@ New	PVSystem.OH_264913_1_2	bus1=DEV_264915_1333.1	Phases=1	kV=0.24	kVA=4.8	irrad
 New	PVSystem.OH_264913_1_7	bus1=DEV_264915_1321.1	Phases=1	kV=0.24	kVA=4.8	irradiance=1	Pmpp=6	kvar=0	kvarlimit=	2.112	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
 New	PVSystem.OH_264931_1_4	bus1=DEV_264932_1252.3	Phases=1	kV=0.24	kVA=6.48	irradiance=1	Pmpp=8.1	kvar=0	kvarlimit=	2.8512	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
 New	PVSystem.OH_264953_1_4	bus1=DEV_264954_1564.1	Phases=1	kV=0.24	kVA=3.04	irradiance=1	Pmpp=3.8	kvar=0	kvarlimit=	1.3376	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
-New	PVSystem.OH_260847_1_1	bus1=DEV_260853_1_1.1	Phases=1	kV=0.24	kVA=41.28	irradiance=1	Pmpp=51.6	kvar=0	kvarlimit=	18.1632	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
 New	PVSystem.OH_261479_1_1	bus1=DEV_261481_1_1.1	Phases=1	kV=0.24	kVA=6.024	irradiance=1	Pmpp=7.53	kvar=0	kvarlimit=	2.65056	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
 New	PVSystem.OH_261486_1_2	bus1=DEV_261487_1_2.1	Phases=1	kV=0.24	kVA=3.44	irradiance=1	Pmpp=4.3	kvar=0	kvarlimit=	1.5136	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
 New	PVSystem.OH_261573_1_1	bus1=DEV_261608_1_1.2	Phases=1	kV=0.24	kVA=13.92	irradiance=1	Pmpp=17.4	kvar=0	kvarlimit=	6.1248	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
@@ -143,4 +142,5 @@ New	PVSystem.OH_265122a	bus1=DEV_265154.1	Phases=1	kV=7.199557857	kVA=24.576	irr
 New	PVSystem.OH_265122b	bus1=DEV_265154.2	Phases=1	kV=7.199557857	kVA=18.24	irradiance=1	Pmpp=22.8	kvar=0	kvarlimit=	8.0256	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
 New	PVSystem.OH_265122c	bus1=DEV_265154.3	Phases=1	kV=7.199557857	kVA=15.936	irradiance=1	Pmpp=19.92	kvar=0	kvarlimit=	7.01184	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
 New	PVSystem.OH_51048142b	bus1=DEV_51048146.2	Phases=1	kV=7.199557857	kVA=21.6	irradiance=1	Pmpp=27	kvar=0	kvarlimit=	9.504	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
+!Removed New	PVSystem.OH_260847_1_1	bus1=DEV_260853_1_1.1	Phases=1	kV=0.24	kVA=41.28	irradiance=1	Pmpp=51.6	kvar=0	kvarlimit=	18.1632	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
 !PV penetration (as a function of planned load and based on inverter kVA size) is  44.4702339991989 %

@@ -90,7 +90,6 @@ New	PVSystem.OH_264913_1_2	bus1=DEV_264915_1333.1	Phases=1	kV=0.24	kVA=4.8	irrad
 New	PVSystem.OH_264913_1_7	bus1=DEV_264915_1321.1	Phases=1	kV=0.24	kVA=4.8	irradiance=1	Pmpp=6	kvar=0	kvarlimit=	2.112	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
 New	PVSystem.OH_264931_1_4	bus1=DEV_264932_1252.3	Phases=1	kV=0.24	kVA=6.48	irradiance=1	Pmpp=8.1	kvar=0	kvarlimit=	2.8512	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
 New	PVSystem.OH_264953_1_4	bus1=DEV_264954_1564.1	Phases=1	kV=0.24	kVA=3.04	irradiance=1	Pmpp=3.8	kvar=0	kvarlimit=	1.3376	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
-New	PVSystem.OH_260847_1_1	bus1=DEV_260853_1_1.1	Phases=1	kV=0.24	kVA=41.28	irradiance=1	Pmpp=51.6	kvar=0	kvarlimit=	18.1632	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
 New	PVSystem.OH_261479_1_1	bus1=DEV_261481_1_1.1	Phases=1	kV=0.24	kVA=6.024	irradiance=1	Pmpp=7.53	kvar=0	kvarlimit=	2.65056	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
 New	PVSystem.OH_261486_1_2	bus1=DEV_261487_1_2.1	Phases=1	kV=0.24	kVA=3.44	irradiance=1	Pmpp=4.3	kvar=0	kvarlimit=	1.5136	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
 New	PVSystem.OH_261573_1_1	bus1=DEV_261608_1_1.2	Phases=1	kV=0.24	kVA=13.92	irradiance=1	Pmpp=17.4	kvar=0	kvarlimit=	6.1248	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
@@ -532,4 +531,5 @@ New	PVSystem.OH_263615c	bus1=NODE_619182.3	Phases=1	kV=7.199557857	kVA=	55.20993
 New	PVSystem.OH_264082c	bus1=DEV_264098.3	Phases=1	kV=7.199557857	kVA=	35.23089054	irradiance=1	Pmpp=44.0386131790618	kvar=0	kvarlimit=	15.50159184	%cutin=0.1	%cutout=0.1	yearly=m3pvmult					
 New	PVSystem.OH_264579b	bus1=NODE_602347.2	Phases=1	kV=7.199557857	kVA=	16.3269149	irradiance=1	Pmpp=20.4086436208078	kvar=0	kvarlimit=	7.183842555	%cutin=0.1	%cutout=0.1	yearly=m3pvmult					
 New	PVSystem.OH_51048142a	bus1=DEV_51048146.1	Phases=1	kV=7.199557857	kVA=	8.828621249	irradiance=1	Pmpp=11.0357765612819	kvar=0	kvarlimit=	3.88459335	%cutin=0.1	%cutout=0.1	yearly=m3pvmult					
+!Removed: New	PVSystem.OH_260847_1_1	bus1=DEV_260853_1_1.1	Phases=1	kV=0.24	kVA=41.28	irradiance=1	Pmpp=51.6	kvar=0	kvarlimit=	18.1632	%cutin=0.1	%cutout=0.1	yearly=m3pvmult	
 !PV	penetration	(as	a	function	kVA=	of	planned	load	and	kvarlimit=	#VALUE!	based	on	inverter	kVA	size)	is	100.1032265	%

@@ -38,12 +38,13 @@ Redirect loads_multifamily.dss
 
 
 Redirect PVgens-E.dss
+Redirect PVgens-FIT.dss
+Redirect PVgens-FIT-PE.dss
+Redirect PVgens-PE-PER.dss
 Redirect PVgens-PE-PER-NEW100-CSS30.dss
 Redirect PVgens-NEW100-CSS30.dss
 Redirect PVESS-NEW100-CSS30.dss
 Redirect ESS-NEW100-CSS30.dss
-Redirect PVgens-FIT.dss
-Redirect PVgens-FIT-PE.dss
 
 !New PVSystem.OH_263105_1_1 bus1=DEV_263108_1_1.2 Phases=1 kV=0.24 kVA=40.8 irradiance=1 Pmpp=51 kvar=0 %cutin=0.1 %cutout=0.1 yearly=m3pvmult kvarlimit=17.952
 

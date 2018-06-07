@@ -20,19 +20,19 @@ import os
 @click.option('--gis_overlay', default=False, type=click.BOOL, help='Display GIS overlay plot')
 # Simulation Settings
 @click.option('--start_day', default=156, type=click.INT, help='Start day for the simulation study')
-@click.option('--end_day', default=163, type=click.INT, help='End day for the simulation study')
-@click.option('--step_resolution_min', default=15, type=click.FLOAT, help='Time step resolutiom in minutes')
+@click.option('--end_day', default=157, type=click.INT, help='End day for the simulation study')
+@click.option('--step_resolution_min', default=15, type=click.FLOAT, help='Time step resolution in minutes')
 @click.option('--max_control_iterations', default=10, type=click.INT, help='Maximum outer loop control iterations')
 @click.option('--error_tolerance', default=1, type=click.FLOAT, help='Error tolerance in KVA')
 @click.option('--simulation_type', default='Daily', type=click.STRING, help='possible modes "Daily" and "Snapshot"')
-@click.option('--active_project', default='HECOHI', type=click.STRING, help='Name of project to run')
+@click.option('--active_project', default='Mikilua', type=click.STRING, help='Name of project to run')
 @click.option('--active_scenario', default='HP-Legacy-B2', type=click.STRING, help='Project scenario to use')
 @click.option('--dss_file', default='MasterCircuit_Mikilua_baseline2.dss', type=click.STRING, help='The main OpenDSS file')
 # Logger settings
 @click.option('--logging_level', default='DEBUG', type=click.STRING, help='possible options "DEBUG" and "INFO"')
 @click.option('--log_to_external_file', default=True, type=click.BOOL, help='Boolean variable ')
-@click.option('--display_on_screen', default=False, type=click.BOOL, help='Boolean variable')
-@click.option('--clear_old_log_files', default=True, type=click.BOOL, help='Boolean variable')
+@click.option('--display_on_screen', default=True, type=click.BOOL, help='Boolean variable')
+@click.option('--clear_old_log_files', default=False, type=click.BOOL, help='Boolean variable')
 
 def RunSimulation(**kwargs):
     # Settings for exporting results

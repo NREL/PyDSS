@@ -1,2 +1,3 @@
 Export/*
 __pycache__/*
+*.log
