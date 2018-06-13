@@ -3,13 +3,32 @@
   <component name="ChangeListManager">
     <list id="4d158a37-460e-4f32-90b0-7874bee38a84" name="Default" comment="" />
     <list default="true" id="a36e9dc1-9053-46dd-a663-a351f8c2cd89" name="N O" comment="">
-      <change beforePath="$PROJECT_DIR$/HECOHI_HP-VV-VW-B2-CSS30.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/DSSfiles/Old/LinesMikilua_keep.dss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/DSSfiles/ESS-NEW100-CSS30.dss" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/DSSfiles/ESS-NEW100-CSS30.dss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/DSSfiles/ESSM34.dss" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/DSSfiles/ESSM34.dss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/DSSfiles/ESSM34_rural.dss" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/DSSfiles/ESSM34_rural.dss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/DSSfiles/MasterCircuit_Mikilua_baseline2_ESS.dss" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/DSSfiles/MasterCircuit_Mikilua_baseline2_ESS.dss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/DSSfiles/MasterCircuit_Mikilua_baseline2_ESS_Rural.dss" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/DSSfiles/MasterCircuit_Mikilua_baseline2_ESS_Rural.dss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/DSSfiles/PVESS-NEW100-CSS30.dss" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/DSSfiles/PVESS-NEW100-CSS30.dss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/DSSfiles/PVgens-NEW100-CSS30.dss" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/DSSfiles/PVgens-NEW100-CSS30.dss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/DSSfiles/PVgens-PE-PER-NEW100.dss" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/DSSfiles/PVgens-PE-PER-NEW100.dss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-Legacy-B2-CSS30/pyControllerList/PV Controller.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-Legacy-B2-CSS30/pyControllerList/PV Controller.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-Legacy-B2/pyControllerList/PV Controller.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-Legacy-B2/pyControllerList/PV Controller.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-B2-CSS30-VV/pyControllerList/PV Controller.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-B2-CSS30-VV/pyControllerList/PV Controller.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-B2-CSS30/pyControllerList/PV Controller.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-B2-CSS30/pyControllerList/PV Controller.xlsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-B2/pyControllerList/PV Controller.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-B2/pyControllerList/PV Controller.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-VW-B2-CSS30-VV/pyControllerList/PV Controller.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-VW-B2-CSS30-VV/pyControllerList/PV Controller.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-VW-B2-CSS30/pyControllerList/PV Controller.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-VW-B2-CSS30/pyControllerList/PV Controller.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-VW-B2-CSS30Fast/pyControllerList/PV Controller.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-VW-B2-CSS30Fast/pyControllerList/PV Controller.xlsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-VW-B2-ESS-Rural/pyControllerList/PV Controller.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-VW-B2-ESS-Rural/pyControllerList/PV Controller.xlsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-VW-B2-ESS/pyControllerList/PV Controller.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-VW-B2-ESS/pyControllerList/PV Controller.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-VW-B2-ESS/pyControllerList/Storage Controller.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-VW-B2-ESS/pyControllerList/Storage Controller.xlsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-VW-B2/pyControllerList/PV Controller.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectFiles/Mikilua/PyDSS Settings/HP-VV-VW-B2/pyControllerList/PV Controller.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dssSingleRun.py" beforeDir="false" afterPath="$PROJECT_DIR$/dssSingleRun.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dssSingleRunCmd.py" beforeDir="false" afterPath="$PROJECT_DIR$/dssSingleRunCmd.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyControllers/PvController.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyControllers/PvController.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyControllers/StorageController.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyControllers/StorageController.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyControllers/pyController.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyControllers/pyController.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -26,8 +45,8 @@
       <file leaf-file-name="dssSingleRun.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dssSingleRun.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="21" column="1" selection-start-line="21" selection-start-column="1" selection-end-line="21" selection-end-column="1" />
+            <state relative-caret-position="390">
+              <caret line="31" column="63" selection-start-line="31" selection-start-column="63" selection-end-line="31" selection-end-column="63" />
               <folding>
                 <element signature="e#0#52#0" expanded="true" />
               </folding>
@@ -35,23 +54,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dssSingleRunCmd.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dssSingleRunCmd.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="155">
-              <caret line="32" column="96" selection-start-line="32" selection-start-column="96" selection-end-line="32" selection-end-column="96" />
-              <folding>
-                <element signature="e#0#52#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PvController.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="PvController.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pyControllers/PvController.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="344">
-              <caret line="77" column="47" lean-forward="true" selection-start-line="77" selection-start-column="47" selection-end-line="77" selection-end-column="47" />
+            <state relative-caret-position="60">
+              <caret line="4" column="22" lean-forward="true" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="22" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -59,20 +66,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dssInstance.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dssInstance.py">
+      <file leaf-file-name="dssSingleRunCmd.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/dssSingleRunCmd.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="203">
-              <caret line="57" column="13" selection-start-line="57" selection-start-column="13" selection-end-line="57" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pyLogger.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pyLogger.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="13" selection-start-line="13" selection-end-line="13" />
+            <state relative-caret-position="90">
+              <caret line="12" column="74" selection-start-line="12" selection-start-column="74" selection-end-line="12" selection-end-column="74" />
+              <folding>
+                <element signature="e#0#52#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -85,24 +86,6 @@
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ResultContainer.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ResultContainer.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1770">
-              <caret line="122" selection-start-line="122" selection-end-line="122" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="scratch.cmdline" pinned="false" current-in-tab="false">
-        <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.cmdline">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
-              <caret line="2" column="37" selection-start-line="2" selection-start-column="37" selection-end-line="2" selection-end-column="37" />
             </state>
           </provider>
         </entry>
@@ -138,6 +121,12 @@
       <find>Qlim</find>
       <find>print</find>
       <find>kwh</find>
+      <find>The object dictionary does not contain</find>
+      <find>kWRated</find>
+      <find>Pmppt</find>
+      <find>Progress</find>
+      <find>% 10</find>
+      <find>1.1</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -189,29 +178,30 @@
         <option value="$PROJECT_DIR$/../ADMS/Main.py" />
         <option value="$PROJECT_DIR$/Export/Sumitomo-Validation/ESS-PS/Convergance/ConvergancePLot.py" />
         <option value="$PROJECT_DIR$/SolveMode.py" />
-        <option value="$PROJECT_DIR$/dssInstance.py" />
         <option value="$PROJECT_DIR$/Export/Sumitomo-Validation/ESS-CF/ConvergancePlot.py" />
         <option value="$USER_HOME$/Google Drive/NREL/Projects/Sumitomo Plots/for paper/PlotsCF.py" />
         <option value="$USER_HOME$/Google Drive/NREL/Projects/Sumitomo Plots/for paper/PlotsPS.py" />
         <option value="$PROJECT_DIR$/Export/HECO/MetricCalculation.py" />
-        <option value="$PROJECT_DIR$/pyControllers/PvController.py" />
         <option value="$PROJECT_DIR$/pyControllers/SocketController.py" />
-        <option value="$PROJECT_DIR$/pyControllers/StorageController.py" />
         <option value="$PROJECT_DIR$/pyControllers/xfmrController.py" />
-        <option value="$PROJECT_DIR$/pyControllers/pyController.py" />
         <option value="$PROJECT_DIR$/pyControllers/PVstorageController.py" />
-        <option value="$PROJECT_DIR$/dssSingleRun.py" />
         <option value="$PROJECT_DIR$/ResultContainer.py" />
         <option value="$PROJECT_DIR$/dssParallelizedRun.py" />
+        <option value="$PROJECT_DIR$/pyControllers/pyController.py" />
+        <option value="$PROJECT_DIR$/pyControllers/StorageController.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.cmdline" />
         <option value="$PROJECT_DIR$/dssSingleRunCmd.py" />
+        <option value="$PROJECT_DIR$/dssInstance.py" />
+        <option value="$PROJECT_DIR$/dssSingleRun.py" />
+        <option value="$PROJECT_DIR$/pyControllers/PvController.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="y" value="23" />
-    <option name="width" value="1920" />
-    <option name="height" value="1013" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="461" />
+    <option name="y" value="112" />
+    <option name="width" value="1280" />
+    <option name="height" value="733" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -255,7 +245,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.dssSingleRunCmd">
+  <component name="RunManager" selected="Python.dssSingleRun">
     <configuration name="dssSingleRun" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="PyDSS-heco" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -298,8 +288,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.dssSingleRunCmd" />
         <item itemvalue="Python.dssSingleRun" />
+        <item itemvalue="Python.dssSingleRunCmd" />
       </list>
     </recent_temporary>
   </component>
@@ -338,27 +328,28 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1920" height="1013" extended-state="0" />
+    <frame x="0" y="23" width="1280" height="733" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="2" sideWeight="0.47241378" visible="true" weight="0.153125" />
       <window_info anchor="bottom" id="TODO" order="7" sideWeight="0.49573562" weight="0.3041145" />
       <window_info anchor="bottom" id="Event Log" order="6" sideWeight="0.15677084" side_tool="true" weight="0.32161874" />
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.33903134" />
       <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.4978678" weight="0.3278867" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.8432292" weight="0.32161874" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.8432292" weight="0.4400607" />
       <window_info id="Structure" order="0" sideWeight="0.4916388" side_tool="true" weight="0.10642782" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.4978678" weight="0.3291592" />
       <window_info id="Favorites" order="1" sideWeight="0.5275862" side_tool="true" weight="0.15542677" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.91675615" weight="0.29925454" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.91675615" weight="0.30045524" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" id="Data View" order="4" weight="0.08198121" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32887402" />
       <window_info anchor="right" x="2064" y="290" width="1736" height="896" id="Documentation" order="3" type="FLOATING" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32887402" />
     </layout>
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -413,11 +404,6 @@
           <line>61</line>
           <option name="timeStamp" value="313" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/dssInstance.py</url>
-          <line>68</line>
-          <option name="timeStamp" value="326" />
-        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
@@ -429,10 +415,17 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="327" />
+      <option name="time" value="332" />
     </breakpoint-manager>
   </component>
   <component name="debuggerHistoryManager">
+    <expressions id="evaluateCodeFragment">
+      <expression>
+        <expression-string>self.__Name</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+    </expressions>
     <expressions id="breakpointCondition">
       <expression>
         <expression-string>self.__Class = 'Transformer'</expression-string>
@@ -613,50 +606,32 @@
     <entry file="file://$USER_HOME$/Google Drive/NREL/Projects/Sumitomo Plots/for paper/PlotsPS.py" />
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/indexes/base.py" />
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/util/_decorators.py" />
-    <entry file="file://$PROJECT_DIR$/SolveMode.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="25">
-          <caret line="51" column="24" lean-forward="true" selection-start-line="51" selection-start-column="24" selection-end-line="51" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Google Drive/NREL/Projects/Sumitomo Plots/for paper/PlotsCF.py" />
     <entry file="file://$PROJECT_DIR$/Export/HECO/MetricCalculation.py" />
     <entry file="file://$PROJECT_DIR$/pyControllers/PVstorageController.py" />
-    <entry file="file://$PROJECT_DIR$/pyControllers/StorageController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="188" column="33" lean-forward="true" selection-start-line="188" selection-start-column="33" selection-end-line="188" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyControllers/xfmrController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" selection-start-line="2" selection-end-line="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyControllers/pyController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyControllers/SocketController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="6" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ResultContainer.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1770">
           <caret line="122" selection-start-line="122" selection-end-line="122" />
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyLogger.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="13" selection-start-line="13" selection-end-line="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyControllers/SocketController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="3" column="6" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.cmdline">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/dssParallelizedRun.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -668,53 +643,67 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dssSingleRun.py">
+    <entry file="file://$PROJECT_DIR$/pyControllers/pyController.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="21" column="1" selection-start-line="21" selection-start-column="1" selection-end-line="21" selection-end-column="1" />
-          <folding>
-            <element signature="e#0#52#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="75">
+          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.cmdline">
+    <entry file="file://$PROJECT_DIR$/pyControllers/StorageController.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="37" selection-start-line="2" selection-start-column="37" selection-end-line="2" selection-end-column="37" />
+        <state relative-caret-position="143">
+          <caret line="105" column="17" selection-start-line="105" selection-start-column="17" selection-end-line="105" selection-end-column="17" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pyLogger.py">
+    <entry file="file://$PROJECT_DIR$/SolveMode.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="13" selection-start-line="13" selection-end-line="13" />
+        <state relative-caret-position="74">
+          <caret line="62" column="8" selection-start-line="62" selection-start-column="8" selection-end-line="62" selection-end-column="8" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dssInstance.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="203">
-          <caret line="57" column="13" selection-start-line="57" selection-start-column="13" selection-end-line="57" selection-end-column="13" />
+        <state relative-caret-position="137">
+          <caret line="207" column="34" selection-start-line="207" selection-start-column="34" selection-end-line="207" selection-end-column="34" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dssSingleRunCmd.py">
+    <entry file="file://$PROJECT_DIR$/dssSingleRun.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="32" column="96" selection-start-line="32" selection-start-column="96" selection-end-line="32" selection-end-column="96" />
+        <state relative-caret-position="390">
+          <caret line="31" column="63" selection-start-line="31" selection-start-column="63" selection-end-line="31" selection-end-column="63" />
           <folding>
             <element signature="e#0#52#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/pyControllers/xfmrController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="16" column="10" selection-start-line="16" selection-start-column="10" selection-end-line="16" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/pyControllers/PvController.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="344">
-          <caret line="77" column="47" lean-forward="true" selection-start-line="77" selection-start-column="47" selection-end-line="77" selection-end-column="47" />
+        <state relative-caret-position="60">
+          <caret line="4" column="22" lean-forward="true" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="22" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dssSingleRunCmd.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="12" column="74" selection-start-line="12" selection-start-column="74" selection-end-line="12" selection-end-column="74" />
+          <folding>
+            <element signature="e#0#52#0" expanded="true" />
           </folding>
         </state>
       </provider>

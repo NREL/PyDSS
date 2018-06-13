@@ -1,5 +1,6 @@
 ! Define storage transformer
 new Transformer.storagexfmr phases=3 windings=2 
+
 ~ wdg=1 Bus=XfmrM34.1.2.3 conn=wye kV=12.47 kva=5000
 ~ wdg=2 Bus=storagebus conn=wye kV=0.48 kva=6000
 
@@ -18,6 +19,6 @@ New Storage.ESSM34 phases=3 Bus1=storagebus kV=0.48
 ! Define pv system unit at 591_57349.1.2.3
 ! This pv system is used to easily implement VoltVAR function for storage
 !New PVSystem.PV_ESSM34.1.2.3 phases=3 bus1=storagebus kV=0.48 kVA=3000 irrad=1 Pmpp=0
-New PVSystem.PV_ESSM34.1 phases=1 bus1=storagebus.1 kV=0.48 kVA=1000 irrad=1 Pmpp=0 kvar=0 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
-New PVSystem.PV_ESSM34.2 phases=1 bus1=storagebus.2 kV=0.48 kVA=1000 irrad=1 Pmpp=0 kvar=0 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
-New PVSystem.PV_ESSM34.3 phases=1 bus1=storagebus.3 kV=0.48 kVA=1000 irrad=1 Pmpp=0 kvar=0 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
+New PVSystem.PV_ESSM34a phases=1 bus1=storagebus.1 kV=0.27713 kVA=1000 irrad=1 Pmpp=0 kvar=0 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
+New PVSystem.PV_ESSM34b phases=1 bus1=storagebus.2 kV=0.27713 kVA=1000 irrad=1 Pmpp=0 kvar=0 %cutin=0.1 %cutout=0.1 yearly=m3pvmult
+New PVSystem.PV_ESSM34c phases=1 bus1=storagebus.3 kV=0.27713 kVA=1000 irrad=1 Pmpp=0 kvar=0 %cutin=0.1 %cutout=0.1 yearly=m3pvmult

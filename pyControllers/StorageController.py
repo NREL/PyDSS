@@ -210,12 +210,12 @@ class StorageController:
             Pbatt = Pbatt
 
         if Pbatt >= 0:
-            pctdischarge = Pbatt/ (self.__Prated)* 100
+            pctdischarge = min(100, Pbatt/ (self.__Prated)* 100)
             self.__ControlledElm.SetParameter('State', 'DISCHARGING')
             self.__ControlledElm.SetParameter('%Discharge', str(pctdischarge))
 
         elif Pbatt < 0:
-            pctcharge = -Pbatt   / (self.__Prated)* 100
+            pctcharge = min(100, -Pbatt / (self.__Prated)* 100)
             self.__ControlledElm.SetParameter('State', 'CHARGING')
             self.__ControlledElm.SetParameter('%charge', str(pctcharge))
 

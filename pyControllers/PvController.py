@@ -44,6 +44,7 @@ class PvController:
         self.__cutout = PvObj.SetParameter('%cutout',Settings['%PCutout'])
 
         self.__PFrated = Settings['PFlim']
+        self.Pmppt = 100
 
         self.P_update = self.P_ControlDict[Settings['Pcontrol']]
         self.Q_update = self.Q_ControlDict[Settings['Qcontrol']]
@@ -72,7 +73,8 @@ class PvController:
             dP = self.P_update()
         else:
             dP = 0
-        return dP
+        self.p = dP
+        return self.p
 
     def VWcontrol(self):
         DampCoef = self.__Settings['pDampCoef']
@@ -82,14 +84,18 @@ class PvController:
 
         uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[::2])
         Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))
+        Qpv = abs(sum(self.__ControlledElm.GetVariable('Powers')[1::2]))
         PpvoutPU= Ppv / self.__Prated
+        Plim = (1 - (Qpv / self.__Srated)**2) ** 0.5
         m = (1 - Pmin) / (uMinC - uMaxC)
+        #m = (Plim - Pmin) / (uMinC - uMaxC)
         c = ((Pmin * uMinC) - uMaxC) / (uMinC - uMaxC)
 
         if uIn < uMinC:
-            Pmax = 1
+            #Pmax = 1
+            Pmax = Plim
         elif uIn < uMaxC and uIn > uMinC:
-            Pmax = m * uIn + c
+            Pmax = min(m * uIn + c, Plim)
         else:
             Pmax = Pmin
 
@@ -184,10 +190,13 @@ class PvController:
             Qcalc = self.QlimPU
         elif uIn <= uDbMin and uIn > uMin:
             Qcalc = uIn * m1 + c1
+            Qcalc = self.oldQcalc + (Qcalc - self.oldQcalc) * self.__Settings['qDampCoef']
         elif uIn <= uDbMax and uIn > uDbMin:
             Qcalc = 0
+            Qcalc = self.oldQcalc + (Qcalc - self.oldQcalc) * self.__Settings['qDampCoef']
         elif uIn <= uMax and uIn > uDbMax:
             Qcalc = uIn * m2 + c2
+            Qcalc = self.oldQcalc + (Qcalc - self.oldQcalc) * self.__Settings['qDampCoef']
         elif uIn >= uMax:
             Qcalc = -self.QlimPU
 
@@ -196,28 +205,34 @@ class PvController:
 
         if Priority == 'Var':
             Plim = (1 - Qcalc ** 2) ** 0.5
+            # Pcalc = Pcalc + (Plim - Pcalc) * self.__Settings['qDampCoef']
+            # self.Pmppt = Pcalc / self.__Prated * self.__Srated * 100
+            if self.TimeChange:
+                self.Pmppt = 100
             if Pcalc > Plim and self.TimeChange is False:
                 self.Pmppt = Plim / self.__Prated * self.__Srated * 100
                 Pcalc = Plim
-            else:
-                if self.TimeChange:
-                    self.Pmppt = 100
             self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
-
-        dQ = (Qcalc - self.oldQcalc)
-        Qcalc = self.oldQcalc + dQ * self.__Settings['qDampCoef']
 
         if Pcalc > 0:
             PFout = -math.cos(math.atan(Qcalc / Pcalc))
             if self.__Settings['Enable PF limit'] and abs(PFout) < pfLim:
                 PFout = -pfLim
-
         else:
             PFout = 1
         self.__ControlledElm.SetParameter('pf', str(PFout))
 
+        dQ = (Qcalc - self.oldQcalc)
         Error = abs(dQ - self.dQOld)
         self.oldQcalc = Qcalc
         self.dQOld = dQ
+
+        # if self.Time == 47 and self.__Name == 'pyCont_' + 'PVSystem' + '_' + 'oh_261584_1_3':
+        #     print(locals())
+        #     print(self.Pmppt)
+        #     print(self.__Prated)
+        #     print(self.__Qrated)
+        #     print(self.__Srated)
+
         # print(Error)
         return Error
