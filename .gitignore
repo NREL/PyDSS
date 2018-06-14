@@ -1,3 +1,4 @@
 Export/*
 __pycache__/*
 *.log
+ProjectFiles/*/PyDSS Settings/*
