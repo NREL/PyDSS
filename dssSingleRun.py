@@ -22,13 +22,13 @@ PO = {
 }
 # Simulation Settings
 SS = {
-    'Start Day'              : 157,
-    'End Day'                : 158,
+    'Start Day'              : 156,
+    'End Day'                : 157,
     'Step resolution (min)'  : 15,
     'Max Control Iterations' : 10,
     'Simulation Type'        : 'Daily',
     'Active Project'         : 'Mikilua',
-    'Active Scenario'        : 'HP-VV-VW-B2',
+    'Active Scenario'        : 'None-Baseline-D',
     'DSS File'               : 'MasterCircuit_Mikilua_baseline2.dss',
     'Error tolerance'        : 1,
 }

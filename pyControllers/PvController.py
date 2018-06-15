@@ -10,6 +10,8 @@ class PvController:
     dPOld = 0
     dQOld = 0
 
+    __Disconnected = False
+
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
         self.__ElmObjectList = ElmObjectList
         #print(PvObj.Bus[0] + ' - ' + PvObj.sBus[0].GetInfo())
@@ -19,6 +21,7 @@ class PvController:
 
         self.Q_ControlDict = {
             'None'           : lambda: 0,
+            'Cutoff'         : self.CutoffControl,
             'CPF'            : self.CPFcontrol,
             'VPF'            : self.VPFcontrol,
             'VVar'           : self.VVARcontrol, }
@@ -42,6 +45,8 @@ class PvController:
         self.__Qrated = float(PvObj.GetParameter2('kVARlimit'))
         self.__cutin = PvObj.SetParameter('%cutin', Settings['%PCutin'])
         self.__cutout = PvObj.SetParameter('%cutout',Settings['%PCutout'])
+        self.__Ucutoff = Settings['%UCutoff']
+        self.__enableCutoff = Settings['Enable Cutoff']
 
         self.__PFrated = Settings['PFlim']
         self.Pmppt = 100
@@ -122,6 +127,37 @@ class PvController:
 
         return Error
 
+    def CutoffControl(self, uIn=None, error=0):
+        if not self.__enableCutoff:
+            return error
+        if uIn is None:
+            uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[::2])
+
+        if uIn >= self.__Ucutoff:
+            self.__ControlledElm.SetParameter('pctPmpp', 0)
+            self.__ControlledElm.SetParameter('pf', 1)
+            if self.__Disconnected:
+                return 0
+            else:
+                self.__Disconnected = True
+                return error + self.__Prated
+
+        if self.TimeChange and self.__Disconnected and uIn < self.__Ucutoff:
+            self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
+            self.__ControlledElm.SetParameter('pf', 1)
+            self.__Disconnected = False
+            return error + self.__Prated
+
+        if self.__Disconnected:
+            self.__ControlledElm.SetParameter('pctPmpp', 0)
+            self.__ControlledElm.SetParameter('pf', 1)
+            return 0
+        else:
+            self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
+            self.__ControlledElm.SetParameter('pf', 1)
+            return error
+
+
     def CPFcontrol(self):
         PF = self.__Settings['pf']
         self.__dssSolver.reSolve()
@@ -135,6 +171,8 @@ class PvController:
         self.__ControlledElm.SetParameter('irradiance', Pirr * (1 + Error * 3))
         self.__ControlledElm.SetParameter('pf', str(-PF))
 
+        if self.__enableCutoff:
+            Error = self.CutoffControl(error=Error)
         return Error
 
     def VPFcontrol(self):
@@ -168,6 +206,9 @@ class PvController:
             self.__ControlledElm.SetParameter('pf', str(-PF))
             self.__ControlledElm.SetParameter('irradiance', Pirr * (1 + Error*1.5))
             self.__dssSolver.reSolve()
+
+        if self.__enableCutoff:
+            Error = self.CutoffControl(error=Error)
         return 0
 
     def VVARcontrol(self):
@@ -178,7 +219,7 @@ class PvController:
         uDbMax = self.__Settings['uDbMax']
         Priority = self.__Settings['Priority']
 
-        uIn = self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[0]
+        uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[::2])
 
         m1 = self.QlimPU / (uMin - uDbMin)
         m2 = self.QlimPU / (uDbMax - uMax)
@@ -235,4 +276,6 @@ class PvController:
         #     print(self.__Srated)
 
         # print(Error)
+        if self.__enableCutoff:
+            Error = self.CutoffControl(uIn, Error)
         return Error
