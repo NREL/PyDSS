@@ -19,9 +19,9 @@ import os
 @click.option('--histogram', default=False, type=click.BOOL, help='Display histogram plot')
 @click.option('--gis_overlay', default=False, type=click.BOOL, help='Display GIS overlay plot')
 # Simulation Settings
-@click.option('--start_day', default=157, type=click.INT, help='Start day for the simulation study')
-@click.option('--end_day', default=158, type=click.INT, help='End day for the simulation study')
-@click.option('--step_resolution_min', default=60, type=click.FLOAT, help='Time step resolution in minutes')
+@click.option('--start_day', default=156, type=click.INT, help='Start day for the simulation study')
+@click.option('--end_day', default=163, type=click.INT, help='End day for the simulation study')
+@click.option('--step_resolution_min', default=15, type=click.FLOAT, help='Time step resolution in minutes')
 @click.option('--max_control_iterations', default=10, type=click.INT, help='Maximum outer loop control iterations')
 @click.option('--error_tolerance', default=1, type=click.FLOAT, help='Error tolerance in KVA')
 @click.option('--simulation_type', default='Daily', type=click.STRING, help='possible modes "Daily" and "Snapshot"')

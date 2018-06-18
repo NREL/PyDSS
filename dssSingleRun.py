@@ -22,9 +22,9 @@ PO = {
 }
 # Simulation Settings
 SS = {
-    'Start Day'              : 157,
-    'End Day'                : 158,
-    'Step resolution (min)'  : 60,
+    'Start Day'              : 156,
+    'End Day'                : 163,
+    'Step resolution (min)'  : 15,
     'Max Control Iterations' : 10,
     'Simulation Type'        : 'Daily',
     'Active Project'         : 'Mikilua',
