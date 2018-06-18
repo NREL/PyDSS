@@ -19,6 +19,8 @@ import pyPlots
 import pyLogger
 import logging
 
+CONTROLLER_PRIORITIES = 3
+
 class OpenDSS:
     __TempResultList = []
     __dssInstance = dss
@@ -102,11 +104,11 @@ class OpenDSS:
         #self.__Modifier.Edit_Elements('Load', 'enabled', 'False')
         return
 
-    def __CreateControllers(self,ControllerDict):
+    def __CreateControllers(self, ControllerDict):
         self.__pyControls = {}
 
-        for ControllerType, ElmentsDict in ControllerDict.items():
-            for ElmName, SettingsDict in ElmentsDict.items():
+        for ControllerType, ElementsDict in ControllerDict.items():
+            for ElmName, SettingsDict in ElementsDict.items():
                  Controller = pyController.Create(ElmName, ControllerType, SettingsDict, self.__dssObjects,
                                                   self.__dssInstance, self.__dssSolver)
                  if Controller != -1:
@@ -137,21 +139,11 @@ class OpenDSS:
                     self.__Logger.info('Created pyPlot -> ' + PlotType)
         return
 
-    def __UpdateControllers_Q(self, Time, UpdateResults):
-        NewError = 0
-        for Key, Controller in self.__pyControls.items():
-            NewError += Controller.Update_Q(Time, UpdateResults)
-        if abs(NewError) < self.__SimulationOptions['Error tolerance']:
-            return True, NewError
-        return False, NewError
-
-    def __UpdateControllers_P(self, Time, UpdateResults):
-        NewError = 0
-        for Key, Controller in self.__pyControls.items():
-            NewError += Controller.Update_P(Time, UpdateResults)
-        if abs(NewError) < self.__SimulationOptions['Error tolerance']:
-            return True, NewError
-        return False, NewError
+    def __UpdateControllers(self, Priority, Time, UpdateResults):
+        error = 0
+        for controller in self.__pyControls.values():
+            error += controller.Update(Priority, Time, UpdateResults)
+        return abs(error) < self.__SimulationOptions['Error tolerance'], error
 
     def __CreateBusObjects(self):
         BusNames = self.__dssCircuit.AllBusNames()
@@ -199,29 +191,19 @@ class OpenDSS:
         TotalDays = self.__SimulationOptions['End Day'] - self.__SimulationOptions['Start Day']
         Steps = int(TotalDays * 24 * 60 / self.__SimulationOptions['Step resolution (min)'])
         self.__Logger.info('Running simulation for ' + str(Steps) + ' time steps')
-        for i in range(Steps):
-            print('Running simulation @ time step: ', i)
+        for step in range(Steps):
+            print('Running simulation @ time step: ', step)
             self.__dssSolver.IncStep()
-            for j in range(self.__SimulationOptions['Max Control Iterations']):
-                has_Q_Converged, Error = self.__UpdateControllers_Q(i, UpdateResults = False)
-                self.__Logger.debug('Q convergance error ' + str(Error))
-                if has_Q_Converged or j == self.__SimulationOptions['Max Control Iterations'] - 1:
-                    if not has_Q_Converged:
-                        self.__Logger.warning('No convergance @ ' + str(i))
-                    break
-                elif not has_Q_Converged:
+            for priority in range(CONTROLLER_PRIORITIES):
+                for i in range(self.__SimulationOptions['Max Control Iterations']):
+                    has_converged, error = self.__UpdateControllers(priority, step, UpdateResults=False)
+                    self.__Logger.debug('Control Loop {} convergence error: {}'.format(priority, error))
+                    if has_converged or i == self.__SimulationOptions['Max Control Iterations'] - 1:
+                        if not has_converged:
+                            self.__Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
+                        break
                     self.__dssSolver.reSolve()
-            #self.__dssSolver.reSolve()
-            for j in range(self.__SimulationOptions['Max Control Iterations']):
-                has_P_Converged, Error = self.__UpdateControllers_P(i, UpdateResults = False)
-                self.__Logger.debug('P convergance error ' + str(Error))
-                if has_P_Converged or j == self.__SimulationOptions['Max Control Iterations'] - 1:
-                    if not has_P_Converged:
-                        self.__Logger.warning('No convergance @ ' + str(i))
-                    break
-                elif not has_P_Converged:
-                    self.__dssSolver.reSolve()
-            #self.__dssSolver.reSolve()
+                #self.__dssSolver.reSolve()
 
             self.__UpdatePlots()
             if self.__ResultOptions and self.__ResultOptions['Log Results']:

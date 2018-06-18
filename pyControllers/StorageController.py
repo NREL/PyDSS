@@ -2,6 +2,7 @@ import numpy as np
 import math
 
 class StorageController:
+    Time = -1
 
     def __init__(self, StorageObj, Settings, dssInstance, ElmObjectList, dssSolver):
         self.Time = 0
@@ -12,20 +13,18 @@ class StorageController:
         self.QcalcOld = 0
         self.ExportOld = False
         self.__ElmObjectList = ElmObjectList
-        self.P_ControlDict = {
+        self.ControlDict = {
             'None' : lambda : 0,
             'PS'   : self.PeakShavingControl,
             'CF'   : self.CapacityFirmimgControl,
             'TT'   : self.TimeTriggeredControl,
             'RT'   : self.RealTimeControl,
             'SH'   : self.ScheduledControl,
-            'NETT' : self.NonExportTimeTriggered,}
-
-        self.Q_ControlDict = {
-            'None' : lambda : 0,
+            'NETT' : self.NonExportTimeTriggered,
             'CPF'  : self.ConstantPowerFactorControl,
             'VPF'  : self.VariablePowerFactorControl,
-            'VVar' : self.VoltVarControl,}
+            'VVar' : self.VoltVarControl,
+        }
 
         self.__ElmObjectList = ElmObjectList
         self.__ControlledElm = StorageObj
@@ -33,8 +32,7 @@ class StorageController:
         self.__dssSolver = dssSolver
         self.__Settings = Settings
         self.__Prated = float(StorageObj.GetParameter2('kWrated'))
-        self.P_update = self.P_ControlDict[Settings['Pcontrol']]
-        self.Q_update = self.Q_ControlDict[Settings['Qcontrol']]
+        self.update = [self.ControlDict[Settings['Control' + str(i)]] for i in [1, 2, 3]]
         self.__Pbatt = float(StorageObj.GetParameter2('kW'))
 
         Class, Name = self.__ControlledElm.GetInfo()
@@ -43,28 +41,10 @@ class StorageController:
 
         return
 
-    def Update_Q(self, Time, Iteration):
-        if Time >= 1:
-            self.Time = Time
-            #elf.doUpdate = UpdateResults
-            dQ = self.Q_update()
-        else:
-            dQ = 0
-        return dQ
-
-    def Update_P(self, Time, Iteration):
-        self.Itr = Iteration
-        #if Time >= 1:
+    def Update(self, Priority, Time, Update):
+        self.TimeChange = self.Time != Time
         self.Time = Time
-        dP = self.P_update()
-            # self.__Convergance[Time, Iteration] = dP
-        #else:
-        #    dP = 0
-
-        # if Time == 1439:
-        #     np.savetxt(r'C:\Users\alatif\Desktop\PyDSS\Export\Sumitomo-Validation\ESS-CF\Convergance.csv',
-        #                self.__Convergance.transpose(), delimiter=',')
-        return dP
+        return self.update[Priority]()
 
     def SetSetting(self, Property, Value):
         self.__Settings[Property] = Value

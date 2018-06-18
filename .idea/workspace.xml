@@ -3,8 +3,20 @@
   <component name="ChangeListManager">
     <list default="true" id="a36e9dc1-9053-46dd-a663-a351f8c2cd89" name="N O" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dssInstance.py" beforeDir="false" afterPath="$PROJECT_DIR$/dssInstance.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dssSingleRun.py" beforeDir="false" afterPath="$PROJECT_DIR$/dssSingleRun.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dssSingleRunCmd.py" beforeDir="false" afterPath="$PROJECT_DIR$/dssSingleRunCmd.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyContrReader.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyContrReader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pyControllers/PvController.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyControllers/PvController.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyControllers/SocketController.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyControllers/SocketController.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyControllers/StorageController.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyControllers/StorageController.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyControllers/StorageController_051818.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyControllers/StorageController_Last working_0604.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyControllers/StorageController_MB.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyControllers/StorageController_Original.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyControllers/StorageController_Test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyControllers/pyController.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyControllers/pyController.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyControllers/xfmrController.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyControllers/xfmrController.py" afterDir="false" />
     </list>
     <list id="4d158a37-460e-4f32-90b0-7874bee38a84" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -22,8 +34,8 @@
       <file leaf-file-name="dssSingleRun.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dssSingleRun.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="209">
-              <caret line="32" column="33" selection-start-line="32" selection-start-column="33" selection-end-line="32" selection-end-column="33" />
+            <state relative-caret-position="56">
+              <caret line="30" column="39" selection-start-line="30" selection-start-column="39" selection-end-line="30" selection-end-column="39" />
               <folding>
                 <element signature="e#0#52#0" expanded="true" />
               </folding>
@@ -31,32 +43,50 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PvController.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="PvController.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pyControllers/PvController.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="159">
-              <caret line="129" column="8" selection-start-line="129" selection-start-column="8" selection-end-line="129" selection-end-column="8" />
+            <state relative-caret-position="225">
+              <caret line="232" column="20" selection-start-line="232" selection-start-column="20" selection-end-line="232" selection-end-column="20" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SocketController.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pyControllers/SocketController.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="730">
+              <caret line="52" selection-start-line="52" selection-end-line="52" />
               <folding>
-                <element signature="e#0#31#0" expanded="true" />
+                <element signature="e#0#13#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="xfmrController.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pyControllers/xfmrController.py">
+      <file leaf-file-name="dssInstance.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dssInstance.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="35" column="8" selection-start-line="34" selection-start-column="8" selection-end-line="35" selection-end-column="8" />
+            <state relative-caret-position="2850">
+              <caret line="202" column="86" selection-start-line="202" selection-start-column="86" selection-end-line="202" selection-end-column="86" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dssSingleRunCmd.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="StorageController.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pyControllers/StorageController.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="291">
+              <caret line="361" selection-start-line="361" selection-end-line="361" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="dssSingleRunCmd.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dssSingleRunCmd.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="137">
-              <caret line="22" column="38" selection-start-line="22" selection-start-column="38" selection-end-line="22" selection-end-column="38" />
+            <state relative-caret-position="262">
+              <caret line="23" column="49" selection-start-line="23" selection-start-column="49" selection-end-line="23" selection-end-column="49" />
               <folding>
                 <element signature="e#0#52#0" expanded="true" />
               </folding>
@@ -75,11 +105,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>runVW</find>
-      <find>get_regulator</find>
-      <find>self.tab</find>
-      <find>treeView_Results</find>
-      <find>textBrowser_Log</find>
       <find>tab_6</find>
       <find>ResModel</find>
       <find>Open</find>
@@ -105,6 +130,11 @@
       <find>True</find>
       <find>Enable PF limit</find>
       <find>cutoff</find>
+      <find>doUpdate</find>
+      <find>damp</find>
+      <find>no</find>
+      <find>no</find>
+      <find>dPOld</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -121,7 +151,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/../Distribution_Fitting.py" />
         <option value="$PROJECT_DIR$/../Socket Serever Tester.py" />
         <option value="$PROJECT_DIR$/../Socket.py" />
         <option value="$PROJECT_DIR$/pyLogger.py" />
@@ -160,32 +189,33 @@
         <option value="$USER_HOME$/Google Drive/NREL/Projects/Sumitomo Plots/for paper/PlotsCF.py" />
         <option value="$USER_HOME$/Google Drive/NREL/Projects/Sumitomo Plots/for paper/PlotsPS.py" />
         <option value="$PROJECT_DIR$/Export/HECO/MetricCalculation.py" />
-        <option value="$PROJECT_DIR$/pyControllers/SocketController.py" />
-        <option value="$PROJECT_DIR$/pyControllers/xfmrController.py" />
         <option value="$PROJECT_DIR$/pyControllers/PVstorageController.py" />
         <option value="$PROJECT_DIR$/ResultContainer.py" />
         <option value="$PROJECT_DIR$/dssParallelizedRun.py" />
+        <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.cmdline" />
+        <option value="$PROJECT_DIR$/pyContrReader.py" />
         <option value="$PROJECT_DIR$/pyControllers/pyController.py" />
         <option value="$PROJECT_DIR$/pyControllers/StorageController.py" />
-        <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.cmdline" />
+        <option value="$PROJECT_DIR$/pyControllers/SocketController.py" />
+        <option value="$PROJECT_DIR$/pyControllers/xfmrController.py" />
         <option value="$PROJECT_DIR$/dssInstance.py" />
+        <option value="$PROJECT_DIR$/dssSingleRunCmd.py" />
         <option value="$PROJECT_DIR$/dssSingleRun.py" />
         <option value="$PROJECT_DIR$/pyControllers/PvController.py" />
-        <option value="$PROJECT_DIR$/dssSingleRunCmd.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="23" />
-    <option name="width" value="1920" />
-    <option name="height" value="1013" />
+    <option name="x" value="116" />
+    <option name="y" value="44" />
+    <option name="width" value="1650" />
+    <option name="height" value="927" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -202,6 +232,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -307,18 +338,19 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1920" height="1013" extended-state="0" />
+    <frame x="116" y="44" width="1650" height="927" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="2" sideWeight="0.47241378" visible="true" weight="0.153125" />
+      <window_info content_ui="combo" id="Project" order="2" sideWeight="0.47241378" visible="true" weight="0.11878788" />
       <window_info anchor="bottom" id="TODO" order="7" sideWeight="0.49573562" weight="0.3041145" />
       <window_info anchor="bottom" id="Event Log" order="6" sideWeight="0.15677084" side_tool="true" weight="0.32161874" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.8432292" weight="0.43982962" />
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.33903134" />
       <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.4978678" weight="0.3278867" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.8432292" visible="true" weight="0.3270809" />
       <window_info id="Structure" order="0" sideWeight="0.4916388" side_tool="true" weight="0.10642782" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.4978678" weight="0.3291592" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.91675615" weight="0.30045524" />
       <window_info id="Favorites" order="1" sideWeight="0.5275862" side_tool="true" weight="0.15542677" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.91675615" weight="0.30045524" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -329,27 +361,6 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32887402" />
     </layout>
-    <layout-to-restore>
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="2" sideWeight="0.47241378" visible="true" weight="0.1548999" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.45059076" visible="true" weight="0.36601308" />
-      <window_info anchor="right" id="Data View" order="4" weight="0.08198121" />
-      <window_info id="Structure" order="0" sideWeight="0.4916388" side_tool="true" weight="0.10642782" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="TODO" order="7" sideWeight="0.49573562" weight="0.3041145" />
-      <window_info anchor="bottom" id="Version Control" order="10" weight="0.33903134" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.91675615" weight="0.29956427" />
-      <window_info anchor="right" x="2064" y="290" width="1736" height="896" id="Documentation" order="3" type="FLOATING" />
-      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.4978678" weight="0.3291592" />
-      <window_info anchor="bottom" id="Event Log" order="6" sideWeight="0.083243825" side_tool="true" weight="0.9693396" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info id="Favorites" order="1" sideWeight="0.5275862" side_tool="true" weight="0.15542677" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32887402" />
-      <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.4978678" weight="0.3278867" />
-    </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -393,7 +404,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="332" />
+      <option name="time" value="333" />
     </breakpoint-manager>
   </component>
   <component name="debuggerHistoryManager">
@@ -418,7 +429,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/bokeh/client/connection.py" />
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/bokeh/util/api.py" />
     <entry file="file://$PROJECT_DIR$/PyPlots/pyPlots.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -479,13 +489,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="275">
           <caret line="32" selection-start-line="32" selection-end-line="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyContrReader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="10" column="39" selection-start-line="10" selection-start-column="38" selection-end-line="10" selection-end-column="39" />
         </state>
       </provider>
     </entry>
@@ -601,22 +604,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pyControllers/SocketController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="3" column="6" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.cmdline">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyControllers/pyController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/SolveMode.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -625,41 +614,73 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dssInstance.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="137">
-          <caret line="207" column="34" selection-start-line="207" selection-start-column="34" selection-end-line="207" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dssParallelizedRun.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="615">
           <caret line="45" column="24" selection-start-line="45" selection-start-column="24" selection-end-line="45" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyContrReader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="23" selection-start-line="7" selection-start-column="23" selection-end-line="7" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyControllers/pyController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="33" selection-start-line="14" selection-start-column="33" selection-end-line="14" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyControllers/xfmrController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="52" lean-forward="true" selection-start-line="12" selection-start-column="52" selection-end-line="12" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyControllers/StorageController_Last working_0604.py" />
+    <entry file="file://$PROJECT_DIR$/dssInstance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2850">
+          <caret line="202" column="86" selection-start-line="202" selection-start-column="86" selection-end-line="202" selection-end-column="86" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyControllers/SocketController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="730">
+          <caret line="52" selection-start-line="52" selection-end-line="52" />
           <folding>
-            <element signature="e#0#32#0" expanded="true" />
+            <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pyControllers/StorageController.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
-          <caret line="105" column="17" selection-start-line="105" selection-start-column="17" selection-end-line="105" selection-end-column="17" />
+        <state relative-caret-position="291">
+          <caret line="361" selection-start-line="361" selection-end-line="361" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pyControllers/xfmrController.py">
+    <entry file="file://$PROJECT_DIR$/dssSingleRunCmd.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="35" column="8" selection-start-line="34" selection-start-column="8" selection-end-line="35" selection-end-column="8" />
+        <state relative-caret-position="262">
+          <caret line="23" column="49" selection-start-line="23" selection-start-column="49" selection-end-line="23" selection-end-column="49" />
+          <folding>
+            <element signature="e#0#52#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dssSingleRun.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="32" column="33" selection-start-line="32" selection-start-column="33" selection-end-line="32" selection-end-column="33" />
+        <state relative-caret-position="56">
+          <caret line="30" column="39" selection-start-line="30" selection-start-column="39" selection-end-line="30" selection-end-column="39" />
           <folding>
             <element signature="e#0#52#0" expanded="true" />
           </folding>
@@ -668,21 +689,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pyControllers/PvController.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="159">
-          <caret line="129" column="8" selection-start-line="129" selection-start-column="8" selection-end-line="129" selection-end-column="8" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dssSingleRunCmd.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="137">
-          <caret line="22" column="38" selection-start-line="22" selection-start-column="38" selection-end-line="22" selection-end-column="38" />
-          <folding>
-            <element signature="e#0#52#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="225">
+          <caret line="232" column="20" selection-start-line="232" selection-start-column="20" selection-end-line="232" selection-end-column="20" />
         </state>
       </provider>
     </entry>

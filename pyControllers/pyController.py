@@ -4,7 +4,7 @@ import SocketController
 import StorageController
 from dssElement import dssElement
 
-ControllerTypes ={
+ControllerTypes = {
     'PV Controller'     : PvController.PvController,
     'Socket Controller' : SocketController.SocketController,
     'XFMR Controller'   : xfmrController.xfmrController,

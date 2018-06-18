@@ -1,8 +1,8 @@
-import matplotlib.pyplot as plt
-import math
 
 class xfmrController:
     P_old = 0
+    Time = -1
+
     __Locked = False
     def __init__(self, RegulatorObj, Settings, dssInstance, ElmObjectList, dssSolver):
         self.__ControlledElm = RegulatorObj
@@ -14,7 +14,7 @@ class xfmrController:
         self.__Name = 'pyCont_' + Class + '_' + Name
         return
 
-    def Update_P(self, Time, UpdateResults):
+    def Update(self, Priority, Time, UpdateResults):
         Powers = self.__ConnTransformer.GetVariable('Powers')
         Powers = Powers[:int(len(Powers)/2)][::2]
         P_new = sum((float(x)) for x in Powers)
@@ -26,9 +26,6 @@ class xfmrController:
            # self.__Locked = self.__EnableLock()
             pass
         self.P_old = P_new
-        return 0
-
-    def Update_Q(self, Time, UpdateResults):
         return 0
 
     def __EnableLock(self):
