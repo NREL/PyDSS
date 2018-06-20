@@ -3,14 +3,15 @@ import math
 
 class PvController:
     TimeChange = False
-    Time = -1
+    Time = (-1, 0)
 
     oldPcalc = 0
     oldQcalc = 0
     #dPOld = 0
     #dQOld = 0
 
-    __Disconnected = False
+    __vDisconnected = False
+    __pDisconnected = False
 
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
         self.__ElmObjectList = ElmObjectList
@@ -20,8 +21,8 @@ class PvController:
             'CPF'            : self.CPFcontrol,
             'VPF'            : self.VPFcontrol,
             'VVar'           : self.VVARcontrol,
-            'VW': self.VWcontrol,
-            'Cutoff': self.CutoffControl,
+            'VW'             : self.VWcontrol,
+            'Cutoff'         : self.CutoffControl,
         }
 
         self.__ControlledElm = PvObj
@@ -41,12 +42,13 @@ class PvController:
         self.__Srated = float(PvObj.GetParameter2('kVA'))
         self.__Prated = float(PvObj.GetParameter2('Pmpp'))
         self.__Qrated = float(PvObj.GetParameter2('kVARlimit'))
-        self.__cutin = PvObj.SetParameter('%cutin', Settings['%PCutin'])
-        self.__cutout = PvObj.SetParameter('%cutout',Settings['%PCutout'])
+        self.__cutin = float(PvObj.SetParameter('%cutin', Settings['%PCutin'])) / 100
+        self.__cutout = float(PvObj.SetParameter('%cutout',Settings['%PCutout'])) / 100
         self.__dampCoef = Settings['DampCoef']
 
         self.__PFrated = Settings['PFlim']
         self.Pmppt = 100
+        self.pf = 1
 
         self.update = [self.ControlDict[Settings['Control' + str(i)]] for i in [1, 2, 3]]
 
@@ -54,8 +56,19 @@ class PvController:
         return
 
     def Update(self, Priority, Time, Update):
-        self.TimeChange = self.Time != Time
-        self.Time = Time
+        self.TimeChange = self.Time != (Priority, Time)
+        self.Time = (Priority, Time)
+        Ppv = -sum(self.__ControlledElm.GetVariable('Powers')[::2]) / self.__Prated
+        if self.__pDisconnected:
+            if Ppv < self.__cutin:
+                return 0
+            else:
+                self.__pDisconnected = False
+        else:
+            if Ppv < self.__cutout:
+                self.__pDisconnected = True
+                self.__ControlledElm.SetParameter('pf', 1)
+                return 0
         return self.update[Priority]()
 
     def VWcontrol(self):
@@ -64,43 +77,39 @@ class PvController:
         Pmin  = self.__Settings['PminVW'] / 100
 
         uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[::2])
-        Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))
-        Qpv = abs(sum(self.__ControlledElm.GetVariable('Powers')[1::2]))
-        PpvoutPU= Ppv / self.__Prated
-        Plim = (1 - (Qpv / self.__Srated)**2) ** 0.5
+        Ppv = -sum(self.__ControlledElm.GetVariable('Powers')[::2]) / self.__Srated
+        Qpv = -sum(self.__ControlledElm.GetVariable('Powers')[1::2]) / self.__Srated
+        #PpvoutPU = Ppv / self.__Prated
+
+        Plim = (1 - Qpv ** 2) ** 0.5 if self.__Settings['VWtype'] == 'Available Power' else 1
         m = (1 - Pmin) / (uMinC - uMaxC)
         #m = (Plim - Pmin) / (uMinC - uMaxC)
         c = ((Pmin * uMinC) - uMaxC) / (uMinC - uMaxC)
 
         if uIn < uMinC:
-            #Pmax = 1
-            Pmax = Plim
+            Pcalc = Plim
         elif uIn < uMaxC and uIn > uMinC:
-            Pmax = min(m * uIn + c, Plim)
+            Pcalc = min(m * uIn + c, Plim)
         else:
-            Pmax = Pmin
+            Pcalc = Pmin
 
-        pctPmpp = self.__ControlledElm.GetValue('pctPmpp')
+        if Ppv > Pcalc or (Ppv > 0 and self.Pmppt < 100):
+            # adding heavy ball term to improve convergence
+            dP = (Ppv - Pcalc) * 0.5 / self.__dampCoef + (self.oldPcalc - Ppv) * 0.1 / self.__dampCoef
+            Pcalc = Ppv - dP
+            self.Pmppt = min(self.Pmppt * Pcalc / Ppv, 100)
+            self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
+            self.pf = math.cos(math.atan(Qpv / Pcalc))
+            if Qpv < 0:
+                self.pf = -self.pf
+            self.__ControlledElm.SetParameter('pf', self.pf)
+        else:
+            dP = 0
 
-        if self.__Settings['VWtype'] == 'Rated Power':
-            Pcalc = Pmax * 100
-            dP = (pctPmpp - Pcalc) * self.__dampCoef
-            Pcalc = pctPmpp - dP
-            Pcalc = self.Pmppt if Pcalc > self.Pmppt else Pcalc
-
-        elif self.__Settings['VWtype'] == 'Available Power':
-            Pcalc = Pmax * PpvoutPU * 100
-            dP = (pctPmpp - Pcalc) * self.__dampCoef
-            Pcalc = pctPmpp - dP
-            Pcalc = self.Pmppt if Pcalc > self.Pmppt else Pcalc
-
-        self.__ControlledElm.SetParameter('pctPmpp', Pcalc)
-        PFout = -math.cos(math.atan(self.oldQcalc / Pmax))
-        self.__ControlledElm.SetParameter('pf', str(PFout))
         Error = abs(dP)
-        self.oldPcalc = Pcalc
-        #self.dPOld = dP
-
+        self.oldPcalc = Ppv
+        if Error > 0.1:
+            print((self.__Name, uIn, Qpv, Plim, Ppv, Pcalc, self.Pmppt, dP, self.pf))
         return Error
 
     def CutoffControl(self):
@@ -109,24 +118,20 @@ class PvController:
         if uIn >= uCut:
             self.__ControlledElm.SetParameter('pctPmpp', 0)
             self.__ControlledElm.SetParameter('pf', 1)
-            if self.__Disconnected:
+            if self.__vDisconnected:
                 return 0
             else:
-                self.__Disconnected = True
+                self.__vDisconnected = True
+                # print('Disconnecting {} at voltage {:.2f}'.format(self.__Name, uIn))
                 return self.__Prated
 
-        if self.TimeChange and self.__Disconnected and uIn < uCut:
+        if self.TimeChange and self.__vDisconnected and uIn < uCut:
             self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
-            self.__ControlledElm.SetParameter('pf', 1)
-            self.__Disconnected = False
+            self.__ControlledElm.SetParameter('pf', self.pf)
+            self.__vDisconnected = False
+            # print('Reconnecting {} at voltage {:.2f}'.format(self.__Name, uIn))
             return self.__Prated
 
-        if self.__Disconnected:
-            self.__ControlledElm.SetParameter('pctPmpp', 0)
-            self.__ControlledElm.SetParameter('pf', 1)
-        else:
-            self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
-            self.__ControlledElm.SetParameter('pf', 1)
         return 0
 
 
@@ -212,11 +217,8 @@ class PvController:
             Qcalc = -self.QlimPU
 
         # adding heavy ball term to improve convergence
-        Qcalc = Qpv + (Qcalc - Qpv) * self.__dampCoef + (Qpv - self.oldQcalc) * self.__dampCoef / 10
+        Qcalc = Qpv + (Qcalc - Qpv) * 0.5 / self.__dampCoef + (Qpv - self.oldQcalc) * 0.1 / self.__dampCoef
         dQ = abs(Qcalc - Qpv)
-
-        if dQ > 0.2: # and self.__Name == '':
-            print((self.__Name, uIn, Qpv, self.oldQcalc, Qcalc, dQ, Ppv, Pcalc))
 
         if Priority == 'Var':
             Plim = (1 - Qcalc ** 2) ** 0.5
@@ -228,20 +230,27 @@ class PvController:
                 self.Pmppt = Plim / self.__Prated * self.__Srated * 100
                 Pcalc = Plim
             self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
+        else:
+            # no watt priority defined yet
+            pass
 
         if Pcalc > 0:
-            PFout = math.cos(math.atan(Qcalc / Pcalc))
-            if self.__Settings['Enable PF limit'] and abs(PFout) < pfLim:
-                PFout = pfLim
+            self.pf = math.cos(math.atan(Qcalc / Pcalc))
+            if self.__Settings['Enable PF limit'] and abs(self.pf) < pfLim:
+                self.pf = pfLim
             if Qcalc < 0:
-                PFout = -PFout
+                self.pf = -self.pf
+            self.__ControlledElm.SetParameter('pf', self.pf)
         else:
-            PFout = 1
-        self.__ControlledElm.SetParameter('pf', str(PFout))
+            print('Warning: PV power is <0 and VVar controller is active.')
+            print((self.__Name, uIn, Qcalc, Qpv, self.oldQcalc, dQ, Pcalc, self.pf))
+            # self.pf = 0
+            # dQ = 0 # forces VVarr off when PV is off, is that correct?
+
 
         Error = abs(dQ)
-        # if Error > 0.1:
-        #     print((self.__Name, uIn, Qcalc, self.oldQcalc, dQ, Pcalc, PFout, self.__ControlledElm.GetVariable('Powers')))
-        self.oldQcalc = Qpv # Qcalc
+        if Error > 0.1 or math.isnan(Error):
+            print((self.__Name, uIn, Qcalc, Qpv, self.oldQcalc, dQ, Pcalc, self.pf, self.__ControlledElm.GetVariable('Powers')))
+        self.oldQcalc = Qpv
 
         return Error

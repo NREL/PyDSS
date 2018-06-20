@@ -24,12 +24,12 @@ PO = {
 SS = {
     'Start Day'              : 157,
     'End Day'                : 158,
-    'Step resolution (min)'  : 60,
+    'Step resolution (min)'  : 15,
     'Max Control Iterations' : 10,
     'Simulation Type'        : 'Daily',
     'Active Project'         : 'Mikilua',
-    'Active Scenario'        : 'None-VW',
-    'DSS File'               : 'MasterCircuit_Mikilua_baseline2.dss',
+    'Active Scenario'        : 'CSS30VV-VW-D',
+    'DSS File'               : 'MasterCircuit_Mikilua_baseline2_CSS30.dss',
     'Error tolerance'        : 1,
 }
 # Logger settings

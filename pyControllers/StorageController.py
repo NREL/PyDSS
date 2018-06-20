@@ -1,16 +1,15 @@
-import numpy as np
 import math
 
 class StorageController:
     Time = -1
 
     def __init__(self, StorageObj, Settings, dssInstance, ElmObjectList, dssSolver):
-        self.Time = 0
+        self.Time = (-1, 0)
         self.__Pin = 0
         self.Pbatt = 0
         self.__PinOld = 0
         self.PbattOld = 0
-        self.QcalcOld = 0
+        self.oldQcalc = 0
         self.ExportOld = False
         self.__ElmObjectList = ElmObjectList
         self.ControlDict = {
@@ -31,9 +30,11 @@ class StorageController:
         self.__dssInstance = dssInstance
         self.__dssSolver = dssSolver
         self.__Settings = Settings
+        self.__Srated = float(StorageObj.GetParameter2('kVA'))
         self.__Prated = float(StorageObj.GetParameter2('kWrated'))
-        self.update = [self.ControlDict[Settings['Control' + str(i)]] for i in [1, 2, 3]]
         self.__Pbatt = float(StorageObj.GetParameter2('kW'))
+        self.__dampCoef = Settings['DampCoef']
+        self.update = [self.ControlDict[Settings['Control' + str(i)]] for i in [1, 2, 3]]
 
         Class, Name = self.__ControlledElm.GetInfo()
         self.__Name = 'pyCont_' + Class + '_' + Name
@@ -42,8 +43,8 @@ class StorageController:
         return
 
     def Update(self, Priority, Time, Update):
-        self.TimeChange = self.Time != Time
-        self.Time = Time
+        self.TimeChange = self.Time != (Time, Priority)
+        self.Time = (Time, Priority)
         return self.update[Priority]()
 
     def SetSetting(self, Property, Value):
@@ -76,69 +77,64 @@ class StorageController:
         return 0
 
     def NonExportTimeTriggered(self):
-        Sin_1t = self.__ElmObjectList[self.__Settings['PowerMeaElem']].GetVariable('Powers')
-        Sin2_1t = Sin_1t[:int(len(Sin_1t) / 2)]
-        Pin_1t = sum(Sin2_1t[0::2])
-        if self.Time == 0 and self.Itr == 0:
+        if self.__Settings['PowerMeaElem'] == 'Total':
+            Sin1 = self.__dssInstance.Circuit.TotalPower()
+            Pin1 = -sum(Sin1[::2])
+        else:
+            Sin1 = self.__ElmObjectList[self.__Settings['PowerMeaElem']].GetVariable('Powers')
+            Pin1 = sum(Sin1[::2])
 
-            if Pin_1t > 0:
-                self.dummy = 1
-            else:
-                self.dummy = -1
+        if self.Time[0] == 0:
+            self.dummy = 1 if Pin1 > 0 else -1
 
         Plb = self.__Settings['BaseLoadLim']
-        # perDischarge = self.__Settings['%DischargeRate']
-        sTime = self.__Settings['ExpWindowStart']
-        eTime = self.__Settings['ExpWindowEnd']
-
         KWHrated = float(self.__ControlledElm.GetParameter2('kWhrated'))
         perIdle = float(self.__ControlledElm.GetParameter2('%IdlingkW'))
         effDchg = float(self.__ControlledElm.GetParameter2('%EffDischarge'))
+        # perDischarge = self.__Settings['%DischargeRate']
 
-        Minutes = int(self.__dssInstance.Solution.Seconds() / 60)
-        Hour = self.__dssInstance.Solution.Hour() % 24
+        sTime = self.__Settings['ExpWindowStart']
+        sTime = sTime.hour + sTime.minute / 60
+        eTime = self.__Settings['ExpWindowEnd']
+        eTime = eTime.hour + eTime.minute / 60
 
-        if sTime.hour < eTime.hour:
-            Twindow = ((eTime.hour * 60 + eTime.minute) - (sTime.hour * 60 + sTime.minute)) / 60
-            if (Hour * 60 + Minutes) > (sTime.hour * 60 + sTime.minute) and \
-                    (Hour * 60 + Minutes) < (eTime.hour * 60 + eTime.minute):
+        currTime = self.__dssInstance.Solution.Hour() % 24 + self.__dssInstance.Solution.Seconds() / 3600
+
+        if sTime < eTime:
+            Twindow = (eTime - sTime)
+            if currTime > sTime and currTime < eTime:
                 Export = True
             else:
                 Export = False
         else:
-            Twindow = 24 - ((sTime.hour * 60 + sTime.minute) - (eTime.hour * 60 + eTime.minute)) / 60
-            if (Hour * 60 + Minutes) > (sTime.hour * 60 + sTime.minute) or \
-                    (Hour * 60 + Minutes) < (eTime.hour * 60 + eTime.minute):
+            Twindow = 24 - (sTime - eTime)
+            if currTime > sTime or currTime < eTime:
                 Export = True
             else:
                 Export = False
 
-        if self.ExportOld == False and Export == True:
+        if self.ExportOld is False and Export is True:
             perKWHstored = float(self.__ControlledElm.GetParameter2('%stored'))
             kWhrem = KWHrated * (perKWHstored / 100)
             self.Pbatt = kWhrem / (Twindow) * effDchg / 100 - perIdle * self.__Prated / 100
             # print(perKWHstored, kWhrem, self.Pbatt)
-
-        # print(self.__ControlledElm.GetParameter2('%stored'))
         self.ExportOld = Export
 
         if Export:
             pctcharge = self.Pbatt / (self.__Prated) * 100
-            rT = ((eTime.hour * 60 + eTime.minute) - (Hour * 60 + Minutes)) / 60
             self.__ControlledElm.SetParameter('State', 'DISCHARGING')
             self.__ControlledElm.SetParameter('%Discharge', str(pctcharge))
             Error = 0
         else:
             if self.__Settings['PowerMeaElem'] == 'Total':
                 Sin = self.__dssInstance.Circuit.TotalPower()
-                Pin = -sum(Sin[0:5:2])
+                Pin = -sum(Sin[::2])
             else:
                 Sin = self.__ElmObjectList[self.__Settings['PowerMeaElem']].GetVariable('Powers')
-                Sin2 = Sin[:int(len(Sin) / 2)]
-                Pin = self.dummy * sum(Sin2[0::2])
+                Pin = self.dummy * sum(Sin[::2])
 
             # Pbatt = -float(self.__ControlledElm.GetVariable('Powers')[0])*3 + IdlingkW
-            # #Does not cork as well as KW parameter for come reason
+            # #Does not cork as well as KW parameter for some reason
             Pbatt = float(self.__ControlledElm.GetParameter2('kw'))
             Pb0 = Pbatt
             if Pin < Plb:
@@ -146,11 +142,9 @@ class StorageController:
                 Pbatt = Pbatt + dP
             else:
                 dP = Pin - Plb
-                Pbatt = min(0, Pbatt + dP * self.__Settings['DampCoef'])
+                Pbatt = min(0, Pbatt + dP * self.__dampCoef)
             if math.isnan(Pbatt) or Pbatt is None:
                 print('Error in Pbatt, data: {}'.format((Pbatt, Pin, dP, Plb, Pb0, self.dummy)))
-
-            #print((self.__ControlledElm.GetInfo()[1], self.__Settings['PowerMeaElem'], Pin, Pb0, Pbatt))
 
             if Pbatt >= 0:
                 pctdischarge = Pbatt / (self.__Prated) * 100
@@ -161,9 +155,11 @@ class StorageController:
                 self.__ControlledElm.SetParameter('State', 'CHARGING')
                 self.__ControlledElm.SetParameter('%charge', str(pctcharge))
 
-            Error = abs(Pbatt - self.PbattOld)
-            # print (Error)
+            Error = abs(Pbatt - self.PbattOld) / self.__Srated
             self.PbattOld = Pbatt
+            if Error > 0.2:
+                # print((self.__ControlledElm.GetInfo()[1], self.__Settings['PowerMeaElem'], Pin, Pb0, Pbatt))
+                print((self.__Name, currTime, Pbatt, self.PbattOld, Pin, Plb, dP, Pb0))
         return Error
 
     def PeakShavingControl(self):
@@ -182,10 +178,10 @@ class StorageController:
         Pbatt = float(self.__ControlledElm.GetParameter2('kw'))
         if Pin > Pub:
             dP = Pin - Pub
-            Pbatt = Pbatt + dP * self.__Settings['DampCoef']
+            Pbatt = Pbatt + dP * self.__dampCoef
         elif Pin < Plb:
             dP = Pin - Plb
-            Pbatt = Pbatt + dP * self.__Settings['DampCoef']
+            Pbatt = Pbatt + dP * self.__dampCoef
         else:
             Pbatt = Pbatt
 
@@ -240,9 +236,9 @@ class StorageController:
         dPub = self.__Settings['CF_dP_ub']
         dPlb = self.__Settings['CF_dP_lb']
 
-        if self.Itr == 0:
+        if self.Time[0] == 0:
             self.__PinOld = self.__Pin
-        print(self.Itr, self.__PinOld, self.__Pin)
+        print(self.Time[0], self.__PinOld, self.__Pin)
         if self.__Settings['PowerMeaElem'] == 'Total':
             Sin = self.__dssInstance.Circuit.TotalPower()
             Pin = -sum(Sin[0:5:2])
@@ -251,12 +247,12 @@ class StorageController:
             Pin = sum(Sin[0:5:2])
         Pbatt = -float(self.__ControlledElm.GetVariable('Powers')[0]) * 3
         ramp = (Pin - self.__PinOld)
-        if self.Time > 1:
+        if self.Time[0] > 1:
             if ramp >= dPub:
-                dPbatt = self.__Settings['DampCoef'] * (ramp - dPub)
+                dPbatt = self.__dampCoef * (ramp - dPub)
                 Pbatt += dPbatt
             elif ramp <= dPlb:
-                dPbatt = self.__Settings['DampCoef'] * (ramp - dPlb)
+                dPbatt = self.__dampCoef * (ramp - dPlb)
                 Pbatt += dPbatt
             else:
                 dPbatt = 0
@@ -348,54 +344,56 @@ class StorageController:
         uDbMax = self.__Settings['uDbMax']
         QlimPU = self.__Settings['QlimPU']
         PFlim = self.__Settings['PFlim']
-        busName = self.__ControlledElm.GetParameter2('bus1')
 
-        for i in range(3):
-            self.__dssInstance.Circuit.SetActiveBus(busName)
-            #uIn = max(self.__dssInstance.Bus.puVmagAngle()[0::2])
-            uIn = self.__dssInstance.Bus.puVmagAngle()[0]
+        uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[::2])
 
-            m1 = QlimPU/(uMin-uDbMin)
-            m2 = QlimPU/(uDbMax-uMax)
-            c1 = QlimPU*uDbMin/(uDbMin-uMin)
-            c2 = QlimPU*uDbMax/(uMax-uDbMax)
+        m1 = QlimPU / (uMin-uDbMin)
+        m2 = QlimPU / (uDbMax-uMax)
+        c1 = QlimPU * uDbMin / (uDbMin-uMin)
+        c2 = QlimPU * uDbMax / (uMax-uDbMax)
 
+        Ppv = float(self.__ControlledElm.GetParameter2('kw'))
+        Pcalc = Ppv / self.__Srated
+        Qpv = sum(self.__ControlledElm.GetVariable('Powers')[1::2])
+        Qpv = Qpv / self.__Srated
+
+        Qcalc = 0
+        if uIn <= uMin:
+            Qcalc = QlimPU
+        elif uIn <= uDbMin and uIn > uMin:
+            Qcalc = uIn * m1 + c1
+        elif uIn <= uDbMax and uIn > uDbMin:
             Qcalc = 0
-            if uIn <= uMin:
-                Qcalc = QlimPU
-            elif uIn <= uDbMin and uIn > uMin:
-                Qcalc = uIn * m1 + c1
-            elif uIn <= uDbMax and uIn > uDbMin:
-                Qcalc = 0
-            elif uIn <= uMax and uIn > uDbMax:
-                Qcalc = uIn * m2 + c2
-            elif uIn >= uMax:
-                Qcalc = -QlimPU
+        elif uIn <= uMax and uIn > uDbMax:
+            Qcalc = uIn * m2 + c2
+        elif uIn >= uMax:
+            Qcalc = -QlimPU
 
-            Pcalc = float(self.__ControlledElm.GetParameter2('kw')) / self.__Prated
-            # Qlim = abs((Pcalc / PFlim) * math.sin(math.acos(PFlim)))
-            #
-            # if Qcalc < -Qlim:
-            #     Qcalc = -Qlim
-            # elif Qcalc > Qlim:
-            #     Qcalc = Qlim
-            # #
-            # Scalc = (Pcalc**2 + Qcalc**2)**(0.5)
-            # if Scalc > 1:
-            #     Scaler = (1 - (Scalc - 1)/Scalc)
-            #     Pcalc = Pcalc * Scaler
-            #     Qcalc = Qcalc * Scaler
+        # adding heavy ball term to improve convergence
+        Qcalc = Qpv + (Qcalc - Qpv) * 0.5 / self.__dampCoef + (Qpv - self.oldQcalc) * 0.1 / self.__dampCoef
+        Qlim = (1 - Pcalc ** 2) ** 0.5 if abs(Pcalc) < 1 else 0 # note - this is watt priority
+        if self.__Settings['Enable PF limit']:
+            Qlim = min(Qlim, abs(Pcalc * math.tan(math.acos(PFlim))))
+        if abs(Qcalc) > Qlim:
+            Qcalc = Qlim if Qcalc > 0 else -Qlim
 
+        dQ = abs(Qcalc - Qpv)
+        pct = min((Qcalc**2 + Pcalc**2) ** 0.5 * self.__Srated / self.__Prated * 100, 100)
+        pf = math.cos(math.atan(Qcalc / Pcalc)) if Pcalc != 0 else 1
+        pf = -pf if Qcalc * Pcalc < 0 else pf
+        if Pcalc > 0:
+            self.__ControlledElm.SetParameter('pf', pf)
+            self.__ControlledElm.SetParameter('State', 'DISCHARGING')
+            self.__ControlledElm.SetParameter('%Discharge', str(pct))
+        elif Pcalc < 0:
+            self.__ControlledElm.SetParameter('pf', pf)
+            self.__ControlledElm.SetParameter('State', 'CHARGING')
+            self.__ControlledElm.SetParameter('%charge', str(pct))
+        else:
+            dQ = 0
 
-            if Pcalc > 0:
-                PFout = math.cos(math.atan(Qcalc / Pcalc))
-                self.__ControlledElm.SetParameter('pf', str(-PFout))
-                #self.__ControlledElm.SetParameter('%Discharge', Pcalc*100)
-            elif Pcalc <= 0:
-                PFout = 1
-                self.__ControlledElm.SetParameter('pf', str(PFout))
-                #self.__ControlledElm.SetParameter('%charge', -Pcalc*100)
-            self.__dssSolver.reSolve()
-            Error = (Qcalc - self.QcalcOld)**2
-            self.QcalcOld = Qcalc
+        Error = abs(dQ)
+        if Error > 0.1 or math.isnan(Error):
+            print((self.__Name, uIn, Qcalc, Qpv, self.oldQcalc, dQ, Ppv, Pcalc, pct, pf, self.__ControlledElm.GetVariable('Powers')))
+        self.oldQcalc = Qcalc
         return Error
