@@ -60,10 +60,10 @@ class __Shapshot:
         self.OriginalStep = self.__dssSolution.Number()
         return
 
-    def IncStep(self,CurrentTimeStep):
-        self.timestep = timestep
+    def IncStep(self, CurrentTimeStep):
+        self.timestep = CurrentTimeStep
         self.__dssSolution.Number(self.number)
-        self.__dssSolution.Hour(timestep)
+        self.__dssSolution.Hour(CurrentTimeStep)
         self.__dssSolution.Seconds(0)
 
     def reSolve(self):

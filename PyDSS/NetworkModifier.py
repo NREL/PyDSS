@@ -1,5 +1,6 @@
-import dssElement as dE
+import PyDSS.dssElement as dE
 import logging
+
 
 class Modifier():
 

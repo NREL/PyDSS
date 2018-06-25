@@ -1,19 +1,5 @@
 import logging
 
-def GetSolver(SimulationSettings ,dssInstance):
-    LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
-    pyLogger = logging.getLogger(LoggerTag)
-    SolverDict = {
-        'Snapshot': __Shapshot(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger),
-        'Daily': __Daily(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger),
-    }
-    try:
-        Solver = SolverDict[SimulationSettings['Simulation Type']]
-        pyLogger.info('Solver set to ' + SimulationSettings['Simulation Type'] + ' mode.')
-        return Solver
-    except:
-        pyLogger.error('Incorrect simulation type passed to the function.')
-        return -1
 
 class __Daily:
     def __init__(self, dssInstance, SimulationSettings, Logger):
@@ -42,7 +28,7 @@ class __Daily:
     def IncStep(self):
         self.__dssSolution.StepSize(self.mStepRes*60)
         self.__dssSolution.Solve()
-        self.pyLogger.info('Simululation time [h] - ' + str(self.__dssSolution.DblHour()))
+        self.pyLogger.info('Simulation time [h] - ' + str(self.__dssSolution.DblHour()))
 
     def reSolve(self):
         self.__dssSolution.StepSize(0)
@@ -50,6 +36,7 @@ class __Daily:
 
     def customControlLoop(self):
         return
+
 
 class __Shapshot:
     def __init__(self, dssInstance, SimulationSettings, Logger):
@@ -60,10 +47,10 @@ class __Shapshot:
         self.OriginalStep = self.__dssSolution.Number()
         return
 
-    def IncStep(self,CurrentTimeStep):
-        self.timestep = timestep
+    def IncStep(self, CurrentTimeStep):
+        self.timestep = CurrentTimeStep
         self.__dssSolution.Number(self.number)
-        self.__dssSolution.Hour(timestep)
+        self.__dssSolution.Hour(CurrentTimeStep)
         self.__dssSolution.Seconds(0)
 
     def reSolve(self):
@@ -72,3 +59,17 @@ class __Shapshot:
         self.__dssSolution.SolveNoControl()
 
 
+def GetSolver(SimulationSettings ,dssInstance):
+    LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
+    pyLogger = logging.getLogger(LoggerTag)
+    SolverDict = {
+        'Snapshot': __Shapshot(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger),
+        'Daily': __Daily(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger),
+    }
+    try:
+        Solver = SolverDict[SimulationSettings['Simulation Type']]
+        pyLogger.info('Solver set to ' + SimulationSettings['Simulation Type'] + ' mode.')
+        return Solver
+    except:
+        pyLogger.error('Incorrect simulation type passed to the function.')
+        return -1

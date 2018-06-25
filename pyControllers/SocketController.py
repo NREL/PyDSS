@@ -44,7 +44,7 @@ class SocketController:
                 numDoubles = int(len(Data) / 8)
                 tag = str(numDoubles) + 'd'
                 Data = list(struct.unpack(tag, Data))
-                print('Recieved --> ', Data)
+                print('Received --> ', Data)
 
                 for i, Variable in enumerate(self.Outputs):
                     self.__ControlledElm.SetParameter(Variable, Data[0])

@@ -1,25 +1,47 @@
-from ResultContainer import ResultContainer  as RC
-from pyContrReader import pyContrReader as pcr
-from pyPlotReader import pyPlotReader as ppr
+from PyDSS.ResultContainer import ResultContainer as RC
+from PyDSS.pyContrReader import pyContrReader as pcr
+from PyDSS.pyPlotReader import pyPlotReader as ppr
+from PyDSS.dssElement import dssElement
+from PyDSS.dssCircuit import dssCircuit
+from PyDSS.NetworkModifier import Modifier
+from PyDSS.dssBus import dssBus
+from PyDSS import SolveMode
+from PyDSS import pyLogger
+import pyControllers
+import PyPlots
+
 from opendssdirect.utils import run_command
-from dssElement import dssElement
-from dssCircuit import dssCircuit
 import opendssdirect as dss
-from dssBus import dssBus
-import pandas as pd
-import SolveMode
 import time
-import sys
 import os
 
-sys.path.insert(0, './pyControllers')
-sys.path.insert(0, './pyPlots')
-import pyController
-import pyPlots
-import pyLogger
-import logging
-
 CONTROLLER_PRIORITIES = 3
+
+SIMULATION_DEFAULTS = {
+    'Start Day': 0,
+    'End Day': 1,
+    'Step resolution (min)': 15,
+    'Max Control Iterations': 10,
+    'Simulation Type': 'Daily',
+    'Active Project': 'Mikilua',
+    'Active Scenario': 'None-None',
+    'DSS File': 'MasterCircuit_Mikilua_baseline2.dss',
+    'Error tolerance': 1,
+}
+RESULT_DEFAULTS = {
+    'Log Results': True,
+    'Export Mode': 'byClass',
+    'Export Style': 'Single file',
+}
+PLOT_DEFAULTS = {
+    'Network layout': False,
+    'Time series': False,
+    'XY plot': False,
+    'Sag plot': False,
+    'Histogram': False,
+    'GIS overlay': False,
+}
+
 
 class OpenDSS:
     __TempResultList = []
@@ -30,27 +52,27 @@ class OpenDSS:
     __DelFlag = 0
     __pyPlotObjects = {}
     BokehSessionID = None
-    def __init__(self, rootPath = os.getcwd(), ResultOptions = None, PlotOptions = pyPlots.defalultPO ,
-                 SimulationSettings =  None, LoggerOptions = None):
-        LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
-        self.__Logger = pyLogger.getLogger(LoggerTag, LoggerOptions=LoggerOptions)
-        self.__Logger.info('An instance of OpenDSS version ' + dss.__version__ + ' has ben created.')
 
+    def __init__(self, **kwargs):
+        rootPath = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
+        importPath = os.path.join(rootPath, 'ProjectFiles', kwargs['Active Project'], 'PyDSS Settings')
         self.__dssPath = {
             'root': rootPath,
-            'Import': rootPath + '/ProjectFiles/' + SimulationSettings['Active Project'] + '/PyDSS Settings',
-            'Export': rootPath + '/Export',
-            'dssFiles': rootPath + '/ProjectFiles/' + SimulationSettings['Active Project'] + '/DSSfiles',
+            'Import': importPath,
+            'pyPlots': os.path.join(importPath, kwargs['Active Scenario'], 'pyPlotList'),
+            'ExportLists': os.path.join(importPath, kwargs['Active Scenario'], 'ExportLists'),
+            'pyControllers': os.path.join(importPath, kwargs['Active Scenario'], 'pyControllerList'),
+            'Export': os.path.join(rootPath, 'Export'),
+            'Log': os.path.join(rootPath, 'Export', 'Logs'),
+            'dssFiles': os.path.join(rootPath, 'ProjectFiles', kwargs['Active Project'], 'DSSfiles'),
         }
 
-        self.__dssPath['pyPlots'] = self.__dssPath['Import'] + '/' + SimulationSettings['Active Scenario'] + '/pyPlotList'
-        self.__dssPath['ExportLists'] = self.__dssPath['Import']+ '/'  + SimulationSettings['Active Scenario'] + '/ExportLists'
-        self.__dssPath['pyControllers'] = self.__dssPath['Import']+ '/'  + SimulationSettings['Active Scenario'] + '/pyControllerList'
+        LoggerTag = kwargs['Active Project'] + '_' + kwargs['Active Scenario']
+        self.__Logger = pyLogger.getLogger(LoggerTag, self.__dssPath['Log'], LoggerOptions=kwargs)
+        self.__Logger.info('An instance of OpenDSS version ' + dss.__version__ + ' has been created.')
 
-        self.__SimulationOptions = SimulationSettings
-        self.__ResultOptions = ResultOptions
-        self.__PlotOptions = PlotOptions
-        self.__dssFilePath = self.__dssPath['dssFiles'] + '/' + SimulationSettings['DSS File']
+        self.__Options = kwargs
+        self.__dssFilePath = os.path.join(self.__dssPath['dssFiles'], kwargs['DSS File'])
 
         self.__dssInstance.Basic.ClearAll()
         self.__dssInstance.utils.run_command('Log=NO')
@@ -63,16 +85,17 @@ class OpenDSS:
         self.__dssClass = dss.ActiveClass
         self.__dssCommand = run_command
         self.__dssSolution = dss.Solution
-        self.__dssSolver = SolveMode.GetSolver(SimulationSettings=SimulationSettings, dssInstance=self.__dssInstance)
+        self.__dssSolver = SolveMode.GetSolver(SimulationSettings=kwargs, dssInstance=self.__dssInstance)
 
-        self.__ModifyNetwork()
+        self.__Modifier = Modifier(dss, run_command, self.__Options)
+        #self.__ModifyNetwork()
         self.__UpdateDictionary()
 
         self.__CreateBusObjects()
         self.__dssSolver.reSolve()
 
-        if self.__ResultOptions and self.__ResultOptions['Log Results']:
-            self.ResultContainer = RC(ResultOptions, SimulationSettings, self.__dssPath,
+        if self.__Options and self.__Options['Log Results']:
+            self.ResultContainer = RC(kwargs, self.__dssPath,
                                       self.__dssObjects, self.__dssObjectsByClass, self.__dssBuses)
 
         pyCtrlReader = pcr(self.__dssPath['pyControllers'])
@@ -83,24 +106,21 @@ class OpenDSS:
 
         pyPlotReader = ppr(self.__dssPath['pyPlots'])
         PlotList = pyPlotReader.pyPlots
-        if PlotList is not None and not all(value == False for value in PlotOptions.values()):
+        if PlotList is not None and not all(value == False for value in kwargs.values()):
             self.__CreatePlots(PlotList)
 
         for Plot in self.__pyPlotObjects:
             self.BokehSessionID = self.__pyPlotObjects[Plot].GetSessionID()
-            if SimulationSettings['Open plots in browser']:
+            if kwargs['Open plots in browser']:
                 self.__pyPlotObjects[Plot].session.show()
             break
 
         return
 
     def __ModifyNetwork(self):
-        from NetworkModifier import Modifier
-        # self.__Modifier = Modifier(dss, run_command, self.__SimulationOptions)
-        #
         # self.__Modifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
         #                              True, self.__dssObjects)
-        # #self.__Modifier.Edit_Elements('regcontrol', 'enabled' ,'False')
+        # self.__Modifier.Edit_Elements('regcontrol', 'enabled' ,'False')
         #self.__Modifier.Edit_Elements('Load', 'enabled', 'False')
         return
 
@@ -109,7 +129,7 @@ class OpenDSS:
 
         for ControllerType, ElementsDict in ControllerDict.items():
             for ElmName, SettingsDict in ElementsDict.items():
-                 Controller = pyController.Create(ElmName, ControllerType, SettingsDict, self.__dssObjects,
+                 Controller = pyControllers.pyController.Create(ElmName, ControllerType, SettingsDict, self.__dssObjects,
                                                   self.__dssInstance, self.__dssSolver)
                  if Controller != -1:
                     self.__pyControls['Controller.' + ElmName] = Controller
@@ -125,16 +145,16 @@ class OpenDSS:
             for Name in newPlotNames:
                 PlotSettings = PlotNames[Name]
                 PlotSettings['FileName'] = Name
-                if PlotType in PlotType1 and self.__PlotOptions[PlotType]:
-                    self.__pyPlotObjects[PlotType] = pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
+                if PlotType in PlotType1 and self.__Options[PlotType]:
+                    self.__pyPlotObjects[PlotType] = PyPlots.pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
                                                                     self.__dssObjectsByClass,self.__dssCircuit)
                     self.__Logger.info('Created pyPlot -> ' + PlotType)
-                elif PlotType in PlotType2 and self.__PlotOptions[PlotType]:
-                    self.__pyPlotObjects[PlotType + Name] = pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
+                elif PlotType in PlotType2 and self.__Options[PlotType]:
+                    self.__pyPlotObjects[PlotType + Name] = PyPlots.pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
                                                                            self.__dssObjectsByClass, self.__dssCircuit)
                     self.__Logger.info('Created pyPlot -> ' + PlotType)
-                elif PlotType in PlotType3  and self.__PlotOptions[PlotType]:
-                    self.__pyPlotObjects[PlotType+Name] = pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
+                elif PlotType in PlotType3  and self.__Options[PlotType]:
+                    self.__pyPlotObjects[PlotType+Name] = PyPlots.pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
                                                                          self.__dssObjects, self.__dssCircuit)
                     self.__Logger.info('Created pyPlot -> ' + PlotType)
         return
@@ -143,7 +163,7 @@ class OpenDSS:
         error = 0
         for controller in self.__pyControls.values():
             error += controller.Update(Priority, Time, UpdateResults)
-        return abs(error) < self.__SimulationOptions['Error tolerance'], error
+        return abs(error) < self.__Options['Error tolerance'], error
 
     def __CreateBusObjects(self):
         BusNames = self.__dssCircuit.AllBusNames()
@@ -180,38 +200,48 @@ class OpenDSS:
     def __GetRelaventObjectDict(self, key):
         ObjectList = {}
         ElmCollection = getattr(dss, key)
-        Elem =  ElmCollection.First()
+        Elem = ElmCollection.First()
         while Elem:
             ObjectList[self.__dssInstance.Element.Name()] =  dssElement(self.__dssInstance)
             Elem = ElmCollection.Next()
         return ObjectList
 
+    def RunStep(self, step, updateObjects=None):
+        print('Running simulation @ time step: ', step)
+        if updateObjects:
+            for object, params in updateObjects.items():
+                cl, name = object.split('.')
+                self.__Modifier.Edit_Elements(cl, name, params)
+            pass
+
+        self.__dssSolver.IncStep()
+        for priority in range(CONTROLLER_PRIORITIES):
+            for i in range(self.__Options['Max Control Iterations']):
+                has_converged, error = self.__UpdateControllers(priority, step, UpdateResults=False)
+                self.__Logger.debug('Control Loop {} convergence error: {}'.format(priority, error))
+                if has_converged or i == self.__Options['Max Control Iterations'] - 1:
+                    if not has_converged:
+                        self.__Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
+                    break
+                self.__dssSolver.reSolve()
+            #self.__dssSolver.reSolve()
+
+        self.__UpdatePlots()
+        if self.__Options['Log Results']:
+            self.ResultContainer.UpdateResults()
+        if self.__Options['Return Results']:
+            return self.ResultContainer.CurrentResults
+        #self.__dssSolver.IncStep()
+
     def RunSimulation(self):
         startTime = time.time()
-        TotalDays = self.__SimulationOptions['End Day'] - self.__SimulationOptions['Start Day']
-        Steps = int(TotalDays * 24 * 60 / self.__SimulationOptions['Step resolution (min)'])
+        TotalDays = self.__Options['End Day'] - self.__Options['Start Day']
+        Steps = int(TotalDays * 24 * 60 / self.__Options['Step resolution (min)'])
         self.__Logger.info('Running simulation for ' + str(Steps) + ' time steps')
         for step in range(Steps):
-            print('Running simulation @ time step: ', step)
-            self.__dssSolver.IncStep()
-            for priority in range(CONTROLLER_PRIORITIES):
-                for i in range(self.__SimulationOptions['Max Control Iterations']):
-                    has_converged, error = self.__UpdateControllers(priority, step, UpdateResults=False)
-                    self.__Logger.debug('Control Loop {} convergence error: {}'.format(priority, error))
-                    if has_converged or i == self.__SimulationOptions['Max Control Iterations'] - 1:
-                        if not has_converged:
-                            self.__Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
-                        break
-                    self.__dssSolver.reSolve()
-                #self.__dssSolver.reSolve()
+            self.RunStep(step)
 
-            self.__UpdatePlots()
-            if self.__ResultOptions and self.__ResultOptions['Log Results']:
-                self.ResultContainer.UpdateResults()
-            #self.__dssSolver.IncStep()
-
-
-        if self.__ResultOptions and self.__ResultOptions['Log Results']:
+        if self.__Options and self.__Options['Log Results']:
             self.ResultContainer.ExportResults()
 
         self.__Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
@@ -236,7 +266,7 @@ class OpenDSS:
             i.close()
 
         if self.__DelFlag == 1:
-            self.__Logger.info('An intstance of OpenDSS (' + str(self) +') has been deleted.')
+            self.__Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')
         else:
-            self.__Logger.error('An intstance of OpenDSS (' + str(self) + ') crashed.')
+            self.__Logger.error('An instance of OpenDSS (' + str(self) + ') crashed.')
         return

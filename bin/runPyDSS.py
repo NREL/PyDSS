@@ -7,11 +7,11 @@ import subprocess
 
 #w.load(QtCore.QUrl('https://www.archlinux.org/'))
 
-from dssGUI import Ui_PyDSS
+from PyDSS.dssGUI import Ui_PyDSS
 import pandas as pd
-import dssInstance
+from PyDSS import dssInstance
 import logging
-import xlwt
+#import xlwt
 import sys
 import os
 #******************************************************************
@@ -127,7 +127,7 @@ class PyDSS():
             'DSS File'              : self.MainDSSfile,
         }
 
-        from dssNetworkX import dssNetworkX
+        from PyDSS.dssNetworkX import dssNetworkX
         self.dssNXinstance = dssNetworkX(SimSettings=SS)
         Nodes = self.dssNXinstance.GetUniqueNodeProperties()
         Edges = self.dssNXinstance.GetUniqueEdgeProperties()
@@ -331,7 +331,7 @@ class PyDSS():
         RO = {
             'Log Results'            : True if str(self.ui.comboBox_ExportResults.currentText()) == 'True' else False,
             'Export Mode'            : str(self.ui.comboBox_ExportMode.currentText()),  # 'byClass'        , 'byElement'
-            'Export Style'           : str(self.ui.comboBox_ExportStyle.currentText()),  # 'Seperate files' , 'Single file'
+            'Export Style'           : str(self.ui.comboBox_ExportStyle.currentText()),  # 'Separate files' , 'Single file'
         }
         #print(RO)
         # Plot Settings

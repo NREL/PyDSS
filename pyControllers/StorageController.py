@@ -134,7 +134,7 @@ class StorageController:
                 Pin = self.dummy * sum(Sin[::2])
 
             # Pbatt = -float(self.__ControlledElm.GetVariable('Powers')[0])*3 + IdlingkW
-            # #Does not cork as well as KW parameter for some reason
+            # #Does not work as well as KW parameter for some reason
             Pbatt = float(self.__ControlledElm.GetParameter2('kw'))
             Pb0 = Pbatt
             if Pin < Plb:
@@ -157,9 +157,9 @@ class StorageController:
 
             Error = abs(Pbatt - self.PbattOld) / self.__Srated
             self.PbattOld = Pbatt
-            if Error > 0.2:
-                # print((self.__ControlledElm.GetInfo()[1], self.__Settings['PowerMeaElem'], Pin, Pb0, Pbatt))
-                print((self.__Name, currTime, Pbatt, self.PbattOld, Pin, Plb, dP, Pb0))
+            # if Error > 0.2:
+            #     # print((self.__ControlledElm.GetInfo()[1], self.__Settings['PowerMeaElem'], Pin, Pb0, Pbatt))
+            #     print((self.__Name, currTime, Pbatt, self.PbattOld, Pin, Plb, dP, Pb0))
         return Error
 
     def PeakShavingControl(self):
@@ -195,8 +195,10 @@ class StorageController:
             self.__ControlledElm.SetParameter('State', 'CHARGING')
             self.__ControlledElm.SetParameter('%charge', str(pctcharge))
 
-        Error = abs(Pbatt - self.PbattOld)
+        Error = abs(Pbatt - self.PbattOld) / self.__Srated
         self.PbattOld = Pbatt
+        # if Error > 0.2:
+        #     print((self.__Name, Pbatt, self.PbattOld, self.__Prated, Pin, Plb, Pub, dP))
         return Error
 
     def RealTimeControl(self):

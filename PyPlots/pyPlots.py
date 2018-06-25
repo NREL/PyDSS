@@ -1,11 +1,6 @@
-import Topology
-import SagPlot
-import Histogram
-import TimeSeries
-import XYPlot
-import GISplot
+from . import Topology, SagPlot, Histogram, TimeSeries, XYPlot, GISplot
 
-PlotTypes ={
+PlotTypes = {
     'Network layout' : Topology.Plot,
 	'Sag plot'       : SagPlot.Plot,
 	'Histogram'      : Histogram.Plot,
@@ -24,6 +19,7 @@ def Create(PlotType, PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit):
     #     print ('The object dictionary does not contain ' + PlotType)
     #     return -1
     return PlotObject
+
 
 defalultPO = {
         'Network layout': False,

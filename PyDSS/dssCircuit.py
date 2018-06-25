@@ -1,4 +1,4 @@
-from dssBus import dssBus
+from PyDSS.dssBus import dssBus
 
 class dssCircuit:
     __Name = None

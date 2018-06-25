@@ -1,9 +1,15 @@
 import logging
-import sys
 import os
-from os import listdir
 
-def getLogger(name, LoggerOptions=None):
+LOGGER_DEFAULTS = {
+    'Logging Level': logging.INFO,
+    'Log to external file': True,
+    'Display on screen': True,
+    'Clear old log files': False,
+}
+
+
+def getLogger(name, path, LoggerOptions=None):
     if LoggerOptions['Clear old log files']:
         test = os.listdir(os.getcwd())
         for item in test:
@@ -18,7 +24,9 @@ def getLogger(name, LoggerOptions=None):
         handler1.setFormatter(formatter)
         logger.addHandler(handler1)
     if LoggerOptions['Log to external file']:
-        handler2 = logging.FileHandler(filename=name + '.log')
+        if not os.path.exists(path):
+            os.mkdir(path)
+        handler2 = logging.FileHandler(filename=os.path.join(path, name + '.log'))
         handler2.setFormatter(formatter)
         logger.addHandler(handler2)
     return logger

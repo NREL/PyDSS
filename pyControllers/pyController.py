@@ -1,8 +1,5 @@
-import PvController
-import xfmrController
-import SocketController
-import StorageController
-from dssElement import dssElement
+from pyControllers import PvController, xfmrController, SocketController, StorageController
+from PyDSS.dssElement import dssElement
 
 ControllerTypes = {
     'PV Controller'     : PvController.PvController,

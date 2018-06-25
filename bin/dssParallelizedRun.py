@@ -1,5 +1,5 @@
 from multiprocessing import Pool
-import dssInstance
+from PyDSS import dssInstance
 import subprocess
 import logging
 import os
@@ -9,7 +9,7 @@ def pyDSSinstance(Scenario):
     RO = {
         'Log Results'    : True,
         'Export Mode'    : 'byClass',             # 'byClass'        , 'byElement'
-        'Export Style'   : 'Single file',         # 'Seperate files' , 'Single file'
+        'Export Style'   : 'Single file',         # 'Separate files' , 'Single file'
     }
     # Plot Settings
     PO = {

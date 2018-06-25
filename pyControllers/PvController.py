@@ -108,8 +108,8 @@ class PvController:
 
         Error = abs(dP)
         self.oldPcalc = Ppv
-        if Error > 0.1:
-            print((self.__Name, uIn, Qpv, Plim, Ppv, Pcalc, self.Pmppt, dP, self.pf))
+        # if Error > 0.1:
+        #     print((self.__Name, uIn, Qpv, Plim, Ppv, Pcalc, self.Pmppt, dP, self.pf))
         return Error
 
     def CutoffControl(self):
@@ -249,8 +249,8 @@ class PvController:
 
 
         Error = abs(dQ)
-        if Error > 0.1 or math.isnan(Error):
-            print((self.__Name, uIn, Qcalc, Qpv, self.oldQcalc, dQ, Pcalc, self.pf, self.__ControlledElm.GetVariable('Powers')))
+        # if Error > 0.1 or math.isnan(Error):
+        #     print((self.__Name, uIn, Qcalc, Qpv, self.oldQcalc, dQ, Pcalc, self.pf, self.__ControlledElm.GetVariable('Powers')))
         self.oldQcalc = Qpv
 
         return Error
