@@ -7,6 +7,8 @@ from bokeh.palettes import Plasma
 from bokeh.client import push_session
 import pandas as pd
 import numpy as np
+
+
 class Plot:
     def __init__(self,PlotProperties, dssBuses, dssObjects, dssCircuit):
 

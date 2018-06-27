@@ -1,13 +1,6 @@
 import logging
 import os
 
-LOGGER_DEFAULTS = {
-    'Logging Level': logging.INFO,
-    'Log to external file': True,
-    'Display on screen': True,
-    'Clear old log files': False,
-}
-
 
 def getLogger(name, path, LoggerOptions=None):
     if LoggerOptions['Clear old log files']:

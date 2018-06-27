@@ -39,7 +39,6 @@ class StorageController:
         Class, Name = self.__ControlledElm.GetInfo()
         self.__Name = 'pyCont_' + Class + '_' + Name
         #self.__Convergance = np.zeros((1440,10))
-
         return
 
     def Update(self, Priority, Time, Update):
@@ -395,7 +394,7 @@ class StorageController:
             dQ = 0
 
         Error = abs(dQ)
-        if Error > 0.1 or math.isnan(Error):
-            print((self.__Name, uIn, Qcalc, Qpv, self.oldQcalc, dQ, Ppv, Pcalc, pct, pf, self.__ControlledElm.GetVariable('Powers')))
+        # if Error > 0.1 or math.isnan(Error):
+        #     print((self.__Name, uIn, Qcalc, Qpv, self.oldQcalc, dQ, Ppv, Pcalc, pct, pf, self.__ControlledElm.GetVariable('Powers')))
         self.oldQcalc = Qcalc
         return Error

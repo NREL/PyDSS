@@ -1,0 +1,13 @@
+numpy
+pandas
+subprocess
+logging
+click
+socket
+struct
+PyQt5
+opendssdirect
+matplotlib
+bokeh
+ast
+pyproj

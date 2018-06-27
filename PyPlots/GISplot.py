@@ -5,7 +5,10 @@ from bokeh.models import ColumnDataSource, HoverTool, BoxSelectTool, PanTool, Wh
 from bokeh.client import push_session
 import pandas as pd
 import numpy as np
-import pyproj
+try:
+    import pyproj
+except ImportError:
+    print('Package pyproj not installed. Cannot use GISplot')
 
 
 class Plot:

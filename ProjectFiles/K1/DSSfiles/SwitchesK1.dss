@@ -1,0 +1,26 @@
+! Script for SwitchesK1.dss
+
+! SWITCH DEFINITIONS
+New Wiredata.switchwire GMR=0.02240 RAC=0.30600 NormAmps=531.0 Runits=mi radunits=in gmrunits=ft
+New Linegeometry.switchgeom nconds=4 nphases=3 reduce=y cond=1 Wire=switchwire h=13.716 x=-1.2090 cond=2 Wire=switchwire h=13.716 x=-0.502 cond=3 Wire=switchwire h=13.716 x=0.5747 cond=4 Wire=switchwire h=14.648 x=0 !line geometry for siwtch
+New Wiredata.switchwire1 GMR=0.00700 RAC=2.40970 NormAmps=120.0 Runits=mi radunits=in gmrunits=ft
+New Linegeometry.switchgeom1 nconds=2 nphases=1 reduce=y cond=1 Wire=switchwire1  h=12.192 x=0 cond=2 Wire=switchwire1 h=10.668 x=0 ! line geom for switch 1ph
+New Line.UG_64103_s Phases=1 Bus1=NODE_272260_s.1 Bus2=NODE_272260.1 Switch=y Geometry=switchgeom1 Length=1 Units=ft! closed switch
+New Line.UG_64166_s Phases=1 Bus1=NODE_30062336_s.1 Bus2=NODE_30062336.1 Switch=y Geometry=switchgeom1 Length=1 Units=ft! closed switch
+New Line.UG_50026565_s Phases=1 Bus1=NODE_30134821_s.1 Bus2=NODE_30134821.1 Switch=y Geometry=switchgeom1 Length=1 Units=ft! closed switch
+New Line.UG_50026574_s Phases=1 Bus1=NODE_30134832_s.3 Bus2=NODE_30134832.3 Switch=y Geometry=switchgeom1 Length=1 Units=ft! closed switch
+New Line.UG_50146_s Phases=1 Bus1=NODE_30106597_s.2 Bus2=NODE_30106597.2 Switch=y Geometry=switchgeom1 Length=1 Units=ft! closed switch
+New Line.UG_50271_s Phases=1 Bus1=NODE_30122102_s.3 Bus2=NODE_30122102.3 Switch=y Geometry=switchgeom1 Length=1 Units=ft! closed switch
+New Line.BB_51071429_s Phases=1 Bus1=DEV_51071431_s.2 Bus2=DEV_51071431.2 Switch=y Geometry=switchgeom1 Length=1 Units=ft! closed switch
+New Line.UG_64038_s Phases=1 Bus1=DEV_51191231_s.3 Bus2=DEV_51191231.3 Switch=y Geometry=switchgeom1 Length=1 Units=ft! closed switch
+New Line.UG_65245_s Phases=1 Bus1=DEV_51227346_s.2 Bus2=DEV_51227346.2 Switch=y Geometry=switchgeom1 Length=1 Units=ft! closed switch
+New Line.UG_51259023_s Phases=1 Bus1=DEV_51259011_s.2 Bus2=DEV_51259011.2 Switch=y Geometry=switchgeom1 Length=1 Units=ft! closed switch
+New Line.UG_64024_s Phases=1 Bus1=DEV_51259074_s.2 Bus2=DEV_51259074.2 Switch=y Geometry=switchgeom1 Length=1 Units=ft! closed switch
+New Line.UG_64246_s Phases=1 Bus1=NODE_272476_s.1 Bus2=NODE_272476.1 Switch=y Geometry=switchgeom1 Length=1 Units=ft! closed switch
+New Line.BB_64059_s Phases=1 Bus1=DEV_64058_s.3 Bus2=DEV_64058.3 Switch=y Geometry=switchgeom1 Length=1 Units=ft! closed switch
+New Line.OH_64388_s Phases=1 Bus1=NODE_30123245_s.3 Bus2=NODE_30123245.3 Switch=y Geometry=switchgeom1 Length=1 Units=ft! closed switch
+New Line.UG_64227_s Phases=1 Bus1=DEV_64226_s.1 Bus2=DEV_64226.1 Switch=y Geometry=switchgeom1 Length=1 Units=ft! closed switch
+New Line.BB_64280_s Phases=1 Bus1=DEV_64277_s.1 Bus2=DEV_64277.1 Switch=y Geometry=switchgeom1 Length=1 Units=ft! closed switch
+New Line.OH_64896_s Phases=3 Bus1=DEV_64909_s.1.2.3 Bus2=DEV_64909.1.2.3 Switch=y Geometry=switchgeom Length=1 Units=ft! closed switch
+New Line.UG_65130_s Phases=1 Bus1=DEV_65129_s.1 Bus2=DEV_65129.1 Switch=y Geometry=switchgeom1 Length=1 Units=ft! closed switch
+New Line.UG_64892_s Phases=1 Bus1=DEV_65335_s.3 Bus2=DEV_65335.3 Switch=y Geometry=switchgeom1 Length=1 Units=ft! closed switch

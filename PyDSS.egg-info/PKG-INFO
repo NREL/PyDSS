@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: PyDSS
+Version: 0.0.1
+Summary: a high level python interface for OpenDSS
+Home-page: https://github.nrel.gov/alatif/PyDSS
+Author: Aadil Latif
+Author-email: Aadil.Latif@nrel.gov
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN

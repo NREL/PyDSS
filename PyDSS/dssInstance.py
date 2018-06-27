@@ -13,11 +13,19 @@ import PyPlots
 from opendssdirect.utils import run_command
 import opendssdirect as dss
 import time
+import logging
 import os
 
 CONTROLLER_PRIORITIES = 3
 
-SIMULATION_DEFAULTS = {
+DSS_DEFAULTS = {
+    # Logging Defaults
+    'Logging Level': logging.INFO,
+    'Log to external file': True,
+    'Display on screen': True,
+    'Clear old log files': False,
+
+    # Simulation Options
     'Start Day': 0,
     'End Day': 1,
     'Step resolution (min)': 15,
@@ -27,13 +35,13 @@ SIMULATION_DEFAULTS = {
     'Active Scenario': 'None-None',
     'DSS File': 'MasterCircuit_Mikilua_baseline2.dss',
     'Error tolerance': 1,
-}
-RESULT_DEFAULTS = {
+
+    # Results Options
     'Log Results': True,
     'Export Mode': 'byClass',
     'Export Style': 'Single file',
-}
-PLOT_DEFAULTS = {
+
+    # Plot Options
     'Network layout': False,
     'Time series': False,
     'XY plot': False,
@@ -54,6 +62,8 @@ class OpenDSS:
     BokehSessionID = None
 
     def __init__(self, **kwargs):
+        DSS_DEFAULTS.update(kwargs)
+        kwargs = DSS_DEFAULTS
         rootPath = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
         importPath = os.path.join(rootPath, 'ProjectFiles', kwargs['Active Project'], 'PyDSS Settings')
         self.__dssPath = {

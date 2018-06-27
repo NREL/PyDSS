@@ -20,14 +20,14 @@ dssArgs = {
     'GIS overlay'    : False,
 
     # Simulation Settings
-    'Start Day'              : 243, # 156, maybe 286
-    'End Day'                : 244, # 163, maybe 293
+    'Start Day'              : 286, # 156, 286
+    'End Day'                : 287, # 163, 293
     'Step resolution (min)'  : 15,
     'Max Control Iterations' : 10,
     'Simulation Type'        : 'Daily',
-    'Active Project'         : 'Mikilua',
-    'Active Scenario'        : 'CSS30VV-VV-D',
-    'DSS File'               : 'MasterCircuit_Mikilua_baseline2_CSS30.dss',
+    'Active Project'         : 'K1',
+    'Active Scenario'        : 'None-None',
+    'DSS File'               : 'MasterCircuit_K1.dss',
     'Error tolerance'        : 1,
 
     # Logger settings
