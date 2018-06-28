@@ -12,10 +12,10 @@ requirements = [
     'numpy',
     'pandas',
     'xlrd',
-    'subprocess',
+    #'subprocess',
     'click',
     'PyQt5',
-    'opendssdirect',
+    'OpenDSSDirect.py',
     'bokeh',
     #'ast',
     #'pyproj'

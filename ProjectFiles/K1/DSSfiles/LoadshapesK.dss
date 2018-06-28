@@ -4,7 +4,7 @@
 !New loadshape.k1pvmult npts= 385, interval=1, mult = (file=Kpvmult_Jun29toJul2.txt )
 
 //annual profile
-New loadshape.k1loadmult npts= 35040, mult = (file=./load-PV-shapes/Kahala4kvloadmult_Jan01toDec31.csv)
-New loadshape.k1pvmult npts= 35040, interval=1, mult = (file=./load-PV-shapes/Kahala4kvPVgenmult_Jan01toDec31.csv )
+New loadshape.k1loadmult npts= 35040, mInterval=15, mult = (file=./load-PV-shapes/Kahala4kvloadmult_Jan01toDec31.csv)
+New loadshape.k1pvmult npts= 35040, mInterval=15, mult = (file=./load-PV-shapes/Kahala4kvPVgenmult_Jan01toDec31.csv )
 
 
