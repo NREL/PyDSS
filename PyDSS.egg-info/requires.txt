@@ -1,13 +1,7 @@
 numpy
 pandas
-subprocess
-logging
+xlrd
 click
-socket
-struct
 PyQt5
-opendssdirect
-matplotlib
+OpenDSSDirect.py
 bokeh
-ast
-pyproj

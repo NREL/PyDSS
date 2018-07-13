@@ -1,7 +1,0 @@
-! Script for MeterK1.dss
-
-! METER DEFINITIONS
-New EnergyMeter.m_UG_63213 line.UG_63213
-
-
-New EnergyMeter.m_Hunakaia PVSystem.HUNAKAIa

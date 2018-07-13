@@ -4,7 +4,7 @@ import os
 import re
 
 try:
-    from setuptools import setup
+    from setuptools import setup , find_packages
 except ImportError:
     from distutils.core import setup
 
@@ -43,7 +43,7 @@ setup(name='PyDSS',
       author='Aadil Latif',
       author_email='Aadil.Latif@nrel.gov',
       url='https://github.nrel.gov/alatif/PyDSS',
-      packages=['PyDSS'],
+      packages=find_packages(),
       install_requires=requirements,
       package_data={'PyDSS': []},
      )
