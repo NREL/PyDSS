@@ -30,7 +30,7 @@ DSS_DEFAULTS = {
     'End Day': 1,
     'Step resolution (min)': 15,
     'Max Control Iterations': 10,
-	'Project Path'   : r'C:\Users\alatif\Desktop\PyDSS-Projects',
+	'Project Path'   : r'C:\Users\memmanue\Desktop\PyDSS-Projects',
     'Simulation Type': 'Daily',
     'Active Project': 'Mikilua',
     'Active Scenario': 'None-None',
@@ -43,12 +43,12 @@ DSS_DEFAULTS = {
     'Export Style': 'Single file',
 
     # Plot Options
-    'Network layout': False,
-    'Time series': False,
-    'XY plot': False,
-    'Sag plot': False,
-    'Histogram': False,
-    'GIS overlay': False,
+    'Network layout': True,
+    'Time series': True,
+    'XY plot': True,
+    'Sag plot': True,
+    'Histogram': True,
+    'GIS overlay': True,
 }
 
 

@@ -52,7 +52,8 @@ class PvController:
 
         self.update = [self.ControlDict[Settings['Control' + str(i)]] for i in [1, 2, 3]]
 
-        self.QlimPU = self.__Qrated / self.__Srated if self.__Qrated < self.__Srated else 1
+        #self.QlimPU = self.__Qrated / self.__Srated if self.__Qrated < self.__Srated else 1
+        self.QlimPU = min(self.__Qrated / self.__Srated, Settings['QlimPU'], 1.0)
         return
 
     def Update(self, Priority, Time, Update):
