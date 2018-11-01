@@ -8,7 +8,7 @@ from bokeh.client import push_session
 import pandas as pd
 import numpy as np
 
-class Plot:
+class Topology:
     Vmin = 0.95
     Vmax = 1.05
     Imin = 0

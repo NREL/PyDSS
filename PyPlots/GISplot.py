@@ -11,7 +11,7 @@ except ImportError:
     print('Package pyproj not installed. Cannot use GISplot')
 
 
-class Plot:
+class GISplot:
     Vmin = 0.95
     Vmax = 1.05
     Imin = 0

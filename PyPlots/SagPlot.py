@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 import math
 
-class Plot:
+class SagPlot:
 	def __init__(self,PlotProperties, dssBuses, dssObjectsbyClass, dssCircuit):
 
 		self.__dssBuses = dssBuses

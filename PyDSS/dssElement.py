@@ -112,9 +112,6 @@ class dssElement:
         self.__dssInstance.Circuit.SetActiveElement(self.__Class + '.' + self.__Name)
         if self.__dssInstance.Element.Name() == (self.__Class + '.' + self.__Name):
             x = self.__dssInstance.Properties.Value(Param)
-            print(Param, x, type(x))
-
-            #print(self.__Class + '.' + self.__Name + '.' + Param + ' -> ' + str(X))
             try:
                 return float(x)
             except:

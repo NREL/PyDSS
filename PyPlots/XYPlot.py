@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 
 
-class Plot:
+class XYPlot:
     def __init__(self,PlotProperties, dssBuses, dssObjects, dssCircuit):
 
         self.__dssBuses = dssBuses

@@ -1,13 +1,17 @@
-from pyControllers import PvController, xfmrController, SocketController, StorageController, HybridController
+from os.path import dirname, basename, isfile
+import glob
+modules = glob.glob(dirname(__file__)+"/*.py")
+pythonFiles = [ basename(f)[:-3] for f in modules if isfile(f) and
+                not f.endswith('__init__.py') and
+                not f.endswith('pyController.py')]
+
 from PyDSS.dssElement import dssElement
 
-ControllerTypes = {
-    'PV Controller'     : PvController.PvController,
-    'Socket Controller' : SocketController.SocketController,
-    'XFMR Controller'   : xfmrController.xfmrController,
-    'Storage Controller': StorageController.StorageController,
-    'Hybrid Controller' : HybridController.HybridController
-}
+ControllerTypes = {}
+
+for file in pythonFiles:
+    exec('from pyControllers import {}'.format(file))
+    exec('ControllerTypes["{}"] = {}.{}'.format(file, file, file))
 
 
 def Create(ElmName, ControllerType, Settings, ElmObjectList, dssInstance, dssSolver):

@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 import math
 
-class Plot:
+class Histogram:
 	def __init__(self,PlotProperties, dssBuses, dssObjectsbyClass, dssCircuit):
 		Data = []
 		self.__dssBuses = dssBuses

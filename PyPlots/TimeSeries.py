@@ -5,7 +5,7 @@ from bokeh.layouts import  column
 from bokeh.palettes import Set1
 from ast import literal_eval as LE
 
-class Plot:
+class TimeSeries:
     def __init__(self,PlotProperties, dssBuses, dssObjects, dssCircuit):
 
         self.__dssBuses = dssBuses
