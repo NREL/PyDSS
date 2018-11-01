@@ -38,10 +38,10 @@ class PvController:
         self.__dssSolver = dssSolver
         self.__Settings = Settings
 
-        self.__BaseKV = float(PvObj.GetParameter2('kv'))
-        self.__Srated = float(PvObj.GetParameter2('kVA'))
-        self.__Prated = float(PvObj.GetParameter2('Pmpp'))
-        self.__Qrated = float(PvObj.GetParameter2('kVARlimit'))
+        self.__BaseKV = float(PvObj.GetParameter('kv'))
+        self.__Srated = float(PvObj.GetParameter('kVA'))
+        self.__Prated = float(PvObj.GetParameter('Pmpp'))
+        self.__Qrated = float(PvObj.GetParameter('kVARlimit'))
         self.__cutin = float(PvObj.SetParameter('%cutin', Settings['%PCutin'])) / 100
         self.__cutout = float(PvObj.SetParameter('%cutout',Settings['%PCutout'])) / 100
         self.__dampCoef = Settings['DampCoef']
@@ -142,9 +142,9 @@ class PvController:
         self.__ControlledElm.SetParameter('irradiance', 1)
         self.__ControlledElm.SetParameter('pf', -PF)
 
-        Error = PF + float(self.__ControlledElm.GetParameter2('pf'))
+        Error = PF + float(self.__ControlledElm.GetParameter('pf'))
 
-        Pirr = float(self.__ControlledElm.GetParameter2('irradiance'))
+        Pirr = float(self.__ControlledElm.GetParameter('irradiance'))
         self.__ControlledElm.SetParameter('irradiance', Pirr * (1 + Error * 3))
         self.__ControlledElm.SetParameter('pf', str(-PF))
 
@@ -174,10 +174,10 @@ class PvController:
         self.__dssSolver.reSolve()
 
         for i in range(10):
-            Error = PF + float(self.__ControlledElm.GetParameter2('pf'))
+            Error = PF + float(self.__ControlledElm.GetParameter('pf'))
             if abs(Error) < 1E-4:
                 break
-            Pirr = float(self.__ControlledElm.GetParameter2('irradiance'))
+            Pirr = float(self.__ControlledElm.GetParameter('irradiance'))
             self.__ControlledElm.SetParameter('pf', str(-PF))
             self.__ControlledElm.SetParameter('irradiance', Pirr * (1 + Error*1.5))
             self.__dssSolver.reSolve()

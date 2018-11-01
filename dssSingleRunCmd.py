@@ -54,6 +54,7 @@ def RunSimulation(**kwargs):
         'GIS overlay': kwargs.get('gis_overlay'),
 
         # Simulation Settings
+        'Project Path': r'C:\Users\alatif\Desktop\PyDSS-Projects',
         'Start Day': kwargs.get('start_day'),
         'End Day': kwargs.get('end_day'),
         'Step resolution (min)': kwargs.get('step_resolution_min'),

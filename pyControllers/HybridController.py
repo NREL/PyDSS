@@ -129,9 +129,9 @@ class HybridController:
         self.__ControlledElm.SetParameter('irradiance', 1)
         self.__ControlledElm.SetParameter('pf', -PF)
 
-        Error = PF + float(self.__ControlledElm.GetParameter2('pf'))
+        Error = PF + float(self.__ControlledElm.GetParameter('pf'))
 
-        Pirr = float(self.__ControlledElm.GetParameter2('irradiance'))
+        Pirr = float(self.__ControlledElm.GetParameter('irradiance'))
         self.__ControlledElm.SetParameter('irradiance', Pirr * (1 + Error * 3))
         self.__ControlledElm.SetParameter('pf', str(-PF))
 
@@ -161,10 +161,10 @@ class HybridController:
         self.__dssSolver.reSolve()
 
         for i in range(10):
-            Error = PF + float(self.__ControlledElm.GetParameter2('pf'))
+            Error = PF + float(self.__ControlledElm.GetParameter('pf'))
             if abs(Error) < 1E-4:
                 break
-            Pirr = float(self.__ControlledElm.GetParameter2('irradiance'))
+            Pirr = float(self.__ControlledElm.GetParameter('irradiance'))
             self.__ControlledElm.SetParameter('pf', str(-PF))
             self.__ControlledElm.SetParameter('irradiance', Pirr * (1 + Error*1.5))
             self.__dssSolver.reSolve()

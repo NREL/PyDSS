@@ -6,7 +6,7 @@ class xfmrController:
     __Locked = False
     def __init__(self, RegulatorObj, Settings, dssInstance, ElmObjectList, dssSolver):
         self.__ControlledElm = RegulatorObj
-        self.__ConnTransformerName = 'Transformer.' + self.__ControlledElm.GetParameter2('transformer').lower()
+        self.__ConnTransformerName = 'Transformer.' + self.__ControlledElm.GetParameter('transformer').lower()
         self.__ConnTransformer = ElmObjectList[self.__ConnTransformerName]
         self.__ElmObjectList = ElmObjectList
         self.__RPFlocking = Settings['RPF locking']

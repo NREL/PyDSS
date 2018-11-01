@@ -52,7 +52,7 @@ class dssElement:
         if VarName in self.__Variables:
             VarValue = self.GetVariable(VarName)
         elif VarName in self.__Parameters:
-            VarValue = self.GetParameter2(VarName)
+            VarValue = self.GetParameter(VarName)
         else:
             return 0, None
 
@@ -69,7 +69,7 @@ class dssElement:
         if VarName in self.__Variables:
             VarValue = self.GetVariable(VarName)
         elif VarName in self.__Parameters:
-            VarValue = self.GetParameter2(VarName)
+            VarValue = self.GetParameter(VarName)
             if VarValue is not None:
                 VarValue = float(VarValue)
             else:
@@ -105,10 +105,10 @@ class dssElement:
 
     def SetParameter(self, Param, Value):
         self.__dssInstance.utils.run_command(self.__Class + '.' + self.__Name + '.' + Param + ' = ' + str(Value))
-        return self.GetParameter2(Param)
+        return self.GetParameter(Param)
 
 
-    def GetParameter2(self, Param):
+    def GetParameter(self, Param):
         self.__dssInstance.Circuit.SetActiveElement(self.__Class + '.' + self.__Name)
         if self.__dssInstance.Element.Name() == (self.__Class + '.' + self.__Name):
             NumberOfProperties = len(self.__dssInstance.Element.AllPropertyNames())

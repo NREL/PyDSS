@@ -30,9 +30,9 @@ class StorageController:
         self.__dssInstance = dssInstance
         self.__dssSolver = dssSolver
         self.__Settings = Settings
-        self.__Srated = float(StorageObj.GetParameter2('kVA'))
-        self.__Prated = float(StorageObj.GetParameter2('kWrated'))
-        self.__Pbatt = float(StorageObj.GetParameter2('kW'))
+        self.__Srated = float(StorageObj.GetParameter('kVA'))
+        self.__Prated = float(StorageObj.GetParameter('kWrated'))
+        self.__Pbatt = float(StorageObj.GetParameter('kW'))
         self.__dampCoef = Settings['DampCoef']
         self.update = [self.ControlDict[Settings['Control' + str(i)]] for i in [1, 2, 3]]
 
@@ -87,9 +87,9 @@ class StorageController:
             self.dummy = 1 if Pin1 > 0 else -1
 
         Plb = self.__Settings['BaseLoadLim']
-        KWHrated = float(self.__ControlledElm.GetParameter2('kWhrated'))
-        perIdle = float(self.__ControlledElm.GetParameter2('%IdlingkW'))
-        effDchg = float(self.__ControlledElm.GetParameter2('%EffDischarge'))
+        KWHrated = float(self.__ControlledElm.GetParameter('kWhrated'))
+        perIdle = float(self.__ControlledElm.GetParameter('%IdlingkW'))
+        effDchg = float(self.__ControlledElm.GetParameter('%EffDischarge'))
         # perDischarge = self.__Settings['%DischargeRate']
 
         sTime = self.__Settings['ExpWindowStart']
@@ -113,7 +113,7 @@ class StorageController:
                 Export = False
 
         if self.ExportOld is False and Export is True:
-            perKWHstored = float(self.__ControlledElm.GetParameter2('%stored'))
+            perKWHstored = float(self.__ControlledElm.GetParameter('%stored'))
             kWhrem = KWHrated * (perKWHstored / 100)
             self.Pbatt = kWhrem / (Twindow) * effDchg / 100 - perIdle * self.__Prated / 100
             # print(perKWHstored, kWhrem, self.Pbatt)
@@ -134,7 +134,7 @@ class StorageController:
 
             # Pbatt = -float(self.__ControlledElm.GetVariable('Powers')[0])*3 + IdlingkW
             # #Does not work as well as KW parameter for some reason
-            Pbatt = float(self.__ControlledElm.GetParameter2('kw'))
+            Pbatt = float(self.__ControlledElm.GetParameter('kw'))
             Pb0 = Pbatt
             if Pin < Plb:
                 dP = Pin - Plb
@@ -164,7 +164,7 @@ class StorageController:
     def PeakShavingControl(self):
         Pub = self.__Settings['PS_ub']
         Plb = self.__Settings['PS_lb']
-        IdlingkWPercent = float(self.__ControlledElm.GetParameter2('%IdlingkW'))
+        IdlingkWPercent = float(self.__ControlledElm.GetParameter('%IdlingkW'))
         IdlingkW = -IdlingkWPercent/100*self.__Prated
         if self.__Settings['PowerMeaElem'] == 'Total':
             Sin = self.__dssInstance.Circuit.TotalPower()
@@ -174,7 +174,7 @@ class StorageController:
             Pin = sum(Sin[0:5:2])
         #Pbatt = -float(self.__ControlledElm.GetVariable('Powers')[0])*3 + IdlingkW
         #Does not work as well as KW parameter for come reason
-        Pbatt = float(self.__ControlledElm.GetParameter2('kw'))
+        Pbatt = float(self.__ControlledElm.GetParameter('kw'))
         if Pin > Pub:
             dP = Pin - Pub
             Pbatt = Pbatt + dP * self.__dampCoef
@@ -280,10 +280,10 @@ class StorageController:
     def ConstantPowerFactorControl(self):
         PF = self.__Settings['pf']
         self.__dssSolver.reSolve()
-        Pcalc = float(self.__ControlledElm.GetParameter2('kw')) / self.__Prated
+        Pcalc = float(self.__ControlledElm.GetParameter('kw')) / self.__Prated
 
         if Pcalc > 0:
-            Qcalc = float(self.__ControlledElm.GetParameter2('kvar')) / self.__Prated
+            Qcalc = float(self.__ControlledElm.GetParameter('kvar')) / self.__Prated
 
             Scalc = (Pcalc ** 2 + Qcalc ** 2) ** (0.5)
             if Scalc > 1:
@@ -307,7 +307,7 @@ class StorageController:
         pfMax = self.__Settings['pfMax']
 
         self.__dssSolver.reSolve()
-        Pcalc = float(self.__ControlledElm.GetParameter2('kw')) / self.__Prated
+        Pcalc = float(self.__ControlledElm.GetParameter('kw')) / self.__Prated
 
         if Pcalc > 0:
             if Pcalc < pMin:
@@ -353,7 +353,7 @@ class StorageController:
         c1 = QlimPU * uDbMin / (uDbMin-uMin)
         c2 = QlimPU * uDbMax / (uMax-uDbMax)
 
-        Ppv = float(self.__ControlledElm.GetParameter2('kw'))
+        Ppv = float(self.__ControlledElm.GetParameter('kw'))
         Pcalc = Ppv / self.__Srated
         Qpv = sum(self.__ControlledElm.GetVariable('Powers')[1::2])
         Qpv = Qpv / self.__Srated

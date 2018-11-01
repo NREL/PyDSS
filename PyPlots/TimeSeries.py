@@ -31,7 +31,7 @@ class Plot:
             Multiplier = self.__multiplier[i]
             pptyType ,Property = yProperties.split('.')
             if pptyType == 'p':
-                newValue = self.yObj.GetParameter2(Property)
+                newValue = self.yObj.GetParameter(Property)
             elif pptyType == 'v' and self.__PlotProperties['yObjectType'] != 'Circuit':
                 newValue = self.yObj.GetVariable(Property)
             elif pptyType == 'v' and self.__PlotProperties['yObjectType'] == 'Circuit':
@@ -83,7 +83,7 @@ class Plot:
             Multiplier = self.__multiplier[i]
             pptyType ,Property = yProperties.split('.')
             if pptyType == 'p':
-                newValue = self.yObj.GetParameter2(Property)
+                newValue = self.yObj.GetParameter(Property)
             elif pptyType == 'v' and self.__PlotProperties['yObjectType'] != 'Circuit':
                 newValue = self.yObj.GetVariable(Property)
             elif pptyType == 'v' and self.__PlotProperties['yObjectType'] == 'Circuit':

@@ -84,7 +84,7 @@ class Plot:
     def getObjectValue(self, Obj, ObjType, ObjPpty, Index, Multiplier):
         pptyType, Property = ObjPpty.split('.')
         if pptyType == 'p':
-            pptyValue = float(Obj.GetParameter2(Property))
+            pptyValue = float(Obj.GetParameter(Property))
         elif pptyType == 'v' and ObjType != 'Circuit':
             pptyValue = Obj.GetVariable(Property)
         elif pptyType == 'v' and ObjType == 'Circuit':

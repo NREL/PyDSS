@@ -52,7 +52,7 @@ class dssElement:
         if VarName in self.__Variables:
             VarValue = self.GetVariable(VarName)
         elif VarName in self.__Parameters:
-            VarValue = self.GetParameter2(VarName)
+            VarValue = self.GetParameter(VarName)
         else:
             return 0, None
 
@@ -69,7 +69,7 @@ class dssElement:
         if VarName in self.__Variables:
             VarValue = self.GetVariable(VarName)
         elif VarName in self.__Parameters:
-            VarValue = self.GetParameter2(VarName)
+            VarValue = self.GetParameter(VarName)
             if VarValue is not None:
                 VarValue = float(VarValue)
             else:
@@ -105,33 +105,20 @@ class dssElement:
 
     def SetParameter(self, Param, Value):
         self.__dssInstance.utils.run_command(self.__Class + '.' + self.__Name + '.' + Param + ' = ' + str(Value))
-        return self.GetParameter2(Param)
+        return self.GetParameter(Param)
 
-
-    def GetParameter2(self, Param):
-        self.__dssInstance.Circuit.SetActiveElement(self.__Class + '.' + self.__Name)
-        if self.__dssInstance.Element.Name() == (self.__Class + '.' + self.__Name):
-            NumberOfProperties = len(self.__dssInstance.Element.AllPropertyNames())
-            for i in range(NumberOfProperties):
-                PropertyName = self.__dssInstance.Properties.Name(str(i))
-                if PropertyName.lower()== Param.lower():
-                    X =self.__dssInstance.Properties.Value(str(i))
-                    #print(self.__Class + '.' + self.__Name + '.' + Param + ' -> ' + str(X))
-                    return X
-            print(Param + ' ia an invalid parameter for ' + self.__Class + ' class.')
-            return None
-        else:
-            print('Could not set ' + self.__Class + '.' + self.__Name + ' as active element.')
-            return None
 
     def GetParameter(self, Param):
         self.__dssInstance.Circuit.SetActiveElement(self.__Class + '.' + self.__Name)
-        if Param in self.__Parameters:
+        if self.__dssInstance.Element.Name() == (self.__Class + '.' + self.__Name):
+            x = self.__dssInstance.Properties.Value(Param)
+            print(Param, x, type(x))
+
+            #print(self.__Class + '.' + self.__Name + '.' + Param + ' -> ' + str(X))
             try:
-                return self.__dssInstance.Properties.Value(self.__Parameters[Param])
+                return float(x)
             except:
-                print ('Unable to get the passed parameter (check function documentation).')
-                return None
+                return x
         else:
-            print ('Invalid parameter for ' + self.__Class + ' class.')
+            print('Could not set ' + self.__Class + '.' + self.__Name + ' as active element.')
             return None
