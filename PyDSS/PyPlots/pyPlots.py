@@ -1,14 +1,18 @@
+from PyDSS.PyPlots import Plots
+
 from os.path import dirname, basename, isfile
 import glob
-modules = glob.glob(dirname(__file__)+"/*.py")
+modules = glob.glob(Plots.__path__[0]+"/*.py")
 pythonFiles = [ basename(f)[:-3] for f in modules if isfile(f) and
                 not f.endswith('__init__.py') and
                 not f.endswith('pyPlots.py')]
 
 PlotTypes = {}
 for file in pythonFiles:
-    exec('from . import {}'.format(file))
+    exec('from PyDSS.PyPlots.Plots import {}'.format(file))
     exec('PlotTypes["{}"] = {}.{}'.format(file, file, file))
+
+print(PlotTypes)
 
 def Create(PlotType, PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit):
     try:

@@ -1,10 +1,12 @@
+from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
 
-class xfmrController:
+class xfmrController(ControllerAbstract):
     P_old = 0
     Time = -1
 
     __Locked = False
     def __init__(self, RegulatorObj, Settings, dssInstance, ElmObjectList, dssSolver):
+        super(xfmrController).__init__()
         self.__ControlledElm = RegulatorObj
         self.__ConnTransformerName = 'Transformer.' + self.__ControlledElm.GetParameter('transformer').lower()
         self.__ConnTransformer = ElmObjectList[self.__ConnTransformerName]

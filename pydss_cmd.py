@@ -1,7 +1,7 @@
 from PyDSS import dssInstance
 import logging
 import click
-# import subprocess
+import subprocess
 # import os
 # from PyQt5.uic.Compiler.qtproxies import i18n_string
 
@@ -28,9 +28,9 @@ import click
 @click.option('--max_control_iterations', default=15, type=click.INT, help='Maximum outer loop control iterations')
 @click.option('--error_tolerance', default=0.004, type=click.FLOAT, help='Error tolerance in per unit')
 @click.option('--simulation_type', default='Daily', type=click.STRING, help='possible modes "Daily" and "Snapshot"')
-@click.option('--active_project', default='SRP', type=click.STRING, help='Name of project to run')
-@click.option('--active_scenario', default='Self_consumption', type=click.STRING, help='Project scenario to use')
-@click.option('--dss_file', default='SRP_test_network.dss', type=click.STRING,
+@click.option('--active_project', default='Mikilua', type=click.STRING, help='Name of project to run')
+@click.option('--active_scenario', default='None-None', type=click.STRING, help='Project scenario to use')
+@click.option('--dss_file', default='MasterCircuit_Mikilua_baseline2_ESS_Rural.dss', type=click.STRING,
               help='The main OpenDSS file')
 # Logger settings
 @click.option('--logging_level', default='DEBUG', type=click.STRING, help='possible options "DEBUG" and "INFO"')
@@ -73,10 +73,11 @@ def RunSimulation(**kwargs):
         'Clear old log file': kwargs.get('clear_old_log_file'),
     }
 
-    # BokehServer = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
+    BokehServer = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
     dss = dssInstance.OpenDSS(**dss_args)
     # DSS.RunMCsimulation(MCscenarios = 3)
-    dss.RunSimulation()
+    dss.CreateGraph(Visualize=True)
+    #dss.RunSimulation()
     # BokehServer.terminate()
     dss.DeleteInstance()
 

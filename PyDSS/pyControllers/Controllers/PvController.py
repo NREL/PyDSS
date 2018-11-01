@@ -1,7 +1,7 @@
-#import matplotlib.pyplot as plt
+from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
 import math
 
-class PvController:
+class PvController(ControllerAbstract):
     TimeChange = False
     Time = (-1, 0)
 
@@ -14,6 +14,8 @@ class PvController:
     __pDisconnected = False
 
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
+        super(PvController).__init__()
+
         self.__ElmObjectList = ElmObjectList
         #print(PvObj.Bus[0] + ' - ' + PvObj.sBus[0].GetInfo())
         self.ControlDict = {

@@ -1,10 +1,12 @@
+from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
 import socket
 import struct
 
-class SocketController:
+class SocketController(ControllerAbstract):
     Time = -1
 
     def __init__(self, ElmObject, Settings, dssInstance, ElmObjectList,dssSolver):
+        super(SocketController).__init__()
         self.__ControlledElm = ElmObject
         Class, Name = self.__ControlledElm.GetInfo()
         self.__Name = 'pyCont_' + Class + '_' + Name
@@ -44,8 +46,6 @@ class SocketController:
                 numDoubles = int(len(Data) / 8)
                 tag = str(numDoubles) + 'd'
                 Data = list(struct.unpack(tag, Data))
-                print('Received --> ', Data)
-
                 for i, Variable in enumerate(self.Outputs):
                     self.__ControlledElm.SetParameter(Variable, Data[0])
 

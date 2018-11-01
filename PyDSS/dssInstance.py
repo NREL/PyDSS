@@ -7,9 +7,11 @@ from PyDSS.NetworkModifier import Modifier
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
-import pyControllers
-import PyPlots
 
+import PyDSS.pyControllers as pyControllers
+import PyDSS.PyPlots as PyPlots
+
+from PyDSS.Extensions.NetworkGraph import CreateGraph
 from opendssdirect.utils import run_command
 import opendssdirect as dss
 import time
@@ -51,7 +53,6 @@ DSS_DEFAULTS = {
     'GIS overlay': True,
 }
 
-
 class OpenDSS:
     __TempResultList = []
     __dssInstance = dss
@@ -66,6 +67,7 @@ class OpenDSS:
         DSS_DEFAULTS.update(kwargs)
         kwargs = DSS_DEFAULTS
         rootPath = kwargs['Project Path']
+        self.__ActiveProject = kwargs['Active Project']
         importPath = os.path.join(rootPath, kwargs['Active Project'], 'PyDSS Scenarios')
         self.__dssPath = {
             'root': rootPath,
@@ -99,7 +101,7 @@ class OpenDSS:
         self.__dssSolver = SolveMode.GetSolver(SimulationSettings=kwargs, dssInstance=self.__dssInstance)
 
         self.__Modifier = Modifier(dss, run_command, self.__Options)
-        #self.__ModifyNetwork()
+
         self.__UpdateDictionary()
 
         self.__CreateBusObjects()
@@ -114,7 +116,6 @@ class OpenDSS:
         if ControllerList is not None:
             self.__CreateControllers(ControllerList)
 
-
         pyPlotReader = ppr(self.__dssPath['pyPlots'])
         PlotList = pyPlotReader.pyPlots
         if PlotList is not None and not all(value == False for value in kwargs.values()):
@@ -125,7 +126,6 @@ class OpenDSS:
             if kwargs['Open plots in browser']:
                 self.__pyPlotObjects[Plot].session.show()
             break
-
         return
 
     def __ModifyNetwork(self):
@@ -267,6 +267,28 @@ class OpenDSS:
         self.__DelFlag = 1
         self.__del__()
         return
+
+    def CreateGraph(self, Visualize=False):
+        defaultGrapgPlotSettings = {
+                'Layout'                 : 'Circular', # Shell, Circular, Fruchterman
+                'Iterations'             : 100,
+                'ShowRefNode'            : False,
+                'NodeSize'               : None, #None for auto fit
+                'LineColorProperty'      : 'Class',
+                'NodeColorProperty'      : 'ConnectedPCs',
+                'Open plots in browser'  : True,
+                'OutputPath'             : self.__dssPath['Export'],
+                'OutputFile'             : None
+        }
+        defaultGrapgPlotSettings['OutputFile']  = self.__ActiveProject + \
+                                                  '_' + defaultGrapgPlotSettings['LineColorProperty'] + \
+                                                  '_' + defaultGrapgPlotSettings['NodeColorProperty'] + \
+                                                  '_' + defaultGrapgPlotSettings['Layout'] + '.html'
+
+        Graph = CreateGraph(self.__dssInstance)
+        if Visualize:
+            Graph.CreateGraphVisualization(defaultGrapgPlotSettings)
+        return Graph.Get()
 
     def __del__(self):
 
