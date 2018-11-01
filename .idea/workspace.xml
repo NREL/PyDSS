@@ -1,37 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a36e9dc1-9053-46dd-a663-a351f8c2cd89" name="N O" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/MonteCarlo.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/dssGUI-old.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/dssGUI.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/dssInstance.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/dssInstance.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/dssNetworkX.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyPlots/GISplot.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyPlots/Histogram.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyPlots/SagPlot.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyPlots/TimeSeries.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyPlots/Topology.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyPlots/XYPlot.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyPlots/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyPlots/desktop.ini" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyPlots/pyPlots.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dssParallelizedRun.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dssSingleRun.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dssSingleRunCmd.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyControllers/HybridController.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyControllers/PvController.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyControllers/SocketController.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyControllers/StorageController.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyControllers/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyControllers/desktop.ini" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyControllers/pyController.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyControllers/xfmrController.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/runPyDSS.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/runPyDSS_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/runPyDSS_test_Complete.sh" beforeDir="false" />
-    </list>
+    <list default="true" id="a36e9dc1-9053-46dd-a663-a351f8c2cd89" name="N O" comment="" />
     <list id="4d158a37-460e-4f32-90b0-7874bee38a84" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -76,49 +46,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="dssInstance.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/PyDSS/dssInstance.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="695">
-              <caret line="291" lean-forward="true" selection-start-line="291" selection-end-line="291" />
-              <folding>
-                <element signature="e#0#55#0" expanded="true" />
-                <element signature="e#1719#4561#0" />
-                <element signature="e#4602#4935#0" />
-                <element signature="e#4996#5577#0" />
-                <element signature="e#5627#7158#0" />
-                <element signature="e#7234#7436#0" />
-                <element signature="e#7480#7688#0" />
-                <element signature="e#7732#9052#0" />
-                <element signature="e#9106#9378#0" />
-                <element signature="e#9437#10659#0" />
-                <element signature="e#10698#11287#0" />
-                <element signature="e#11326#11426#0" />
-                <element signature="e#11466#11522#0" />
-                <element signature="e#11630#12753#0" />
-                <element signature="e#12162#12545#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pydss_cmd.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pydss_cmd.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="745">
-              <caret line="86" column="16" lean-forward="true" selection-start-line="86" selection-start-column="16" selection-end-line="86" selection-end-column="16" />
-              <folding>
-                <element signature="e#0#29#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MonteCarlo.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MonteCarlo.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/PyDSS/Extensions/MonteCarlo.py">
           <provider selected="true" editor-type-id="text-editor">
             <state>
-              <caret column="28" lean-forward="true" selection-start-column="28" selection-end-column="28" />
+              <caret column="28" selection-start-column="28" selection-end-column="28" />
             </state>
           </provider>
         </entry>
@@ -136,7 +68,7 @@
         <entry file="file://$PROJECT_DIR$/PyDSS/Extensions/NetworkGraph.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="325">
-              <caret line="76" column="16" lean-forward="true" selection-start-line="76" selection-start-column="16" selection-end-line="76" selection-end-column="16" />
+              <caret line="76" column="16" selection-start-line="76" selection-start-column="16" selection-end-line="76" selection-end-column="16" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
                 <element signature="e#7300#8271#0" />
@@ -270,7 +202,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1664" />
+    <option name="x" value="1662" />
     <option name="y" value="-8" />
     <option name="width" value="1550" />
     <option name="height" value="878" />
@@ -303,6 +235,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -467,35 +400,45 @@
       <window_info id="Favorites" order="1" sideWeight="0.5275862" side_tool="true" weight="0.15542677" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.91675615" weight="0.6775599" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.8424242" weight="0.4379085" />
+      <window_info active="true" content_ui="combo" id="Project" order="2" sideWeight="0.47241378" visible="true" weight="0.13804004" />
+      <window_info id="Structure" order="0" sideWeight="0.4916388" side_tool="true" weight="0.10642782" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="TODO" order="7" sideWeight="0.49573562" weight="0.3041145" />
+      <window_info anchor="bottom" id="Version Control" order="10" weight="0.33880422" />
       <window_info anchor="right" id="Data View" order="4" weight="0.08198121" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.91675615" weight="0.6775599" />
       <window_info anchor="right" x="2064" y="290" width="1736" height="896" id="Documentation" order="3" type="FLOATING" />
       <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Event Log" order="6" sideWeight="0.15757576" side_tool="true" weight="0.3165299" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info id="Favorites" order="1" sideWeight="0.5275862" side_tool="true" weight="0.15542677" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3282532" />
+      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.4978678" weight="0.3291592" />
+      <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.4978678" weight="0.3278867" />
     </layout>
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info active="true" content_ui="combo" id="Project" order="2" sideWeight="0.47241378" visible="true" weight="0.1548999" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.45059076" visible="true" weight="0.36601308" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="right" id="Data View" order="4" weight="0.08198121" />
       <window_info id="Structure" order="0" sideWeight="0.4916388" side_tool="true" weight="0.10642782" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="7" sideWeight="0.49573562" weight="0.3041145" />
-      <window_info anchor="bottom" id="Version Control" order="10" weight="0.33903134" />
-      <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.4978678" weight="0.3278867" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32887402" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.91675615" weight="0.29956427" />
       <window_info anchor="right" x="2064" y="290" width="1736" height="896" id="Documentation" order="3" type="FLOATING" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.4978678" weight="0.3291592" />
       <window_info anchor="bottom" id="Event Log" order="6" sideWeight="0.083243825" side_tool="true" weight="0.9693396" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32887402" />
+      <window_info anchor="bottom" id="Version Control" order="10" weight="0.33903134" />
       <window_info id="Favorites" order="1" sideWeight="0.5275862" side_tool="true" weight="0.15542677" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.4978678" weight="0.3278867" />
     </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -549,23 +492,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2550">
           <caret line="102" selection-start-line="102" selection-end-line="102" />
-          <folding>
-            <element signature="e#0#55#0" expanded="true" />
-            <element signature="e#1719#4561#0" />
-            <element signature="e#4602#4935#0" />
-            <element signature="e#4996#5577#0" />
-            <element signature="e#5627#7158#0" />
-            <element signature="e#7234#7436#0" />
-            <element signature="e#7480#7688#0" />
-            <element signature="e#7732#9052#0" />
-            <element signature="e#9106#9378#0" />
-            <element signature="e#9437#10659#0" />
-            <element signature="e#10698#11287#0" />
-            <element signature="e#11326#11426#0" />
-            <element signature="e#11466#11522#0" />
-            <element signature="e#11630#12753#0" />
-            <element signature="e#12162#12545#0" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -702,23 +628,20 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="745">
           <caret line="86" column="16" lean-forward="true" selection-start-line="86" selection-start-column="16" selection-end-line="86" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#29#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/Extensions/MonteCarlo.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
-          <caret column="28" lean-forward="true" selection-start-column="28" selection-end-column="28" />
+          <caret column="28" selection-start-column="28" selection-end-column="28" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/Extensions/NetworkGraph.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="325">
-          <caret line="76" column="16" lean-forward="true" selection-start-line="76" selection-start-column="16" selection-end-line="76" selection-end-column="16" />
+          <caret line="76" column="16" selection-start-line="76" selection-start-column="16" selection-end-line="76" selection-end-column="16" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
             <element signature="e#7300#8271#0" />
@@ -733,23 +656,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="695">
           <caret line="291" lean-forward="true" selection-start-line="291" selection-end-line="291" />
-          <folding>
-            <element signature="e#0#55#0" expanded="true" />
-            <element signature="e#1719#4561#0" />
-            <element signature="e#4602#4935#0" />
-            <element signature="e#4996#5577#0" />
-            <element signature="e#5627#7158#0" />
-            <element signature="e#7234#7436#0" />
-            <element signature="e#7480#7688#0" />
-            <element signature="e#7732#9052#0" />
-            <element signature="e#9106#9378#0" />
-            <element signature="e#9437#10659#0" />
-            <element signature="e#10698#11287#0" />
-            <element signature="e#11326#11426#0" />
-            <element signature="e#11466#11522#0" />
-            <element signature="e#11630#12753#0" />
-            <element signature="e#12162#12545#0" />
-          </folding>
         </state>
       </provider>
     </entry>
