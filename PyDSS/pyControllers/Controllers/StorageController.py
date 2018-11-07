@@ -1,5 +1,7 @@
 from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
+import calendar
 import math
+import ast
 
 class StorageController(ControllerAbstract):
     Time = -1
@@ -19,17 +21,20 @@ class StorageController(ControllerAbstract):
         self.oldQcalc = 0
         self.ExportOld = False
         self.__ElmObjectList = ElmObjectList
+
         self.ControlDict = {
-            'None' : lambda : 0,
-            'PS'   : self.PeakShavingControl,
-            'CF'   : self.CapacityFirmimgControl,
-            'TT'   : self.TimeTriggeredControl,
-            'RT'   : self.RealTimeControl,
-            'SH'   : self.ScheduledControl,
-            'NETT' : self.NonExportTimeTriggered,
-            'CPF'  : self.ConstantPowerFactorControl,
-            'VPF'  : self.VariablePowerFactorControl,
-            'VVar' : self.VoltVarControl,
+            'None'   : lambda : 0,
+            'PS'     : self.PeakShavingControl,
+            'CF'     : self.CapacityFirmimgControl,
+            'TT'     : self.TimeTriggeredControl,
+            'RT'     : self.RealTimeControl,
+            'SH'     : self.ScheduledControl,
+            'NETT'   : self.NonExportTimeTriggered,
+            'TOU'    : self.TimeOfUse,
+            'DemChg' : self.DemandCharge,
+            'CPF'    : self.ConstantPowerFactorControl,
+            'VPF'    : self.VariablePowerFactorControl,
+            'VVar'   : self.VoltVarControl,
         }
 
         self.__a = Settings['alpha']
@@ -61,6 +66,118 @@ class StorageController(ControllerAbstract):
 
     def GetSetting(self, Property):
         return self.__Settings[Property]
+
+    def __parseRatePlan(self, tarrif):
+        self.touTarrif = ast.literal_eval(tarrif)
+        CurrDateTime = self.__dssSolver.GetDateTime()
+        DayOfYear = CurrDateTime.timetuple().tm_yday
+        weekno = CurrDateTime.weekday()
+        currentDay = calendar.day_name[weekno]
+
+        for period, touDetails in self.touTarrif.items():
+            if touDetails['ED'] < touDetails['SD']:
+                TOUday = [i for j in (range(1, touDetails['ED']), range(touDetails['SD'], 365)) for i in j]
+            else:
+                TOUday = range(touDetails['SD'], touDetails['ED'] + 1)
+            if DayOfYear in TOUday:
+                if currentDay in touDetails['TOW']:
+                    for st, et in zip(touDetails['ST'], touDetails['ET']):
+                        if et < st:
+                            TOUtime = [i for j in (range(1, et), range(st, 25)) for i in j]
+                        else:
+                            TOUtime = range(st, et)
+                        if CurrDateTime.hour in TOUtime:
+                            return True
+                else:
+                    pass
+        return False
+
+    def TimeOfUse(self):
+        dP = 0
+        Pub = self.__Settings['touLoadLim']
+        touCharge = self.__Settings['%touCharge']
+        tarrif = self.__Settings['touTarrifStructure']
+        isTOU = self.__parseRatePlan(tarrif)
+        Pbatt = float(self.__ControlledElm.GetParameter('kw'))
+        if self.__Settings['PowerMeaElem'] == 'Total':
+            Sin = self.__dssInstance.Circuit.TotalPower()
+            Pin = -sum(Sin[0:5:2])
+        else:
+            Sin = self.__ElmObjectList[self.__Settings['PowerMeaElem']].GetVariable('Powers')
+            Pin = sum(Sin[0:5:2])
+
+        if isTOU:
+            if Pin > Pub:
+                dP = Pin - Pub
+                Pbatt = Pbatt + (dP) * self.__a - (Pbatt - self.PbattOld) * self.__b
+            else:
+                Pbatt = 0
+        else:
+            Pbatt =  -touCharge * self.__Prated / 100
+
+        if Pbatt >= 0:
+            pctdischarge = Pbatt / (self.__Prated) * 100
+            self.__ControlledElm.SetParameter('State', 'DISCHARGING')
+            self.__ControlledElm.SetParameter('%Discharge', str(pctdischarge))
+        if Pbatt < 0:
+            pctcharge = -Pbatt / (self.__Prated) * 100
+            self.__ControlledElm.SetParameter('State', 'CHARGING')
+            self.__ControlledElm.SetParameter('%charge', str(pctcharge))
+
+        Error = abs(Pbatt - self.PbattOld)
+        self.PbattOld = Pbatt
+        self.dPold = dP
+        return Error
+
+
+    def DemandCharge(self):
+        return 0
+        dP = 0
+        DemandChgThreh = self.__Settings['DemandChgThreh[kWh]']
+        Pub = self.__Settings['touLoadLim']
+        touCharge = self.__Settings['%touCharge']
+        tarrif = self.__Settings['touTarrifStructure']
+        isTOU = self.__parseRatePlan(tarrif)
+        Pbatt = float(self.__ControlledElm.GetParameter('kw'))
+        if self.__Settings['PowerMeaElem'] == 'Total':
+            Sin = self.__dssInstance.Circuit.TotalPower()
+            Pin = -sum(Sin[0:5:2])
+        else:
+            Sin = self.__ElmObjectList[self.__Settings['PowerMeaElem']].GetVariable('Powers')
+            Pin = sum(Sin[0:5:2])
+        DateAndTime = self.__dssSolver.GetDateTime()
+        CurrMin = DateAndTime.minute
+        if isTOU:
+            if CurrMin in [0, 30]:
+                self.__EnergyCounter = [Pin]
+            else:
+                self.__EnergyCounter.append(Pin)
+            Demand = sum(self.__EnergyCounter) / (60 / self.__dssSolver.GetStepResolutionMinutes())
+            if Demand >= 0.9 * DemandChgThreh:
+                print('Mitigating demand charge: ', Demand)
+                if Pin > Pub:
+                    dP = Pin - Pub
+                    Pbatt = Pbatt + (dP) * self.__a - (Pbatt - self.PbattOld) * self.__b
+                else:
+                    Pbatt = 0
+            else:
+                Pbatt = 0
+        else:
+            Pbatt = -touCharge * self.__Prated / 100
+
+        if Pbatt >= 0:
+            pctdischarge = Pbatt / (self.__Prated) * 100
+            self.__ControlledElm.SetParameter('State', 'DISCHARGING')
+            self.__ControlledElm.SetParameter('%Discharge', str(pctdischarge))
+        if Pbatt < 0:
+            pctcharge = -Pbatt / (self.__Prated) * 100
+            self.__ControlledElm.SetParameter('State', 'CHARGING')
+            self.__ControlledElm.SetParameter('%charge', str(pctcharge))
+
+        Error = abs(Pbatt - self.PbattOld)
+        self.PbattOld = Pbatt
+        self.dPold = dP
+        return Error
 
     def ScheduledControl(self):
         P_profile = self.__Settings['Schedule']

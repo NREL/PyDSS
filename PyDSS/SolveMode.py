@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import logging
 
 def GetSolver(SimulationSettings ,dssInstance):
@@ -17,16 +18,20 @@ def GetSolver(SimulationSettings ,dssInstance):
 
 class __Daily:
     def __init__(self, dssInstance, SimulationSettings, Logger):
+
+        self.__Time = datetime.strptime('{} {}'.format(SimulationSettings['Start Year'],
+                                                     SimulationSettings['Start Day']), '%Y %j')
+        self.Settings = SimulationSettings
         self.pyLogger = Logger
         StartDay = SimulationSettings['Start Day']
         mStepResolution = SimulationSettings['Step resolution (min)']
-        self.mStepRes = mStepResolution
+        self.__mStepRes = mStepResolution
         self.__dssIntance = dssInstance
         self.__dssSolution = dssInstance.Solution
         self.__dssSolution.Mode(2)
         self.__dssSolution.Hour(StartDay * 24)
         self.__dssSolution.Number(1)
-        self.__dssSolution.StepSize(self.mStepRes*60)
+        self.__dssSolution.StepSize(self.__mStepRes*60)
         self.__dssSolution.MaxControlIterations(200)
         return
 
@@ -40,16 +45,21 @@ class __Daily:
         return
 
     def IncStep(self):
-        self.__dssSolution.StepSize(self.mStepRes*60)
+        self.__dssSolution.StepSize(self.__mStepRes*60)
         self.__dssSolution.Solve()
-        self.pyLogger.info('Simululation time [h] - ' + str(self.__dssSolution.DblHour()))
+        self.__Time = self.__Time + timedelta(minutes=self.__mStepRes)
+        self.pyLogger.info('OpenDSS time [h] - ' + str(self.__dssSolution.DblHour()))
+        self.pyLogger.info('PyDSS datetime - ' + str(self.__Time))
+
+    def GetDateTime(self):
+        return self.__Time
+
+    def GetStepResolutionMinutes(self):
+        return self.__mStepRes
 
     def reSolve(self):
         self.__dssSolution.StepSize(0)
         self.__dssSolution.SolveNoControl()
-
-    def customControlLoop(self):
-        return
 
 class __Shapshot:
     def __init__(self, dssInstance, SimulationSettings, Logger):

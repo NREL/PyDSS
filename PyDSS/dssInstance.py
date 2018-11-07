@@ -218,7 +218,6 @@ class OpenDSS:
         return ObjectList
 
     def RunStep(self, step, updateObjects=None):
-        print('Running simulation @ time step: ', step)
         if updateObjects:
             for object, params in updateObjects.items():
                 cl, name = object.split('.')

@@ -22,20 +22,21 @@ import subprocess
 @click.option('--histogram', default=False, type=click.BOOL, help='Display histogram plot')
 @click.option('--gis_overlay', default=False, type=click.BOOL, help='Display GIS overlay plot')
 # Simulation Settings
+@click.option('--start_year', default=2018, type=click.INT, help='Start year for the simulation study')
 @click.option('--start_day', default=156, type=click.INT, help='Start day for the simulation study')  # 156-163, 286-293
 @click.option('--end_day', default=160, type=click.INT, help='End day for the simulation study')
 @click.option('--step_resolution_min', default=1, type=click.FLOAT, help='Time step resolution in minutes')
 @click.option('--max_control_iterations', default=15, type=click.INT, help='Maximum outer loop control iterations')
 @click.option('--error_tolerance', default=0.004, type=click.FLOAT, help='Error tolerance in per unit')
 @click.option('--simulation_type', default='Daily', type=click.STRING, help='possible modes "Daily" and "Snapshot"')
-@click.option('--active_project', default='Mikilua', type=click.STRING, help='Name of project to run')
-@click.option('--active_scenario', default='None-None', type=click.STRING, help='Project scenario to use')
-@click.option('--dss_file', default='MasterCircuit_Mikilua_baseline2_ESS_Rural.dss', type=click.STRING,
+@click.option('--active_project', default='SRP', type=click.STRING, help='Name of project to run')
+@click.option('--active_scenario', default='Demand_charge', type=click.STRING, help='Project scenario to use')
+@click.option('--dss_file', default='SRP_test_network.dss', type=click.STRING,
               help='The main OpenDSS file')
 # Logger settings
 @click.option('--logging_level', default='DEBUG', type=click.STRING, help='possible options "DEBUG" and "INFO"')
 @click.option('--log_to_external_file', default=True, type=click.BOOL, help='Boolean variable ')
-@click.option('--display_on_screen', default=True, type=click.BOOL, help='Boolean variable')
+@click.option('--display_on_screen', default=False, type=click.BOOL, help='Boolean variable')
 @click.option('--clear_old_log_file', default=True, type=click.BOOL, help='Boolean variable')
 def RunSimulation(**kwargs):
     dss_args = {
@@ -55,6 +56,7 @@ def RunSimulation(**kwargs):
 
         # Simulation Settings
         'Project Path': r'C:\Users\alatif\Desktop\PyDSS-Projects',
+        'Start Year': kwargs.get('start_year'),
         'Start Day': kwargs.get('start_day'),
         'End Day': kwargs.get('end_day'),
         'Step resolution (min)': kwargs.get('step_resolution_min'),
@@ -73,11 +75,11 @@ def RunSimulation(**kwargs):
         'Clear old log file': kwargs.get('clear_old_log_file'),
     }
 
-    BokehServer = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
+    #BokehServer = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
     dss = dssInstance.OpenDSS(**dss_args)
     # DSS.RunMCsimulation(MCscenarios = 3)
-    dss.CreateGraph(Visualize=True)
-    #dss.RunSimulation()
+    #dss.CreateGraph(Visualize=True)
+    dss.RunSimulation()
     # BokehServer.terminate()
     dss.DeleteInstance()
 
