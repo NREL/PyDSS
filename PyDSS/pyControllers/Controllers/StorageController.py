@@ -131,7 +131,6 @@ class StorageController(ControllerAbstract):
 
 
     def DemandCharge(self):
-        return 0
         dP = 0
         DemandChgThreh = self.__Settings['DemandChgThreh[kWh]']
         Pub = self.__Settings['touLoadLim']
@@ -148,11 +147,12 @@ class StorageController(ControllerAbstract):
         DateAndTime = self.__dssSolver.GetDateTime()
         CurrMin = DateAndTime.minute
         if isTOU:
-            if CurrMin in [0, 30]:
-                self.__EnergyCounter = [Pin]
-            else:
-                self.__EnergyCounter.append(Pin)
+            i = CurrMin % 30
+            if i == 0:
+                self.__EnergyCounter = [0 for i in range(30)]
+            self.__EnergyCounter[i] = Pin
             Demand = sum(self.__EnergyCounter) / (60 / self.__dssSolver.GetStepResolutionMinutes())
+            print(Demand)
             if Demand >= 0.9 * DemandChgThreh:
                 print('Mitigating demand charge: ', Demand)
                 if Pin > Pub:
