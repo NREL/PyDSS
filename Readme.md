@@ -27,15 +27,11 @@ The code has been test using Python 3.6+ and requires installation of a number o
 
  **-pip install 'OpenDSSDirect.py[extras]'**
 
-The code has been tested using Bokeh version 0.12.5 and can be installed using
-
- **-pip install bokeh==0.12.5**
+ **-pip install bokeh**
  
-
 Additionally, GIS overlay maps require installation of PyProj and a Google maps API key. Google maps API key can be generated at https://developers.google.com/maps/documentation/embed/get-api-key. PyProj is a coordinate transformation package and can be installed using the following command
 
  **-pip install pyproj**
- 
  
  All other requirements can be satisfied by installing a Python package like **Anaconda**.
 
