@@ -43,7 +43,5 @@ Additionally, GIS overlay maps require installation of PyProj and a Google maps 
 
 Some users have experinced PyDSS halting when Bokeh visulation is used. In all cases tornado and bokeh compatability has been the culprit (until now). The following steps have been able to fix the problem
 	
-	 - pip uninstall bokeh
 	 - pip uninstall tornado
-	 - conda install tornado==4.5.3
-	 - conda install bokeh==0.12.5
+	 - conda install tornado==4.4.2
