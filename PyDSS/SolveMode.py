@@ -20,7 +20,8 @@ class __Daily:
     def __init__(self, dssInstance, SimulationSettings, Logger):
 
         self.__Time = datetime.strptime('{} {}'.format(SimulationSettings['Start Year'],
-                                                     SimulationSettings['Start Day']), '%Y %j')
+                                                     SimulationSettings['Start Day'] + SimulationSettings['Date offset']
+                                                       ), '%Y %j')
         self.Settings = SimulationSettings
         self.pyLogger = Logger
         StartDay = SimulationSettings['Start Day']
@@ -52,6 +53,7 @@ class __Daily:
         self.pyLogger.info('PyDSS datetime - ' + str(self.__Time))
 
     def GetDateTime(self):
+        print(self.__Time)
         return self.__Time
 
     def GetStepResolutionMinutes(self):

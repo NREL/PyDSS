@@ -66,6 +66,9 @@ class Histogram:
 		session.show(self.__Figure)
 		return
 
+	def GetFigure(self):
+		return self.__Figure
+
 	def UpdatePlot(self):
 		Data = []
 		for ObjName in self.Objects:
