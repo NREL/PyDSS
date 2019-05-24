@@ -12,15 +12,12 @@ for file in pythonFiles:
     exec('from PyDSS.PyPlots.Plots import {}'.format(file))
     exec('PlotTypes["{}"] = {}.{}'.format(file, file, file))
 
-print(PlotTypes)
+#print(PlotTypes)
 
 def Create(PlotType, PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit):
-    try:
+
         PlotObject = PlotTypes[PlotType](PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit)
         return PlotObject
-    except:
-        print ('The object dictionary does not contain ' + PlotType)
-        return -1
 
 
 defalultPO = {

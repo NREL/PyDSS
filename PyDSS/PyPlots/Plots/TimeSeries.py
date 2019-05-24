@@ -7,7 +7,6 @@ from ast import literal_eval as LE
 
 class TimeSeries:
     def __init__(self,PlotProperties, dssBuses, dssObjects, dssCircuit):
-
         self.__dssBuses = dssBuses
         self.__dssObjs = dssObjects
         self.__PlotProperties = PlotProperties
@@ -39,8 +38,8 @@ class TimeSeries:
 
             if newValue is not None:
                 if isinstance(newValue, list):
-
                     if self.__index[i] == 'SumEven':
+                        print(PlotProperties['FileName'], newValue)
                         self.Y[i].append(Multiplier * sum(newValue[::2]))
                     elif self.__index[i] == 'SumOdd':
                         self.Y[i].append(Multiplier * sum(newValue[1::2]))

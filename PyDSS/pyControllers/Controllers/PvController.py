@@ -137,20 +137,34 @@ class PvController(ControllerAbstract):
 
         return 0
 
-
     def CPFcontrol(self):
-        PF = self.__Settings['pf']
-        self.__dssSolver.reSolve()
+        PFset = self.__Settings['pf']
+        PFact = self.__ControlledElm.GetParameter('pf')
+        Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))/ self.__Srated
+        Qpv = -sum(self.__ControlledElm.GetVariable('Powers')[1::2])/ self.__Srated
 
-        self.__ControlledElm.SetParameter('irradiance', 1)
-        self.__ControlledElm.SetParameter('pf', -PF)
 
-        Error = PF + float(self.__ControlledElm.GetParameter('pf'))
+        if self.__Settings['cpf-priority'] == 'PF':
+           # if self.TimeChange:
+            Plim = PFset * 100
+            self.__ControlledElm.SetParameter('pctPmpp', Plim)
+           # else:
+        else:
+            if self.__Settings['cpf-priority'] == 'Var':
+                #add code for var priority here
+                Plim = 0
+            else:
+                Plim = 1
+            if self.TimeChange:
+                self.Pmppt = 100
+            else:
+                self.Pmppt = Plim  * self.__Srated
+            #print(self.Pmppt , self.__Srated)
 
-        Pirr = float(self.__ControlledElm.GetParameter('irradiance'))
-        self.__ControlledElm.SetParameter('irradiance', Pirr * (1 + Error * 3))
-        self.__ControlledElm.SetParameter('pf', str(-PF))
 
+        Error = abs(PFset + PFact)
+
+        self.__ControlledElm.SetParameter('pf', str(-PFset))
         return Error
 
     def VPFcontrol(self):
@@ -245,11 +259,11 @@ class PvController(ControllerAbstract):
                 self.pf = -self.pf
             self.__ControlledElm.SetParameter('pf', self.pf)
         else:
-            print('Warning: PV power is <0 and VVar controller is active.')
-            print((self.__Name, uIn, Qcalc, Qpv, self.oldQcalc, dQ, Pcalc, self.pf))
+            #print('Warning: PV power is <0 and VVar controller is active.')
+            #print(self.__Name, Qcalc , Qpv, self.Time, dQ)
             # self.pf = 0
             # dQ = 0 # forces VVarr off when PV is off, is that correct?
-
+            pass
 
         Error = abs(dQ)
         # if Error > 0.1 or math.isnan(Error):

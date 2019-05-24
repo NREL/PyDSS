@@ -239,7 +239,7 @@ class StorageController:
 
         if self.Time[0] == 0:
             self.__PinOld = self.__Pin
-        print(self.Time[0], self.__PinOld, self.__Pin)
+        #print(self.Time[0], self.__PinOld, self.__Pin)
         if self.__Settings['PowerMeaElem'] == 'Total':
             Sin = self.__dssInstance.Circuit.TotalPower()
             Pin = -sum(Sin[0:5:2])
@@ -320,7 +320,7 @@ class StorageController:
                 PF = Pcalc * m + c
         else:
             PF = pfMax
-        print (Pcalc,PF)
+        #print (Pcalc,PF)
 
         Qcalc =  (Pcalc / PF) * math.sin(math.acos(PF))
 

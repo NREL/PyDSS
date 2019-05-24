@@ -13,11 +13,11 @@ for file in pythonFiles:
     exec('from PyDSS.pyControllers.Controllers import {}'.format(file))
     exec('ControllerTypes["{}"] = {}.{}'.format(file, file, file))
 
-print(ControllerTypes)
+#print(ControllerTypes)
 
 def Create(ElmName, ControllerType, Settings, ElmObjectList, dssInstance, dssSolver):
     try:
-        print(ElmObjectList)
+        #print(ElmObjectList)
         relObject = ElmObjectList[ElmName]
     except:
         Index = dssInstance.Circuit.SetActiveElement(ElmName)

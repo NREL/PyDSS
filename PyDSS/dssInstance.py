@@ -14,9 +14,14 @@ import PyDSS.PyPlots as PyPlots
 from PyDSS.Extensions.NetworkGraph import CreateGraph
 from opendssdirect.utils import run_command
 import opendssdirect as dss
-import time
+import subprocess
 import logging
+import time
 import os
+
+from bokeh.plotting import figure, curdoc
+from bokeh.layouts import  column, row
+from bokeh.client import push_session
 
 CONTROLLER_PRIORITIES = 3
 
@@ -90,8 +95,9 @@ class OpenDSS:
         self.__dssInstance.Basic.ClearAll()
         self.__dssInstance.utils.run_command('Log=NO')
         run_command('Clear')
-        run_command('compile ' + self.__dssFilePath)
-
+        self.__Logger.info('Loading OpenDSS model')
+        reply = run_command('compile ' + self.__dssFilePath)
+        self.__Logger.info('OpenDSS:  ' + reply)
         self.__dssCircuit = dss.Circuit
         self.__dssElement = dss.Element
         self.__dssBus = dss.Bus
@@ -109,7 +115,7 @@ class OpenDSS:
 
         if self.__Options and self.__Options['Log Results']:
             self.ResultContainer = RC(kwargs, self.__dssPath,
-                                      self.__dssObjects, self.__dssObjectsByClass, self.__dssBuses)
+                                      self.__dssObjects, self.__dssObjectsByClass, self.__dssBuses, self.__dssSolver)
 
         pyCtrlReader = pcr(self.__dssPath['pyControllers'])
         ControllerList = pyCtrlReader.pyControllers
@@ -118,14 +124,17 @@ class OpenDSS:
 
         pyPlotReader = ppr(self.__dssPath['pyPlots'])
         PlotList = pyPlotReader.pyPlots
-        if PlotList is not None and not all(value == False for value in kwargs.values()):
+        if PlotList is not None and kwargs['Create dynamic plots']:
             self.__CreatePlots(PlotList)
 
-        for Plot in self.__pyPlotObjects:
-            self.BokehSessionID = self.__pyPlotObjects[Plot].GetSessionID()
-            if kwargs['Open plots in browser']:
-                self.__pyPlotObjects[Plot].session.show()
-            break
+        # for Plot in self.__pyPlotObjects:
+        #     self.BokehSessionID = self.__pyPlotObjects[Plot].GetSessionID()
+        #     if kwargs['Open plots in browser']:
+        #         self.__pyPlotObjects[Plot].session.show()
+        #     break
+
+
+        self.energy = [0 for i in range(60*24*365)]
         return
 
     def __ModifyNetwork(self):
@@ -148,32 +157,49 @@ class OpenDSS:
         return
 
     def __CreatePlots(self, PlotsDict):
+
+        self.BokehDoc = curdoc()
+        Figures = []
         for PlotType, PlotNames in PlotsDict.items():
             newPlotNames = list(PlotNames)
-            PlotType1= ['Network layout', 'GIS overlay']
-            PlotType2 = ['Sag plot', 'Histogram']
-            PlotType3 = ['XY plot', 'Time series']
+            PlotType1= ['Topology', 'GISplot']
+            PlotType2 = ['SagPlot', 'Histogram']
+            PlotType3 = ['XYPlot', 'TimeSeries']
+
             for Name in newPlotNames:
                 PlotSettings = PlotNames[Name]
                 PlotSettings['FileName'] = Name
-                if PlotType in PlotType1 and self.__Options[PlotType]:
+                if PlotType in PlotType1:
                     self.__pyPlotObjects[PlotType] = PyPlots.pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
                                                                     self.__dssObjectsByClass,self.__dssCircuit)
+                    Figures.append(self.__pyPlotObjects[PlotType].GetFigure())
+                    #self.BokehDoc.add_root(self.__pyPlotObjects[PlotType].GetFigure())
                     self.__Logger.info('Created pyPlot -> ' + PlotType)
-                elif PlotType in PlotType2 and self.__Options[PlotType]:
+                elif PlotType in PlotType2:
                     self.__pyPlotObjects[PlotType + Name] = PyPlots.pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
                                                                            self.__dssObjectsByClass, self.__dssCircuit)
                     self.__Logger.info('Created pyPlot -> ' + PlotType)
-                elif PlotType in PlotType3  and self.__Options[PlotType]:
+                elif PlotType in PlotType3:
                     self.__pyPlotObjects[PlotType+Name] = PyPlots.pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
                                                                          self.__dssObjects, self.__dssCircuit)
                     self.__Logger.info('Created pyPlot -> ' + PlotType)
+
+        Layout = row(*Figures)
+        self.BokehDoc.add_root(Layout)
+        self.BokehDoc.title = "PyDSS"
+        self.session = push_session(self.BokehDoc)
+        self.session.show()
+
         return
 
     def __UpdateControllers(self, Priority, Time, UpdateResults):
         error = 0
+
         for controller in self.__pyControls.values():
             error += controller.Update(Priority, Time, UpdateResults)
+            if Priority==0:
+                pass
+                #self.energy[Time] = controller.Demand
         return abs(error) < self.__Options['Error tolerance'], error
 
     def __CreateBusObjects(self):
@@ -241,6 +267,8 @@ class OpenDSS:
             self.ResultContainer.UpdateResults()
         if self.__Options['Return Results']:
             return self.ResultContainer.CurrentResults
+
+
         #self.__dssSolver.IncStep()
 
     def RunSimulation(self):
@@ -268,6 +296,7 @@ class OpenDSS:
         return
 
     def CreateGraph(self, Visualize=False):
+        self.__Logger.info('Creating graph representation')
         defaultGrapgPlotSettings = {
                 'Layout'                 : 'Circular', # Shell, Circular, Fruchterman
                 'Iterations'             : 100,
@@ -290,7 +319,6 @@ class OpenDSS:
         return Graph.Get()
 
     def __del__(self):
-
         x = list(self.__Logger.handlers)
         for i in x:
             self.__Logger.removeHandler(i)

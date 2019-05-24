@@ -6,8 +6,9 @@ import os
 
 
 class ResultContainer:
-    def __init__(self, Options, SystemPaths, dssObjects, dssObjectsByClass, dssBuses):
+    def __init__(self, Options, SystemPaths, dssObjects, dssObjectsByClass, dssBuses, dssSolver):
         LoggerTag = Options['Active Project'] + '_' + Options['Active Scenario']
+        self.__dssDolver = dssSolver
         self.Results = {}
         self.CurrentResults = {}
         self.pyLogger = logging.getLogger(LoggerTag)
@@ -18,7 +19,7 @@ class ResultContainer:
         self.__Settings = Options
         self.__StartDay = Options['Start Day']
         self.__EndDay = Options['End Day']
-
+        self.__DateTime = []
         self.FileReader = PCR(SystemPaths['ExportLists'])
 
         self.ExportFolder = os.path.join(self.SystemPaths['Export'], Options['Active Scenario'])
@@ -81,6 +82,7 @@ class ResultContainer:
         return
 
     def UpdateResults(self):
+        self.__DateTime.append(self.__dssDolver.GetDateTime())
         if self.__Settings['Export Mode'] == 'byElement':
             for Element in self.Results.keys():
                 for Property in self.Results[Element].keys():

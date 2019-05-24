@@ -230,7 +230,7 @@ class HybridController:
             self.__ControlledElm.SetParameter('pf', self.pf)
         else:
             print('Warning: PV power is <0 and VVar controller is active.')
-            print((self.__Name, uIn, Qcalc, Qpv, self.oldQcalc, dQ, Pcalc, self.pf))
+            #print((self.__Name, uIn, Qcalc, Qpv, self.oldQcalc, dQ, Pcalc, self.pf))
             # self.pf = 0
             # dQ = 0 # forces VVarr off when PV is off, is that correct?
 
