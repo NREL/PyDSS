@@ -122,9 +122,9 @@ class OpenDSS:
         if ControllerList is not None:
             self.__CreateControllers(ControllerList)
 
-        pyPlotReader = ppr(self.__dssPath['pyPlots'])
-        PlotList = pyPlotReader.pyPlots
-        if PlotList is not None and kwargs['Create dynamic plots']:
+        if kwargs['Create dynamic plots']:
+            pyPlotReader = ppr(self.__dssPath['pyPlots'])
+            PlotList = pyPlotReader.pyPlots
             self.__CreatePlots(PlotList)
 
         # for Plot in self.__pyPlotObjects:
@@ -273,9 +273,9 @@ class OpenDSS:
 
     def RunSimulation(self):
         startTime = time.time()
-        TotalDays = self.__Options['End Day'] - self.__Options['Start Day']
-        Steps = int(TotalDays * 24 * 60 / self.__Options['Step resolution (min)'])
-        self.__Logger.info('Running simulation for ' + str(Steps) + ' time steps')
+        Steps, sTime, eTime = self.__dssSolver.SimulationSteps()
+        self.__Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
+        self.__Logger.info('Simulation time step {}.'.format(Steps))
         for step in range(Steps):
             self.RunStep(step)
 
