@@ -48,7 +48,7 @@ class __Daily:
         self.__dssSolution.Seconds(StartTimeMin * 60)
         self.__dssSolution.Number(1)
         self.__dssSolution.StepSize(self.__sStepRes)
-        self.__dssSolution.MaxControlIterations(200)
+        self.__dssSolution.MaxControlIterations(SimulationSettings['Max Control Iterations'])
         return
 
     def SimulationSteps(self):
@@ -87,22 +87,39 @@ class __Daily:
 
 class __Shapshot:
     def __init__(self, dssInstance, SimulationSettings, Logger):
+        self.Settings = SimulationSettings
+        self.pyLogger = Logger
+        StartTimeMin = SimulationSettings['Start Time (min)']
+        self.__Time = datetime.strptime(
+            '{} {}'.format(SimulationSettings['Start Year'], SimulationSettings['Start Day'] +
+                           SimulationSettings['Date offset']), '%Y %j'
+        )
+
+        self.__Time = self.__Time + timedelta(minutes=StartTimeMin)
+        self.__StartTime = self.__Time
+        self.__EndTime = self.__Time
+        self.__sStepRes = 1
         self.__dssInstance = dssInstance
         self.__dssSolution = dssInstance.Solution
         self.__dssSolution.Mode(0)
-        self.__dssSolution.MaxControlIterations(100)
-        self.OriginalStep = self.__dssSolution.Number()
+        self.__dssInstance.utils.run_command('Set ControlMode=STATIC')
+        self.__dssSolution.MaxControlIterations(SimulationSettings['Max Control Iterations'])
         return
 
-    def IncStep(self, CurrentTimeStep):
-        self.timestep = CurrentTimeStep
-        self.__dssSolution.Number(self.number)
-        self.__dssSolution.Hour(CurrentTimeStep)
-        self.__dssSolution.Seconds(0)
+    def SimulationSteps(self):
+        return 1, self.__StartTime, self.__EndTime
+
+    def GetDateTime(self):
+        return self.__Time
+
+    def GetStepResolutionSeconds(self):
+        return self.__sStepRes
+
+    def GetStepSizeSec(self):
+        return self.__sStepRes
 
     def reSolve(self):
-        self.__dssSolution.StepSizeMin(0)
-        self.__dssSolution.StepSize(0)
-        self.__dssSolution.SolveNoControl()
+        return self.__dssSolution.SolveNoControl()
 
-
+    def IncStep(self):
+        return self.__dssSolution.Solve()

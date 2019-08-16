@@ -1,15 +1,15 @@
 from PyDSS.dssBus import dssBus
 
 class dssElement:
-    __Name = None
-    __Class = None
-    __Parameters = {}
-    __Variables = {}
-    Bus = None
-    BusCount = None
-    sBus = []
-    def __init__(self, dssInstance):
 
+    def __init__(self, dssInstance):
+        self.__Name = None
+        self.__Class = None
+        self.__Parameters = {}
+        self.__Variables = {}
+        self.Bus = None
+        self.BusCount = None
+        self.sBus = []
 
         self.__Class,  self.__Name =  dssInstance.Element.Name().split('.',1)
         self.__dssInstance = dssInstance

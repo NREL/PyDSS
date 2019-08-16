@@ -1,9 +1,10 @@
 class dssBus:
-    __Name = None
-    __Index = None
-    __Variables = {}
-    XY = None
+
     def __init__(self, dssInstance):
+        self.__Name = None
+        self.__Index = None
+        self.__Variables = {}
+        self.XY = None
         self.__Name =  dssInstance.Bus.Name()
 
         self.__dssInstance = dssInstance

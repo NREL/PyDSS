@@ -1,11 +1,11 @@
 from PyDSS.dssBus import dssBus
 
 class dssCircuit:
-    __Name = None
-    __Variables = {}
+
 
     def __init__(self, dssInstance):
-
+        self.__Name = None
+        self.__Variables = {}
         self.__Name =  dssInstance.Circuit.Name()
         self.__dssInstance = dssInstance
 
