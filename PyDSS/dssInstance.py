@@ -59,16 +59,19 @@ DSS_DEFAULTS = {
 }
 
 class OpenDSS:
-    __TempResultList = []
-    __dssInstance = dss
-    __dssBuses = {}
-    __dssObjects = {}
-    __dssObjectsByClass = {}
-    __DelFlag = 0
-    __pyPlotObjects = {}
-    BokehSessionID = None
+
 
     def __init__(self, **kwargs):
+
+        self.__TempResultList = []
+        self.__dssInstance = dss
+        self.__dssBuses = {}
+        self.__dssObjects = {}
+        self.__dssObjectsByClass = {}
+        self.__DelFlag = 0
+        self.__pyPlotObjects = {}
+        self.BokehSessionID = None
+
         DSS_DEFAULTS.update(kwargs)
         kwargs = DSS_DEFAULTS
         rootPath = kwargs['Project Path']

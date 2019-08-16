@@ -4,9 +4,8 @@ import math
 import ast
 
 class StorageController(ControllerAbstract):
-    Time = -1
-
     def __init__(self, StorageObj, Settings, dssInstance, ElmObjectList, dssSolver):
+        self.Time = -1
         super(StorageController).__init__()
 
         self.__ControlledElm = StorageObj

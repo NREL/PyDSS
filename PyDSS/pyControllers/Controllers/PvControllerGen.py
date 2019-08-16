@@ -7,17 +7,19 @@ import math
 import os
 
 class PvControllerGen(ControllerAbstract):
-    TimeChange = False
-    Time = (-1, 0)
 
-    oldPcalc = 0
-    oldQcalc = 0
-    Qpvpu = 0
-    __vDisconnected = False
-    __pDisconnected = False
 
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
         super(PvControllerGen).__init__()
+
+        self.TimeChange = False
+        self.Time = (-1, 0)
+
+        self.oldPcalc = 0
+        self.oldQcalc = 0
+        self.Qpvpu = 0
+        self. __vDisconnected = False
+        self.__pDisconnected = False
 
         self.__ElmObjectList = ElmObjectList
         self.ControlDict = {
