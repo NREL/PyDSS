@@ -117,8 +117,8 @@ class OpenDSS:
         self.__dssSolver.reSolve()
 
         if self.__Options and self.__Options['Log Results']:
-            self.ResultContainer = RC(kwargs, self.__dssPath,
-                                      self.__dssObjects, self.__dssObjectsByClass, self.__dssBuses, self.__dssSolver)
+            self.ResultContainer = RC(kwargs, self.__dssPath,  self.__dssObjects, self.__dssObjectsByClass,
+                                      self.__dssBuses, self.__dssSolver, self.__dssCommand)
 
         pyCtrlReader = pcr(self.__dssPath['pyControllers'])
         ControllerList = pyCtrlReader.pyControllers
