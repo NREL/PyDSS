@@ -1,13 +1,19 @@
 from PyDSS.pyContrReader import pyContrReader as PCR
+from PyDSS import unitDefinations
+import pandas as pd
 import numpy as np
 import pathlib
 import logging
+import shutil
+import math
 import os
 
 
 class ResultContainer:
-    def __init__(self, Options, SystemPaths, dssObjects, dssObjectsByClass, dssBuses, dssSolver):
+
+    def __init__(self, Options, SystemPaths, dssObjects, dssObjectsByClass, dssBuses, dssSolver, dssCommand):
         LoggerTag = Options['Active Project'] + '_' + Options['Active Scenario']
+        self.metadata_info = unitDefinations.unit_info
         self.__dssDolver = dssSolver
         self.Results = {}
         self.CurrentResults = {}
@@ -16,6 +22,7 @@ class ResultContainer:
         self.ObjectsByElement = dssObjects
         self.ObjectsByClass = dssObjectsByClass
         self.SystemPaths = SystemPaths
+        self.__dssCommand = dssCommand
         self.__Settings = Options
         self.__StartDay = Options['Start Day']
         self.__EndDay = Options['End Day']
@@ -111,6 +118,7 @@ class ResultContainer:
             self.__ExportResultsByElements()
         elif self.__Settings['Export Mode'] == 'byClass':
             self.__ExportResultsByClass()
+        self.__ExportEventLog()
 
     def __ExportResultsByClass(self):
         for Class in self.Results.keys():
@@ -122,27 +130,44 @@ class ResultContainer:
                     if isinstance(self.Results[Class][Property][Element][0], list):
                         Data = np.array(self.Results[Class][Property][Element])
                         for i in range(len(self.Results[Class][Property][Element][0])):
-                            ElmLvlHeader += Element + '-' + str(i) + ','
+                            if Property in self.metadata_info:
+                                if i % 2 == 0 and 'E' in self.metadata_info[Property]:
+                                    ElmLvlHeader += '{} ph:{} [{}],'.format(Element,  math.floor(i / 2) + 1,
+                                                                           self.metadata_info[Property]['E'])
+                                elif i % 2 == 1 and 'O' in self.metadata_info[Property]:
+                                    ElmLvlHeader += '{} ph:{} [{}],'.format(Element, math.floor(i / 2) + 1,
+                                                                           self.metadata_info[Property]['O'])
+                                else:
+                                    ElmLvlHeader += '{}-{} [{}],'.format(Element, i, self.metadata_info[Property])
+                            else:
+                                ElmLvlHeader += Element + '-' + str(i) + ','
                     else:
                         Data = np.transpose(np.array([self.Results[Class][Property][Element]]))
-                        ElmLvlHeader = Element + ','
-
+                        if Property in self.metadata_info:
+                            ElmLvlHeader = '{} [{}],'.format(Element, self.metadata_info[Property])
+                        else:
+                            ElmLvlHeader = Element + ','
                     if self.__Settings['Export Style'] == 'Separate files':
                         fname = '-'.join([Class, Property, Element, str(self.__StartDay), str(self.__EndDay)]) + '.csv'
-                        np.savetxt(os.path.join(self.ExportFolder, fname), Data,
-                                   delimiter=',', header=ElmLvlHeader, comments='', fmt='%f')
+                        columns = [x for x in ElmLvlHeader.split(',') if x != '']
+                        df = pd.DataFrame(Data, index=self.__DateTime, columns=columns)
+                        df.to_csv(os.path.join(self.ExportFolder, fname), index_label='timestamp')
                         self.pyLogger.info(Class + '-' + Property  + '-' + Element + ".csv exported to " + self.ExportFolder)
                     elif self.__Settings['Export Style'] == 'Single file':
                         Class_ElementDatasets.append(Data)
                     PptyLvlHeader += ElmLvlHeader
                 if self.__Settings['Export Style'] == 'Single file':
+                    assert Class_ElementDatasets
                     Dataset = Class_ElementDatasets[0]
-                    if len(Class_ElementDatasets) > 0:
+                    if len(Class_ElementDatasets) > 1:
                         for D in Class_ElementDatasets[1:]:
                             Dataset = np.append(Dataset, D, axis=1)
+                    columns = [x for x in PptyLvlHeader.split(',') if x != '']
+                    print(columns)
+                    print(Dataset.shape, len(columns), len(self.__DateTime))
+                    df = pd.DataFrame(Dataset, index=self.__DateTime, columns=columns)
                     fname = '-'.join([Class, Property, str(self.__StartDay), str(self.__EndDay)]) + '.csv'
-                    np.savetxt(os.path.join(self.ExportFolder, fname), Dataset,
-                               delimiter=',', header=PptyLvlHeader, comments='', fmt='%f')
+                    df.to_csv(os.path.join(self.ExportFolder, fname), index_label='timestamp')
                     self.pyLogger.info(Class + '-' + Property + ".csv exported to " + self.ExportFolder)
         return
 
@@ -176,7 +201,18 @@ class ResultContainer:
                     for D in ElementDatasets[1:]:
                         Dataset = np.append(Dataset, D, axis=1)
                 fname = '-'.join([Element, str(self.__StartDay), str(self.__EndDay)]) + '.csv'
+
                 np.savetxt(os.path.join(self.ExportFolder, fname), Dataset,
                            delimiter=',', header=AllHeader, comments='', fmt='%f')
                 self.pyLogger.info(Element + ".csv exported to " + self.ExportFolder)
         return
+
+    def __ExportEventLog(self):
+        event_log = "event_log.csv"
+        cmd = "Export EventLog {}".format(event_log)
+        out = self.__dssCommand(cmd)
+        self.pyLogger.info("Exported OpenDSS event log to %s", out)
+        file_path = os.path.join(self.ExportFolder, event_log)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        shutil.move(event_log, self.ExportFolder)
