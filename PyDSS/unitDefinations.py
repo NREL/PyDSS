@@ -17,7 +17,6 @@ unit_info = {
         'kW': 'kW',
         'kVABase': 'kVA',
         'kWh': 'kWh',
-
         'puVmagAngle' : {'E' : 'V:pu', 'O' : ''},
         'VoltagesMagAng': {'E' : 'V', 'O' : 'Deg'},
         'Voltages': {'E': 'V:Re', 'O': 'V:Im'},
