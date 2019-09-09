@@ -27,6 +27,7 @@ class ResultContainer:
         self.__StartDay = Options['Start Day']
         self.__EndDay = Options['End Day']
         self.__DateTime = []
+        self.__Frequency = []
         self.FileReader = PCR(SystemPaths['ExportLists'])
 
         self.ExportFolder = os.path.join(self.SystemPaths['Export'], Options['Active Scenario'])
@@ -90,6 +91,7 @@ class ResultContainer:
 
     def UpdateResults(self):
         self.__DateTime.append(self.__dssDolver.GetDateTime())
+        self.__Frequency.append(self.__dssDolver.getFrequency())
         if self.__Settings['Export Mode'] == 'byElement':
             for Element in self.Results.keys():
                 for Property in self.Results[Element].keys():
@@ -150,8 +152,10 @@ class ResultContainer:
                     if self.__Settings['Export Style'] == 'Separate files':
                         fname = '-'.join([Class, Property, Element, str(self.__StartDay), str(self.__EndDay)]) + '.csv'
                         columns = [x for x in ElmLvlHeader.split(',') if x != '']
-                        df = pd.DataFrame(Data, index=self.__DateTime, columns=columns)
-                        df.to_csv(os.path.join(self.ExportFolder, fname), index_label='timestamp')
+                        tuples = list(zip(*[self.__DateTime, self.__Frequency]))
+                        index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency'])
+                        df = pd.DataFrame(Data, index=index, columns=columns)
+                        df.to_csv(os.path.join(self.ExportFolder, fname))
                         self.pyLogger.info(Class + '-' + Property  + '-' + Element + ".csv exported to " + self.ExportFolder)
                     elif self.__Settings['Export Style'] == 'Single file':
                         Class_ElementDatasets.append(Data)
@@ -163,11 +167,11 @@ class ResultContainer:
                         for D in Class_ElementDatasets[1:]:
                             Dataset = np.append(Dataset, D, axis=1)
                     columns = [x for x in PptyLvlHeader.split(',') if x != '']
-                    print(columns)
-                    print(Dataset.shape, len(columns), len(self.__DateTime))
-                    df = pd.DataFrame(Dataset, index=self.__DateTime, columns=columns)
+                    tuples = list(zip(*[self.__DateTime, self.__Frequency]))
+                    index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency'])
+                    df = pd.DataFrame(Dataset, index=index, columns=columns)
                     fname = '-'.join([Class, Property, str(self.__StartDay), str(self.__EndDay)]) + '.csv'
-                    df.to_csv(os.path.join(self.ExportFolder, fname), index_label='timestamp')
+                    df.to_csv(os.path.join(self.ExportFolder, fname))
                     self.pyLogger.info(Class + '-' + Property + ".csv exported to " + self.ExportFolder)
         return
 

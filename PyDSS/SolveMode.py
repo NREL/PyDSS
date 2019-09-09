@@ -6,8 +6,9 @@ def GetSolver(SimulationSettings ,dssInstance):
     LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
     pyLogger = logging.getLogger(LoggerTag)
     SolverDict = {
-        'Snapshot': __Shapshot(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger),
-        'Daily': __Daily(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger),
+        'Snapshot'  : __Shapshot(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger),
+        'QSTS'      : __Daily(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger),
+        'SE'        : __StateEstimation(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger),
     }
     try:
         Solver = SolverDict[SimulationSettings['Simulation Type']]
@@ -16,6 +17,11 @@ def GetSolver(SimulationSettings ,dssInstance):
     except:
         pyLogger.error('Incorrect simulation type passed to the function.')
         return -1
+
+
+class __StateEstimation:
+    def __init__(self, dssInstance, SimulationSettings, Logger):
+        return
 
 class __Daily:
     def __init__(self, dssInstance, SimulationSettings, Logger):
@@ -50,6 +56,12 @@ class __Daily:
         self.__dssSolution.StepSize(self.__sStepRes)
         self.__dssSolution.MaxControlIterations(SimulationSettings['Max Control Iterations'])
         return
+    def setFrequency(self, frequency):
+        self.__dssSolution.Frequency(frequency)
+        return
+
+    def getFrequency(self):
+        return  self.__dssSolution.Frequency()
 
     def SimulationSteps(self):
         Seconds = (self.__EndTime - self.__StartTime).total_seconds()
@@ -102,7 +114,7 @@ class __Shapshot:
         self.__dssInstance = dssInstance
         self.__dssSolution = dssInstance.Solution
         self.__dssSolution.Mode(0)
-        self.__dssInstance.utils.run_command('Set ControlMode=STATIC')
+        self.__dssInstance.utils.run_command('Set ControlMode={}'.format(SimulationSettings['Control mode']))
         self.__dssSolution.MaxControlIterations(SimulationSettings['Max Control Iterations'])
         return
 
@@ -123,3 +135,10 @@ class __Shapshot:
 
     def IncStep(self):
         return self.__dssSolution.Solve()
+
+    def setFrequency(self, frequency):
+        self.__dssSolution.Frequency(frequency)
+        return
+
+    def getFrequency(self):
+        return  self.__dssSolution.Frequency()

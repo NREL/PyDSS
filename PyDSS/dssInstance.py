@@ -14,6 +14,7 @@ import PyDSS.PyPlots as PyPlots
 from PyDSS.Extensions.NetworkGraph import CreateGraph
 from opendssdirect.utils import run_command
 import opendssdirect as dss
+import numpy as np
 import subprocess
 import logging
 import time
@@ -59,8 +60,6 @@ DSS_DEFAULTS = {
 }
 
 class OpenDSS:
-
-
     def __init__(self, **kwargs):
 
         self.__TempResultList = []
@@ -101,6 +100,13 @@ class OpenDSS:
         self.__Logger.info('Loading OpenDSS model')
         reply = run_command('compile ' + self.__dssFilePath)
         self.__Logger.info('OpenDSS:  ' + reply)
+        run_command('Set DefaultBaseFrequency={}'.format(self.__Options['Fundamental frequency']))
+        self.__Logger.info('OpenDSS fundamental frequency set to :  ' + str(self.__Options['Fundamental frequency']) + ' Hz')
+
+        run_command('Set %SeriesRL={}'.format(self.__Options['Percentage load in series']))
+        if self.__Options['Neglect shunt admittance']:
+            run_command('Set NeglectLoadY=Yes')
+
         self.__dssCircuit = dss.Circuit
         self.__dssElement = dss.Element
         self.__dssBus = dss.Bus
@@ -110,9 +116,7 @@ class OpenDSS:
         self.__dssSolver = SolveMode.GetSolver(SimulationSettings=kwargs, dssInstance=self.__dssInstance)
 
         self.__Modifier = Modifier(dss, run_command, self.__Options)
-
         self.__UpdateDictionary()
-
         self.__CreateBusObjects()
         self.__dssSolver.reSolve()
 
@@ -247,12 +251,14 @@ class OpenDSS:
         return ObjectList
 
     def RunStep(self, step, updateObjects=None):
+
         if updateObjects:
             for object, params in updateObjects.items():
                 cl, name = object.split('.')
                 self.__Modifier.Edit_Elements(cl, name, params)
             pass
 
+        #run_command('Set Controlmode=Time')  # TODO: remove later
         self.__dssSolver.IncStep()
         for priority in range(CONTROLLER_PRIORITIES):
             for i in range(self.__Options['Max Control Iterations']):
@@ -263,13 +269,20 @@ class OpenDSS:
                         self.__Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
                     break
                 self.__dssSolver.reSolve()
-            #self.__dssSolver.reSolve()
 
-        self.__UpdatePlots()
-        if self.__Options['Log Results']:
-            self.ResultContainer.UpdateResults()
-        if self.__Options['Return Results']:
-            return self.ResultContainer.CurrentResults
+        if self.__Options['Enable frequency sweep']:
+            self.__dssCommand('set mode=harmonicT')
+            for freqency in np.arange(self.__Options['Start frequency'], self.__Options['End frequency'] + 1, 2):
+                self.__dssSolver.setFrequency(freqency * self.__Options['Fundamental frequency'])
+                self.__dssSolver.reSolve()
+                if self.__Options['Log Results']:
+                    self.ResultContainer.UpdateResults()
+        else:
+            self.__UpdatePlots()
+            if self.__Options['Log Results']:
+                self.ResultContainer.UpdateResults()
+            if self.__Options['Return Results']:
+                return self.ResultContainer.CurrentResults
 
 
         #self.__dssSolver.IncStep()
@@ -311,7 +324,7 @@ class OpenDSS:
                 'OutputPath'             : self.__dssPath['Export'],
                 'OutputFile'             : None
         }
-        defaultGrapgPlotSettings['OutputFile']  = self.__ActiveProject + \
+        defaultGrapgPlotSettings['OutputFile'] = self.__ActiveProject + \
                                                   '_' + defaultGrapgPlotSettings['LineColorProperty'] + \
                                                   '_' + defaultGrapgPlotSettings['NodeColorProperty'] + \
                                                   '_' + defaultGrapgPlotSettings['Layout'] + '.html'
