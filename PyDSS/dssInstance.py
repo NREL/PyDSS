@@ -211,6 +211,7 @@ class OpenDSS:
 
     def __CreateBusObjects(self):
         BusNames = self.__dssCircuit.AllBusNames()
+        run_command('New  Fault.DEFAULT Bus1={} enabled=no r=0.01'.format(BusNames[0]))
         for BusName in BusNames:
             self.__dssCircuit.SetActiveBus(BusName)
             self.__dssBuses[BusName] = dssBus(self.__dssInstance)
@@ -269,22 +270,24 @@ class OpenDSS:
                         self.__Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
                     break
                 self.__dssSolver.reSolve()
+        self.__UpdatePlots()
+        if self.__Options['Log Results']:
+            self.ResultContainer.UpdateResults()
+        if self.__Options['Return Results']:
+            return self.ResultContainer.CurrentResults
 
-        if self.__Options['Enable frequency sweep']:
-            self.__dssCommand('set mode=harmonicT')
+        if self.__Options['Enable frequency sweep'] and self.__Options['Simulation Type'].lower() != 'dynamic':
+            self.__dssSolver.setMode('Harmonic')
             for freqency in np.arange(self.__Options['Start frequency'], self.__Options['End frequency'] + 1, 2):
                 self.__dssSolver.setFrequency(freqency * self.__Options['Fundamental frequency'])
                 self.__dssSolver.reSolve()
                 if self.__Options['Log Results']:
                     self.ResultContainer.UpdateResults()
-        else:
-            self.__UpdatePlots()
-            if self.__Options['Log Results']:
-                self.ResultContainer.UpdateResults()
-            if self.__Options['Return Results']:
-                return self.ResultContainer.CurrentResults
-
-
+            if self.__Options['Simulation Type'].lower() == 'snapshot':
+                self.__dssSolver.setMode('Snapshot')
+            else:
+                self.__dssSolver.setMode('Yearly')
+        return
         #self.__dssSolver.IncStep()
 
     def RunSimulation(self):
