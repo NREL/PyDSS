@@ -3,13 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="a36e9dc1-9053-46dd-a663-a351f8c2cd89" name="N O" comment="">
       <change beforePath="$PROJECT_DIR$/PyDSS.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/GISplot.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/GISplot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/Histogram.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/Histogram.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/SagPlot.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/SagPlot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/TimeSeries.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/TimeSeries.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/Topology.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/Topology.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/XYPlot.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/XYPlot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/PyPlots/pyPlots.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/PyPlots/pyPlots.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/FrequencySweep.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/FrequencySweep.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PyDSS/dssInstance.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/dssInstance.py" afterDir="false" />
     </list>
     <list id="4d158a37-460e-4f32-90b0-7874bee38a84" name="Default" comment="" />
@@ -27,8 +21,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PyDSS.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="373">
-              <caret line="108" column="26" lean-forward="true" selection-start-line="108" selection-start-column="26" selection-end-line="108" selection-end-column="26" />
+            <state relative-caret-position="436">
+              <caret line="97" column="4" selection-start-line="97" selection-start-column="4" selection-end-line="97" selection-end-column="4" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
               </folding>
@@ -39,8 +33,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/PyDSS/PyPlots/Plots/FrequencySweep.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="33" column="78" selection-start-line="33" selection-start-column="78" selection-end-line="33" selection-end-column="78" />
+            <state relative-caret-position="628">
+              <caret line="87" lean-forward="true" selection-start-line="87" selection-end-line="87" />
               <folding>
                 <element signature="e#0#41#0" expanded="true" />
               </folding>
@@ -75,7 +69,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PyDSS/pyControllers/Controllers/PvControllerGen.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="663">
+            <state relative-caret-position="2397">
               <caret line="219" column="42" selection-start-line="219" selection-start-column="42" selection-end-line="219" selection-end-column="42" />
               <folding>
                 <element signature="e#0#72#0" expanded="true" />
@@ -85,10 +79,22 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PyDSS/ResultContainer.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="817">
+              <caret line="134" selection-start-line="134" selection-end-line="134" />
+              <folding>
+                <element signature="e#0#52#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PyDSS/SolveMode.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="429">
-              <caret line="147" column="20" selection-start-line="147" selection-start-column="8" selection-end-line="147" selection-end-column="20" />
+            <state relative-caret-position="259">
+              <caret line="173" column="19" selection-start-line="173" selection-start-column="8" selection-end-line="173" selection-end-column="19" />
               <folding>
                 <element signature="e#0#40#0" expanded="true" />
               </folding>
@@ -99,8 +105,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PyDSS/dssInstance.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="159">
-              <caret line="305" column="36" selection-start-line="305" selection-start-column="36" selection-end-line="305" selection-end-column="36" />
+            <state relative-caret-position="-276">
+              <caret line="305" column="16" selection-start-line="305" selection-start-column="16" selection-end-line="305" selection-end-column="16" />
               <folding>
                 <element signature="e#0#55#0" expanded="true" />
                 <element signature="e#6523#8364#0" />
@@ -446,7 +452,7 @@
       <window_info content_ui="combo" id="Project" order="2" sideWeight="0.490701" weight="0.20911528" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32763532" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.8424242" visible="true" weight="0.39653304" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.8424242" visible="true" weight="0.18201517" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.91675615" weight="0.4127844" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -743,16 +749,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/ResultContainer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="561">
-          <caret line="183" column="26" lean-forward="true" selection-start-line="183" selection-start-column="26" selection-end-line="183" selection-end-column="26" />
-          <folding>
-            <element signature="e#0#52#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/build/lib/PyDSS/dssInstance.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1051">
@@ -778,16 +774,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
           <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyControllers/Controllers/PvControllerGen.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="663">
-          <caret line="219" column="42" selection-start-line="219" selection-start-column="42" selection-end-line="219" selection-end-column="42" />
-          <folding>
-            <element signature="e#0#72#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -838,16 +824,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/SolveMode.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="429">
-          <caret line="147" column="20" selection-start-line="147" selection-start-column="8" selection-end-line="147" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/PyPlots/Plots/XYPlot.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="357">
@@ -868,10 +844,40 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/SolveMode.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="259">
+          <caret line="173" column="19" selection-start-line="173" selection-start-column="8" selection-end-line="173" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyControllers/Controllers/PvControllerGen.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2397">
+          <caret line="219" column="42" selection-start-line="219" selection-start-column="42" selection-end-line="219" selection-end-column="42" />
+          <folding>
+            <element signature="e#0#72#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/ResultContainer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="817">
+          <caret line="134" selection-start-line="134" selection-end-line="134" />
+          <folding>
+            <element signature="e#0#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="373">
-          <caret line="108" column="26" lean-forward="true" selection-start-line="108" selection-start-column="26" selection-end-line="108" selection-end-column="26" />
+        <state relative-caret-position="436">
+          <caret line="97" column="4" selection-start-line="97" selection-start-column="4" selection-end-line="97" selection-end-column="4" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
           </folding>
@@ -880,8 +886,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/dssInstance.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="159">
-          <caret line="305" column="36" selection-start-line="305" selection-start-column="36" selection-end-line="305" selection-end-column="36" />
+        <state relative-caret-position="-276">
+          <caret line="305" column="16" selection-start-line="305" selection-start-column="16" selection-end-line="305" selection-end-column="16" />
           <folding>
             <element signature="e#0#55#0" expanded="true" />
             <element signature="e#6523#8364#0" />
@@ -891,8 +897,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/PyPlots/Plots/FrequencySweep.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="33" column="78" selection-start-line="33" selection-start-column="78" selection-end-line="33" selection-end-column="78" />
+        <state relative-caret-position="628">
+          <caret line="87" lean-forward="true" selection-start-line="87" selection-end-line="87" />
           <folding>
             <element signature="e#0#41#0" expanded="true" />
           </folding>
