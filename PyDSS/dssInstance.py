@@ -171,24 +171,42 @@ class OpenDSS:
             newPlotNames = list(PlotNames)
             PlotType1= ['Topology', 'GISplot']
             PlotType2 = ['SagPlot', 'Histogram']
-            PlotType3 = ['XYPlot', 'TimeSeries']
+            PlotType3 = ['XYPlot', 'TimeSeries', 'FrequencySweep']
 
             for Name in newPlotNames:
                 PlotSettings = PlotNames[Name]
                 PlotSettings['FileName'] = Name
                 if PlotType in PlotType1:
-                    self.__pyPlotObjects[PlotType] = PyPlots.pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
-                                                                    self.__dssObjectsByClass,self.__dssCircuit)
+                    self.__pyPlotObjects[PlotType] = PyPlots.pyPlots.Create(
+                        PlotType,
+                        PlotSettings,
+                        self.__dssBuses,
+                        self.__dssObjectsByClass,
+                        self.__dssCircuit,
+                        self.__dssSolver
+                    )
                     Figures.append(self.__pyPlotObjects[PlotType].GetFigure())
                     #self.BokehDoc.add_root(self.__pyPlotObjects[PlotType].GetFigure())
                     self.__Logger.info('Created pyPlot -> ' + PlotType)
                 elif PlotType in PlotType2:
-                    self.__pyPlotObjects[PlotType + Name] = PyPlots.pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
-                                                                           self.__dssObjectsByClass, self.__dssCircuit)
+                    self.__pyPlotObjects[PlotType + Name] = PyPlots.pyPlots.Create(
+                        PlotType,
+                        PlotSettings,
+                        self.__dssBuses,
+                        self.__dssObjectsByClass,
+                        self.__dssCircuit,
+                        self.__dssSolver
+                    )
                     self.__Logger.info('Created pyPlot -> ' + PlotType)
                 elif PlotType in PlotType3:
-                    self.__pyPlotObjects[PlotType+Name] = PyPlots.pyPlots.Create(PlotType, PlotSettings,self.__dssBuses,
-                                                                         self.__dssObjects, self.__dssCircuit)
+                    self.__pyPlotObjects[PlotType+Name] = PyPlots.pyPlots.Create(
+                        PlotType,
+                        PlotSettings,
+                        self.__dssBuses,
+                        self.__dssObjects,
+                        self.__dssCircuit,
+                        self.__dssSolver
+                    )
                     self.__Logger.info('Created pyPlot -> ' + PlotType)
 
         Layout = row(*Figures)
@@ -240,6 +258,8 @@ class OpenDSS:
         self.__dssObjectsByClass['Circuits'] = {
             'Circuit.' + self.__dssCircuit.Name() : self.__dssObjects['Circuit.' + self.__dssCircuit.Name()]
         }
+
+        print(self.__dssObjects)
         return
 
     def __GetRelaventObjectDict(self, key):
@@ -259,28 +279,31 @@ class OpenDSS:
                 self.__Modifier.Edit_Elements(cl, name, params)
             pass
 
-        #run_command('Set Controlmode=Time')  # TODO: remove later
+
         self.__dssSolver.IncStep()
-        for priority in range(CONTROLLER_PRIORITIES):
-            for i in range(self.__Options['Max Control Iterations']):
-                has_converged, error = self.__UpdateControllers(priority, step, UpdateResults=False)
-                self.__Logger.debug('Control Loop {} convergence error: {}'.format(priority, error))
-                if has_converged or i == self.__Options['Max Control Iterations'] - 1:
-                    if not has_converged:
-                        self.__Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
-                    break
-                self.__dssSolver.reSolve()
-        self.__UpdatePlots()
-        if self.__Options['Log Results']:
-            self.ResultContainer.UpdateResults()
-        if self.__Options['Return Results']:
-            return self.ResultContainer.CurrentResults
+        if self.__Options['Disable PyDSS controllers'] == False:
+            for priority in range(CONTROLLER_PRIORITIES):
+                for i in range(self.__Options['Max Control Iterations']):
+                    has_converged, error = self.__UpdateControllers(priority, step, UpdateResults=False)
+                    self.__Logger.debug('Control Loop {} convergence error: {}'.format(priority, error))
+                    if has_converged or i == self.__Options['Max Control Iterations'] - 1:
+                        if not has_converged:
+                            self.__Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
+                        break
+                    self.__dssSolver.reSolve()
+
+            if self.__Options['Log Results']:
+                self.ResultContainer.UpdateResults()
+            if self.__Options['Return Results']:
+                return self.ResultContainer.CurrentResults
 
         if self.__Options['Enable frequency sweep'] and self.__Options['Simulation Type'].lower() != 'dynamic':
             self.__dssSolver.setMode('Harmonic')
-            for freqency in np.arange(self.__Options['Start frequency'], self.__Options['End frequency'] + 1, 2):
+            for freqency in np.arange(self.__Options['Start frequency'], self.__Options['End frequency'] + 1,
+                                      self.__Options['frequency increment']):
                 self.__dssSolver.setFrequency(freqency * self.__Options['Fundamental frequency'])
                 self.__dssSolver.reSolve()
+                self.__UpdatePlots()
                 if self.__Options['Log Results']:
                     self.ResultContainer.UpdateResults()
             if self.__Options['Simulation Type'].lower() == 'snapshot':

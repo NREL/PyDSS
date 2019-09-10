@@ -14,9 +14,9 @@ for file in pythonFiles:
 
 #print(PlotTypes)
 
-def Create(PlotType, PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit):
+def Create(PlotType, PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit, dssSolver):
 
-        PlotObject = PlotTypes[PlotType](PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit)
+        PlotObject = PlotTypes[PlotType](PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit, dssSolver)
         return PlotObject
 
 

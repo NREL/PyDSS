@@ -13,31 +13,31 @@ import os
 @click.option('--export_style', default='Single file', type=click.STRING,
               help='possible options "Single_file" and "Separate_files"')
 # Plot Settings
-@click.option('--create_dynamic_plots', default=False, type=click.BOOL, help='render dynamic plot using bokeh')
-
+@click.option('--create_dynamic_plots', default=True, type=click.BOOL, help='render dynamic plot using bokeh')
 # QSTS Settings
 @click.option('--start_year', default=2017, type=click.INT, help='Start year for the simulation study')
 @click.option('--start_day', default=1, type=click.INT, help='Start day for the simulation study')  # 156-163, 286-293
 @click.option('--start_time_min', default=0, type=click.FLOAT, help='Start time in minutes')  # 156-163, 286-293
 @click.option('--end_day', default=1, type=click.INT, help='End day for the simulation study')
-@click.option('--end_time_min', default=1/60, type=click.FLOAT, help='end time in minutes')  # 156-163, 286-293
+@click.option('--end_time_min', default=1440, type=click.FLOAT, help='end time in minutes')  # 156-163, 286-293
 @click.option('--date_offset', default=0, type=click.INT, help='Date offset to be added')
-@click.option('--step_resolution_sec', default=0.002, type=click.FLOAT, help='Time step resolution in seconds')
+@click.option('--step_resolution_sec', default=15*60, type=click.FLOAT, help='Time step resolution in seconds')
 @click.option('--max_control_iterations', default=15, type=click.INT, help='Maximum outer loop control iterations')
 @click.option('--error_tolerance', default=0.001, type=click.FLOAT, help='Error tolerance in per unit')
 @click.option('--control_mode', default='Time', type=click.STRING, help='"STATIC" or "Time"')
-
+@click.option('--disable_pydss_controllers', default=True, type=click.BOOL, help='"STATIC" or "Time"')
 # Simulation Settings
-@click.option('--simulation_type', default='QSTS', type=click.STRING, help='possible modes "QSTS", "Dynamic" and "Snapshot"')
-@click.option('--active_project', default='Test_pydss_project', type=click.STRING, help='Name of project to run')
-@click.option('--active_scenario', default='Dynamics', type=click.STRING, help='Project scenario to use')
-@click.option('--dss_file', default='SRP_test_network.dss', type=click.STRING,
+@click.option('--simulation_type', default='Snapshot', type=click.STRING, help='possible modes "QSTS", "Dynamic" and "Snapshot"')
+@click.option('--active_project', default='Harmonics_example', type=click.STRING, help='Name of project to run')
+@click.option('--active_scenario', default='freq_scan', type=click.STRING, help='Project scenario to use')
+@click.option('--dss_file', default='Run_Scan.dss', type=click.STRING,
               help='The main OpenDSS file')
 # Harmonics settings
 @click.option('--fundamental_frequency', default=60, type=click.FLOAT, help='in Hertz')
 @click.option('--start_frequency', default=1, type=click.FLOAT, help='as multiple of fundamental frequency')
 @click.option('--end_frequency', default=15, type=click.FLOAT, help='as multiple of fundamental frequency ')
-@click.option('--enable_frequency_sweep', default=False, type=click.BOOL, help='Boolean variable')
+@click.option('--frequency_increment', default=5/60, type=click.FLOAT, help='as multiple of fundamental frequency ')
+@click.option('--enable_frequency_sweep', default=True, type=click.BOOL, help='Boolean variable')
 @click.option('--neglect_shunt_admittance', default=False, type=click.BOOL, help='Boolean variable')
 @click.option('--percentage_series_rl', default=50, type=click.FLOAT, help='Percent of load that is series R‐L for Harmonic studies')
 # Logger settings
@@ -68,11 +68,13 @@ def RunSimulation(**kwargs):
         'Max Control Iterations': kwargs.get('max_control_iterations'),
         'Error tolerance': kwargs.get('error_tolerance'),
         'Control mode': kwargs.get('control_mode'),
+        'Disable PyDSS controllers': kwargs.get('disable_pydss_controllers'),
 
         # Setting for harmonics simulation
         'Fundamental frequency': kwargs.get('fundamental_frequency'),
         'Start frequency': kwargs.get('start_frequency'),
         'End frequency': kwargs.get('end_frequency'),
+        'frequency increment': kwargs.get('frequency_increment'),
         'Enable frequency sweep': kwargs.get('enable_frequency_sweep'),
         'Neglect shunt admittance': kwargs.get('neglect_shunt_admittance'),
         'Percentage load in series': kwargs.get('percentage_series_rl'),
@@ -93,7 +95,7 @@ def RunSimulation(**kwargs):
         'Clear old log file': kwargs.get('clear_old_log_file'),
     }
     import subprocess
-    # BokehServer = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
+    BokehServer = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
     dss = dssInstance.OpenDSS(**dss_args)
     # visualizer = dssVisualizer.VisualizerInstance(**dss_args)
     #dss.CreateGraph(Visualize=True)

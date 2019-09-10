@@ -12,7 +12,7 @@ import numpy as np
 import math
 
 class Histogram:
-	def __init__(self,PlotProperties, dssBuses, dssObjectsbyClass, dssCircuit):
+	def __init__(self,PlotProperties, dssBuses, dssObjectsbyClass, dssCircuit, dssSolver):
 		Data = []
 		self.__dssBuses = dssBuses
 		self.__PlotProperties = PlotProperties
