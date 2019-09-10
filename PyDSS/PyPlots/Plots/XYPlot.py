@@ -10,7 +10,7 @@ import numpy as np
 
 
 class XYPlot:
-    def __init__(self,PlotProperties, dssBuses, dssObjects, dssCircuit):
+    def __init__(self,PlotProperties, dssBuses, dssObjects, dssCircuit, dssSolver):
 
         self.__dssBuses = dssBuses
         self.__dssObjs = dssObjects

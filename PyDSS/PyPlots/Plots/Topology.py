@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 
 class Topology:
-    def __init__(self,PlotProperties,dssBuses,dssObjectsByClass,dssCircuit):
+    def __init__(self,PlotProperties,dssBuses,dssObjectsByClass,dssCircuit,dssSolver):
         self.__dssBuses = dssBuses
         self.__dssCircuit = dssCircuit
         self.__PlotProperties = PlotProperties

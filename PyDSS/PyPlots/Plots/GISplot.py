@@ -25,7 +25,7 @@ class GISplot:
     Imax = 100
     VoltagePhase = 0
     CurrentPhase = 0
-    def __init__(self,PlotProperties,dssBuses,dssObjectsByClass,dssCircuit):
+    def __init__(self,PlotProperties,dssBuses,dssObjectsByClass,dssCircuit, dssSolver):
         self.__dssBuses = dssBuses
         self.__dssCircuit = dssCircuit
         self.__PlotProperties = PlotProperties
