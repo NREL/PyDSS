@@ -38,6 +38,7 @@ class FrequencySweep:
         self.doc.title = "PyDSS"
         self.session = push_session(self.doc)
         self.session.show(self.__Figure)  # open the document in a browser
+        self.__time = dssSolver.GetDateTime()
         return
 
     def getObjectValue(self, Obj, ObjPpty, Index):
@@ -72,6 +73,12 @@ class FrequencySweep:
 
 
     def UpdatePlot(self):
+        if self.__dssSolver.GetDateTime() != self.__time:
+            #self.data_source.data = self.data
+            self.data = {'frequency': [0]}
+            self.data[self.__PlotProperties['Property']] = [0]
+            self.__time = self.__dssSolver.GetDateTime()
+
         yVal = self.getObjectValue(self.plotted_object, self.__PlotProperties['Property'], self.__PlotProperties['Indices'])
         freq = self.__dssSolver.getFrequency()
 

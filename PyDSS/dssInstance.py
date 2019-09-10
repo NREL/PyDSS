@@ -291,7 +291,7 @@ class OpenDSS:
                             self.__Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
                         break
                     self.__dssSolver.reSolve()
-
+            self.__UpdatePlots()
             if self.__Options['Log Results']:
                 self.ResultContainer.UpdateResults()
             if self.__Options['Return Results']:

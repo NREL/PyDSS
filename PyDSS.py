@@ -27,16 +27,16 @@ import os
 @click.option('--control_mode', default='Time', type=click.STRING, help='"STATIC" or "Time"')
 @click.option('--disable_pydss_controllers', default=True, type=click.BOOL, help='"STATIC" or "Time"')
 # Simulation Settings
-@click.option('--simulation_type', default='Snapshot', type=click.STRING, help='possible modes "QSTS", "Dynamic" and "Snapshot"')
-@click.option('--active_project', default='Harmonics_example', type=click.STRING, help='Name of project to run')
-@click.option('--active_scenario', default='freq_scan', type=click.STRING, help='Project scenario to use')
-@click.option('--dss_file', default='Run_Scan.dss', type=click.STRING,
+@click.option('--simulation_type', default='QSTS', type=click.STRING, help='possible modes "QSTS", "Dynamic" and "Snapshot"')
+@click.option('--active_project', default='Test_pydss_project', type=click.STRING, help='Name of project to run')
+@click.option('--active_scenario', default='Self_consumption_frequency_sweep', type=click.STRING, help='Project scenario to use')
+@click.option('--dss_file', default='SRP_test_network.dss', type=click.STRING,
               help='The main OpenDSS file')
 # Harmonics settings
 @click.option('--fundamental_frequency', default=60, type=click.FLOAT, help='in Hertz')
 @click.option('--start_frequency', default=1, type=click.FLOAT, help='as multiple of fundamental frequency')
 @click.option('--end_frequency', default=15, type=click.FLOAT, help='as multiple of fundamental frequency ')
-@click.option('--frequency_increment', default=5/60, type=click.FLOAT, help='as multiple of fundamental frequency ')
+@click.option('--frequency_increment', default=2, type=click.FLOAT, help='as multiple of fundamental frequency ')
 @click.option('--enable_frequency_sweep', default=True, type=click.BOOL, help='Boolean variable')
 @click.option('--neglect_shunt_admittance', default=False, type=click.BOOL, help='Boolean variable')
 @click.option('--percentage_series_rl', default=50, type=click.FLOAT, help='Percent of load that is series R‐L for Harmonic studies')
