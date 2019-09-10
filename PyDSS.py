@@ -18,26 +18,26 @@ import os
 # QSTS Settings
 @click.option('--start_year', default=2017, type=click.INT, help='Start year for the simulation study')
 @click.option('--start_day', default=1, type=click.INT, help='Start day for the simulation study')  # 156-163, 286-293
-@click.option('--start_time_min', default=840.6, type=click.FLOAT, help='Start time in minutes')  # 156-163, 286-293
+@click.option('--start_time_min', default=0, type=click.FLOAT, help='Start time in minutes')  # 156-163, 286-293
 @click.option('--end_day', default=1, type=click.INT, help='End day for the simulation study')
-@click.option('--end_time_min', default=841.1, type=click.FLOAT, help='end time in minutes')  # 156-163, 286-293
-@click.option('--date_offset', default=1, type=click.INT, help='Date offset to be added')
-@click.option('--step_resolution_sec', default=1/240, type=click.FLOAT, help='Time step resolution in seconds')
+@click.option('--end_time_min', default=1/60, type=click.FLOAT, help='end time in minutes')  # 156-163, 286-293
+@click.option('--date_offset', default=0, type=click.INT, help='Date offset to be added')
+@click.option('--step_resolution_sec', default=0.002, type=click.FLOAT, help='Time step resolution in seconds')
 @click.option('--max_control_iterations', default=15, type=click.INT, help='Maximum outer loop control iterations')
 @click.option('--error_tolerance', default=0.001, type=click.FLOAT, help='Error tolerance in per unit')
 @click.option('--control_mode', default='Time', type=click.STRING, help='"STATIC" or "Time"')
 
 # Simulation Settings
-@click.option('--simulation_type', default='Snapshot', type=click.STRING, help='possible modes "QSTS" and "Snapshot"')
-@click.option('--active_project', default='Harmonics_example_2', type=click.STRING, help='Name of project to run')
-@click.option('--active_scenario', default='freq_scan', type=click.STRING, help='Project scenario to use')
-@click.option('--dss_file', default='IEEE_519.dss', type=click.STRING,
+@click.option('--simulation_type', default='QSTS', type=click.STRING, help='possible modes "QSTS", "Dynamic" and "Snapshot"')
+@click.option('--active_project', default='Test_pydss_project', type=click.STRING, help='Name of project to run')
+@click.option('--active_scenario', default='Dynamics', type=click.STRING, help='Project scenario to use')
+@click.option('--dss_file', default='SRP_test_network.dss', type=click.STRING,
               help='The main OpenDSS file')
 # Harmonics settings
 @click.option('--fundamental_frequency', default=60, type=click.FLOAT, help='in Hertz')
 @click.option('--start_frequency', default=1, type=click.FLOAT, help='as multiple of fundamental frequency')
 @click.option('--end_frequency', default=15, type=click.FLOAT, help='as multiple of fundamental frequency ')
-@click.option('--enable_frequency_sweep', default=True, type=click.BOOL, help='Boolean variable')
+@click.option('--enable_frequency_sweep', default=False, type=click.BOOL, help='Boolean variable')
 @click.option('--neglect_shunt_admittance', default=False, type=click.BOOL, help='Boolean variable')
 @click.option('--percentage_series_rl', default=50, type=click.FLOAT, help='Percent of load that is series R‐L for Harmonic studies')
 # Logger settings
