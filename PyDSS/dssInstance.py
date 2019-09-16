@@ -85,20 +85,24 @@ class OpenDSS:
             'Export': os.path.join(rootPath, kwargs['Active Project'], 'Exports'),
             'Log': os.path.join(rootPath, kwargs['Active Project'], 'Logs'),
             'dssFiles': os.path.join(rootPath, kwargs['Active Project'], 'DSSfiles'),
+            'dssFilePath' : os.path.join(rootPath, kwargs['Active Project'], 'DSSfiles', kwargs['DSS File']),
         }
 
         LoggerTag = kwargs['Active Project'] + '_' + kwargs['Active Scenario']
         self.__Logger = pyLogger.getLogger(LoggerTag, self.__dssPath['Log'], LoggerOptions=kwargs)
         self.__Logger.info('An instance of OpenDSS version ' + dss.__version__ + ' has been created.')
 
-        self.__Options = kwargs
-        self.__dssFilePath = os.path.join(self.__dssPath['dssFiles'], kwargs['DSS File'])
+        for key, path in self.__dssPath.items():
+            if not os.path.exists(path):
+                self.__Logger.error('{} path: {} does not exist!'.format(key, path))
+                quit()
 
+        self.__Options = kwargs
         self.__dssInstance.Basic.ClearAll()
         self.__dssInstance.utils.run_command('Log=NO')
         run_command('Clear')
         self.__Logger.info('Loading OpenDSS model')
-        reply = run_command('compile ' + self.__dssFilePath)
+        reply = run_command('compile ' + self.__dssPath['dssFilePath'])
         self.__Logger.info('OpenDSS:  ' + reply)
         run_command('Set DefaultBaseFrequency={}'.format(self.__Options['Fundamental frequency']))
         self.__Logger.info('OpenDSS fundamental frequency set to :  ' + str(self.__Options['Fundamental frequency']) + ' Hz')
