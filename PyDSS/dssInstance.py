@@ -138,15 +138,11 @@ class OpenDSS:
             pyPlotReader = ppr(self.__dssPath['pyPlots'])
             PlotList = pyPlotReader.pyPlots
             self.__CreatePlots(PlotList)
-
-        # for Plot in self.__pyPlotObjects:
-        #     self.BokehSessionID = self.__pyPlotObjects[Plot].GetSessionID()
-        #     if kwargs['Open plots in browser']:
-        #         self.__pyPlotObjects[Plot].session.show()
-        #     break
-
-
-        self.energy = [0 for i in range(60*24*365)]
+            for Plot in self.__pyPlotObjects:
+                self.BokehSessionID = self.__pyPlotObjects[Plot].GetSessionID()
+                if kwargs['Open plots in browser']:
+                    self.__pyPlotObjects[Plot].session.show()
+                break
         return
 
     def __ModifyNetwork(self):
@@ -264,7 +260,7 @@ class OpenDSS:
             'Circuit.' + self.__dssCircuit.Name() : self.__dssObjects['Circuit.' + self.__dssCircuit.Name()]
         }
 
-        print(self.__dssObjects)
+        #print(self.__dssObjects)
         return
 
     def __GetRelaventObjectDict(self, key):

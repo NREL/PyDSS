@@ -92,6 +92,9 @@ def validate_settings(dss_args):
                         max(valid_settings[key]['Options'])
                     )
 
+    for key, ctype in valid_settings.items():
+        assert (key in dss_args), "'{}' definition is missing in the TOML file".format(key)
+
     assert (dss_args['End frequency'] >= dss_args['Start frequency']),\
         "'End frequency' can not be smaller than 'Start frequency'"
     assert (dss_args['End Day'] >= dss_args['Start Day']), \
