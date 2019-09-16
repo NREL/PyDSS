@@ -192,7 +192,7 @@ class StorageController(ControllerAbstract):
         CurrentTime = int(self.__dssInstance.Solution.Hour()) * 60 * 60 + \
                       int(self.__dssInstance.Solution.Seconds())
 
-        Index =  int(CurrentTime / TimeStepPerSample)
+        Index = int(CurrentTime / TimeStepPerSample)
         Pout = P_profile[Index]
         if Pout > 0:
             self.__ControlledElm.SetParameter('State', 'DISCHARGING')
@@ -321,8 +321,6 @@ class StorageController(ControllerAbstract):
 
 
         Error = abs(Pbatt - self.PbattOld) / self.__Srated
-        print(self.Time, self.__Settings['PowerMeaElem'], Pin, Pbatt, Error)
-
         self.PbattOld = Pbatt
         # if Error > 0.2:
         #     print((self.__Name, Pbatt, self.PbattOld, self.__Prated, Pin, Plb, Pub, dP))
