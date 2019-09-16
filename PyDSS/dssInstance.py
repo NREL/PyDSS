@@ -104,6 +104,7 @@ class OpenDSS:
         self.__Logger.info('Loading OpenDSS model')
         reply = run_command('compile ' + self.__dssPath['dssFilePath'])
         self.__Logger.info('OpenDSS:  ' + reply)
+        assert ('error ' not in reply.lower()), 'Error compiling OpenDSS model.\n{}'.format(reply)
         run_command('Set DefaultBaseFrequency={}'.format(self.__Options['Fundamental frequency']))
         self.__Logger.info('OpenDSS fundamental frequency set to :  ' + str(self.__Options['Fundamental frequency']) + ' Hz')
 
