@@ -15,7 +15,6 @@ class PvController(ControllerAbstract):
 
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
         super(PvController).__init__()
-
         self.__ElmObjectList = ElmObjectList
         #print(PvObj.Bus[0] + ' - ' + PvObj.sBus[0].GetInfo())
         self.ControlDict = {
