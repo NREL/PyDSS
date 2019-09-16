@@ -6,7 +6,7 @@ import click
 import toml
 import os
 
-toml_file_path = r'C:\Users\alatif\Desktop\PyDSS-Projects\Test_pydss_project\PyDSS_settings.toml'
+toml_file_path = r'C:\Users\alatif\Desktop\PyDSS-Projects\MySpohnTest\PyDSS Scenarios\self_consumption\PyDSS_settings.toml'
 
 valid_settings = {
         'Log Results' : bool,
@@ -63,7 +63,6 @@ def RunSimulation(**kwargs):
     validate_settings(dss_args)
     f.close()
 
-
     #BokehServer = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
     dss = dssInstance.OpenDSS(**dss_args)
     # visualizer = dssVisualizer.VisualizerInstance(**dss_args)
@@ -82,7 +81,6 @@ def validate_settings(dss_args):
             key, valid_settings[key], type(ctype)
         )
     return
-
 
 if __name__ == '__main__':
     RunSimulation()

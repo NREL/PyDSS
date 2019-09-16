@@ -1,6 +1,6 @@
 from bokeh.models import ColumnDataSource, HoverTool, BoxSelectTool, PanTool, WheelZoomTool, MultiLine, Square, Circle,\
     Triangle
-from bokeh.tile_providers import CARTODBPOSITRON
+#from bokeh.tile_providers import CARTODBPOSITRON
 from bokeh.client import push_session
 from bokeh.plotting import figure
 from bokeh.palettes import Viridis, Plasma

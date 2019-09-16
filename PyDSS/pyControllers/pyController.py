@@ -13,19 +13,25 @@ for file in pythonFiles:
     exec('from PyDSS.pyControllers.Controllers import {}'.format(file))
     exec('ControllerTypes["{}"] = {}.{}'.format(file, file, file))
 
-#print(ControllerTypes)
-
 def Create(ElmName, ControllerType, Settings, ElmObjectList, dssInstance, dssSolver):
-    try:
+
+    assert (ControllerType in ControllerTypes), "Defination for '{}' controller not found. \n " \
+                                                "Please define the controller in ~PyDSS\pyControllers\Controllers".format(
+        ControllerType
+    )
+    # try:
         #print(ElmObjectList)
-        relObject = ElmObjectList[ElmName]
-    except:
-        Index = dssInstance.Circuit.SetActiveElement(ElmName)
-        if int(Index) >= 0:
-            ElmObjectList[ElmName] = dssElement(dssInstance)
-            relObject = ElmObjectList[ElmName]
-        else:
-            print('The controller dictionary does not contain ' + ControllerType)
-            return -1
+    assert (ElmName in ElmObjectList), "'{}' does not exist in the PyDSS master object dictionary.".format(ElmName)
+    relObject = ElmObjectList[ElmName]
+    # except:
+    #     Index = dssInstance.Circuit.SetActiveElement(ElmName)
+    #     if int(Index) >= 0:
+    #         ElmObjectList[ElmName] = dssElement(dssInstance)
+    #         relObject = ElmObjectList[ElmName]
+    #     else:
+    #         print('The controller dictionary does not contain {}'.format(ElmName))
+    #         return -1
+
+
     ObjectController = ControllerTypes[ControllerType](relObject, Settings, dssInstance, ElmObjectList, dssSolver)
     return ObjectController

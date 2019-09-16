@@ -292,10 +292,12 @@ class StorageController(ControllerAbstract):
             Pin = -sum(Sin[0:5:2])
         else:
             Sin = self.__ElmObjectList[self.__Settings['PowerMeaElem']].GetVariable('Powers')
-            Pin = sum(Sin[0:5:2])
+            Pin = sum(Sin[0:int(len(Sin)/2):2])
+
         #Pbatt = -float(self.__ControlledElm.GetVariable('Powers')[0])*3 + IdlingkW
         #Does not work as well as KW parameter for some reason
         Pbatt = float(self.__ControlledElm.GetParameter('kw'))
+
         if Pin > Pub:
             dP = Pin - Pub
             Pbatt = Pbatt + dP * self.__dampCoef
@@ -317,7 +319,10 @@ class StorageController(ControllerAbstract):
             self.__ControlledElm.SetParameter('State', 'CHARGING')
             self.__ControlledElm.SetParameter('%charge', str(pctcharge))
 
+
         Error = abs(Pbatt - self.PbattOld) / self.__Srated
+        print(self.Time, self.__Settings['PowerMeaElem'], Pin, Pbatt, Error)
+
         self.PbattOld = Pbatt
         # if Error > 0.2:
         #     print((self.__Name, Pbatt, self.PbattOld, self.__Prated, Pin, Plb, Pub, dP))
