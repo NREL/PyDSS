@@ -15,9 +15,12 @@ for file in pythonFiles:
 #print(PlotTypes)
 
 def Create(PlotType, PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit, dssSolver):
-
-        PlotObject = PlotTypes[PlotType](PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit, dssSolver)
-        return PlotObject
+    assert (PlotType in PlotTypes), "Defination for '{}' pyPlot not found. \n " \
+                                                "Please define the controller in ~PyDSS\PyPlots\Plots".format(
+        PlotType
+    )
+    PlotObject = PlotTypes[PlotType](PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit, dssSolver)
+    return PlotObject
 
 
 defalultPO = {
