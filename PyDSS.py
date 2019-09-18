@@ -1,9 +1,10 @@
+from PyDSS.pyAnalyzer.dssSimulationResult import ResultObject
+from PyDSS.pyAnalyzer.dssGraphicsGenerator import CreatePlots
 from PyDSS import dssInstance
-from PyDSS import dssVisualizer
 import subprocess
-import logging
 import click
 import toml
+import sys
 import os
 
 toml_file_path = r'C:\Users\alatif\Desktop\PyDSS-Projects\MySpohnTest\PyDSS Scenarios\self_consumption\PyDSS_settings.toml'
@@ -27,7 +28,7 @@ valid_settings = {
         'Step resolution (sec)' : {'type': float},
         'Max Control Iterations' : {'type': int},
         'Error tolerance' : {'type': float},
-        'Simulation Type' : {'type': str, 'Options': ["QSTS", "Dynamic", "Snapshot"]},
+        'Simulation Type' : {'type': str, 'Options': ["QSTS", "Dynamic", "Snapshot", "Monte Carlo"]},
         'Active Project' : {'type': str},
         'Active Scenario' : {'type': str},
         'DSS File' : {'type': str},
@@ -47,34 +48,74 @@ valid_settings = {
         'frequency increment' : {'type': float},
         'Neglect shunt admittance' : {'type': bool, 'Options': [True, False]},
         'Percentage load in series' : {'type': float, 'Options': range(0, 100)},
+
+        'Number of Monte Carlo scenarios' : {'type': int},
 }
 
-@click.command()
-# Settings for exporting results
-@click.option('--toml_path', default=toml_file_path, type=click.STRING, help='Path for the toml pile')
-
-
-def RunSimulation(**kwargs):
-    TOML_path = kwargs.get('toml_path')
+def RunSimulations(Batch_TOML_file):
     settings_text = ''
-    f = open(TOML_path, "r")
+    f = open(Batch_TOML_file, "r")
+    text = settings_text.join(f.readlines())
+    Simulations_args = toml.loads(text)
+    f.close()
+    SimulationResults = {}
+
+    if Simulations_args['Simulations']['Run_bokeh_server']:
+        BokehServer = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
+
+
+    for scenario in Simulations_args['Simulations']['Scenarios']:
+        dss_args, ResultObject = RunScenario(
+            scenario,
+            Simulations_args['Simulations']['Run_simulations'],
+            Simulations_args['Simulations']['Generate_visuals']
+        )
+        SimulationResults['{}-{}-{}-{}-{}'.format(
+            dss_args["Active Project"],
+            dss_args["Active Scenario"],
+            dss_args["Start Year"],
+            dss_args["Start Day"],
+            dss_args["End Day"],
+        )] = (dss_args, ResultObject)
+
+    if Simulations_args['Simulations']['Generate_visuals']:
+        CreatePlots(Simulations_args, SimulationResults)
+
+    if Simulations_args['Simulations']['Run_bokeh_server']:
+        BokehServer.terminate()
+    return
+
+
+def RunScenario(Scenario_TOML_file_path, run_simulation=True, generate_visuals=False):
+    settings_text = ''
+    f = open(Scenario_TOML_file_path, "r")
     text = settings_text.join(f.readlines())
     dss_args = toml.loads(text, _dict=dict)
-    validate_settings(dss_args)
+    __validate_settings(dss_args)
     f.close()
-
-    #BokehServer = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
     dss = dssInstance.OpenDSS(**dss_args)
-    # visualizer = dssVisualizer.VisualizerInstance(**dss_args)
-    #dss.CreateGraph(Visualize=True)
-    dss.RunSimulation()
-    # BokehServer.terminate()
-    # DSS.RunMCsimulation(MCscenarios = 3)
-    dss.DeleteInstance()
-    # os.system('pause')
-    # del dss
 
-def validate_settings(dss_args):
+    if run_simulation:
+        print('Running scenario: {}'.format(Scenario_TOML_file_path))
+        if dss_args['Simulation Type'] == "Monte Carlo":
+            #TODO: Fix the broken MC code
+            dss.RunMCsimulation(MCscenarios=dss_args['Number of Monte Carlo scenarios'])
+        else:
+            dss.RunSimulation()
+    # dss.CreateGraph(Visualize=True)
+    dss.DeleteInstance()
+    del dss
+    if generate_visuals:
+        return dss_args, ResultObject(os.path.join(
+            dss_args['Project Path'],
+            dss_args["Active Project"],
+            'Exports',
+            dss_args['Active Scenario']
+        ))
+    else:
+        return dss_args, None
+
+def __validate_settings(dss_args):
     for key, ctype in dss_args.items():
         assert (key in valid_settings), "'{}' is not a valid PyDSS argument".format(key)
         assert (isinstance(ctype, valid_settings[key]['type'])), "'{}' can only be a '{}' data type. Was passed {}".format(
@@ -86,8 +127,9 @@ def validate_settings(dss_args):
                     "Invalid argument value '{}'. Possible values are: {}".format(ctype ,valid_settings[key]['Options'])
             elif isinstance(valid_settings[key]['Options'], range):
                 assert (min(valid_settings[key]['Options']) <= ctype <= max(valid_settings[key]['Options'])), \
-                    "Value '{}' out of bounds. Allowable range is: {}-{}".format(
+                    "Value '{}' out of bounds for '{}'. Allowable range is: {}-{}".format(
                         ctype,
+                        key,
                         min(valid_settings[key]['Options']),
                         max(valid_settings[key]['Options'])
                     )
@@ -118,7 +160,9 @@ def validate_settings(dss_args):
     return
 
 if __name__ == '__main__':
-    RunSimulation()
+    Batch_file = r'C:\Users\alatif\Desktop\PyDSS-Projects\MySpohnTest\PyDSS Scenarios\BatchRunSettings.toml'
+    RunSimulations(Batch_file)
+    #RunSimulation(Batch_file)
     print('End')
     # process(sys.argv[3:])
 
