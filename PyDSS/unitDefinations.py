@@ -4,7 +4,7 @@ unit_info = {
         'RatedCurrent': 'Amp',
         'EmergAmps': 'Amp',
         'NormalAmps': 'Amp',
-
+        'normamps': 'Amp',
         'Losses': {'E' : 'kW', 'O' : 'kvar'},
         'PhaseLosses': {'E' : 'kW', 'O' : 'kvar'},
         'Powers':  {'E' : 'kW', 'O' : 'kvar'},

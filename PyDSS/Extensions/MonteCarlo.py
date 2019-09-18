@@ -25,7 +25,7 @@ class MonteCarloSim:
             MCsettings = pd.read_excel(MCfilePath,sheetname=0).T
             self.__MCsettingsDict = MCsettings.to_dict()
         except:
-            self.pyLogger.warning('Monte Carlo scenario generation file not found')
+            self.pyLogger.error('Monte Carlo scenario generation file not found')
             return
         return
 
