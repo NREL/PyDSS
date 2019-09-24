@@ -25,6 +25,7 @@ unit_info = {
         'Vminpu': 'pu',
         'Frequency' : 'Hz',
         'Tap' : 'tap:PU',
-        '%stored' : '%SOC'
+        '%stored' : '%SOC',
+        'Distance' : 'Mi'
 
     }

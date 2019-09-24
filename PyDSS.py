@@ -15,8 +15,8 @@ valid_settings = {
         'Export Mode': {'type': str, 'Options': ["byClass", "byElement"]},
         'Export Style': {'type': str, 'Options': ["Single file", "Separate files"]},
 
-        'Create dynamic plots' : {'type': bool, 'Options': [True, False]},
-        'Open plots in browser' : {'type': bool, 'Options': [True, False]},
+        'Create dynamic plots': {'type': bool, 'Options': [True, False]},
+        'Open plots in browser': {'type': bool, 'Options': [True, False]},
 
         'Project Path': {'type': str},
         'Start Year' : {'type': int, 'Options': range(1970, 2099)},
@@ -93,18 +93,20 @@ def RunScenario(Scenario_TOML_file_path, run_simulation=True, generate_visuals=F
     dss_args = toml.loads(text, _dict=dict)
     __validate_settings(dss_args)
     f.close()
-    dss = dssInstance.OpenDSS(**dss_args)
 
+    print(run_simulation)
     if run_simulation:
+        dss = dssInstance.OpenDSS(**dss_args)
         print('Running scenario: {}'.format(Scenario_TOML_file_path))
         if dss_args['Simulation Type'] == "Monte Carlo":
             #TODO: Fix the broken MC code
             dss.RunMCsimulation(MCscenarios=dss_args['Number of Monte Carlo scenarios'])
         else:
             dss.RunSimulation()
+        dss.DeleteInstance()
+        del dss
     # dss.CreateGraph(Visualize=True)
-    dss.DeleteInstance()
-    del dss
+
     if generate_visuals:
         return dss_args, ResultObject(os.path.join(
             dss_args['Project Path'],

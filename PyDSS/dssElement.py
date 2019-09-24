@@ -71,7 +71,10 @@ class dssElement:
         elif VarName in self.__Parameters:
             VarValue = self.GetParameter(VarName)
             if VarValue is not None:
-                VarValue = float(VarValue)
+                try:
+                    VarValue = float(VarValue)
+                except:
+                    pass
             else:
                 VarValue = 0
         else:

@@ -8,24 +8,136 @@ import PyDSS.pyAnalyzer.dssPlots.dssVoltageDistance as dssVoltageDistance
 
 class CreatePlots:
 
+    required_files = {
+        'Voltage_sag': ['Buses-Distance', 'Buses-puVmagAngle'],
+        'Voltage': ['Buses-puVmagAngle'],
+        'Loading':  {
+            'Lines': ['Lines-CurrentsMagAng', 'Lines-normamps'],
+            'Transformers': ['Transformers-CurrentsMagAng', 'Transformers-normamps'],
+        },
+        'Voltage_Loading': {
+            'Lines': ['Lines-CurrentsMagAng', 'Lines-normamps', 'Lines-bus1', 'Buses-puVmagAngle'],
+            'Transformers': ['Transformers-CurrentsMagAng', 'Transformers-normamps', 'Transformers-bus',
+                             'Buses-puVmagAngle'],
+        },
+        'Load': ['Loads-Powers', 'Loads-VoltagesMagAng'],
+        'Generation': {
+            'PVSystems': ['PVSystems-Powers', 'PVSystems-VoltagesMagAng'],
+            'Generators': ['Generators-Powers', 'Generators-VoltagesMagAng'],
+        },
+        'Load_Generation': {
+            'PVSystems': ['PVSystems-Powers', 'Loads-Powers'],
+            'Generators': ['Generators-Powers', 'Loads-Powers'],
+        },
+        'Curtailment': ['PVSystems-Powers'],
+        'XFMR_tap': ['Transformers-tap'],
+        'Voltage_imbalance': ['Buses-puVmagAngle'],
+        'Frequency_sweep': [],
+        'Feeder_power': ['Circuits-TotalPower'],
+        'Feeder_line_losses': ['Circuits-LineLosses'],
+        'Feeder_losses': ['Circuits-Losses'],
+        'Feeder_substation_losses': ['Circuits-SubstationLosses'],
+    }
+
+    plot_groups = {
+        'Even Odd Filter': ['Buses-puVmagAngle', 'Lines-CurrentsMagAng', 'Transformers-CurrentsMagAng',
+                            'Loads-Powers', 'Loads-VoltagesMagAng', 'Voltage_imbalance', 'PVSystems-Powers',
+                            'PVSystems-VoltagesMagAng', 'Generators-Powers', 'Generators-VoltagesMagAng',
+                            'Circuits-TotalPower', 'Circuits-LineLosses', 'Circuits-Losses', 'Circuits-SubstationLosses']
+    }
+
+    plot_Types = {
+        'Time series': ['Voltage', 'Loading', 'Load', 'Generation', 'Curtailment','XFMR_tap', 'Voltage_imbalance',
+                        'Feeder_power', 'Feeder_line_losses', 'Feeder_substation_losses', 'Feeder_losses'],
+        'XY plots': ['Load_Generation', 'Voltage_Loading'],
+    }
+
     def __init__(self, simulations_args, simulation_results):
         visualization_args = simulations_args['Visualization']
-        print(simulation_results)
-        if visualization_args['Voltage_sag']:
-            dssVoltageDistance.Plot(visualization_args, simulation_results)
-        if visualization_args['Voltage_PDF'] or visualization_args['Loading_PDF'] or \
-                visualization_args['Voltage_imbalance_PDF']:
-            dssPDFplot.Plot(visualization_args, simulation_results)
-        if visualization_args['GIS_plot'] or visualization_args['Heat_map']:
-            dssGISplot.Plot(visualization_args, simulation_results)
-        if visualization_args['Frequency_sweep']:
-            dssFrequencySweep.Plot(visualization_args, simulation_results)
-        if visualization_args['Voltage_profiles'] or visualization_args['Loading_profiles'] or \
-                visualization_args['Load_profiles'] or visualization_args['Generation_profiles'] or \
-                visualization_args['Curtailment_profiles'] or visualization_args['Voltage_imbalance_profiles'] or\
-                visualization_args['Feederhead_profiles']:
-            dssProfilePlot.Plot(visualization_args, simulation_results)
-        if visualization_args['Voltage_Loading']:
-            dssXYplot.Plot(visualization_args, simulation_results)
+        plotting_dict = simulations_args['Plots']
+        plots = {}
+        for plot_type, required_files in self.required_files.items():
+            assert (plot_type in plotting_dict),\
+                "Define a boolean variable '{}' in the master TOML file".format(plot_type)
+            assert (plot_type + '_settings' in visualization_args), \
+                "Define settings for the '{}' plot in the master TOML file".format(plot_type)
+            if plotting_dict[plot_type] == True:
+                plots[plot_type] = {}
+                # Validate settings
+                for scenario_name, scenario_data in simulation_results.items():
+                    scenario_results_formatted = {}
+                    plots[plot_type][scenario_name] = {}
+                    scenario_settings, scenario_result_obj = scenario_data
+                    scenario_results = scenario_result_obj.get_results()
+                    scenario_results_formatted = scenario_results.copy()
+                    plotsettings = visualization_args[plot_type + '_settings']
+                    if isinstance(required_files, dict):
+                        assert ('Class' in plotsettings), "Settings for plot type '{}' require ".format(plot_type) +\
+                                                          "defination of class variable in the settings dictionary."
+                        elm_class = plotsettings['Class']
+                        required_files = required_files[elm_class]
+                    for each_file in required_files:
+                        key = self.__check_result_existance(scenario_results, each_file)
+                        assert (key != None), "Result for {} do not exist for scenario '{}'.".\
+                                                  format(each_file, scenario_name) +\
+                                              "Please rerun the ".format(each_file) +\
+                                              "simulation and export the required result file to generate a " +\
+                                              "'{}' plot".format(plot_type)
+                        keysum = [1 for x in self.plot_groups['Even Odd Filter'] if key.startswith(x + '-')]
+                        if keysum:
+                            scenario_results_formatted[key] = self.__filter_DF_even_odd(scenario_results[key],
+                                                                                        plotsettings['Frequency'],
+                                                                                        plotsettings['Simulation_mode'])
+                        else:
+                            scenario_results_formatted[key] = self.__filter_DF(scenario_results[key],
+                                                                               plotsettings['Frequency'],
+                                                                               plotsettings['Simulation_mode'])
+                        plots[plot_type][scenario_name]['Data'] = scenario_results_formatted
+                        plots[plot_type][scenario_name]['Plot_settings'] = plotsettings
+                        plots[plot_type][scenario_name]['Scenario_settings'] = scenario_settings
+                        plots[plot_type][scenario_name]['Visualization_settings'] = visualization_args
+
+        self.__create_plots(plots)
+
+    def __create_plots(self, plots):
+        for plot_type in plots:
+            if plot_type in self.plot_Types['Time series']:
+                dssProfilePlot.Plot(plot_type, plots[plot_type])
+                dssPDFplot.Plot(plot_type, plots[plot_type])
+            if plot_type in self.plot_Types['XY plots']:
+                dssXYplot.Plot(plot_type, plots[plot_type])
         return
 
+
+    def __check_result_existance(self, results, result_key):
+        relevant_key = None
+        for key in results.keys():
+            if key.startswith(result_key):
+                relevant_key = key
+                break
+        return relevant_key
+
+    def __filter_DF_even_odd(self, data, frequecy, simulation_mode):
+        # print('###################################################')
+        # print(simulation_mode)
+        # print(data)
+        # print('')
+        datax = data[data['frequency'] == frequecy].copy()
+        datax = datax[datax['Simulation mode'] == simulation_mode]
+        datax = datax[datax.columns[2:]]
+        data_even = datax[datax.columns[0::2]]
+        data_even = data_even.loc[:, (data_even != 0).any(axis=0)]
+        data_odd = datax[datax.columns[1::2]]
+        data_odd = data_odd.loc[:, (data_odd != 0).any(axis=0)]
+        return data_even, data_odd
+
+    def __filter_DF(self, data, frequecy, simulation_mode):
+        # print('###################################################')
+        # print(simulation_mode)
+        # print(data)
+        # print('')
+        datax = data[data['frequency'] == frequecy].copy()
+        datax = datax[datax['Simulation mode'] == simulation_mode]
+        datax = datax[datax.columns[2:]]
+        datax = datax.loc[:, (datax != 0).any(axis=0)]
+        return (datax, None)
