@@ -4,7 +4,7 @@ import PyDSS.pyAnalyzer.dssPlots.dssGISplot as dssGISplot
 import PyDSS.pyAnalyzer.dssPlots.dssPDFplot as dssPDFplot
 import PyDSS.pyAnalyzer.dssPlots.dssProfilePlot as dssProfilePlot
 import PyDSS.pyAnalyzer.dssPlots.dssXYplot as dssXYplot
-import PyDSS.pyAnalyzer.dssPlots.dssVoltageDistance as dssVoltageDistance
+import PyDSS.pyAnalyzer.dssPlots.dssVoltageDistance as dssDistance
 
 class CreatePlots:
 
@@ -30,9 +30,15 @@ class CreatePlots:
             'Generators': ['Generators-Powers', 'Loads-Powers'],
         },
         'Curtailment': ['PVSystems-Powers'],
-        'XFMR_tap': ['Transformers-tap'],
+        'XFMR_tap': ['Transformers-taps'],
         'Voltage_imbalance': ['Buses-puVmagAngle'],
-        'Frequency_sweep': [],
+        'Frequency_sweep': {
+            'Lines': ['Lines-Power', 'Lines-VoltagesMagAng'],
+            'Circuits': ['Circuits-TotalPower', 'Circuits-Losses'],
+            'Generators': ['Generators-Powers' 'Generators-VoltagesMagAng'],
+            'PVSystems': ['PVSystems-Powers', 'PVSystems-VoltagesMagAng'],
+            'Loads': ['Loads-Powers', 'Loads-VoltagesMagAng'],
+        },
         'Feeder_power': ['Circuits-TotalPower'],
         'Feeder_line_losses': ['Circuits-LineLosses'],
         'Feeder_losses': ['Circuits-Losses'],
@@ -43,13 +49,18 @@ class CreatePlots:
         'Even Odd Filter': ['Buses-puVmagAngle', 'Lines-CurrentsMagAng', 'Transformers-CurrentsMagAng',
                             'Loads-Powers', 'Loads-VoltagesMagAng', 'Voltage_imbalance', 'PVSystems-Powers',
                             'PVSystems-VoltagesMagAng', 'Generators-Powers', 'Generators-VoltagesMagAng',
-                            'Circuits-TotalPower', 'Circuits-LineLosses', 'Circuits-Losses', 'Circuits-SubstationLosses']
+                            'Circuits-TotalPower', 'Circuits-LineLosses', 'Circuits-Losses',
+                            'Circuits-SubstationLosses','Transformers-taps']
     }
 
     plot_Types = {
         'Time series': ['Voltage', 'Loading', 'Load', 'Generation', 'Curtailment','XFMR_tap', 'Voltage_imbalance',
                         'Feeder_power', 'Feeder_line_losses', 'Feeder_substation_losses', 'Feeder_losses'],
         'XY plots': ['Load_Generation', 'Voltage_Loading'],
+
+        'Distance': ['Voltage_sag'],
+
+        'Frequency': ['Frequency_sweep']
     }
 
     def __init__(self, simulations_args, simulation_results):
@@ -88,9 +99,13 @@ class CreatePlots:
                             scenario_results_formatted[key] = self.__filter_DF_even_odd(scenario_results[key],
                                                                                         plotsettings['Frequency'],
                                                                                         plotsettings['Simulation_mode'])
-                        else:
+                        elif plot_type not in self.plot_Types['Frequency']:
                             scenario_results_formatted[key] = self.__filter_DF(scenario_results[key],
                                                                                plotsettings['Frequency'],
+                                                                               plotsettings['Simulation_mode'])
+                        else:
+                            scenario_results_formatted[key] = self.__filter_DF_harmonics(scenario_results[key],
+                                                                               plotsettings['Timestamp'],
                                                                                plotsettings['Simulation_mode'])
                         plots[plot_type][scenario_name]['Data'] = scenario_results_formatted
                         plots[plot_type][scenario_name]['Plot_settings'] = plotsettings
@@ -99,6 +114,13 @@ class CreatePlots:
 
         self.__create_plots(plots)
 
+    def __filter_DF_harmonics(self, data, time, simulation_mode):
+        datax = data.copy()
+        data['Time'] = data.index
+        datax = datax[datax['Simulation mode'] == simulation_mode]
+        datax = datax[datax.columns[2:]]
+        return (datax, None)
+
     def __create_plots(self, plots):
         for plot_type in plots:
             if plot_type in self.plot_Types['Time series']:
@@ -106,6 +128,10 @@ class CreatePlots:
                 dssPDFplot.Plot(plot_type, plots[plot_type])
             if plot_type in self.plot_Types['XY plots']:
                 dssXYplot.Plot(plot_type, plots[plot_type])
+            if plot_type in self.plot_Types['Distance']:
+                dssDistance.Plot(plot_type, plots[plot_type])
+            if plot_type in self.plot_Types['Frequency']:
+                dssFrequencySweep.Plot(plot_type, plots[plot_type])
         return
 
 
@@ -132,12 +158,7 @@ class CreatePlots:
         return data_even, data_odd
 
     def __filter_DF(self, data, frequecy, simulation_mode):
-        # print('###################################################')
-        # print(simulation_mode)
-        # print(data)
-        # print('')
         datax = data[data['frequency'] == frequecy].copy()
         datax = datax[datax['Simulation mode'] == simulation_mode]
         datax = datax[datax.columns[2:]]
-        datax = datax.loc[:, (datax != 0).any(axis=0)]
         return (datax, None)

@@ -162,7 +162,7 @@ def __validate_settings(dss_args):
     return
 
 if __name__ == '__main__':
-    Batch_file = r'C:\Users\alatif\Desktop\PyDSS-Projects\MySpohnTest\PyDSS Scenarios\BatchRunSettings.toml'
+    Batch_file = r'C:\Users\alatif\Desktop\PyDSS-Projects\Harmonics_Snapshot\PyDSS Scenarios\BatchRunSettings.toml'
     RunSimulations(Batch_file)
     #RunSimulation(Batch_file)
     print('End')

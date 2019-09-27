@@ -79,6 +79,10 @@ class Plot:
                 two_plots, classes = self.__create_feeder_losses_plot(plot_type, scenario, plot_data, ax, ax2,
                                                                    plot_settings, color, create_new_plot)
 
+            if plot_type == 'XFMR_tap':
+                two_plots, classes = self.__create_xfmr_tap_plot(plot_type, scenario, plot_data, ax, plot_settings,
+                                                                 color, create_new_plot)
+
             if classes:
                 elm_Class, elm_Class2 = classes
 
@@ -125,6 +129,14 @@ class Plot:
                                    builtup_scenario[-1], '{}-{}'.format('', plot_type),
                                    visualization_args['FileType'])
         return
+
+    def __create_xfmr_tap_plot(self, plot_type, scenario, plot_data, ax, plot_settings, color, create_new_plot):
+        labels = ('Time',  'Transformer taps [p.u.]')
+        key = self.__get_key(plot_data[scenario]['Data'], 'Transformers-taps', None)
+        data = self.__get_data(plot_data[scenario]['Data'][key])
+        self.__generate_plot(ax=ax, labels=labels, data=data, plot_settings=plot_settings, scenario=scenario,
+                             color=color, newplot=create_new_plot)
+        return False, None
 
     def __create_feeder_losses_plot(self, plot_type, scenario, plot_data, ax, ax2,  plot_settings, color,
                                    create_new_plot):
