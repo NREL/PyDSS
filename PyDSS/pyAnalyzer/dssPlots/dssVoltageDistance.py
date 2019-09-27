@@ -1,10 +1,112 @@
 import matplotlib.pyplot as plt
 import seaborn as sbn
 import pandas as pd
+import numpy as np
 import pathlib
 import os
 
 class Plot:
+    def __init__(self, plot_type, plot_data):
+        scenario_number = 0
+        colors = ["#9b59b6", "#3498db", "#95a5a6", "#e74c3c", "#34495e", "#2ecc71"]
+        self.legend_lines = []
+        self.legend_labels = []
+        self.curtailment_data = {}
+        visualization_args = None
+        two_plots = False
+        curtailment_plot = False
+        X_Y_dataframes = []
+        for scenario in plot_data:
+            plot_settings = plot_data[scenario]['Plot_settings']
+            scenario_settings = plot_data[scenario]['Scenario_settings']
+            visualization_args = plot_data[scenario]['Visualization_settings']
+            path_seperate, path_single = self.__get_paths(scenario_settings)
+            if visualization_args['Plotting_mode'] == "Separate":
+                self.legend_lines = []
+                self.legend_labels = []
+            create_new_plot = visualization_args['Plotting_mode'] == "Separate" or (
+                    visualization_args['Plotting_mode'] == "Single" and scenario_number == 0)
+            if create_new_plot:
+                fig, ax = self.__create_figure(plot_settings['Width'], plot_settings['Height'], plot_settings['DPI'])
+            elm_Class = plot_settings['Class'] if 'Class' in plot_settings else ''
+            color = colors[scenario_number % len(colors)]
+
+            if plot_type == 'Voltage_sag':
+                data = self.__get_voltage_distance_data(plot_data, scenario, plot_settings, elm_Class)
+                X_Y_dataframes.append(data)
+                columns = data.columns
+                sbn.set(style="white")
+                ax = sbn.scatterplot(ax=ax, x=columns[0], y=columns[1], data=data, label=scenario)
+                ax.legend(frameon=False, prop={'size': plot_settings['Legend_font_size']})
+            if visualization_args['Plotting_mode'] == "Separate":
+                plt.tight_layout()
+                self.save_file(fig, path_seperate, scenario, 'VDplot', visualization_args['FileType'])
+            scenario_number += 1
+        if visualization_args['Plotting_mode'] == "Single":
+            plt.tight_layout()
+            self.save_file(fig, path_single, scenario, 'VDplot', visualization_args['FileType'])
+
+        return
+
+    def __get_voltage_distance_data(self, plot_data, scenario, plot_settings, elm_Class):
+        key = self.__get_key(plot_data[scenario]['Data'], 'Buses-puVmagAngle', None)
+        voltages = self.__get_data(plot_data[scenario]['Data'][key])
+        key = self.__get_key(plot_data[scenario]['Data'], 'Buses-Distance', None)
+        distances = self.__get_data(plot_data[scenario]['Data'][key])
+
+        voltages = voltages.loc[plot_settings['Time']]
+        distances = distances.loc[plot_settings['Time']]
+
+        distances_list = []
+        for c1 in [x.split(" ")[0] for x in voltages.index]:
+            distances_list.append(distances.loc[c1 + ' [Mi]'])
+        voltages = voltages.values
+        data = pd.DataFrame(np.matrix([distances_list, voltages]).T , columns=[
+            'Distance [Mi]',
+            'Voltage [p.u.]'
+        ])
+        return data
+
+    def __create_figure(self, width, height, dpi):
+        fig = plt.figure(figsize=(width, height), dpi=dpi)
+        ax = fig.add_subplot(111)
+        return fig, ax
+
+    def __get_data(self, data, even=True):
+        if isinstance(data, tuple):
+            data_even, data_odd = data
+            if not even:
+                data_even = data_odd
+        else:
+            data_even = data
+        return data_even
+
+    def __get_key(self, data_dict, filetag, elm_class):
+        if elm_class == None:
+            key = [x for x in data_dict if x.startswith('{}-'.format(filetag))][0]
+        else:
+            key = [x for x in data_dict if x.startswith('{}-{}-'.format(elm_class, filetag))][0]
+        return key
+
+    def __get_paths(self, simulation_settings):
+        path_seperate = os.path.join(simulation_settings["Project Path"], simulation_settings["Active Project"],
+                                     "Exports", simulation_settings["Active Scenario"], "Plots")
+        path_single = os.path.join(simulation_settings["Project Path"], simulation_settings["Active Project"],
+                                   "Exports", simulation_settings["Active Scenario"], "Scenario Comparison Plots")
+        return path_seperate, path_single
+
+    def save_file(self, figure, path, scenario, plot_type, extension):
+        pathlib.Path(path).mkdir(parents=True, exist_ok=True)
+        figpath = '{}\{}-{}-Dist.{}'.format(path, scenario, plot_type, extension)
+        figure.savefig(figpath)
+        plt.close(figure)
+        print("File saved: {}".format(figpath))
+        return
+
+
+
+
+class X:
 
     def __init__(self, visualization_args, simulation_results):
         self.simulation_results = simulation_results

@@ -26,8 +26,6 @@ class Plot:
             if visualization_args['Plotting_mode'] == "Separate":
                 self.legend_lines = []
                 self.legend_labels = []
-            create_new_plot = visualization_args['Plotting_mode'] == "Separate" or (
-                    visualization_args['Plotting_mode'] == "Single" and scenario_number == 0)
             elm_Class = plot_settings['Class'] if 'Class' in plot_settings else ''
             color = colormaps[scenario_number % len(colormaps)]
             if plot_type == 'Voltage_Loading':

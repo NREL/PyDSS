@@ -1,5 +1,5 @@
 from PyDSS.dssBus import dssBus
-
+import ast
 class dssElement:
 
     def __init__(self, dssInstance):
@@ -74,6 +74,10 @@ class dssElement:
                 try:
                     VarValue = float(VarValue)
                 except:
+                    try:
+                        VarValue = ast.literal_eval(VarValue)
+                    except:
+                        pass
                     pass
             else:
                 VarValue = 0
