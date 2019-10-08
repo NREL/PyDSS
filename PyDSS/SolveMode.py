@@ -11,8 +11,6 @@ def GetSolver(SimulationSettings ,dssInstance):
             return __Shapshot(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger)
         elif SimulationSettings['Simulation Type'].lower() == 'qsts':
             return __QSTS(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger)
-        elif SimulationSettings['Simulation Type'].lower() == 'se':
-            return __StateEstimation(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger)
         elif SimulationSettings['Simulation Type'].lower() == 'dynamic':
             return __Dynamic(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger)
         else:
@@ -87,6 +85,9 @@ class __Dynamic:
         self.pyLogger.info('OpenDSS time [h] - ' + str(self.__dssSolution.DblHour()))
         self.pyLogger.info('PyDSS datetime - ' + str(self.__Time))
 
+    def GetTotalSeconds(self):
+        return (self.__Time - self.__StartTime).total_seconds()
+
     def GetDateTime(self):
         return self.__Time
 
@@ -105,10 +106,6 @@ class __Dynamic:
 
     def setMode(self, mode):
         self.__dssIntance.utils.run_command('Set Mode={}'.format(mode))
-
-class __StateEstimation:
-    def __init__(self, dssInstance, SimulationSettings, Logger):
-        return
 
 class __QSTS:
     def __init__(self, dssInstance, SimulationSettings, Logger):
@@ -163,6 +160,7 @@ class __QSTS:
         return
 
     def IncStep(self):
+        #self.__sStepRes = 1/240
         self.__dssSolution.StepSize(self.__sStepRes)
         self.__dssSolution.Solve()
         self.__Time = self.__Time + timedelta(seconds=self.__sStepRes)
@@ -170,6 +168,9 @@ class __QSTS:
         self.__Second = (self.__dssSolution.DblHour() % 1) * 60 * 60
         self.pyLogger.info('OpenDSS time [h] - ' + str(self.__dssSolution.DblHour()))
         self.pyLogger.info('PyDSS datetime - ' + str(self.__Time))
+
+    def GetTotalSeconds(self):
+        return (self.__Time - self.__StartTime).total_seconds()
 
     def GetDateTime(self):
         return self.__Time
@@ -224,6 +225,9 @@ class __Shapshot:
 
     def GetDateTime(self):
         return self.__Time
+
+    def GetTotalSeconds(self):
+        return (self.__Time - self.__StartTime).total_seconds()
 
     def GetStepResolutionSeconds(self):
         return self.__sStepRes
