@@ -104,6 +104,7 @@ class OpenDSS:
         self.__Logger.info('Loading OpenDSS model')
         reply = run_command('compile ' + self.__dssPath['dssFilePath'])
         self.__Logger.info('OpenDSS:  ' + reply)
+
         assert ('error ' not in reply.lower()), 'Error compiling OpenDSS model.\n{}'.format(reply)
         run_command('Set DefaultBaseFrequency={}'.format(self.__Options['Fundamental frequency']))
         self.__Logger.info('OpenDSS fundamental frequency set to :  ' + str(self.__Options['Fundamental frequency']) + ' Hz')
@@ -280,8 +281,10 @@ class OpenDSS:
                 self.__Modifier.Edit_Elements(cl, name, params)
             pass
 
-
         self.__dssSolver.IncStep()
+        if self.__Options['Co-simulation Mode']:
+            self.ResultContainer.updateSubscriptions()
+
         if self.__Options['Disable PyDSS controllers'] == False:
             for priority in range(CONTROLLER_PRIORITIES):
                 for i in range(self.__Options['Max Control Iterations']):
@@ -292,6 +295,7 @@ class OpenDSS:
                             self.__Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
                         break
                     self.__dssSolver.reSolve()
+
             self.__UpdatePlots()
             if self.__Options['Log Results']:
                 self.ResultContainer.UpdateResults()

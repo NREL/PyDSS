@@ -7,8 +7,6 @@ import math
 import os
 
 class PvControllerGen(ControllerAbstract):
-
-
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
         super(PvControllerGen).__init__()
 
@@ -46,7 +44,7 @@ class PvControllerGen(ControllerAbstract):
 
         # Initializing the model
         PvObj.SetParameter('kvar', 0)
-        self.__BaseKV = float(PvObj.SetParameter('kv',Settings['kV']))
+        #self.__BaseKV = float(PvObj.SetParameter('kv',Settings['kV']))
         self.__Srated = float(PvObj.SetParameter('kva',Settings['kVA']))
         self.__Prated = float(PvObj.SetParameter('kW',Settings['maxKW']))
         self.__minQ = float(PvObj.SetParameter('minkvar',-Settings['KvarLimit']))
@@ -85,6 +83,9 @@ class PvControllerGen(ControllerAbstract):
         # self.voltage = list(range(96))
         # self.reactive_power = list(range(96))
         # self.reactive_power_2 = list(range(96))
+
+        self.__VoltVioM = False
+        self.__VoltVioP = False
         return
 
     def __initializeRideThroughSettings(self):
@@ -178,7 +179,6 @@ class PvControllerGen(ControllerAbstract):
         if self.__Settings['Ride-through Category'] in ['Category I', 'Category II']:
             if self.__Settings['Permissive operation'] == 'Current limited':
                 if self.__Settings['May trip operation'] == 'Permissive operation':
-                    print('Here')
                     self.CurrLimRegion = cascaded_union(
                         [PermissiveOVRegion, PermissiveUVRegion, MandatoryRegion, MayTripRegion])
                     self.MomentarySucessionRegion = None

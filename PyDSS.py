@@ -7,7 +7,7 @@ import toml
 import sys
 import os
 
-toml_file_path = r'C:\Users\alatif\Desktop\PyDSS-Projects\MySpohnTest\PyDSS Scenarios\self_consumption\PyDSS_settings.toml'
+
 
 valid_settings = {
         'Log Results' : {'type': bool, 'Options': [True, False]},
@@ -32,6 +32,14 @@ valid_settings = {
         'Active Project' : {'type': str},
         'Active Scenario' : {'type': str},
         'DSS File' : {'type': str},
+
+        'Co-simulation Mode': {'type': bool, 'Options': [True, False]},
+        'Federate name' : {'type': str},
+        'Time delta' : {'type': float},
+        'Core type' : {'type': str},
+        'Uninterruptible' : {'type': bool, 'Options': [True, False]},
+        'Helics logging level' : {'type': int, 'Options': range(0, 10)},
+
 
         'Logging Level' : {'type': str, 'Options': ["DEBUG", "INFO", "WARNING" , "ERROR"]},
         'Log to external file'  : {'type': bool, 'Options': [True, False]},
@@ -92,9 +100,10 @@ def RunScenario(Scenario_TOML_file_path, run_simulation=True, generate_visuals=F
     text = settings_text.join(f.readlines())
     dss_args = toml.loads(text, _dict=dict)
     __validate_settings(dss_args)
+    dss_args["Start Time (min)"] += 0.3
+    dss_args["End Time (min)"] += 0.3
     f.close()
 
-    print(run_simulation)
     if run_simulation:
         dss = dssInstance.OpenDSS(**dss_args)
         print('Running scenario: {}'.format(Scenario_TOML_file_path))
@@ -162,9 +171,10 @@ def __validate_settings(dss_args):
     return
 
 if __name__ == '__main__':
-    Batch_file = r'C:\Users\alatif\Desktop\PyDSS-Projects\Harmonics_Snapshot\PyDSS Scenarios\BatchRunSettings.toml'
-    RunSimulations(Batch_file)
-    #RunSimulation(Batch_file)
+    #Batch_file = r'C:\Users\alatif\Desktop\PyDSS-Projects\MySpohnTest\PyDSS Scenarios\PlotsTOML.toml'
+    #RunSimulations(Batch_file)
+    toml_file_path = r'C:\Users\alatif\Desktop\PyDSS-Projects\MySpohnTest\PyDSS Scenarios\helics\PyDSS_settings.toml'
+    RunScenario(toml_file_path)
     print('End')
     # process(sys.argv[3:])
 

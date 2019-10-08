@@ -28,9 +28,9 @@ def Create(ElmName, ControllerType, Settings, ElmObjectList, dssInstance, dssSol
     #     if int(Index) >= 0:
     #         ElmObjectList[ElmName] = dssElement(dssInstance)
     #         relObject = ElmObjectList[ElmName]
-    #     else:
-    #         print('The controller dictionary does not contain {}'.format(ElmName))
-    #         return -1
+    # else:
+    #     print('The controller dictionary does not contain {}'.format(ElmName))
+    #     return -1
 
 
     ObjectController = ControllerTypes[ControllerType](relObject, Settings, dssInstance, ElmObjectList, dssSolver)

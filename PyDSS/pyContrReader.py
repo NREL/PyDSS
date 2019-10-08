@@ -1,13 +1,13 @@
-import os
 import pandas as pd
-
+import numpy as np
+import os
 
 class pyContrReader:
-    pyControllers = {}
-    def __init__(self, Path = r'C:/Users/alatif/Desktop/PyDSS-heco/Import/pyControllerList'):
+    def __init__(self, Path):
         self.pyControllers = {}
         filenames = os.listdir(Path)
         for filename in filenames:
+
             if filename.endswith('.xlsx'):
                 pyControllerType  = filename.split('.')[0]
                 ControllerDataset = pd.read_excel(os.path.join(Path, filename), skiprows=[0,], index_col=[0])
@@ -15,6 +15,70 @@ class pyContrReader:
                 pyController = {}
                 for pyControllerName in pyControllerNames:
                     pyControllerData = ControllerDataset.loc[pyControllerName]
+                    assert len(pyControllerData == 1), 'Multiple PyDSS controller definitions for a single OpenDSS ' +\
+                                                       'element not allowed'
                     pyControllerDict = pyControllerData.to_dict()
                     pyController[pyControllerName] = pyControllerDict
                 self.pyControllers[pyControllerType] = pyController
+
+
+class pySubscriptionReader:
+    def __init__(self, filePath):
+        self.SubscriptionDict = {}
+        SubscriptionData = pd.read_excel(filePath, skiprows=[0,], index_col=[0])
+        requiredColumns = {'Property', 'Subscription ID', 'Unit', 'Subscribe', 'Data type'}
+        fileColumns = set(SubscriptionData.columns)
+        diff  = requiredColumns.difference(fileColumns)
+
+        assert (len(diff) == 0), 'Missing column in the scbscriptions file \nRequired columns: {}'.format(
+            requiredColumns
+        )
+        Subscribe = SubscriptionData['Subscribe']
+        assert (Subscribe.dtype == bool), 'The subscribe column can only have boolean values.'
+        self.SubscriptionDict = SubscriptionData.T.to_dict()
+
+
+
+
+class pyExportReader:
+    def __init__(self, filePath):
+        self.pyControllers = {}
+        self.publicationList = []
+
+        ControllerDataset = pd.read_excel(filePath, skiprows=[0,], index_col=[0])
+        assert (ControllerDataset.columns[0] == 'Publish'), 'First column after class declarations in the ' +\
+                                                            'export defination files  should have column ' +\
+                                                            'name "Publish"'
+
+        Publish = ControllerDataset['Publish']
+        assert (Publish.dtype == bool), 'The publish column can only have boolean values.'
+        ControllerDatasetFiltered = ControllerDataset[ControllerDataset.columns[1:]]
+
+        pyControllerNames = ControllerDatasetFiltered.index.tolist()
+        pyController = {}
+        for pyControllerName, doPublish in zip(pyControllerNames, Publish.values):
+            pyControllerData = ControllerDatasetFiltered.loc[pyControllerName]
+            pulishdata = ControllerDataset['Publish'].loc[pyControllerName]
+            if isinstance(pulishdata, np.bool_):
+                pulishdata = [pulishdata]
+            else:
+                pulishdata = pulishdata.dropna().values
+            Data = pyControllerData.copy()
+            Data.index = range(len(Data))
+            for i, publish in enumerate(pulishdata):
+                if publish:
+                    if isinstance(Data, pd.core.frame.DataFrame):
+                        properties = Data.loc[i].dropna()
+                    else:
+                        properties = Data.dropna().values
+                    for property in properties:
+                        self.publicationList.append("{} {}".format(pyControllerName, property))
+
+            if len(pyControllerData) > 1:
+                pyControllerData = pd.Series(pyControllerData.values.flatten())
+                pyControllerDict = pyControllerData.dropna().to_dict()
+            else:
+                pyControllerDict = pyControllerData.dropna().to_dict()
+
+            self.pyControllers[pyControllerName] = pyControllerDict
+        self.publicationList = list(set(self.publicationList))
