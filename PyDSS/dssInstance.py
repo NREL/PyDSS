@@ -257,8 +257,6 @@ class OpenDSS:
         self.__dssObjectsByClass['Circuits'] = {
             'Circuit.' + self.__dssCircuit.Name() : self.__dssObjects['Circuit.' + self.__dssCircuit.Name()]
         }
-
-        #print(self.__dssObjects)
         return
 
     def __GetRelaventObjectDict(self, key):
