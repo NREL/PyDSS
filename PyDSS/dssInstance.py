@@ -61,7 +61,6 @@ DSS_DEFAULTS = {
 
 class OpenDSS:
     def __init__(self, **kwargs):
-
         self.__TempResultList = []
         self.__dssInstance = dss
         self.__dssBuses = {}
@@ -93,9 +92,7 @@ class OpenDSS:
         self.__Logger.info('An instance of OpenDSS version ' + dss.__version__ + ' has been created.')
 
         for key, path in self.__dssPath.items():
-            if not os.path.exists(path):
-                self.__Logger.error('{} path: {} does not exist!'.format(key, path))
-                quit()
+            assert (os.path.exists(path)), '{} path: {} does not exist!'.format(key, path)
 
         self.__Options = kwargs
         self.__dssInstance.Basic.ClearAll()
@@ -316,7 +313,6 @@ class OpenDSS:
             else:
                 self.__dssSolver.setMode('Yearly')
         return
-        #self.__dssSolver.IncStep()
 
     def RunSimulation(self):
         startTime = time.time()
