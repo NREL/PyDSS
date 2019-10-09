@@ -10,7 +10,9 @@ class pyContrReader:
 
             if filename.endswith('.xlsx'):
                 pyControllerType  = filename.split('.')[0]
-                ControllerDataset = pd.read_excel(os.path.join(Path, filename), skiprows=[0,], index_col=[0])
+                filepath = os.path.join(Path, filename)
+                assert (os.path.exists(filepath)), 'path: "{}" does not exist!'.format(filepath)
+                ControllerDataset = pd.read_excel(filepath, skiprows=[0,], index_col=[0])
                 pyControllerNames = ControllerDataset.index.tolist()
                 pyController = {}
                 for pyControllerName in pyControllerNames:
@@ -25,6 +27,7 @@ class pyContrReader:
 class pySubscriptionReader:
     def __init__(self, filePath):
         self.SubscriptionDict = {}
+        assert (os.path.exists(filePath)), 'path: "{}" does not exist!'.format(filePath)
         SubscriptionData = pd.read_excel(filePath, skiprows=[0,], index_col=[0])
         requiredColumns = {'Property', 'Subscription ID', 'Unit', 'Subscribe', 'Data type'}
         fileColumns = set(SubscriptionData.columns)
@@ -44,7 +47,7 @@ class pyExportReader:
     def __init__(self, filePath):
         self.pyControllers = {}
         self.publicationList = []
-
+        assert (os.path.exists(filePath)), 'path: "{}" does not exist!'.format(filePath)
         ControllerDataset = pd.read_excel(filePath, skiprows=[0,], index_col=[0])
         assert (ControllerDataset.columns[0] == 'Publish'), 'First column after class declarations in the ' +\
                                                             'export defination files  should have column ' +\
