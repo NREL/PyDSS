@@ -1,3 +1,4 @@
+from  PyDSS.pyPlots.pyPlotAbstract import PlotAbstract
 from bokeh.plotting import figure, curdoc
 from bokeh.io import output_file
 from bokeh.models import ColumnDataSource, ColorBar, \
@@ -9,9 +10,9 @@ import pandas as pd
 import numpy as np
 
 
-class XYPlot:
+class XYPlot(PlotAbstract):
     def __init__(self,PlotProperties, dssBuses, dssObjects, dssCircuit, dssSolver):
-
+        super(XYPlot).__init__()
         self.__dssBuses = dssBuses
         self.__dssObjs = dssObjects
         self.__dssCircuit = dssCircuit
@@ -60,8 +61,11 @@ class XYPlot:
         self.doc.add_root(self.__Figure)
         self.doc.title = "PyDSS"
         self.session = push_session(self.doc)
-        self.session.show(self.__Figure)  # open the document in a browser
+        #self.session.show(self.__Figure)  # open the document in a browser
         return
+
+    def GetSessionID(self):
+        return self.session.id
 
     def GetColorArray(self, DataSeries, Pallete):
         if len(DataSeries)> 10:
@@ -92,13 +96,13 @@ class XYPlot:
 
         if pptyValue is not None:
             if isinstance(pptyValue, list):
-                if Index == 'SumEven':
+                if Index.lower() == 'sumeven':
                     result = Multiplier * sum(pptyValue[::2])
-                elif Index == 'SumOdd':
+                elif Index.lower() == 'sumodd':
                     result = Multiplier * sum(pptyValue[1::2])
-                elif Index == 'Even':
+                elif Index.lower() == 'even':
                     result = [[Multiplier * x] for x in pptyValue[::2]]
-                elif Index == 'Odd':
+                elif Index.lower() == 'odd':
                     result = [[Multiplier * x] for x in pptyValue[1::2]]
                 elif 'Index=' in Index:
                     c = int(Index.replace('Index=', ''))

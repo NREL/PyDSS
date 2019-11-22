@@ -8,18 +8,8 @@ try:
 except ImportError:
     from distutils.core import setup
 
-requirements = [
-    'numpy',
-    'pandas',
-    'xlrd',
-    #'subprocess',
-    'click',
-    'PyQt5',
-    'OpenDSSDirect.py',
-    'bokeh',
-    #'ast',
-    #'pyproj'
-]
+with open('requirements.txt') as f:
+    requirements = f.read().splitlines()
 
 # Read the version from the __init__.py file without importing it
 def read(*names, **kwargs):
@@ -39,11 +29,23 @@ def find_version(*file_paths):
 
 setup(name='PyDSS',
       version=find_version("PyDSS", "__init__.py"),
-      description='a high level python interface for OpenDSS',
+      description='A high-level python interface for OpenDSS',
       author='Aadil Latif',
       author_email='Aadil.Latif@nrel.gov',
-      url='https://github.nrel.gov/alatif/PyDSS',
+      url='http://www.github.com/nrel/pydss',
       packages=find_packages(),
       install_requires=requirements,
-      package_data={'PyDSS': []},
+      package_data={'PyDSS': ['*.toml']},
+      license='BSD 3 clause',
+      python_requires='>=3.6',
+      classifiers=[
+          'Development Status :: 4 - Beta',
+          'Environment :: Console',
+          'Environment :: Web Environment',
+          'Intended Audience :: Developers',
+          'Intended Audience :: Science/Research',
+          'Operating System :: OS Independent',
+          "Programming Language :: Python :: 3",
+          "License :: OSI Approved :: BSD License",
+          ],
      )

@@ -4,12 +4,28 @@ import math
 import ast
 
 class StorageController(ControllerAbstract):
+    """Numerous control implementation for a storage system from both behind-the-meter and front-of- meter applications. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
+
+            :param StorageObj: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS Storage element
+            :type FaultObj: class:`PyDSS.dssElement.dssElement`
+            :param Settings: A dictionary that defines the settings for the PvController.
+            :type Settings: dict
+            :param dssInstance: An :class:`opendssdirect` instance
+            :type dssInstance: :class:`opendssdirect`
+            :param ElmObjectList: Dictionary of all dssElement, dssBus and dssCircuit objects
+            :type ElmObjectList: dict
+            :param dssSolver: An instance of one of the classed defined in :mod:`PyDSS.SolveMode`.
+            :type dssSolver: :mod:`PyDSS.SolveMode`
+            :raises: AssertionError if 'StorageObj' is not a wrapped OpenDSS Storage element
+
+    """
     def __init__(self, StorageObj, Settings, dssInstance, ElmObjectList, dssSolver):
         self.Time = -1
         super(StorageController).__init__()
 
         self.__ControlledElm = StorageObj
         Class, Name = self.__ControlledElm.GetInfo()
+        assert (Class.lower() == 'storage'), 'StorageController works only with an OpenDSS Storage element'
         self.__Name = 'pyCont_' + Class + '_' + Name
 
         self.Time = (-1, 0)
@@ -91,6 +107,8 @@ class StorageController(ControllerAbstract):
         return False
 
     def TimeOfUse(self):
+        """ Implementation of a time of use controller for behind the meter applications
+        """
         dP = 0
         Pub = self.__Settings['touLoadLim']
         touCharge = self.__Settings['%touCharge']
@@ -131,6 +149,8 @@ class StorageController(ControllerAbstract):
 
 
     def DemandCharge(self):
+        """ Implementation of a demand charge controller for behind the meter applications
+        """
         self.Demand = 0
         dP = 0
         DemandChgThreh = self.__Settings['DemandChgThreh[kWh]']
@@ -183,6 +203,8 @@ class StorageController(ControllerAbstract):
         return Error
 
     def ScheduledControl(self):
+        """ Implementation of a fixed schedule controller. Used to implemented predefined dispatch signals
+        """
         P_profile = self.__Settings['Schedule']
         Days = self.__Settings['Days']
         LenSchedule = len(P_profile)
@@ -205,6 +227,8 @@ class StorageController(ControllerAbstract):
         return 0
 
     def NonExportTimeTriggered(self):
+        """ Implementation of a smart non-export controller. Makes use of TOU window to optimize charging
+        """
         # self.dPold = 0
         dP = 0
         Plb = self.__Settings['BaseLoadLim']
@@ -283,6 +307,9 @@ class StorageController(ControllerAbstract):
         return Error
 
     def PeakShavingControl(self):
+        """ Implementation of a peak shaving / base loading controller. Setting both peak shaving and base loading
+        limits to zero will make the storage work in "SELF CONSUMPTION" mode
+        """
         Pub = self.__Settings['PS_ub']
         Plb = self.__Settings['PS_lb']
         IdlingkWPercent = float(self.__ControlledElm.GetParameter('%IdlingkW'))
@@ -339,6 +366,8 @@ class StorageController(ControllerAbstract):
         return 0
 
     def TimeTriggeredControl(self):
+        """ Charge and discharge cycles depend on defined time base schedules
+        """
         HrCharge = self.__Settings['HrCharge']
         HrDischarge = self.__Settings['HrDischarge']
         rateCharge = self.__Settings['%rateCharge']
@@ -360,6 +389,8 @@ class StorageController(ControllerAbstract):
         return 0
 
     def CapacityFirmimgControl(self):
+        """ Implementation of a capacity firming algorithm
+        """
         dPub = self.__Settings['CF_dP_ub']
         dPlb = self.__Settings['CF_dP_lb']
 
@@ -404,6 +435,9 @@ class StorageController(ControllerAbstract):
         return Error
 
     def ConstantPowerFactorControl(self):
+        """ Implementation of a constant power factor algorithm. In all cases of reactive power support, active power
+        will be prioritized over reactive power.
+        """
         PF = self.__Settings['pf']
         self.__dssSolver.reSolve()
         Pcalc = float(self.__ControlledElm.GetParameter('kw')) / self.__Prated
@@ -427,6 +461,10 @@ class StorageController(ControllerAbstract):
         return 0
 
     def VariablePowerFactorControl(self):
+        """ Implementation of a variable power factor algorithm. In all cases of reactive power support, active power
+            will be prioritized over reactive power.
+        """
+
         pMin = self.__Settings['Pmin']
         pMax = self.__Settings['Pmax']
         pfMin = self.__Settings['pfMin']
@@ -464,7 +502,9 @@ class StorageController(ControllerAbstract):
         return 0
 
     def VoltVarControl(self):
-
+        """ Implementation of a Volt / var algorithm. Enables the storage to stack multiple services. In all cases of
+        reactive power support, active power will be prioritized over reactive power.
+        """
         uMin = self.__Settings['uMin']
         uMax = self.__Settings['uMax']
         uDbMin = self.__Settings['uDbMin']

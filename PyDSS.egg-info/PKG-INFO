@@ -1,10 +1,19 @@
-Metadata-Version: 1.0
+Metadata-Version: 1.2
 Name: PyDSS
 Version: 0.0.1
-Summary: a high level python interface for OpenDSS
-Home-page: https://github.nrel.gov/alatif/PyDSS
+Summary: A high-level python interface for OpenDSS
+Home-page: http://www.github.com/nrel/pydss
 Author: Aadil Latif
 Author-email: Aadil.Latif@nrel.gov
-License: UNKNOWN
+License: BSD 3 clause
 Description: UNKNOWN
 Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Console
+Classifier: Environment :: Web Environment
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Science/Research
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: BSD License
+Requires-Python: >=3.6

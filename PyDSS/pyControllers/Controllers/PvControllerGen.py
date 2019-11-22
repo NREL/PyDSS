@@ -7,6 +7,21 @@ import math
 import os
 
 class PvControllerGen(ControllerAbstract):
+    """Implementation of IEEE1547-2003 and IEEE1547-2018 voltage ride-through standards using the OpenDSS Generator model. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
+
+            :param PvObj: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS 'Generator' element
+            :type FaultObj: class:`PyDSS.dssElement.dssElement`
+            :param Settings: A dictionary that defines the settings for the PvController.
+            :type Settings: dict
+            :param dssInstance: An :class:`opendssdirect` instance
+            :type dssInstance: :class:`opendssdirect`
+            :param ElmObjectList: Dictionary of all dssElement, dssBus and dssCircuit objects
+            :type ElmObjectList: dict
+            :param dssSolver: An instance of one of the classed defined in :mod:`PyDSS.SolveMode`.
+            :type dssSolver: :mod:`PyDSS.SolveMode`
+            :raises: AssertionError if 'PvObj' is not a wrapped OpenDSS Generator element
+
+    """
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
         super(PvControllerGen).__init__()
 
@@ -36,6 +51,7 @@ class PvControllerGen(ControllerAbstract):
         self.__Settings = Settings
 
         Class, Name = self.__ControlledElm.GetInfo()
+        assert (Class.lower() == 'generator'), 'PvControllerGen works only with an OpenDSS Generator element'
         self.__Name = 'pyCont_' + Class + '_' + Name
         if '_' in Name:
             self.Phase = Name.split('_')[1]
@@ -218,11 +234,18 @@ class PvControllerGen(ControllerAbstract):
         #     Error = self.update[Priority]()
         if Priority == 2:
             uIn = self.__UpdateViolatonTimers()
-            self.__VoltageRideThrough(uIn)
+            self.VoltageRideThrough(uIn)
 
         return Error
 
-    def __VoltageRideThrough(self, uIn):
+    def Trip(self, uIn):
+        """ Implementation of the IEEE1587-2003 voltage ride-through requirements for inverter systems
+        """
+        return
+
+    def VoltageRideThrough(self, uIn):
+        """ Implementation of the IEEE1587-2018 voltage ride-through requirements for inverter systems
+        """
         self.__faultCounterClearingTimeSec = 1
 
         Pm = Point(self.__uViolationtime, uIn)

@@ -65,6 +65,7 @@ class CreatePlots:
 
     def __init__(self, simulations_args, simulation_results):
         visualization_args = simulations_args['Visualization']
+        #print(visualization_args)
         plotting_dict = simulations_args['Plots']
         plots = {}
         for plot_type, required_files in self.required_files.items():
@@ -84,7 +85,7 @@ class CreatePlots:
                     plotsettings = visualization_args[plot_type + '_settings']
                     if isinstance(required_files, dict):
                         assert ('Class' in plotsettings), "Settings for plot type '{}' require ".format(plot_type) +\
-                                                          "defination of class variable in the settings dictionary."
+                                                          "definition of class variable in the settings dictionary."
                         elm_class = plotsettings['Class']
                         required_files = required_files[elm_class]
                     for each_file in required_files:
@@ -95,7 +96,7 @@ class CreatePlots:
                                               "simulation and export the required result file to generate a " +\
                                               "'{}' plot".format(plot_type)
                         keysum = [1 for x in self.plot_groups['Even Odd Filter'] if key.startswith(x + '-')]
-                        if keysum:
+                        if keysum and plot_type not in self.plot_Types['Frequency']:
                             scenario_results_formatted[key] = self.__filter_DF_even_odd(scenario_results[key],
                                                                                         plotsettings['Frequency'],
                                                                                         plotsettings['Simulation_mode'])
@@ -103,9 +104,11 @@ class CreatePlots:
                             scenario_results_formatted[key] = self.__filter_DF(scenario_results[key],
                                                                                plotsettings['Frequency'],
                                                                                plotsettings['Simulation_mode'])
+
                         else:
                             scenario_results_formatted[key] = self.__filter_DF_harmonics(scenario_results[key],
-                                                                               plotsettings['Timestamp'],
+                                                                               plotsettings['Frequency'],
+                                                                               plotsettings['Time'],
                                                                                plotsettings['Simulation_mode'])
                         plots[plot_type][scenario_name]['Data'] = scenario_results_formatted
                         plots[plot_type][scenario_name]['Plot_settings'] = plotsettings
@@ -114,11 +117,14 @@ class CreatePlots:
 
         self.__create_plots(plots)
 
-    def __filter_DF_harmonics(self, data, time, simulation_mode):
+    def __filter_DF_harmonics(self, data, baseFreq, time, simulation_mode):
         datax = data.copy()
-        data['Time'] = data.index
+        datax['Time'] = datax.index
+        datax = datax[datax['Time'] == time]
+        datax = datax[datax['frequency'] > baseFreq]
         datax = datax[datax['Simulation mode'] == simulation_mode]
-        datax = datax[datax.columns[2:]]
+        datax.index = datax['frequency']
+        datax = datax[datax.columns[2:-1]]
         return (datax, None)
 
     def __create_plots(self, plots):
@@ -144,10 +150,6 @@ class CreatePlots:
         return relevant_key
 
     def __filter_DF_even_odd(self, data, frequecy, simulation_mode):
-        # print('###################################################')
-        # print(simulation_mode)
-        # print(data)
-        # print('')
         datax = data[data['frequency'] == frequecy].copy()
         datax = datax[datax['Simulation mode'] == simulation_mode]
         datax = datax[datax.columns[2:]]

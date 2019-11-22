@@ -3,14 +3,29 @@ import socket
 import struct
 
 class SocketController(ControllerAbstract):
-    Time = -1
+    """Allows PyDSS object to inteface with external software using socket communication. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
+
+            :param ElmObject: A :class:`PyDSS.dssElement.dssElement` object that wraps around any OpenDSS element
+            :type FaultObj: class:`PyDSS.dssElement.dssElement`
+            :param Settings: A dictionary that defines the settings for the PvController.
+            :type Settings: dict
+            :param dssInstance: An :class:`opendssdirect` instance
+            :type dssInstance: :class:`opendssdirect`
+            :param ElmObjectList: Dictionary of all dssElement, dssBus and dssCircuit objects
+            :type ElmObjectList: dict
+            :param dssSolver: An instance of one of the classed defined in :mod:`PyDSS.SolveMode`.
+            :type dssSolver: :mod:`PyDSS.SolveMode`
+            :raises: socket.error if the connection fails
+
+    """
 
     def __init__(self, ElmObject, Settings, dssInstance, ElmObjectList,dssSolver):
         super(SocketController).__init__()
+        self.Time = -1
         self.__ControlledElm = ElmObject
         Class, Name = self.__ControlledElm.GetInfo()
         self.__Name = 'pyCont_' + Class + '_' + Name
-
+        #assert (Class.lower() == 'regulator'), 'PvControllerGen works only with an OpenDSS Regulator element'
         self.IP = Settings['IP']
         self.Port = Settings['Port']
         self.Encoding = Settings['Encoding']
@@ -27,11 +42,13 @@ class SocketController(ControllerAbstract):
         return s
 
     def Update(self, Priority, Time, UpdateResults):
-        # only update once?
-        self.TimeChange = self.Time != Time
-        self.Time = Time
 
-        if self.TimeChange:
+        self.TimeChange = self.Time != (Priority, Time)
+        self.Time = (Priority, Time)
+        # self.TimeChange = self.Time != Time
+        # self.Time = Time
+
+        if self.TimeChange and Priority==0:
             Values = []
             for Variable in self.Inputs:
                 Val =  self.__ControlledElm.GetValue(Variable)
@@ -40,7 +57,7 @@ class SocketController(ControllerAbstract):
                 else:
                     Values.extend([Val])
             self.Socket.sendall(struct.pack('%sd' % len(Values), *Values))
-
+        if self.TimeChange and Priority == 1:
             Data = self.Socket.recv(self.BufferSize)
             if Data:
                 numDoubles = int(len(Data) / 8)
@@ -48,5 +65,4 @@ class SocketController(ControllerAbstract):
                 Data = list(struct.unpack(tag, Data))
                 for i, Variable in enumerate(self.Outputs):
                     self.__ControlledElm.SetParameter(Variable, Data[0])
-
         return 0

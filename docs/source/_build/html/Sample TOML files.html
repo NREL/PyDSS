@@ -1,0 +1,451 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sample “Scenario_settings.toml” file &#8212; PyDSS 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Automated scenario comparison" href="Automated comparison of scenarios.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="Automated comparison of scenarios.html" title="Automated scenario comparison"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">PyDSS 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="sample-scenario-settings-toml-file">
+<h1>Sample “Scenario_settings.toml” file<a class="headerlink" href="#sample-scenario-settings-toml-file" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-TOML notranslate"><div class="highlight"><pre><span></span># Log Results- [Bool] - Set true if results need to be exported
+# Return Results- [Bool] - Set true if running PyDSS in Cosimulation environment, RunStep function will return current system states
+# Export Mode- [Str] - Possible options &quot;byClass&quot; and &quot;byElement&quot;
+# Export Style- [Str] - possible options &quot;Single_file&quot; and &quot;Separate_files&quot;
+
+&quot;Log Results&quot; = true
+&quot;Return Results&quot; = false
+&quot;Export Mode&quot; = &quot;byClass&quot;
+&quot;Export Style&quot; = &quot;Single file&quot;
+
+# Create dynamic plots- [Bool] - Enable rendering of dynamic plots using bokeh
+# Open plots in browser- [Bool] - Open plots  in s window. Will work if &quot;Create dynamic plots&quot; is set to true 
+
+&quot;Create dynamic plots&quot; = false
+&quot;Open plots in browser&quot; = true
+
+# Simulation Type- [String] - Possible options &quot;QSTS&quot;, &quot;Dynamic&quot; and &quot;Snapshot&quot;
+# Start Year- [Int] - Start year for the simulation study (em nb .g 2017)
+# Start Day- [Int] - Start day for the simulation study. Index start at 1
+# Start Time (min)- [Float] - Start time in minutes. Floating number can be used to account for second or sub second time points
+# End Day- [Float] - End day for the simulation study
+# End Time (min)- [Float] - end time in minutes
+# Date offset- [Int] - Date offset to be added incase OpenDSS profiles do not start at the begining of the year 
+# Step resolution (sec)- [Float] - Time step resolution in seconds
+# Max Control Iterations- [Int] - Maximum outer loop control iterations
+# Error tolerance- [Float] - Error tolerance in per unit
+# Control mode- [String] - Control mode options are &quot;STATIC&quot; or &quot;Time&quot;
+# Disable PyDSS controllers- [Bool] - Disable all pyController in PyDSS. All controller implemented in DSS files will still work.
+# Active Project- [String] - Name of project to run
+# Active Scenario- [String] - Project scenario to use
+# DSS File- [String] - The main OpenDSS file
+
+&quot;Start Year&quot; = 2017
+&quot;Start Day&quot; = 1
+&quot;Start Time (min)&quot; = 0.0
+&quot;End Day&quot; = 1
+&quot;End Time (min)&quot; = 1439.0
+&quot;Date offset&quot; = 0
+&quot;Step resolution (sec)&quot; = 900.0
+&quot;Max Control Iterations&quot; = 15
+&quot;Error tolerance&quot; = 0.001
+&quot;Control mode&quot; = &quot;Time&quot;
+&quot;Disable PyDSS controllers&quot; = false
+&quot;Project Path&quot; = &quot;C:\\Users\\alatif\\Desktop\\PyDSS-Projects&quot;
+&quot;Simulation Type&quot; = &quot;QSTS&quot;
+&quot;Active Project&quot; = &quot;MySpohnTest&quot;
+&quot;Active Scenario&quot; = &quot;self_consumption&quot;
+&quot;DSS File&quot; = &quot;Master_Spohn_existing_VV.dss&quot;
+
+
+# Co-simulation Mode - [Bool] - Set to true to enable Helics interface all other co-simulation settings only valid if this value is true
+# Federate name - [str] - Name of the federate 
+# Time delta - [float] - The property controlling the minimum time delta for a federate
+# Core type - [str] - Core tyoe to be used for communication
+# Uninterruptible - [Bool] - Can the federate be interepted
+# Helics logging level - [int] - logging level for the federate (use Helics documentation for choosig the right value)
+
+&quot;Co-simulation Mode&quot; = false
+&quot;Federate name&quot; = &quot;PyDSS&quot;
+&quot;Time delta&quot; = 0.01
+&quot;Core type&quot; = &quot;zmq&quot;
+&quot;Uninterruptible&quot; = true
+&quot;Helics logging level&quot; = 5
+
+
+# Enable frequency sweep- [Bool] - Enable harmonic sweep. works with only &#39;Static&#39; and &#39;QSTS&#39; simulation modes
+# Fundamental frequency- [Float] - Fundamental system frequeny in Hertz
+# Start frequency- [Float] - as multiple of fundamental frequency
+# End frequency- [Float] - as multiple of fundamental frequency
+# Frequency increment- [Float] - as multiple of fundamental 
+# Neglect shunt admittance- [Bool] - Neglect shunt addmittance for frequency sweep
+# Percentage load in series- [Float] - Percent of load that is series RL for Harmonic studies
+
+&quot;Enable frequency sweep&quot; = false
+&quot;Fundamental frequency&quot; = 60
+&quot;Start frequency&quot; = 1.0
+&quot;End frequency&quot; = 15.0
+&quot;frequency increment&quot; = 2.0
+&quot;Neglect shunt admittance&quot; = false
+&quot;Percentage load in series&quot; = 50.0
+
+# Logging Level- [String] - possible options &quot;DEBUG&quot;, &quot;INFO&quot;, &quot;WARNING&quot; or &quot;ERROR&quot;
+# Log to external file- [Bool] - Boolean variable
+# Display on screen- [Bool] - Boolean variable
+# Clear old log file- [Bool] - Boolean variable
+
+&quot;Logging Level&quot; = &quot;DEBUG&quot;
+&quot;Log to external file&quot; = false
+&quot;Display on screen&quot; = true
+&quot;Clear old log file&quot; = false
+
+&quot;Number of Monte Carlo scenarios&quot; = 1
+
+</pre></div>
+</div>
+</div>
+<div class="section" id="sample-batch-settings-toml-file">
+<h1>Sample “Batch_settings.toml” file<a class="headerlink" href="#sample-batch-settings-toml-file" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-TOML notranslate"><div class="highlight"><pre><span></span>
+
+[Simulations] 
+
+#Absolute path for all scenario settings.toml files.
+#Any number of scenarios may be added to the list.
+#The first scenario is always the base case against which all scenarios are compared 
+Scenarios = [
+		&quot;C:/Users/alatif/Desktop/PyDSS-Projects/MySpohnTest/PyDSS Scenarios/base/Scenario_settings.toml&quot;,
+		&quot;C:/Users/alatif/Desktop/PyDSS-Projects/MySpohnTest/PyDSS Scenarios/self_consumption/Scenario_settings.toml&quot;
+	]
+
+#Run_simulations: BOOL: Run the simulation or not	
+Run_simulations = true
+#Generate_visuals: BOOL: Create comparative plots. If Run_simulations is false, simulation results from older simulation results will be used if available. If no results are available, an assertion error will be raied.   
+Generate_visuals = false
+#Run_bokeh_server: BOOL: Run bokeh server. Will only work if Run_simulations 
+Run_bokeh_server = false
+
+[Plots]
+#&lt;plot type&gt;: BOOL: Enable plots to be created for the given list of scenarios. 
+Frequency_sweep = false
+XFMR_tap = false
+Voltage_sag = false
+Voltage = false
+Loading = false
+Voltage_Loading = false
+Voltage_profiles = false
+Load = false
+Generation = false
+Load_Generation = false
+Curtailment = false
+Voltage_imbalance = false
+Feeder_power = false
+Feeder_line_losses = false
+Feeder_losses = false
+Feeder_substation_losses = false
+
+[Visualization]
+#Plotting_mode_-_str_-_possible_values &#39;Single&#39;, &#39;Separate&#39;
+Plotting_mode =&quot;Separate&quot;
+#Plotting_mode_-_str_-_possible_values &#39;png&#39;, &#39;pdf&#39;
+FileType = &#39;png&#39;
+
+[Visualization.Curtailment_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = &quot;Yearly&quot;
+Show_operation_regions = true
+Y_ranges = [0.0, 2.5, 5.0, 100.0]
+Y_range_labels = [&quot;Low curtailment&quot;, &quot;Imtermediate curtailment&quot;, &quot;High curtailment&quot;,]
+Y_range_colors = [&quot;green&quot;, &quot;blue&quot;, &quot;darkblue&quot;]
+
+[Visualization.Feeder_power_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = &quot;Yearly&quot;
+
+[Visualization.Feeder_line_losses_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = &quot;Yearly&quot;
+
+[Visualization.Feeder_losses_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = &quot;Yearly&quot;
+
+[Visualization.Feeder_substation_losses_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = &quot;Yearly&quot;
+
+[Visualization.Voltage_imbalance_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = &quot;Yearly&quot;
+Show_operation_regions = false
+Y_ranges = [0.0, 0.90, 0.95, 1.05, 1.10, 1.5]
+Y_range_labels = [&quot;UV trip region&quot;, &quot;Voltage control region&quot;, &quot;Normal operation region&quot;, &quot;Voltage control region&quot;, &quot;OV trip region&quot;]
+Y_range_colors = [&quot;orange&quot;, &quot;yellow&quot;, &quot;green&quot;, &quot;blue&quot;, &quot;darkblue&quot;]
+
+[Visualization.Frequency_sweep_settings]
+Height = 800
+Width = 600
+DPI = 200
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Color_template = &quot;Blues&quot;
+# Elements - List - List of bus names. An empy list would mean all
+Elements = []
+
+[Visualization.XFMR_tap_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = &quot;Yearly&quot;
+
+[Visualization.Generation_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = &quot;Yearly&quot;
+# Class - str - possible options &#39;Generators&#39;, &#39;PVSystems&#39;
+Class = &quot;PVSystems&quot;
+
+[Visualization.Load_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = &quot;Yearly&quot;
+
+[Visualization.Voltage_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = &quot;Yearly&quot;
+Color_template = &quot;Blues&quot;
+Show_operation_regions = true
+Y_ranges = [0.0, 0.90, 0.95, 1.05, 1.10, 1.5]
+Y_range_labels = [&quot;UV trip region&quot;, &quot;Voltage control region&quot;, &quot;Normal operation region&quot;, &quot;Voltage control region&quot;, &quot;OV trip region&quot;]
+Y_range_colors = [&quot;orange&quot;, &quot;yellow&quot;, &quot;green&quot;, &quot;blue&quot;, &quot;darkblue&quot;]
+
+[Visualization.Loading_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = &quot;Yearly&quot;
+Color_template = &quot;Blues&quot;
+Show_operation_regions = true
+Y_ranges = [0.0, 15.0, 85.0, 10000.0]
+Y_range_labels = [&quot;under loaded region&quot;, &quot;Normal loading region&quot;, &quot;Over loaded region&quot;]
+Y_range_colors = [&quot;orange&quot;, &quot;green&quot;, &quot;darkblue&quot;]
+# Class - str - possible options &#39;Lines&#39;, &#39;Transformers&#39;, &#39;Capacitor&#39;
+Class = &quot;Transformers&quot;
+
+[Visualization.Voltage_sag_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+UV = [0.97, 0.95, 0.90]
+OV = [1.03, 1.05, 1.1]
+display_limits = true
+Alpha = 0.3
+Legend_font_size = 5
+Time = &quot;2017-01-01 02:30:00&quot;
+Frequency = 60.0
+Simulation_mode = &quot;Yearly&quot;
+
+
+[Visualization.Load_Generation_settings]
+Height = 7
+DPI = 200
+Display_limits = true
+Alpha = 0.05
+Legend_font_size = 10
+Frequency = 60.0
+Simulation_mode = &quot;Yearly&quot;
+Grid = true
+# kind - str - possible options &#39;scatter&#39;, &#39;reg&#39;, &#39;resid&#39;, &#39;kde&#39;, &#39;hex&#39;
+Kind = &quot;kde&quot;
+# Class - str - possible options &#39;Generators&#39;, &#39;PVSystems&#39;
+Class = &quot;PVSystems&quot;
+
+[Visualization.Voltage_Loading_settings]
+Height = 7
+DPI = 200
+Display_limits = true
+Alpha = 0.05
+Legend_font_size = 10
+Frequency = 60.0
+Simulation_mode = &quot;Yearly&quot;
+Grid = true
+# kind - str - possible options &#39;scatter&#39;, &#39;reg&#39;, &#39;resid&#39;, &#39;kde&#39;, &#39;hex&#39;
+Kind = &quot;kde&quot;
+# Class - str - possible options &#39;Lines&#39;, &#39;Transformers&#39;
+Class = &quot;Transformers&quot;
+
+
+
+
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Sample “Scenario_settings.toml” file</a></li>
+<li><a class="reference internal" href="#sample-batch-settings-toml-file">Sample “Batch_settings.toml” file</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Automated comparison of scenarios.html"
+                        title="previous chapter">Automated scenario comparison</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Sample TOML files.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="Automated comparison of scenarios.html" title="Automated scenario comparison"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">PyDSS 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Aadil Latif.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+  </body>
+</html>

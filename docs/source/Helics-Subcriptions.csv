@@ -1,0 +1,4 @@
+Element,Property,Subscription ID,Unit,Subscribe,Data type
+Load.mpx000635970,kw,test.Pv1power,kW,TRUE,double
+Load.mpx000635971,kw,test.Pv2power,kW,TRUE,double
+Load.mpx000635972,kw,test.Pv3power,kW,TRUE,double

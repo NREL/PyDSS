@@ -1,3 +1,4 @@
+from  PyDSS.pyPlots.pyPlotAbstract import PlotAbstract
 from bokeh.plotting import figure, curdoc
 from bokeh.io import output_file
 from bokeh.client import push_session
@@ -11,8 +12,9 @@ import pandas as pd
 import numpy as np
 import math
 
-class Histogram:
+class Histogram(PlotAbstract):
 	def __init__(self,PlotProperties, dssBuses, dssObjectsbyClass, dssCircuit, dssSolver):
+		super(Histogram).__init__()
 		Data = []
 		self.__dssBuses = dssBuses
 		self.__PlotProperties = PlotProperties
@@ -62,9 +64,12 @@ class Histogram:
 		curdoc().add_root(self.__Figure)
 		curdoc().title = "PyDSS"
 
-		session = push_session(curdoc())
-		session.show(self.__Figure)
+		self.session = push_session(curdoc())
+		#self.session.show(self.__Figure)
 		return
+
+	def GetSessionID(self):
+		return self.session.id
 
 	def GetFigure(self):
 		return self.__Figure

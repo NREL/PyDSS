@@ -1,0 +1,15 @@
+Installation
+============
+
+PyDSS can be installed by typing the following command on the command prompt:
+
+.. code-block:: python
+
+	pip install -i https://test.pypi.org/simple/ PyDSS==0.0.1
+	
+Alternatly, if you choose to clone the git repo at https://github.com/nrel/pydss , use the followiing commands to build the module and instakk it.
+
+.. code-block:: python
+
+	python setup.py -build
+	python setup.py -install

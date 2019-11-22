@@ -1,3 +1,4 @@
+from  PyDSS.pyPlots.pyPlotAbstract import PlotAbstract
 from bokeh.plotting import figure, curdoc
 from bokeh.io import output_file
 from bokeh.client import push_session
@@ -11,9 +12,9 @@ import pandas as pd
 import numpy as np
 import math
 
-class SagPlot:
+class SagPlot(PlotAbstract):
 	def __init__(self,PlotProperties, dssBuses, dssObjectsbyClass, dssCircuit, dssSolver):
-
+		super(SagPlot).__init__()
 		self.__dssBuses = dssBuses
 		self.__PlotProperties = PlotProperties
 		self.__dssObjectsByClass = dssObjectsbyClass

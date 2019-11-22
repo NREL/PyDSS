@@ -1,16 +1,12 @@
+from  PyDSS.pyPlots.pyPlotAbstract import PlotAbstract
 from bokeh.plotting import figure, curdoc
 from bokeh.io import output_file
-from bokeh.models import ColumnDataSource, ColorBar, \
-    LinearColorMapper, HoverTool, BoxSelectTool, BoxZoomTool, \
-    PanTool, WheelZoomTool, ResetTool, SaveTool, Label
-from bokeh.palettes import Plasma
+from bokeh.models import ColumnDataSource
 from bokeh.client import push_session
-import pandas as pd
-import numpy as np
 
-
-class FrequencySweep:
+class FrequencySweep(PlotAbstract):
     def __init__(self, PlotProperties, dssBuses, dssObjects, dssCircuit, dssSolver):
+        super(FrequencySweep).__init__()
         self.__dssSolver = dssSolver
         self.__dssBuses = dssBuses
         self.__dssObjs = dssObjects
@@ -40,6 +36,9 @@ class FrequencySweep:
         self.session.show(self.__Figure)  # open the document in a browser
         self.__time = dssSolver.GetDateTime()
         return
+
+    def GetSessionID(self):
+        return self.session.id
 
     def getObjectValue(self, Obj, ObjPpty, Index):
         pptyValue = Obj.GetVariable(ObjPpty)
@@ -83,5 +82,5 @@ class FrequencySweep:
         freq = self.__dssSolver.getFrequency()
 
         self.data[self.__PlotProperties['Property']].append(yVal)
-        self.data['frequency'].append(freq)
+        self.data['frequency'].append(freq[freq])
         self.data_source.data = self.data

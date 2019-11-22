@@ -114,16 +114,15 @@ class ResultContainer:
 
     def __registerFederatePublications(self):
         self.__publications = {}
-
         for object, property_dict in self.CurrentResults.items():
             objClass = None
             for Class in self.ObjectsByClass:
                 if object in self.ObjectsByClass[Class]:
                     objClass = Class
                     break
-
             for property, type_dict in property_dict.items():
                 if '{} {}'.format(objClass, property) in self.PublicationList:
+
                     for typeID, type in type_dict.items():
                         name = '{}.{}.{}'.format(object, property, typeID)
 
@@ -133,7 +132,6 @@ class ResultContainer:
                             type['type'],
                             type['unit']
                         )
-
                         self.pyLogger.debug('PyDSS publishing "{}" of type "{}" with units "{}"'.format(
                             name,
                             type['type'],
@@ -213,16 +211,16 @@ class ResultContainer:
         return
 
     def __parse_current_values(self, Element, Property, Values):
-        if self.__Settings['Co-simulation Mode']:
-            ans = self.CurrentResults[Element][Property]
-            for filter, data in ans.items():
-                if filter == 'A':
-                    ans[filter]['value'] = Values
-                elif filter == 'E':
-                    ans[filter]['value'] = Values[0::2]
-                elif filter == '0':
-                    ans[filter]['value'] = Values[1::2]
 
+        ans = self.CurrentResults[Element][Property]
+        for filter, data in ans.items():
+            if filter == 'A':
+                ans[filter]['value'] = Values
+            elif filter == 'E':
+                ans[filter]['value'] = Values[0::2]
+            elif filter == '0':
+                ans[filter]['value'] = Values[1::2]
+            if self.__Settings['Co-simulation Mode']:
                 name = '{}.{}.{}'.format(Element, Property, filter)
                 if isinstance(ans[filter]['value'], list) and name in self.__publications:
                     h.helicsPublicationPublishVector(self.__publications[name], ans[filter]['value'])
@@ -275,14 +273,14 @@ class ResultContainer:
                             self.__parse_current_values(Element, Property, value)
         return
 
-    def ExportResults(self):
+    def ExportResults(self, fileprefix=''):
         if self.__Settings['Export Mode'] == 'byElement':
-            self.__ExportResultsByElements()
+            self.__ExportResultsByElements(fileprefix)
         elif self.__Settings['Export Mode'] == 'byClass':
-            self.__ExportResultsByClass()
+            self.__ExportResultsByClass(fileprefix)
         self.__ExportEventLog()
 
-    def __ExportResultsByClass(self):
+    def __ExportResultsByClass(self, fileprefix=''):
         for Class in self.Results.keys():
             for Property in self.Results[Class].keys():
                 Class_ElementDatasets = []
@@ -310,7 +308,7 @@ class ResultContainer:
                         else:
                             ElmLvlHeader = Element + ','
                     if self.__Settings['Export Style'] == 'Separate files':
-                        fname = '-'.join([Class, Property, Element, str(self.__StartDay), str(self.__EndDay)]) + '.csv'
+                        fname = '-'.join([Class, Property, Element, str(self.__StartDay), str(self.__EndDay) ,fileprefix]) + '.csv'
                         columns = [x for x in ElmLvlHeader.split(',') if x != '']
                         tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                         index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
@@ -330,12 +328,12 @@ class ResultContainer:
                     tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                     index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
                     df = pd.DataFrame(Dataset, index=index, columns=columns)
-                    fname = '-'.join([Class, Property, str(self.__StartDay), str(self.__EndDay)]) + '.csv'
+                    fname = '-'.join([Class, Property, str(self.__StartDay), str(self.__EndDay), fileprefix]) + '.csv'
                     df.to_csv(os.path.join(self.ExportFolder, fname))
                     self.pyLogger.info(Class + '-' + Property + ".csv exported to " + self.ExportFolder)
         return
 
-    def __ExportResultsByElements(self):
+    def __ExportResultsByElements(self, fileprefix=''):
         for Element in self.Results.keys():
             ElementDatasets = []
             AllHeader = ''
@@ -362,7 +360,7 @@ class ResultContainer:
                     Header = Property + ','
 
                 if self.__Settings['Export Style'] == 'Separate files':
-                    fname = '-'.join([Element, Property, str(self.__StartDay), str(self.__EndDay)]) + '.csv'
+                    fname = '-'.join([Element, Property, str(self.__StartDay), str(self.__EndDay), fileprefix]) + '.csv'
                     columns = [x for x in Header.split(',') if x != '']
                     tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                     index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
@@ -377,7 +375,7 @@ class ResultContainer:
                 if len(ElementDatasets) > 0:
                     for D in ElementDatasets[1:]:
                         Dataset = np.append(Dataset, D, axis=1)
-                fname = '-'.join([Element, str(self.__StartDay), str(self.__EndDay)]) + '.csv'
+                fname = '-'.join([Element, str(self.__StartDay), str(self.__EndDay), fileprefix]) + '.csv'
                 columns = [x for x in AllHeader.split(',') if x != '']
                 tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                 index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])

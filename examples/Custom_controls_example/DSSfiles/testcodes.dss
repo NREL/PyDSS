@@ -1,0 +1,24 @@
+! big conductor for 3ph fillers
+New Linecode.3X_954AAC_477AACN Nphases=3 R1=0.068351 X1=0.368048 R0=0.203024 X0=1.170769 B1=4.539618 B0=1.880536 units=km baseFreq=60  normamps=1132.000000
+
+New Linecode.1/0 nphases=1
+~ rmatrix=[0.36742424] !ohms per 1000 ft this is already 2x 
+~ xmatrix=[0.0274] ! old value was 0.07856808, new value from 1/0 triplex config hand calc Ex4.3 GSO this is 2x
+~ cmatrix=[15]
+~ Normamps=202  {202 1.25 *}
+~ units=kft
+
+New Linecode.4 nphases=1
+~ rmatrix=[ 0.92917  ]  !multiplied self by 2
+~ xmatrix=[0.07856808] ! use same as 1/0 since this is Triplex spacing
+~ cmatrix=[15]
+~ Normamps=90  {90 1.25 *}
+~ units=kft
+
+New Linecode.6 nphases=1
+~ rmatrix=[1.4784] 
+~ xmatrix=[0.07856808] ! use same as 1/0 since this is Triplex spacing
+~ cmatrix=[15 | -12 15 | -12 -12 15]
+~ Normamps=65  {65 1.25 *}
+~ units=kft
+

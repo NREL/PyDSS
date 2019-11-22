@@ -1,4 +1,4 @@
-from PyDSS.PyPlots import Plots
+from PyDSS.pyPlots import Plots
 
 from os.path import dirname, basename, isfile
 import glob
@@ -9,7 +9,7 @@ pythonFiles = [ basename(f)[:-3] for f in modules if isfile(f) and
 
 PlotTypes = {}
 for file in pythonFiles:
-    exec('from PyDSS.PyPlots.Plots import {}'.format(file))
+    exec('from PyDSS.pyPlots.Plots import {}'.format(file))
     exec('PlotTypes["{}"] = {}.{}'.format(file, file, file))
 
 #print(PlotTypes)

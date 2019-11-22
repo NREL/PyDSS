@@ -1,3 +1,4 @@
+from  PyDSS.pyPlots.pyPlotAbstract import PlotAbstract
 from bokeh.models import ColumnDataSource, HoverTool, BoxSelectTool, PanTool, WheelZoomTool, MultiLine, Square, Circle,\
     Triangle
 #from bokeh.tile_providers import CARTODBPOSITRON
@@ -18,14 +19,17 @@ except ImportError:
     print('Package pyproj not installed. Cannot use GISplot')
     quit()
 
-class GISplot:
-    Vmin = 0.95
-    Vmax = 1.05
-    Imin = 0
-    Imax = 100
-    VoltagePhase = 0
-    CurrentPhase = 0
+class GISplot(PlotAbstract):
+
     def __init__(self,PlotProperties,dssBuses,dssObjectsByClass,dssCircuit, dssSolver):
+        super(GISplot).__init__()
+        self.Vmin = 0.95
+        self.Vmax = 1.05
+        self.Imin = 0
+        self.Imax = 100
+        self.VoltagePhase = 0
+        self.CurrentPhase = 0
+
         self.__dssBuses = dssBuses
         self.__dssCircuit = dssCircuit
         self.__PlotProperties = PlotProperties

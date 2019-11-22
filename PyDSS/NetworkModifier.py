@@ -58,7 +58,7 @@ class Modifier():
         Cmd = 'Edit ' + Class + '.' + Name
         for PptyName, PptyVal in Properties.items():
             if PptyVal is not None:
-                tCMD = ' ' + PptyName + '=' + PptyVal
+                tCMD = ' ' + PptyName + '=' + str(PptyVal)
                 Cmd += tCMD
         self.__dssCommand(Cmd)
         self.pyLogger.info('Edited -> ' + Cmd)

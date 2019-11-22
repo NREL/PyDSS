@@ -1,0 +1,77 @@
+# Log Results- [Bool] - Set true if results need to be exported
+# Return Results- [Bool] - Set true if running PyDSS in Cosimulation environment, RunStep function will return current system states
+# Export Mode- [Str] - Possible options "byClass" and "byElement"
+# Export Style- [Str] - possible options "Single_file" and "Separate_files"
+
+"Log Results" = true
+"Return Results" = false
+"Export Mode" = "byClass"
+"Export Style" = "Single file"
+
+# Create dynamic plots- [Bool] - Enable rendering of dynamic plots using bokeh
+# Open plots in browser- [Bool] - Open plots  in s window. Will work if "Create dynamic plots" is set to true 
+
+"Create dynamic plots" = false
+"Open plots in browser" = true
+
+# Simulation Type- [String] - Possible options "QSTS", "Dynamic" and "Snapshot"
+# Start Year- [Int] - Start year for the simulation study (em nb .g 2017)
+# Start Day- [Int] - Start day for the simulation study. Index start at 1
+# Start Time (min)- [Float] - Start time in minutes. Floating number can be used to account for second or sub second time points
+# End Day- [Float] - End day for the simulation study
+# End Time (min)- [Float] - end time in minutes
+# Date offset- [Int] - Date offset to be added incase OpenDSS profiles do not start at the begining of the year 
+# Step resolution (sec)- [Float] - Time step resolution in seconds
+# Max Control Iterations- [Int] - Maximum outer loop control iterations
+# Error tolerance- [Float] - Error tolerance in per unit
+# Control mode- [String] - Control mode options are "STATIC" or "Time"
+# Disable PyDSS controllers- [Bool] - Disable all pyController in PyDSS. All controller implemented in DSS files will still work.
+# Active Project- [String] - Name of project to run
+# Active Scenario- [String] - Project scenario to use
+# DSS File- [String] - The main OpenDSS file
+
+"Start Year" = 2017
+"Start Day" = 1
+"Start Time (min)" = 0.0
+"End Day" = 1
+"End Time (min)" = 1439.0
+"Date offset" = 0
+"Step resolution (sec)" = 900.0
+"Max Control Iterations" = 15
+"Error tolerance" = 0.001
+"Control mode" = "Time"
+"Disable PyDSS controllers" = false
+"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS-Projects"
+"Simulation Type" = "Snapshot"
+"Active Project" = "Harmonics_Snapshot"
+"Active Scenario" = "freq_scan"
+"DSS File" = "Run_Scan.dss"
+
+# Enable frequency sweep- [Bool] - Enable harmonic sweep. works with only 'Static' and 'QSTS' simulation modes
+# Fundamental frequency- [Float] - Fundamental system frequeny in Hertz
+# Start frequency- [Float] - as multiple of fundamental frequency
+# End frequency- [Float] - as multiple of fundamental frequency
+# Frequency increment- [Float] - as multiple of fundamental 
+# Neglect shunt admittance- [Bool] - Neglect shunt addmittance for frequency sweep
+# Percentage load in series- [Float] - Percent of load that is series RL for Harmonic studies
+
+"Enable frequency sweep" = true
+"Fundamental frequency" = 60
+"Start frequency" = 1.0
+"End frequency" = 15.0
+"frequency increment" = 0.0833333333333333
+"Neglect shunt admittance" = false
+"Percentage load in series" = 50.0
+
+# Logging Level- [String] - possible options "DEBUG", "INFO", "WARNING" or "ERROR"
+# Log to external file- [Bool] - Boolean variable
+# Display on screen- [Bool] - Boolean variable
+# Clear old log file- [Bool] - Boolean variable
+
+"Logging Level" = "DEBUG"
+"Log to external file" = false
+"Display on screen" = false
+"Clear old log file" = true
+
+"Number of Monte Carlo scenarios" = 1
+

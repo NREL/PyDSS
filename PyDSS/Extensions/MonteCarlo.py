@@ -7,14 +7,11 @@ import logging
 
 class MonteCarloSim:
 
-    def __init__(self, dss, run_command, SimulationSettings, dssPaths, dssObjects, dssObjectsByClass, dssSolver):
+    def __init__(self, SimulationSettings, dssPaths, dssObjects, dssObjectsByClass):
         LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
         self.pyLogger = logging.getLogger(LoggerTag)
-        self.__dssInstance = dss
         self.__dssPaths = dssPaths
-        self.__dssSolver = dssSolver
         self.__dssObjects = dssObjects
-        self.__dssCommand = run_command
         self.__Settings = SimulationSettings
         self.__dssObjectsByClass = dssObjectsByClass
 

@@ -1,0 +1,20 @@
+Frequency sweep plot
+^^^^^^^^^^^^^^^^^^^^
+
+GIS plot
+^^^^^^^^
+   
+Histogram plot
+^^^^^^^^^^^^^^
+
+Voltage sag plot
+^^^^^^^^^^^^^^^^
+
+Time series plot
+^^^^^^^^^^^^^^^^
+
+Voltage / Current heatmap plot
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+XY plots
+^^^^^^^^

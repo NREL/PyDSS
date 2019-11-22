@@ -1,0 +1,246 @@
+[Simulations] 
+
+Run_simulations = true
+Generate_visuals = false
+Run_bokeh_server = false
+
+[Plots]
+
+Frequency_sweep = false
+XFMR_tap = false
+Voltage_sag = false
+Voltage = false
+Loading = false
+Voltage_Loading = false
+Voltage_profiles = false
+Load = false
+Generation = false
+Load_Generation = false
+Curtailment = false
+Voltage_imbalance = false
+Feeder_power = false
+Feeder_line_losses = false
+Feeder_losses = false
+Feeder_substation_losses = false
+
+[Visualization]
+#Plotting_mode_-_str_-_possible_values 'Single', 'Separate'
+Plotting_mode ="Single"
+#Plotting_mode_-_str_-_possible_values 'png', 'pdf'
+FileType = 'png'
+
+[Visualization.Curtailment_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = "Yearly"
+Show_operation_regions = true
+Y_ranges = [0.0, 2.5, 5.0, 100.0]
+Y_range_labels = ["Low curtailment", "Imtermediate curtailment", "High curtailment",]
+Y_range_colors = ["green", "blue", "darkblue"]
+
+[Visualization.Feeder_power_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = "Yearly"
+
+[Visualization.Feeder_line_losses_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = "Yearly"
+
+[Visualization.Feeder_losses_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = "Yearly"
+
+[Visualization.Feeder_substation_losses_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = "Yearly"
+
+[Visualization.Voltage_imbalance_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = "Yearly"
+Show_operation_regions = false
+Y_ranges = [0.0, 0.90, 0.95, 1.05, 1.10, 1.5]
+Y_range_labels = ["UV trip region", "Voltage control region", "Normal operation region", "Voltage control region", "OV trip region"]
+Y_range_colors = ["orange", "yellow", "green", "blue", "darkblue"]
+
+[Visualization.Frequency_sweep_settings]
+Height = 4
+Width = 6
+DPI = 200
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Color_template = "Blues"
+Class = "Circuits"
+Simulation_mode = "Harmonic"
+Frequency = 60.0
+Time = "2017-01-01"
+Grid = true
+Legend_font_size = 6
+Elements = [] # Elements - List - List of bus names. An empty list would mean all
+
+[Visualization.XFMR_tap_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 1
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = "Yearly"
+
+[Visualization.Generation_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = "Yearly"
+# Class - str - possible options 'Generators', 'PVSystems'
+Class = "PVSystems"
+
+[Visualization.Load_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = "Yearly"
+
+[Visualization.Voltage_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = "Yearly"
+Color_template = "Blues"
+Show_operation_regions = true
+Y_ranges = [0.0, 0.90, 0.95, 1.05, 1.10, 1.5]
+Y_range_labels = ["UV trip region", "Voltage control region", "Normal operation region", "Voltage control region", "OV trip region"]
+Y_range_colors = ["orange", "yellow", "green", "blue", "darkblue"]
+
+[Visualization.Loading_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+Line_width = 3
+Line_alpha = 0.2
+Fill_alpha = 0.2
+Frequency = 60.0
+Legend_font_size = 6
+Simulation_mode = "Yearly"
+Color_template = "Blues"
+Show_operation_regions = true
+Y_ranges = [0.0, 15.0, 85.0, 10000.0]
+Y_range_labels = ["under loaded region", "Normal loading region", "Over loaded region"]
+Y_range_colors = ["orange", "green", "darkblue"]
+# Class - str - possible options 'Lines', 'Transformers', 'Capacitor'
+Class = "Transformers"
+
+[Visualization.Voltage_sag_settings]
+Height = 4
+Width = 6
+DPI = 200
+Grid = true
+UV = [0.97, 0.95, 0.90]
+OV = [1.03, 1.05, 1.1]
+display_limits = true
+Alpha = 0.3
+Legend_font_size = 5
+Time = "2017-01-01 02:30:00"
+Frequency = 60.0
+Simulation_mode = "Yearly"
+
+
+[Visualization.Load_Generation_settings]
+Height = 7
+DPI = 200
+Display_limits = true
+Alpha = 0.05
+Legend_font_size = 10
+Frequency = 60.0
+Simulation_mode = "Yearly"
+Grid = true
+# kind - str - possible options 'scatter', 'reg', 'resid', 'kde', 'hex'
+Kind = "kde"
+# Class - str - possible options 'Generators', 'PVSystems'
+Class = "PVSystems"
+
+[Visualization.Voltage_Loading_settings]
+Height = 7
+DPI = 200
+Display_limits = true
+Alpha = 0.05
+Legend_font_size = 10
+Frequency = 60.0
+Simulation_mode = "Yearly"
+Grid = true
+# kind - str - possible options 'scatter', 'reg', 'resid', 'kde', 'hex'
+Kind = "kde"
+# Class - str - possible options 'Lines', 'Transformers'
+Class = "Transformers"
+
+
+
+

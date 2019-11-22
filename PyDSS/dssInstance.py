@@ -9,7 +9,7 @@ from PyDSS import SolveMode
 from PyDSS import pyLogger
 
 import PyDSS.pyControllers as pyControllers
-import PyDSS.PyPlots as PyPlots
+import PyDSS.pyPlots as pyPlots
 
 from PyDSS.Extensions.NetworkGraph import CreateGraph
 from opendssdirect.utils import run_command
@@ -176,7 +176,7 @@ class OpenDSS:
                 PlotSettings = PlotNames[Name]
                 PlotSettings['FileName'] = Name
                 if PlotType in PlotType1:
-                    self.__pyPlotObjects[PlotType] = PyPlots.pyPlots.Create(
+                    self.__pyPlotObjects[PlotType] = pyPlots.pyPlots.Create(
                         PlotType,
                         PlotSettings,
                         self.__dssBuses,
@@ -188,7 +188,7 @@ class OpenDSS:
                     #self.BokehDoc.add_root(self.__pyPlotObjects[PlotType].GetFigure())
                     self.__Logger.info('Created pyPlot -> ' + PlotType)
                 elif PlotType in PlotType2:
-                    self.__pyPlotObjects[PlotType + Name] = PyPlots.pyPlots.Create(
+                    self.__pyPlotObjects[PlotType + Name] = pyPlots.pyPlots.Create(
                         PlotType,
                         PlotSettings,
                         self.__dssBuses,
@@ -198,7 +198,7 @@ class OpenDSS:
                     )
                     self.__Logger.info('Created pyPlot -> ' + PlotType)
                 elif PlotType in PlotType3:
-                    self.__pyPlotObjects[PlotType+Name] = PyPlots.pyPlots.Create(
+                    self.__pyPlotObjects[PlotType+Name] = pyPlots.pyPlots.Create(
                         PlotType,
                         PlotSettings,
                         self.__dssBuses,
@@ -269,11 +269,10 @@ class OpenDSS:
         return ObjectList
 
     def RunStep(self, step, updateObjects=None):
-
         if updateObjects:
             for object, params in updateObjects.items():
                 cl, name = object.split('.')
-                self.__Modifier.Edit_Elements(cl, name, params)
+                self.__Modifier.Edit_Element(cl, name, params)
             pass
 
         self.__dssSolver.IncStep()
@@ -312,7 +311,7 @@ class OpenDSS:
                 self.__dssSolver.setMode('Yearly')
         return
 
-    def RunSimulation(self):
+    def RunSimulation(self, file_prefix=''):
         startTime = time.time()
         Steps, sTime, eTime = self.__dssSolver.SimulationSteps()
         self.__Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
@@ -321,10 +320,18 @@ class OpenDSS:
             self.RunStep(step)
 
         if self.__Options and self.__Options['Log Results']:
-            self.ResultContainer.ExportResults()
+            self.ResultContainer.ExportResults(file_prefix)
 
         self.__Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
         self.__Logger.info('End of simulation')
+
+    def RunMCsimulation(self, samples):
+        from PyDSS.Extensions.MonteCarlo import MonteCarloSim
+        MC = MonteCarloSim(self.__Options, self.__dssPath, self.__dssObjects, self.__dssObjectsByClass)
+        for i in range(samples):
+            MC.Create_Scenario()
+            self.RunSimulation('MC{}'.format(i))
+        return
 
     def __UpdatePlots(self):
         for Plot in self.__pyPlotObjects:
@@ -360,14 +367,15 @@ class OpenDSS:
         return Graph.Get()
 
     def __del__(self):
-        x = list(self.__Logger.handlers)
-        for i in x:
-            self.__Logger.removeHandler(i)
-            i.flush()
-            i.close()
-
         if self.__DelFlag == 1:
             self.__Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')
         else:
             self.__Logger.error('An instance of OpenDSS (' + str(self) + ') crashed.')
+
+        if self.__Options["Log to external file"]:
+            x = list(self.__Logger.handlers)
+            for i in x:
+                self.__Logger.removeHandler(i)
+                i.flush()
+                i.close()
         return

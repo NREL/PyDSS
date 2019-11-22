@@ -2,9 +2,79 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a36e9dc1-9053-46dd-a663-a351f8c2cd89" name="N O" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/PyDSS-heco.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PyDSS-heco.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS.egg-info/PKG-INFO" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS.egg-info/PKG-INFO" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS.egg-info/SOURCES.txt" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS.egg-info/SOURCES.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS.egg-info/dependency_links.txt" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS.egg-info/dependency_links.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS.egg-info/requires.txt" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS.egg-info/requires.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS.egg-info/top_level.txt" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS.egg-info/top_level.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/Extensions/MonteCarlo.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/Extensions/MonteCarlo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/NetworkModifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/NetworkModifier.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/FrequencySweep.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/FrequencySweep.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/GISplot.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/GISplot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/Histogram.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/Histogram.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/SagPlot.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/SagPlot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/TimeSeries.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/TimeSeries.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/Topology.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/Topology.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/XYPlot.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/PyPlots/Plots/XYPlot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/PyPlots/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/PyPlots/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/PyPlots/pyPlotAbstract.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/PyPlots/pyPlotAbstract.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/PyPlots/pyPlots.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/PyPlots/pyPlots.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/ResultContainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/ResultContainer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/SolveMode.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/SolveMode.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PyDSS/dssElement.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/dssElement.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PyDSS/dssInstance.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/dssInstance.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssGraphicsGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssGraphicsGenerator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssFrequencySweep.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssFrequencySweep.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssPDFplot.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssPDFplot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssProfilePlot.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssProfilePlot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssSimulationResult.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssSimulationResult.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/pyContrReader.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyContrReader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/FaultController.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/FaultController.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/PvController.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/PvController.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/PvControllerGen.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/PvControllerGen.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/SocketController.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/SocketController.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/StorageController.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/StorageController.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/xfmrController.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/xfmrController.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Readme.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/Export/Logs/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/Export/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/MonteCarlo.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/NetworkModifier.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/ResultContainer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/SolveMode.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/dssBus.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/dssCircuit.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/dssElement.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/dssGUI-old.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/dssGUI.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/dssInstance.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/dssNetworkX.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/pyContrReader.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/pyLogger.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/pyPlotReader.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyPlots/GISplot.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyPlots/Histogram.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyPlots/SagPlot.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyPlots/TimeSeries.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyPlots/Topology.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyPlots/XYPlot.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyPlots/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/PyPlots/pyPlots.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/pyControllers/HybridController.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/pyControllers/PvController.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/pyControllers/SocketController.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/pyControllers/StorageController.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/pyControllers/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/pyControllers/pyController.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib/pyControllers/xfmrController.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/PyDSS-0.0.1-py3.6.egg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
     </list>
     <list id="4d158a37-460e-4f32-90b0-7874bee38a84" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,32 +88,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PyDSS/pyControllers/pyController.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/PyDSS/pyDSS.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret line="3" column="44" selection-start-line="3" selection-start-column="44" selection-end-line="3" selection-end-column="44" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PyDSS/dssInstance.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="518">
-              <caret line="357" selection-start-line="357" selection-end-line="358" />
-              <folding>
-                <element signature="e#0#55#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PyDSS.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="141" column="30" lean-forward="true" selection-start-line="141" selection-start-column="30" selection-end-line="141" selection-end-column="30" />
+            <state relative-caret-position="273">
+              <caret line="197" column="47" selection-start-line="197" selection-start-column="47" selection-end-line="197" selection-end-column="47" />
               <folding>
                 <element signature="e#0#61#0" expanded="true" />
               </folding>
@@ -52,10 +101,34 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PyDSS/dssInstance.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="188">
+              <caret line="327" column="11" selection-start-line="327" selection-start-column="11" selection-end-line="327" selection-end-column="11" />
+              <folding>
+                <element signature="e#0#55#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PyDSS/SolveMode.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="761">
+              <caret line="76" column="14" selection-start-line="76" selection-start-column="14" selection-end-line="76" selection-end-column="14" />
+              <folding>
+                <element signature="e#0#40#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PyDSS/ResultContainer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="21" column="25" selection-start-line="21" selection-start-column="8" selection-end-line="21" selection-end-column="25" />
+            <state relative-caret-position="120">
+              <caret line="275" column="17" selection-start-line="275" selection-start-column="17" selection-end-line="275" selection-end-column="17" />
               <folding>
                 <element signature="e#0#60#0" expanded="true" />
               </folding>
@@ -63,47 +136,59 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/PyDSS/dssElement.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PyDSS/Extensions/MonteCarlo.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="9" column="12" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="12" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PyDSS/default_simulation_settings.toml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1530">
+              <caret line="90" selection-start-line="90" selection-end-line="90" selection-end-column="37" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PyDSS/pyPlots/Plots/FrequencySweep.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="773">
-              <caret line="131" column="9" lean-forward="true" selection-start-line="131" selection-start-column="9" selection-end-line="131" selection-end-column="9" />
+              <caret line="86" selection-start-line="86" selection-end-line="86" />
               <folding>
-                <element signature="e#0#31#0" expanded="true" />
+                <element signature="e#0#54#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../Helics Example/pireciever.py">
+        <entry file="file://$PROJECT_DIR$/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="4" column="30" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="30" />
-              <folding>
-                <element signature="e#24#42#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="68">
+              <caret line="4" column="49" selection-start-line="4" selection-start-column="49" selection-end-line="4" selection-end-column="49" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../Helics Example/pisender.py">
+        <entry file="file://$PROJECT_DIR$/PyDSS/pyPlots/pyPlotAbstract.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="663">
-              <caret line="41" column="4" selection-start-line="41" selection-start-column="4" selection-end-line="41" selection-end-column="4" />
-              <folding>
-                <element signature="e#24#35#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="340">
+              <caret line="20" column="27" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="27" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../Helics Example/Broker2.py">
+        <entry file="file://$PROJECT_DIR$/PyDSS/pyPlots/pyPlots.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="5" column="18" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
+            <state relative-caret-position="306">
+              <caret line="21" selection-start-line="21" selection-end-line="21" />
             </state>
           </provider>
         </entry>
@@ -114,18 +199,12 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="Setup Script" />
       </list>
     </option>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>__dssElement</find>
-      <find>Step resolution (min)</find>
-      <find>modifi</find>
-      <find>modifier</find>
-      <find>runmc</find>
-      <find>cork</find>
-      <find>Separate</find>
       <find>no con</find>
       <find>ast</find>
       <find>GetParameter2</find>
@@ -146,9 +225,16 @@
       <find>exists</find>
       <find>Async.</find>
       <find>Async</find>
-      <find>print</find>
       <find>self.__BaseKV</find>
       <find>pyControllers</find>
+      <find>ResultObject</find>
+      <find>RunScenario</find>
+      <find>__VoltageRideThrough</find>
+      <find>PyPlots</find>
+      <find>GetSessionID</find>
+      <find>in the master TOML file</find>
+      <find>Simulation mode</find>
+      <find>print</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -166,72 +252,47 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/build/lib/PyDSS/dssInstance.py" />
-        <option value="$PROJECT_DIR$/../PyDSS-Projects/PRECISE/Exports/CalculateCurtailment.py" />
-        <option value="$PROJECT_DIR$/../PyDSS-Projects/PRECISE/Exports/probability_dist.py" />
-        <option value="$PROJECT_DIR$/../PyDSS-Projects/SRP/Exports/Plot_exported_results.py" />
-        <option value="$PROJECT_DIR$/pydss_cmd.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/PvController2.py" />
-        <option value="$PROJECT_DIR$/../PyDSS-Projects/PV_with_voltage_ridethrough/PyDSS Scenarios/smartPV/pyControllerList/Ride through tester.py" />
-        <option value="$PROJECT_DIR$/PyDSS/dssCircuit.py" />
-        <option value="$PROJECT_DIR$/PyDSS/dssBus.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssResult.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/FaultController.py" />
-        <option value="$PROJECT_DIR$/PyDSS/PyPlots/Plots/Histogram.py" />
-        <option value="$PROJECT_DIR$/PyDSS/PyPlots/Plots/SagPlot.py" />
-        <option value="$PROJECT_DIR$/PyDSS/PyPlots/Plots/TimeSeries.py" />
-        <option value="$PROJECT_DIR$/PyDSS/PyPlots/Plots/Topology.py" />
-        <option value="$PROJECT_DIR$/PyDSS/PyPlots/Plots/XYPlot.py" />
-        <option value="$PROJECT_DIR$/PyDSS/PyPlots/Plots/FrequencySweep.py" />
-        <option value="$PROJECT_DIR$/../SRP Dashborads/Polling codes/LG chem experimental run v3/modbus_poller.py" />
-        <option value="$PROJECT_DIR$/../Solar distric cup usecases/JBG_Smith_Usecase/profile creator.py" />
-        <option value="$PROJECT_DIR$/../Solar distric cup usecases/JBG_Smith_Usecase/PSLF_file_modifier.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/PvController.py" />
-        <option value="$PROJECT_DIR$/PyDSS/PyPlots/Plots/GISplot.py" />
-        <option value="$PROJECT_DIR$/PyDSS/PyPlots/pyPlots.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/StorageController.py" />
-        <option value="$PROJECT_DIR$/PyDSS/dssVisualizer.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssVisualizer.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssSimulationResult.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssComparitor.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssGISplot.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssFrequencySweep.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssXYplot.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssVoltageDistance.py" />
+        <option value="$PROJECT_DIR$/PyDSS/PyDSS.py" />
+        <option value="$PROJECT_DIR$/setup.py" />
         <option value="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssProfilePlot.py" />
+        <option value="$PROJECT_DIR$/PyDSS/pyPlots/pyPlotAbstract.py" />
+        <option value="$PROJECT_DIR$/PyDSS/pyPlots/Plots/Histogram.py" />
+        <option value="$PROJECT_DIR$/PyDSS/pyPlots/Plots/XYPlot.py" />
+        <option value="$PROJECT_DIR$/PyDSS/pyPlots/Plots/TimeSeries.py" />
+        <option value="$PROJECT_DIR$/examples/External_interfacing example/Helics_example.py" />
+        <option value="$PROJECT_DIR$/examples/External_interfacing example/Helics_example/run_pyDSS.py" />
+        <option value="$PROJECT_DIR$/examples/External_interfacing_example/Helics_example/run_dummy_federate.py" />
+        <option value="$PROJECT_DIR$/examples/External_interfacing_example/Helics_example/run_pyDSS.py" />
+        <option value="$PROJECT_DIR$/PyDSS/NetworkModifier.py" />
+        <option value="$PROJECT_DIR$/examples/External_interfacing_example/API_example/run_pyDSS.py" />
+        <option value="$PROJECT_DIR$/examples/External_interfacing_example/Socket_example/run_pyDSS.py" />
+        <option value="$PROJECT_DIR$/examples/External_interfacing_example/Socket_example/run_socket_controller.py" />
+        <option value="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/SocketController.py" />
         <option value="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssPDFplot.py" />
         <option value="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssGraphicsGenerator.py" />
-        <option value="$PROJECT_DIR$/PyDSS/unitDefinations.py" />
-        <option value="$USER_HOME$/Box/Sumitomo-Phase3/Sumitomo dashboard/Data_manager.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/HelicsController.py" />
-        <option value="$PROJECT_DIR$/../PyDSS-Projects/EPRI_J1/DSSfiles/PV_sceenario_generator.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/PvControllerGen.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyControllers/pyController.py" />
+        <option value="$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssFrequencySweep.py" />
+        <option value="$PROJECT_DIR$/PyDSS/default_plot_settings.toml" />
+        <option value="$PROJECT_DIR$/PyDSS/Extensions/MonteCarlo.py" />
         <option value="$PROJECT_DIR$/PyDSS/SolveMode.py" />
-        <option value="$PROJECT_DIR$/PyDSS.py" />
-        <option value="$PROJECT_DIR$/../Helics Example/Broker2.py" />
-        <option value="$PROJECT_DIR$/../Helics Example/pireciever.py" />
-        <option value="$PROJECT_DIR$/../Helics Example/pisender.py" />
+        <option value="$PROJECT_DIR$/PyDSS/pyPlots/Plots/FrequencySweep.py" />
         <option value="$PROJECT_DIR$/PyDSS/ResultContainer.py" />
-        <option value="$PROJECT_DIR$/../PSLF_file_modifier.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyContrReader.py" />
-        <option value="$PROJECT_DIR$/PyDSS/dssElement.py" />
         <option value="$PROJECT_DIR$/PyDSS/dssInstance.py" />
+        <option value="$PROJECT_DIR$/PyDSS/pyDSS.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="2073" />
-    <option name="y" value="-17" />
-    <option name="width" value="1550" />
-    <option name="height" value="840" />
+    <option name="x" value="1912" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1056" />
   </component>
+  <component name="ProjectId" id="1SYvJrILuoO87d1kroLO1gXiIyJ" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -248,19 +309,38 @@
               <item name="PyDSS" type="b2602c69:ProjectViewProjectNode" />
               <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
               <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
-              <item name="pyControllers" type="462c0819:PsiDirectoryNode" />
+              <item name="pyAnalyzer" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="PyDSS" type="b2602c69:ProjectViewProjectNode" />
               <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
               <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
-              <item name="pyControllers" type="462c0819:PsiDirectoryNode" />
-              <item name="Controllers" type="462c0819:PsiDirectoryNode" />
+              <item name="pyAnalyzer" type="462c0819:PsiDirectoryNode" />
+              <item name="dssPlots" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PyDSS" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
+              <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
+              <item name="pyPlots" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PyDSS" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
+              <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
+              <item name="pyPlots" type="462c0819:PsiDirectoryNode" />
+              <item name="Plots" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PyDSS" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
+              <item name="tests" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -288,112 +368,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.PSLF_file_modifier (1)">
-    <configuration name="Data_manager" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="PyDSS-heco" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$USER_HOME$/Box/Sumitomo-Phase3/Sumitomo dashboard" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$USER_HOME$/Box/Sumitomo-Phase3/Sumitomo dashboard/Data_manager.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="PSLF_file_modifier (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="PyDSS-heco" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/.." />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../PSLF_file_modifier.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="PSLF_file_modifier" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="PyDSS-heco" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../Solar distric cup usecases/JBG_Smith_Usecase" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../Solar distric cup usecases/JBG_Smith_Usecase/PSLF_file_modifier.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="PV_sceenario_generator" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="PyDSS-heco" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../PyDSS-Projects/EPRI_J1/DSSfiles" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../PyDSS-Projects/EPRI_J1/DSSfiles/PV_sceenario_generator.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="PyDSS" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="PyDSS-heco" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PyDSS.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.pyDSS">
     <configuration name="dssSingleRun" type="PythonConfigurationType" factoryName="Python">
       <module name="PyDSS-heco" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -401,7 +376,7 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="/usr/local/bin/python3" />
+      <option name="SDK_HOME" value="C:\ProgramData\Anaconda3\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/bin" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -415,21 +390,126 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="pyDSS" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="PyDSS-heco" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/PyDSS" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PyDSS/pyDSS.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="run_pyDSS (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="PyDSS-heco" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples/External_interfacing_example/Helics_example" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/External_interfacing_example/Helics_example/run_pyDSS.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="run_pyDSS (2)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="PyDSS-heco" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples/External_interfacing_example/API_example" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/External_interfacing_example/API_example/run_pyDSS.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="run_pyDSS" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="PyDSS-heco" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples/External_interfacing example/Helics_example" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/External_interfacing example/Helics_example/run_pyDSS.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="run_socket_controller" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="PyDSS-heco" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples/External_interfacing_example/Socket_example" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/External_interfacing_example/Socket_example/run_socket_controller.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <list>
-      <item itemvalue="Python.Data_manager" />
-      <item itemvalue="Python.PSLF_file_modifier (1)" />
-      <item itemvalue="Python.PSLF_file_modifier" />
-      <item itemvalue="Python.PV_sceenario_generator" />
-      <item itemvalue="Python.PyDSS" />
       <item itemvalue="Python.dssSingleRun" />
+      <item itemvalue="Python.pyDSS" />
+      <item itemvalue="Python.run_pyDSS" />
+      <item itemvalue="Python.run_pyDSS (1)" />
+      <item itemvalue="Python.run_pyDSS (2)" />
+      <item itemvalue="Python.run_socket_controller" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.PSLF_file_modifier (1)" />
-        <item itemvalue="Python.PyDSS" />
-        <item itemvalue="Python.PV_sceenario_generator" />
-        <item itemvalue="Python.Data_manager" />
-        <item itemvalue="Python.PSLF_file_modifier" />
+        <item itemvalue="Python.pyDSS" />
+        <item itemvalue="Python.run_socket_controller" />
+        <item itemvalue="Python.run_pyDSS (2)" />
+        <item itemvalue="Python.run_pyDSS (1)" />
+        <item itemvalue="Python.run_pyDSS" />
       </list>
     </recent_temporary>
   </component>
@@ -469,130 +549,72 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1912" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info id="Structure" order="0" sideWeight="0.509299" side_tool="true" weight="0.44121715" />
-      <window_info id="Favorites" order="1" sideWeight="0.5275862" side_tool="true" weight="0.15542677" />
-      <window_info content_ui="combo" id="Project" order="2" sideWeight="0.490701" visible="true" weight="0.18710022" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.30663857" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32763532" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.8424242" weight="0.80931747" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.91675615" weight="0.5557963" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.30769232" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.62621886" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49573562" weight="0.3041145" />
-      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.4978678" weight="0.32827735" />
-      <window_info anchor="bottom" id="Version Control" order="8" weight="0.33880422" />
-      <window_info anchor="bottom" id="Python Console" order="9" sideWeight="0.4978678" weight="0.32719395" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32936078" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" x="2064" y="290" width="1736" height="896" id="Documentation" order="3" type="FLOATING" />
-      <window_info anchor="right" id="Data View" order="4" weight="0.08198121" />
-      <window_info anchor="right" id="Event Log" order="5" sideWeight="0.15757576" side_tool="true" weight="0.20255864" />
     </layout>
-    <layout-to-restore>
-      <window_info id="Structure" order="0" sideWeight="0.509299" side_tool="true" weight="0.44121715" />
-      <window_info id="Favorites" order="1" sideWeight="0.5275862" side_tool="true" weight="0.15542677" />
-      <window_info content_ui="combo" id="Project" order="2" sideWeight="0.490701" visible="true" weight="0.24040511" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32763532" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.8424242" visible="true" weight="0.24593717" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.91675615" weight="0.4127844" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49573562" weight="0.3041145" />
-      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.4978678" weight="0.32827735" />
-      <window_info anchor="bottom" id="Version Control" order="8" weight="0.33880422" />
-      <window_info anchor="bottom" id="Python Console" order="9" sideWeight="0.4978678" weight="0.32719395" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" x="2064" y="290" width="1736" height="896" id="Documentation" order="3" type="FLOATING" />
-      <window_info anchor="right" id="Data View" order="4" weight="0.08198121" />
-      <window_info anchor="right" id="Event Log" order="5" sideWeight="0.15757576" side_tool="true" weight="0.24664879" />
-    </layout-to-restore>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url />
-          <line>61</line>
-          <option name="timeStamp" value="313" />
+          <url>file://$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssPDFplot.py</url>
+          <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url />
-          <line>8</line>
-          <option name="timeStamp" value="27" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url />
-          <line>19</line>
-          <option name="timeStamp" value="39" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/PyDSS/PyPlots/Plots/Topology.py</url>
-          <option name="timeStamp" value="46" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/PyDSS/PyPlots/Plots/TimeSeries.py</url>
-          <line>45</line>
-          <option name="timeStamp" value="47" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/PyDSS/ResultContainer.py</url>
-          <line>240</line>
-          <option name="timeStamp" value="315" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/PyDSS/SolveMode.py</url>
-          <line>22</line>
-          <option name="timeStamp" value="320" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/PyDSS.py</url>
-          <line>8</line>
-          <option name="timeStamp" value="321" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/PyDSS.py</url>
-          <line>33</line>
-          <option name="timeStamp" value="323" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/PyDSS.py</url>
-          <line>113</line>
-          <option name="timeStamp" value="324" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/PyDSS/SolveMode.py</url>
-          <line>200</line>
-          <option name="timeStamp" value="325" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/PyDSS/SolveMode.py</url>
-          <line>109</line>
-          <option name="timeStamp" value="326" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/PyDSS/pyControllers/Controllers/PvControllerGen.py</url>
-          <line>47</line>
-          <option name="timeStamp" value="329" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/../PSLF_file_modifier.py</url>
-          <line>37</line>
-          <option name="timeStamp" value="330" />
+          <url>file://$PROJECT_DIR$/PyDSS/pyAnalyzer/dssGraphicsGenerator.py</url>
+          <line>108</line>
+          <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
-      <default-breakpoints>
-        <breakpoint type="python-exception">
-          <properties notifyOnTerminate="true" exception="BaseException">
-            <option name="notifyOnTerminate" value="true" />
-          </properties>
-        </breakpoint>
-      </default-breakpoints>
     </breakpoint-manager>
   </component>
   <component name="debuggerHistoryManager">
@@ -619,101 +641,232 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/setup.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="582">
-          <caret line="40" column="43" selection-start-line="40" selection-start-column="43" selection-end-line="40" selection-end-column="43" />
+        <state relative-caret-position="433">
+          <caret line="28" selection-start-line="28" selection-end-line="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/envs/PyDSS/Lib/site-packages/matplotlib/axes/_base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-80">
+          <caret line="3138" selection-start-line="3138" selection-end-line="3138" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/envs/PyDSS/Lib/site-packages/numpy/core/fromnumeric.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="85" selection-start-line="85" selection-end-line="85" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/docs/build/html/_static/jquery-3.4.1.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="453">
+          <caret line="766" column="31" selection-start-line="766" selection-start-column="31" selection-end-line="766" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/envs/PyDSS/Lib/ast.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="145">
+          <caret line="90" selection-start-line="90" selection-end-line="90" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyPlots/Plots/GISplot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2244">
           <folding>
-            <element signature="e#22#31#0" expanded="true" />
+            <element signature="e#0#54#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/matplotlib/contour.py">
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyPlots/Plots/Histogram.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3637">
-          <caret line="991" column="15" selection-start-line="991" selection-start-column="13" selection-end-line="991" selection-end-column="15" />
+        <state relative-caret-position="340">
+          <caret line="74" column="28" selection-start-line="74" selection-start-column="28" selection-end-line="74" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#54#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/matplotlib/artist.py">
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyPlots/Plots/XYPlot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="915" selection-start-line="915" selection-end-line="915" />
+        <state relative-caret-position="204">
+          <caret line="63" column="9" selection-start-line="63" selection-start-column="9" selection-end-line="63" selection-end-column="9" />
+          <folding>
+            <element signature="e#0#54#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/matplotlib/axes/_base.py">
+    <entry file="file://$PROJECT_DIR$/examples/External_interfacing example/Helics_example.py" />
+    <entry file="file://$PROJECT_DIR$/examples/External_interfacing example/Helics_example/run_pyDSS.py" />
+    <entry file="file://$PROJECT_DIR$/tests/test_simple.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2041">
-          <caret line="505" selection-start-line="505" selection-end-line="505" />
+        <state relative-caret-position="51">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/matplotlib/cm.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/reshape/reshape.py">
+    <entry file="file://$PROJECT_DIR$/examples/External_interfacing_example/Helics_example/run_pyDSS.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
-          <caret line="165" selection-start-line="165" selection-end-line="165" />
+        <state relative-caret-position="204">
+          <caret line="14" selection-start-line="14" selection-end-line="20" selection-end-column="43" />
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/matplotlib/colors.py">
+    <entry file="file://$PROJECT_DIR$/examples/External_interfacing_example/Helics_example/run_dummy_federate.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="272" selection-start-line="272" selection-end-line="272" />
+        <state relative-caret-position="1241">
+          <caret line="73" column="30" selection-start-line="73" selection-start-column="30" selection-end-line="73" selection-end-column="30" />
+          <folding>
+            <element signature="e#24#35#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/seaborn/axisgrid.py">
+    <entry file="file://$PROJECT_DIR$/examples/External_interfacing_example/API_example/run_pyDSS.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="213">
-          <caret line="1708" selection-start-line="1708" selection-end-line="1708" />
+        <state relative-caret-position="357">
+          <caret line="32" selection-start-line="32" selection-end-line="32" />
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/seaborn/distributions.py">
+    <entry file="file://$PROJECT_DIR$/PyDSS/NetworkModifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="609">
-          <caret line="224" selection-start-line="224" selection-end-line="224" />
+        <state relative-caret-position="403">
+          <caret line="66" column="62" selection-start-line="66" selection-start-column="62" selection-end-line="66" selection-end-column="62" />
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/plotting/_core.py">
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2and3/socket.pyi">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18156">
-          <caret line="1098" selection-start-line="1098" selection-end-line="1098" />
+        <state relative-caret-position="227">
+          <caret line="558" column="8" selection-start-line="558" selection-start-column="8" selection-end-line="558" selection-end-column="8" />
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/generic.py">
+    <entry file="file://C:/ProgramData/Anaconda3/envs/PyDSS/Lib/site-packages/toml/decoder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160344">
-          <caret line="9481" selection-start-line="9481" selection-end-line="9481" />
+        <state relative-caret-position="7667">
+          <caret line="457" selection-start-line="457" selection-end-line="457" />
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/seaborn/relational.py">
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyContrReader.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="841">
-          <caret line="1318" column="4" selection-start-line="1318" selection-start-column="4" selection-end-line="1318" selection-end-column="4" />
+        <state relative-caret-position="1428">
+          <caret line="86" column="62" selection-start-line="86" selection-start-column="62" selection-end-line="86" selection-end-column="62" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/External_interfacing_example/Socket_example/run_socket_controller.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="8" selection-start-line="8" selection-end-line="8" />
+          <folding>
+            <element signature="e#41#54#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyControllers/Controllers/SocketController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="20" selection-start-line="20" selection-end-line="20" />
+          <folding>
+            <element signature="e#0#72#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/External_interfacing_example/Socket_example/run_pyDSS.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="19" column="11" selection-start-line="19" selection-start-column="11" selection-end-line="19" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyControllers/Controllers/PvControllerGen.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="680">
+          <caret line="271" column="9" selection-start-line="271" selection-start-column="9" selection-end-line="271" selection-end-column="10" />
+          <caret line="272" column="9" selection-start-line="272" selection-start-column="9" selection-end-line="272" selection-end-column="10" />
+          <caret line="273" column="9" selection-start-line="273" selection-start-column="9" selection-end-line="273" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#72#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyControllers/Controllers/PvController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="79" column="36" selection-start-line="78" selection-start-column="8" selection-end-line="79" selection-end-column="36" />
+          <folding>
+            <element signature="e#0#72#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyControllers/Controllers/FaultController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-162" />
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/envs/PyDSS/Lib/site-packages/pandas/plotting/_core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="719">
+          <caret line="1000" column="36" lean-forward="true" selection-start-line="1000" selection-start-column="12" selection-end-line="1000" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/default_plot_settings.toml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="633">
+          <caret line="203" column="9" selection-start-line="203" selection-start-column="9" selection-end-line="203" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyPlots/Plots/TimeSeries.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="10" column="36" selection-start-line="10" selection-start-column="36" selection-end-line="10" selection-end-column="36" />
+          <folding>
+            <element signature="e#0#54#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/envs/PyDSS/Lib/site-packages/matplotlib/backends/backend_agg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1173">
+          <caret line="86" selection-start-line="86" selection-end-line="86" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/envs/PyDSS/Lib/site-packages/matplotlib/pyplot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="22644">
+          <caret line="1381" selection-start-line="1381" selection-end-line="1381" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/pyAnalyzer/dssGraphicsGenerator.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1853">
-          <caret line="114" column="23" selection-start-line="114" selection-start-column="23" selection-end-line="114" selection-end-column="23" />
-          <folding>
-            <element signature="e#1#72#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="2057">
+          <caret line="126" column="40" selection-start-line="126" selection-start-column="40" selection-end-line="126" selection-end-column="40" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssPDFplot.py">
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssFrequencySweep.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4879">
-          <caret line="292" column="8" selection-start-line="292" selection-start-column="8" selection-end-line="292" selection-end-column="8" />
+        <state relative-caret-position="884">
+          <caret line="58" column="29" selection-start-line="58" selection-start-column="29" selection-end-line="58" selection-end-column="29" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>
@@ -722,251 +875,92 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssProfilePlot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="661">
-          <caret line="259" column="60" selection-start-line="259" selection-start-column="56" selection-end-line="259" selection-end-column="60" />
+        <state relative-caret-position="586">
+          <caret line="100" column="58" selection-start-line="90" selection-start-column="12" selection-end-line="100" selection-end-column="58" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssXYplot.py">
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssPDFplot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="661">
-          <caret line="47" column="64" selection-start-line="47" selection-start-column="64" selection-end-line="47" selection-end-column="64" />
+        <state relative-caret-position="-2720">
+          <caret line="86" column="23" lean-forward="true" selection-start-line="86" selection-start-column="23" selection-end-line="86" selection-end-column="23" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyAnalyzer/dssPlots/dssVoltageDistance.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="12" column="31" selection-start-line="12" selection-start-column="31" selection-end-line="12" selection-end-column="31" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Temp/1/Temp1_helics feeder (002).zip/helics feeder/feeder.py" />
-    <entry file="file://$USER_HOME$/AppData/Local/Temp/1/Temp1_helics feeder (002).zip/helics feeder/constants.py" />
-    <entry file="file://$USER_HOME$/AppData/Local/Temp/1/Temp1_helics feeder (002).zip/helics feeder/agents/Feeder.py" />
-    <entry file="file://$USER_HOME$/AppData/Local/Temp/1/Temp1_helics feeder (002).zip/helics feeder/agents/Agent.py" />
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/io/common.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1792">
-          <caret line="423" selection-start-line="423" selection-end-line="423" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyControllers/Controllers/Helics.py" />
-    <entry file="file://$PROJECT_DIR$/PyDSS/unitDefinations.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="42" column="30" selection-start-line="42" selection-start-column="24" selection-end-line="42" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Box/Sumitomo-Phase3/Sumitomo dashboard/Data_manager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="23" column="37" lean-forward="true" selection-start-line="23" selection-start-column="37" selection-end-line="23" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../HELICS-2.2.0/tests/python/test_message_federate.py">
+    <entry file="file://$PROJECT_DIR$/PyDSS/dssElement.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <folding>
-            <element signature="e#0#11#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../HELICS-2.2.0/tests/python/test_message_filter.py">
+    <entry file="file://$PROJECT_DIR$/PyDSS/Extensions/MonteCarlo.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2108">
-          <caret line="126" column="44" selection-start-line="126" selection-start-column="3" selection-end-line="126" selection-end-column="44" />
+        <state relative-caret-position="85">
+          <caret line="9" column="12" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="12" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Box/Sumitomo-Phase3/Sumitomo dashboard/Bill_calculator.py">
+    <entry file="file://$PROJECT_DIR$/PyDSS/default_simulation_settings.toml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4012">
-          <caret line="253" column="42" selection-start-line="253" selection-start-column="8" selection-end-line="253" selection-end-column="42" />
+        <state relative-caret-position="1530">
+          <caret line="90" selection-start-line="90" selection-end-line="90" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyPlots/pyPlotAbstract.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="20" column="27" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyPlots/pyPlots.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="21" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyPlots/Plots/FrequencySweep.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="773">
+          <caret line="86" selection-start-line="86" selection-end-line="86" />
           <folding>
-            <element signature="e#0#48#0" expanded="true" />
+            <element signature="e#0#54#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/pandas/core/tools/timedeltas.py">
+    <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="20" selection-start-line="1" selection-start-column="20" selection-end-line="1" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../HELICS-2.2.0/tests/python/test_value_federate.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="5" column="4" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="4" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../PyDSS-Projects/EPRI_J1/DSSfiles/PV_sceenario_generator.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="663">
-          <caret line="39" selection-start-line="39" selection-end-line="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/dssBus.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="43" column="28" selection-start-line="43" selection-start-column="28" selection-end-line="43" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyControllers/Controllers/StorageController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="160" column="58" selection-start-line="160" selection-start-column="58" selection-end-line="160" selection-end-column="58" />
-          <folding>
-            <element signature="e#0#72#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/toml/decoder.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="337">
-          <caret line="469" column="42" lean-forward="true" selection-start-line="469" selection-start-column="42" selection-end-line="469" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2019.1/system/python_stubs/-313451744/builtins.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
-          <caret line="488" column="4" selection-start-line="488" selection-start-column="4" selection-end-line="488" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyControllers/Controllers/PvController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="494">
-          <caret line="114" column="20" selection-start-line="74" selection-end-line="114" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#72#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyControllers/Controllers/HelicsController.py" />
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyControllers/Controllers/PvControllerGen.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="544">
-          <caret line="386" column="3" lean-forward="true" selection-start-line="386" selection-start-column="3" selection-end-line="386" selection-end-column="3" />
-          <folding>
-            <element signature="e#0#72#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="68">
+          <caret line="4" column="49" selection-start-line="4" selection-start-column="49" selection-end-line="4" selection-end-column="49" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/SolveMode.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="892">
-          <caret line="174" column="26" lean-forward="true" selection-start-line="174" selection-start-column="26" selection-end-line="174" selection-end-column="26" />
+        <state relative-caret-position="761">
+          <caret line="76" column="14" selection-start-line="76" selection-start-column="14" selection-end-line="76" selection-end-column="14" />
           <folding>
             <element signature="e#0#40#0" expanded="true" />
-            <element signature="e#8428#10225#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Helics Example/Broker.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/helics.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="299">
-          <caret line="563" selection-start-line="563" selection-end-line="563" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyContrReader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="2" column="9" lean-forward="true" selection-start-line="2" selection-start-column="9" selection-end-line="2" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../PSLF_file_modifier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="663">
-          <caret line="39" lean-forward="true" selection-start-line="39" selection-end-line="39" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyControllers/pyController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="3" column="44" selection-start-line="3" selection-start-column="44" selection-end-line="3" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Helics Example/pireciever.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="4" column="30" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="30" />
-          <folding>
-            <element signature="e#24#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Helics Example/pisender.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="663">
-          <caret line="41" column="4" selection-start-line="41" selection-start-column="4" selection-end-line="41" selection-end-column="4" />
-          <folding>
-            <element signature="e#24#35#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Helics Example/Broker2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="5" column="18" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="141" column="30" lean-forward="true" selection-start-line="141" selection-start-column="30" selection-end-line="141" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#61#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/ResultContainer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="21" column="25" selection-start-line="21" selection-start-column="8" selection-end-line="21" selection-end-column="25" />
+        <state relative-caret-position="120">
+          <caret line="275" column="17" selection-start-line="275" selection-start-column="17" selection-end-line="275" selection-end-column="17" />
           <folding>
             <element signature="e#0#60#0" expanded="true" />
           </folding>
@@ -975,20 +969,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/dssInstance.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="518">
-          <caret line="357" selection-start-line="357" selection-end-line="358" />
+        <state relative-caret-position="188">
+          <caret line="327" column="11" selection-start-line="327" selection-start-column="11" selection-end-line="327" selection-end-column="11" />
           <folding>
             <element signature="e#0#55#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/dssElement.py">
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyDSS.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="773">
-          <caret line="131" column="9" lean-forward="true" selection-start-line="131" selection-start-column="9" selection-end-line="131" selection-end-column="9" />
+        <state relative-caret-position="273">
+          <caret line="197" column="47" selection-start-line="197" selection-start-column="47" selection-end-line="197" selection-end-column="47" />
           <folding>
-            <element signature="e#0#31#0" expanded="true" />
+            <element signature="e#0#61#0" expanded="true" />
           </folding>
         </state>
       </provider>

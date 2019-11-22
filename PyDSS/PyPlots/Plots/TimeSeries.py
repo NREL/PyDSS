@@ -1,3 +1,4 @@
+from  PyDSS.pyPlots.pyPlotAbstract import PlotAbstract
 from bokeh.plotting import figure, curdoc
 from bokeh.io import output_file
 from bokeh.client import push_session
@@ -5,8 +6,9 @@ from bokeh.layouts import  column
 from bokeh.palettes import Set1
 from ast import literal_eval as LE
 
-class TimeSeries:
+class TimeSeries(PlotAbstract):
     def __init__(self,PlotProperties, dssBuses, dssObjects, dssCircuit, dssSolver):
+        super(TimeSeries).__init__()
         self.__dssBuses = dssBuses
         self.__dssObjs = dssObjects
         self.__PlotProperties = PlotProperties
@@ -64,7 +66,10 @@ class TimeSeries:
                     self.Lines[i].append(a)
             else:
                 self.Lines[i] = Figure.line(self.X[i], self.Y[i], line_width=3, line_alpha=1)
-            Figure.yaxis.axis_label = Property + '-' + self.__index[i]
+            if self.__index[i] is not None:
+                Figure.yaxis.axis_label = Property + '-' + self.__index[i]
+            else:
+                Figure.yaxis.axis_label = Property
             Figure.xaxis.axis_label = 'Timesteps'
             self.Figures.append(Figure)
 
@@ -73,9 +78,12 @@ class TimeSeries:
         self.doc.add_root(self.Layout)
         self.doc.title = "PyDSS"
         self.session = push_session(self.doc)
-        self.session.show(self.Layout)  # open the document in a browser
+        #self.session.show(self.Layout)  # open the document in a browser
 
         return
+
+    def GetSessionID(self):
+        return self.session.id
 
     def UpdatePlot(self):
         for i, yProperties in enumerate(self.__Properties):

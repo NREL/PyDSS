@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>The socket interface &#8212; PyDSS 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Automated scenario comparison" href="Automated comparison of scenarios.html" />
+    <link rel="prev" title="External PyDSS interfaces" href="External interfaces for cosimulation.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="Automated comparison of scenarios.html" title="Automated scenario comparison"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="External interfaces for cosimulation.html" title="External PyDSS interfaces"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">PyDSS 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="External interfaces for cosimulation.html" accesskey="U">External PyDSS interfaces</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>Within the example folder the project named external interfaces provides an example usage of all three interafces.</p>
+<div class="section" id="the-socket-interface">
+<h1>The socket interface<a class="headerlink" href="#the-socket-interface" title="Permalink to this headline">¶</a></h1>
+<p>The socket interface is implemented as a PyDSS pyController. Implmentation details and expected inputs are detailed here: <a class="reference internal" href="PyDSS controllers.html#socket-controller"><span class="std std-ref">Socket controller</span></a></p>
+</div>
+<div class="section" id="the-helics-interface">
+<h1>The HELICS interface<a class="headerlink" href="#the-helics-interface" title="Permalink to this headline">¶</a></h1>
+<p>The HELICS interface is implemented within the . Implmentation details and expected inputs are detailed here: <a class="reference internal" href="PyDSS controllers.html#socket-controller"><span class="std std-ref">Socket controller</span></a>. Setting up the interface required users define parameters that have been detailed here: <a class="reference internal" href="Result management.html#enhanced-result-export-features"><span class="std std-ref">Enhanced result export features</span></a></p>
+</div>
+<div class="section" id="the-api-interface">
+<h1>The API interface<a class="headerlink" href="#the-api-interface" title="Permalink to this headline">¶</a></h1>
+<p>Using the API interface would require user to create an instance of the <code class="xref py py-class docutils literal notranslate"><span class="pre">PyDSS.dssInstacne</span></code> class. This would require the user to define the arguments dictionary. If structured correctly, user should be able to invove an instance of PyDSS. Ensure within the passed arguments dictionary,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;Return Results&quot;</span> <span class="p">:</span> <span class="bp">True</span>
+</pre></div>
+</div>
+<p>Else, None will be returned at simulator steps through time. Once an instance has been created, simulation may be controlled externaly. A simple example is as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">run_simulation</span><span class="p">(</span><span class="n">args_dict</span><span class="p">):</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">simulator</span> <span class="o">=</span> <span class="n">PyDSS</span><span class="o">.</span><span class="n">dssInstance</span><span class="p">(</span><span class="n">args_dict</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">simulator</span><span class="o">.</span><span class="n">RunStep</span><span class="p">(</span><span class="n">stepSize</span><span class="p">))</span>
+        <span class="n">simulator</span><span class="o">.</span><span class="n">DeleteInstance</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">results</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The socket interface</a></li>
+<li><a class="reference internal" href="#the-helics-interface">The HELICS interface</a></li>
+<li><a class="reference internal" href="#the-api-interface">The API interface</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="External interfaces for cosimulation.html"
+                        title="previous chapter">External PyDSS interfaces</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Automated comparison of scenarios.html"
+                        title="next chapter">Automated scenario comparison</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/interfaces.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="Automated comparison of scenarios.html" title="Automated scenario comparison"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="External interfaces for cosimulation.html" title="External PyDSS interfaces"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">PyDSS 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="External interfaces for cosimulation.html" >External PyDSS interfaces</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Aadil Latif.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+  </body>
+</html>

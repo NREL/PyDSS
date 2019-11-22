@@ -1,0 +1,9 @@
+Class,Publish,Property,Property2,Property3,Property4
+Loads,TRUE,Powers,,,
+Loads,FALSE,VoltagesMagAng,,,
+PVSystems,TRUE,Powers,VoltagesMagAng,,
+Storages,FALSE,Powers,VoltagesMagAng,%stored,
+Buses,FALSE,puVmagAngle,Distance,,
+Circuits,TRUE,TotalPower,LineLosses,Losses,
+Lines,FALSE,CurrentsMagAng,normamps,bus1,
+Transformers,FALSE,CurrentsMagAng,normamps,bus,taps

@@ -10,7 +10,6 @@ class ResultObject:
         for result in self.__result_files:
             if result != 'event_log.csv':
                 self.__result_dict[result.replace('.csv', '')] = pd.read_csv(os.path.join(resultPath, result), index_col=0)
-                #print(self.__result_dict[result.replace('.csv', '')])
         return
 
     def get_results(self):

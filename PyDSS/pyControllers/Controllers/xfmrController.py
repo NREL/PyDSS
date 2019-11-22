@@ -1,18 +1,35 @@
 from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
 
 class xfmrController(ControllerAbstract):
-    P_old = 0
-    Time = -1
+    """The controller locks a regulator in the event of reverse power flow. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
 
-    __Locked = False
+                :param RegulatorObj: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS 'Regulator' element
+                :type FaultObj: class:`PyDSS.dssElement.dssElement`
+                :param Settings: A dictionary that defines the settings for the PvController.
+                :type Settings: dict
+                :param dssInstance: An :class:`opendssdirect` instance
+                :type dssInstance: :class:`opendssdirect`
+                :param ElmObjectList: Dictionary of all dssElement, dssBus and dssCircuit objects
+                :type ElmObjectList: dict
+                :param dssSolver: An instance of one of the classed defined in :mod:`PyDSS.SolveMode`.
+                :type dssSolver: :mod:`PyDSS.SolveMode`
+                :raises: AssertionError if 'RegulatorObj' is not a wrapped OpenDSS Regulator element
+
+        """
+
+
     def __init__(self, RegulatorObj, Settings, dssInstance, ElmObjectList, dssSolver):
         super(xfmrController).__init__()
+        self.P_old = 0
+        self.Time = -1
+        self.__Locked = False
         self.__ControlledElm = RegulatorObj
         self.__ConnTransformerName = 'Transformer.' + self.__ControlledElm.GetParameter('transformer').lower()
         self.__ConnTransformer = ElmObjectList[self.__ConnTransformerName]
         self.__ElmObjectList = ElmObjectList
         self.__RPFlocking = Settings['RPF locking']
         Class, Name = self.__ControlledElm.GetInfo()
+
         self.__Name = 'pyCont_' + Class + '_' + Name
         return
 

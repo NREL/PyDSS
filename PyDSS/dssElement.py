@@ -126,7 +126,3 @@ class dssElement:
         else:
             print('Could not set ' + self.__Class + '.' + self.__Name + ' as active element.')
             return None
-
-    def __del__(self):
-        self.SetParameter('enabled', 'false')
-        return

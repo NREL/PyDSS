@@ -1,3 +1,2 @@
 PyDSS
-PyPlots
-pyControllers
+tests

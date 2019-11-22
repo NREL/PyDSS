@@ -2,19 +2,36 @@ from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
 import math
 
 class PvController(ControllerAbstract):
-    TimeChange = False
-    Time = (-1, 0)
+    """Implementation of smart control modes of modern inverter systems. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
 
-    oldPcalc = 0
-    oldQcalc = 0
-    #dPOld = 0
-    #dQOld = 0
+        :param PvObj: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS 'PVSystem' element
+        :type FaultObj: class:`PyDSS.dssElement.dssElement`
+        :param Settings: A dictionary that defines the settings for the PvController.
+        :type Settings: dict
+        :param dssInstance: An :class:`opendssdirect` instance
+        :type dssInstance: :class:`opendssdirect`
+        :param ElmObjectList: Dictionary of all dssElement, dssBus and dssCircuit objects
+        :type ElmObjectList: dict
+        :param dssSolver: An instance of one of the classed defined in :mod:`PyDSS.SolveMode`.
+        :type dssSolver: :mod:`PyDSS.SolveMode`
+        :raises: AssertionError if 'PvObj' is not a wrapped OpenDSS PVSystem element
 
-    __vDisconnected = False
-    __pDisconnected = False
+    """
 
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
+        """Constructor method
+        """
         super(PvController).__init__()
+
+        self.TimeChange = False
+        self.Time = (-1, 0)
+
+        self.oldPcalc = 0
+        self.oldQcalc = 0
+
+        self.__vDisconnected = False
+        self.__pDisconnected = False
+
         self.__ElmObjectList = ElmObjectList
         #print(PvObj.Bus[0] + ' - ' + PvObj.sBus[0].GetInfo())
         self.ControlDict = {
@@ -28,6 +45,7 @@ class PvController(ControllerAbstract):
 
         self.__ControlledElm = PvObj
         Class, Name = self.__ControlledElm.GetInfo()
+        assert (Class.lower()=='pvsystem'), 'PvController works only with an OpenDSS PVSystem element'
         self.__Name = 'pyCont_' + Class + '_' + Name
         if '_' in Name:
             self.Phase = Name.split('_')[1]
@@ -74,6 +92,8 @@ class PvController(ControllerAbstract):
         return self.update[Priority]()
 
     def VWcontrol(self):
+        """Volt / Watt  control implementation
+        """
         uMinC = self.__Settings['uMinC']
         uMaxC = self.__Settings['uMaxC']
         Pmin  = self.__Settings['PminVW'] / 100
@@ -115,6 +135,8 @@ class PvController(ControllerAbstract):
         return Error
 
     def CutoffControl(self):
+        """Over voltage trip implementation
+        """
         uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[::2])
         uCut = self.__Settings['%UCutoff']
         if uIn >= uCut:
@@ -137,6 +159,8 @@ class PvController(ControllerAbstract):
         return 0
 
     def CPFcontrol(self):
+        """Constant power factor implementation
+        """
         PFset = self.__Settings['pf']
         PFact = self.__ControlledElm.GetParameter('pf')
         Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))/ self.__Srated
@@ -167,6 +191,8 @@ class PvController(ControllerAbstract):
         return Error
 
     def VPFcontrol(self):
+        """Variable power factor control implementation
+        """
         Pmin = self.__Settings['Pmin']
         Pmax = self.__Settings['Pmax']
         PFmin = self.__Settings['pfMin']
@@ -201,6 +227,8 @@ class PvController(ControllerAbstract):
         return 0
 
     def VVARcontrol(self):
+        """Volt / var control implementation
+        """
         uMin = self.__Settings['uMin']
         uMax = self.__Settings['uMax']
         pfLim = self.__Settings['PFlim']

@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Extended controls library &#8212; PyDSS 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Fault controller" href="PyDSS controllers.html" />
+    <link rel="prev" title="Development of custom dynamic plots" href="Creating custom dynamic plots.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="PyDSS controllers.html" title="Fault controller"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Creating custom dynamic plots.html" title="Development of custom dynamic plots"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">PyDSS 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="extended-controls-library">
+<h1>Extended controls library<a class="headerlink" href="#extended-controls-library" title="Permalink to this headline">¶</a></h1>
+<p>Although OpenDSS has numerous control implementations in its internal equipment library (e.g. inverter controller, storage controller), these controller implementations are limited to a few control modes and may not mimic the behavior of the actual system we are modeling. For example, The OpenDSS storage controller is not capable of operating in ’capacity firming’ or ’base loading’ mode that many utility scale storage systems use. To facilitate implementation of new control modes and ensure that these controls converge to a steady state solution at each time step, an iterative convergence algorithm has been implemented within the PyDSS architecture. The convergence loop uses the steepest gradient descent with Heavy Ball optimization method to efficiently converge to a steady state solution. Heavy Ball optimization is a two step iterative method that uses the state of the previous iteration to maintain momentum in the same direction. The momentum term</p>
+<div class="math">
+<p><img src="_images/math/c0f737857302f88890d2527666d80466123fead4.png" alt="(x_{k}^{t,n} - x_{k-1}^{t,n})"/></p>
+</div><p>( helps mitigate zigzag trajectories in iterative descent algorithms, thus enabling faster convergence rates. The transition equation for each controller can be formulated as:</p>
+<div class="math">
+<p><img src="_images/math/154f19d6e905d1db9b6937821c85e00c91c1c7d0.png" alt="x_{k+1}^{t,n} = x_{k}^{t,n} - \alpha^n . \bigtriangledown f(x_{k}^{t,n}) + \beta^n . (x_{k}^{t,n} - x_{k-1}^{t,n})"/></p>
+</div><p>Each new controller implementation is a pyController object within PyDSS and controls one or more OpenDSS elements. The architecture allows users to implement there own controllers and add them to the simulation environment with minimal coding effort. Figure below presents a flow chart for a simulation run in PyDSS.</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/Flow_chart.png"><img alt="_images/Flow_chart.png" src="_images/Flow_chart.png" style="width: 269.0px; height: 437.5px;" /></a>
+</div>
+<p>The installation come with several control listed below.</p>
+<ul class="simple">
+<li><p>Fault controller (Induces a fault ona chosen bus. Used in dynamic simulations)</p></li>
+<li><dl class="simple">
+<dt>Pv controller (Developed for controlling the OpenDSS PVSystem element.)</dt><dd><ul>
+<li><p>Volt / Var implementation</p></li>
+<li><p>Volt / Watt implementation</p></li>
+<li><p>Constant power factor implmentation</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Pv controller [Gen] (Developed for controlling the OpenDSS Generator element.)</dt><dd><ul>
+<li><p>Complete IEEE1547-2018 voltage ridethrough implementation.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Socket controller (Enables socket interafce for PyDSS objects)</p></li>
+<li><dl class="simple">
+<dt>Storage controller (Developed for controlling the OpenDSS Storage element.)</dt><dd><ul>
+<li><p>Time of use control implementation</p></li>
+<li><p>Demand charge control implementation</p></li>
+<li><p>Self consumption control implementation</p></li>
+<li><p>Peak shaving / base loading control implementation</p></li>
+<li><p>Capacity firming control implementation</p></li>
+<li><p>Smart self consumption implementation</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Xfmr controller</dt><dd><ul>
+<li><p>Enables tap lock in reverse power flow conditions.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>pyControllers need to be defined within the ‘pyControllerList.json’ file for a given scenario. All pyController may be disabled by setting the to ‘true’ in the ‘Scenario_settings.TOML’ file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;Disable PyDSS controllers&quot;</span> <span class="o">=</span> <span class="n">false</span>
+</pre></div>
+</div>
+<p>Error tolerance and maximum controll interations for pyController object can also be defined in the ‘Scenario_settings.TOML’ file by setting appropriate value for the following keys.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;Max Control Iterations&quot;</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="s2">&quot;Error tolerance&quot;</span> <span class="o">=</span> <span class="mf">0.001</span>
+</pre></div>
+</div>
+<p>Controller convergance (and instances of failed convergance) are reported  in the log file. The log file also contains a summary convergance report at the end of a simulation. The figure below shows a convergance plot for the PV controller implemented in PyDSS. Each trace shows convergance path at a single time step.</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/Convergance.png"><img alt="_images/Convergance.png" src="_images/Convergance.png" style="width: 369.25px; height: 228.0px;" /></a>
+</div>
+<p>Expected definations for each controller can be found here</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="PyDSS controllers.html">Fault controller</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PyDSS controllers.html#pv-controller">PV controller</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PyDSS controllers.html#pv-controller-gen">Pv controller [Gen]</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PyDSS controllers.html#socket-controller">Socket controller</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PyDSS controllers.html#storage-controller">Storage controller</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PyDSS controllers.html#xfmr-controller">Xfmr controller</a></li>
+</ul>
+</div>
+<p>Users are able to extend current control implementations by following the tutorial here</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Creating custom controls.html">Extending PyDSS controllers</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Creating custom dynamic plots.html"
+                        title="previous chapter">Development of custom dynamic plots</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="PyDSS controllers.html"
+                        title="next chapter">Fault controller</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Extended controls library.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="PyDSS controllers.html" title="Fault controller"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Creating custom dynamic plots.html" title="Development of custom dynamic plots"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">PyDSS 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Aadil Latif.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+2019-04-12 08:58:21,873 - INFO - dssInstance - An instance of OpenDSS version 0.3.4 has been created.
+2019-04-12 08:58:22,039 - INFO - SolveMode - Solver set to Daily mode.
+2019-04-12 08:58:22,148 - INFO - dssInstance - Created pyController -> Controller.Storage.ESSC591
+2019-04-12 09:01:35,755 - INFO - dssInstance - An instance of OpenDSS version 0.3.4 has been created.
+2019-04-12 09:01:35,903 - INFO - SolveMode - Solver set to Daily mode.
+2019-04-12 09:01:35,973 - INFO - dssInstance - Created pyController -> Controller.Storage.ESSC591
