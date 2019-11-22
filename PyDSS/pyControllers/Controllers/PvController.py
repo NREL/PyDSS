@@ -22,8 +22,6 @@ class PvController(ControllerAbstract):
         """Constructor method
         """
         super(PvController).__init__()
-<<<<<<< HEAD
-
         self.TimeChange = False
         self.Time = (-1, 0)
 
@@ -33,8 +31,6 @@ class PvController(ControllerAbstract):
         self.__vDisconnected = False
         self.__pDisconnected = False
 
-=======
->>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         self.__ElmObjectList = ElmObjectList
         #print(PvObj.Bus[0] + ' - ' + PvObj.sBus[0].GetInfo())
         self.ControlDict = {
@@ -162,18 +158,13 @@ class PvController(ControllerAbstract):
         return 0
 
     def CPFcontrol(self):
-<<<<<<< HEAD
         """Constant power factor implementation
         """
-=======
->>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         PFset = self.__Settings['pf']
         PFact = self.__ControlledElm.GetParameter('pf')
         Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))/ self.__Srated
         Qpv = -sum(self.__ControlledElm.GetVariable('Powers')[1::2])/ self.__Srated
 
-<<<<<<< HEAD
-
         if self.__Settings['cpf-priority'] == 'PF':
            # if self.TimeChange:
             Plim = PFset * 100
@@ -193,30 +184,6 @@ class PvController(ControllerAbstract):
 
 
         Error = abs(PFset + PFact)
-
-=======
-
-        if self.__Settings['cpf-priority'] == 'PF':
-           # if self.TimeChange:
-            Plim = PFset * 100
-            self.__ControlledElm.SetParameter('pctPmpp', Plim)
-           # else:
-        else:
-            if self.__Settings['cpf-priority'] == 'Var':
-                #add code for var priority here
-                Plim = 0
-            else:
-                Plim = 1
-            if self.TimeChange:
-                self.Pmppt = 100
-            else:
-                self.Pmppt = Plim  * self.__Srated
-            #print(self.Pmppt , self.__Srated)
-
-
-        Error = abs(PFset + PFact)
-
->>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         self.__ControlledElm.SetParameter('pf', str(-PFset))
         return Error
 

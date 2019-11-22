@@ -6,14 +6,10 @@ from bokeh.layouts import  column
 from bokeh.palettes import Set1
 from ast import literal_eval as LE
 
-<<<<<<< HEAD
+
 class TimeSeries(PlotAbstract):
     def __init__(self,PlotProperties, dssBuses, dssObjects, dssCircuit, dssSolver):
         super(TimeSeries).__init__()
-=======
-class TimeSeries:
-    def __init__(self,PlotProperties, dssBuses, dssObjects, dssCircuit, dssSolver):
->>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         self.__dssBuses = dssBuses
         self.__dssObjs = dssObjects
         self.__PlotProperties = PlotProperties

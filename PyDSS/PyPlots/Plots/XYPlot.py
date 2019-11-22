@@ -10,15 +10,11 @@ import pandas as pd
 import numpy as np
 
 
-<<<<<<< HEAD
+
 class XYPlot(PlotAbstract):
     def __init__(self,PlotProperties, dssBuses, dssObjects, dssCircuit, dssSolver):
         super(XYPlot).__init__()
-=======
-class XYPlot:
-    def __init__(self,PlotProperties, dssBuses, dssObjects, dssCircuit, dssSolver):
 
->>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         self.__dssBuses = dssBuses
         self.__dssObjs = dssObjects
         self.__dssCircuit = dssCircuit

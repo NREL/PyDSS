@@ -7,13 +7,8 @@ class pyContrReader:
         self.pyControllers = {}
         filenames = os.listdir(Path)
         for filename in filenames:
-<<<<<<< HEAD
             print(filename)
             if filename.endswith('.xlsx') and not filename.startswith('~$'):
-=======
-
-            if filename.endswith('.xlsx'):
->>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
                 pyControllerType  = filename.split('.')[0]
                 filepath = os.path.join(Path, filename)
                 assert (os.path.exists(filepath)), 'path: "{}" does not exist!'.format(filepath)
@@ -38,11 +33,7 @@ class pySubscriptionReader:
         fileColumns = set(SubscriptionData.columns)
         diff  = requiredColumns.difference(fileColumns)
 
-<<<<<<< HEAD
         assert (len(diff) == 0), 'Missing column in the subscriptions file.\nRequired columns: {}'.format(
-=======
-        assert (len(diff) == 0), 'Missing column in the scbscriptions file \nRequired columns: {}'.format(
->>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
             requiredColumns
         )
         Subscribe = SubscriptionData['Subscribe']

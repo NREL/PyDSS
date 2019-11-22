@@ -7,7 +7,6 @@ import math
 import os
 
 class PvControllerGen(ControllerAbstract):
-<<<<<<< HEAD
     """Implementation of IEEE1547-2003 and IEEE1547-2018 voltage ride-through standards using the OpenDSS Generator model. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
 
             :param PvObj: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS 'Generator' element
@@ -23,8 +22,7 @@ class PvControllerGen(ControllerAbstract):
             :raises: AssertionError if 'PvObj' is not a wrapped OpenDSS Generator element
 
     """
-=======
->>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
+
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
         super(PvControllerGen).__init__()
 
@@ -54,10 +52,7 @@ class PvControllerGen(ControllerAbstract):
         self.__Settings = Settings
 
         Class, Name = self.__ControlledElm.GetInfo()
-<<<<<<< HEAD
         assert (Class.lower() == 'generator'), 'PvControllerGen works only with an OpenDSS Generator element'
-=======
->>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         self.__Name = 'pyCont_' + Class + '_' + Name
         if '_' in Name:
             self.Phase = Name.split('_')[1]
@@ -240,7 +235,6 @@ class PvControllerGen(ControllerAbstract):
         #     Error = self.update[Priority]()
         if Priority == 2:
             uIn = self.__UpdateViolatonTimers()
-<<<<<<< HEAD
             self.VoltageRideThrough(uIn)
 
         return Error
@@ -253,13 +247,6 @@ class PvControllerGen(ControllerAbstract):
     def VoltageRideThrough(self, uIn):
         """ Implementation of the IEEE1587-2018 voltage ride-through requirements for inverter systems
         """
-=======
-            self.__VoltageRideThrough(uIn)
-
-        return Error
-
-    def __VoltageRideThrough(self, uIn):
->>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         self.__faultCounterClearingTimeSec = 1
 
         Pm = Point(self.__uViolationtime, uIn)

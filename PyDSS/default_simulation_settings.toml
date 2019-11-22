@@ -88,5 +88,5 @@
 "Display on screen" = true
 "Clear old log file" = false
 
-"Number of Monte Carlo scenarios" = 1
+"Number of Monte Carlo scenarios" = -1
 

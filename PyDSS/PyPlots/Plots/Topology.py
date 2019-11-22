@@ -1,7 +1,6 @@
-<<<<<<< HEAD
+
 from  PyDSS.pyPlots.pyPlotAbstract import PlotAbstract
-=======
->>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
+
 from bokeh.models import ColumnDataSource, ColorBar, \
     LinearColorMapper, HoverTool, BoxSelectTool, BoxZoomTool, \
     PanTool, WheelZoomTool, ResetTool, SaveTool, Label
@@ -10,14 +9,11 @@ from bokeh.plotting import figure
 import pandas as pd
 import numpy as np
 
-<<<<<<< HEAD
+
 class Topology(PlotAbstract):
     def __init__(self,PlotProperties,dssBuses,dssObjectsByClass,dssCircuit,dssSolver):
         super(Topology).__init__()
-=======
-class Topology:
-    def __init__(self,PlotProperties,dssBuses,dssObjectsByClass,dssCircuit,dssSolver):
->>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
+
         self.__dssBuses = dssBuses
         self.__dssCircuit = dssCircuit
         self.__PlotProperties = PlotProperties
