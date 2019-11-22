@@ -176,7 +176,11 @@ class OpenDSS:
                 PlotSettings = PlotNames[Name]
                 PlotSettings['FileName'] = Name
                 if PlotType in PlotType1:
+<<<<<<< HEAD
                     self.__pyPlotObjects[PlotType] = pyPlots.pyPlots.Create(
+=======
+                    self.__pyPlotObjects[PlotType] = PyPlots.pyPlots.Create(
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
                         PlotType,
                         PlotSettings,
                         self.__dssBuses,
@@ -188,7 +192,11 @@ class OpenDSS:
                     #self.BokehDoc.add_root(self.__pyPlotObjects[PlotType].GetFigure())
                     self.__Logger.info('Created pyPlot -> ' + PlotType)
                 elif PlotType in PlotType2:
+<<<<<<< HEAD
                     self.__pyPlotObjects[PlotType + Name] = pyPlots.pyPlots.Create(
+=======
+                    self.__pyPlotObjects[PlotType + Name] = PyPlots.pyPlots.Create(
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
                         PlotType,
                         PlotSettings,
                         self.__dssBuses,
@@ -198,7 +206,11 @@ class OpenDSS:
                     )
                     self.__Logger.info('Created pyPlot -> ' + PlotType)
                 elif PlotType in PlotType3:
+<<<<<<< HEAD
                     self.__pyPlotObjects[PlotType+Name] = pyPlots.pyPlots.Create(
+=======
+                    self.__pyPlotObjects[PlotType+Name] = PyPlots.pyPlots.Create(
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
                         PlotType,
                         PlotSettings,
                         self.__dssBuses,
@@ -269,6 +281,7 @@ class OpenDSS:
         return ObjectList
 
     def RunStep(self, step, updateObjects=None):
+
         if updateObjects:
             for object, params in updateObjects.items():
                 cl, name = object.split('.')
@@ -367,6 +380,15 @@ class OpenDSS:
         return Graph.Get()
 
     def __del__(self):
+<<<<<<< HEAD
+=======
+        x = list(self.__Logger.handlers)
+        for i in x:
+            self.__Logger.removeHandler(i)
+            i.flush()
+            i.close()
+
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         if self.__DelFlag == 1:
             self.__Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')
         else:

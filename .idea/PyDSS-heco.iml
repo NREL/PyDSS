@@ -2,7 +2,11 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
+<<<<<<< HEAD
     <orderEntry type="jdk" jdkName="Python 3.7 (PyDSS)" jdkType="Python SDK" />
+=======
+    <orderEntry type="jdk" jdkName="Python 3.7 (DG2)" jdkType="Python SDK" />
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="ReSTService">

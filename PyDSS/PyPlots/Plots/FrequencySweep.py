@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from  PyDSS.pyPlots.pyPlotAbstract import PlotAbstract
 from bokeh.plotting import figure, curdoc
 from bokeh.io import output_file
@@ -7,6 +8,21 @@ from bokeh.client import push_session
 class FrequencySweep(PlotAbstract):
     def __init__(self, PlotProperties, dssBuses, dssObjects, dssCircuit, dssSolver):
         super(FrequencySweep).__init__()
+=======
+from bokeh.plotting import figure, curdoc
+from bokeh.io import output_file
+from bokeh.models import ColumnDataSource, ColorBar, \
+    LinearColorMapper, HoverTool, BoxSelectTool, BoxZoomTool, \
+    PanTool, WheelZoomTool, ResetTool, SaveTool, Label
+from bokeh.palettes import Plasma
+from bokeh.client import push_session
+import pandas as pd
+import numpy as np
+
+
+class FrequencySweep:
+    def __init__(self, PlotProperties, dssBuses, dssObjects, dssCircuit, dssSolver):
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         self.__dssSolver = dssSolver
         self.__dssBuses = dssBuses
         self.__dssObjs = dssObjects
@@ -37,9 +53,12 @@ class FrequencySweep(PlotAbstract):
         self.__time = dssSolver.GetDateTime()
         return
 
+<<<<<<< HEAD
     def GetSessionID(self):
         return self.session.id
 
+=======
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
     def getObjectValue(self, Obj, ObjPpty, Index):
         pptyValue = Obj.GetVariable(ObjPpty)
         if pptyValue is not None:
@@ -82,5 +101,9 @@ class FrequencySweep(PlotAbstract):
         freq = self.__dssSolver.getFrequency()
 
         self.data[self.__PlotProperties['Property']].append(yVal)
+<<<<<<< HEAD
         self.data['frequency'].append(freq[freq])
+=======
+        self.data['frequency'].append(freq)
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         self.data_source.data = self.data

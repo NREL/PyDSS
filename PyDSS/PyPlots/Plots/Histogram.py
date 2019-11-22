@@ -12,9 +12,14 @@ import pandas as pd
 import numpy as np
 import math
 
+<<<<<<< HEAD
 class Histogram(PlotAbstract):
 	def __init__(self,PlotProperties, dssBuses, dssObjectsbyClass, dssCircuit, dssSolver):
 		super(Histogram).__init__()
+=======
+class Histogram:
+	def __init__(self,PlotProperties, dssBuses, dssObjectsbyClass, dssCircuit, dssSolver):
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
 		Data = []
 		self.__dssBuses = dssBuses
 		self.__PlotProperties = PlotProperties
@@ -68,9 +73,12 @@ class Histogram(PlotAbstract):
 		#self.session.show(self.__Figure)
 		return
 
+<<<<<<< HEAD
 	def GetSessionID(self):
 		return self.session.id
 
+=======
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
 	def GetFigure(self):
 		return self.__Figure
 

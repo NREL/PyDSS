@@ -4,6 +4,7 @@ import math
 import ast
 
 class StorageController(ControllerAbstract):
+<<<<<<< HEAD
     """Numerous control implementation for a storage system from both behind-the-meter and front-of- meter applications. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
 
             :param StorageObj: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS Storage element
@@ -19,6 +20,8 @@ class StorageController(ControllerAbstract):
             :raises: AssertionError if 'StorageObj' is not a wrapped OpenDSS Storage element
 
     """
+=======
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
     def __init__(self, StorageObj, Settings, dssInstance, ElmObjectList, dssSolver):
         self.Time = -1
         super(StorageController).__init__()
@@ -149,8 +152,11 @@ class StorageController(ControllerAbstract):
 
 
     def DemandCharge(self):
+<<<<<<< HEAD
         """ Implementation of a demand charge controller for behind the meter applications
         """
+=======
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         self.Demand = 0
         dP = 0
         DemandChgThreh = self.__Settings['DemandChgThreh[kWh]']

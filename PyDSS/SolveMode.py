@@ -69,7 +69,11 @@ class __Dynamic:
 
     def SolveFor(self, mStartTime, mTimeStep):
         Hour = int(mStartTime/60)
+<<<<<<< HEAD
         Min = mStartTime % 60
+=======
+        Min = mStartTime%60
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         self.__dssSolution.Hour(Hour)
         self.__dssSolution.Seconds(Min*60)
         self.__dssSolution.Number(mTimeStep)

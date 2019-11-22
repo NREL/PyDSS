@@ -1,6 +1,7 @@
 from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
 
 class FaultController(ControllerAbstract):
+<<<<<<< HEAD
     """The class is used to induce faults on bus for dynamic simulation studies. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class. 
 
     :param FaultObj: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS 'Fault' element
@@ -24,6 +25,14 @@ class FaultController(ControllerAbstract):
         self.P_old = 0
         self.Time = -1
         self.__Locked = False
+=======
+    P_old = 0
+    Time = -1
+
+    __Locked = False
+    def __init__(self, FaultObj, Settings, dssInstance, ElmObjectList, dssSolver):
+        super(FaultController).__init__()
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         self.__dssSolver = dssSolver
         self.__FaultObj = FaultObj
         self.__Settings = Settings
@@ -32,7 +41,10 @@ class FaultController(ControllerAbstract):
         FaultObj.SetParameter('r', Settings['Fault resistance'])
         print(FaultObj, Settings)
         Class, Name = self.__FaultObj.GetInfo()
+<<<<<<< HEAD
         assert (Class.lower() == 'fault'), 'FaultController works only with an OpenDSS Fault element'
+=======
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         self.__Name = 'pyCont_' + Class + '_' + Name
         self.__init_time = dssSolver.GetDateTime()
         self.__Settings['Fault end time (sec)'] = self.__Settings['Fault start time (sec)'] + \
@@ -40,9 +52,12 @@ class FaultController(ControllerAbstract):
         return
 
     def Update(self, Priority, Time, UpdateResults):
+<<<<<<< HEAD
         """Induces and removes a fault as the simulation runs as per user defined settings. 
         """
 
+=======
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         time = (self.__dssSolver.GetDateTime() - self.__init_time).total_seconds()
 
         if time >= self.__Settings['Fault start time (sec)'] and time < self.__Settings['Fault end time (sec)']:
@@ -51,3 +66,15 @@ class FaultController(ControllerAbstract):
             self.__FaultObj.SetParameter('enabled', 'no')
         return 0
 
+<<<<<<< HEAD
+=======
+    # def __EnableLock(self):
+    #     self.__ControlledElm.SetParameter('enabled','False')
+    #     return True
+    #
+    # def __DisableLock(self):
+    #     self.__ControlledElm.SetParameter('enabled', 'True')
+    #     #self.__ControlledElm.SetParameter('enabled', 'False')
+    #     return False
+
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369

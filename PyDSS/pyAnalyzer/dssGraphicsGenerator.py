@@ -65,7 +65,10 @@ class CreatePlots:
 
     def __init__(self, simulations_args, simulation_results):
         visualization_args = simulations_args['Visualization']
+<<<<<<< HEAD
         #print(visualization_args)
+=======
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         plotting_dict = simulations_args['Plots']
         plots = {}
         for plot_type, required_files in self.required_files.items():
@@ -85,7 +88,11 @@ class CreatePlots:
                     plotsettings = visualization_args[plot_type + '_settings']
                     if isinstance(required_files, dict):
                         assert ('Class' in plotsettings), "Settings for plot type '{}' require ".format(plot_type) +\
+<<<<<<< HEAD
                                                           "definition of class variable in the settings dictionary."
+=======
+                                                          "defination of class variable in the settings dictionary."
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
                         elm_class = plotsettings['Class']
                         required_files = required_files[elm_class]
                     for each_file in required_files:
@@ -96,7 +103,11 @@ class CreatePlots:
                                               "simulation and export the required result file to generate a " +\
                                               "'{}' plot".format(plot_type)
                         keysum = [1 for x in self.plot_groups['Even Odd Filter'] if key.startswith(x + '-')]
+<<<<<<< HEAD
                         if keysum and plot_type not in self.plot_Types['Frequency']:
+=======
+                        if keysum:
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
                             scenario_results_formatted[key] = self.__filter_DF_even_odd(scenario_results[key],
                                                                                         plotsettings['Frequency'],
                                                                                         plotsettings['Simulation_mode'])
@@ -104,11 +115,17 @@ class CreatePlots:
                             scenario_results_formatted[key] = self.__filter_DF(scenario_results[key],
                                                                                plotsettings['Frequency'],
                                                                                plotsettings['Simulation_mode'])
+<<<<<<< HEAD
 
                         else:
                             scenario_results_formatted[key] = self.__filter_DF_harmonics(scenario_results[key],
                                                                                plotsettings['Frequency'],
                                                                                plotsettings['Time'],
+=======
+                        else:
+                            scenario_results_formatted[key] = self.__filter_DF_harmonics(scenario_results[key],
+                                                                               plotsettings['Timestamp'],
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
                                                                                plotsettings['Simulation_mode'])
                         plots[plot_type][scenario_name]['Data'] = scenario_results_formatted
                         plots[plot_type][scenario_name]['Plot_settings'] = plotsettings
@@ -117,6 +134,7 @@ class CreatePlots:
 
         self.__create_plots(plots)
 
+<<<<<<< HEAD
     def __filter_DF_harmonics(self, data, baseFreq, time, simulation_mode):
         datax = data.copy()
         datax['Time'] = datax.index
@@ -125,6 +143,13 @@ class CreatePlots:
         datax = datax[datax['Simulation mode'] == simulation_mode]
         datax.index = datax['frequency']
         datax = datax[datax.columns[2:-1]]
+=======
+    def __filter_DF_harmonics(self, data, time, simulation_mode):
+        datax = data.copy()
+        data['Time'] = data.index
+        datax = datax[datax['Simulation mode'] == simulation_mode]
+        datax = datax[datax.columns[2:]]
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         return (datax, None)
 
     def __create_plots(self, plots):
@@ -150,6 +175,13 @@ class CreatePlots:
         return relevant_key
 
     def __filter_DF_even_odd(self, data, frequecy, simulation_mode):
+<<<<<<< HEAD
+=======
+        # print('###################################################')
+        # print(simulation_mode)
+        # print(data)
+        # print('')
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         datax = data[data['frequency'] == frequecy].copy()
         datax = datax[datax['Simulation mode'] == simulation_mode]
         datax = datax[datax.columns[2:]]

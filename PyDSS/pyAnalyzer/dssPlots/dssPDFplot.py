@@ -2,7 +2,10 @@ import matplotlib.pyplot as plt
 import seaborn as sbn
 import pandas as pd
 import numpy as np
+<<<<<<< HEAD
 import warnings
+=======
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
 import pathlib
 import os
 
@@ -99,7 +102,11 @@ class Plot:
             self.save_file(fig, path_single, scenario, '{}-{}'.format(elm_Class, plot_type),
                            visualization_args['FileType'])
             if two_plots:
+<<<<<<< HEAD
                 self.save_file(fig2, path_single, scenario, '{}-{}'.format(elm_Class2, plot_type),
+=======
+                self.save_file(fig2, path_seperate, scenario, '{}-{}'.format(elm_Class2, plot_type),
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
                                visualization_args['FileType'])
 
         if plot_type == 'Curtailment':
@@ -293,6 +300,7 @@ class Plot:
 
     def __generate_plot(self,  ax, labels, data, plot_settings, color, scenario, newplot):
         #data.index = pd.to_datetime(data.index)
+<<<<<<< HEAD
         data = data.replace([np.inf, -np.inf], np.nan)
         data = data.dropna()
         try:
@@ -321,6 +329,31 @@ class Plot:
             plt.tight_layout()
         except:
             warnings.warn("Data error: No plot created")
+=======
+        range = np.max(data.values) - np.min(data.values)
+        ax.set_xlim(np.min(data.values) - 0.05 * range,  np.max(data.values) + 0.05 * range)
+        data = data.values.flatten()
+        sbn.distplot(data, ax=ax, label=None, hist_kws=dict(alpha=plot_settings['Fill_alpha']))
+        #                 leg = ax.legend(prop={'size': plot_settings['Legend_font_size']}, frameon=False)
+        # ax = data.plot(ax=ax, color=color, alpha=plot_settings['Fill_alpha'],
+        #                      linewidth=plot_settings['Line_width'])
+
+        ax.set_xlabel(list(labels)[1])
+        ax.set_ylabel('Frequency')
+        if plot_settings['Grid']:
+            ax.grid(color='lightgrey', linestyle='-', linewidth=0.3)
+        if 'Show_operation_regions' in plot_settings and plot_settings['Show_operation_regions'] and newplot:
+            for i, label in enumerate(plot_settings['Y_range_labels']):
+                b1 = ax.axvspan(plot_settings['Y_ranges'][i], plot_settings['Y_ranges'][i + 1], alpha=0.03,
+                                color=plot_settings['Y_range_colors'][i], label='normal loading region')
+                self.legend_lines.append(b1)
+                self.legend_labels.append(label)
+        self.legend_lines.append(ax.lines[-1])
+        self.legend_labels.append(scenario)
+        legend = ax.legend(self.legend_lines, self.legend_labels, frameon=False,
+                           prop={'size': plot_settings['Legend_font_size']})
+        plt.tight_layout()
+>>>>>>> 98cba91204224c1b5c9e477759bf012e2f70a369
         return
 
     def __get_paths(self, simulation_settings):
