@@ -62,7 +62,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__ControlledElm</span> <span class="o">=</span> <span class="n">ElmObject</span>
         <span class="n">Class</span><span class="p">,</span> <span class="n">Name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ControlledElm</span><span class="o">.</span><span class="n">GetInfo</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__Name</span> <span class="o">=</span> <span class="s1">&#39;pyCont_&#39;</span> <span class="o">+</span> <span class="n">Class</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">Name</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="n">Class</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;regulator&#39;</span><span class="p">),</span> <span class="s1">&#39;PvControllerGen works only with an OpenDSS Regulator element&#39;</span>
+        <span class="c1">#assert (Class.lower() == &#39;regulator&#39;), &#39;PvControllerGen works only with an OpenDSS Regulator element&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">IP</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">[</span><span class="s1">&#39;IP&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Port</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">[</span><span class="s1">&#39;Port&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Encoding</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">[</span><span class="s1">&#39;Encoding&#39;</span><span class="p">]</span>
@@ -79,11 +79,13 @@
         <span class="k">return</span> <span class="n">s</span>
 
     <span class="k">def</span> <span class="nf">Update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Priority</span><span class="p">,</span> <span class="n">Time</span><span class="p">,</span> <span class="n">UpdateResults</span><span class="p">):</span>
-        <span class="c1"># only update once?</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">TimeChange</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Time</span> <span class="o">!=</span> <span class="n">Time</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Time</span> <span class="o">=</span> <span class="n">Time</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">TimeChange</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TimeChange</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Time</span> <span class="o">!=</span> <span class="p">(</span><span class="n">Priority</span><span class="p">,</span> <span class="n">Time</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Time</span> <span class="o">=</span> <span class="p">(</span><span class="n">Priority</span><span class="p">,</span> <span class="n">Time</span><span class="p">)</span>
+        <span class="c1"># self.TimeChange = self.Time != Time</span>
+        <span class="c1"># self.Time = Time</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">TimeChange</span> <span class="ow">and</span> <span class="n">Priority</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
             <span class="n">Values</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">Variable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Inputs</span><span class="p">:</span>
                 <span class="n">Val</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">__ControlledElm</span><span class="o">.</span><span class="n">GetValue</span><span class="p">(</span><span class="n">Variable</span><span class="p">)</span>
@@ -92,7 +94,7 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">Values</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">Val</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Socket</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">d&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">Values</span><span class="p">),</span> <span class="o">*</span><span class="n">Values</span><span class="p">))</span>
-
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">TimeChange</span> <span class="ow">and</span> <span class="n">Priority</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">Data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Socket</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">BufferSize</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">Data</span><span class="p">:</span>
                 <span class="n">numDoubles</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Data</span><span class="p">)</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span>
@@ -100,7 +102,6 @@
                 <span class="n">Data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">Data</span><span class="p">))</span>
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">Variable</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Outputs</span><span class="p">):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">__ControlledElm</span><span class="o">.</span><span class="n">SetParameter</span><span class="p">(</span><span class="n">Variable</span><span class="p">,</span> <span class="n">Data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-
         <span class="k">return</span> <span class="mi">0</span></div>
 </pre></div>
 

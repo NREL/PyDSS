@@ -59,7 +59,6 @@
         <span class="sd">&quot;&quot;&quot;Constructor method</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PvController</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">TimeChange</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Time</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
@@ -203,7 +202,6 @@
         <span class="n">Ppv</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__ControlledElm</span><span class="o">.</span><span class="n">GetVariable</span><span class="p">(</span><span class="s1">&#39;Powers&#39;</span><span class="p">)[::</span><span class="mi">2</span><span class="p">]))</span><span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Srated</span>
         <span class="n">Qpv</span> <span class="o">=</span> <span class="o">-</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__ControlledElm</span><span class="o">.</span><span class="n">GetVariable</span><span class="p">(</span><span class="s1">&#39;Powers&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Srated</span>
 
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Settings</span><span class="p">[</span><span class="s1">&#39;cpf-priority&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;PF&#39;</span><span class="p">:</span>
            <span class="c1"># if self.TimeChange:</span>
             <span class="n">Plim</span> <span class="o">=</span> <span class="n">PFset</span> <span class="o">*</span> <span class="mi">100</span>
@@ -223,7 +221,6 @@
 
 
         <span class="n">Error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">PFset</span> <span class="o">+</span> <span class="n">PFact</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">__ControlledElm</span><span class="o">.</span><span class="n">SetParameter</span><span class="p">(</span><span class="s1">&#39;pf&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="o">-</span><span class="n">PFset</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">Error</span></div>
 

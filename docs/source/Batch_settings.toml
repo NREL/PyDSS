@@ -1,24 +1,9 @@
-
-
 [Simulations] 
-
-#Absolute path for all scenario settings.toml files.
-#Any number of scenarios may be added to the list.
-#The first scenario is always the base case against which all scenarios are compared 
-Scenarios = [
-		"C:/Users/alatif/Desktop/PyDSS-Projects/MySpohnTest/PyDSS Scenarios/base/Scenario_settings.toml",
-		"C:/Users/alatif/Desktop/PyDSS-Projects/MySpohnTest/PyDSS Scenarios/self_consumption/Scenario_settings.toml"
-	]
-
-#Run_simulations: BOOL: Run the simulation or not	
 Run_simulations = true
-#Generate_visuals: BOOL: Create comparative plots. If Run_simulations is false, simulation results from older simulation results will be used if available. If no results are available, an assertion error will be raied.   
-Generate_visuals = false
-#Run_bokeh_server: BOOL: Run bokeh server. Will only work if Run_simulations 
+Generate_visuals = false 
 Run_bokeh_server = false
 
 [Plots]
-#<plot type>: BOOL: Enable plots to be created for the given list of scenarios. 
 Frequency_sweep = false
 XFMR_tap = false
 Voltage_sag = false
@@ -37,9 +22,7 @@ Feeder_losses = false
 Feeder_substation_losses = false
 
 [Visualization]
-#Plotting_mode_-_str_-_possible_values 'Single', 'Separate'
 Plotting_mode ="Separate"
-#Plotting_mode_-_str_-_possible_values 'png', 'pdf'
 FileType = 'png'
 
 [Visualization.Curtailment_settings]

@@ -8,21 +8,7 @@
 
 About PyDSS
 ===========
-PyDSS is a high-level Python package that is a wrapper for OpenDSS and aims to expand upon its organizational, analytical, and visualization capabilities. Further, it simplifies co-simulation framework integration and allows the user to develop custom control algorithms and embed them into the simulation environment.
-
-PyDSS makes use of opendssdirect.py (https://pypi.org/project/OpenDSSDirect.py/) to provide a high-level Python interface for OpenDSS that provides users with:
-
-.. toctree::
-   :maxdepth: 2
-
-   Project management
-   Result management
-   Dynamic visualization capabilities
-   Extended controls library
-   External interfaces for cosimulation
-   Automated comparison of scenarios
-
-PyDSS also provides extension modules to facilitate Monte Carlo studies in distribution system domain.
+PyDSS is a high-level Python package that is a wrapper for OpenDSS and aims to expand upon its organizational, analytical, and visualization capabilities. Further, it simplifies co-simulation framework integration and allows the user to develop custom control algorithms and embed them into the simulation environment. PyDSS makes use of opendssdirect.py (https://pypi.org/project/OpenDSSDirect.py/) to provide a high-level Python interface for OpenDSS. PyDSS also provides extension modules to facilitate Monte Carlo studies in distribution system domain and automated post processing of results. Flexible architecture makes PyDSS customizable and easily extendible. 
 
 Installation
 ============
@@ -60,10 +46,10 @@ PyDSS requires a specific directory format to define projects detailed below.
             |      |       |       |__ \ExportLists.json (Define export list for the project)
             |      |       |       |__ \pyControllerList.json (Define a set of custom controls)
             |      |       |       |__ \pyPlotList.json (Define a set of dynamic plots)
-            |      |       |       |__ \Scenario_settings.toml (PyDSS simulation settings)			
+            |      |       |       |__ \*Scenario_settings*.toml (PyDSS simulation settings)			
             |      |       |__ \HELICS 
             |      |       |__ \<Scenario name> 
-            |      |       |__ \Batch_settings.toml (The batch toml file is required to run batch simulations)			
+            |      |       |__ \*Vis_settings*.toml (The batch toml file is required to run batch simulations)			
             |      |               :			
             |      |__ \Exports (All simulation results will be exported to this folder)
             |      |__ \Logs (PyDSS logs will be exported to this folder)
@@ -71,6 +57,40 @@ PyDSS requires a specific directory format to define projects detailed below.
             |__ \<Project name>
                    :
 			   
+Running PyDSS is simple. The following code snippet shows how to run a defined simulation scenario.
+
+
+.. code-block:: python
+
+	import click
+	import sys
+	import os
+
+	@click.command()
+	@click.option('--pydss_path',
+				  default=r'C:\\Users\\alatif\\Desktop\\PyDSS')
+	@click.option('--sim_path',
+				  default=r'~PyDSS\\examples\\Custom_controls_example\\PyDSS Scenarios')
+	@click.option('--sim_file',
+				  default=r'multiple_controllers.toml') #The TOML file contains simulation settings for the particular scenario
+	@click.option('--vis_file',
+				  default=r'automated_comparison.toml') #The TOML file contains visualization settings 
+	def run_pyDSS(pydss_path, sim_path, sim_file, vis_file):
+		# Should not be required if installed using pip command. Only required when working with a cloned copy.
+		sys.path.append(pydss_path) 
+		sys.path.append(os.path.join(pydss_path, 'PyDSS'))
+		from pyDSS import instance as dssInstance
+		# Create an instance of PyDSS
+		a = dssInstance() 
+		#Run the simulation 
+		a.run(sim_file, vis_file) 
+
+	run_pyDSS()
+
+- sim_file [str or list[str]] -  Path to simulation settings toml file. Can be a list of paths. If a list is provided, simulations will be run sequentially.
+- vis_file [str] - Path to visualization settings toml file. Is only required when generating comparativce plots
+
+
 Skeleton for a new project can be created using following lines of code.  
 
 .. code-block:: python
@@ -89,31 +109,27 @@ Validity of the PyDSS project can be tested using the following command.
 
 Within the installation folder, several examples have been provided.
 	
-Defining a scenario
-~~~~~~~~~~~~~~~~~~~
-
-Running batch simulations
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Once a project has been created, simulations may be run in one of two modes
-
-1. 'Scenario' mode is used to run a single simulation scenario. Simulation settings are definded in the "Scenario_settings.toml" file. Comments within the file document required simulation paramters and seetings.
-
-2. 'Batch' mode is used to run multiple simulation scenarios. Batch mode can also be used to automate comparison of scenario results and generate plots. Batch mode settings need to defined with in "Batch_settings.toml" file. Plots will also be exported to the 'Exports' folder.
-
-Simulations can be run using the following commands.
-
-.. code-block:: python
-
-	from PyDSS import PyDSS
-	sucess = PyDSS.run('<mode>', '<toml file path>')
-
-Details for the two modes can be found here.
+Default values for the simulation settings and visualization settigs can be found here.
 	
 .. toctree::
    :maxdepth: 2
    
    Sample TOML files  
+   
+Additional Documentation
+========================
+
+.. toctree::
+   :maxdepth: 1
+
+   Simulation modes
+   Project management
+   Result management
+   Dynamic visualization capabilities
+   Extended controls library
+   External interfaces for cosimulation
+   Automated comparison of scenarios
+   
    
 License
 =======
@@ -135,7 +151,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 Contact
 =======
-Questions? Please send an email to aadil.latif@nrel.gov
+Questions? Please send an email to aadil.latif@nrel.gov or aadil.latif@gmail.com
 
    
 

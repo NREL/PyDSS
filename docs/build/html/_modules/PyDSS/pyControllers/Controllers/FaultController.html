@@ -79,7 +79,6 @@
     <span class="k">def</span> <span class="nf">Update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Priority</span><span class="p">,</span> <span class="n">Time</span><span class="p">,</span> <span class="n">UpdateResults</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Induces and removes a fault as the simulation runs as per user defined settings. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">time</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dssSolver</span><span class="o">.</span><span class="n">GetDateTime</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">__init_time</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">time</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Settings</span><span class="p">[</span><span class="s1">&#39;Fault start time (sec)&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">time</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Settings</span><span class="p">[</span><span class="s1">&#39;Fault end time (sec)&#39;</span><span class="p">]:</span>
@@ -87,6 +86,7 @@
         <span class="k">elif</span> <span class="n">time</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Settings</span><span class="p">[</span><span class="s1">&#39;Fault end time (sec)&#39;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__FaultObj</span><span class="o">.</span><span class="n">SetParameter</span><span class="p">(</span><span class="s1">&#39;enabled&#39;</span><span class="p">,</span> <span class="s1">&#39;no&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">0</span></div>
+
 
 </pre></div>
 

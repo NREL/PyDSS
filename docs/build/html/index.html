@@ -17,7 +17,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Improved project management" href="Project management.html" /> 
+    <link rel="next" title="Default simulation settings" href="Sample TOML files.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -26,7 +26,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="Project management.html" title="Improved project management"
+          <a href="Sample TOML files.html" title="Default simulation settings"
              accesskey="N">next</a> |</li>
         <li class="nav-item nav-item-0"><a href="#">PyDSS 0.0.1 documentation</a> &#187;</li> 
       </ul>
@@ -42,43 +42,7 @@
 </div>
 <div class="section" id="about-pydss">
 <h1>About PyDSS<a class="headerlink" href="#about-pydss" title="Permalink to this headline">¶</a></h1>
-<p>PyDSS is a high-level Python package that is a wrapper for OpenDSS and aims to expand upon its organizational, analytical, and visualization capabilities. Further, it simplifies co-simulation framework integration and allows the user to develop custom control algorithms and embed them into the simulation environment.</p>
-<p>PyDSS makes use of opendssdirect.py (<a class="reference external" href="https://pypi.org/project/OpenDSSDirect.py/">https://pypi.org/project/OpenDSSDirect.py/</a>) to provide a high-level Python interface for OpenDSS that provides users with:</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="Project management.html">Improved project management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Result management.html">Enhanced result export features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Dynamic visualization capabilities.html">Dynamic visualization capabilities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Dynamic plots.html">Frequency sweep plot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Dynamic plots.html#gis-plot">GIS plot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Dynamic plots.html#histogram-plot">Histogram plot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Dynamic plots.html#voltage-sag-plot">Voltage sag plot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Dynamic plots.html#time-series-plot">Time series plot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Dynamic plots.html#voltage-current-heatmap-plot">Voltage / Current heatmap plot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Dynamic plots.html#xy-plots">XY plots</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Creating custom dynamic plots.html">Development of custom dynamic plots</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="Extended controls library.html">Extended controls library</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="PyDSS controllers.html">Fault controller</a></li>
-<li class="toctree-l2"><a class="reference internal" href="PyDSS controllers.html#pv-controller">PV controller</a></li>
-<li class="toctree-l2"><a class="reference internal" href="PyDSS controllers.html#pv-controller-gen">Pv controller [Gen]</a></li>
-<li class="toctree-l2"><a class="reference internal" href="PyDSS controllers.html#socket-controller">Socket controller</a></li>
-<li class="toctree-l2"><a class="reference internal" href="PyDSS controllers.html#storage-controller">Storage controller</a></li>
-<li class="toctree-l2"><a class="reference internal" href="PyDSS controllers.html#xfmr-controller">Xfmr controller</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Creating custom controls.html">Extending PyDSS controllers</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="External interfaces for cosimulation.html">External PyDSS interfaces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="interfaces.html">The socket interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="interfaces.html#the-helics-interface">The HELICS interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="interfaces.html#the-api-interface">The API interface</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="Automated comparison of scenarios.html">Automated scenario comparison</a></li>
-</ul>
-</div>
-<p>PyDSS also provides extension modules to facilitate Monte Carlo studies in distribution system domain.</p>
+<p>PyDSS is a high-level Python package that is a wrapper for OpenDSS and aims to expand upon its organizational, analytical, and visualization capabilities. Further, it simplifies co-simulation framework integration and allows the user to develop custom control algorithms and embed them into the simulation environment. PyDSS makes use of opendssdirect.py (<a class="reference external" href="https://pypi.org/project/OpenDSSDirect.py/">https://pypi.org/project/OpenDSSDirect.py/</a>) to provide a high-level Python interface for OpenDSS. PyDSS also provides extension modules to facilitate Monte Carlo studies in distribution system domain and automated post processing of results. Flexible architecture makes PyDSS customizable and easily extendible.</p>
 </div>
 <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
@@ -106,10 +70,10 @@
     <span class="o">|</span>      <span class="o">|</span>       <span class="o">|</span>       <span class="o">|</span><span class="n">__</span> \<span class="n">ExportLists</span><span class="o">.</span><span class="n">json</span> <span class="p">(</span><span class="n">Define</span> <span class="n">export</span> <span class="nb">list</span> <span class="k">for</span> <span class="n">the</span> <span class="n">project</span><span class="p">)</span>
     <span class="o">|</span>      <span class="o">|</span>       <span class="o">|</span>       <span class="o">|</span><span class="n">__</span> \<span class="n">pyControllerList</span><span class="o">.</span><span class="n">json</span> <span class="p">(</span><span class="n">Define</span> <span class="n">a</span> <span class="nb">set</span> <span class="n">of</span> <span class="n">custom</span> <span class="n">controls</span><span class="p">)</span>
     <span class="o">|</span>      <span class="o">|</span>       <span class="o">|</span>       <span class="o">|</span><span class="n">__</span> \<span class="n">pyPlotList</span><span class="o">.</span><span class="n">json</span> <span class="p">(</span><span class="n">Define</span> <span class="n">a</span> <span class="nb">set</span> <span class="n">of</span> <span class="n">dynamic</span> <span class="n">plots</span><span class="p">)</span>
-    <span class="o">|</span>      <span class="o">|</span>       <span class="o">|</span>       <span class="o">|</span><span class="n">__</span> \<span class="n">Scenario_settings</span><span class="o">.</span><span class="n">toml</span> <span class="p">(</span><span class="n">PyDSS</span> <span class="n">simulation</span> <span class="n">settings</span><span class="p">)</span>
+    <span class="o">|</span>      <span class="o">|</span>       <span class="o">|</span>       <span class="o">|</span><span class="n">__</span> \<span class="o">*</span><span class="n">Scenario_settings</span><span class="o">*.</span><span class="n">toml</span> <span class="p">(</span><span class="n">PyDSS</span> <span class="n">simulation</span> <span class="n">settings</span><span class="p">)</span>
     <span class="o">|</span>      <span class="o">|</span>       <span class="o">|</span><span class="n">__</span> \<span class="n">HELICS</span>
     <span class="o">|</span>      <span class="o">|</span>       <span class="o">|</span><span class="n">__</span> \<span class="o">&lt;</span><span class="n">Scenario</span> <span class="n">name</span><span class="o">&gt;</span>
-    <span class="o">|</span>      <span class="o">|</span>       <span class="o">|</span><span class="n">__</span> \<span class="n">Batch_settings</span><span class="o">.</span><span class="n">toml</span> <span class="p">(</span><span class="n">The</span> <span class="n">batch</span> <span class="n">toml</span> <span class="nb">file</span> <span class="ow">is</span> <span class="n">required</span> <span class="n">to</span> <span class="n">run</span> <span class="n">batch</span> <span class="n">simulations</span><span class="p">)</span>
+    <span class="o">|</span>      <span class="o">|</span>       <span class="o">|</span><span class="n">__</span> \<span class="o">*</span><span class="n">Vis_settings</span><span class="o">*.</span><span class="n">toml</span> <span class="p">(</span><span class="n">The</span> <span class="n">batch</span> <span class="n">toml</span> <span class="nb">file</span> <span class="ow">is</span> <span class="n">required</span> <span class="n">to</span> <span class="n">run</span> <span class="n">batch</span> <span class="n">simulations</span><span class="p">)</span>
     <span class="o">|</span>      <span class="o">|</span>               <span class="p">:</span>
     <span class="o">|</span>      <span class="o">|</span><span class="n">__</span> \<span class="n">Exports</span> <span class="p">(</span><span class="n">All</span> <span class="n">simulation</span> <span class="n">results</span> <span class="n">will</span> <span class="n">be</span> <span class="n">exported</span> <span class="n">to</span> <span class="n">this</span> <span class="n">folder</span><span class="p">)</span>
     <span class="o">|</span>      <span class="o">|</span><span class="n">__</span> \<span class="n">Logs</span> <span class="p">(</span><span class="n">PyDSS</span> <span class="n">logs</span> <span class="n">will</span> <span class="n">be</span> <span class="n">exported</span> <span class="n">to</span> <span class="n">this</span> <span class="n">folder</span><span class="p">)</span>
@@ -118,6 +82,37 @@
            <span class="p">:</span>
 </pre></div>
 </div>
+<p>Running PyDSS is simple. The following code snippet shows how to run a defined simulation scenario.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">click</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="nd">@click.command</span><span class="p">()</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s1">&#39;--pydss_path&#39;</span><span class="p">,</span>
+                          <span class="n">default</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;C:</span><span class="se">\\</span><span class="s1">Users</span><span class="se">\\</span><span class="s1">alatif</span><span class="se">\\</span><span class="s1">Desktop</span><span class="se">\\</span><span class="s1">PyDSS&#39;</span><span class="p">)</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s1">&#39;--sim_path&#39;</span><span class="p">,</span>
+                          <span class="n">default</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;~PyDSS</span><span class="se">\\</span><span class="s1">examples</span><span class="se">\\</span><span class="s1">Custom_controls_example</span><span class="se">\\</span><span class="s1">PyDSS Scenarios&#39;</span><span class="p">)</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s1">&#39;--sim_file&#39;</span><span class="p">,</span>
+                          <span class="n">default</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;multiple_controllers.toml&#39;</span><span class="p">)</span> <span class="c1">#The TOML file contains simulation settings for the particular scenario</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s1">&#39;--vis_file&#39;</span><span class="p">,</span>
+                          <span class="n">default</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;automated_comparison.toml&#39;</span><span class="p">)</span> <span class="c1">#The TOML file contains visualization settings</span>
+<span class="k">def</span> <span class="nf">run_pyDSS</span><span class="p">(</span><span class="n">pydss_path</span><span class="p">,</span> <span class="n">sim_path</span><span class="p">,</span> <span class="n">sim_file</span><span class="p">,</span> <span class="n">vis_file</span><span class="p">):</span>
+        <span class="c1"># Should not be required if installed using pip command. Only required when working with a cloned copy.</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pydss_path</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pydss_path</span><span class="p">,</span> <span class="s1">&#39;PyDSS&#39;</span><span class="p">))</span>
+        <span class="kn">from</span> <span class="nn">pyDSS</span> <span class="kn">import</span> <span class="n">instance</span> <span class="k">as</span> <span class="n">dssInstance</span>
+        <span class="c1"># Create an instance of PyDSS</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">dssInstance</span><span class="p">()</span>
+        <span class="c1">#Run the simulation</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">sim_file</span><span class="p">,</span> <span class="n">vis_file</span><span class="p">)</span>
+
+<span class="n">run_pyDSS</span><span class="p">()</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>sim_file [str or list[str]] -  Path to simulation settings toml file. Can be a list of paths. If a list is provided, simulations will be run sequentially.</p></li>
+<li><p>vis_file [str] - Path to visualization settings toml file. Is only required when generating comparativce plots</p></li>
+</ul>
 <p>Skeleton for a new project can be created using following lines of code.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PyDSS</span> <span class="kn">import</span> <span class="n">PyDSS</span>
 <span class="n">sucess</span> <span class="o">=</span> <span class="n">PyDSS</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;&lt;Proects path&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;Project name&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;Scenario name&gt;&#39;</span><span class="p">)</span>
@@ -130,29 +125,27 @@
 </pre></div>
 </div>
 <p>Within the installation folder, several examples have been provided.</p>
-</div>
-<div class="section" id="defining-a-scenario">
-<h2>Defining a scenario<a class="headerlink" href="#defining-a-scenario" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="running-batch-simulations">
-<h2>Running batch simulations<a class="headerlink" href="#running-batch-simulations" title="Permalink to this headline">¶</a></h2>
-<p>Once a project has been created, simulations may be run in one of two modes</p>
-<ol class="arabic simple">
-<li><p>‘Scenario’ mode is used to run a single simulation scenario. Simulation settings are definded in the “Scenario_settings.toml” file. Comments within the file document required simulation paramters and seetings.</p></li>
-<li><p>‘Batch’ mode is used to run multiple simulation scenarios. Batch mode can also be used to automate comparison of scenario results and generate plots. Batch mode settings need to defined with in “Batch_settings.toml” file. Plots will also be exported to the ‘Exports’ folder.</p></li>
-</ol>
-<p>Simulations can be run using the following commands.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PyDSS</span> <span class="kn">import</span> <span class="n">PyDSS</span>
-<span class="n">sucess</span> <span class="o">=</span> <span class="n">PyDSS</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s1">&#39;&lt;mode&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;toml file path&gt;&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Details for the two modes can be found here.</p>
+<p>Default values for the simulation settings and visualization settigs can be found here.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Sample TOML files.html">Sample “Scenario_settings.toml” file</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Sample TOML files.html#sample-batch-settings-toml-file">Sample “Batch_settings.toml” file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Sample TOML files.html">Default simulation settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Sample TOML files.html#default-visualization-settings">Default visualization settings</a></li>
 </ul>
 </div>
+</div>
+</div>
+<div class="section" id="additional-documentation">
+<h1>Additional Documentation<a class="headerlink" href="#additional-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Simulation modes.html">PyDSS simulation modes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Project management.html">Improved project management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Result management.html">Enhanced result export features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Dynamic visualization capabilities.html">Dynamic visualization capabilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Extended controls library.html">Extended controls library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="External interfaces for cosimulation.html">External PyDSS interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Automated comparison of scenarios.html">Automated scenario comparison</a></li>
+</ul>
 </div>
 </div>
 <div class="section" id="license">
@@ -169,7 +162,7 @@
 </div>
 <div class="section" id="contact">
 <h1>Contact<a class="headerlink" href="#contact" title="Permalink to this headline">¶</a></h1>
-<p>Questions? Please send an email to <a class="reference external" href="mailto:aadil&#46;latif&#37;&#52;&#48;nrel&#46;gov">aadil<span>&#46;</span>latif<span>&#64;</span>nrel<span>&#46;</span>gov</a></p>
+<p>Questions? Please send an email to <a class="reference external" href="mailto:aadil&#46;latif&#37;&#52;&#48;nrel&#46;gov">aadil<span>&#46;</span>latif<span>&#64;</span>nrel<span>&#46;</span>gov</a> or <a class="reference external" href="mailto:aadil&#46;latif&#37;&#52;&#48;gmail&#46;com">aadil<span>&#46;</span>latif<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
@@ -189,17 +182,16 @@
 <li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#running-pydss">Running PyDSS</a><ul>
 <li><a class="reference internal" href="#settings-up-a-pydss-project">Settings up a PyDSS project</a></li>
-<li><a class="reference internal" href="#defining-a-scenario">Defining a scenario</a></li>
-<li><a class="reference internal" href="#running-batch-simulations">Running batch simulations</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#additional-documentation">Additional Documentation</a></li>
 <li><a class="reference internal" href="#license">License</a></li>
 <li><a class="reference internal" href="#contact">Contact</a></li>
 </ul>
 
   <h4>Next topic</h4>
-  <p class="topless"><a href="Project management.html"
-                        title="next chapter">Improved project management</a></p>
+  <p class="topless"><a href="Sample TOML files.html"
+                        title="next chapter">Default simulation settings</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -228,7 +220,7 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="Project management.html" title="Improved project management"
+          <a href="Sample TOML files.html" title="Default simulation settings"
              >next</a> |</li>
         <li class="nav-item nav-item-0"><a href="#">PyDSS 0.0.1 documentation</a> &#187;</li> 
       </ul>

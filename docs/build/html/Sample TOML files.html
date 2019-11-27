@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Sample “Scenario_settings.toml” file &#8212; PyDSS 0.0.1 documentation</title>
+    <title>Default simulation settings &#8212; PyDSS 0.0.1 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -17,7 +17,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Automated scenario comparison" href="Automated comparison of scenarios.html" /> 
+    <link rel="next" title="Improved project management" href="Project management.html" />
+    <link rel="prev" title="About PyDSS" href="index.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -26,7 +27,10 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="Automated comparison of scenarios.html" title="Automated scenario comparison"
+          <a href="Project management.html" title="Improved project management"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="About PyDSS"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">PyDSS 0.0.1 documentation</a> &#187;</li> 
       </ul>
@@ -37,39 +41,15 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="sample-scenario-settings-toml-file">
-<h1>Sample “Scenario_settings.toml” file<a class="headerlink" href="#sample-scenario-settings-toml-file" title="Permalink to this headline">¶</a></h1>
-<div class="highlight-TOML notranslate"><div class="highlight"><pre><span></span># Log Results- [Bool] - Set true if results need to be exported
-# Return Results- [Bool] - Set true if running PyDSS in Cosimulation environment, RunStep function will return current system states
-# Export Mode- [Str] - Possible options &quot;byClass&quot; and &quot;byElement&quot;
-# Export Style- [Str] - possible options &quot;Single_file&quot; and &quot;Separate_files&quot;
-
-&quot;Log Results&quot; = true
+  <div class="section" id="default-simulation-settings">
+<h1>Default simulation settings<a class="headerlink" href="#default-simulation-settings" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-TOML notranslate"><div class="highlight"><pre><span></span>&quot;Log Results&quot; = true
 &quot;Return Results&quot; = false
 &quot;Export Mode&quot; = &quot;byClass&quot;
 &quot;Export Style&quot; = &quot;Single file&quot;
 
-# Create dynamic plots- [Bool] - Enable rendering of dynamic plots using bokeh
-# Open plots in browser- [Bool] - Open plots  in s window. Will work if &quot;Create dynamic plots&quot; is set to true 
-
 &quot;Create dynamic plots&quot; = false
 &quot;Open plots in browser&quot; = true
-
-# Simulation Type- [String] - Possible options &quot;QSTS&quot;, &quot;Dynamic&quot; and &quot;Snapshot&quot;
-# Start Year- [Int] - Start year for the simulation study (em nb .g 2017)
-# Start Day- [Int] - Start day for the simulation study. Index start at 1
-# Start Time (min)- [Float] - Start time in minutes. Floating number can be used to account for second or sub second time points
-# End Day- [Float] - End day for the simulation study
-# End Time (min)- [Float] - end time in minutes
-# Date offset- [Int] - Date offset to be added incase OpenDSS profiles do not start at the begining of the year 
-# Step resolution (sec)- [Float] - Time step resolution in seconds
-# Max Control Iterations- [Int] - Maximum outer loop control iterations
-# Error tolerance- [Float] - Error tolerance in per unit
-# Control mode- [String] - Control mode options are &quot;STATIC&quot; or &quot;Time&quot;
-# Disable PyDSS controllers- [Bool] - Disable all pyController in PyDSS. All controller implemented in DSS files will still work.
-# Active Project- [String] - Name of project to run
-# Active Scenario- [String] - Project scenario to use
-# DSS File- [String] - The main OpenDSS file
 
 &quot;Start Year&quot; = 2017
 &quot;Start Day&quot; = 1
@@ -82,19 +62,11 @@
 &quot;Error tolerance&quot; = 0.001
 &quot;Control mode&quot; = &quot;Time&quot;
 &quot;Disable PyDSS controllers&quot; = false
-&quot;Project Path&quot; = &quot;C:\\Users\\alatif\\Desktop\\PyDSS-Projects&quot;
 &quot;Simulation Type&quot; = &quot;QSTS&quot;
-&quot;Active Project&quot; = &quot;MySpohnTest&quot;
-&quot;Active Scenario&quot; = &quot;self_consumption&quot;
-&quot;DSS File&quot; = &quot;Master_Spohn_existing_VV.dss&quot;
-
-
-# Co-simulation Mode - [Bool] - Set to true to enable Helics interface all other co-simulation settings only valid if this value is true
-# Federate name - [str] - Name of the federate 
-# Time delta - [float] - The property controlling the minimum time delta for a federate
-# Core type - [str] - Core tyoe to be used for communication
-# Uninterruptible - [Bool] - Can the federate be interepted
-# Helics logging level - [int] - logging level for the federate (use Helics documentation for choosig the right value)
+&quot;Project Path&quot; = &quot;&quot;
+&quot;Active Project&quot; = &quot;&quot;
+&quot;Active Scenario&quot; = &quot;&quot;
+&quot;DSS File&quot; = &quot;&quot;
 
 &quot;Co-simulation Mode&quot; = false
 &quot;Federate name&quot; = &quot;PyDSS&quot;
@@ -102,15 +74,6 @@
 &quot;Core type&quot; = &quot;zmq&quot;
 &quot;Uninterruptible&quot; = true
 &quot;Helics logging level&quot; = 5
-
-
-# Enable frequency sweep- [Bool] - Enable harmonic sweep. works with only &#39;Static&#39; and &#39;QSTS&#39; simulation modes
-# Fundamental frequency- [Float] - Fundamental system frequeny in Hertz
-# Start frequency- [Float] - as multiple of fundamental frequency
-# End frequency- [Float] - as multiple of fundamental frequency
-# Frequency increment- [Float] - as multiple of fundamental 
-# Neglect shunt admittance- [Bool] - Neglect shunt addmittance for frequency sweep
-# Percentage load in series- [Float] - Percent of load that is series RL for Harmonic studies
 
 &quot;Enable frequency sweep&quot; = false
 &quot;Fundamental frequency&quot; = 60
@@ -120,44 +83,65 @@
 &quot;Neglect shunt admittance&quot; = false
 &quot;Percentage load in series&quot; = 50.0
 
-# Logging Level- [String] - possible options &quot;DEBUG&quot;, &quot;INFO&quot;, &quot;WARNING&quot; or &quot;ERROR&quot;
-# Log to external file- [Bool] - Boolean variable
-# Display on screen- [Bool] - Boolean variable
-# Clear old log file- [Bool] - Boolean variable
-
-&quot;Logging Level&quot; = &quot;DEBUG&quot;
+&quot;Logging Level&quot; = &quot;WARNING&quot;
 &quot;Log to external file&quot; = false
 &quot;Display on screen&quot; = true
 &quot;Clear old log file&quot; = false
 
-&quot;Number of Monte Carlo scenarios&quot; = 1
+&quot;Number of Monte Carlo scenarios&quot; = -1
 
 </pre></div>
 </div>
+<ul class="simple">
+<li><p>Log Results- [Bool] - Set true if results need to be exported</p></li>
+<li><p>Return Results- [Bool] - Set true if running PyDSS in Cosimulation environment, RunStep function will return current system states</p></li>
+<li><p>Export Mode- [Str] - Possible options “byClass” and “byElement”</p></li>
+<li><p>Export Style- [Str] - possible options “Single_file” and “Separate_files”</p></li>
+<li><p>Create dynamic plots- [Bool] - Enable rendering of dynamic plots using bokeh</p></li>
+<li><p>Open plots in browser- [Bool] - Open plots  in s window. Will work if “Create dynamic plots” is set to true</p></li>
+<li><p>Simulation Type- [String] - Possible options “QSTS”, “Dynamic” and “Snapshot”</p></li>
+<li><p>Start Year- [Int] - Start year for the simulation study (em nb .g 2017)</p></li>
+<li><p>Start Day- [Int] - Start day for the simulation study. Index start at 1</p></li>
+<li><p>Start Time (min)- [Float] - Start time in minutes. Floating number can be used to account for second or sub second time points</p></li>
+<li><p>End Day- [Float] - End day for the simulation study</p></li>
+<li><p>End Time (min)- [Float] - end time in minutes</p></li>
+<li><p>Date offset- [Int] - Date offset to be added incase OpenDSS profiles do not start at the begining of the year</p></li>
+<li><p>Step resolution (sec)- [Float] - Time step resolution in seconds</p></li>
+<li><p>Max Control Iterations- [Int] - Maximum outer loop control iterations</p></li>
+<li><p>Error tolerance- [Float] - Error tolerance in per unit</p></li>
+<li><p>Control mode- [String] - Control mode options are “STATIC” or “Time”</p></li>
+<li><p>Disable PyDSS controllers- [Bool] - Disable all pyController in PyDSS. All controller implemented in DSS files will still work.</p></li>
+<li><p>Active Project- [String] - Name of project to run</p></li>
+<li><p>Active Scenario- [String] - Project scenario to use</p></li>
+<li><p>DSS File- [String] - The main OpenDSS file</p></li>
+<li><p>Co-simulation Mode - [Bool] - Set to true to enable Helics interface all other co-simulation settings only valid if this value is true</p></li>
+<li><p>Federate name - [str] - Name of the federate</p></li>
+<li><p>Time delta - [float] - The property controlling the minimum time delta for a federate</p></li>
+<li><p>Core type - [str] - Core tyoe to be used for communication</p></li>
+<li><p>Uninterruptible - [Bool] - Can the federate be interepted</p></li>
+<li><p>Helics logging level - [int] - log</p></li>
+<li><p>Enable frequency sweep- [Bool] - Enable harmonic sweep. works with only ‘Static’ and ‘QSTS’ simulation modes</p></li>
+<li><p>Fundamental frequency- [Float] - Fundamental system frequeny in Hertz</p></li>
+<li><p>Start frequency- [Float] - as multiple of fundamental frequency</p></li>
+<li><p>End frequency- [Float] - as multiple of fundamental frequency</p></li>
+<li><p>Frequency increment- [Float] - as multiple of fundamental</p></li>
+<li><p>Neglect shunt admittance- [Bool] - Neglect shunt addmittance for frequency sweep</p></li>
+<li><p>Percentage load in series- [Float] - Percent of load that is series RL for Harmonic studies</p></li>
+<li><p>Logging Level- [String] - possible options “DEBUG”, “INFO”, “WARNING” or “ERROR”</p></li>
+<li><p>Log to external file- [Bool] - Boolean variable</p></li>
+<li><p>Display on screen- [Bool] - Boolean variable</p></li>
+<li><p>Clear old log file- [Bool] - Boolean variable</p></li>
+<li><p>Number of Monte Carlo scenarios- [Int] -  Should be set to -1 to disbale MC simulation mode</p></li>
+</ul>
 </div>
-<div class="section" id="sample-batch-settings-toml-file">
-<h1>Sample “Batch_settings.toml” file<a class="headerlink" href="#sample-batch-settings-toml-file" title="Permalink to this headline">¶</a></h1>
-<div class="highlight-TOML notranslate"><div class="highlight"><pre><span></span>
-
-[Simulations] 
-
-#Absolute path for all scenario settings.toml files.
-#Any number of scenarios may be added to the list.
-#The first scenario is always the base case against which all scenarios are compared 
-Scenarios = [
-		&quot;C:/Users/alatif/Desktop/PyDSS-Projects/MySpohnTest/PyDSS Scenarios/base/Scenario_settings.toml&quot;,
-		&quot;C:/Users/alatif/Desktop/PyDSS-Projects/MySpohnTest/PyDSS Scenarios/self_consumption/Scenario_settings.toml&quot;
-	]
-
-#Run_simulations: BOOL: Run the simulation or not	
+<div class="section" id="default-visualization-settings">
+<h1>Default visualization settings<a class="headerlink" href="#default-visualization-settings" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-TOML notranslate"><div class="highlight"><pre><span></span>[Simulations] 
 Run_simulations = true
-#Generate_visuals: BOOL: Create comparative plots. If Run_simulations is false, simulation results from older simulation results will be used if available. If no results are available, an assertion error will be raied.   
-Generate_visuals = false
-#Run_bokeh_server: BOOL: Run bokeh server. Will only work if Run_simulations 
+Generate_visuals = false 
 Run_bokeh_server = false
 
 [Plots]
-#&lt;plot type&gt;: BOOL: Enable plots to be created for the given list of scenarios. 
 Frequency_sweep = false
 XFMR_tap = false
 Voltage_sag = false
@@ -176,9 +160,7 @@ Feeder_losses = false
 Feeder_substation_losses = false
 
 [Visualization]
-#Plotting_mode_-_str_-_possible_values &#39;Single&#39;, &#39;Separate&#39;
 Plotting_mode =&quot;Separate&quot;
-#Plotting_mode_-_str_-_possible_values &#39;png&#39;, &#39;pdf&#39;
 FileType = &#39;png&#39;
 
 [Visualization.Curtailment_settings]
@@ -393,6 +375,14 @@ Class = &quot;Transformers&quot;
 
 </pre></div>
 </div>
+<ul class="simple">
+<li><p>[Simulations].Run_simulations-  [Bool] - Run the simulation or not</p></li>
+<li><p>[Simulations].Generate_visuals- [Bool] - Create comparative plots. If Run_simulations is false, simulation results from older simulation results will be used if available. If no results are available, an assertion error will be raied.</p></li>
+<li><p>[Simulations].Run_bokeh_server- [Bool] - Run bokeh server. Will only work if Run_simulations Run_bokeh_server = false</p></li>
+<li><p>[Plots].&lt;any plot type&gt;- [Bool] - Enable plots to be created for the given list of scenarios.</p></li>
+<li><p>[Visualization].Plotting_mode- [Str]- possible_values ‘Single’, ‘Separate’</p></li>
+<li><p>[Visualization].FileType - [Str]- possible_values ‘png’, ‘pdf’</p></li>
+</ul>
 </div>
 
 
@@ -403,13 +393,16 @@ Class = &quot;Transformers&quot;
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Sample “Scenario_settings.toml” file</a></li>
-<li><a class="reference internal" href="#sample-batch-settings-toml-file">Sample “Batch_settings.toml” file</a></li>
+<li><a class="reference internal" href="#">Default simulation settings</a></li>
+<li><a class="reference internal" href="#default-visualization-settings">Default visualization settings</a></li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Automated comparison of scenarios.html"
-                        title="previous chapter">Automated scenario comparison</a></p>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">About PyDSS</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Project management.html"
+                        title="next chapter">Improved project management</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -438,7 +431,10 @@ Class = &quot;Transformers&quot;
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="Automated comparison of scenarios.html" title="Automated scenario comparison"
+          <a href="Project management.html" title="Improved project management"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="About PyDSS"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">PyDSS 0.0.1 documentation</a> &#187;</li> 
       </ul>

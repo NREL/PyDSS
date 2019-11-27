@@ -1,21 +1,18 @@
 Automated scenario comparison
 =============================
 
-PyDSS enables users to automatically generate high quality plots using the exported simulation resuts. Users both both generate plots for an induvisual scenario or generate plots to compare multiple scenarios. When running simulations in 'Batch’ mode, the following settings in the 'Batch_settings.toml' can be used to create plots.
+PyDSS enables users to automatically generate high quality plots using the exported simulation resuts. Users both both generate plots for an induvisual scenario or generate plots to compare multiple scenarios. It is important to note that to run to generate these plot users need to define a visualization toml file
+'Generate_visuals' should be set to true to enable the feature. Additionally any plot the user requires should also be set to true. A example has been provided on how to setup the comparison feature and can found at ~\\PyDSS\\examples\\Custom_controls_example\\PyDSS Scenarios. 'automated_comparison.toml' file contains contains the visualization settings 
 
 .. code-block:: python
 
 	[Simulations] 
-		Scenarios = [
-				"~/PyDSS-Projects/Test_project/PyDSS Scenarios/base_case/Scenario_settings.toml",
-				"~/PyDSS-Projects/Test_project/PyDSS Scenarios/self_consumption/Scenario_settings.toml"
-			]
 		Run_simulations = true
 		Generate_visuals = false
 		Run_bokeh_server = false
 	[Plots] 
 		Frequency_sweep = false
-		XFMR_tap = false
+		XFMR_tap = true
 		Voltage_sag = false
 		Voltage = false
 		Loading = false
@@ -31,16 +28,47 @@ PyDSS enables users to automatically generate high quality plots using the expor
 		Feeder_losses = false
 		Feeder_substation_losses = false
 	[Visualization]
-		Plotting_mode ="Separate"
+		Plotting_mode ="Separate" 
 		FileType = 'png'
 
-
-- Simulations.Scenarios [list of strings] - List absolute paths for all Scenario_settings.toml files for each scenaio of interest. Any number of scenario may be added to the list. The FISRT scenario is always the base case against which all scenarios are compared.
 - Simulations.Run_simulations [bool] -  If 'false', the simulatiosn will not run the simulation or not.
 - Simulations.Generate_visuals [bool] - If 'false', plots will not be generated. Will generate plots if set to 'true', even is 'Run_simulations' is set to false using results exported from previos simulations. If files required are not available, an assertion error will be raised. 
 - Plots [dict] - Within the plots dicionary, all plots user required to be generated can be set to 'true'. If files required are not available, an assertion error will be raised. 
 - Visualization.Plotting_mode [string] - Possible values are  ['Single', 'Separate']. Allows user to either generate seperate plots or comparative plots.
 - Visualization.FileType [string] - Possible values are  ['png', 'pdf']. Allows user export plots in multiple formats.
+
+
+Once the visualization file has been correclty configured, the simulations canbe run using the following code.
+
+.. code-block:: python
+
+	import click
+	import sys
+	import os
+
+	@click.command()
+	@click.option('--pydss_path',
+				  default=r'C:\Users\alatif\Desktop\PyDSS')
+	@click.option('--sim_path',
+				  default=r'C:\Users\alatif\Desktop\PyDSS\examples\External_interfacing_example\pyDSS_project\PyDSS Scenarios')
+	
+	def run_pyDSS(pydss_path, sim_path):
+		sys.path.append(pydss_path)
+		sys.path.append(os.path.join(pydss_path, 'PyDSS'))
+		from pyDSS import instance as dssInstance
+		a = dssInstance() # Create an instance of PyDSS
+		# the run command takes in list of scenrio TOML files and visualization TOML file as function inputs
+		a.run(['~\\PyDSS\\examples\\Custom_controls_example\\PyDSS Scenarios\\base_case.toml',     
+			'~\\PyDSS\examples\\Custom_controls_example\\PyDSS Scenarios\\self_consumption.toml',
+			'~\\PyDSS\\examples\\Custom_controls_example\\PyDSS Scenarios\\volt_var.toml',
+			'~\\PyDSS\examples\\Custom_controls_example\\PyDSS Scenarios\\multiple_controllers.toml'],
+		'~\\PyDSS\\examples\\Custom_controls_example\\PyDSS Scenarios\\automated_comparison.toml'      
+		) #Run the simulation 
+
+	run_pyDSS()
+
+
+
 
 Loading vs Voltage KDE plot for all transformer (for a QSTS simulation) 
 

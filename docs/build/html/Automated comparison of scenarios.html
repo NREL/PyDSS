@@ -43,18 +43,15 @@
             
   <div class="section" id="automated-scenario-comparison">
 <h1>Automated scenario comparison<a class="headerlink" href="#automated-scenario-comparison" title="Permalink to this headline">¶</a></h1>
-<p>PyDSS enables users to automatically generate high quality plots using the exported simulation resuts. Users both both generate plots for an induvisual scenario or generate plots to compare multiple scenarios. When running simulations in ‘Batch’ mode, the following settings in the ‘Batch_settings.toml’ can be used to create plots.</p>
+<p>PyDSS enables users to automatically generate high quality plots using the exported simulation resuts. Users both both generate plots for an induvisual scenario or generate plots to compare multiple scenarios. It is important to note that to run to generate these plot users need to define a visualization toml file
+‘Generate_visuals’ should be set to true to enable the feature. Additionally any plot the user requires should also be set to true. A example has been provided on how to setup the comparison feature and can found at ~\PyDSS\examples\Custom_controls_example\PyDSS Scenarios. ‘automated_comparison.toml’ file contains contains the visualization settings</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">Simulations</span><span class="p">]</span>
-        <span class="n">Scenarios</span> <span class="o">=</span> <span class="p">[</span>
-                        <span class="s2">&quot;~/PyDSS-Projects/Test_project/PyDSS Scenarios/base_case/Scenario_settings.toml&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;~/PyDSS-Projects/Test_project/PyDSS Scenarios/self_consumption/Scenario_settings.toml&quot;</span>
-                <span class="p">]</span>
         <span class="n">Run_simulations</span> <span class="o">=</span> <span class="n">true</span>
         <span class="n">Generate_visuals</span> <span class="o">=</span> <span class="n">false</span>
         <span class="n">Run_bokeh_server</span> <span class="o">=</span> <span class="n">false</span>
 <span class="p">[</span><span class="n">Plots</span><span class="p">]</span>
         <span class="n">Frequency_sweep</span> <span class="o">=</span> <span class="n">false</span>
-        <span class="n">XFMR_tap</span> <span class="o">=</span> <span class="n">false</span>
+        <span class="n">XFMR_tap</span> <span class="o">=</span> <span class="n">true</span>
         <span class="n">Voltage_sag</span> <span class="o">=</span> <span class="n">false</span>
         <span class="n">Voltage</span> <span class="o">=</span> <span class="n">false</span>
         <span class="n">Loading</span> <span class="o">=</span> <span class="n">false</span>
@@ -75,13 +72,39 @@
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>Simulations.Scenarios [list of strings] - List absolute paths for all Scenario_settings.toml files for each scenaio of interest. Any number of scenario may be added to the list. The FISRT scenario is always the base case against which all scenarios are compared.</p></li>
 <li><p>Simulations.Run_simulations [bool] -  If ‘false’, the simulatiosn will not run the simulation or not.</p></li>
 <li><p>Simulations.Generate_visuals [bool] - If ‘false’, plots will not be generated. Will generate plots if set to ‘true’, even is ‘Run_simulations’ is set to false using results exported from previos simulations. If files required are not available, an assertion error will be raised.</p></li>
 <li><p>Plots [dict] - Within the plots dicionary, all plots user required to be generated can be set to ‘true’. If files required are not available, an assertion error will be raised.</p></li>
 <li><p>Visualization.Plotting_mode [string] - Possible values are  [‘Single’, ‘Separate’]. Allows user to either generate seperate plots or comparative plots.</p></li>
 <li><p>Visualization.FileType [string] - Possible values are  [‘png’, ‘pdf’]. Allows user export plots in multiple formats.</p></li>
 </ul>
+<p>Once the visualization file has been correclty configured, the simulations canbe run using the following code.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">click</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="nd">@click.command</span><span class="p">()</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s1">&#39;--pydss_path&#39;</span><span class="p">,</span>
+                          <span class="n">default</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;C:\Users\alatif\Desktop\PyDSS&#39;</span><span class="p">)</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s1">&#39;--sim_path&#39;</span><span class="p">,</span>
+                          <span class="n">default</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;C:\Users\alatif\Desktop\PyDSS\examples\External_interfacing_example\pyDSS_project\PyDSS Scenarios&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">run_pyDSS</span><span class="p">(</span><span class="n">pydss_path</span><span class="p">,</span> <span class="n">sim_path</span><span class="p">):</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pydss_path</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pydss_path</span><span class="p">,</span> <span class="s1">&#39;PyDSS&#39;</span><span class="p">))</span>
+        <span class="kn">from</span> <span class="nn">pyDSS</span> <span class="kn">import</span> <span class="n">instance</span> <span class="k">as</span> <span class="n">dssInstance</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">dssInstance</span><span class="p">()</span> <span class="c1"># Create an instance of PyDSS</span>
+        <span class="c1"># the run command takes in list of scenrio TOML files and visualization TOML file as function inputs</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;~</span><span class="se">\\</span><span class="s1">PyDSS</span><span class="se">\\</span><span class="s1">examples</span><span class="se">\\</span><span class="s1">Custom_controls_example</span><span class="se">\\</span><span class="s1">PyDSS Scenarios</span><span class="se">\\</span><span class="s1">base_case.toml&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;~</span><span class="se">\\</span><span class="s1">PyDSS\examples</span><span class="se">\\</span><span class="s1">Custom_controls_example</span><span class="se">\\</span><span class="s1">PyDSS Scenarios</span><span class="se">\\</span><span class="s1">self_consumption.toml&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;~</span><span class="se">\\</span><span class="s1">PyDSS</span><span class="se">\\</span><span class="s1">examples</span><span class="se">\\</span><span class="s1">Custom_controls_example</span><span class="se">\\</span><span class="s1">PyDSS Scenarios</span><span class="se">\\</span><span class="s1">volt_var.toml&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;~</span><span class="se">\\</span><span class="s1">PyDSS\examples</span><span class="se">\\</span><span class="s1">Custom_controls_example</span><span class="se">\\</span><span class="s1">PyDSS Scenarios</span><span class="se">\\</span><span class="s1">multiple_controllers.toml&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;~</span><span class="se">\\</span><span class="s1">PyDSS</span><span class="se">\\</span><span class="s1">examples</span><span class="se">\\</span><span class="s1">Custom_controls_example</span><span class="se">\\</span><span class="s1">PyDSS Scenarios</span><span class="se">\\</span><span class="s1">automated_comparison.toml&#39;</span>
+        <span class="p">)</span> <span class="c1">#Run the simulation</span>
+
+<span class="n">run_pyDSS</span><span class="p">()</span>
+</pre></div>
+</div>
 <p>Loading vs Voltage KDE plot for all transformer (for a QSTS simulation)</p>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="_images/voltage-loading.png"><img alt="_images/voltage-loading.png" src="_images/voltage-loading.png" style="width: 420.0px; height: 420.0px;" /></a>
