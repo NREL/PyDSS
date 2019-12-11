@@ -2,64 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fcd3c74c-17e0-4241-bf3f-29643a7dcab1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/PyDSS.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/PyDSS-heco.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/ProjectSettings.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/PyDSS/v16/.suo" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/VSWorkspaceState.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/slnx.sqlite" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS.egg-info/PKG-INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS.egg-info/SOURCES.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS.egg-info/dependency_links.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS.egg-info/requires.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS.egg-info/top_level.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/SolveMode.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/SolveMode.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/default_simulation_settings.toml" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/default_simulation_settings.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PyDSS/dssInstance.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/dssInstance.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/StorageController.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/StorageController.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/pyDSS.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyDSS.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/pyLogger.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyLogger.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/Export/Logs/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/Export/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/MonteCarlo.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/NetworkModifier.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/ResultContainer.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/SolveMode.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/dssBus.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/dssCircuit.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/dssElement.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/dssGUI-old.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/dssGUI.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/dssInstance.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/dssNetworkX.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/pyContrReader.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/pyLogger.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyDSS/pyPlotReader.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyPlots/GISplot.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyPlots/Histogram.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyPlots/SagPlot.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyPlots/TimeSeries.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyPlots/Topology.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyPlots/XYPlot.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyPlots/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/PyPlots/pyPlots.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/pyControllers/HybridController.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/pyControllers/PvController.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/pyControllers/SocketController.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/pyControllers/StorageController.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/pyControllers/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/pyControllers/pyController.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/pyControllers/xfmrController.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/PyDSS-0.0.1-py3.6.egg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/PyDSS Scenarios/automated_comparison.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/Custom_controls_example/PyDSS Scenarios/automated_comparison.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/PyDSS Scenarios/self_consumption/pyControllerList/~$StorageController.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/pyvenv.cfg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/pyPostprocessor/pyPostprocess.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyPostprocessor/pyPostprocess.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -81,11 +25,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/PyDSS/dssInstance.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="298" column="43" selection-start-line="298" selection-start-column="43" selection-end-line="298" selection-end-column="43" />
+            <state relative-caret-position="274">
+              <caret line="295" column="27" selection-start-line="295" selection-start-column="27" selection-end-line="295" selection-end-column="27" />
               <folding>
                 <element signature="e#0#55#0" expanded="true" />
               </folding>
@@ -96,10 +40,13 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PyDSS/SolveMode.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1445">
-              <caret line="85" column="27" selection-start-line="85" selection-start-column="27" selection-end-line="85" selection-end-column="27" />
+            <state relative-caret-position="408">
+              <caret line="198" column="92" selection-start-line="198" selection-start-column="92" selection-end-line="198" selection-end-column="92" />
               <folding>
                 <element signature="e#0#40#0" expanded="true" />
+                <element signature="e#1128#4613#0" />
+                <element signature="e#4633#8439#0" />
+                <element signature="e#8463#10260#0" />
               </folding>
             </state>
           </provider>
@@ -108,8 +55,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PyDSS/ResultContainer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="280" column="33" selection-start-line="280" selection-start-column="33" selection-end-line="280" selection-end-column="33" />
+            <state relative-caret-position="-3995">
+              <caret line="56" column="12" selection-start-line="56" selection-start-column="12" selection-end-line="56" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -126,8 +73,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/pyPostprocess.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="172">
-              <caret line="11" selection-start-line="11" selection-end-line="11" />
+            <state relative-caret-position="399">
+              <caret line="27" column="73" selection-start-line="27" selection-start-column="73" selection-end-line="27" selection-end-column="73" />
               <folding>
                 <element signature="e#0#45#0" expanded="true" />
               </folding>
@@ -135,11 +82,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="365">
-              <caret line="29" column="9" selection-start-line="29" selection-start-column="9" selection-end-line="29" selection-end-column="9" />
+            <state relative-caret-position="416">
+              <caret line="34" selection-start-line="34" selection-end-line="34" />
             </state>
           </provider>
         </entry>
@@ -181,8 +128,8 @@
         <option value="$PROJECT_DIR$/PyDSS/SolveMode.py" />
         <option value="$PROJECT_DIR$/PyDSS/default_simulation_settings.toml" />
         <option value="$PROJECT_DIR$/PyDSS/pyPostprocessor/pyPostprocess.py" />
-        <option value="$PROJECT_DIR$/PyDSS/dssInstance.py" />
         <option value="$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade.py" />
+        <option value="$PROJECT_DIR$/PyDSS/dssInstance.py" />
       </list>
     </option>
   </component>
@@ -456,49 +403,12 @@
     <entry file="file://$PROJECT_DIR$/PyDSS/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/SolveMode.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1445">
-          <caret line="85" column="27" selection-start-line="85" selection-start-column="27" selection-end-line="85" selection-end-column="27" />
-          <folding>
-            <element signature="e#0#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/ResultContainer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="280" column="33" selection-start-line="280" selection-start-column="33" selection-end-line="280" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/pyPlots/pyPlots.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="425">
           <caret line="25" column="14" selection-start-line="25" selection-start-column="14" selection-end-line="25" selection-end-column="14" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/pyPostprocess.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="172">
-          <caret line="11" selection-start-line="11" selection-end-line="11" />
-          <folding>
-            <element signature="e#0#45#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/dssInstance.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="298" column="43" selection-start-line="298" selection-start-column="43" selection-end-line="298" selection-end-column="43" />
-          <folding>
-            <element signature="e#0#55#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -520,10 +430,50 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/SolveMode.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="198" column="92" selection-start-line="198" selection-start-column="92" selection-end-line="198" selection-end-column="92" />
+          <folding>
+            <element signature="e#0#40#0" expanded="true" />
+            <element signature="e#1128#4613#0" />
+            <element signature="e#4633#8439#0" />
+            <element signature="e#8463#10260#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/ResultContainer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3995">
+          <caret line="56" column="12" selection-start-line="56" selection-start-column="12" selection-end-line="56" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/pyPostprocess.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="399">
+          <caret line="27" column="73" selection-start-line="27" selection-start-column="73" selection-end-line="27" selection-end-column="73" />
+          <folding>
+            <element signature="e#0#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="365">
-          <caret line="29" column="9" selection-start-line="29" selection-start-column="9" selection-end-line="29" selection-end-column="9" />
+        <state relative-caret-position="416">
+          <caret line="34" selection-start-line="34" selection-end-line="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/dssInstance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="274">
+          <caret line="295" column="27" selection-start-line="295" selection-start-column="27" selection-end-line="295" selection-end-column="27" />
+          <folding>
+            <element signature="e#0#55#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

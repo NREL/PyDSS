@@ -231,7 +231,7 @@ class OpenDSS:
         ElmCollection = getattr(self._dssInstance, key)
         Elem = ElmCollection.First()
         while Elem:
-            ObjectList[self._dssInstance.Element.Name()] =  dssElement(self._dssInstance)
+            ObjectList[self._dssInstance.Element.Name()] = dssElement(self._dssInstance)
             Elem = ElmCollection.Next()
         return ObjectList
 
@@ -287,7 +287,7 @@ class OpenDSS:
 
         if self._Options['Post processing script'] != "":
             self.postprocessor = pyPostprocess.Create(self._dssInstance, self._dssSolver, self._dssObjects,
-                                                     self._dssObjectsByClass, self._Options)
+                                                     self._dssObjectsByClass, self._Options, self._Logger)
         else:
             print('No post processing script selected')
             self.postprocessor = None

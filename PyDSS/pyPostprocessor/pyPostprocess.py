@@ -14,7 +14,7 @@ for file in pythonFiles:
     exec('from PyDSS.pyPostprocessor.PostprocessScripts import {}'.format(file))
     exec('POST_PROCESSES["{}"] = {}.{}'.format(file, file, file))
 
-def Create(dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings):
+def Create(dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger):
     test = None
     PostProcessorClass = None
     ScriptName = simulationSettings['Post processing script']
@@ -24,5 +24,6 @@ def Create(dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSett
         "Please define the controller in ~PyDSS\pyPostprocessor\PostprocessScripts".format(
             ScriptName
     )
-    PostProcessor = POST_PROCESSES[ScriptName](dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings)
+    PostProcessor = POST_PROCESSES[ScriptName](dssInstance, dssSolver, dssObjects, dssObjectsByClass,
+                                               simulationSettings, Logger)
     return PostProcessor
