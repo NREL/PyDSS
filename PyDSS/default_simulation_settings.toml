@@ -47,6 +47,14 @@
 "Active Scenario" = ""
 "DSS File" = ""
 
+# Post processing script - [Str] - Name the post processing script to be run after simulation .
+#                                  possible values are [AutomatedThermalUpgrade, AutomatedVoltageUpgrade]
+# Run each iteration - [Bool] - if true, the the proprocessing script will run after time step. Else, the script will be executed 
+#	      							at the end of the simultion run 
+
+"Post processing script" = "AutomatedThermalUpgrade"
+"Run each iteration" = true 
+
 # Co-simulation Mode - [Bool] - Set to true to enable Helics interface all other co-simulation settings only valid if this value is true
 # Federate name - [str] - Name of the federate 
 # Time delta - [float] - The property controlling the minimum time delta for a federate
@@ -83,8 +91,8 @@
 # Display on screen- [Bool] - Boolean variable
 # Clear old log file- [Bool] - Boolean variable
 
-"Logging Level" = "WARNING"
-"Log to external file" = false
+"Logging Level" = "INFO"
+"Log to external file" = true
 "Display on screen" = true
 "Clear old log file" = false
 

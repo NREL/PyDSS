@@ -82,8 +82,8 @@ class __Dynamic:
         self.__Time = self.__Time + timedelta(seconds=self.__sStepRes)
         self.__Hour = int(self.__dssSolution.DblHour() // 1)
         self.__Second = (self.__dssSolution.DblHour() % 1) * 60 * 60
-        self.pyLogger.info('OpenDSS time [h] - ' + str(self.__dssSolution.DblHour()))
-        self.pyLogger.info('PyDSS datetime - ' + str(self.__Time))
+        self.pyLogger.debug('OpenDSS time [h] - ' + str(self.__dssSolution.DblHour()))
+        self.pyLogger.debug('PyDSS datetime - ' + str(self.__Time))
 
     def GetTotalSeconds(self):
         return (self.__Time - self.__StartTime).total_seconds()
@@ -166,8 +166,8 @@ class __QSTS:
         self.__Time = self.__Time + timedelta(seconds=self.__sStepRes)
         self.__Hour = int(self.__dssSolution.DblHour() // 1)
         self.__Second = (self.__dssSolution.DblHour() % 1) * 60 * 60
-        self.pyLogger.info('OpenDSS time [h] - ' + str(self.__dssSolution.DblHour()))
-        self.pyLogger.info('PyDSS datetime - ' + str(self.__Time))
+        self.pyLogger.debug('OpenDSS time [h] - ' + str(self.__dssSolution.DblHour()))
+        self.pyLogger.debug('PyDSS datetime - ' + str(self.__Time))
 
     def GetTotalSeconds(self):
         return (self.__Time - self.__StartTime).total_seconds()

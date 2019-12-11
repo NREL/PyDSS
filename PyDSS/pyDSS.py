@@ -40,7 +40,7 @@ __status__ = "Production"
 class instance(object):
 
     valid_settings = {
-            'Log Results' : {'type': bool, 'Options': [True, False]},
+            'Log Results': {'type': bool, 'Options': [True, False]},
             'Return Results': {'type': bool, 'Options': [True, False]},
             'Export Mode': {'type': str, 'Options': ["byClass", "byElement"]},
             'Export Style': {'type': str, 'Options': ["Single file", "Separate files"]},
@@ -49,56 +49,51 @@ class instance(object):
             'Open plots in browser': {'type': bool, 'Options': [True, False]},
 
             'Project Path': {'type': str},
-            'Start Year' : {'type': int, 'Options': range(1970, 2099)},
-            'Start Day' : {'type': int, 'Options': range(0, 365)},
-            'Start Time (min)' : {'type': float, 'Options': range(0, 1440)},
-            'End Day' : {'type': int, 'Options': range(0, 365)},
-            'End Time (min)' : {'type': float, 'Options': range(0, 1440)},
-            'Date offset' : {'type': int, 'Options': range(0, 365)},
+            'Start Year': {'type': int, 'Options': range(1970, 2099)},
+            'Start Day': {'type': int, 'Options': range(0, 365)},
+            'Start Time (min)': {'type': float, 'Options': range(0, 1440)},
+            'End Day': {'type': int, 'Options': range(0, 365)},
+            'End Time (min)': {'type': float, 'Options': range(0, 1440)},
+            'Date offset': {'type': int, 'Options': range(0, 365)},
             'Step resolution (sec)' : {'type': float},
             'Max Control Iterations' : {'type': int},
-            'Error tolerance' : {'type': float},
-            'Simulation Type' : {'type': str, 'Options': ["QSTS", "Dynamic", "Snapshot", "Monte Carlo"]},
-            'Active Project' : {'type': str},
-            'Active Scenario' : {'type': str},
-            'DSS File' : {'type': str},
+            'Error tolerance': {'type': float},
+            'Simulation Type': {'type': str, 'Options': ["QSTS", "Dynamic", "Snapshot", "Monte Carlo"]},
+            'Active Project': {'type': str},
+            'Active Scenario': {'type': str},
+            'DSS File': {'type': str},
+
+            'Post processing script': {'type': str},
+            "Run each iteration": {'type': bool, 'Options': [True, False]},
 
             'Co-simulation Mode': {'type': bool, 'Options': [True, False]},
-            'Federate name' : {'type': str},
-            'Time delta' : {'type': float},
-            'Core type' : {'type': str},
-            'Uninterruptible' : {'type': bool, 'Options': [True, False]},
-            'Helics logging level' : {'type': int, 'Options': range(0, 10)},
+            'Federate name': {'type': str},
+            'Time delta': {'type': float},
+            'Core type': {'type': str},
+            'Uninterruptible': {'type': bool, 'Options': [True, False]},
+            'Helics logging level': {'type': int, 'Options': range(0, 10)},
 
 
-            'Logging Level' : {'type': str, 'Options': ["DEBUG", "INFO", "WARNING" , "ERROR"]},
-            'Log to external file'  : {'type': bool, 'Options': [True, False]},
-            'Display on screen' : {'type': bool, 'Options': [True, False]},
-            'Clear old log file' : {'type': bool, 'Options': [True, False]},
+            'Logging Level': {'type': str, 'Options': ["DEBUG", "INFO", "WARNING" , "ERROR"]},
+            'Log to external file': {'type': bool, 'Options': [True, False]},
+            'Display on screen': {'type': bool, 'Options': [True, False]},
+            'Clear old log file': {'type': bool, 'Options': [True, False]},
 
-            'Control mode' : {'type': str, 'Options': ["Static", "Time"]},
-            'Disable PyDSS controllers' : {'type': bool, 'Options': [True, False]},
+            'Control mode': {'type': str, 'Options': ["Static", "Time"]},
+            'Disable PyDSS controllers': {'type': bool, 'Options': [True, False]},
 
-            'Enable frequency sweep' : {'type': bool, 'Options': [True, False]},
-            'Fundamental frequency' : {'type': int, 'Options': [50, 60]},
-            'Start frequency' : {'type': float},
-            'End frequency' : {'type': float},
-            'frequency increment' : {'type': float},
-            'Neglect shunt admittance' : {'type': bool, 'Options': [True, False]},
-            'Percentage load in series' : {'type': float, 'Options': range(0, 100)},
+            'Enable frequency sweep': {'type': bool, 'Options': [True, False]},
+            'Fundamental frequency': {'type': int, 'Options': [50, 60]},
+            'Start frequency': {'type': float},
+            'End frequency': {'type': float},
+            'frequency increment': {'type': float},
+            'Neglect shunt admittance': {'type': bool, 'Options': [True, False]},
+            'Percentage load in series': {'type': float, 'Options': range(0, 100)},
 
-            'Number of Monte Carlo scenarios' : {'type': int},
+            'Number of Monte Carlo scenarios': {'type': int},
     }
 
-    def __init__(self, basepath=None):
-        # path = os.path.dirname(PyDSS.__file__)
-        # os.chdir(path)
-        # os.chdir("../examples")
-        # self.path_examples = os.getcwd()
-        # if basepath == None:
-        #     self.projects_path = os.getcwd()
-        # else:
-        #     self.projects_path = basepath
+    def __init__(self):
         return
 
     def create_new_project(self, base_path, project_name, scenario_name):
@@ -148,6 +143,7 @@ class instance(object):
         else:
             updated_vis_settings = default_vis_settings
 
+        bokeh_server_proc = None
         if updated_vis_settings['Simulations']['Run_bokeh_server']:
             bokeh_server_proc = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
 
@@ -156,7 +152,9 @@ class instance(object):
             args, results = self.__run_scenario(simulation_file,
                                                 updated_vis_settings['Simulations']['Run_simulations'],
                                                 updated_vis_settings['Simulations']['Generate_visuals'])
-            SimulationResults = self.update_results_dict(SimulationResults, args, results)
+            if results is not None:
+                SimulationResults = self.update_results_dict(SimulationResults, args, results)
+
 
         elif isinstance(simulation_file, list):
             for sim_file in simulation_file:
@@ -169,6 +167,7 @@ class instance(object):
             CreatePlots(updated_vis_settings, SimulationResults)
         if updated_vis_settings['Simulations']['Run_bokeh_server']:
             bokeh_server_proc.terminate()
+        print('end of update_results_dict')
         return
 
     def update_scenario_settigs(self, Scenario_TOML_file_path):
@@ -189,11 +188,11 @@ class instance(object):
             dss = dssInstance.OpenDSS(**dss_args)
             print('Running scenario: {}'.format(Scenario_TOML_file_path))
             if dss_args["Number of Monte Carlo scenarios"] > 0:
-                #TODO: Fix the broken MC code
                 dss.RunMCsimulation(samples=dss_args['Number of Monte Carlo scenarios'])
             else:
                 dss.RunSimulation()
-            dss.DeleteInstance()
+            del dss
+            print(dss)
         if generate_visuals:
             result = ResultObject(os.path.join(
                 dss_args['Project Path'],
@@ -258,11 +257,11 @@ if __name__ == '__main__':
     #a.run(r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\volt_var.toml')
     #a.run(r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\multiple_controllers.toml')
 
-    # a.run([r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\base_case.toml',
-    #        r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\self_consumption.toml',
-    #        r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\volt_var.toml',
-    #        r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\multiple_controllers.toml'],
-    #       r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\automated_comparison.toml')
+    a.run([r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\base_case.toml',
+           r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\self_consumption.toml',
+           r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\volt_var.toml',
+           r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\multiple_controllers.toml'],
+          r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\automated_comparison.toml')
 
     # a.run(r'C:\Users\alatif\Desktop\PyDSS\examples\Dynamic_visualization_example\PyDSS Scenarios\Dynamic_visuals.toml',
     #       r'C:\Users\alatif\Desktop\PyDSS\examples\Dynamic_visualization_example\PyDSS Scenarios\user_defined_vis_settings.toml')
@@ -270,6 +269,6 @@ if __name__ == '__main__':
     # a.run(r'C:\Users\alatif\Desktop\PyDSS\examples\Harmonics_examples\PyDSS Scenarios\freq_scan_qsts.toml',
     #       r'C:\Users\alatif\Desktop\PyDSS\examples\Harmonics_examples\PyDSS Scenarios\Freq_scan_qsts_visuals.toml')
 
-    a.run(r'C:\Users\alatif\Desktop\PyDSS\examples\Monte_carlo_examples\PyDSS Scenarios\monte_carlo_settings.toml')
+    #a.run(r'C:\Users\alatif\Desktop\PyDSS\examples\Monte_carlo_examples\PyDSS Scenarios\monte_carlo_settings.toml')
 
     del a

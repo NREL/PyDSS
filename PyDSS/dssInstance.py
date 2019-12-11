@@ -8,74 +8,42 @@ from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
 
+from PyDSS.pyPostprocessor import pyPostprocess
 import PyDSS.pyControllers as pyControllers
 import PyDSS.pyPlots as pyPlots
 
+
 from PyDSS.Extensions.NetworkGraph import CreateGraph
-from opendssdirect.utils import run_command
-import opendssdirect as dss
+
 import numpy as np
-import subprocess
 import logging
 import time
 import os
 
-from bokeh.plotting import figure, curdoc
-from bokeh.layouts import  column, row
+from bokeh.plotting import curdoc
+from bokeh.layouts import row
 from bokeh.client import push_session
 
 CONTROLLER_PRIORITIES = 3
 
-DSS_DEFAULTS = {
-    # Logging Defaults
-    'Logging Level': logging.INFO,
-    'Log to external file': True,
-    'Display on screen': True,
-    'Clear old log files': False,
-
-    # Simulation Options
-    'Start Day': 0,
-    'End Day': 1,
-    'Step resolution (min)': 15,
-    'Max Control Iterations': 10,
-	'Project Path'   : r'C:\Users\memmanue\Desktop\PyDSS-Projects',
-    'Simulation Type': 'Daily',
-    'Active Project': 'Mikilua',
-    'Active Scenario': 'None-None',
-    'DSS File': 'MasterCircuit_Mikilua_baseline2.dss',
-    'Error tolerance': 1,
-
-    # Results Options
-    'Log Results': True,
-    'Export Mode': 'byClass',
-    'Export Style': 'Single file',
-
-    # Plot Options
-    'Network layout': True,
-    'Time series': True,
-    'XY plot': True,
-    'Sag plot': True,
-    'Histogram': True,
-    'GIS overlay': True,
-}
-
 class OpenDSS:
     def __init__(self, **kwargs):
-        self.__TempResultList = []
-        self.__dssInstance = dss
-        self.__dssBuses = {}
-        self.__dssObjects = {}
-        self.__dssObjectsByClass = {}
-        self.__DelFlag = 0
-        self.__pyPlotObjects = {}
+        from opendssdirect.utils import run_command
+        import opendssdirect as dss
+
+        self._TempResultList = []
+        self._dssInstance = dss
+        self._dssBuses = {}
+        self._dssObjects = {}
+        self._dssObjectsByClass = {}
+        self._DelFlag = 0
+        self._pyPlotObjects = {}
         self.BokehSessionID = None
 
-        DSS_DEFAULTS.update(kwargs)
-        kwargs = DSS_DEFAULTS
         rootPath = kwargs['Project Path']
-        self.__ActiveProject = kwargs['Active Project']
+        self._ActiveProject = kwargs['Active Project']
         importPath = os.path.join(rootPath, kwargs['Active Project'], 'PyDSS Scenarios')
-        self.__dssPath = {
+        self._dssPath = {
             'root': rootPath,
             'Import': importPath,
             'pyPlots': os.path.join(importPath, kwargs['Active Scenario'], 'pyPlotList'),
@@ -84,85 +52,85 @@ class OpenDSS:
             'Export': os.path.join(rootPath, kwargs['Active Project'], 'Exports'),
             'Log': os.path.join(rootPath, kwargs['Active Project'], 'Logs'),
             'dssFiles': os.path.join(rootPath, kwargs['Active Project'], 'DSSfiles'),
-            'dssFilePath' : os.path.join(rootPath, kwargs['Active Project'], 'DSSfiles', kwargs['DSS File']),
+            'dssFilePath': os.path.join(rootPath, kwargs['Active Project'], 'DSSfiles', kwargs['DSS File']),
         }
 
         LoggerTag = kwargs['Active Project'] + '_' + kwargs['Active Scenario']
-        self.__Logger = pyLogger.getLogger(LoggerTag, self.__dssPath['Log'], LoggerOptions=kwargs)
-        self.__Logger.info('An instance of OpenDSS version ' + dss.__version__ + ' has been created.')
+        self._Logger = pyLogger.getLogger(LoggerTag, self._dssPath['Log'], LoggerOptions=kwargs)
+        self._Logger.info('An instance of OpenDSS version ' + dss.__version__ + ' has been created.')
 
-        for key, path in self.__dssPath.items():
+        for key, path in self._dssPath.items():
             assert (os.path.exists(path)), '{} path: {} does not exist!'.format(key, path)
 
-        self.__Options = kwargs
-        self.__dssInstance.Basic.ClearAll()
-        self.__dssInstance.utils.run_command('Log=NO')
+        self._Options = kwargs
+        self._dssInstance.Basic.ClearAll()
+        self._dssInstance.utils.run_command('Log=NO')
         run_command('Clear')
-        self.__Logger.info('Loading OpenDSS model')
-        reply = run_command('compile ' + self.__dssPath['dssFilePath'])
-        self.__Logger.info('OpenDSS:  ' + reply)
+        self._Logger.info('Loading OpenDSS model')
+        reply = run_command('compile ' + self._dssPath['dssFilePath'])
+        self._Logger.info('OpenDSS:  ' + reply)
 
         assert ('error ' not in reply.lower()), 'Error compiling OpenDSS model.\n{}'.format(reply)
-        run_command('Set DefaultBaseFrequency={}'.format(self.__Options['Fundamental frequency']))
-        self.__Logger.info('OpenDSS fundamental frequency set to :  ' + str(self.__Options['Fundamental frequency']) + ' Hz')
+        run_command('Set DefaultBaseFrequency={}'.format(self._Options['Fundamental frequency']))
+        self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(self._Options['Fundamental frequency']) + ' Hz')
 
-        run_command('Set %SeriesRL={}'.format(self.__Options['Percentage load in series']))
-        if self.__Options['Neglect shunt admittance']:
+        run_command('Set %SeriesRL={}'.format(self._Options['Percentage load in series']))
+        if self._Options['Neglect shunt admittance']:
             run_command('Set NeglectLoadY=Yes')
 
-        self.__dssCircuit = dss.Circuit
-        self.__dssElement = dss.Element
-        self.__dssBus = dss.Bus
-        self.__dssClass = dss.ActiveClass
-        self.__dssCommand = run_command
-        self.__dssSolution = dss.Solution
-        self.__dssSolver = SolveMode.GetSolver(SimulationSettings=kwargs, dssInstance=self.__dssInstance)
+        self._dssCircuit = dss.Circuit
+        self._dssElement = dss.Element
+        self._dssBus = dss.Bus
+        self._dssClass = dss.ActiveClass
+        self._dssCommand = run_command
+        self._dssSolution = dss.Solution
+        self._dssSolver = SolveMode.GetSolver(SimulationSettings=kwargs, dssInstance=self._dssInstance)
 
-        self.__Modifier = Modifier(dss, run_command, self.__Options)
-        self.__UpdateDictionary()
-        self.__CreateBusObjects()
-        self.__dssSolver.reSolve()
+        self._Modifier = Modifier(dss, run_command, self._Options)
+        self._UpdateDictionary()
+        self._CreateBusObjects()
+        self._dssSolver.reSolve()
 
-        if self.__Options and self.__Options['Log Results']:
-            self.ResultContainer = RC(kwargs, self.__dssPath,  self.__dssObjects, self.__dssObjectsByClass,
-                                      self.__dssBuses, self.__dssSolver, self.__dssCommand)
+        if self._Options and self._Options['Log Results']:
+            self.ResultContainer = RC(kwargs, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
+                                      self._dssBuses, self._dssSolver, self._dssCommand)
 
-        pyCtrlReader = pcr(self.__dssPath['pyControllers'])
+        pyCtrlReader = pcr(self._dssPath['pyControllers'])
         ControllerList = pyCtrlReader.pyControllers
         if ControllerList is not None:
-            self.__CreateControllers(ControllerList)
+            self._CreateControllers(ControllerList)
 
         if kwargs['Create dynamic plots']:
-            pyPlotReader = ppr(self.__dssPath['pyPlots'])
+            pyPlotReader = ppr(self._dssPath['pyPlots'])
             PlotList = pyPlotReader.pyPlots
-            self.__CreatePlots(PlotList)
-            for Plot in self.__pyPlotObjects:
-                self.BokehSessionID = self.__pyPlotObjects[Plot].GetSessionID()
+            self._CreatePlots(PlotList)
+            for Plot in self._pyPlotObjects:
+                self.BokehSessionID = self._pyPlotObjects[Plot].GetSessionID()
                 if kwargs['Open plots in browser']:
-                    self.__pyPlotObjects[Plot].session.show()
+                    self._pyPlotObjects[Plot].session.show()
                 break
         return
 
-    def __ModifyNetwork(self):
-        # self.__Modifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
-        #                              True, self.__dssObjects)
-        # self.__Modifier.Edit_Elements('regcontrol', 'enabled' ,'False')
-        #self.__Modifier.Edit_Elements('Load', 'enabled', 'False')
+    def _ModifyNetwork(self):
+        # self._Modifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
+        #                              True, self._dssObjects)
+        # self._Modifier.Edit_Elements('regcontrol', 'enabled' ,'False')
+        #self._Modifier.Edit_Elements('Load', 'enabled', 'False')
         return
 
-    def __CreateControllers(self, ControllerDict):
-        self.__pyControls = {}
+    def _CreateControllers(self, ControllerDict):
+        self._pyControls = {}
 
         for ControllerType, ElementsDict in ControllerDict.items():
             for ElmName, SettingsDict in ElementsDict.items():
-                 Controller = pyControllers.pyController.Create(ElmName, ControllerType, SettingsDict, self.__dssObjects,
-                                                  self.__dssInstance, self.__dssSolver)
+                 Controller = pyControllers.pyController.Create(ElmName, ControllerType, SettingsDict, self._dssObjects,
+                                                  self._dssInstance, self._dssSolver)
                  if Controller != -1:
-                    self.__pyControls['Controller.' + ElmName] = Controller
-                    self.__Logger.info('Created pyController -> Controller.' + ElmName)
+                    self._pyControls['Controller.' + ElmName] = Controller
+                    self._Logger.info('Created pyController -> Controller.' + ElmName)
         return
 
-    def __CreatePlots(self, PlotsDict):
+    def _CreatePlots(self, PlotsDict):
 
         self.BokehDoc = curdoc()
         Figures = []
@@ -177,95 +145,93 @@ class OpenDSS:
                 PlotSettings['FileName'] = Name
                 if PlotType in PlotType1:
 
-                    self.__pyPlotObjects[PlotType] = PyPlots.pyPlots.Create(
+                    self._pyPlotObjects[PlotType] = pyPlots.pyPlots.Create(
                         PlotType,
                         PlotSettings,
-                        self.__dssBuses,
-                        self.__dssObjectsByClass,
-                        self.__dssCircuit,
-                        self.__dssSolver
+                        self._dssBuses,
+                        self._dssObjectsByClass,
+                        self._dssCircuit,
+                        self._dssSolver
                     )
-                    Figures.append(self.__pyPlotObjects[PlotType].GetFigure())
-                    #self.BokehDoc.add_root(self.__pyPlotObjects[PlotType].GetFigure())
-                    self.__Logger.info('Created pyPlot -> ' + PlotType)
+                    Figures.append(self._pyPlotObjects[PlotType].GetFigure())
+                    #self.BokehDoc.add_root(self._pyPlotObjects[PlotType].GetFigure())
+                    self._Logger.info('Created pyPlot -> ' + PlotType)
                 elif PlotType in PlotType2:
-                    self.__pyPlotObjects[PlotType + Name] = pyPlots.pyPlots.Create(
+                    self._pyPlotObjects[PlotType + Name] = pyPlots.pyPlots.Create(
                         PlotType,
                         PlotSettings,
-                        self.__dssBuses,
-                        self.__dssObjectsByClass,
-                        self.__dssCircuit,
-                        self.__dssSolver
+                        self._dssBuses,
+                        self._dssObjectsByClass,
+                        self._dssCircuit,
+                        self._dssSolver
                     )
-                    self.__Logger.info('Created pyPlot -> ' + PlotType)
+                    self._Logger.info('Created pyPlot -> ' + PlotType)
                 elif PlotType in PlotType3:
-                    self.__pyPlotObjects[PlotType+Name] = PyPlots.pyPlots.Create(
+                    self._pyPlotObjects[PlotType+Name] = pyPlots.pyPlots.Create(
                         PlotType,
                         PlotSettings,
-                        self.__dssBuses,
-                        self.__dssObjects,
-                        self.__dssCircuit,
-                        self.__dssSolver
+                        self._dssBuses,
+                        self._dssObjects,
+                        self._dssCircuit,
+                        self._dssSolver
                     )
-                    self.__Logger.info('Created pyPlot -> ' + PlotType)
+                    self._Logger.info('Created pyPlot -> ' + PlotType)
 
         Layout = row(*Figures)
         self.BokehDoc.add_root(Layout)
         self.BokehDoc.title = "PyDSS"
         self.session = push_session(self.BokehDoc)
         self.session.show()
-
         return
 
-    def __UpdateControllers(self, Priority, Time, UpdateResults):
+    def _UpdateControllers(self, Priority, Time, UpdateResults):
         error = 0
 
-        for controller in self.__pyControls.values():
+        for controller in self._pyControls.values():
             error += controller.Update(Priority, Time, UpdateResults)
-            if Priority==0:
+            if Priority == 0:
                 pass
-                #self.energy[Time] = controller.Demand
-        return abs(error) < self.__Options['Error tolerance'], error
+        return abs(error) < self._Options['Error tolerance'], error
 
-    def __CreateBusObjects(self):
-        BusNames = self.__dssCircuit.AllBusNames()
-        run_command('New  Fault.DEFAULT Bus1={} enabled=no r=0.01'.format(BusNames[0]))
+    def _CreateBusObjects(self):
+        BusNames = self._dssCircuit.AllBusNames()
+        self._dssInstance.run_command('New  Fault.DEFAULT Bus1={} enabled=no r=0.01'.format(BusNames[0]))
         for BusName in BusNames:
-            self.__dssCircuit.SetActiveBus(BusName)
-            self.__dssBuses[BusName] = dssBus(self.__dssInstance)
+            self._dssCircuit.SetActiveBus(BusName)
+            self._dssBuses[BusName] = dssBus(self._dssInstance)
         return
 
-    def __UpdateDictionary(self):
+    def _UpdateDictionary(self):
         InvalidSelection = ['Settings', 'ActiveClass', 'dss', 'utils', 'PDElements', 'XYCurves', 'Bus', 'Properties']
-        self.__dssObjectsByClass={'LoadShape' : self.__GetRelaventObjectDict('LoadShape')}
+        self._dssObjectsByClass={'LoadShape': self._GetRelaventObjectDict('LoadShape')}
 
-        for ElmName in self.__dssInstance.Circuit.AllElementNames():
+        for ElmName in self._dssInstance.Circuit.AllElementNames():
             Class, Name =  ElmName.split('.', 1)
-            if Class + 's' not in self.__dssObjectsByClass:
-                self.__dssObjectsByClass[Class + 's'] = {}
-            self.__dssInstance.Circuit.SetActiveElement(ElmName)
-            self.__dssObjectsByClass[Class + 's'][ElmName] = dssElement(self.__dssInstance)
-            self.__dssObjects[ElmName] = self.__dssObjectsByClass[Class + 's'][ElmName]
+            if Class + 's' not in self._dssObjectsByClass:
+                self._dssObjectsByClass[Class + 's'] = {}
+            self._dssInstance.Circuit.SetActiveElement(ElmName)
+            self._dssObjectsByClass[Class + 's'][ElmName] = dssElement(self._dssInstance)
+            self._dssObjects[ElmName] = self._dssObjectsByClass[Class + 's'][ElmName]
 
-        for ObjName in self.__dssObjects.keys():
+        for ObjName in self._dssObjects.keys():
             Class = ObjName.split('.')[0] + 's'
-            if Class not in self.__dssObjectsByClass:
-                self.__dssObjectsByClass[Class] = {}
-            if  ObjName not in self.__dssObjectsByClass[Class]:
-                self.__dssObjectsByClass[Class][ObjName] = self.__dssObjects[ObjName]
+            if Class not in self._dssObjectsByClass:
+                self._dssObjectsByClass[Class] = {}
+            if  ObjName not in self._dssObjectsByClass[Class]:
+                self._dssObjectsByClass[Class][ObjName] = self._dssObjects[ObjName]
 
-        self.__dssObjects['Circuit.' + self.__dssCircuit.Name()] = dssCircuit(self.__dssInstance)
-        self.__dssObjectsByClass['Circuits'] = {
-            'Circuit.' + self.__dssCircuit.Name() : self.__dssObjects['Circuit.' + self.__dssCircuit.Name()]
+        self._dssObjects['Circuit.' + self._dssCircuit.Name()] = dssCircuit(self._dssInstance)
+        self._dssObjectsByClass['Circuits'] = {
+            'Circuit.' + self._dssCircuit.Name(): self._dssObjects['Circuit.' + self._dssCircuit.Name()]
         }
         return
 
-    def __GetRelaventObjectDict(self, key):
+    def _GetRelaventObjectDict(self, key):
         ObjectList = {}
-        ElmCollection = getattr(dss, key)
+        ElmCollection = getattr(self._dssInstance, key)
         Elem = ElmCollection.First()
         while Elem:
-            ObjectList[self.__dssInstance.Element.Name()] =  dssElement(self.__dssInstance)
+            ObjectList[self._dssInstance.Element.Name()] =  dssElement(self._dssInstance)
             Elem = ElmCollection.Next()
         return ObjectList
 
@@ -274,80 +240,87 @@ class OpenDSS:
         if updateObjects:
             for object, params in updateObjects.items():
                 cl, name = object.split('.')
-                self.__Modifier.Edit_Element(cl, name, params)
+                self._Modifier.Edit_Element(cl, name, params)
             pass
 
-        self.__dssSolver.IncStep()
-        if self.__Options['Co-simulation Mode']:
+        self._dssSolver.IncStep()
+        if self._Options['Co-simulation Mode']:
             self.ResultContainer.updateSubscriptions()
 
-        if self.__Options['Disable PyDSS controllers'] == False:
+        if self._Options['Disable PyDSS controllers'] is False:
             for priority in range(CONTROLLER_PRIORITIES):
-                for i in range(self.__Options['Max Control Iterations']):
-                    has_converged, error = self.__UpdateControllers(priority, step, UpdateResults=False)
-                    self.__Logger.debug('Control Loop {} convergence error: {}'.format(priority, error))
-                    if has_converged or i == self.__Options['Max Control Iterations'] - 1:
+                for i in range(self._Options['Max Control Iterations']):
+                    has_converged, error = self._UpdateControllers(priority, step, UpdateResults=False)
+                    self._Logger.debug('Control Loop {} convergence error: {}'.format(priority, error))
+                    if has_converged or i == self._Options['Max Control Iterations'] - 1:
                         if not has_converged:
-                            self.__Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
+                            self._Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
                         break
-                    self.__dssSolver.reSolve()
+                    self._dssSolver.reSolve()
 
-            self.__UpdatePlots()
-            if self.__Options['Log Results']:
+            self._UpdatePlots()
+            if self._Options['Log Results']:
                 self.ResultContainer.UpdateResults()
-            if self.__Options['Return Results']:
+            if self._Options['Return Results']:
                 return self.ResultContainer.CurrentResults
 
-        if self.__Options['Enable frequency sweep'] and self.__Options['Simulation Type'].lower() != 'dynamic':
-            self.__dssSolver.setMode('Harmonic')
-            for freqency in np.arange(self.__Options['Start frequency'], self.__Options['End frequency'] + 1,
-                                      self.__Options['frequency increment']):
-                self.__dssSolver.setFrequency(freqency * self.__Options['Fundamental frequency'])
-                self.__dssSolver.reSolve()
-                self.__UpdatePlots()
-                if self.__Options['Log Results']:
+        if self._Options['Enable frequency sweep'] and self._Options['Simulation Type'].lower() != 'dynamic':
+            self._dssSolver.setMode('Harmonic')
+            for freqency in np.arange(self._Options['Start frequency'], self._Options['End frequency'] + 1,
+                                      self._Options['frequency increment']):
+                self._dssSolver.setFrequency(freqency * self._Options['Fundamental frequency'])
+                self._dssSolver.reSolve()
+                self._UpdatePlots()
+                if self._Options['Log Results']:
                     self.ResultContainer.UpdateResults()
-            if self.__Options['Simulation Type'].lower() == 'snapshot':
-                self.__dssSolver.setMode('Snapshot')
+            if self._Options['Simulation Type'].lower() == 'snapshot':
+                self._dssSolver.setMode('Snapshot')
             else:
-                self.__dssSolver.setMode('Yearly')
+                self._dssSolver.setMode('Yearly')
         return
 
     def RunSimulation(self, file_prefix=''):
         startTime = time.time()
-        Steps, sTime, eTime = self.__dssSolver.SimulationSteps()
-        self.__Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
-        self.__Logger.info('Simulation time step {}.'.format(Steps))
-        for step in range(Steps):
-            self.RunStep(step)
+        Steps, sTime, eTime = self._dssSolver.SimulationSteps()
+        self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
+        self._Logger.info('Simulation time step {}.'.format(Steps))
 
-        if self.__Options and self.__Options['Log Results']:
+        if self._Options['Post processing script'] != "":
+            self.postprocessor = pyPostprocess.Create(self._dssInstance, self._dssSolver, self._dssObjects,
+                                                     self._dssObjectsByClass, self._Options)
+        else:
+            print('No post processing script selected')
+            self.postprocessor = None
+
+        step = 0
+        while step < Steps:
+            self.RunStep(step)
+            if self.postprocessor is not None:
+                step = self.postprocessor.run(step, Steps)
+            step+=1
+
+        if self._Options and self._Options['Log Results']:
             self.ResultContainer.ExportResults(file_prefix)
 
-        self.__Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
-        self.__Logger.info('End of simulation')
+        self._Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
+        self._Logger.info('End of simulation')
 
     def RunMCsimulation(self, samples):
         from PyDSS.Extensions.MonteCarlo import MonteCarloSim
-        MC = MonteCarloSim(self.__Options, self.__dssPath, self.__dssObjects, self.__dssObjectsByClass)
+        MC = MonteCarloSim(self._Options, self._dssPath, self._dssObjects, self._dssObjectsByClass)
         for i in range(samples):
             MC.Create_Scenario()
             self.RunSimulation('MC{}'.format(i))
         return
 
-    def __UpdatePlots(self):
-        for Plot in self.__pyPlotObjects:
-            self.__pyPlotObjects[Plot].UpdatePlot()
-        return
-
-    def DeleteInstance(self):
-        self.__DelFlag = 1
-        self.__del__()
+    def _UpdatePlots(self):
+        for Plot in self._pyPlotObjects:
+            self._pyPlotObjects[Plot].UpdatePlot()
         return
 
     def CreateGraph(self, Visualize=False):
-        self.__Logger.info('Creating graph representation')
-        defaultGrapgPlotSettings = {
+        self._Logger.info('Creating graph representation')
+        defaultGraphPlotSettings = {
                 'Layout'                 : 'Circular', # Shell, Circular, Fruchterman
                 'Iterations'             : 100,
                 'ShowRefNode'            : False,
@@ -355,30 +328,25 @@ class OpenDSS:
                 'LineColorProperty'      : 'Class',
                 'NodeColorProperty'      : 'ConnectedPCs',
                 'Open plots in browser'  : True,
-                'OutputPath'             : self.__dssPath['Export'],
+                'OutputPath'             : self._dssPath['Export'],
                 'OutputFile'             : None
         }
-        defaultGrapgPlotSettings['OutputFile'] = self.__ActiveProject + \
-                                                  '_' + defaultGrapgPlotSettings['LineColorProperty'] + \
-                                                  '_' + defaultGrapgPlotSettings['NodeColorProperty'] + \
-                                                  '_' + defaultGrapgPlotSettings['Layout'] + '.html'
+        defaultGraphPlotSettings['OutputFile'] = self._ActiveProject + \
+                                                  '_' + defaultGraphPlotSettings['LineColorProperty'] + \
+                                                  '_' + defaultGraphPlotSettings['NodeColorProperty'] + \
+                                                  '_' + defaultGraphPlotSettings['Layout'] + '.html'
 
-        Graph = CreateGraph(self.__dssInstance)
+        Graph = CreateGraph(self._dssInstance)
         if Visualize:
-            Graph.CreateGraphVisualization(defaultGrapgPlotSettings)
+            Graph.CreateGraphVisualization(defaultGraphPlotSettings)
         return Graph.Get()
 
     def __del__(self):
-
-        if self.__DelFlag == 1:
-            self.__Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')
-        else:
-            self.__Logger.error('An instance of OpenDSS (' + str(self) + ') crashed.')
-
-        if self.__Options["Log to external file"]:
-            x = list(self.__Logger.handlers)
-            for i in x:
-                self.__Logger.removeHandler(i)
-                i.flush()
-                i.close()
+        self._Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')
+        if self._Options["Log to external file"]:
+            handlers = list(self._Logger.handlers)
+            for filehandler in handlers:
+                filehandler.flush()
+                filehandler.close()
+                self._Logger.removeHandler(filehandler)
         return

@@ -3,7 +3,7 @@ import os
 
 
 def getLogger(name, path, LoggerOptions=None):
-    if LoggerOptions['Clear old log files']:
+    if LoggerOptions['Clear old log file']:
         test = os.listdir(os.getcwd())
         for item in test:
             if item.endswith(".log"):
