@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 import os
 
+import toml
+
+
 class pyContrReader:
     def __init__(self, Path):
         self.pyControllers = {}
@@ -25,11 +28,11 @@ class pyContrReader:
                     pyControllerDict = pyControllerData.to_dict()
                     pyController[pyControllerName] = pyControllerDict
                 self.pyControllers[pyControllerType] = pyController
-            elif ext == ".toml":
-                with open(filename) as f_in:
-                    self.pyControllers = toml.load(fp_in)
-                    found_config_file = True
-                break
+            #elif ext == ".toml":
+            #    with open(os.path.join(Path, filename)) as f_in:
+            #        self.pyControllers = toml.load(f_in)
+            #        found_config_file = True
+            #    break
 
         assert not (found_config_file and found_excel_file), "Found both .xlsx files and a config file"
 
