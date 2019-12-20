@@ -152,7 +152,7 @@ class instance(object):
         # TODO: we should serialize the actual simulation config to a file. 
         if run_simulation:
             dss = dssInstance.OpenDSS(**dss_args)
-            print('Running scenario: {}'.format(Scenario_TOML_file_path))
+            print('Running scenario: {}'.format(dss_args["Active Scenario"]))
             if dss_args["Number of Monte Carlo scenarios"] > 0:
                 dss.RunMCsimulation(samples=dss_args['Number of Monte Carlo scenarios'])
             else:
