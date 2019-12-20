@@ -67,7 +67,11 @@ class OpenDSS:
         self._dssInstance.utils.run_command('Log=NO')
         run_command('Clear')
         self._Logger.info('Loading OpenDSS model')
-        reply = run_command('compile ' + self._dssPath['dssFilePath'])
+        try:
+            orig_dir = os.getcwd()
+            reply = run_command('compile ' + self._dssPath['dssFilePath'])
+        finally:
+            os.chdir(orig_dir)
         self._Logger.info('OpenDSS:  ' + reply)
 
         assert ('error ' not in reply.lower()), 'Error compiling OpenDSS model.\n{}'.format(reply)
