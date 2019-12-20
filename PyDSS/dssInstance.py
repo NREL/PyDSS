@@ -42,7 +42,7 @@ class OpenDSS:
 
         rootPath = kwargs['Project Path']
         self._ActiveProject = kwargs['Active Project']
-        importPath = os.path.join(rootPath, kwargs['Active Project'], 'PyDSS Scenarios')
+        importPath = os.path.join(rootPath, kwargs['Active Project'], 'Scenarios')
         self._dssPath = {
             'root': rootPath,
             'Import': importPath,
@@ -55,6 +55,7 @@ class OpenDSS:
             'dssFilePath': os.path.join(rootPath, kwargs['Active Project'], 'DSSfiles', kwargs['DSS File']),
         }
 
+        self._Options = kwargs
         LoggerTag = kwargs['Active Project'] + '_' + kwargs['Active Scenario']
         self._Logger = pyLogger.getLogger(LoggerTag, self._dssPath['Log'], LoggerOptions=kwargs)
         self._Logger.info('An instance of OpenDSS version ' + dss.__version__ + ' has been created.')
@@ -62,7 +63,6 @@ class OpenDSS:
         for key, path in self._dssPath.items():
             assert (os.path.exists(path)), '{} path: {} does not exist!'.format(key, path)
 
-        self._Options = kwargs
         self._dssInstance.Basic.ClearAll()
         self._dssInstance.utils.run_command('Log=NO')
         run_command('Clear')

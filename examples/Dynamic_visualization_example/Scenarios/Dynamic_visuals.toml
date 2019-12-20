@@ -1,0 +1,12 @@
+
+"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS\\examples"
+"Simulation Type" = "QSTS"
+"Active Project" = "Dynamic_visualization_example"
+"Active Scenario" = "Dynamic_visuals"
+"DSS File" = "Master_Spohn_existing_VV.dss"
+"Max Control Iterations" = 30
+
+"Create dynamic plots" = true
+"Open plots in browser" = true
+
+"End Day" = 30

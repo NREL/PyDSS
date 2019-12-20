@@ -1,0 +1,28 @@
+[default]
+Category = "Legacy"
+Control1 = "None"  # If "None" then simulation code will override.
+Control2 = "None"  # This must be set for cases with VVar/VWat
+Control3 = "None"
+pf = "None"  # If "None" then simulation code will override.
+pfMin = 0.8
+pfMax = 1
+Pmin = 0
+Pmax = 1
+uMin = 0.92
+uDbMin = 0.967
+uDbMax = 1.033
+uMax = 1.06  # must be less than or equal to uMinC
+QlimPU = 0.44
+PFlim = 1
+"Enable PF limit" = false
+uMinC = 1.06
+uMaxC = 1.1
+PminVW = 10
+VWtype = "Available Power"
+"%UCutoff" = 1.1
+"%PCutin" = 10
+"%PCutout" = 10
+Efficiency = 100
+Priority = "Var"
+DampCoef = 0.8
+# might need to define parameters alpha and beta

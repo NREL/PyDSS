@@ -7,7 +7,7 @@ import os
               default=r'C:\Users\alatif\Desktop\PyDSS',
               help='number of greetings')
 @click.option('--sim_path',
-              default=r'C:\Users\alatif\Desktop\PyDSS\examples\External_interfacing_example\pyDSS_project\PyDSS Scenarios',
+              default=r'C:\Users\alatif\Desktop\PyDSS\examples\External_interfacing_example\pyDSS_project\Scenarios',
               help='number of greetings')
 @click.option('--sim_file',
               default=r'helics_interface.toml',

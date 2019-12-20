@@ -36,6 +36,11 @@ setup(name='PyDSS',
       packages=find_packages(),
       install_requires=requirements,
       package_data={'PyDSS': ['*.toml']},
+        entry_points={
+            "console_scripts": [
+                "pydss=PyDSS.cli.pydss:cli",
+            ],
+        },
       license='BSD 3 clause',
       python_requires='>=3.6',
       classifiers=[

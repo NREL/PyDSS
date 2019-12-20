@@ -1,0 +1,25 @@
+
+[Simulations] 
+
+Run_simulations = true
+Generate_visuals = true
+Run_bokeh_server = false
+
+[Plots]
+
+Frequency_sweep = true
+XFMR_tap = false
+Voltage_sag = false
+Voltage = false
+Loading = false
+Voltage_Loading = false
+Voltage_profiles = false
+Load = false
+Generation = false
+Load_Generation = false
+Curtailment = false
+Voltage_imbalance = false
+Feeder_power = false
+Feeder_line_losses = false
+Feeder_losses = false
+Feeder_substation_losses = false

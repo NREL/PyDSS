@@ -6,9 +6,12 @@ class pyContrReader:
     def __init__(self, Path):
         self.pyControllers = {}
         filenames = os.listdir(Path)
+        found_config_file = False
+        found_excel_file = False
         for filename in filenames:
-            print(filename)
-            if filename.endswith('.xlsx') and not filename.startswith('~$'):
+            ext = os.path.splitext(filename)[1]
+            if ext == '.xlsx' and not filename.startswith('~$'):
+                found_excel_file = True
                 pyControllerType  = filename.split('.')[0]
                 filepath = os.path.join(Path, filename)
                 assert (os.path.exists(filepath)), 'path: "{}" does not exist!'.format(filepath)
@@ -22,7 +25,13 @@ class pyContrReader:
                     pyControllerDict = pyControllerData.to_dict()
                     pyController[pyControllerName] = pyControllerDict
                 self.pyControllers[pyControllerType] = pyController
+            elif ext == ".toml":
+                with open(filename) as f_in:
+                    self.pyControllers = toml.load(fp_in)
+                    found_config_file = True
+                break
 
+        assert not (found_config_file and found_excel_file), "Found both .xlsx files and a config file"
 
 class pySubscriptionReader:
     def __init__(self, filePath):
