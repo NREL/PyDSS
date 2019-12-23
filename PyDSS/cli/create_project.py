@@ -1,6 +1,4 @@
-"""
-CLI to create a new PyDSS project
-"""
+"""CLI to create a new PyDSS project"""
 
 import click
 
