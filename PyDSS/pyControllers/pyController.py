@@ -15,7 +15,7 @@ for file in pythonFiles:
 
 def Create(ElmName, ControllerType, Settings, ElmObjectList, dssInstance, dssSolver):
 
-    assert (ControllerType in ControllerTypes), "Defination for '{}' controller not found. \n " \
+    assert (ControllerType in ControllerTypes), "Definition for '{}' controller not found. \n " \
                                                 "Please define the controller in ~PyDSS\pyControllers\Controllers".format(
         ControllerType
     )
