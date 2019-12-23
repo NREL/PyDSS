@@ -31,7 +31,7 @@ def convert_config_data_to_toml(filename, name=None):
         new_filename = os.path.join(dirname, basename + ".toml")
     else:
         new_filename = name
-    dump_data(data, new_filename) 
+    dump_data(data, new_filename)
     logger.info("Converted %s to %s", filename, new_filename)
 
 
@@ -74,20 +74,23 @@ def _convert_exports(filename, name_field):
     df = pd.read_excel(filename, skiprows=[0,])
     exports = {}
     for export in df.to_dict(orient="records"):
-        publish = export.pop("Publish")
-        if not publish:
-            continue
         cls = export.pop(name_field)
-        if cls in exports:
-            raise InvalidParameter(f"{cls} is stored twice")
-        exports[cls] = [x for x in export.values() if x is not np.NaN]
+        if cls not in exports:
+            exports[cls] = {"Publish": [], "NoPublish": []}
+        values = [x for x in export.values() if x is not np.NaN]
+        if not values:
+            raise InvalidParameter(f"export data has empty row: {export}")
+        if export["Publish"]:
+            exports[cls]["Publish"] += values[1:]
+        else:
+            exports[cls]["NoPublish"] += values[1:]
 
     return exports
 
 
 def _convert_export_by_class(filename):
     return _convert_exports(filename, "Class")
-    
+
 
 def _convert_export_by_element(filename):
     return _convert_exports(filename, "Element")
@@ -111,7 +114,8 @@ def _convert_plot_config(filename):
 
 def _convert_gis_overlay(df):
     pass
-    
+
+
 _CONFIG_TYPES = {
     "PvController": {
         "convert": _convert_pv_controller,
