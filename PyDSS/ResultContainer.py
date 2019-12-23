@@ -40,12 +40,12 @@ class ResultContainer:
         self.ExportFolder = os.path.join(self.SystemPaths['Export'], Options['Active Scenario'])
         pathlib.Path(self.ExportFolder).mkdir(parents=True, exist_ok=True)
         if self.__Settings['Export Mode'] == 'byElement':
-            self.FileReader = pyER(os.path.join(SystemPaths['ExportLists'], 'ExportMode-byElement.xlsx'))
+            self.FileReader = pyER(os.path.join(SystemPaths['ExportLists'], 'ExportMode-byElement.toml'))
             self.ExportList = self.FileReader.pyControllers
             self.PublicationList = self.FileReader.publicationList
             self.CreateListByElement()
         elif self.__Settings['Export Mode'] == 'byClass':
-            self.FileReader = pyER(os.path.join(SystemPaths['ExportLists'], 'ExportMode-byClass.xlsx'))
+            self.FileReader = pyER(os.path.join(SystemPaths['ExportLists'], 'ExportMode-byClass.toml'))
             self.ExportList = self.FileReader.pyControllers
             self.PublicationList = self.FileReader.publicationList
             self.CreateListByClass()
@@ -158,10 +158,10 @@ class ResultContainer:
         return data
 
     def CreateListByClass(self):
-        for Class, Properties in self.ExportList.items():
+        for Class, Properties in enumerate(self.ExportList):
             if Class == 'Buses':
                 self.Results[Class] = {}
-                for PptyIndex, PptyName in Properties.items():
+                for PptyIndex, PptyName in enumerate(Properties):
                     if isinstance(PptyName, str):
                         self.Results[Class][PptyName] = {}
                         for BusName, BusObj in self.Buses.items():
@@ -173,7 +173,7 @@ class ResultContainer:
             else:
                 if Class in self.ObjectsByClass:
                     self.Results[Class] = {}
-                    for PptyIndex, PptyName in Properties.items():
+                    for PptyIndex, PptyName in enumerate(Properties):
                         if isinstance(PptyName, str):
                             self.Results[Class][PptyName] = {}
                             for ElementName, ElmObj in self.ObjectsByClass[Class].items():
@@ -185,11 +185,11 @@ class ResultContainer:
         return
 
     def CreateListByElement(self):
-        for Element, Properties in self.ExportList.items():
+        for Element, Properties in enumerate(self.ExportList):
             if Element in self.ObjectsByElement:
                 self.Results[Element] = {}
                 self.CurrentResults[Element] = {}
-                for PptyIndex, PptyName in Properties.items():
+                for PptyIndex, PptyName in enumerate(Properties):
                     if isinstance(PptyName, str):
                         if self.ObjectsByElement[Element].IsValidAttribute(PptyName):
                             self.Results[Element][PptyName] = []
@@ -197,7 +197,7 @@ class ResultContainer:
             elif Element in self.Buses:
                 self.Results[Element] = {}
                 self.CurrentResults[Element] = {}
-                for PptyIndex, PptyName in Properties.items():
+                for PptyIndex, PptyName in enumerate(Properties):
                     if isinstance(PptyName, str):
                         if self.Buses[Element].inVariableDict(PptyName):
                             self.Results[Element][PptyName] = []
