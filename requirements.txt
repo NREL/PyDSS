@@ -12,3 +12,4 @@ Shapely==1.6.4.post1
 matplotlib
 Click
 numpy
+pyarrow

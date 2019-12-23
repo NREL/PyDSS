@@ -2,11 +2,15 @@
 # Return Results- [Bool] - Set true if running PyDSS in Cosimulation environment, RunStep function will return current system states
 # Export Mode- [Str] - Possible options "byClass" and "byElement"
 # Export Style- [Str] - possible options "Single_file" and "Separate_files"
+# Export Format- [Str] - possible options "csv", "feather"
+# Export Compression- [Bool]
 
 "Log Results" = true
 "Return Results" = false
 "Export Mode" = "byClass"
 "Export Style" = "Single file"
+"Export Format" = "csv"
+"Export Compression" = false
 
 # Create dynamic plots- [Bool] - Enable rendering of dynamic plots using bokeh
 # Open plots in browser- [Bool] - Open plots  in s window. Will work if "Create dynamic plots" is set to true 

@@ -3,14 +3,19 @@ from PyDSS.unitDefinations import type_info as Types
 from PyDSS.unitDefinations import unit_info as Units
 from PyDSS.pyContrReader import pyExportReader as pyER
 from PyDSS import unitDefinations
+from PyDSS.exceptions import InvalidParameter
 import pandas as pd
 import numpy as np
 import helics as h
 import pathlib
+import gzip
 import logging
 import shutil
 import math
 import os
+
+
+logger = logging.getLogger(__name__)
 
 
 class ResultContainer:
@@ -33,6 +38,8 @@ class ResultContainer:
         self.__DateTime = []
         self.__Frequency = []
         self.__SimulationMode = []
+        self.__ExportFormat = Options['Export Format']
+        self.__ExportCompression = Options['Export Compression']
 
         self.__publications = {}
         self.__subscriptions = {}
@@ -158,7 +165,7 @@ class ResultContainer:
         return data
 
     def CreateListByClass(self):
-        for Class, Properties in enumerate(self.ExportList):
+        for Class, Properties in self.ExportList.items():
             if Class == 'Buses':
                 self.Results[Class] = {}
                 for PptyIndex, PptyName in enumerate(Properties):
@@ -185,7 +192,7 @@ class ResultContainer:
         return
 
     def CreateListByElement(self):
-        for Element, Properties in enumerate(self.ExportList):
+        for Element, Properties in self.ExportList.items():
             if Element in self.ObjectsByElement:
                 self.Results[Element] = {}
                 self.CurrentResults[Element] = {}
@@ -302,13 +309,14 @@ class ResultContainer:
                         else:
                             ElmLvlHeader = Element + ','
                     if self.__Settings['Export Style'] == 'Separate files':
-                        fname = '-'.join([Class, Property, Element, str(self.__StartDay), str(self.__EndDay) ,fileprefix]) + '.csv'
+                        fname = '-'.join([Class, Property, Element, str(self.__StartDay), str(self.__EndDay) ,fileprefix])
                         columns = [x for x in ElmLvlHeader.split(',') if x != '']
                         tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                         index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
                         df = pd.DataFrame(Data, index=index, columns=columns)
-                        df.to_csv(os.path.join(self.ExportFolder, fname))
-                        self.pyLogger.info(Class + '-' + Property  + '-' + Element + ".csv exported to " + self.ExportFolder)
+                        if self.__ExportFormat == "feather":
+                            df.reset_index(inplace=True)
+                        self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
                     elif self.__Settings['Export Style'] == 'Single file':
                         Class_ElementDatasets.append(Data)
                     PptyLvlHeader += ElmLvlHeader
@@ -322,9 +330,10 @@ class ResultContainer:
                     tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                     index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
                     df = pd.DataFrame(Dataset, index=index, columns=columns)
-                    fname = '-'.join([Class, Property, str(self.__StartDay), str(self.__EndDay), fileprefix]) + '.csv'
-                    df.to_csv(os.path.join(self.ExportFolder, fname))
-                    self.pyLogger.info(Class + '-' + Property + ".csv exported to " + self.ExportFolder)
+                    if self.__ExportFormat == "feather":
+                        df.reset_index(inplace=True)
+                    fname = '-'.join([Class, Property, str(self.__StartDay), str(self.__EndDay), fileprefix])
+                    self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
         return
 
     def __ExportResultsByElements(self, fileprefix=''):
@@ -354,13 +363,14 @@ class ResultContainer:
                     Header = Property + ','
 
                 if self.__Settings['Export Style'] == 'Separate files':
-                    fname = '-'.join([Element, Property, str(self.__StartDay), str(self.__EndDay), fileprefix]) + '.csv'
+                    fname = '-'.join([Element, Property, str(self.__StartDay), str(self.__EndDay), fileprefix])
                     columns = [x for x in Header.split(',') if x != '']
                     tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                     index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
                     df = pd.DataFrame(Data, index=index, columns=columns)
-                    df.to_csv(os.path.join(self.ExportFolder, fname))
-                    self.pyLogger.info(Element + '-' + Property + ".csv exported to " + self.ExportFolder)
+                    if self.__ExportFormat == "feather":
+                        df.reset_index(inplace=True)
+                    self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
                 elif self.__Settings['Export Style'] == 'Single file':
                     ElementDatasets.append(Data)
                 AllHeader += Header
@@ -369,13 +379,14 @@ class ResultContainer:
                 if len(ElementDatasets) > 0:
                     for D in ElementDatasets[1:]:
                         Dataset = np.append(Dataset, D, axis=1)
-                fname = '-'.join([Element, str(self.__StartDay), str(self.__EndDay), fileprefix]) + '.csv'
+                fname = '-'.join([Element, str(self.__StartDay), str(self.__EndDay), fileprefix])
                 columns = [x for x in AllHeader.split(',') if x != '']
                 tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                 index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
                 df = pd.DataFrame(Dataset, index=index, columns=columns)
-                df.to_csv(os.path.join(self.ExportFolder, fname))
-                self.pyLogger.info(Element + ".csv exported to " + self.ExportFolder)
+                if self.__ExportFormat == "feather":
+                    df.reset_index(inplace=True)
+                self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
         return
 
     def __ExportEventLog(self):
@@ -387,3 +398,62 @@ class ResultContainer:
         if os.path.exists(file_path):
             os.remove(file_path)
         shutil.move(event_log, self.ExportFolder)
+
+    def __ExportDataFrame(self, df, basename):
+        filename = basename + "." + self.__ExportFormat
+        write_dataframe(df, filename, compress=self.__ExportCompression)
+        self.pyLogger.info("Exported %s", filename)
+
+
+def write_dataframe(df, file_path, compress=False, keep_original=False,
+                    **kwargs):
+    """Write the dataframe to a file with in a format matching the extension.
+
+    Note that the feather format does not support row indices. Index columns
+    will be lost for that format. If the dataframe has an index then it should
+    be converted to a column before calling this function.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+    file_path : str
+    compress : bool
+    keep_original : bool
+    kwargs : pass keyword arguments to underlying library
+
+    Raises
+    ------
+    InvalidParameter if the file extension is not supported.
+    InvalidParameter if the DataFrame index is set.
+
+    """
+    if not isinstance(df.index, pd.RangeIndex) and not \
+            isinstance(df.index, pd.core.indexes.base.Index):
+        raise InvalidParameter("DataFrame index must not be set")
+
+    directory = os.path.dirname(file_path)
+    filename = os.path.basename(file_path)
+    ext = os.path.splitext(filename)[1]
+    path = os.path.join(directory, filename)
+
+    if ext == ".csv":
+        df.to_csv(path, **kwargs)
+    elif ext == ".feather":
+        df.to_feather(path, **kwargs)
+    elif ext == ".json":
+        df.to_json(path, **kwargs)
+    else:
+        raise InvalidParameter(f"unsupported file extension {ext}")
+
+    logger.debug("Created %s", path)
+
+    if compress:
+        zipped_path = path + ".gz"
+        with open(path, "rb") as f_in:
+            with gzip.open(zipped_path, "wb") as f_out:
+                shutil.copyfileobj(f_in, f_out)
+
+        if not keep_original:
+            os.remove(path)
+
+        logger.debug("Compressed %s", zipped_path)

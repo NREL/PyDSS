@@ -49,6 +49,8 @@ class instance(object):
             'Return Results': {'type': bool, 'Options': [True, False]},
             'Export Mode': {'type': str, 'Options': ["byClass", "byElement"]},
             'Export Style': {'type': str, 'Options': ["Single file", "Separate files"]},
+            'Export Format': {'type': str, 'Options': ["csv", "feather"]},
+            'Export Compression': {'type': bool, 'Options': [True, False]},
 
             'Create dynamic plots': {'type': bool, 'Options': [True, False]},
             'Open plots in browser': {'type': bool, 'Options': [True, False]},
