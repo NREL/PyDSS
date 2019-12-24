@@ -7,7 +7,7 @@ import os
 from PyDSS.pyAnalyzer.dssSimulationResult import ResultObject
 from PyDSS.pyAnalyzer.dssGraphicsGenerator import CreatePlots
 from PyDSS import dssInstance
-from PyDSS.utils import load_data
+from PyDSS.utils.utils import load_data
 
 __author__ = "Aadil Latif"
 __copyright__ = """

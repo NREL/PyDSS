@@ -4,18 +4,16 @@ from PyDSS.unitDefinations import unit_info as Units
 from PyDSS.pyContrReader import pyExportReader as pyER
 from PyDSS import unitDefinations
 from PyDSS.exceptions import InvalidParameter
+from PyDSS.utils.dataframe_utils import write_dataframe
 import pandas as pd
 import numpy as np
-import helics as h
+#import helics as h
 import pathlib
 import gzip
 import logging
 import shutil
 import math
 import os
-
-
-logger = logging.getLogger(__name__)
 
 
 class ResultContainer:
@@ -403,57 +401,3 @@ class ResultContainer:
         filename = basename + "." + self.__ExportFormat
         write_dataframe(df, filename, compress=self.__ExportCompression)
         self.pyLogger.info("Exported %s", filename)
-
-
-def write_dataframe(df, file_path, compress=False, keep_original=False,
-                    **kwargs):
-    """Write the dataframe to a file with in a format matching the extension.
-
-    Note that the feather format does not support row indices. Index columns
-    will be lost for that format. If the dataframe has an index then it should
-    be converted to a column before calling this function.
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-    file_path : str
-    compress : bool
-    keep_original : bool
-    kwargs : pass keyword arguments to underlying library
-
-    Raises
-    ------
-    InvalidParameter if the file extension is not supported.
-    InvalidParameter if the DataFrame index is set.
-
-    """
-    if not isinstance(df.index, pd.RangeIndex) and not \
-            isinstance(df.index, pd.core.indexes.base.Index):
-        raise InvalidParameter("DataFrame index must not be set")
-
-    directory = os.path.dirname(file_path)
-    filename = os.path.basename(file_path)
-    ext = os.path.splitext(filename)[1]
-    path = os.path.join(directory, filename)
-
-    if ext == ".csv":
-        df.to_csv(path, **kwargs)
-    elif ext == ".feather":
-        df.to_feather(path, **kwargs)
-    elif ext == ".json":
-        df.to_json(path, **kwargs)
-    else:
-        raise InvalidParameter(f"unsupported file extension {ext}")
-
-    logger.debug("Created %s", path)
-
-    if compress:
-        zipped_path = path + ".gz"
-        with open(path, "rb") as f_in:
-            with gzip.open(zipped_path, "wb") as f_out:
-                shutil.copyfileobj(f_in, f_out)
-
-        if not keep_original:
-            os.remove(path)
-
-        logger.debug("Compressed %s", zipped_path)

@@ -5,7 +5,7 @@ import os
 import toml
 
 from PyDSS.config_data import convert_config_data_to_toml
-from PyDSS.utils import load_data
+from PyDSS.utils.utils import load_data
 
 
 class pyContrReader:

@@ -5,7 +5,7 @@ import os
 
 import PyDSS
 from PyDSS.pyDSS import instance
-from PyDSS.utils import dump_data, load_data
+from PyDSS.utils.utils import dump_data, load_data
 
 
 logger = logging.getLogger(__name__)

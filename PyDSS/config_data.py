@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 from PyDSS.exceptions import InvalidParameter
-from PyDSS.utils import dump_data
+from PyDSS.utils.utils import dump_data
 
 
 logger = logging.getLogger(__name__)
