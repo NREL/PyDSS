@@ -113,7 +113,7 @@ class instance(object):
 
     def run(self, simulation_config, scenario):
         path = os.path.dirname(PyDSS.__file__)
-        default_vis_settings = load_data(os.path.join(path, 'default_plot_settings.toml'))
+        default_vis_settings = load_data(os.path.join(path, 'defaults', 'pyPlotList', 'plots.toml'))
 
         if scenario.plots is not None:
             updated_vis_settings = {**default_vis_settings, **scenario.plots}
@@ -140,7 +140,7 @@ class instance(object):
 
     def update_scenario_settings(self, simulation_config):
         path = os.path.dirname(PyDSS.__file__)
-        default_sim_settings = load_data(os.path.join(path, 'default_simulation_settings.toml'))
+        default_sim_settings = load_data(os.path.join(path, 'defaults', 'simulation.toml'))
         dss_args = {**default_sim_settings, **simulation_config}
         self.__validate_settings(dss_args)
         return dss_args
