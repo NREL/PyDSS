@@ -1,0 +1,8 @@
+["Load.1234"]
+IP = "127.0.0.1"
+Port = 5001
+Encoding = "None"
+Buffer = 1024
+Index = "Even,Even "
+Inputs = "VoltagesMagAng,Powers"
+Outputs = "kW"
