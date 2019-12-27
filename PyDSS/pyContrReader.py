@@ -15,29 +15,24 @@ class pyContrReader:
         found_config_file = False
         found_excel_file = False
         for filename in filenames:
-            ext = os.path.splitext(filename)[1]
-            if ext == '.xlsx' and not filename.startswith('~$'):
-                found_excel_file = True
-                pyControllerType  = filename.split('.')[0]
-                filepath = os.path.join(Path, filename)
-                assert (os.path.exists(filepath)), 'path: "{}" does not exist!'.format(filepath)
-                ControllerDataset = pd.read_excel(filepath, skiprows=[0,], index_col=[0])
-                pyControllerNames = ControllerDataset.index.tolist()
-                pyController = {}
-                for pyControllerName in pyControllerNames:
-                    pyControllerData = ControllerDataset.loc[pyControllerName]
-                    assert len(pyControllerData == 1), 'Multiple PyDSS controller definitions for a single OpenDSS ' +\
-                                                       'element not allowed'
-                    pyControllerDict = pyControllerData.to_dict()
-                    pyController[pyControllerName] = pyControllerDict
-                self.pyControllers[pyControllerType] = pyController
-            #elif ext == ".toml":
-            #    with open(os.path.join(Path, filename)) as f_in:
-            #        self.pyControllers = toml.load(f_in)
-            #        found_config_file = True
-            #    break
+            pyControllerType, ext = os.path.splitext(filename)
+            if filename.startswith('~$'):
+                continue
+            elif ext == '.xlsx':
+                filename = convert_config_data_to_toml(xlsx_filename)
+            elif ext != ".toml":
+                continue
+            if pyControllerType not in self.pyControllers:
+                self.pyControllers[pyControllerType] = {}
+            filepath = os.path.join(Path, filename)
+            assert (os.path.exists(filepath)), 'path: "{}" does not exist!'.format(filepath)
+            for name, controller in load_data(filepath).items():
+                if name in self.pyControllers[pyControllerType]:
+                    raise InvalidParameter(
+                        f"Multiple PyDSS controller definitions for a single OpenDSS element not allowed: {name}"
+                    )
+                self.pyControllers[pyControllerType][name] = controller
 
-        assert not (found_config_file and found_excel_file), "Found both .xlsx files and a config file"
 
 class pySubscriptionReader:
     def __init__(self, filePath):
