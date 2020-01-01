@@ -1,4 +1,5 @@
 from PyDSS.pyContrReader import pySubscriptionReader as pySR
+from PyDSS.pyLogger import getLoggerTag
 from PyDSS.unitDefinations import type_info as Types
 from PyDSS.unitDefinations import unit_info as Units
 from PyDSS.pyContrReader import pyExportReader as pyER
@@ -19,7 +20,10 @@ import os
 class ResultContainer:
 
     def __init__(self, Options, SystemPaths, dssObjects, dssObjectsByClass, dssBuses, dssSolver, dssCommand):
-        LoggerTag = Options['Active Project'] + '_' + Options['Active Scenario']
+        if Options["Pre-configured logging"]:
+            LoggerTag = __name__
+        else:
+            LoggerTag = getLoggerTag(Options)
         self.metadata_info = unitDefinations.unit_info
         self.__dssDolver = dssSolver
         self.Results = {}

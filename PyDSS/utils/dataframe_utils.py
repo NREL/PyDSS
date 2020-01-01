@@ -6,6 +6,8 @@ import shutil
 
 import pandas as pd
 
+from PyDSS.exceptions import InvalidParameter
+
 
 logger = logging.getLogger(__name__)
 

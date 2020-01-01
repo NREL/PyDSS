@@ -2,16 +2,12 @@
 # Return Results- [Bool] - Set true if running PyDSS in Cosimulation environment, RunStep function will return current system states
 # Export Mode- [Str] - Possible options "byClass" and "byElement"
 # Export Style- [Str] - possible options "Single_file" and "Separate_files"
-# Export Format- [Str] - possible options "csv", "feather"
-# Export Compression- [Bool]
 
 "Log Results" = true
 "Return Results" = false
 "Export Mode" = "byClass"
 "Export Style" = "Single file"
-"Export Format" = "csv"
-"Export Compression" = false
-"Export Iteration Order" = "ValuesByPropertyAcrossElements"
+"Export Iteration Order" = "ElementValuesPerProperty"
 "Export Elements" = true
 
 # Create dynamic plots- [Bool] - Enable rendering of dynamic plots using bokeh
@@ -47,19 +43,12 @@
 "Error tolerance" = 0.001
 "Control mode" = "Time"
 "Disable PyDSS controllers" = false
+"Project Path" = "./tests/data"
 "Simulation Type" = "QSTS"
-"Project Path" = ""
-"Active Project" = ""
-"Active Scenario" = ""
-"DSS File" = ""
+"Active Project" = "project"
+"Active Scenario" = "scenario1"
+"DSS File" = "Master_Spohn_existing_VV.dss"
 
-# Post processing script - [Str] - Name the post processing script to be run after simulation .
-#                                  possible values are [AutomatedThermalUpgrade, AutomatedVoltageUpgrade]
-# Run each iteration - [Bool] - if true, the the proprocessing script will run after time step. Else, the script will be executed 
-#	      							at the end of the simultion run 
-
-"Post processing script" = "AutomatedThermalUpgrade"
-"Run each iteration" = true 
 
 # Co-simulation Mode - [Bool] - Set to true to enable Helics interface all other co-simulation settings only valid if this value is true
 # Federate name - [str] - Name of the federate 
@@ -75,9 +64,8 @@
 "Uninterruptible" = true
 "Helics logging level" = 5
 
-
 # Enable frequency sweep- [Bool] - Enable harmonic sweep. works with only 'Static' and 'QSTS' simulation modes
-# Fundamental frequency- [Float] - Fundamental system frequeny in Hertz
+# Fundamental frequency- [int] - Fundamental system frequeny in Hertz
 # Start frequency- [Float] - as multiple of fundamental frequency
 # End frequency- [Float] - as multiple of fundamental frequency
 # Frequency increment- [Float] - as multiple of fundamental 
@@ -92,17 +80,16 @@
 "Neglect shunt admittance" = false
 "Percentage load in series" = 50.0
 
-# Logging Level- [String] - possible options "DEBUG", "INFO", "WARNING" or "ERROR"
+# Logging Level- [String] - possible options "DEBUG", "INFO", "WARNING" , "ERROR"
 # Log to external file- [Bool] - Boolean variable
 # Display on screen- [Bool] - Boolean variable
 # Clear old log file- [Bool] - Boolean variable
 
-"Logging Level" = "INFO"
+"Logging Level" = "DEBUG"
 "Log to external file" = true
 "Display on screen" = true
 "Clear old log file" = false
-"Pre-configured logging" = false
 
-"Number of Monte Carlo scenarios" = -1
+"Number of Monte Carlo scenarios" = 0
 
-"Result Container" = "ResultContainer"
+"Result Container" = "ResultData"

@@ -1,71 +1,63 @@
-class dssBus:
+
+from PyDSS.dssObjectBase import dssObjectBase
+
+
+class dssBus(dssObjectBase):
+
+    VARIABLE_OUTPUTS_BY_LABEL = {
+        "PuVoltage": {
+            "accessor": "Phases",
+            "label_prefix": "Phase",
+        },
+        "SeqVoltages": {
+            "accessor": "Phases",
+            "label_prefix": "Phase",
+        },
+        "VMagAngle": {
+            "accessor": "Phases",
+            "label_prefix": "Phase",
+        },
+        "Voc": {
+            "accessor": "Phases",
+            "label_prefix": "Phase",
+        },
+        "Voltages": {
+            "accessor": "Phases",
+            "label_prefix": "Phase",
+        },
+        "puVmagAngle": {
+            "accessor": "Phases",
+            "label_prefix": "Phase",
+        },
+    }
+    VARIABLE_OUTPUTS_COMPLEX = ()
 
     def __init__(self, dssInstance):
-        self.__Name = None
-        self.__Index = None
-        self.__Variables = {}
+        name = dssInstance.Bus.Name()
+        super(dssBus, self).__init__(dssInstance, name, name)
+        self._Index = None
         self.XY = None
-        self.__Name =  dssInstance.Bus.Name()
+        self._Nodes = dssInstance.Bus.Nodes()
 
-        self.__dssInstance = dssInstance
         self.Distance = dssInstance.Bus.Distance()
         BusVarDict = dssInstance.Bus.__dict__
         for key in BusVarDict.keys():
             try:
-                self.__Variables[key] = getattr(dssInstance.Bus, key)
+                self._Variables[key] = getattr(dssInstance.Bus, key)
             except:
-                self.__Variables[key] = None
-                pass
+                self._Variables[key] = None
         if self.GetVariable('X') is not None:
-            self.XY = [self.GetVariable('X'),self.GetVariable('Y')]
+            self.XY = [self.GetVariable('X'), self.GetVariable('Y')]
         else:
             self.XY = [0, 0]
-        return
 
-    def GetInfo(self):
-        return self.__Name
+    @property
+    def NumPhases(self):
+        return len(self._Nodes)
 
-    def inVariableDict(self,VarName):
-        if VarName in self.__Variables:
-            return True
-        else:
-            return False
+    @property
+    def Phases(self):
+        return self._Nodes[:]
 
-    def DataLength(self,VarName):
-        self.__dssInstance.Circuit.SetActiveBus(self.__Name)
-        VarValue = self.GetVariable(VarName)
-        if  isinstance(VarValue, list):
-            return len(VarValue) , 'List'
-        elif isinstance(VarValue, str):
-            return 1, 'String'
-        elif isinstance(VarValue, int or float or bool):
-            return 1, 'Number'
-        else:
-            return None,None
-
-    def GetVariableNames(self):
-        return self.__Variables.keys()
-
-    def GetVariable(self,VarName):
-        self.__dssInstance.Circuit.SetActiveBus(self.__Name)
-        if VarName in self.__Variables:
-            try:
-                return self.__Variables[VarName]()
-            except:
-                print ('Unexpected error')
-                return None
-        else:
-            print ('Invalid variable name')
-            return None
-
-    def SetVariable(self,VarName,Value):
-        self.__dssInstance.Circuit.SetActiveBus(self.__Name)
-        if VarName in self.__Variables:
-            try:
-                return self.__Variables[VarName](Value)
-            except:
-                print ('Error setting Value')
-                return None
-        else:
-            print ('Invalid variable name')
-            return None
+    def SetActiveObject(self):
+        self._dssInstance.Circuit.SetActiveBus(self._Name)

@@ -1,0 +1,28 @@
+
+[Loads]
+Publish = [ "Powers",]
+NoPublish = [ ]
+
+[PVSystems]
+Publish = []
+NoPublish = [ "Pmpp"]
+
+[Storages]
+Publish = ["Powers"]
+NoPublish = [ ]
+
+[Buses]
+Publish = []
+NoPublish = [ "puVmagAngle", "Distance",]
+
+[Circuits]
+Publish = ["TotalPower", "LineLosses", "Losses", "SubstationLosses"]
+NoPublish = []
+
+[Lines]
+Publish = []
+NoPublish = [ "Currents", "NormalAmps" ]
+
+[Transformers]
+Publish = []
+NoPublish = [ "Currents", "NormalAmps" ]

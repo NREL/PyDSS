@@ -1,5 +1,6 @@
 """CLI to create a new PyDSS project"""
 
+import ast
 import click
 
 from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, ExportMode
@@ -36,13 +37,26 @@ from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, Exp
     default=None,
     help="comma-delimited list of export modes",
 )
+@click.option(
+    "-o", "--options",
+    help="dict-formatted simulation settings that override the config file. " \
+         "Example:  pydss run ./project --options \"{\\\"Simulation Type\\\": \\\"QSTS\\\"}\"",
+)
 @click.command()
-def create_project(path=None, project=None, scenarios=None, simulation_config=None, controller_types=None, export_modes=None):
+def create_project(path=None, project=None, scenarios=None,
+                   simulation_config=None, controller_types=None,
+                   export_modes=None, options=None):
     """Create PyDSS project."""
     if controller_types is not None:
         controller_types = [ControllerType(x) for x in controller_types.split(",")]
     if export_modes is not None:
         export_modes = [ExportMode(x) for x in export_modes.split(",")]
+
+    if options is not None:
+        options = ast.literal_eval(options)
+        if not isinstance(options, dict):
+            print(f"options must be of type dict; received {type(options)}")
+            sys.exit(1)
 
     scenarios = [
         PyDssScenario(
@@ -51,4 +65,10 @@ def create_project(path=None, project=None, scenarios=None, simulation_config=No
             export_modes=export_modes,
         ) for x in scenarios.split(",")
     ]
-    PyDssProject.create_project(path, project, scenarios, simulation_config)
+    PyDssProject.create_project(
+        path,
+        project,
+        scenarios,
+        simulation_config,
+        options=options
+    )

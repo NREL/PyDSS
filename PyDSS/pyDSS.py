@@ -3,11 +3,12 @@ import pathlib
 import PyDSS
 import toml
 import os
+import logging
 
 from PyDSS.pyAnalyzer.dssSimulationResult import ResultObject
 from PyDSS.pyAnalyzer.dssGraphicsGenerator import CreatePlots
 from PyDSS import dssInstance
-from PyDSS.utils.utils import load_data
+from PyDSS.utils.utils import dump_data, load_data
 
 __author__ = "Aadil Latif"
 __copyright__ = """
@@ -42,6 +43,9 @@ __status__ = "Production"
 PYDSS_BASE_DIR = os.path.join(os.path.dirname(getattr(PyDSS, "__path__")[0]), "PyDSS")
 
 
+logger = logging.getLogger(__name__)
+
+
 class instance(object):
 
     valid_settings = {
@@ -51,6 +55,8 @@ class instance(object):
             'Export Style': {'type': str, 'Options': ["Single file", "Separate files"]},
             'Export Format': {'type': str, 'Options': ["csv", "feather"]},
             'Export Compression': {'type': bool, 'Options': [True, False]},
+            'Export Iteration Order': {'type': str, 'Options': ["ElementValuesPerProperty", "ValuesByPropertyAcrossElements"]},
+            'Export Elements': {'type': bool, 'Options': [True, False]},
 
             'Create dynamic plots': {'type': bool, 'Options': [True, False]},
             'Open plots in browser': {'type': bool, 'Options': [True, False]},
@@ -85,6 +91,7 @@ class instance(object):
             'Log to external file': {'type': bool, 'Options': [True, False]},
             'Display on screen': {'type': bool, 'Options': [True, False]},
             'Clear old log file': {'type': bool, 'Options': [True, False]},
+            'Pre-configured logging': {'type': bool, 'Options': [True, False]},
 
             'Control mode': {'type': str, 'Options': ["Static", "Time"]},
             'Disable PyDSS controllers': {'type': bool, 'Options': [True, False]},
@@ -98,6 +105,7 @@ class instance(object):
             'Percentage load in series': {'type': float, 'Options': range(0, 100)},
 
             'Number of Monte Carlo scenarios': {'type': int},
+            'Result Container': {'type': str, 'Options': ['ResultContainer', 'ResultData']},
     }
 
     def update_results_dict(self, results_container, args, results):
@@ -135,7 +143,6 @@ class instance(object):
             CreatePlots(updated_vis_settings, SimulationResults)
         if updated_vis_settings['Simulations']['Run_bokeh_server']:
             bokeh_server_proc.terminate()
-        print('end of update_results_dict')
         return
 
     def update_scenario_settings(self, simulation_config):
@@ -151,16 +158,17 @@ class instance(object):
 
     def __run_scenario(self, simulation_config, run_simulation=True, generate_visuals=False):
         dss_args = self.update_scenario_settings(simulation_config)
-        # TODO: we should serialize the actual simulation config to a file. 
+        self._dump_scenario_simulation_settings(dss_args)
+
         if run_simulation:
             dss = dssInstance.OpenDSS(**dss_args)
-            print('Running scenario: {}'.format(dss_args["Active Scenario"]))
+            logger.info('Running scenario: %s', dss_args["Active Scenario"])
             if dss_args["Number of Monte Carlo scenarios"] > 0:
                 dss.RunMCsimulation(samples=dss_args['Number of Monte Carlo scenarios'])
             else:
                 dss.RunSimulation()
-            del dss
-            print(dss)
+            #del dss
+            #print(dss)
         if generate_visuals:
             result = ResultObject(os.path.join(
                 dss_args['Project Path'],
@@ -172,6 +180,16 @@ class instance(object):
             result = None
         return dss_args, result
 
+    def _dump_scenario_simulation_settings(self, dss_args):
+        # Various settings may have been updated. Write the actual settings to a file.
+        scenario_simulation_filename = os.path.join(
+            dss_args["Project Path"],
+            dss_args["Active Project"],
+            "Scenarios",
+            dss_args["Active Scenario"],
+            "simulation.toml"
+        )
+        dump_data(dss_args, scenario_simulation_filename)
 
     def __validate_settings(self, dss_args):
         valid_settings = self.valid_settings

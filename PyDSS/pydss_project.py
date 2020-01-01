@@ -151,7 +151,8 @@ class PyDssProject:
         logger.info("Setup folders at %s", self._project_dir)
 
     @classmethod
-    def create_project(cls, path, name, scenarios, simulation_config=None):
+    def create_project(cls, path, name, scenarios, simulation_config=None,
+                       options=None):
         """Create a new PyDssProject on the filesystem.
 
         Parameters
@@ -169,6 +170,8 @@ class PyDssProject:
         if simulation_config is None:
             simulation_config = DEFAULT_SIMULATION_SETTINGS_FILE
         simulation_config = load_data(simulation_config)
+        if options is not None:
+            simulation_config.update(options)
         simulation_config["Project Path"] = path
         simulation_config["Active Project"] = name
 
@@ -178,21 +181,48 @@ class PyDssProject:
                     scenarios, path)
         return project
 
-    def run(self):
+    def run(self, logging_configured=True):
         """Run all scenarios in the project."""
         inst = instance()
+        self._simulation_config["Pre-configured logging"] = logging_configured
         for scenario in self._scenarios:
             self._simulation_config["Active Scenario"] = scenario.name
             inst.run(self._simulation_config, scenario)
 
+    @staticmethod
+    def load_simulation_config(project_path):
+        """Return the simulation settings for a project, using defaults if the
+        file is not defined.
+
+        Parameters
+        ----------
+        project_path : str
+
+        Returns
+        -------
+        dict
+
+        """
+        filename = os.path.join(project_path, SIMULATION_SETTINGS_FILENAME)
+        if not os.path.exists(filename):
+            filename = os.path.join(
+                project_path,
+                DEFAULT_SIMULATION_SETTINGS_FILE,
+            )
+            assert os.path.exists(filename)
+
+        return load_data(filename)
+
     @classmethod
-    def load_project(cls, path):
+    def load_project(cls, path, options=None):
         """Load a PyDssProject from directory.
 
         Parameters
         ----------
         path : str
             full path to existing project
+        options : dict
+            options that override the config file
 
         """
         name = os.path.basename(path)
@@ -202,19 +232,26 @@ class PyDssProject:
         simulation_config = load_data(
             os.path.join(path, SIMULATION_SETTINGS_FILENAME)
         )
+
+        if options is not None:
+            simulation_config.update(options)
+            logger.info("Overrode config options: %s", options)
+
         return PyDssProject(path, name, scenarios, simulation_config)
 
     @classmethod
-    def run_project(cls, path):
+    def run_project(cls, path, options=None):
         """Load a PyDssProject from directory and run all scenarios.
 
         Parameters
         ----------
         path : str
             full path to existing project
+        options : dict
+            options that override the config file
 
         """
-        project = cls.load_project(path)
+        project = cls.load_project(path, options=options)
         return project.run()
 
 
@@ -229,7 +266,9 @@ class PyDssScenario:
                  export_modes=None, exports=None, plots=None):
         self.name = name
         if controller_types is not None and controllers is not None:
-            raise InvalidParameter("controller_types and controllers cannot both be set")
+            raise InvalidParameter(
+                "controller_types and controllers cannot both be set"
+            )
         if (controller_types is None and controllers is None):
             self.controllers = {
                 x: self.load_controller_config_from_type(x)
@@ -249,7 +288,9 @@ class PyDssScenario:
             self.controllers = controllers
 
         if export_modes is not None and exports is not None:
-            raise InvalidParameter("export_modes and exports cannot both be set")
+            raise InvalidParameter(
+                "export_modes and exports cannot both be set"
+            )
         if (export_modes is None and exports is None):
             mode = PyDssScenario.DEFAULT_EXPORT_MODE
             self.exports = {mode: self.load_export_config_from_mode(mode)}

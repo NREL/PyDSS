@@ -6,11 +6,16 @@ import pandas as pd
 import numpy as np
 import logging
 
+from PyDSS.pyLogger import getLoggerTag
+
 
 class MonteCarloSim:
 
     def __init__(self, SimulationSettings, dssPaths, dssObjects, dssObjectsByClass):
-        LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
+        if SimulationSettings["Pre-configured logging"]:
+            LoggerTag = __name__
+        else:
+            LoggerTag = getLoggerTag(SimulationSettings)
         self.pyLogger = logging.getLogger(LoggerTag)
         self.__dssPaths = dssPaths
         self.__dssObjects = dssObjects

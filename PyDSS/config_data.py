@@ -33,6 +33,7 @@ def convert_config_data_to_toml(filename, name=None):
         new_filename = name
     dump_data(data, new_filename)
     logger.info("Converted %s to %s", filename, new_filename)
+    return new_filename
 
 
 def _get_config_type(basename):

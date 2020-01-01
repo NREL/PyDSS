@@ -23,3 +23,7 @@ def getLogger(name, path, LoggerOptions=None):
         handler2.setFormatter(formatter)
         logger.addHandler(handler2)
     return logger
+
+
+def getLoggerTag(options):
+    return options["Active Project"] + "_" + options["Active Scenario"]
