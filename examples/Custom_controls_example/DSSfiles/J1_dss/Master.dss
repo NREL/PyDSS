@@ -1,0 +1,63 @@
+Clear
+
+Redirect LoadShapes.dss
+
+Redirect Substation.dss
+Redirect LineCodes.dss
+Redirect Lines.dss
+Redirect Transformers.dss
+Redirect LoadsInd.dss
+Redirect Services.dss
+Redirect Capacitors.dss
+Redirect Regulators.dss
+!Redirect ExistingPV.dss
+
+set maxiter=5000
+set maxcontroliter=5000
+
+Set voltagebases=[69, 12.47, 7.2, 0.480, 0.416]
+Calcv
+!Solve
+
+Buscoords Buscoords.dss
+
+New EnergyMeter.J1 element=Line.OH_5964927408 terminal=1 !peakcurrent=[393, 393, 393]
+
+batchedit load..* Vmaxpu=1.15 Vminpu=0.85
+batchedit pvsystem..* Vmaxpu=1.15 Vminpu=0.85
+
+
+!Redirect Monitors.dss
+
+! INITIALIZATION - To avoid any confusion, we specify the initial states
+edit transformer.subxfmr wdg=2 tap=1.0
+edit transformer.regxfmr_B4874 wdg=2 tap=0.996875
+edit transformer.regxfmr_B4868 wdg=2 tap=1.0
+edit transformer.regxfmr_B4872 wdg=2 tap=0.996875
+edit transformer.regxfmr_B18863 wdg=2 tap=0.99375
+edit transformer.regxfmr_B18864 wdg=2 tap=0.99375
+edit transformer.regxfmr_B18865 wdg=2 tap=0.9875
+edit transformer.regxfmr_B19010 wdg=2 tap=1.00625
+edit transformer.regxfmr_B19008 wdg=2 tap=1.0
+
+edit capacitor.B4909-1 states=[0]
+edit capacitor.B4877-1 states=[0]
+edit capacitor.B4862-1 states=[1]
+edit capacitor.B4829-1 states=[1]
+edit capacitor.B18944 states=[1]
+
+!set mode=duty controlmode=time 
+!set number=1 stepsize=1s hour=0 sec=0
+Solve
+
+!AddBusMarker Bus=X_5865228330A color=Red size=30
+
+plot circuit
+
+!Reset monitors
+!Reset meters
+!Reset eventlog
+
+!set hour=0 sec=0
+
+

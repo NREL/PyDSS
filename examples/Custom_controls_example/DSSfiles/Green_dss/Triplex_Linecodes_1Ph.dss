@@ -1,0 +1,27 @@
+New Linecode.1/0_AL_TRIPLEX_1PH nphases=1
+~ rmatrix=[0.36742424] !ohms per 1000 ft
+~ xmatrix=[0.07856808]
+~ cmatrix=[15]
+~ Normamps=202  {202 1.25 *}
+~ units=kft
+
+New Linecode.2/0_1PH nphases=1
+~ rmatrix=[0.29128788] !ohms per 1000 ft
+~ xmatrix=[0.0785221]
+~ cmatrix=[15]
+~ Normamps=230  {230 1.25 *}
+~ units=kft
+
+New Linecode.3/0_1PH nphases=1
+~ rmatrix=[0.2314394] !ohms per 1000 ft
+~ xmatrix=[0.0785538]
+~ cmatrix=[15]
+~ Normamps=263  {263 1.25 *}
+~ units=kft
+
+New Linecode.4/0_1PH nphases=1
+~ rmatrix=[0.18333334] !ohms per 1000 ft
+~ xmatrix=[0.07840812]
+~ cmatrix=[15]
+~ Normamps=299  {299 1.25 *}
+~ units=kft

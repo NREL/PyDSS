@@ -1,0 +1,181 @@
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Regulator.regxfmr_b4872, Action= CHANGED 16 TAPS TO 1.04688.
+Hour=0, Sec=0, ControlIter=1, Element=Regulator.regxfmr_b4868, Action= CHANGED 16 TAPS TO 1.05.
+Hour=0, Sec=0, ControlIter=1, Element=Regulator.regxfmr_b4874, Action= CHANGED 16 TAPS TO 1.04688.
+Hour=0, Sec=0, ControlIter=2, Element=Regulator.regxfmr_b4872, Action= CHANGED 13 TAPS TO 1.05.
+Hour=0, Sec=0, ControlIter=2, Element=Regulator.regxfmr_b4874, Action= CHANGED 9 TAPS TO 1.05.
+Hour=0, Sec=0, ControlIter=3, Element=Regulator.regxfmr_b18865, Action= CHANGED 8 TAPS TO 1.0375.
+Hour=0, Sec=0, ControlIter=3, Element=Regulator.regxfmr_b18864, Action= CHANGED 9 TAPS TO 1.05.
+Hour=0, Sec=0, ControlIter=3, Element=Regulator.regxfmr_b18863, Action= CHANGED 7 TAPS TO 1.0375.
+Hour=0, Sec=0, ControlIter=4, Element=Regulator.regxfmr_b18865, Action= CHANGED 2 TAPS TO 1.05.
+Hour=0, Sec=0, ControlIter=4, Element=Regulator.regxfmr_b18864, Action= CHANGED 3 TAPS TO 1.06875.
+Hour=0, Sec=0, ControlIter=4, Element=Regulator.regxfmr_b18863, Action= CHANGED 3 TAPS TO 1.05625.
+Hour=0, Sec=0, ControlIter=5, Element=Regulator.regxfmr_b18865, Action= CHANGED 1 TAPS TO 1.05625.
+Hour=0, Sec=0, ControlIter=5, Element=Regulator.regxfmr_b18864, Action= CHANGED 1 TAPS TO 1.075.
+Hour=0, Sec=0, ControlIter=5, Element=Regulator.regxfmr_b18863, Action= CHANGED 1 TAPS TO 1.0625.
+Hour=0, Sec=0, ControlIter=6, Element=Regulator.regxfmr_b18864, Action= CHANGED 1 TAPS TO 1.08125.
+Hour=0, Sec=0, ControlIter=7, Element=Regulator.regxfmr_b19008, Action= CHANGED 4 TAPS TO 1.025.
+Hour=0, Sec=0, ControlIter=7, Element=Regulator.regxfmr_b19010, Action= CHANGED 6 TAPS TO 1.04375.
+Hour=0, Sec=0, ControlIter=8, Element=Regulator.regxfmr_b18863, Action= CHANGED 1 TAPS TO 1.06875.
+Hour=0, Sec=0, ControlIter=9, Element=Regulator.regxfmr_b19008, Action= CHANGED 1 TAPS TO 1.03125.
+Hour=0, Sec=0, ControlIter=9, Element=Regulator.regxfmr_b19010, Action= CHANGED 2 TAPS TO 1.05625.
+Hour=0, Sec=0, ControlIter=10, Element=Regulator.regxfmr_b18863, Action= CHANGED 1 TAPS TO 1.075.
+Hour=0, Sec=0, ControlIter=11, Element=Regulator.regxfmr_b19008, Action= CHANGED 1 TAPS TO 1.0375.
+Hour=0, Sec=0, ControlIter=12, Element=Regulator.subxfmr, Action= CHANGED 3 TAPS TO 1.0375.
+Hour=0, Sec=0, ControlIter=13, Element=Regulator.regxfmr_b18865, Action= CHANGED -2 TAPS TO 1.04375.
+Hour=0, Sec=0, ControlIter=13, Element=Regulator.regxfmr_b18864, Action= CHANGED -2 TAPS TO 1.06875.
+Hour=0, Sec=0, ControlIter=13, Element=Regulator.regxfmr_b18863, Action= CHANGED -2 TAPS TO 1.0625.
+Hour=0, Sec=0, ControlIter=14, Element=Regulator.regxfmr_b18865, Action= CHANGED -1 TAPS TO 1.0375.
+Hour=0, Sec=0, ControlIter=14, Element=Regulator.regxfmr_b18864, Action= CHANGED -1 TAPS TO 1.0625.
+Hour=0, Sec=0, ControlIter=14, Element=Regulator.regxfmr_b18863, Action= CHANGED -2 TAPS TO 1.05.
+Hour=0, Sec=0, ControlIter=15, Element=Regulator.regxfmr_b19008, Action= CHANGED -1 TAPS TO 1.03125.
+Hour=0, Sec=0, ControlIter=16, Element=Regulator.regxfmr_b18864, Action= CHANGED -1 TAPS TO 1.05625.
+Hour=0, Sec=0, ControlIter=17, Element=Regulator.subxfmr, Action= CHANGED 1 TAPS TO 1.05.
+Hour=0, Sec=0, ControlIter=18, Element=Regulator.regxfmr_b18865, Action= CHANGED -2 TAPS TO 1.025.
+Hour=0, Sec=0, ControlIter=18, Element=Regulator.regxfmr_b18864, Action= CHANGED -1 TAPS TO 1.05.
+Hour=0, Sec=0, ControlIter=18, Element=Regulator.regxfmr_b18863, Action= CHANGED -1 TAPS TO 1.04375.
+Hour=0, Sec=0, ControlIter=19, Element=Regulator.regxfmr_b18863, Action= CHANGED -1 TAPS TO 1.0375.
+Hour=0, Sec=0, ControlIter=20, Element=Regulator.subxfmr, Action= CHANGED 1 TAPS TO 1.0625.
+Hour=0, Sec=0, ControlIter=21, Element=Regulator.regxfmr_b18865, Action= CHANGED -1 TAPS TO 1.01875.
+Hour=0, Sec=0, ControlIter=21, Element=Regulator.regxfmr_b18864, Action= CHANGED -2 TAPS TO 1.0375.
+Hour=0, Sec=0, ControlIter=21, Element=Regulator.regxfmr_b18863, Action= CHANGED -1 TAPS TO 1.03125.
+Hour=0, Sec=0, ControlIter=22, Element=Regulator.regxfmr_b18863, Action= CHANGED -1 TAPS TO 1.025.
+Hour=0, Sec=0, ControlIter=23, Element=Capacitor.b4877-1, Action=**STEP UP**
+Hour=0, Sec=0, ControlIter=23, Element=Capacitor.b4909-1, Action=**STEP UP**
+Hour=0, Sec=0, ControlIter=24, Element=Regulator.regxfmr_b4872, Action= CHANGED -5 TAPS TO 1.03438.
+Hour=0, Sec=0, ControlIter=24, Element=Regulator.regxfmr_b4868, Action= CHANGED -5 TAPS TO 1.03438.
+Hour=0, Sec=0, ControlIter=24, Element=Regulator.regxfmr_b4874, Action= CHANGED -8 TAPS TO 1.025.
+Hour=0, Sec=0, ControlIter=25, Element=Regulator.regxfmr_b4872, Action= CHANGED -2 TAPS TO 1.02813.
+Hour=0, Sec=0, ControlIter=25, Element=Regulator.regxfmr_b4868, Action= CHANGED -2 TAPS TO 1.02813.
+Hour=0, Sec=0, ControlIter=25, Element=Regulator.regxfmr_b4874, Action= CHANGED -3 TAPS TO 1.01563.
+Hour=0, Sec=0, ControlIter=26, Element=Regulator.regxfmr_b18865, Action= CHANGED -2 TAPS TO 1.00625.
+Hour=0, Sec=0, ControlIter=26, Element=Regulator.regxfmr_b18864, Action= CHANGED -2 TAPS TO 1.025.
+Hour=0, Sec=0, ControlIter=27, Element=Regulator.regxfmr_b18865, Action= CHANGED -1 TAPS TO 1.
+Hour=0, Sec=0, ControlIter=27, Element=Regulator.regxfmr_b18864, Action= CHANGED -1 TAPS TO 1.01875.
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**ARMED**, DELAY= 90 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4909-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b4877-1, Action=**RESET**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.b18944, Action=**RESET**

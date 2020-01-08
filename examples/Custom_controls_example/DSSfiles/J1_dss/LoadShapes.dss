@@ -1,0 +1,19 @@
+!diversity factor of the two profiles is 1.0245, so scaling them up to get the same peak load on the feeder
+!Increasing the feeder load in order to get some low voltages during the year
+
+! Have changed all profiles with the 15 min average downsampled 15-minute data
+New loadshape.Commercial npts=35040 minterval=15 mult=[file=Commercial.csv, header=yes]
+New loadshape.Other npts=35040 minterval=15 mult=[file=Residential.csv, header=yes]
+
+!loadshape for the other feeders aggregated at the substation
+New loadshape.AggLoadProfile npts=35040 minterval=15 mult=[file=Aggregate.csv, header=yes]
+
+!individual power profiles for each PV system using cloud fields
+New Loadshape.PVprofile_1 npts=35040 minterval=15 mult=[file=PVloadshape1.csv, col=1, header=yes]
+New Loadshape.PVprofile_2 npts=35040 minterval=15 mult=[file=PVloadshape2.csv, col=1, header=yes]
+New Loadshape.PVprofile_3 npts=35040 minterval=15 mult=[file=PVloadshape3.csv, col=1, header=yes]
+New Loadshape.PVprofile_4 npts=35040 minterval=15 mult=[file=PVloadshape4.csv, col=1, header=yes]
+New Loadshape.PVprofile_5 npts=35040 minterval=15 mult=[file=PVloadshape5.csv, col=1, header=yes]
+New Loadshape.PVprofile_6 npts=35040 minterval=15 mult=[file=PVloadshape6.csv, col=1, header=yes]
+New Loadshape.PVprofile_7 npts=35040 minterval=15 mult=[file=PVloadshape7.csv, col=1, header=yes]
+

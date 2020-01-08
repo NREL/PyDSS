@@ -52,7 +52,7 @@
 # Run each iteration - [Bool] - if true, the the proprocessing script will run after time step. Else, the script will be executed 
 #	      							at the end of the simultion run 
 
-"Post processing script" = "AutomatedThermalUpgrade"
+"Post processing script" = ""
 "Run each iteration" = true 
 
 # Co-simulation Mode - [Bool] - Set to true to enable Helics interface all other co-simulation settings only valid if this value is true

@@ -1,6 +1,38 @@
 
-"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS\\examples"
-"Simulation Type" = "QSTS"
+"Project Path" = "C:\\Users\\ajain\\Desktop\\PyDSS_develop_branch\\PyDSS\\examples"
+"Simulation Type" = "Snapshot"
 "Active Project" = "Custom_controls_example"
 "Active Scenario" = "base_case"
-"DSS File" = "Master_Spohn_existing_VV.dss"
+"DSS File" = "Master.dss"
+"Post processing script" = "AutomatedThermalUpgrade"
+
+# Thermal upgrades settings
+# "Feeder" = "../Test_Feeder"
+# "img_path"                   = "../Images"
+# "DPV_scenarios"             = "../ten_random"#"../ten_random_J1",
+# "master file"               = "Master_noPV.dss"#"Master.dss",
+# "DPV_penetration_HClimit"   = 120
+# "DPV_penetration_target"    = 160
+# "DPV_penetration_step"      = 10
+# "DPV control"               = "PF=1"#"PF=1" or "PF=-0.95" or "VVar-CatA" or "VVar-CatB" or "VVar-VWatt-CatB"
+# "DPV system priority"       = "watt"# "watt" or "var"
+# "Outputs"                   = "../Outputs"
+# "line loading limit"        = 1.0#1=100%
+# "DT loading limit"          = 1.0#1=100%,
+# "line_safety_margin"        = 1.5#1.1=110%: implies new line added should be rated at least 10% above the DTs actual overloading
+# "xfmr_safety_margin"        = 1.5# 1.1=110%: implies new DT added should be rated at least 10% above DT's actual overloading
+# "V_upper_lim"               = 1.05
+# "V_lower_lim"               = 0.95
+# "Target_V"                  = 1
+# "plot window open time"     = 1  # seconds
+# "Min PVLoad multiplier"     = 1
+# "Min Load multiplier"       = 0.1
+# "Max Load multiplier"       = 1
+# "max Regulators"            = 5
+# "Range B upper"             = 1.1# Range B limit inc
+# "Range B lower"             = 0.20
+# "nominal_voltage"           = 120
+# "Max iterations"            = 20
+# "Create_upgrade_plots"      = "True"
+# "tps_to_test"               = [0.2,2.2,0.1,2.0]#[min load multiplier without PV, max load multiplier without PV, min load multiplier with PV, max load multiplier with PV]
+# "units key"                 = ["mi","kft","km","m","Ft","in","cm"]# Units key for lines taken from OpenDSS

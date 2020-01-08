@@ -1,0 +1,10 @@
+// Define new circuit. Source Z equiv (Ohm) set directly from Cyme Model Source Equiv (Ohms)
+// pu voltage adjusted until Sourcebus voltages matches 1.039
+//New Circuit.GREEN_12KV basekv=12.00 bus1 = SourceBus pu=1.064 R1=0.11239 X1=1.11207 R0=0.0 X0=0.81935
+New Circuit.GREEN_12KV basekv=12 bus1 = SourceBus pu=1.039 R1=0.00001 X1=0.00001 R0=0.00001 X0=0.00001
+ 
+// someone said a transformer is needed for DPV
+New Transformer.Sub phases=3 windings=2 buses=(SourceBus,07570) conns=(wye,wye) 
+~ kvs=(12,12) kvas=(16000,16000) 
+~ xhl=0.001 wdg=1 %r=0.001 wdg=2 %r=0.001
+~ Maxtap=1.1 Mintap=0.9 enabled=True

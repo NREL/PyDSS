@@ -1,0 +1,8 @@
+New Transformer.new_regA phases=1 windings=2 buses=(4214799E_07570.1,4214799E_07570Reg.1) conns=(wye, wye) kvs=(6.93 6.93) kvas=(10000, 10000) xhl=0.01 Maxtap=1.1 Mintap=0.9 enabled=True
+New RegControl.new_regA_ctrl transformer=new_regA winding=2 vreg=114 ptratio=60 band=3 enabled=True delay=45
+
+New Transformer.new_regB phases=1 windings=2 buses=(4214799E_07570.2,4214799E_07570Reg.2) conns=(wye, wye) kvs=(6.93 6.93) kvas=(10000, 10000) xhl=0.01 Maxtap=1.1 Mintap=0.9 enabled=True
+New RegControl.new_regB_ctrl transformer=new_regB winding=2 vreg=114 ptratio=60 band=3 enabled=True delay=45
+
+New Transformer.new_regC phases=1 windings=2 buses=(4214799E_07570.3,4214799E_07570Reg.3) conns=(wye, wye) kvs=(6.93 6.93) kvas=(10000, 10000) xhl=0.01 Maxtap=1.1 Mintap=0.9 enabled=True
+New RegControl.new_regC_ctrl transformer=new_regC winding=2 vreg=114 ptratio=60 band=3 enabled=True delay=45

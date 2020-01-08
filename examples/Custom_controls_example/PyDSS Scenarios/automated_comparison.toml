@@ -1,6 +1,6 @@
 [Simulations]
 	
-Run_simulations = true
+Run_simulations = false
 Generate_visuals = true
 Run_bokeh_server = false
 

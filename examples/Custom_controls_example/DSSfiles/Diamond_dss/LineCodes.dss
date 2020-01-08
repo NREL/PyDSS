@@ -1,0 +1,15 @@
+! Overhead line codes
+New Linecode.OH-CU_3C_4/0 nphases=3 r1=0.174481 x1=0.442992 r0=0.352317 x0=1.847113 c1=10.0066 c0=4.1067 units=km baseFreq=60 normamps=540.000000 emergamps=745.000000
+New Linecode.OH-CU_3C_#2 nphases=3 r1=0.554325 x1=0.486720 r0=0.732161 x0=1.890840 c1=9.0606 c0=3.938 units=km baseFreq=60 normamps=265.000000 emergamps=355.000000
+New Linecode.OH-ACSR_3C_#4 nphases=3 r1=1.349618 x1=0.560930 r0=1.527454 x0=1.965050 c1=8.8359 c0=3.8949 units=km baseFreq=60 normamps=160.000000 emergamps=205.000000
+New Linecode.OH-CU_3C_4/0_4/0N nphases=3 r1=0.174481 x1=0.442992 r0=0.324980 x0=1.007537 c1=10.0066 c0=5.6038 units=km baseFreq=60 normamps=540.000000 emergamps=745.000000
+New Linecode.OH-ACSR_3C_1/0_1/0N nphases=3 r1=0.533758 x1=0.503162 r0=0.910200 x0=1.285795 c1=9.5415 c0=5.285 units=km baseFreq=60 normamps=280.000000 emergamps=355.000000
+New Linecode.OH-CU_3C_#6_#6N nphases=3 r1=0.121800 x1=0.397063 r0=0.272299 x0=0.961607 c1=10.9915 c0=5.8998 units=km baseFreq=60 normamps=128.000000 emergamps=128.000000
+New Linecode.OH-ACSR_3C_1/0 nphases=3 r1=0.533758 x1=0.503162 r0=0.711594 x0=1.907282 c1=9.5415 c0=4.0261 units=km baseFreq=60 normamps=280.000000 emergamps=355.000000
+New Linecode.OH-CU_3C_#6 nphases=3 r1=1.374100 x1=0.525778 r0=1.551936 x0=1.929898 c1=8.2655 c0=3.7799 units=km baseFreq=60 normamps=140.000000 emergamps=140.000000
+ 
+! Cable line codes
+New Linecode.UG-CLP_2C_1/0_5/12/16KV nphases=3 r1=0.555446 x1=0.154881 r0=1.590399 x0=0.655105 c1=156.9722 c0=156.9722 units=km baseFreq=60 normamps=141.000000 emergamps=172.000000
+New Linecode.UG-CLP_2C_#2_5/12/16KV nphases=3 r1=0.877407 x1=0.170416 r0=1.860757 x0=0.582647 c1=134.1284 c0=134.1284 units=km baseFreq=60 normamps=112.000000 emergamps=133.000000
+New Linecode.UG-BUS nphases=3 r1=0.000621 x1=0.000621 r0=0.000621 x0=0.000621 c1=0 c0=0 units=km baseFreq=60 normamps=600.000000 emergamps=600.000000
+New Linecode.UG-CLP_3C_750_5/12/16KV nphases=3 r1=0.112663 x1=0.138365 r0=0.495680 x0=0.135467 c1=286.4777 c0=286.4776 units=km baseFreq=60 normamps=559.000000 emergamps=559.000000

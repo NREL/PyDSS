@@ -1,0 +1,34 @@
+!Note that the irradiance profiles go above 1pu due to cloud enhancement and that the data comes from Hawaii
+!pctPmpp=100 setting limits the DC power output to not be above the Pmpp rating on the DC side, so the real power output will never be above the Pmpp
+
+!DC/AC ratio is 1.15 for all systems
+
+! Large, 3-Phase PV Systems
+New PVSystem.3P_ExistingSite1 phases=3 bus1=X_5865228330A  kV=0.416 kVA=475 irradiance=1 Pmpp=546 pf=1 %cutin=0.1 %cutout=0.1 pctPmpp=100 balanced=yes varfollowinverter=true wattpriority=false duty=PVprofile_1 
+New PVSystem.3P_ExistingSite3 phases=3 bus1=5890628219_sec kV=0.416 kVA=1235 irradiance=1 Pmpp=1420 pf=1 %cutin=0.1 %cutout=0.1 pctPmpp=100 balanced=yes varfollowinverter=true wattpriority=false duty=PVprofile_2 
+
+!small, single-phase PV Systems
+New PVSystem.C_Existing2 phases=1 bus1=X_B55624_Cust1-C.3 kV=0.24 kVA=11.1 irradiance=1 Pmpp=12.8 pf=1 %cutin=0.1 %cutout=0.1 pctPmpp=100 balanced=yes varfollowinverter=true wattpriority=false duty=PVprofile_3 
+New PVSystem.B_Existing3 phases=1 bus1=X_B60964_Cust1-B.2 kV=0.24 kVA=10 irradiance=1 Pmpp=11.5 pf=1 %cutin=0.1 %cutout=0.1 pctPmpp=100 balanced=yes varfollowinverter=true wattpriority=false duty=PVprofile_4 
+New PVSystem.C_Existing5 phases=1 bus1=X_B61252_Cust1-C.3 kV=0.24 kVA=20 irradiance=1 Pmpp=23 pf=1 %cutin=0.1 %cutout=0.1 pctPmpp=100 balanced=yes varfollowinverter=true wattpriority=false duty=PVprofile_5 
+New PVSystem.A_Existing9 phases=1 bus1=X_B66452_Cust1-A.1 kV=0.24 kVA=10 irradiance=1 Pmpp=11.5 pf=1 %cutin=0.1 %cutout=0.1 pctPmpp=100 balanced=yes varfollowinverter=true wattpriority=false duty=PVprofile_6 
+New PVSystem.C_Existing13 phases=1 bus1=X_B26203_Cust1-C.3 kV=0.24 kVA=14.5 irradiance=1 Pmpp=16.7 pf=1 %cutin=0.1 %cutout=0.1 pctPmpp=100 balanced=yes varfollowinverter=true wattpriority=false duty=PVprofile_7 
+
+!Removed from EPRI model
+!New PVSystem.B_Existing7 phases=1 bus1=X_B4870_Cust1-B.2 kV=0.24 kVA=10 irradiance=1 Pmpp=11.5 pf=1 %cutin=0.1 %cutout=0.1 pctPmpp=100 balanced=yes varfollowinverter=true wattpriority=false duty=PVprofile_1 
+!New PVSystem.C_Existing10 phases=1 bus1=X_B18989_Cust1-C.3 kV=0.24 kVA=10 irradiance=1 Pmpp=11.5 pf=1 %cutin=0.1 %cutout=0.1 pctPmpp=100 balanced=yes varfollowinverter=true wattpriority=false duty=PVprofile_1 
+!New PVSystem.C_Existing11 phases=1 bus1=X_6039329105_Cust1-C.3 kV=0.24 kVA=10 irradiance=1 Pmpp=11.5 pf=1 %cutin=0.1 %cutout=0.1 pctPmpp=100 balanced=yes varfollowinverter=true wattpriority=false duty=PVprofile_1 
+!New PVSystem.B_Existing12 phases=1 bus1=X_B41861_Cust1-B.2 kV=0.24 kVA=8 irradiance=1 Pmpp=9.2 pf=1 %cutin=0.1 %cutout=0.1 pctPmpp=100 balanced=yes varfollowinverter=true wattpriority=false duty=PVprofile_1 
+
+!All PV has the same Volt-var curve (currently 1547 Category B)
+!New XYCurve.vv_curve npts=6 Yarray=(0.44,0.44,0,0,-0.44,-0.44) Xarray=(0.8,0.92,0.98,1.02,1.08,1.2)
+
+!NREL CODE FOR VOLT-VAR
+!New InvControl.InvPVCtrl mode=VOLTVAR voltage_curvex_ref=rated vvc_curve1=vv_curve deltaQ_factor=0.5 eventlog=no VV_RefReactivePower=VARMAX_VARS
+
+!New InvControl.InvPVCtrl1 pvsystemlist=3P_ExistingSite1 mode=VOLTVAR 
+!~vvc_curve1=vv_curve voltage_curvex_ref=rated VV_RefReactivePower=VARMAX_VARS
+!~rateofchangemode=risefall risefalllimit=-1
+!~avgwindowlen=0
+!~deltaQ_factor=0.5 varchangetolerance=0.025 voltagechangetolerance=0.0001
+

@@ -101,6 +101,10 @@ class __Dynamic:
         self.__dssSolution.StepSize(0)
         self.__dssSolution.SolveNoControl()
 
+    def Solve(self):
+        self.__dssSolution.StepSize(0)
+        self.__dssSolution.Solve()
+
     def getMode(self):
         return self.__dssSolution.ModeID()
 
@@ -185,6 +189,10 @@ class __QSTS:
         self.__dssSolution.StepSize(0)
         self.__dssSolution.SolveNoControl()
 
+    def Solve(self):
+        self.__dssSolution.StepSize(0)
+        self.__dssSolution.Solve()
+
     def getMode(self):
         return self.__dssSolution.ModeID()
 
@@ -237,6 +245,9 @@ class __Shapshot:
 
     def reSolve(self):
         return self.__dssSolution.SolveNoControl()
+
+    def Solve(self):
+        self.__dssSolution.Solve()
 
     def IncStep(self):
         return self.__dssSolution.Solve()

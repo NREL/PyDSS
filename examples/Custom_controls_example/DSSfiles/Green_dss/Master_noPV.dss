@@ -1,0 +1,106 @@
+// NOTE: to match original CYME model comment out "redirect newsecondaries.dss" & "redirect newloads". Uncomment "redirect loads.dss"
+Clear
+// note that this substation has a Vpu as in Cyme with Xsys defined as a line connecting the ideal source to the rest of the network 
+Redirect Substation.dss
+Redirect wirecodes.dss
+Redirect linespacingcodes.dss
+Redirect LineCodes.dss
+Redirect Lines.dss
+Redirect lineswithcodes.dss
+//Redirect New_regulators.dss
+
+// new 1ph triplex lines from Matt Rylander 3/26
+Redirect Triplex_Linecodes_1Ph_Ext.dss
+
+
+// Defining the new load and PV loadshapes
+!New Loadshape.SubLoad_Continuous     npts=31536000, sinterval=1, mult=[sngfile=SubstationData_Continuous.sng]
+!New Loadshape.pv_loadshape1       npts=31536000 sinterval=1 mult=[file=PVloadshape1.csv, col=1, header=yes]
+
+!New Loadshape.PQmultipliers    npts=525600 minterval=1 Pmult=[file=Pmultipliers.csv, col=1, header=yes] Qmult=[file=Qmultipliers.csv, col=1, header=no] 
+!New Loadshape.PVSDGE npts=525600 minterval=1 mult=[file=PVGen1min.CSV,col=1, header=yes]
+!New Loadshape.PQmultipliers    npts=525600 minterval=1 mult=[file=Pmult_Ppeak.csv, col=1, header=yes] !Qmult=[file=Qmult_Qpeak.csv, col=1, header=no] 
+!New Loadshape.PVSDGE npts=525600 minterval=1 mult=[file=PVGen1min.csv, col=1, header=yes]
+
+
+// Switches is required dss to complete open sections - asc must be exported from Cyme "Petesswitches report" and re-built as dss - see Cymeswitches.xls
+Redirect newswitches.dss
+
+// Reclosers not added in conversion - add them manually
+Redirect Recloser.dss
+
+
+// new transformer definitions needed to re-connect wdg1 bus to main network - see GreenSecondaries.xls
+Redirect newtransformers.dss
+
+// new secondaries must be created to complete connection to conversion created transformers
+Redirect newsecondaries.dss
+
+// Loads and caps must be disconnected when running fault and exporting SeqZ
+// Loads CVR stuff seems to create conversion problems - removed CVR info from loads, also removed apparently dup loads with pf=.8
+Redirect newloads_allocated.dss
+//Redirect loads.dss
+Redirect Capacitors.dss
+
+
+Set voltagebases = [138, 115, 33, 16, 12, 4, 0.480, 0.416, 0.208, 0.24, 0.12]
+//show isolated
+//show topology
+
+set maxiter=1000
+set maxcontroliter=1000
+CalcVoltageBases 
+Buscoords buscoords.dss
+
+New EnergyMeter.SCE_Green element=Line.UG_07570$4684857E_07570_1_07570 terminal=1 !peakcurrent=[393, 393, 393]
+New monitor.subVI element=Transformer.Sub terminal=2 mode=0
+New monitor.subPQ element=Transformer.Sub terminal=1 mode=65 PPolar=No
+New monitor.feederPQ element=Line.UG_07570$4684857E_07570_1_07570 terminal=1 mode=65 PPolar=No
+//New monitor.Tap1 element=Transformer.reg1 terminal=2 mode=2
+//New monitor.Tap2 element=Transformer.reg2 terminal=2 mode=2
+//New monitor.Tap3 element=Transformer.reg3 terminal=2 mode=2
+New monitor.Cap1 element=Capacitor.ND31711600_07570$ND31711597_07-1 mode=33
+New monitor.Cap2 element=Capacitor.4368672E mode=33
+New monitor.Cap3 element=Capacitor.765945E mode=33
+New monitor.Cap4 element=Capacitor.1636823E mode=33
+New monitor.Cap5 element=Capacitor.4700554E mode=33
+New monitor.Cap6 element=Capacitor.1254276E mode=33
+//New monitor.VoltageTap1 element=Transformer.reg1 terminal=2 mode=0
+//New monitor.VoltageTap2 element=Transformer.reg2 terminal=2 mode=0
+//New monitor.VoltageTap3 element=Transformer.reg3 terminal=2 mode=0
+New monitor.VoltageCap1 element=Capacitor.ND31711600_07570$ND31711597_07-1 mode=0
+New monitor.VoltageCap2 element=Capacitor.4368672E mode=0
+New monitor.VoltageCap3 element=Capacitor.765945E mode=0
+New monitor.VoltageCap4 element=Capacitor.1636823E mode=0
+New monitor.VoltageCap5 element=Capacitor.4700554E mode=0
+New monitor.VoltageCap6 element=Capacitor.1254276E mode=0
+New monitor.HighestImpedanceBus element=Line.OH_4180602E_07570$1982285E_07570 terminal=2 mode=0
+
+
+batchedit EnergyMeter.SCE_Green peakcurrent=[349,347,372]
+batchedit load..* pf=1
+allocateloads
+batchedit load..* pf=0.84
+
+
+//Solve mode=snap
+
+//Redirect PV_Gen_1_100_close.txt
+//Solve mode=snap
+//Export Voltages dss_Green_V.csv
+//Export Capacity
+//Export SeqVoltages dss_Green_V0.csv
+//Export Powers
+//Export Loads
+//Export Currents
+
+//Solve mode=fault
+//Export SeqZ 
+
+//plot circuit Power max=2000 n n C1=$00FF0000
+
+// set markercode=24
+// set nodewidth=2
+//plot general quantity=2 max=1.05 min=.92 object=(Z:\Documents\Projects\EPRI_CSI\OpenDSSConversion\Green\dss_green_v0.csv) c1=red c2=green
+//Plot Profile Phases=all
+

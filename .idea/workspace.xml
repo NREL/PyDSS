@@ -1,11 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fcd3c74c-17e0-4241-bf3f-29643a7dcab1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/PyDSS/dssInstance.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/dssInstance.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/pyPostprocessor/pyPostprocess.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyPostprocessor/pyPostprocess.py" afterDir="false" />
+    <list default="true" id="30945d95-4cae-4696-b5de-ac9b162e4af0" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/PyDSS.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PyDSS.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/SolveMode.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/SolveMode.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/default_simulation_settings.toml" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/default_simulation_settings.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/pyControllers/Controllers/PvControllerGen.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/pyDSS.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyDSS.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/pyPlots/Plots/GISplot.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/HECO19021_Profile9998.DSV" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/HECO19021_Profile9998.dbl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/HECO19021_VLN_Node.Txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/Loadshapes_Sep8to15.dss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/MPX000460267.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/MPX000472455.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/MPX000594341.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/MPX000635970.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/MPX000637601.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/Master_Spohn_existing_VV.dss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/PVGenerators_existing_VV.dss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/SecLines.dss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/SecLoads_Timeseries_realloc.dss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/Vsource_profile.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/buscoords.dss" beforeDir="false" afterPath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/buscoords.dss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/testcodes.dss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/PyDSS Scenarios/automated_comparison.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/Custom_controls_example/PyDSS Scenarios/automated_comparison.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/PyDSS Scenarios/base_case.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/Custom_controls_example/PyDSS Scenarios/base_case.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/PyDSS Scenarios/base_case/PyDSS_settings.toml" beforeDir="false" afterPath="$PROJECT_DIR$/examples/Custom_controls_example/PyDSS Scenarios/base_case/PyDSS_settings.toml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,11 +42,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file leaf-file-name="pyDSS.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/PyDSS/pyDSS.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="172">
-              <caret line="135" column="8" selection-start-line="135" selection-start-column="8" selection-end-line="135" selection-end-column="8" />
+            <state relative-caret-position="484">
+              <caret line="61" column="44" lean-forward="true" selection-start-line="61" selection-start-column="44" selection-end-line="61" selection-end-column="44" />
               <folding>
                 <element signature="e#0#61#0" expanded="true" />
               </folding>
@@ -25,79 +54,37 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/PyDSS/dssInstance.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="274">
-              <caret line="295" column="27" selection-start-line="295" selection-start-column="27" selection-end-line="295" selection-end-column="27" />
-              <folding>
-                <element signature="e#0#55#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PyDSS/SolveMode.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="198" column="92" selection-start-line="198" selection-start-column="92" selection-end-line="198" selection-end-column="92" />
-              <folding>
-                <element signature="e#0#40#0" expanded="true" />
-                <element signature="e#1128#4613#0" />
-                <element signature="e#4633#8439#0" />
-                <element signature="e#8463#10260#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PyDSS/ResultContainer.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3995">
-              <caret line="56" column="12" selection-start-line="56" selection-start-column="12" selection-end-line="56" selection-end-column="25" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PyDSS/default_simulation_settings.toml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="293">
-              <caret line="54" column="51" selection-start-line="54" selection-start-column="51" selection-end-line="54" selection-end-column="51" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/pyPostprocess.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="399">
-              <caret line="27" column="73" selection-start-line="27" selection-start-column="73" selection-end-line="27" selection-end-column="73" />
-              <folding>
-                <element signature="e#0#45#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
+      <file leaf-file-name="AutomatedThermalUpgrade.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="416">
-              <caret line="34" selection-start-line="34" selection-end-line="34" />
+            <state relative-caret-position="6321">
+              <caret line="318" column="35" selection-start-line="318" selection-start-column="35" selection-end-line="318" selection-end-column="35" />
+              <folding>
+                <element signature="e#0#75#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PyDSS/pyPlots/pyPlots.py">
+      <file leaf-file-name="postprocess_thermal_upgrades.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/postprocess_thermal_upgrades.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="25" column="14" selection-start-line="25" selection-start-column="14" selection-end-line="25" selection-end-column="14" />
+            <state relative-caret-position="2793">
+              <caret line="147" column="80" selection-start-line="147" selection-start-column="80" selection-end-line="147" selection-end-column="80" />
               <folding>
-                <element signature="e#0#31#0" expanded="true" />
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SolveMode.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PyDSS/SolveMode.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="4641">
+              <caret line="223" column="43" selection-start-line="223" selection-start-column="43" selection-end-line="223" selection-end-column="43" />
+              <folding>
+                <element signature="e#0#40#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -105,12 +92,23 @@
       </file>
     </leaf>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>__</find>
+      <find>self.sol.Solve()</find>
+      <find>dssSolver.Solve()</find>
+      <find>solve</find>
+      <find>print</find>
     </findStrings>
     <replaceStrings>
-      <replace>_</replace>
+      <replace>dssSolver.Solve()</replace>
+      <replace>self.dssSolver.Solve()</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -119,32 +117,26 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/__init__.py" />
-        <option value="$PROJECT_DIR$/requirements.txt" />
-        <option value="$PROJECT_DIR$/PyDSS/pyPostprocessor/__init__.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedVoltageUpgrade.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyLogger.py" />
-        <option value="$PROJECT_DIR$/PyDSS/pyDSS.py" />
-        <option value="$PROJECT_DIR$/PyDSS/SolveMode.py" />
         <option value="$PROJECT_DIR$/PyDSS/default_simulation_settings.toml" />
-        <option value="$PROJECT_DIR$/PyDSS/pyPostprocessor/pyPostprocess.py" />
+        <option value="$PROJECT_DIR$/PyDSS/SolveMode.py" />
+        <option value="$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade_helper.py" />
+        <option value="$PROJECT_DIR$/PyDSS/pyDSS.py" />
+        <option value="$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/postprocess_thermal_upgrades.py" />
         <option value="$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade.py" />
-        <option value="$PROJECT_DIR$/PyDSS/dssInstance.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="2132" />
-    <option name="y" value="-8" />
-    <option name="width" value="1152" />
-    <option name="height" value="617" />
+    <option name="x" value="-9" />
+    <option name="y" value="-9" />
+    <option name="width" value="1938" />
+    <option name="height" value="1098" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -156,6 +148,30 @@
               <item name="PyDSS" type="b2602c69:ProjectViewProjectNode" />
               <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
               <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PyDSS" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
+              <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
+              <item name="Exports" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PyDSS" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
+              <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
+              <item name="Extensions" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PyDSS" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
+              <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
+              <item name="pyAnalyzer" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PyDSS" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
+              <item name="PyDSS" type="462c0819:PsiDirectoryNode" />
+              <item name="pyControllers" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="PyDSS" type="b2602c69:ProjectViewProjectNode" />
@@ -180,11 +196,11 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="C:/Documents_NREL/Grid_Cost_DER_PhaseII/ReplicabilityAndValidationAnalysis/Python_code_replicability_analysis" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
@@ -199,27 +215,24 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
-    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+  <component name="RunManager" selected="Python.pyDSS">
+    <configuration name="AutomatedThermalUpgrade" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="PyDSS" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\ProgramData\Anaconda3\python.exe" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
     </configuration>
     <configuration name="pyDSS" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="PyDSS" />
@@ -228,9 +241,9 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\ProgramData\Anaconda3\envs\PyDSS\python.exe" />
+      <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/PyDSS" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PyDSS/pyDSS.py" />
@@ -238,13 +251,15 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Python.pyDSS" />
+      <item itemvalue="Python.AutomatedThermalUpgrade" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.pyDSS" />
+        <item itemvalue="Python.AutomatedThermalUpgrade" />
       </list>
     </recent_temporary>
   </component>
@@ -253,226 +268,248 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="fcd3c74c-17e0-4241-bf3f-29643a7dcab1" name="Default Changelist" comment="" />
-      <created>1576081877220</created>
+      <changelist id="30945d95-4cae-4696-b5de-ac9b162e4af0" name="Default" comment="" />
+      <created>1576179953206</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1576081877220</updated>
+      <updated>1576179953206</updated>
     </task>
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1912" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <frame x="-7" y="-7" width="1938" height="1048" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19915701" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.38678223" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39869988" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22760417" />
       <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="8" />
-      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Python Console" order="10" />
+      <window_info anchor="bottom" id="Python Console" order="7" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.77793103" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.15648445" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" />
     </layout>
-    <layout-to-restore>
-      <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.24973656" />
-      <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="0" />
-      <window_info anchor="bottom" id="Event Log" order="1" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="2" />
-      <window_info anchor="bottom" id="Python Console" order="3" />
-      <window_info anchor="bottom" id="Message" order="4" />
-      <window_info anchor="bottom" id="Find" order="5" />
-      <window_info anchor="bottom" id="Run" order="6" />
-      <window_info anchor="bottom" id="Debug" order="7" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="10" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout-to-restore>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/PyDSS/pyDSS.py</url>
-          <line>151</line>
-          <option name="timeStamp" value="1" />
+          <url>file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedVoltageUpgrade.py</url>
+          <line>22</line>
+          <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/PyDSS/pyPostprocessor/pyPostprocess.py</url>
-          <line>4</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/PyDSS/pyPlots/pyPlots.py</url>
-          <line>21</line>
-          <option name="timeStamp" value="8" />
+          <url>file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade.py</url>
+          <line>111</line>
+          <option name="timeStamp" value="5" />
         </line-breakpoint>
       </breakpoints>
+      <option name="time" value="6" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/pyPostprocessAbstract.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="25" selection-start-column="6" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyPlots/Plots/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedVoltageUpgrade.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="44" lean-forward="true" selection-start-column="44" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyPlots/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" selection-end-line="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/unitDefinations.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/envs/PyDSS/Lib/logging/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="917">
-          <caret line="1384" column="26" lean-forward="true" selection-start-line="1384" selection-start-column="26" selection-end-line="1384" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/External_interfacing_example/API_example/run_pyDSS.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="469">
-          <caret line="32" selection-start-line="32" selection-end-line="32" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyLogger.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="40" selection-start-line="5" selection-start-column="40" selection-end-line="5" selection-end-column="40" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyPlots/pyPlots.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="25" column="14" selection-start-line="25" selection-start-column="14" selection-end-line="25" selection-end-column="14" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/pyDSS.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="172">
-          <caret line="135" column="8" selection-start-line="135" selection-start-column="8" selection-end-line="135" selection-end-column="8" />
+        <state relative-caret-position="840">
+          <caret line="40" selection-start-line="40" selection-end-line="40" />
           <folding>
             <element signature="e#0#61#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/default_simulation_settings.toml">
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="293">
-          <caret line="54" column="51" selection-start-line="54" selection-start-column="51" selection-end-line="54" selection-end-column="51" />
+        <state relative-caret-position="6678">
+          <caret line="318" column="35" selection-start-line="318" selection-start-column="35" selection-end-line="318" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#75#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/postprocess_thermal_upgrades.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3087">
+          <caret line="147" column="80" selection-start-line="147" selection-start-column="80" selection-end-line="147" selection-end-column="80" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/SolveMode.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="198" column="92" selection-start-line="198" selection-start-column="92" selection-end-line="198" selection-end-column="92" />
+        <state relative-caret-position="4683">
+          <caret line="223" column="43" selection-start-line="223" selection-start-column="43" selection-end-line="223" selection-end-column="43" />
           <folding>
             <element signature="e#0#40#0" expanded="true" />
-            <element signature="e#1128#4613#0" />
-            <element signature="e#4633#8439#0" />
-            <element signature="e#8463#10260#0" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/ResultContainer.py">
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyDSS.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3995">
-          <caret line="56" column="12" selection-start-line="56" selection-start-column="12" selection-end-line="56" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/pyPostprocess.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="27" column="73" selection-start-line="27" selection-start-column="73" selection-end-line="27" selection-end-column="73" />
+        <state relative-caret-position="693">
+          <caret line="40" selection-start-line="40" selection-end-line="40" />
           <folding>
-            <element signature="e#0#45#0" expanded="true" />
+            <element signature="e#0#61#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="416">
-          <caret line="34" selection-start-line="34" selection-end-line="34" />
+        <state relative-caret-position="6321">
+          <caret line="318" column="35" selection-start-line="318" selection-start-column="35" selection-end-line="318" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#75#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PyDSS/dssInstance.py">
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/postprocess_thermal_upgrades.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="274">
-          <caret line="295" column="27" selection-start-line="295" selection-start-column="27" selection-end-line="295" selection-end-column="27" />
+        <state relative-caret-position="2793">
+          <caret line="147" column="80" selection-start-line="147" selection-start-column="80" selection-end-line="147" selection-end-column="80" />
           <folding>
-            <element signature="e#0#55#0" expanded="true" />
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/SolveMode.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4641">
+          <caret line="223" column="43" selection-start-line="223" selection-start-column="43" selection-end-line="223" selection-end-column="43" />
+          <folding>
+            <element signature="e#0#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyDSS.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="63">
+          <caret line="10" column="26" lean-forward="true" selection-start-line="10" selection-start-column="26" selection-end-line="10" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#61#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="567">
+          <caret line="27" column="13" selection-start-line="27" selection-start-column="13" selection-end-line="27" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#75#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedVoltageUpgrade.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/SolveMode.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5292">
+          <caret line="254" column="38" lean-forward="true" selection-start-line="254" selection-start-column="38" selection-end-line="254" selection-end-column="38" />
+          <folding>
+            <element signature="e#0#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/default_simulation_settings.toml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="651">
+          <caret line="55" column="28" lean-forward="true" selection-start-line="55" selection-start-column="28" selection-end-line="55" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/-968815243/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="233">
+          <caret line="5246" column="8" selection-start-line="5246" selection-start-column="8" selection-end-line="5246" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.conda/envs/disco_pydss/Lib/site-packages/toml/decoder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="457" selection-start-line="457" selection-end-line="457" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedVoltageUpgrade.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="651">
+          <caret line="31" column="19" lean-forward="true" selection-end-line="31" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade_helper.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="651">
+          <caret line="31" column="19" lean-forward="true" selection-start-line="31" selection-start-column="19" selection-end-line="31" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.conda/envs/disco_pydss/Lib/site-packages/dss/dss_capi_ir/ICircuit.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="261">
+          <caret line="98" column="13" selection-start-line="98" selection-start-column="13" selection-end-line="98" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/SolveMode.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4641">
+          <caret line="223" column="43" selection-start-line="223" selection-start-column="43" selection-end-line="223" selection-end-column="43" />
+          <folding>
+            <element signature="e#0#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/postprocess_thermal_upgrades.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2793">
+          <caret line="147" column="80" selection-start-line="147" selection-start-column="80" selection-end-line="147" selection-end-column="80" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6321">
+          <caret line="318" column="35" selection-start-line="318" selection-start-column="35" selection-end-line="318" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#75#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyDSS/pyDSS.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="484">
+          <caret line="61" column="44" lean-forward="true" selection-start-line="61" selection-start-column="44" selection-end-line="61" selection-end-column="44" />
+          <folding>
+            <element signature="e#0#61#0" expanded="true" />
           </folding>
         </state>
       </provider>
