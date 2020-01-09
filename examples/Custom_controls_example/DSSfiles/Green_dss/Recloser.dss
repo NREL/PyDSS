@@ -1,1 +1,0 @@
-New Line.RAR3129_07570_1$RAR3129_07570 bus1=RAR3129_07570_1.1.2.3 bus2=RAR3129_07570.1.2.3 Phases=3 Switch = n r1 = 1e-4 x1 =0 r0 =1e-4 x0 = 0 c1 =0 c0 = 0 enabled=True
