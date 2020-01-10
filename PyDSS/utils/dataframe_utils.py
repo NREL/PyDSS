@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def read_dataframe(filename, index_col=None, columns=None, parse_dates=False,
-                   **kwargs):
+                   remove_unnamed=True, **kwargs):
     """Convert filename to a dataframe. Supports .csv, .json, .feather.
     Handles compressed files.
 
@@ -25,6 +25,8 @@ def read_dataframe(filename, index_col=None, columns=None, parse_dates=False,
     columns : list or None
         Use these columns if the file is CSV and does not define them.
     parse_dates : bool
+    remove_unnamed : bool
+        Remove any column that starts with "Unnamed".
     kwargs : kwargs
         Passed to underlying library for dataframe conversion.
         Consider setting parse_dates=True if the index is a timestamp.
@@ -64,6 +66,10 @@ def read_dataframe(filename, index_col=None, columns=None, parse_dates=False,
                     df.set_index(pd.to_datetime(df.index), inplace=True)
     else:
         raise InvalidParameter(f"unsupported file extension {ext}")
+
+    if remove_unnamed:
+        cols_to_remove = [x for x in df.columns if x.startswith("Unnamed")]
+        df.drop(columns=cols_to_remove, inplace=True)
 
     return df
 

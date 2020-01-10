@@ -30,8 +30,6 @@ class _ValueStorageBase(abc.ABC):
         """
         columns = []
         for column in df.columns:
-            if "Unnamed" in column:
-                continue
             fields = column.split(_ValueStorageBase.DELIMITER)
             assert len(fields) >= 2, column
             _name = fields[0]

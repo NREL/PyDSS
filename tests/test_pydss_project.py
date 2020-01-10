@@ -106,6 +106,15 @@ def test_run_project_by_element(cleanup_project):
     assert isinstance(df, pd.DataFrame)
     assert len(df) == 96
 
+    elem_name = "Line.sw0"
+    full_df = scenario.get_full_dataframe("Lines", elem_name)
+    for column in full_df.columns:
+        assert "Unnamed" not in column
+        if column not in ("frequency", "Simulation mode"):
+            assert elem_name in column
+    assert len(full_df.columns) >= len(scenario.list_element_properties("Lines"))
+    assert len(full_df) == 96
+
 
 def test_run_project_by_property(cleanup_project):
     options = {"Export Iteration Order": "ValuesByPropertyAcrossElements"}
@@ -137,6 +146,15 @@ def test_run_project_by_property(cleanup_project):
     df = scenario.get_dataframe("Lines", "Currents", "Line.sw0", label="1A")
     assert isinstance(df, pd.DataFrame)
     assert len(df) == 96
+
+    prop = "Currents"
+    full_df = scenario.get_full_dataframe("Lines", prop)
+    assert len(full_df.columns) >= len(scenario.list_element_names("Lines", prop))
+    for column in full_df.columns:
+        assert "Unnamed" not in column
+        if column not in ("frequency", "Simulation mode"):
+            assert prop in column
+    assert len(full_df) == 96
 
     element_info_files = scenario.list_element_info_files()
     assert element_info_files

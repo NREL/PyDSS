@@ -258,6 +258,18 @@ class ElementData(abc.ABC):
     def path(self):
         return self._path
 
+    def get_full_dataframe(self):
+        """Return a dataframe containing all data.  The dataframe is copied.
+
+        Returns
+        -------
+        pd.DataFrame
+
+        """
+        df = self._get_dataframe().copy(deep=True)
+        self._add_indices_to_dataframe(df)
+        return df
+
     def _get_dataframe(self):
         if self.cache_data:
             if self._cached_df is not None:

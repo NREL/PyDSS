@@ -59,6 +59,24 @@ class _Results(abc.ABC):
         """
 
     @abc.abstractmethod
+    def get_full_dataframe(self, element_class, name_or_prop):
+        """Return a dataframe containing all data.  The dataframe is copied.
+
+        Parameters
+        ----------
+        element_class : str
+        name_or_prop : str
+            The element name or property, depending on
+            ElementValuesPerPropertyResults vs
+            ValuesByPropertyAcrossElementsResults
+
+        Returns
+        -------
+        pd.DataFrame
+
+        """
+
+    @abc.abstractmethod
     def iterate_dataframes(self, element_class, name_or_prop, label=None):
         """Returns a generator over the dataframes by element name.
 
@@ -167,12 +185,7 @@ class _Results(abc.ABC):
                 )
             filename = actual
 
-        df = read_dataframe(filename)
-        remove = "Unnamed: 0"
-        if remove in df.columns:
-            df.drop(columns=remove, inplace=True)
-
-        return df
+        return read_dataframe(filename)
 
     def read_capacitor_changes(self):
         """Read the capacitor state changes from the OpenDSS event log.
@@ -212,6 +225,10 @@ class ElementValuesPerPropertyResults(_Results):
     def get_dataframe(self, element_class, prop, element_name, label=None):
         element = self._get_element(element_class, element_name)
         return element.get_dataframe(prop, label=label)
+
+    def get_full_dataframe(self, element_class, name_or_prop):
+        element = self._get_element(element_class, name_or_prop)
+        return element.get_full_dataframe()
 
     def iterate_dataframes(self, element_class, name_or_prop, label=None):
         element = self._get_element(element_class, name_or_prop)
@@ -263,6 +280,10 @@ class ValuesByPropertyAcrossElementsResults(_Results):
     def get_dataframe(self, element_class, prop, element_name, label=None):
         prop_agg = self._get_property_aggregator(element_class, prop)
         return prop_agg.get_dataframe(element_name, label=label)
+
+    def get_full_dataframe(self, element_class, name_or_prop):
+        prop_agg = self._get_property_aggregator(element_class, name_or_prop)
+        return prop_agg.get_full_dataframe()
 
     def iterate_dataframes(self, element_class, name_or_prop, label=None):
         prop_agg = self._get_property_aggregator(element_class, name_or_prop)

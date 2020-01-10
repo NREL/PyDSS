@@ -81,9 +81,12 @@ column represents.  This can very by element.
 If the "ResultData" export method is configured then data can be loaded as
 shown by this example code::
 
+Load element classes and properties
+===================================
+
 .. code-block:: python
 
-    from PyDSS.pydss_results import PyDssResults, ValuesByPropertyAcrossElementsResults
+    from PyDSS.pydss_results import PyDssResults
 
     path = "."
     results = PyDssResults(path)
@@ -94,7 +97,11 @@ shown by this example code::
             for name in scenario.list_element_names(elem_class, prop):
                 print(elem_class, prop, name)
 
-    # Read a dataframe for one element.
+Read a dataframe for one element
+================================
+
+::
+
     df = scenario.get_dataframe("Lines", "Currents", "Line.pvl_112")
     df.head()
 
@@ -106,7 +113,12 @@ shown by this example code::
     2017-01-01 01:00:00  (3.4120603231713176e-08+1.3804576042275585e-05j)   (3.637978807091713e-12+1.1368683772161603e-13j)
     2017-01-01 01:15:00   (3.356035449542105e-08+1.3810414088766265e-05j)  (-3.637978807091713e-12+1.1368683772161603e-13j)
 
-    # Get a dataframe only for terminal 1 conductor A.
+Read a dataframe for one element with a specific label
+======================================================
+Some element properties contain multiple values.  For example, the OpenDSS
+CktElement objects report ``Currents`` into each conductor of each terminal.
+Here is how you can get the data for a single conductor/terminal::
+
     df = scenario.get_dataframe("Lines", "Currents", "Line.pvl_112", label="1A")
     df.head()
 
@@ -118,3 +130,33 @@ shown by this example code::
     2017-01-01 01:00:00  (3.4120603231713176e-08+1.3804576042275585e-05j)
     2017-01-01 01:15:00   (3.356035449542105e-08+1.3810414088766265e-05j)
 
+Read a dataframe for all elements
+=================================
+You may want to get data for all elements at once.
+
+.. code-block:: python
+
+    df = scenario.get_full_dataframe("Lines", "Currents")
+
+
+Performance Considerations
+**************************
+Here are some details on how the data is stored in files.
+
+If the simulation setting ``Export Iteration Order`` is
+``ValuesByPropertyAcrossElements`` then there is one data file per element
+class / property combination. All elements are included within that file.  By
+default the data is not kept in memory.  Anytime you request data for an
+element the code will read the file and return only the relevant columns. If
+you want to iterate over all elements then you should call
+``iterate_dataframes`` instead of ``get_dataframe``.
+
+If the simulation setting ``Export Iteration Order`` is
+``ElementValuesPerProperty`` then there is one data file per element for each
+element class. Use this if you will be reading all data for one element at a
+time instead of iterating across elements by property.
+
+If your dataset is small enough to fit in your system's memory then you can
+enable caching by setting the environment variable ``PYDSS_CACHE_DATA`` to 1.
+If this is set then the code will read each dataframe from file once and only
+once.
