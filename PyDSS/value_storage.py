@@ -93,30 +93,39 @@ class ValueByNumber(_ValueStorageBase):
 
 class ValueByLabel(_ValueStorageBase):
     """Stores a list of lists of numbers by an arbitrary label."""
-    def __init__(self, name, prop, data, label_prefix, labels):
+    def __init__(self, name, prop, label_prefix, labels, values):
+        """Constructor for ValueByLabel
+
+        Parameters
+        ----------
+        name : str
+        prop : str
+        label_prefix : str
+            Text to use as a prefix for column labels. Ex: Phase
+        labels : list
+            list of str
+        values : list
+            Pairs of values that can be interpreted as complex numbers.
+
+        """
         self._name = name
         self._prop = prop
-        self._data = data
         self._label_prefix = label_prefix
         self._labels = labels
+        self._data = {}
+
+        num_labels = len(labels)
+        assert len(values) == num_labels * 2, f"{name} {prop} {len(values)} {num_labels}"
+        for i in range(0, len(values), 2):
+            label = label_prefix + str(labels[int(i / 2)])
+            value = complex(values[i], values[i + 1])
+            self._data[label] = [value]
 
     def __iter__(self):
         return self._data.__iter__()
 
     def __len__(self):
         return len(self._data)
-
-    @classmethod
-    def create(cls, name, prop, label_prefix, labels, values):
-        num_labels = len(labels)
-        # This assumes that values is a list of pairs of complex numbers.
-        assert len(values) == num_labels * 2, f"{name} {prop} {len(values)} {num_labels}"
-        data = {}
-        for i in range(0, len(values), 2):
-            label = label_prefix + str(labels[int(i / 2)])
-            value = complex(values[i], values[i + 1])
-            data[label] = [value]
-        return ValueByLabel(name, prop, data, label_prefix, labels)
 
     def append(self, other):
         """Append values from another instance of ValueByLabel"""

@@ -65,7 +65,7 @@ class dssObjectBase(abc.ABC):
             info = self.VARIABLE_OUTPUTS_BY_LABEL[VarName]
             label_prefix = info["label_prefix"]
             labels = getattr(self, info["accessor"])
-            return ValueByLabel.create(self._FullName, VarName, label_prefix, labels, value)
+            return ValueByLabel(self._FullName, VarName, label_prefix, labels, value)
         elif VarName in self.VARIABLE_OUTPUTS_COMPLEX:
             assert isinstance(value, list) and len(value) == 2, str(value)
             value = complex(value[0], value[1])
