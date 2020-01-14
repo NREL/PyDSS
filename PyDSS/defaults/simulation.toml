@@ -50,6 +50,7 @@
 "Simulation Type" = "QSTS"
 "Project Path" = ""
 "Active Project" = ""
+"Scenarios" = []
 "Active Scenario" = ""
 "DSS File" = ""
 

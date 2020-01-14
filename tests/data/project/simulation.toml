@@ -46,6 +46,7 @@
 "Project Path" = "./tests/data"
 "Simulation Type" = "QSTS"
 "Active Project" = "project"
+"Scenarios" = ["scenario1"]
 "Active Scenario" = "scenario1"
 "DSS File" = "Master_Spohn_existing_VV.dss"
 

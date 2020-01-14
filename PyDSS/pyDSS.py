@@ -73,6 +73,7 @@ class instance(object):
             'Error tolerance': {'type': float},
             'Simulation Type': {'type': str, 'Options': ["QSTS", "Dynamic", "Snapshot", "Monte Carlo"]},
             'Active Project': {'type': str},
+            'Scenarios': {'type': list},
             'Active Scenario': {'type': str},
             'DSS File': {'type': str},
 

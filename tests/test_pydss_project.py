@@ -26,7 +26,10 @@ def pydss_project():
 def test_create_project(pydss_project):
     project_name = "test-project"
     project_dir = os.path.join(PATH, project_name)
-    scenarios = [PyDssScenario(x) for x in ("scenario1", "scenario2")]
+    # Intentionally not in alphabetic order so that we verify our designated
+    # ordering.
+    scenario_names = ("b_scenario1", "a_scenario2")
+    scenarios = [PyDssScenario(x) for x in scenario_names]
     project = PyDssProject.create_project(PATH, project_name, scenarios)
     assert os.path.exists(project_dir)
     for dir_name in PyDssScenario._SCENARIO_DIRECTORIES:

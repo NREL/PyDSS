@@ -22,6 +22,7 @@
 "Simulation Type" = "QSTS"
 "Project Path" = "./tests/data"
 "Active Project" = "project"
+Scenarios = [ "scenario1",]
 "Active Scenario" = "scenario1"
 "DSS File" = "Master_Spohn_existing_VV.dss"
 "Post processing script" = "AutomatedThermalUpgrade"
