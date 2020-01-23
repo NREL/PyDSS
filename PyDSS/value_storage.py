@@ -61,6 +61,35 @@ class _ValueStorageBase(abc.ABC):
         """
 
 
+class ValueByString(_ValueStorageBase):
+    """Stores a list of numbers for an element/property."""
+    def __init__(self, name, prop, value):
+        self._data = [value]
+        self._name = name
+        self._prop = prop
+
+    def __iter__(self):
+        return self._data.__iter__()
+
+    def __len__(self):
+        return len(self._data)
+
+    def append(self, other):
+        """Append values from another instance of ValueByNumber"""
+        self._data += other
+
+    @property
+    @staticmethod
+    def num_columns():
+        return 1
+
+    @staticmethod
+    def _make_column(name, prop):
+        return _ValueStorageBase.DELIMITER.join((name, prop))
+
+    def to_dataframe(self):
+        return pd.DataFrame(self._data, columns=[self._make_column(self._name, self._prop)])
+
 class ValueByNumber(_ValueStorageBase):
     """Stores a list of numbers for an element/property."""
     def __init__(self, name, prop, value):
@@ -93,7 +122,7 @@ class ValueByNumber(_ValueStorageBase):
 
 class ValueByLabel(_ValueStorageBase):
     """Stores a list of lists of numbers by an arbitrary label."""
-    def __init__(self, name, prop, label_prefix, labels, values):
+    def __init__(self, name, prop, value, Nodes, is_complex, units):
         """Constructor for ValueByLabel
 
         Parameters
@@ -108,18 +137,37 @@ class ValueByLabel(_ValueStorageBase):
             Pairs of values that can be interpreted as complex numbers.
 
         """
+        phs = {
+            1: 'A',
+            2: 'B',
+            3: 'C',
+            0: 'N',
+        }
+
         self._name = name
         self._prop = prop
-        self._label_prefix = label_prefix
-        self._labels = labels
+        self._labels = []
         self._data = {}
 
-        num_labels = len(labels)
-        assert len(values) == num_labels * 2, f"{name} {prop} {len(values)} {num_labels}"
-        for i in range(0, len(values), 2):
-            label = label_prefix + str(labels[int(i / 2)])
-            value = complex(values[i], values[i + 1])
-            self._data[label] = [value]
+        n = 2
+        m = int(len(value) / (len(Nodes)*n))
+        value = [value[i * n:(i + 1) * n] for i in range((len(value) + n - 1) // n)]
+        value = [value[i * m:(i + 1) * m] for i in range((len(value) + m - 1) // m)]
+
+        for i, node_val in enumerate(zip(Nodes, value)):
+            node, val = node_val
+            for v , x in zip(node, val):
+                label = '_{}{}'.format(phs[v], str(i+1))
+                if is_complex:
+                    label += " " + units[0]
+                    self._labels.append(label)
+                    self._data[label] = [complex(x[0], x[1])]
+                else:
+                    label_mag = label + ' ' + units[0]
+                    label_ang = label + ' ' + units[1]
+                    self._labels.extend([label_mag ,label_ang])
+                    self._data[label_mag] = [x[0]]
+                    self._data[label_ang] = [x[1]]
 
     def __iter__(self):
         return self._data.__iter__()
@@ -154,15 +202,13 @@ class ValueByLabel(_ValueStorageBase):
 
     def _make_columns(self):
         return [
-            self.DELIMITER.join((self._name, self._prop, f"{self._label_prefix}{x}"))
-            for x in self._labels
+            self.DELIMITER.join((self._name, f"{x}")) for x in self._labels
         ]
 
     def to_dataframe(self):
         df = pd.DataFrame(self._data)
         df.columns = self._make_columns()
         return df
-
 
 def get_value_class(class_name):
     """Return the class with the given name."""

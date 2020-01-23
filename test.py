@@ -1,5 +1,5 @@
-from PyDSS import PyDSS
+from PyDSS import pyDSS
 
-a = PyDSS.instance()
+a = pyDSS.instance()
 #a.create_new_project('as', 'fd')
-print(a.run('Automated_comparison_example', 'fd'))
+print(a.run('project', 'scenario1'))

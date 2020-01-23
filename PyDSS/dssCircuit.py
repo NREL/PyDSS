@@ -13,6 +13,7 @@ class dssCircuit(dssObjectBase):
     def __init__(self, dssInstance):
         name = dssInstance.Circuit.Name()
         fullName = "Circuit." + name
+        self._Class = 'Circuit'
         super(dssCircuit, self).__init__(dssInstance, name, fullName)
 
         CktElmVarDict = dssInstance.Circuit.__dict__

@@ -16,6 +16,7 @@ class dssObjectBase(abc.ABC):
         self._Variables = {}
         self._dssInstance = dssInstance
 
+
     @abc.abstractmethod
     def SetActiveObject(self):
         """Set the active DSS object."""
@@ -55,6 +56,7 @@ class dssObjectBase(abc.ABC):
         self.SetActiveObject()
         func = self._Variables[VarName]
         if func is None:
+            print(func, VarName)
             raise InvalidParameter(f"get function for {self._FullName} / {VarName} is None")
 
         value = func()
@@ -63,9 +65,9 @@ class dssObjectBase(abc.ABC):
 
         if VarName in self.VARIABLE_OUTPUTS_BY_LABEL:
             info = self.VARIABLE_OUTPUTS_BY_LABEL[VarName]
-            label_prefix = info["label_prefix"]
-            labels = getattr(self, info["accessor"])
-            return ValueByLabel(self._FullName, VarName, label_prefix, labels, value)
+            is_complex = info["is_complex"]
+            units = info["units"]
+            return ValueByLabel(self._FullName, VarName, value, self._Nodes, is_complex, units)
         elif VarName in self.VARIABLE_OUTPUTS_COMPLEX:
             assert isinstance(value, list) and len(value) == 2, str(value)
             value = complex(value[0], value[1])

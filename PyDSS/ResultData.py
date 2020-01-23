@@ -78,25 +78,46 @@ class ResultData:
     def updateSubscriptions(self):
         assert False
 
+    def _create_element_list(self, objs, properties):
+        elements = []
+        element_names = set()
+        for property_name in properties:
+            assert isinstance(property_name, str)
+            for name, obj in objs.items():
+                if not obj.IsValidAttribute(property_name):
+                    raise InvalidParameter(f"{element_class} / {property_name} {name} cannot be exported")
+                if name not in element_names:
+                    elements.append((name, obj))
+                    element_names.add(name)
+        return elements, element_names
+
+
+
     def _create_list_by_class(self):
         for element_class, properties in self._export_list.items():
             elements = []
             element_names = set()
             if element_class == "Buses":
                 objs = self._buses
+                elements, element_names = self._create_element_list(objs, properties)
             else:
-                objs = self._objects_by_class[element_class]
-                if element_class not in self._objects_by_class:
-                    raise InvalidParameter(f"{element_class} cannot be exported")
+                if element_class in  self._objects_by_class:
+                    # Changed logic to ensure user done not have to worry about export definations.
+                    # Probably should add waring in the log if a call type in not available in the model
+                    objs = self._objects_by_class[element_class]
+                    elements, element_names = self._create_element_list(objs, properties)
+                    # if element_class not in self._objects_by_class:
+                    #     raise InvalidParameter(f"{element_class} cannot be exported")
 
-            for property_name in properties:
-                assert isinstance(property_name, str)
-                for name, obj in objs.items():
-                    if not obj.IsValidAttribute(property_name):
-                        raise InvalidParameter(f"{element_class} / {property_name} {name} cannot be exported")
-                    if name not in element_names:
-                        elements.append((name, obj))
-                        element_names.add(name)
+
+            # for property_name in properties:
+            #     assert isinstance(property_name, str)
+            #     for name, obj in objs.items():
+            #         if not obj.IsValidAttribute(property_name):
+            #             raise InvalidParameter(f"{element_class} / {property_name} {name} cannot be exported")
+            #         if name not in element_names:
+            #             elements.append((name, obj))
+            #             element_names.add(name)
 
             # TODO: refactor prop_aggregators
             prop_aggregators = []
@@ -361,8 +382,14 @@ class ElementValuesPerProperty(ElementData):
     def add_values(self):
         for prop in self.properties:
             value = self._obj.GetValue(prop, convert=True)
-            if self._data[prop] is None:
+            # print(value)
+            # if isinstance(value, str):
+            #     quit()
+            # TODO: please check to this if this is correct
+            if self._data[prop] is None and not isinstance(value, str):
                 self._data[prop] = value
+            elif self._data[prop] is None and isinstance(value, str):
+                self._data[prop] = [value]
             else:
                 self._data[prop].append(value)
             if self._value_class is None:
@@ -468,18 +495,22 @@ class ValuesByPropertyAcrossElements(ElementData):
             _data = elem.get_data(self._property)
             if not _data:
                 continue
-            df = _data.to_dataframe()
+            if not isinstance(_data, list):
+                df = _data.to_dataframe()
+            else:
+                df = pd.DataFrame(_data, columns=['{}__{}'.format(elem.name, self._property)])
             dataframes.append(df)
 
-        df = pd.concat(dataframes, axis=1, copy=False)
-        filename = self._make_filename() + "." + fmt
-        fullpath = os.path.join(path, filename)
-        write_dataframe(df, fullpath, compress=compress)
+        if len(dataframes):
+            df = pd.concat(dataframes, axis=1, copy=False)
+            filename = self._make_filename() + "." + fmt
+            fullpath = os.path.join(path, filename)
+            write_dataframe(df, fullpath, compress=compress)
 
-        data["file"] = fullpath
-        data["element_names"] = self._element_names
-        data["value_class"] = self._value_class.__name__
-        return data
+            data["file"] = fullpath
+            data["element_names"] = self._element_names
+            data["value_class"] = self._value_class.__name__
+            return data
 
     @classmethod
     def deserialize(cls, data):

@@ -6,29 +6,40 @@ class dssBus(dssObjectBase):
 
     VARIABLE_OUTPUTS_BY_LABEL = {
         "PuVoltage": {
-            "accessor": "Phases",
-            "label_prefix": "Phase",
+            "is_complex": True,
+            "units": ['[pu]']
         },
         "SeqVoltages": {
-            "accessor": "Phases",
-            "label_prefix": "Phase",
+            "is_complex": False,
+            "units": ['[kV]', '[Deg]']
+        },
+        "CplxSeqVoltages": {
+            "is_complex": True,
+            "units": ['[kV]']
         },
         "VMagAngle": {
-            "accessor": "Phases",
-            "label_prefix": "Phase",
+            "is_complex": False,
+            "units": ['[kV]', '[Deg]']
         },
         "Voc": {
-            "accessor": "Phases",
-            "label_prefix": "Phase",
+            "is_complex": True,
+            "units": ['[kV]']
         },
         "Voltages": {
-            "accessor": "Phases",
-            "label_prefix": "Phase",
+            "is_complex": True,
+            "units": ['[kV]']
         },
         "puVmagAngle": {
-            "accessor": "Phases",
-            "label_prefix": "Phase",
+            "is_complex": False,
+            "units":  ['[pu]', '[Deg]']
+
         },
+        "Isc": {
+            "is_complex": True,
+            "units": ['[Amps]']
+
+        },
+
     }
     VARIABLE_OUTPUTS_COMPLEX = ()
 
@@ -37,8 +48,10 @@ class dssBus(dssObjectBase):
         super(dssBus, self).__init__(dssInstance, name, name)
         self._Index = None
         self.XY = None
-        self._Nodes = dssInstance.Bus.Nodes()
-
+        self._Class  = 'Bus'
+        self._Nodes = [dssInstance.Bus.Nodes()]
+        self._NumTerminals = 1
+        self._NumConductors = len(self._Nodes)
         self.Distance = dssInstance.Bus.Distance()
         BusVarDict = dssInstance.Bus.__dict__
         for key in BusVarDict.keys():

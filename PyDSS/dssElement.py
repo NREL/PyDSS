@@ -5,30 +5,49 @@ from PyDSS.dssObjectBase import dssObjectBase
 from PyDSS.exceptions import InvalidParameter
 from PyDSS.value_storage import ValueByNumber
 
-
 class dssElement(dssObjectBase):
 
     VARIABLE_OUTPUTS_BY_LABEL = {
         "Currents": {
-            "accessor": "ConductorByTerminal",
-            "label_prefix": "",
+            "is_complex": True,
+            "units": ['[Amps]']
         },
         "CurrentsMagAng": {
-            "accessor": "Terminals",
-            "label_prefix": "Terminal",
+            "is_complex": False,
+            "units" : ['[Amps]', '[Deg]']
         },
         "Powers": {
-            "accessor": "ConductorByTerminal",
-            "label_prefix": "",
+            "is_complex": True,
+            "units": ['[kVA]']
         },
         "Voltages": {
-            "accessor": "Terminals",
-            "label_prefix": "Terminal",
+            "is_complex": True,
+            "units": ['[kV]']
         },
+        'VoltagesMagAng': {
+            "is_complex": False,
+            "units": ['[kV]', '[Deg]']
+        },
+        'Losses': {
+            "is_complex": True,
+            "units": ['[kVA]']
+        },
+        'CplxSeqCurrents': {
+            "is_complex": True,
+            "units": ['[Amps]']
+        },
+        'SeqCurrents': {
+            "is_complex": False,
+            "units": ['[Amps]', '[Deg]']
+        },
+        'SeqPowers': {
+            "is_complex": False,
+            "units": ['[kVA]', '[Deg]']
+        }
     }
 
     VARIABLE_OUTPUTS_COMPLEX = (
-        "Losses",
+
     )
 
     _MAX_CONDUCTORS = 4
@@ -43,18 +62,16 @@ class dssElement(dssObjectBase):
         self._Parameters = {}
         self._NumTerminals = dssInstance.CktElement.NumTerminals()
         self._NumConductors = dssInstance.CktElement.NumConductors()
+
         assert self._NumConductors <= self._MAX_CONDUCTORS, str(self._NumConductors)
         self._NumPhases = dssInstance.CktElement.NumPhases()
 
-        # Array of integer containing the node numbers (representing phases, for example)
-        # for each conductor of each terminal.
-        self._NodeOrder = dssInstance.CktElement.NodeOrder()
-        assert len(self._NodeOrder) == self._NumTerminals * self._NumConductors, \
-            f"{self._NodeOrder} {self._NumTerminals} {self._NumConductors}"
+        n = self._NumConductors
+        nodes = dssInstance.CktElement.NodeOrder()
+        self._Nodes = [nodes[i * n:(i + 1) * n] for i in range((len(nodes) + n - 1) // n)]
 
-        self.Bus = None
-        self.BusCount = None
-        self.sBus = []
+        assert len(nodes) == self._NumTerminals * self._NumConductors, \
+            f"{self._Nodes} {self._NumTerminals} {self._NumConductors}"
 
         self._dssInstance = dssInstance
 
@@ -118,6 +135,7 @@ class dssElement(dssObjectBase):
                     VarValue = float(VarValue)
                     if convert:
                         VarValue = ValueByNumber(self._FullName, VarName, VarValue)
+
                         # TODO: this is now prone to error. If there is a coding
                         # error in ValueByNumber then this will jump to the
                         # exception handler.
@@ -156,7 +174,13 @@ class dssElement(dssObjectBase):
 
     @property
     def Conductors(self):
-        letters = "ABCN"
+        letters = 'ABCN'
+        # letters = {
+        #     1:'A',
+        #     2:'B',
+        #     3:'C',
+        #     0:'N'
+        # }
         # FIXME: Handling of order is incorrect
         return [letters[i] for i in range(self._NumConductors)]
 
