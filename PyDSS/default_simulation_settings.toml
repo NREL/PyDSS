@@ -37,9 +37,9 @@
 "End Time (min)" = 1439.0
 "Date offset" = 0
 "Step resolution (sec)" = 900.0
-"Max Control Iterations" = 15
+"Max Control Iterations" = 50
 "Error tolerance" = 0.001
-"Control mode" = "Time"
+"Control mode" = "Static"
 "Disable PyDSS controllers" = false
 "Simulation Type" = "QSTS"
 "Project Path" = ""

@@ -203,7 +203,8 @@ class OpenDSS:
 
     def _UpdateDictionary(self):
         InvalidSelection = ['Settings', 'ActiveClass', 'dss', 'utils', 'PDElements', 'XYCurves', 'Bus', 'Properties']
-        self._dssObjectsByClass={'LoadShape': self._GetRelaventObjectDict('LoadShape')}
+        # TODO: this causes a segmentation fault. Aadil says it may not be needed.
+        # self._dssObjectsByClass={'LoadShape': self._GetRelaventObjectDict('LoadShape')}
 
         for ElmName in self._dssInstance.Circuit.AllElementNames():
             Class, Name =  ElmName.split('.', 1)

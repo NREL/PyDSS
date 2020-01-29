@@ -20,12 +20,12 @@ plt.rcParams.update({'font.size': 14})
 class postprocess_thermal_upgrades():
     def __init__(self, Settings, dss):
         self.Settings = Settings
-        # self.sol = dss.Solution
+        self.sol = dss.Solution
         self.init_pen = self.Settings["DPV_penetration_HClimit"]
         self.end_pen = self.Settings["DPV_penetration_target"]
         self.pen_step = self.Settings["DPV_penetration_step"]
+
         if self.Settings["Create_plots"]:
-            # self.compile_feeder_initialize()
             self.create_op_plots()
         self.get_orig_line_DT_params()
         self.process_thermal_upgrades()
@@ -153,25 +153,56 @@ class postprocess_thermal_upgrades():
                 self.DT_size_list.append((vals["new"][0]+vals["upgrade"][0])*25)
                 self.DT_sec_coords[bus_sec] = self.pos_dict[bus_sec]
 
-    def compile_feeder_initialize(self):
-        dss.run_command("Clear")
-        dss.Basic.ClearAll()
-        Master_file = os.path.join(self.Settings["Feeder"], self.Settings["master file"])
-        if not os.path.exists(Master_file):
-            print("error {} does not exist".format(Master_file))
-            quit()
-        command_string = "Redirect {master}".format(master=Master_file)
-        dss.run_command(command_string)
-        command_string = "Solve mode=snap"
-        self.sol.Solve()
-
     def create_op_plots(self):
         self.all_bus_names = dss.Circuit.AllBusNames()
         self.G = nx.DiGraph()
         self.generate_nodes()
         self.generate_edges()
         self.pos_dict = nx.get_node_attributes(self.G, 'pos')
+        self.correct_node_coords()
         print("Length:", len(self.pos_dict))
+
+    def correct_node_coords(self):
+        # If node doesn't have node attributes, attach parent or child node's attributes
+        new_temp_graph = self.G
+        temp_graph = new_temp_graph.to_undirected()
+        for n, d in self.G.in_degree().items():
+            if d == 0:
+                self.source = n
+        for key, vals in self.pos_dict.items():
+            if vals[0] == 0.0 and vals[1] == 0.0:
+                new_x = 0
+                new_y = 0
+                pred_buses = nx.shortest_path(temp_graph, source=key, target=self.source)
+                if len(pred_buses) > 0:
+                    for pred_bus in pred_buses:
+                        if pred_bus == key:
+                            continue
+                        if self.pos_dict[pred_bus][0] != 0.0 and self.pos_dict[pred_bus][1] != 0.0:
+                            new_x = self.pos_dict[pred_bus][0]
+                            new_y = self.pos_dict[pred_bus][1]
+                            self.G.node[key]["pos"] = [new_x, new_y]
+                            break
+                if new_x == 0 and new_y == 0:
+                    # Since either predecessor nodes were not available or they did not have
+                    # non-zero coordinates, try successor nodes
+                    # Get a leaf node
+                    for x in self.G.nodes():
+                        if self.G.out_degree(x) == 0 and self.G.in_degree(x) == 1:
+                            leaf_node = x
+                            break
+                    succ_buses = nx.shortest_path(temp_graph, source=key, target=leaf_node)
+                    if len(succ_buses) > 0:
+                        for pred_bus in succ_buses:
+                            if pred_bus == key:
+                                continue
+                            if self.pos_dict[pred_bus][0] != 0.0 and self.pos_dict[pred_bus][1] != 0.0:
+                                new_x = self.pos_dict[pred_bus][0]
+                                new_y = self.pos_dict[pred_bus][1]
+                                self.G.node[key]["pos"] = [new_x, new_y]
+                                break
+        # Update pos dict with new coordinates
+        self.pos_dict = nx.get_node_attributes(self.G, 'pos')
 
     def generate_nodes(self):
         self.nodes_list = []
@@ -221,7 +252,7 @@ class postprocess_thermal_upgrades():
         ec = nx.draw_networkx_edges(self.G, pos=self.pos_dict, alpha=1.0, width=1)
         if len(self.DT_sec_lst)>0:
             dt = nx.draw_networkx_nodes(self.G, pos=self.DT_sec_coords, nodelist=self.DT_sec_lst, node_size=self.DT_size_list,
-                                        node_color='orange', alpha=1)
+                                        node_color='r', alpha=1)
         ldn = nx.draw_networkx_nodes(self.G, pos=self.pos_dict, nodelist=self.nodes_list, node_size=1,
                                      node_color='k', alpha=1)
 

@@ -4,10 +4,10 @@ import os
 
 @click.command()
 @click.option('--pydss_path',
-              default=r'C:\Users\alatif\Desktop\PyDSS',
+              default=r'C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS',
               help='number of greetings')
 @click.option('--sim_path',
-              default=r'C:\Users\alatif\Desktop\PyDSS\examples\External_interfacing_example\pyDSS_project\PyDSS Scenarios',
+              default=r'C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\PyDSS Scenarios',
               help='number of greetings')
 @click.option('--sim_file',
               default=r'helics_interface.toml',

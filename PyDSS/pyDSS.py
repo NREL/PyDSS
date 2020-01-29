@@ -192,7 +192,7 @@ class instance(object):
             else:
                 dss.RunSimulation()
             del dss
-            print(dss)
+            #print(dss)
         if generate_visuals:
             result = ResultObject(os.path.join(
                 dss_args['Project Path'],

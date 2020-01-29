@@ -1,2 +1,2 @@
-timestamp,frequency,Simulation mode,Circuit.j1 ph:1 [kW],Circuit.j1 ph:1 [kvar]
-2017-01-01,60.0,Snap,1166.2491202164401,2593.9474011188154
+timestamp,frequency,Simulation mode,Circuit.diamond_4kv ph:1 [kW],Circuit.diamond_4kv ph:1 [kvar]
+2017-01-01,60.0,Snap,66.31109750590743,60.40454033438442

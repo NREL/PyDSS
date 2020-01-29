@@ -3,14 +3,14 @@
 "Simulation Type" = "Snapshot"
 "Active Project" = "Custom_controls_example"
 "Active Scenario" = "base_case"
-"DSS File" = "Master.dss"
-"Post processing script" = "AutomatedThermalUpgrade"
+"DSS File" = "Master_noPV.dss"
+"Post processing script" = "AutomatedVoltageUpgrade"
 
 # Thermal upgrades settings
 # "Feeder" = "../Test_Feeder"
 # "img_path"                   = "../Images"
 # "DPV_scenarios"             = "../ten_random"#"../ten_random_J1",
-# "master file"               = "Master_noPV.dss"#"Master.dss",
+# "master file"               = "Master.dss"#"Master.dss",
 # "DPV_penetration_HClimit"   = 120
 # "DPV_penetration_target"    = 160
 # "DPV_penetration_step"      = 10

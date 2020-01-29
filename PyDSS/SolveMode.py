@@ -223,7 +223,7 @@ class __Shapshot:
         self.__dssInstance = dssInstance
         self.__dssSolution = dssInstance.Solution
         self.__dssSolution.Mode(0)
-        self.__dssInstance.utils.run_command('Set ControlMode={}'.format(SimulationSettings['Control mode']))
+        #self.__dssInstance.utils.run_command('Set ControlMode={}'.format(SimulationSettings['Control mode']))
         self.__dssSolution.MaxControlIterations(SimulationSettings['Max Control Iterations'])
 
         return
