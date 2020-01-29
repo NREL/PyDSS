@@ -130,26 +130,32 @@ class dssElement(dssObjectBase):
             VarValue = self.GetVariable(VarName, convert=convert)
         elif VarName in self._Parameters:
             VarValue = self.GetParameter(VarName)
-            if VarValue is not None:
-                try:
-                    VarValue = float(VarValue)
-                    if convert:
-                        VarValue = ValueByNumber(self._FullName, VarName, VarValue)
-
-                        # TODO: this is now prone to error. If there is a coding
-                        # error in ValueByNumber then this will jump to the
-                        # exception handler.
-                        # Talk to Aadil about making the except explicit.
-                except:
-                    try:
-                        VarValue = ast.literal_eval(VarValue)
-                    except:
-                        pass
-            else:
-                VarValue = 0
+            if convert:
+                VarValue = ValueByNumber(self._FullName, VarName, VarValue)
         else:
-            VarValue = 0
+            return None
         return VarValue
+
+        #     if VarValue is not None:
+        #         try:
+        #             VarValue = float(VarValue)
+        #             if convert:
+        #                 VarValue = ValueByNumber(self._FullName, VarName, VarValue)
+        #
+        #                 # TODO: this is now prone to error. If there is a coding
+        #                 # error in ValueByNumber then this will jump to the
+        #                 # exception handler.
+        #                 # Talk to Aadil about making the except explicit.
+        #         except:
+        #             try:
+        #                 VarValue = ast.literal_eval(VarValue)
+        #             except:
+        #                 pass
+        #     else:
+        #         VarValue = 0
+        # else:
+        #     VarValue = 0
+        # return VarValue
 
     def SetActiveObject(self):
         self._dssInstance.Circuit.SetActiveElement(self._FullName)
@@ -175,13 +181,6 @@ class dssElement(dssObjectBase):
     @property
     def Conductors(self):
         letters = 'ABCN'
-        # letters = {
-        #     1:'A',
-        #     2:'B',
-        #     3:'C',
-        #     0:'N'
-        # }
-        # FIXME: Handling of order is incorrect
         return [letters[i] for i in range(self._NumConductors)]
 
     @property
@@ -208,7 +207,4 @@ class dssElement(dssObjectBase):
     def Terminals(self):
         return list(range(1, self._NumTerminals + 1))
 
-    # TODO: do we need this?  Causes errors when Python is shutting down
-    #def __del__(self):
-    #    self.SetParameter('enabled', 'false')
-    #    return
+

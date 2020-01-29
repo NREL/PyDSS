@@ -49,9 +49,10 @@ class dssBus(dssObjectBase):
         self._Index = None
         self.XY = None
         self._Class  = 'Bus'
+        #  self._Nodes is nested in a list to be consistent with dssElement._Nodes
         self._Nodes = [dssInstance.Bus.Nodes()]
         self._NumTerminals = 1
-        self._NumConductors = len(self._Nodes)
+        self._NumConductors = len(dssInstance.Bus.Nodes())
         self.Distance = dssInstance.Bus.Distance()
         BusVarDict = dssInstance.Bus.__dict__
         for key in BusVarDict.keys():
@@ -63,6 +64,10 @@ class dssBus(dssObjectBase):
             self.XY = [self.GetVariable('X'), self.GetVariable('Y')]
         else:
             self.XY = [0, 0]
+
+    @property
+    def NumConductors(self):
+        return self._NumConductors
 
     @property
     def NumPhases(self):

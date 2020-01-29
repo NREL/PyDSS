@@ -60,36 +60,6 @@ class _ValueStorageBase(abc.ABC):
 
         """
 
-
-class ValueByString(_ValueStorageBase):
-    """Stores a list of numbers for an element/property."""
-    def __init__(self, name, prop, value):
-        self._data = [value]
-        self._name = name
-        self._prop = prop
-
-    def __iter__(self):
-        return self._data.__iter__()
-
-    def __len__(self):
-        return len(self._data)
-
-    def append(self, other):
-        """Append values from another instance of ValueByNumber"""
-        self._data += other
-
-    @property
-    @staticmethod
-    def num_columns():
-        return 1
-
-    @staticmethod
-    def _make_column(name, prop):
-        return _ValueStorageBase.DELIMITER.join((name, prop))
-
-    def to_dataframe(self):
-        return pd.DataFrame(self._data, columns=[self._make_column(self._name, self._prop)])
-
 class ValueByNumber(_ValueStorageBase):
     """Stores a list of numbers for an element/property."""
     def __init__(self, name, prop, value):
@@ -151,8 +121,17 @@ class ValueByLabel(_ValueStorageBase):
 
         n = 2
         m = int(len(value) / (len(Nodes)*n))
-        value = [value[i * n:(i + 1) * n] for i in range((len(value) + n - 1) // n)]
-        value = [value[i * m:(i + 1) * m] for i in range((len(value) + m - 1) // m)]
+        value = self.chunk_list(value, n)
+        value = self.chunk_list(value, m)
+
+        # Chunk_list example
+        # X = list(range(12)) , nList= 2
+        # Y = chunk_list(X, nList) -> [[0, 1], [2, 3], [4, 5], [6, 7], [8, 9], [10, 11]]
+        # Given element has 2 terminals m = 12 / (2*2) = 3
+        # Z =  chunk_list(Y, m) - > [
+        #                            [[0, 1], [2, 3], [4, 5]],  Terminal one complex pairs
+        #                            [[6, 7], [8, 9], [10, 11]] Terminal two complex pairs
+        #                            ]
 
         for i, node_val in enumerate(zip(Nodes, value)):
             node, val = node_val
@@ -168,6 +147,10 @@ class ValueByLabel(_ValueStorageBase):
                     self._labels.extend([label_mag ,label_ang])
                     self._data[label_mag] = [x[0]]
                     self._data[label_ang] = [x[1]]
+
+    @staticmethod
+    def chunk_list(values, nLists):
+        return  [values[i * nLists:(i + 1) * nLists] for i in range((len(values) + nLists - 1) // nLists)]
 
     def __iter__(self):
         return self._data.__iter__()
