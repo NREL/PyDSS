@@ -6,6 +6,7 @@ import os
 import re
 
 from PyDSS.utils.dataframe_utils import read_dataframe
+from PyDSS.element_options import ElementOptions
 from PyDSS.exceptions import InvalidParameter
 from PyDSS.pydss_project import PyDssProject
 from PyDSS.ResultData import ResultData, ElementValuesPerProperty, \
@@ -13,14 +14,16 @@ from PyDSS.ResultData import ResultData, ElementValuesPerProperty, \
 from PyDSS.utils.utils import load_data
 
 
+
 class PyDssResults:
     """Interface to perform analysis on PyDSS output data."""
     def __init__(self, project_path):
+        options = ElementOptions()
         self._project = PyDssProject.load_project(project_path)
         self._scenarios = []
         exports_dir = os.path.join(project_path, "Exports")
         for scenario in os.listdir(exports_dir):
-            scenario_result = _get_scenario_results(exports_dir, scenario)
+            scenario_result = _get_scenario_results(exports_dir, scenario, options)
             self._scenarios.append(scenario_result)
 
     @property
@@ -30,11 +33,12 @@ class PyDssResults:
 
 class _Results(abc.ABC):
 
-    def __init__(self, metadata):
+    def __init__(self, metadata, options):
         self._metadata = metadata
+        self._options = options
 
     @abc.abstractmethod
-    def get_dataframe(self, element_class, prop, element_name, label=None):
+    def get_dataframe(self, element_class, prop, element_name, **kwargs):
         """Return the dataframe for an element.
 
         Parameters
@@ -42,10 +46,8 @@ class _Results(abc.ABC):
         element_class : str
         prop : str
         element_name : str
-        label : int
-            For compound values return only this value. If None, return all.
-            For example, to get only Currents values from terminal 2 conductor
-            A, set label="2A".
+        kwargs : **kwargs
+            Filter on options
 
         Returns
         -------
@@ -77,7 +79,7 @@ class _Results(abc.ABC):
         """
 
     @abc.abstractmethod
-    def iterate_dataframes(self, element_class, name_or_prop, label=None):
+    def iterate_dataframes(self, element_class, name_or_prop, **kwargs):
         """Returns a generator over the dataframes by element name.
 
         Parameters
@@ -87,10 +89,8 @@ class _Results(abc.ABC):
             The element name or property, depending on
             ElementValuesPerPropertyResults vs
             ValuesByPropertyAcrossElementsResults
-        label : int
-            For compound values return only this value. If None, return all.
-            For example, to get only Currents values from terminal 2 conductor
-            A, set label="2A".
+        kwargs : **kwargs
+            Filter on options
 
         Returns
         -------
@@ -147,6 +147,21 @@ class _Results(abc.ABC):
             Raised if the element_class is not stored.
 
         """
+
+    def list_element_property_options(self, element_class, prop):
+        """List the possible options for the element class and property.
+
+        Parameters
+        ----------
+        element_class : str
+        prop : str
+
+        Returns
+        -------
+        list
+
+        """
+        return self._options.list_options(element_class, prop)
 
     def list_element_info_files(self):
         """Return the files describing the OpenDSS element objects.
@@ -209,11 +224,20 @@ class _Results(abc.ABC):
         """
         return _read_event_log(self._metadata["event_log"])
 
+    def _check_options(self, element_class, prop, **kwargs):
+        for option, val in kwargs.items():
+            if not self._options.is_option_valid(element_class, prop, option):
+                raise InvalidParameter(
+                    f"class={element_class} property={prop} option={option} is invalid"
+                )
+
+        return self._options.list_options(element_class, prop)
+
 
 class ElementValuesPerPropertyResults(_Results):
     """Result wrapper for ElementValuesPerProperty"""
-    def __init__(self, metadata):
-        super(ElementValuesPerPropertyResults, self).__init__(metadata)
+    def __init__(self, metadata, options):
+        super(ElementValuesPerPropertyResults, self).__init__(metadata, options)
         self._elements = {}
 
         for elem_class, elements in metadata["data"].items():
@@ -222,17 +246,18 @@ class ElementValuesPerPropertyResults(_Results):
                 obj = ElementValuesPerProperty.deserialize(element)
                 self._elements[elem_class].append(obj)
 
-    def get_dataframe(self, element_class, prop, element_name, label=None):
+    def get_dataframe(self, element_class, prop, element_name, **kwargs):
+        options = self._check_options(element_class, prop, **kwargs)
         element = self._get_element(element_class, element_name)
-        return element.get_dataframe(prop, label=label)
+        return element.get_dataframe(prop, options, **kwargs)
 
     def get_full_dataframe(self, element_class, name_or_prop):
         element = self._get_element(element_class, name_or_prop)
         return element.get_full_dataframe()
 
-    def iterate_dataframes(self, element_class, name_or_prop, label=None):
+    def iterate_dataframes(self, element_class, name_or_prop, **kwargs):
         element = self._get_element(element_class, name_or_prop)
-        return element.iterate_dataframes(label=label)
+        return element.iterate_dataframes(**kwargs)
 
     def list_element_classes(self):
         return sorted(list(self._elements.keys()))
@@ -268,8 +293,8 @@ _ClassProperty = namedtuple("ClassProperty", "element_class, property")
 
 class ValuesByPropertyAcrossElementsResults(_Results):
     """Result wrapper for ValuesByPropertyAcrossElements"""
-    def __init__(self, metadata):
-        super(ValuesByPropertyAcrossElementsResults, self).__init__(metadata)
+    def __init__(self, metadata, options):
+        super(ValuesByPropertyAcrossElementsResults, self).__init__(metadata, options)
         self._property_aggregators = {}
 
         for element in metadata["data"]:
@@ -277,17 +302,19 @@ class ValuesByPropertyAcrossElementsResults(_Results):
             key = _ClassProperty(obj.element_class, obj.prop)
             self._property_aggregators[key] = obj
 
-    def get_dataframe(self, element_class, prop, element_name, label=None):
+    def get_dataframe(self, element_class, prop, element_name, **kwargs):
+        options = self._check_options(element_class, prop, **kwargs)
         prop_agg = self._get_property_aggregator(element_class, prop)
-        return prop_agg.get_dataframe(element_name, label=label)
+        return prop_agg.get_dataframe(element_name, options, **kwargs)
 
     def get_full_dataframe(self, element_class, name_or_prop):
         prop_agg = self._get_property_aggregator(element_class, name_or_prop)
         return prop_agg.get_full_dataframe()
 
-    def iterate_dataframes(self, element_class, name_or_prop, label=None):
+    def iterate_dataframes(self, element_class, name_or_prop, **kwargs):
+        options = self._check_options(element_class, name_or_prop, **kwargs)
         prop_agg = self._get_property_aggregator(element_class, name_or_prop)
-        return prop_agg.iterate_dataframes(label=label)
+        return prop_agg.iterate_dataframes(**kwargs)
 
     def list_element_classes(self):
         classes = set()
@@ -324,7 +351,7 @@ class ValuesByPropertyAcrossElementsResults(_Results):
         return prop_agg
 
 
-def _get_scenario_results(path, scenario):
+def _get_scenario_results(path, scenario, options):
     filename = os.path.join(path, scenario, ResultData.METADATA_FILENAME)
     if not os.path.exists(filename):
         raise InvalidParameter(
@@ -333,9 +360,9 @@ def _get_scenario_results(path, scenario):
 
     metadata = load_data(filename)
     if metadata["type"] == "ElementValuesPerProperty":
-        results = ElementValuesPerPropertyResults(metadata)
+        results = ElementValuesPerPropertyResults(metadata, options)
     elif metadata["type"] == "ValuesByPropertyAcrossElements":
-        results = ValuesByPropertyAcrossElementsResults(metadata)
+        results = ValuesByPropertyAcrossElementsResults(metadata, options)
     else:
         assert False, f"type={metadata['type']} is invalid"
 

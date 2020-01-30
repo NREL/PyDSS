@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def read_dataframe(filename, index_col=None, columns=None, parse_dates=False,
-                   remove_unnamed=True, **kwargs):
+                   remove_unnamed=True, strip_column_units=False, **kwargs):
     """Convert filename to a dataframe. Supports .csv, .json, .feather.
     Handles compressed files.
 
@@ -27,6 +27,8 @@ def read_dataframe(filename, index_col=None, columns=None, parse_dates=False,
     parse_dates : bool
     remove_unnamed : bool
         Remove any column that starts with "Unnamed".
+    strip_column_units : bool
+        Remove units from column names.
     kwargs : kwargs
         Passed to underlying library for dataframe conversion.
         Consider setting parse_dates=True if the index is a timestamp.
@@ -70,6 +72,15 @@ def read_dataframe(filename, index_col=None, columns=None, parse_dates=False,
     if remove_unnamed:
         cols_to_remove = [x for x in df.columns if x.startswith("Unnamed")]
         df.drop(columns=cols_to_remove, inplace=True)
+
+    if strip_column_units:
+        columns = []
+        for column in df.columns:
+            index = column.find(" [")
+            if index != -1:
+                column = column[:index]
+            columns.append(column)
+        df.columns = columns
 
     return df
 

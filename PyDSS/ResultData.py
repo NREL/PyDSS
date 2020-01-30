@@ -302,7 +302,7 @@ class ElementData(abc.ABC):
         df.set_index(("timestamp"), inplace=True)
 
     @abc.abstractmethod
-    def iterate_dataframes(self, label=None):
+    def iterate_dataframes(self, **kwargs):
         """Return a generator of stored dataframes."""
 
     def set_value_class(self, value_class):
@@ -336,8 +336,10 @@ class ElementValuesPerProperty(ElementData):
             if not _data:
                 continue
             df = _data.to_dataframe()
-            columns = self._value_class.get_columns(df, self._name, prop)
-            df.columns = columns
+            # TODO: this might be broken but this code path is not expected
+            # to be used much.
+            #columns = self._value_class.get_columns(df, self._name, options)
+            #df.columns = columns
             dataframes.append(df)
 
         df = pd.concat(dataframes, axis=1, copy=False)
@@ -396,17 +398,15 @@ class ElementValuesPerProperty(ElementData):
         assert self._data is not None
         return self._data[prop]
 
-    def get_dataframe(self, prop, label=None):
+    def get_dataframe(self, prop, options, **kwargs):
         """Return a dataframe for a property.
 
         Parameters
         ----------
         prop : str
             property of an ElementValuesPerProperty Class
-        index : int
-            For compound values return only this value. If None, return all.
-            For example, to get only Current Magnitudes from a property called
-            'CurrentsMagAng', set index=0.
+        kwargs : **kwargs
+            Filter on options
 
         Returns
         -------
@@ -414,12 +414,12 @@ class ElementValuesPerProperty(ElementData):
 
         """
         df = self._get_dataframe()
-        columns = self._value_class.get_columns(df, self._name, prop, label=label)
+        columns = self._value_class.get_columns(df, self._name, options, **kwargs)
         df = df[columns]
         self._add_indices_to_dataframe(df)
         return df
 
-    def iterate_dataframes(self, label=None):
+    def iterate_dataframes(self, options, **kwargs):
         """Returns a generator over the dataframes by property.
 
         Returns
@@ -430,7 +430,7 @@ class ElementValuesPerProperty(ElementData):
         """
         df_master = self._get_dataframe()
         for prop in self._properties:
-            columns = self._value_class.get_columns(df_master, self._name, prop)
+            columns = self._value_class.get_columns(df_master, self._name, options, **kwargs)
             df = df_master[columns]
             self._add_indices_to_dataframe(df)
             yield prop, df
@@ -530,16 +530,14 @@ class ValuesByPropertyAcrossElements(ElementData):
     def prop(self):
         return self._property
 
-    def get_dataframe(self, element_name, label=None):
+    def get_dataframe(self, element_name, options, **kwargs):
         """Return a dataframe for a property.
 
         Parameters
         ----------
         element_name : str
-        index : int
-            For compound values return only this value. If None, return all.
-            For example, to get only Current Magnitudes from a property called
-            'CurrentsMagAng', set index=0.
+        kwargs : **kwargs
+            Filter on options
 
         Returns
         -------
@@ -548,12 +546,12 @@ class ValuesByPropertyAcrossElements(ElementData):
         """
         assert self._value_class is not None
         df = self._get_dataframe()
-        columns = self._value_class.get_columns(df, element_name, self._property, label=label)
+        columns = self._value_class.get_columns(df, element_name, options, **kwargs)
         df = df[columns]
         self._add_indices_to_dataframe(df)
         return df
 
-    def iterate_dataframes(self, label=None):
+    def iterate_dataframes(self, options, **kwargs):
         """Returns a generator over the dataframes by element name.
 
         Returns
@@ -564,7 +562,7 @@ class ValuesByPropertyAcrossElements(ElementData):
         """
         df_master = self._get_dataframe()
         for name in self._element_names:
-            columns = self._value_class.get_columns(df_master, name, self._property, label=label)
+            columns = self._value_class.get_columns(df_master, name, options, **kwargs)
             df = df_master[columns]
             self._add_indices_to_dataframe(df)
             yield name, df
