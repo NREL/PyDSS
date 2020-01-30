@@ -2,9 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="30945d95-4cae-4696-b5de-ac9b162e4af0" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedVoltageUpgrade.py" beforeDir="false" afterPath="$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedVoltageUpgrade.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/HECO19021_Profile9998.DSV" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/HECO19021_Profile9998.dbl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/HECO19021_VLN_Node.Txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/Loadshapes_Sep8to15.dss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/MPX000460267.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/MPX000472455.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/MPX000594341.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/MPX000635970.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/MPX000637601.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/Master_Spohn_existing_VV.dss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/PVGenerators_existing_VV.dss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/SecLines.dss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/SecLoads_Timeseries_realloc.dss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/Vsource_profile.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/buscoords.dss" beforeDir="false" afterPath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/buscoords.dss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/Custom_controls_example/DSSfiles/testcodes.dss" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,8 +31,8 @@
       <file leaf-file-name="pyDSS.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PyDSS/pyDSS.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="251">
-              <caret line="79" column="75" lean-forward="true" selection-start-line="79" selection-start-column="75" selection-end-line="79" selection-end-column="75" />
+            <state relative-caret-position="172">
+              <caret line="79" column="75" selection-start-line="79" selection-start-column="75" selection-end-line="79" selection-end-column="75" />
               <folding>
                 <element signature="e#0#61#0" expanded="true" />
               </folding>
@@ -30,7 +43,7 @@
       <file leaf-file-name="pyPostprocess.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/pyPostprocess.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
+            <state relative-caret-position="187">
               <caret line="14" selection-start-line="14" selection-end-line="14" />
             </state>
           </provider>
@@ -39,8 +52,8 @@
       <file leaf-file-name="AutomatedThermalUpgrade.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="359">
-              <caret line="131" column="9" selection-start-line="131" selection-start-column="9" selection-end-line="131" selection-end-column="9" />
+            <state relative-caret-position="432">
+              <caret line="54" column="36" selection-start-line="54" selection-start-column="36" selection-end-line="54" selection-end-column="36" />
               <folding>
                 <element signature="e#0#75#0" expanded="true" />
               </folding>
@@ -51,7 +64,7 @@
       <file leaf-file-name="run_dummy_federate.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/examples/External_interfacing_example/Helics_example/run_dummy_federate.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-930">
+            <state relative-caret-position="-931">
               <caret line="1" selection-start-line="1" selection-end-line="1" />
               <folding>
                 <element signature="e#24#35#0" expanded="true" />
@@ -63,8 +76,8 @@
       <file leaf-file-name="AutomatedVoltageUpgrade.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedVoltageUpgrade.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="648">
-              <caret line="438" column="34" lean-forward="true" selection-start-line="438" selection-start-column="34" selection-end-line="438" selection-end-column="34" />
+            <state relative-caret-position="210">
+              <caret line="438" column="34" selection-start-line="438" selection-start-column="34" selection-end-line="438" selection-end-column="34" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -75,8 +88,8 @@
       <file leaf-file-name="postprocess_voltage_upgrades.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/postprocess_voltage_upgrades.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="746">
-              <caret line="50" column="33" lean-forward="true" selection-start-line="50" selection-start-column="33" selection-end-line="50" selection-end-column="33" />
+            <state relative-caret-position="696">
+              <caret line="50" column="33" selection-start-line="50" selection-start-column="33" selection-end-line="50" selection-end-column="33" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -92,7 +105,7 @@
       <file leaf-file-name="postprocess_thermal_upgrades.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/postprocess_thermal_upgrades.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-501">
+            <state relative-caret-position="-655">
               <caret line="154" selection-start-line="154" selection-end-line="154" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
@@ -104,7 +117,7 @@
       <file leaf-file-name="SolveMode.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PyDSS/SolveMode.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
+            <state relative-caret-position="62">
               <caret line="226" column="8" selection-start-line="226" selection-start-column="8" selection-end-line="226" selection-end-column="8" />
               <folding>
                 <element signature="e#0#40#0" expanded="true" />
@@ -158,10 +171,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
-    <option name="width" value="1936" />
-    <option name="height" value="1056" />
+    <option name="x" value="1909" />
+    <option name="y" value="-11" />
+    <option name="width" value="1943" />
+    <option name="height" value="1043" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -417,10 +430,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="1913" y="-7" width="1295" height="695" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.196875" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23028883" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.46227416" />
@@ -819,7 +832,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/examples/External_interfacing_example/Helics_example/run_dummy_federate.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-930">
+        <state relative-caret-position="-931">
           <caret line="1" selection-start-line="1" selection-end-line="1" />
           <folding>
             <element signature="e#24#35#0" expanded="true" />
@@ -853,7 +866,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/SolveMode.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
+        <state relative-caret-position="62">
           <caret line="226" column="8" selection-start-line="226" selection-start-column="8" selection-end-line="226" selection-end-column="8" />
           <folding>
             <element signature="e#0#40#0" expanded="true" />
@@ -866,14 +879,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/pyPostprocess.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
+        <state relative-caret-position="187">
           <caret line="14" selection-start-line="14" selection-end-line="14" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/postprocess_thermal_upgrades.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-501">
+        <state relative-caret-position="-655">
           <caret line="154" selection-start-line="154" selection-end-line="154" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
@@ -890,8 +903,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/postprocess_voltage_upgrades.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="746">
-          <caret line="50" column="33" lean-forward="true" selection-start-line="50" selection-start-column="33" selection-end-line="50" selection-end-column="33" />
+        <state relative-caret-position="696">
+          <caret line="50" column="33" selection-start-line="50" selection-start-column="33" selection-end-line="50" selection-end-column="33" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
@@ -900,8 +913,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/pyDSS.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="251">
-          <caret line="79" column="75" lean-forward="true" selection-start-line="79" selection-start-column="75" selection-end-line="79" selection-end-column="75" />
+        <state relative-caret-position="172">
+          <caret line="79" column="75" selection-start-line="79" selection-start-column="75" selection-end-line="79" selection-end-column="75" />
           <folding>
             <element signature="e#0#61#0" expanded="true" />
           </folding>
@@ -910,8 +923,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedVoltageUpgrade.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="648">
-          <caret line="438" column="34" lean-forward="true" selection-start-line="438" selection-start-column="34" selection-end-line="438" selection-end-column="34" />
+        <state relative-caret-position="210">
+          <caret line="438" column="34" selection-start-line="438" selection-start-column="34" selection-end-line="438" selection-end-column="34" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
@@ -920,8 +933,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PyDSS/pyPostprocessor/PostprocessScripts/AutomatedThermalUpgrade.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="359">
-          <caret line="131" column="9" selection-start-line="131" selection-start-column="9" selection-end-line="131" selection-end-column="9" />
+        <state relative-caret-position="432">
+          <caret line="54" column="36" selection-start-line="54" selection-start-column="36" selection-end-line="54" selection-end-column="36" />
           <folding>
             <element signature="e#0#75#0" expanded="true" />
           </folding>
