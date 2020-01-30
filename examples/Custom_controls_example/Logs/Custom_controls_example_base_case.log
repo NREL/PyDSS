@@ -2049,3 +2049,88 @@
 2020-01-29 15:43:20,024 - INFO - dssInstance - Simulation completed in 53.152695417404175 seconds
 2020-01-29 15:43:20,024 - INFO - dssInstance - End of simulation
 2020-01-29 15:43:20,024 - INFO - dssInstance - An instance of OpenDSS (<PyDSS.dssInstance.OpenDSS object at 0x0000020AF8718BE0>) has been deleted.
+2020-01-30 13:47:02,073 - INFO - dssInstance - An instance of OpenDSS version 0.3.7 has been created.
+2020-01-30 13:47:02,078 - INFO - dssInstance - Loading OpenDSS model
+2020-01-30 13:47:02,130 - INFO - dssInstance - OpenDSS:  
+2020-01-30 13:47:02,130 - INFO - dssInstance - OpenDSS fundamental frequency set to :  60 Hz
+2020-01-30 13:47:02,130 - INFO - SolveMode - Setting solver to Snapshot mode.
+2020-01-30 13:47:02,503 - INFO - dssInstance - Running simulation from 2017-01-01 00:00:00 till 2017-01-01 00:00:00.
+2020-01-30 13:47:02,503 - INFO - dssInstance - Simulation time step 1.
+2020-01-30 13:50:48,492 - INFO - ResultContainer - Loads-Powers.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:50:48,517 - INFO - ResultContainer - Loads-VoltagesMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:50:48,554 - INFO - ResultContainer - Buses-puVmagAngle.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:50:48,584 - INFO - ResultContainer - Buses-Distance.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:50:48,596 - INFO - ResultContainer - Circuits-TotalPower.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:50:48,610 - INFO - ResultContainer - Circuits-LineLosses.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:50:48,623 - INFO - ResultContainer - Circuits-Losses.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:50:48,635 - INFO - ResultContainer - Circuits-SubstationLosses.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:50:48,701 - INFO - ResultContainer - Lines-CurrentsMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:50:48,761 - INFO - ResultContainer - Lines-normamps.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:50:48,800 - INFO - ResultContainer - Lines-bus1.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:50:48,824 - INFO - ResultContainer - Transformers-CurrentsMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:50:48,837 - INFO - ResultContainer - Transformers-normamps.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:50:48,852 - INFO - ResultContainer - Transformers-bus.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:50:48,867 - INFO - ResultContainer - Transformers-taps.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:50:48,869 - INFO - ResultContainer - Exported OpenDSS event log to event_log.csv
+2020-01-30 13:50:48,881 - INFO - dssInstance - Simulation completed in 226.37721133232117 seconds
+2020-01-30 13:50:48,881 - INFO - dssInstance - End of simulation
+2020-01-30 13:50:48,881 - INFO - dssInstance - An instance of OpenDSS (<PyDSS.dssInstance.OpenDSS object at 0x00000176B50B6BA8>) has been deleted.
+2020-01-30 13:54:41,872 - INFO - dssInstance - An instance of OpenDSS version 0.3.7 has been created.
+2020-01-30 13:54:41,873 - INFO - dssInstance - Loading OpenDSS model
+2020-01-30 13:54:41,933 - INFO - dssInstance - OpenDSS:  
+2020-01-30 13:54:41,933 - INFO - dssInstance - OpenDSS fundamental frequency set to :  60 Hz
+2020-01-30 13:54:41,934 - INFO - SolveMode - Setting solver to Snapshot mode.
+2020-01-30 13:54:42,438 - INFO - dssInstance - Running simulation from 2017-01-01 00:00:00 till 2017-01-01 00:00:00.
+2020-01-30 13:54:42,438 - INFO - dssInstance - Simulation time step 1.
+2020-01-30 13:54:43,936 - INFO - dssInstance - An instance of OpenDSS (<PyDSS.dssInstance.OpenDSS object at 0x0000024B84EB6BA8>) has been deleted.
+2020-01-30 13:55:31,367 - INFO - dssInstance - An instance of OpenDSS version 0.3.7 has been created.
+2020-01-30 13:55:31,369 - INFO - dssInstance - Loading OpenDSS model
+2020-01-30 13:55:31,444 - INFO - dssInstance - OpenDSS:  
+2020-01-30 13:55:31,444 - INFO - dssInstance - OpenDSS fundamental frequency set to :  60 Hz
+2020-01-30 13:55:31,445 - INFO - SolveMode - Setting solver to Snapshot mode.
+2020-01-30 13:55:31,987 - INFO - dssInstance - Running simulation from 2017-01-01 00:00:00 till 2017-01-01 00:00:00.
+2020-01-30 13:55:31,988 - INFO - dssInstance - Simulation time step 1.
+2020-01-30 13:55:44,648 - INFO - dssInstance - An instance of OpenDSS (<PyDSS.dssInstance.OpenDSS object at 0x000002C053596C18>) has been deleted.
+2020-01-30 13:56:09,636 - INFO - dssInstance - An instance of OpenDSS version 0.3.7 has been created.
+2020-01-30 13:56:09,637 - INFO - dssInstance - Loading OpenDSS model
+2020-01-30 13:56:09,705 - INFO - dssInstance - OpenDSS:  
+2020-01-30 13:56:09,705 - INFO - dssInstance - OpenDSS fundamental frequency set to :  60 Hz
+2020-01-30 13:56:09,705 - INFO - SolveMode - Setting solver to Snapshot mode.
+2020-01-30 13:56:10,283 - INFO - dssInstance - Running simulation from 2017-01-01 00:00:00 till 2017-01-01 00:00:00.
+2020-01-30 13:56:10,283 - INFO - dssInstance - Simulation time step 1.
+2020-01-30 13:56:23,135 - INFO - dssInstance - An instance of OpenDSS (<PyDSS.dssInstance.OpenDSS object at 0x0000023E2AAD5C18>) has been deleted.
+2020-01-30 13:56:51,959 - INFO - dssInstance - An instance of OpenDSS version 0.3.7 has been created.
+2020-01-30 13:56:51,960 - INFO - dssInstance - Loading OpenDSS model
+2020-01-30 13:56:52,034 - INFO - dssInstance - OpenDSS:  
+2020-01-30 13:56:52,034 - INFO - dssInstance - OpenDSS fundamental frequency set to :  60 Hz
+2020-01-30 13:56:52,034 - INFO - SolveMode - Setting solver to Snapshot mode.
+2020-01-30 13:56:52,713 - INFO - dssInstance - Running simulation from 2017-01-01 00:00:00 till 2017-01-01 00:00:00.
+2020-01-30 13:56:52,714 - INFO - dssInstance - Simulation time step 1.
+2020-01-30 13:57:19,534 - INFO - dssInstance - An instance of OpenDSS (<PyDSS.dssInstance.OpenDSS object at 0x000001F3ED136C18>) has been deleted.
+2020-01-30 13:57:37,306 - INFO - dssInstance - An instance of OpenDSS version 0.3.7 has been created.
+2020-01-30 13:57:37,308 - INFO - dssInstance - Loading OpenDSS model
+2020-01-30 13:57:37,375 - INFO - dssInstance - OpenDSS:  
+2020-01-30 13:57:37,375 - INFO - dssInstance - OpenDSS fundamental frequency set to :  60 Hz
+2020-01-30 13:57:37,375 - INFO - SolveMode - Setting solver to Snapshot mode.
+2020-01-30 13:57:37,957 - INFO - dssInstance - Running simulation from 2017-01-01 00:00:00 till 2017-01-01 00:00:00.
+2020-01-30 13:57:37,957 - INFO - dssInstance - Simulation time step 1.
+2020-01-30 13:57:48,261 - INFO - AutomatedThermalUpgrade - Running thermal upgrade post process
+2020-01-30 13:57:48,289 - INFO - ResultContainer - Loads-Powers.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:57:48,329 - INFO - ResultContainer - Loads-VoltagesMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:57:48,358 - INFO - ResultContainer - Buses-puVmagAngle.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:57:48,380 - INFO - ResultContainer - Buses-Distance.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:57:48,394 - INFO - ResultContainer - Circuits-TotalPower.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:57:48,408 - INFO - ResultContainer - Circuits-LineLosses.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:57:48,421 - INFO - ResultContainer - Circuits-Losses.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:57:48,432 - INFO - ResultContainer - Circuits-SubstationLosses.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:57:48,487 - INFO - ResultContainer - Lines-CurrentsMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:57:48,523 - INFO - ResultContainer - Lines-normamps.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:57:48,590 - INFO - ResultContainer - Lines-bus1.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:57:48,619 - INFO - ResultContainer - Transformers-CurrentsMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:57:48,637 - INFO - ResultContainer - Transformers-normamps.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:57:48,662 - INFO - ResultContainer - Transformers-bus.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:57:48,678 - INFO - ResultContainer - Transformers-taps.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\Exports\base_case
+2020-01-30 13:57:48,685 - INFO - ResultContainer - Exported OpenDSS event log to event_log.csv
+2020-01-30 13:57:48,714 - INFO - dssInstance - Simulation completed in 10.757206201553345 seconds
+2020-01-30 13:57:48,714 - INFO - dssInstance - End of simulation
+2020-01-30 13:57:48,714 - INFO - dssInstance - An instance of OpenDSS (<PyDSS.dssInstance.OpenDSS object at 0x00000231E5105C18>) has been deleted.

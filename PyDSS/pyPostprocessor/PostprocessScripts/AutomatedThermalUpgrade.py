@@ -100,7 +100,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.pen_level = start_pen
         #self.compile_feeder_initialize()
         self.export_line_DT_parameters()
-        start_t = time.time()
+        start= time.time()
         print("Determining thermal upgrades for PV penetration level: ", self.pen_level)
 
         self.feeder_parameters = {}
@@ -124,12 +124,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.determine_line_ldgs()
         self.determine_xfmr_ldgs()
 
-        self.feeder_parameters["Initial violations"] = {
-            "Number of lines with violations": len(self.line_violations),
-            "Number of xfmrs with violations": len(self.xfmr_violations),
-            "Max line loading observed": max(self.orig_line_ldg_lst),
-            "Max xfmr loading observed": max(self.orig_xfmr_ldg_lst),
-        }
+
 
         print("Voltages before upgrades", max(dss.Circuit.AllBusMagPu()), min(dss.Circuit.AllBusMagPu()))
         print("Substation power before upgrades: ", dss.Circuit.TotalPower())
@@ -149,6 +144,13 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             self.orig_xfmr_ldg_lst.append(vals[0] * 100 / vals[1])
             self.equip_ldgs["Xfmr_" + key] = (vals[0] * 100 / vals[1])
         self.write_to_json(self.equip_ldgs, "Initial_equipment_loadings_pen_{}".format(self.pen_level))
+
+        self.feeder_parameters["Initial violations"] = {
+            "Number of lines with violations": len(self.line_violations),
+            "Number of xfmrs with violations": len(self.xfmr_violations),
+            "Max line loading observed": max(self.orig_line_ldg_lst),
+            "Max xfmr loading observed": max(self.orig_xfmr_ldg_lst),
+        }
 
         if self.Settings["Create_upgrade_plots"]:
             self.create_op_plots()
@@ -209,7 +211,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         print("Writing Results to output file")
         self.write_dat_file()
         print("Processing upgrade results")
-        print("Total time = ", end - start_t)
+        print("Total time = ", end - start)
         # # TODO: Test impact of applied settings - can't compile the feeder again in PyDSS
         # self.compile_feeder_initialize()
         # upgrades_file = os.path.join(self.Settings["Outputs"], "Thermal_upgrades_pen_{}.dss".format(self.pen_level))
@@ -226,7 +228,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             "Max line loading observed": max(self.final_line_ldg_lst),
             "Max xfmr loading observed": max(self.final_xfmr_ldg_lst),
         }
-        self.feeder_parameters["Simulation time (seconds)"] = end - start_t
+        self.feeder_parameters["Simulation time (seconds)"] = end - start
         self.write_to_json(self.feeder_parameters, "Thermal_violations_comparison")
 
         # Process outputs

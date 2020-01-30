@@ -4,7 +4,7 @@
 "Active Project" = "Custom_controls_example"
 "Active Scenario" = "base_case"
 "DSS File" = "Master_noPV.dss"
-"Post processing script" = "AutomatedVoltageUpgrade"
+"Post processing script" = "AutomatedThermalUpgrade"
 
 # Thermal upgrades settings
 # "Feeder" = "../Test_Feeder"
