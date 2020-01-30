@@ -11,38 +11,41 @@ class _ValueStorageBase(abc.ABC):
     DELIMITER = "__"
 
     @staticmethod
-    def get_columns(df, name, prop, label=None):
-        """Return the column names in the dataframe that match name and prop.
+    def get_columns(df, name, options, **kwargs):
+        """Return the column names in the dataframe that match name and kwargs.
 
         Parameters
         ----------
         df : pd.DataFrame
         name : str
-        prop : str
-        label : int | str
-            Return data corresponding to this label.
-            May not be applicable for all subtypes.
+        kwargs : **kwargs
+            Filter with option values
 
         Returns
         -------
         list
 
         """
+        field_indices = {option: i + 1 for i, option in enumerate(options)}
         columns = []
         for column in df.columns:
-            fields = column.split(_ValueStorageBase.DELIMITER)
-            assert len(fields) >= 2, column
+            col = column
+            index = column.find(" [")
+            if index != -1:
+                col = column[:index]
+            # [name, option1, option2, ...]
+            fields = col.split(_ValueStorageBase.DELIMITER)
+            assert len(fields) == 1 + len(options), f"fields={fields} options={options}"
             _name = fields[0]
-            _prop = fields[1]
-            if _name != name or _prop != prop:
+            if _name != name:
                 continue
-            if label is None:
+            match = True
+            for key, val in kwargs.items():
+                if fields[field_indices[key]] != val:
+                    match = False
+                    break
+            if match:
                 columns.append(column)
-            else:
-                assert len(fields) == 3, column
-                _label = fields[2]
-                if _label == label:
-                    columns.append(column)
 
         if not columns:
             raise InvalidParameter(f"{name} does not exist in DataFrame")
@@ -157,7 +160,7 @@ class ValueByLabel(_ValueStorageBase):
         for i, node_val in enumerate(zip(Nodes, value)):
             node, val = node_val
             for v , x in zip(node, val):
-                label = '_{}{}'.format(phs[v], str(i+1))
+                label = '{}{}'.format(phs[v], str(i+1))
                 if is_complex:
                     label += " " + units[0]
                     self._labels.append(label)

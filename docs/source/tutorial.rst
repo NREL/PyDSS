@@ -105,7 +105,7 @@ Read a dataframe for one element
     df = scenario.get_dataframe("Lines", "Currents", "Line.pvl_112")
     df.head()
 
-                                                  Line.pvl_112__Currents__1A                        Line.pvl_112__Currents__2A
+                                                  Line.pvl_112__A1 [Amps]                        Line.pvl_112__A2 [Amps]
     timestamp
     2017-01-01 00:15:00  (3.5710399970412254e-08+1.3782673590867489e-05j)  (-3.637978807091713e-12+1.1368683772161603e-13j)
     2017-01-01 00:30:00  (3.3905962482094765e-08+1.3793145967611053e-05j)                           1.1368683772161603e-13j
@@ -113,22 +113,33 @@ Read a dataframe for one element
     2017-01-01 01:00:00  (3.4120603231713176e-08+1.3804576042275585e-05j)   (3.637978807091713e-12+1.1368683772161603e-13j)
     2017-01-01 01:15:00   (3.356035449542105e-08+1.3810414088766265e-05j)  (-3.637978807091713e-12+1.1368683772161603e-13j)
 
-Read a dataframe for one element with a specific label
-======================================================
+Read a dataframe for one element with a specific option
+=======================================================
 Some element properties contain multiple values.  For example, the OpenDSS
-CktElement objects report ``Currents`` into each conductor of each terminal.
-Here is how you can get the data for a single conductor/terminal::
+CktElement objects report ``Currents`` into each phase/terminal.
+Here is how you can get the data for a single phase/terminal::
 
-    df = scenario.get_dataframe("Lines", "Currents", "Line.pvl_112", label="1A")
+    df = scenario.get_dataframe("Lines", "Currents", "Line.pvl_112", phase_terminal="A1")
     df.head()
 
-                                                   Line.pvl_112__Currents__1A
+                                                   Line.pvl_112__Currents__A1 [Amps]
     timestamp                                                                                       
     2017-01-01 00:15:00  (3.5710399970412254e-08+1.3782673590867489e-05j)
     2017-01-01 00:30:00  (3.3905962482094765e-08+1.3793145967611053e-05j)
     2017-01-01 00:45:00   (3.381501301191747e-08+1.3786106705993006e-05j)
     2017-01-01 01:00:00  (3.4120603231713176e-08+1.3804576042275585e-05j)
     2017-01-01 01:15:00   (3.356035449542105e-08+1.3810414088766265e-05j)
+
+Find out all options available for a property
+=============================================
+
+::
+
+    scenario.list_element_property_options("Lines", "Currents")
+    ["phase_terminal"]
+
+    scenario.list_element_property_options("Lines", "NormalAmps")
+    []
 
 Read a dataframe for all elements
 =================================
