@@ -125,13 +125,23 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             # self.plot_feeder()
             pass
         self.write_flag = 1
-
+        self.feeder_parameters = {}
         # Use this block for capacitor settings
         self.check_voltage_violations_multi_tps()
         print("Initial number of buses with violations are: ", len(self.buses_with_violations))
         print("Initial objective function value: ", self.severity_indices[2])
         print("Initial maximum voltage observed on any node:", self.max_V_viol)
         print("Initial minimum voltage observed on any node:", self.min_V_viol)
+
+        self.feeder_parameters["intial_violations"] ={
+            "Number of buses with violations"       :len(self.buses_with_violations),
+            "Buses at all tps with violations"      :self.severity_indices[0],
+            "Severity of bus violations"            : self.severity_indices[1],
+            "Objective function value"              :self.severity_indices[2],
+            "Maximum voltage observed"              : self.max_V_viol,
+            "Minimum voltage observed"              : self.min_V_viol
+        }
+
         if len(self.buses_with_violations) > 0:
             if self.Settings["create topology plots"]:
                 self.plot_violations()
@@ -410,6 +420,19 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         print("Final objective function value: ", self.severity_indices[2])
         print("Final maximum voltage observed on any node:", self.max_V_viol, self.busvmax)
         print("Final minimum voltage observed on any node:", self.min_V_viol)
+
+        self.feeder_parameters["Final_violations"] = {
+            "Number of buses with violations": len(self.buses_with_violations),
+            "Buses at all tps with violations": self.severity_indices[0],
+            "Severity of bus violations": self.severity_indices[1],
+            "Objective function value": self.severity_indices[2],
+            "Maximum voltage observed": self.max_V_viol,
+            "Minimum voltage observed": self.min_V_viol
+        }
+
+        self.feeder_parameters["Simulation time (seconds)"] = end_t-start_t
+
+        self.write_to_json(self.feeder_parameters,"Voltage_violations_comparison")
 
     def get_existing_controller_info(self):
         self.cap_control_info = {}

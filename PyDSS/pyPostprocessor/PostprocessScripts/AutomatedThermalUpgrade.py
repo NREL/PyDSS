@@ -102,7 +102,9 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.export_line_DT_parameters()
         start_t = time.time()
         print("Determining thermal upgrades for PV penetration level: ", self.pen_level)
-        start = time.time()
+
+        self.feeder_parameters = {}
+
         self.dss_upgrades = [
             "//This file has all the upgrades determined using the control device placement algorithm \n"]
 
@@ -121,6 +123,14 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         # Determine initial loadings
         self.determine_line_ldgs()
         self.determine_xfmr_ldgs()
+
+        self.feeder_parameters["Initial violations"] = {
+            "Number of lines with violations": len(self.line_violations),
+            "Number of xfmrs with violations": len(self.xfmr_violations),
+            "Max line loading observed": max(self.orig_line_ldg_lst),
+            "Max xfmr loading observed": max(self.orig_xfmr_ldg_lst),
+        }
+
         print("Voltages before upgrades", max(dss.Circuit.AllBusMagPu()), min(dss.Circuit.AllBusMagPu()))
         print("Substation power before upgrades: ", dss.Circuit.TotalPower())
         num_elms_violated_curr_itr = len(self.xfmr_violations) + len(self.line_violations)
@@ -209,6 +219,15 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         # self.determine_xfmr_ldgs()
         # if self.Settings["Create_upgrade_plots"]:
         #     self.create_op_plots()
+
+        self.feeder_parameters["Final violations"] = {
+            "Number of lines with violations": len(self.line_violations),
+            "Number of xfmrs with violations": len(self.xfmr_violations),
+            "Max line loading observed": max(self.final_line_ldg_lst),
+            "Max xfmr loading observed": max(self.final_xfmr_ldg_lst),
+        }
+        self.feeder_parameters["Simulation time (seconds)"] = end - start_t
+        self.write_to_json(self.feeder_parameters, "Thermal_violations_comparison")
 
         # Process outputs
         input_dict = {
