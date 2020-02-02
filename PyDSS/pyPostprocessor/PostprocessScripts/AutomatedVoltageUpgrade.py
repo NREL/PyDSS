@@ -1,3 +1,6 @@
+#**Authors:**
+# Akshay Kumar Jain; Akshay.Jain@nrel.gov
+
 import os
 import matplotlib.pyplot as plt
 import opendssdirect as dss
@@ -86,7 +89,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.cap_control = "voltage"
         self.max_regs = self.Settings["Max regulators"]
         self.terminal = 1
-
+        self.plot_violations_counter = 0
         # TODO: Regs default settings
 
         # Substation LTC default settings
@@ -725,7 +728,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         return
 
     def plot_violations(self):
-        plt.figure(figsize=(8, 7))
+        #plt.figure(figsize=(8, 7))
+        plt.figure(figsize=(40, 40), dpi=10)
         plt.clf()
         numV = len(self.buses_with_violations)
         plt.title("Number of buses in the feeder with voltage violations: {}".format(numV))
@@ -736,7 +740,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             m = nx.draw_networkx_nodes(self.G, pos=self.buses_with_violations_pos,
                                        nodelist=self.buses_with_violations, node_size=10, node_color='r')
         plt.axis("off")
-        plt.show()
+        plt.savefig(os.path.join(self.Settings["Outputs"],"Nodal_violations_{}.pdf".format(str(self.plot_violations_counter))))
+        self.plot_violations_counter+=1
 
     def get_capacitor_state(self):
         # TODO: How to figure out whether cap banks are 3 phase, 2 phase or 1 phase. 1 phase caps will have LN voltage
@@ -1478,7 +1483,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         plt.figure(figsize=(7, 7))
         ax = sns.heatmap(self.square_array, linewidth=0.5)
         plt.title("Distance matrix of nodes with violations")
-        plt.show()
+        plt.savefig(os.path.join(self.Settings["Outputs"],"Nodal_violations_heatmap.pdf"))
 
     def cluster_square_array(self):
         # Clustering the distance matrix into clusters equal to optimal clusters
@@ -1723,7 +1728,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             pass
         plt.axis("off")
         plt.title("All buses with violations grouped in {} clusters".format(self.optimal_clusters))
-        plt.show()
+        plt.savefig(
+            os.path.join(self.Settings["Outputs"], "Cluster_{}_reglocations.pdf".format(str(self.optimal_clusters))))
 
     def run(self, step, stepMax):
         """Induces and removes a fault as the simulation runs as per user defined settings. 

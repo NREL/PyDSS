@@ -1,3 +1,6 @@
+#**Authors:**
+# Akshay Kumar Jain; Akshay.Jain@nrel.gov
+
 import os
 import json
 
@@ -18,13 +21,22 @@ class postprocess_voltage_upgrades():
         self.Settings           = Settings
         self.cap_upgrades       = {}
         self.reg_upgrades       = {}
+        self.cap_processed_ops  = {}
         self.source_xfmr_buses  = []
         self.read_orig_upgrades()
-        self.get_cap_upgrades()
-        self.get_sub_LTC_upgrades()
-        self.get_existing_inline_regctrl_upgrades()
-        self.get_added_devices()
-        if len(self.reg_upgrades)>0 and len(self.cap_processed_ops)>0:
+        datafile = open(os.path.join(self.Settings["outputs"],"Voltage_upgrades.dss"), "r")
+        len_counter=0
+        for line in datafile:
+            len_counter+=1
+        if len(self.orig_caps)>0 and len_counter>1:
+            self.get_cap_upgrades()
+        if len_counter>1:
+            self.get_sub_LTC_upgrades()
+        if len_counter>1:
+            self.get_existing_inline_regctrl_upgrades()
+        if len_counter > 1:
+            self.get_added_devices()
+        if len(self.reg_upgrades)>0:
             for key,vals in self.reg_upgrades.items():
                 self.cap_processed_ops["Regctrl.{}".format(key)]=vals
         self.write_to_json(self.cap_processed_ops,"Processed_voltage_upgrades")
@@ -45,7 +57,6 @@ class postprocess_voltage_upgrades():
         # have to be added even though it would appear as an edit in the opendss upgrades files.
         # Otherwise if controller existed and it was voltage controlled plus original ON and OFF
         # settings were not used (indicated by "original" flag), then settings were modified
-        self.cap_processed_ops = {}
         for key,vals in self.orig_caps.items():
             ctrl_added = 1
             ctrl_type = "Voltage"

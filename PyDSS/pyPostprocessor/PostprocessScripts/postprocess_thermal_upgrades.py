@@ -1,3 +1,7 @@
+#**Authors:**
+# Akshay Kumar Jain; Akshay.Jain@nrel.gov
+
+
 import os
 import matplotlib.pyplot as plt
 import csv
@@ -259,7 +263,7 @@ class postprocess_thermal_upgrades():
         # nx.draw_networkx_labels(self.G, pos=self.pos_dict, node_size=1, font_size=15)
         plt.title("Thermal violations")
         plt.axis("off")
-        plt.savefig(os.path.join(self.Settings["Outputs"],"Thermal_upgrades_in_pen_{}.pdf".format(self.pen_level)))
+        plt.savefig(os.path.join(self.Settings["Outputs"],"Thermal_upgrades.pdf"))
 
 # Test Disco feeder
 if __name__ == "__main__":

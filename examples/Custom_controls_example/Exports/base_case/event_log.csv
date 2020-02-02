@@ -1,941 +1,444 @@
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 4 TAPS TO 1.025.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED 4 TAPS TO 1.025.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED 4 TAPS TO 1.025.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_c, Action= CHANGED 2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_b, Action= CHANGED 2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED 2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1172851e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1041696e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 2 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.05625.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.05625.
-Hour=0, Sec=0, ControlIter=4, Element=Capacitor.1172851e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=4, Element=Capacitor.1041696e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=6, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=7, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=8, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=9, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=10, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=11, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=12, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=13, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=14, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=15, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=16, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=17, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=18, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=19, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=20, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=21, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=22, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=23, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=24, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=25, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=26, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=27, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=28, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=29, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=30, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=31, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=32, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=33, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=34, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=35, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=36, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=37, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=38, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=39, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=40, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=41, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=42, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=43, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=44, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=45, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=46, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=47, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=48, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=49, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1172851e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1041696e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 2 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.05625.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.05625.
-Hour=0, Sec=0, ControlIter=4, Element=Capacitor.1172851e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=4, Element=Capacitor.1041696e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=6, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=7, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=8, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=9, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=10, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=11, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=12, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=13, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=14, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=15, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=16, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=17, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=18, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=19, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=20, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=21, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=22, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=23, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=24, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=25, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=26, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=27, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=28, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=29, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=30, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=31, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=32, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=33, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=34, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=35, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=36, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=37, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=38, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=39, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=40, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=41, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=42, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=43, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=44, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=45, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=46, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=47, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=48, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=49, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1172851e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1041696e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 2 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.05625.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.05625.
-Hour=0, Sec=0, ControlIter=4, Element=Capacitor.1172851e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=4, Element=Capacitor.1041696e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=6, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=7, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=8, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=9, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=10, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=11, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=12, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=13, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=14, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=15, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=16, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=17, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=18, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=19, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=20, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=21, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=22, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=23, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=24, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=25, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=26, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=27, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=28, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=29, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=30, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=31, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=32, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=33, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=34, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=35, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=36, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=37, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=38, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=39, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=40, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=41, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=42, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=43, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=44, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=45, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=46, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=47, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=48, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=49, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=6, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=7, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=8, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=9, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=10, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=11, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=12, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=13, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=14, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=15, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=16, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=17, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=18, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=19, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=20, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=21, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=22, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=23, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=24, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=25, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=26, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=27, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=28, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=29, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=30, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=31, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=32, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=33, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=34, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=35, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=36, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=37, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=38, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=39, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=40, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=41, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=42, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=43, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=44, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=45, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=46, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=47, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=48, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=49, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=6, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=7, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=8, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=9, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=10, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=11, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=12, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=13, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=14, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=15, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=16, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=17, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=18, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=19, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=20, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=21, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=22, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=23, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=24, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=25, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=26, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=27, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=28, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=29, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=30, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=31, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=32, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=33, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=34, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=35, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=36, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=37, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=38, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=39, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=40, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=41, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=42, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=43, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=44, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=45, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=46, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=47, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=48, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=49, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=6, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=7, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=8, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=9, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=10, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=11, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=12, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=13, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=14, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=15, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=16, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=17, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=18, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=19, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=20, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=21, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=22, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=23, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=24, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=25, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=26, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=27, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=28, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=29, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=30, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=31, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=32, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=33, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=34, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=35, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=36, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=37, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=38, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=39, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=40, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=41, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=42, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=43, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=44, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=45, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=46, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=47, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=48, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=49, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=6, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=7, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=8, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=9, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=10, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=11, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=12, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=13, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=14, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=15, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=16, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=17, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=18, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=19, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=20, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=21, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=22, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=23, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=24, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=25, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=26, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=27, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=28, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=29, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=30, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=31, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=32, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=33, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=34, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=35, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=36, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=37, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=38, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=39, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=40, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=41, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=42, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=43, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=44, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=45, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=46, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=47, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=48, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=49, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1172851e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1041696e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 2 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.05625.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=3, Element=Capacitor.1172851e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=3, Element=Capacitor.1041696e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=6, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=7, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=8, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=9, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=10, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=11, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=12, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=13, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=14, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=15, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=16, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=17, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=18, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=19, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=20, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=21, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=22, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=23, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=24, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=25, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=26, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=27, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=28, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=29, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=30, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=31, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=32, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=33, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=34, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=35, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=36, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=37, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=38, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=39, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=40, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=41, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=42, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=43, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=44, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=45, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=46, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=47, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=48, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=49, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_b, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1172851e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1041696e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 2 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.05625.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=3, Element=Capacitor.1172851e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=3, Element=Capacitor.1041696e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=6, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=7, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=8, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=9, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=10, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=11, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=12, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=13, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=14, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=15, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=16, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=17, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=18, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=19, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=20, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=21, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=22, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=23, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=24, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=25, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=26, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=27, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=28, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=29, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=30, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=31, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=32, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=33, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=34, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=35, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=36, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=37, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=38, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=39, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=40, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=41, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=42, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=43, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=44, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=45, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=46, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=47, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=48, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=49, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1172851e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1041696e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 2 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.05625.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=3, Element=Capacitor.1172851e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=3, Element=Capacitor.1041696e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=6, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=7, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=8, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=9, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=10, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=11, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=12, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=13, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=14, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=15, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=16, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=17, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=18, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=19, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=20, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=21, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=22, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=23, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=24, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=25, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=26, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=27, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=28, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=29, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=30, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=31, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=32, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=33, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=34, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=35, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=36, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=37, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=38, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=39, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=40, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=41, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=42, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=43, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=44, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=45, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=46, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=47, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=48, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=49, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1172851e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1041696e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 2 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.05625.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=3, Element=Capacitor.1172851e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=3, Element=Capacitor.1041696e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=6, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=7, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=8, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=9, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=10, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=11, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=12, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=13, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=14, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=15, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=16, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=17, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=18, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=19, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=20, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=21, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=22, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=23, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=24, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=25, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=26, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=27, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=28, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=29, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=30, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=31, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=32, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=33, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=34, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=35, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=36, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=37, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=38, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=39, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=40, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=41, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=42, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=43, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=44, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=45, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=46, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=47, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=48, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=49, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1172851e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1041696e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 2 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.05625.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=3, Element=Capacitor.1172851e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=3, Element=Capacitor.1041696e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=6, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=7, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=8, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=9, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=10, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=11, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=12, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=13, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=14, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=15, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=16, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=17, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=18, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=19, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=20, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=21, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=22, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=23, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=24, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=25, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=26, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=27, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=28, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=29, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=30, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=31, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=32, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=33, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=34, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=35, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=36, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=37, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=38, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=39, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=40, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=41, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=42, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=43, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=44, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=45, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=46, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=47, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=48, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=49, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1172851e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1041696e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 2 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.05625.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=3, Element=Capacitor.1172851e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=3, Element=Capacitor.1041696e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=6, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=7, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=8, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=9, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=10, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=11, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=12, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=13, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=14, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=15, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=16, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=17, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=18, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=19, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=20, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=21, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=22, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=23, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=24, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=25, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=26, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=27, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=28, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=29, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=30, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=31, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=32, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=33, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=34, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=35, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=36, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=37, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=38, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=39, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=40, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=41, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=42, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=43, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=44, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=45, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=46, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=47, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=48, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=49, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1172851e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=2, Element=Capacitor.1041696e, Action=**OPENED**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 300 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 2 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.04375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.05625.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_b, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=3, Element=Capacitor.1172851e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=3, Element=Capacitor.1041696e, Action=**CLOSED**
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_c, Action= CHANGED -1 TAPS TO 1.05.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**ARMED**, DELAY= 15 SEC
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_b, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_a, Action= CHANGED -2 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=2, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=3, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=4, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=5, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=6, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=7, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=8, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=9, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=10, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=11, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=12, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=13, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=14, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=15, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=16, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=17, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=18, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=19, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=20, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=21, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=22, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=23, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=24, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=25, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=26, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=27, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=28, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=29, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=30, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=31, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=32, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=33, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=34, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=35, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=36, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=37, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=38, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=39, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=40, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=41, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=42, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=43, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=44, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=45, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=46, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=47, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=48, Element=Regulator.subltc_a, Action= CHANGED -1 TAPS TO 1.03125.
-Hour=0, Sec=0, ControlIter=49, Element=Regulator.subltc_a, Action= CHANGED 1 TAPS TO 1.0375.
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1041696e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1172851e, Action=**RESET**
-Hour=0, Sec=0, ControlIter=1, Element=Regulator.subltc_c, Action= CHANGED 1 TAPS TO 1.04375.
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**ARMED**, DELAY= 0 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1254276e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4700554e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.765945e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.4368672e, Action=**CLOSED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.nd31711600_07570$nd31711597_07-1, Action=**CLOSED**

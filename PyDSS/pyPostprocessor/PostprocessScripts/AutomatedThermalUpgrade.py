@@ -1,3 +1,6 @@
+#**Authors:**
+# Akshay Kumar Jain; Akshay.Jain@nrel.gov
+
 from PyDSS.pyPostprocessor.pyPostprocessAbstract import AbstractPostprocess
 # Additional packages
 import os
@@ -26,6 +29,7 @@ plt.rcParams.update({'font.size': 14})
 #  through the DTs and lines available in the feeder itself.
 # TODO: Add xhl, xht, xlt and buses functionality for DTs
 # TODO: Units of the line and transformers
+# TODO: Correct line and xfmr violations safety margin issue
 
 class AutomatedThermalUpgrade(AbstractPostprocess):
     """The class is used to induce faults on bus for dynamic simulation studies. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class. 
@@ -84,7 +88,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             # [min load multiplier without PV, max load multiplier without PV, min load multiplier with PV, max load multiplier with PV]
             "units key": ["mi", "kft", "km", "m", "Ft", "in", "cm"],  # Units key for lines taken from OpenDSS
             "max control iterations": 50,
-            "Create_upgrades_library": False,
+            "Create_upgrades_library": True,
             }
         for key,val in New_settings.items():
             if key not in self.Settings:
@@ -94,6 +98,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         dss = dssInstance
         self.dssSolver = dssSolver
         # TODO: To be modified
+        self.plot_violations_counter=0
         start_pen = self.Settings["DPV_penetration_HClimit"]
         target_pen = self.Settings["DPV_penetration_target"]
         pen_step = self.Settings["DPV_penetration_step"]
@@ -199,15 +204,14 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         print("Voltages after upgrades ", max(dss.Circuit.AllBusMagPu()), min(dss.Circuit.AllBusMagPu()))
         print("Substation power after upgrades: ", dss.Circuit.TotalPower())
         if self.Settings["Create_upgrade_plots"]:
+            plt.figure(figsize=(40, 40), dpi=10)
             plt.clf()
             plt.plot(self.orig_line_ldg_lst, "o", label="Starting Line Loadings")
             plt.plot(self.final_line_ldg_lst, "o", label="Ending Line Loadings")
             plt.plot(self.orig_xfmr_ldg_lst, "o", label="Starting Transformer Loadings")
             plt.plot(self.final_xfmr_ldg_lst, "o", label="Ending Transformer Loadings")
             plt.legend()
-            plt.savefig(
-                os.path.join(self.Settings["Outputs"], "Loading_comparisons_pen_{}".format(str(self.pen_level))),
-                dpi=300)
+            plt.savefig(os.path.join(self.Settings["Outputs"], "Loading_comparisons.pdf"))
         print("Writing Results to output file")
         self.write_dat_file()
         print("Processing upgrade results")
@@ -350,7 +354,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.DT_size_list = []
         self.DT_sec_coords = {}
         for key,vals in self.equip_ldgs.items():
-            if key.lower().startswith("line") and int(vals)>100:
+            if key.lower().startswith("line") and round(vals,2)>self.Settings["line loading limit"]*100:
                 key = key.split("Line_")[1]
                 key = "Line."+key
                 dss.Circuit.SetActiveElement("{}".format(key))
@@ -360,7 +364,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 self.edge_pos_plt_dict[from_bus] = self.pos_dict[from_bus]
                 self.edge_pos_plt_dict[to_bus] = self.pos_dict[to_bus]
                 self.edge_size_list.append(vals)
-            if key.lower().startswith("xfmr") and int(vals)>100:
+            if key.lower().startswith("xfmr") and round(vals,2)>self.Settings["DT loading limit"]*100:
                 key = key.split("Xfmr_")[1]
                 key = "Transformer." + key
                 dss.Circuit.SetActiveElement("{}".format(key))
@@ -383,8 +387,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         # nx.draw_networkx_labels(self.G, pos=self.pos_dict, node_size=1, font_size=15)
         plt.title("Thermal violations")
         plt.axis("off")
-        plt.show()
-        #plt.savefig(os.path.join(self.Settings["Outputs"],"Thermal_upgrades_in_pen_{}.pdf".format(self.pen_level)))
+        plt.savefig(os.path.join(self.Settings["Outputs"],"Thermal_violations_{}.pdf".format(str(self.plot_violations_counter))))
+        self.plot_violations_counter+=1
 
     def export_line_DT_parameters(self):
         self.originial_line_parameters = {}
@@ -603,7 +607,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 kv_to_bus = dss.Bus.kVBase()
                 dss.Circuit.SetActiveElement("Line.{}".format(key))
                 norm_amps = dss.CktElement.NormalAmps()
-                num_par_lns = int(vals[0]*self.Settings["line_safety_margin"]/vals[1])+1
+                num_par_lns = int((vals[0]*self.Settings["line_safety_margin"])/(vals[1]*self.Settings["line loading limit"]))+1
                 if kv_from_bus != kv_to_bus:
                     print("For line {} the from and to bus kV ({} {}) do not match, quitting...".format(key,
                                                                                                         kv_from_bus,
@@ -619,7 +623,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if lc_key in self.avail_line_upgrades:
                     for lcs,lcs_vals in self.avail_line_upgrades[lc_key].items():
                         if lcs!=line_code:
-                            if lcs_vals[0]>vals[0]*self.Settings["line_safety_margin"] and lcs_vals[0]<num_par_lns*norm_amps:
+                            if lcs_vals[0]>((vals[0]*self.Settings["line_safety_margin"])/(self.Settings["line loading limit"])) and lcs_vals[0]<num_par_lns*norm_amps:
                                 command_string = "Edit Line.{lnm} {cnfig}={lnc}".format(lnm=key, cnfig=ln_config, lnc=lcs)
                                 dss.run_command(command_string)
                                 self.dssSolver.Solve()
@@ -821,7 +825,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                                                                                                           norm_amps,
                                                                                                           vals[1]))
                     quit()
-                num_par_dts = int(vals[0] * self.Settings["xfmr_safety_margin"] / vals[1]) + 1
+                num_par_dts = int((vals[0] * self.Settings["xfmr_safety_margin"]) / (vals[1]*self.Settings["DT loading limit"])) + 1
                 dt_key = "type_" + "{}_".format(phases) + "{}_".format(num_wdgs)
                 for kv_cnt in range(len(wdg_kv_list)):
                     dt_key = dt_key + "{}_".format(wdg_kv_list[kv_cnt])
@@ -832,7 +836,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if dt_key in self.avail_xfmr_upgrades:
                     for dt,dt_vals in self.avail_xfmr_upgrades[dt_key].items():
                         if dt!=key:
-                            if dt_vals[1][0]>vals[0]*self.Settings["xfmr_safety_margin"] and dt_vals[1][0]<num_par_dts*norm_amps:
+                            if dt_vals[1][0]>((vals[0]*self.Settings["xfmr_safety_margin"])/(self.Settings["line loading limit"])) and dt_vals[1][0]<num_par_dts*norm_amps:
                                 command_string = "Edit Transformer.{xf} %noloadloss={nll} ".format(xf=key,
                                                                                                   nll=dt_vals[3][0])
                                 for wdgs_cnt in range(num_wdgs):
