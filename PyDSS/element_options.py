@@ -1,32 +1,6 @@
 """Stores the options available for element classes and properties."""
 
-
-ELEMENT_FIELDS = {
-    "Lines": [
-        {
-            "name": "Currents",
-            "options": [
-                "phase_terminal",
-            ]
-        },
-        {
-            "name": "Powers",
-            "options": [
-                "phase_terminal",
-            ]
-        },
-        {
-            "name": "NormalAmps",
-            "options": [],
-        },
-        {
-            "name": "Enabled",
-            "options": [],
-        },
-    ],
-    "Buses": [
-    ]
-}
+from PyDSS.element_fields import ELEMENT_FIELDS
 
 
 class ElementOptions:
