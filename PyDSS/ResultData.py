@@ -80,16 +80,16 @@ class ResultData:
 
     def _create_element_list(self, objs, properties):
         elements = []
-        #element_names = set()
+        element_names = set()
         for property_name in properties:
             assert isinstance(property_name, str)
             for name, obj in objs.items():
                 if not obj.IsValidAttribute(property_name):
                     raise InvalidParameter(f"{element_class} / {property_name} {name} cannot be exported")
                 #TODO: Will commenting this be an issue ever Dan?
-                #if name not in element_names:
-                elements.append((name, obj))
-                    #element_names.add(name)
+                if name not in element_names:
+                    elements.append((name, obj))
+                    element_names.add(name)
         return elements
 
 
@@ -103,12 +103,8 @@ class ResultData:
                 elements = self._create_element_list(objs, properties)
             else:
                 if element_class in  self._objects_by_class:
-                    # Changed logic to ensure user done not have to worry about export definations.
-                    # Probably should add waring in the log if a call type in not available in the model
                     objs = self._objects_by_class[element_class]
                     elements = self._create_element_list(objs, properties)
-                    # if element_class not in self._objects_by_class:
-                    #     raise InvalidParameter(f"{element_class} cannot be exported")
 
 
             # TODO: refactor prop_aggregators
@@ -136,7 +132,7 @@ class ResultData:
 
     def ExportResults(self, fileprefix=""):
         self._export_indices()
-        self._export_event_log()
+        #self._export_event_log()
         if self._export_iteration_order == "ElementValuesPerProperty":
             self._export_results_by_element(fileprefix=fileprefix)
         elif self._export_iteration_order == "ValuesByPropertyAcrossElements":
@@ -372,15 +368,24 @@ class ElementValuesPerProperty(ElementData):
         return obj
 
     def add_values(self):
-        for prop in self.properties:
+        for  prop in self.properties:
             value = self._obj.GetValue(prop, convert=True)
-            # TODO: please check to this if this is correct
-            if self._data[prop] is None:
-                self._data[prop] = value
+            if isinstance(value, list):
+                for v in value:
+                    if self._data[prop] is None:
+                        self._data[prop] = v
+                    else:
+                        self._data[prop].append(v)
+                    if self._value_class is None:
+                        self.set_value_class(type(v))
             else:
-                self._data[prop].append(value)
-            if self._value_class is None:
-                self.set_value_class(type(value))
+                # TODO: please check to this if this is correct
+                if self._data[prop] is None:
+                    self._data[prop] = value
+                else:
+                    self._data[prop].append(value)
+                if self._value_class is None:
+                    self.set_value_class(type(value))
 
     @property
     def element_class(self):

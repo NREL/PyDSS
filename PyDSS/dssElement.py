@@ -136,26 +136,6 @@ class dssElement(dssObjectBase):
             return None
         return VarValue
 
-        #     if VarValue is not None:
-        #         try:
-        #             VarValue = float(VarValue)
-        #             if convert:
-        #                 VarValue = ValueByNumber(self._FullName, VarName, VarValue)
-        #
-        #                 # TODO: this is now prone to error. If there is a coding
-        #                 # error in ValueByNumber then this will jump to the
-        #                 # exception handler.
-        #                 # Talk to Aadil about making the except explicit.
-        #         except:
-        #             try:
-        #                 VarValue = ast.literal_eval(VarValue)
-        #             except:
-        #                 pass
-        #     else:
-        #         VarValue = 0
-        # else:
-        #     VarValue = 0
-        # return VarValue
 
     def SetActiveObject(self):
         self._dssInstance.Circuit.SetActiveElement(self._FullName)

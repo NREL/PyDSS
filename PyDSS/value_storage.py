@@ -60,6 +60,76 @@ class _ValueStorageBase(abc.ABC):
 
         """
 
+class   ValueByList(_ValueStorageBase):
+    """"Stores a list of lists of numbers by an arbitrary label."""
+    def __init__(self, name, prop, values, label_suffixes):
+        """Constructor for ValueByLabel
+
+        Parameters
+        ----------
+        name : str
+        prop : str
+        label_prefix : str
+            Text to use as a prefix for column labels. Ex: Phase
+        labels : list
+            list of str
+        values : list
+            Pairs of values that can be interpreted as complex numbers.
+
+        """
+        self._name = name
+        self._prop = prop
+        self._labels = []
+        self._data = {}
+
+        assert (isinstance(values, list) and len(values) == len(label_suffixes)), \
+            '"values" and "label_suffixes" should be lists of equal lengths'
+        for val, lab_suf in zip(values , label_suffixes):
+            label = prop + '__' + lab_suf
+            self._data[label] = [val]
+            self._labels.append(label)
+
+    def _make_columns(self):
+        return [
+            self.DELIMITER.join((self._name, f"{x}")) for x in self._labels
+        ]
+
+    def __iter__(self):
+        return self._data.__iter__()
+
+    def __len__(self):
+        return len(self._data)
+
+    def append(self, other):
+        """Append values from another instance of ValueByLabel"""
+        for key in other:
+            assert key in self._data
+            for val in other.get(key):
+                self._data[key].append(val)
+
+    def get(self, key):
+        """Return the list of data for key.
+
+        Parameters
+        ----------
+        key : str
+
+        Returns
+        -------
+        list
+
+        """
+        return self._data[key]
+
+    @property
+    def num_columns(self):
+        return len(self._data)
+
+    def to_dataframe(self):
+        df = pd.DataFrame(self._data)
+        df.columns = self._make_columns()
+        return df
+
 class ValueByNumber(_ValueStorageBase):
     """Stores a list of numbers for an element/property."""
     def __init__(self, name, prop, value):
@@ -88,6 +158,8 @@ class ValueByNumber(_ValueStorageBase):
 
     def to_dataframe(self):
         return pd.DataFrame(self._data, columns=[self._make_column(self._name, self._prop)])
+
+
 
 
 class ValueByLabel(_ValueStorageBase):
@@ -136,7 +208,7 @@ class ValueByLabel(_ValueStorageBase):
         for i, node_val in enumerate(zip(Nodes, value)):
             node, val = node_val
             for v , x in zip(node, val):
-                label = '_{}{}'.format(phs[v], str(i+1))
+                label = '{}{}'.format(phs[v], str(i+1))
                 if is_complex:
                     label += " " + units[0]
                     self._labels.append(label)
@@ -144,7 +216,7 @@ class ValueByLabel(_ValueStorageBase):
                 else:
                     label_mag = label + ' ' + units[0]
                     label_ang = label + ' ' + units[1]
-                    self._labels.extend([label_mag ,label_ang])
+                    self._labels.extend([label_mag, label_ang])
                     self._data[label_mag] = [x[0]]
                     self._data[label_ang] = [x[1]]
 
