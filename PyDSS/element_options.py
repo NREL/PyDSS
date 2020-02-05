@@ -9,10 +9,12 @@ class ElementOptions:
         if data is None:
             data = ELEMENT_FIELDS
         self._element_classes = {}
-        for elem_class, properties in data.items():
+        for elem_class, option_combos in data.items():
             options = {}
-            for prop in properties:
-                options[prop["name"]] = prop["options"]
+            for option_combo in option_combos:
+                for prop in option_combo["names"]:
+                    assert prop not in options
+                    options[prop] = option_combo["options"]
             self._element_classes[elem_class] = options
 
     def is_option_valid(self, element_class, prop, option):

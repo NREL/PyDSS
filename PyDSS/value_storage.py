@@ -35,7 +35,8 @@ class _ValueStorageBase(abc.ABC):
                 col = column[:index]
             # [name, option1, option2, ...]
             fields = col.split(_ValueStorageBase.DELIMITER)
-            assert len(fields) == 1 + len(options), f"fields={fields} options={options}"
+            if options and kwargs:
+                assert len(fields) == 1 + len(options), f"fields={fields} options={options}"
             _name = fields[0]
             if _name != name:
                 continue

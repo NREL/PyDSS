@@ -302,7 +302,7 @@ class ElementData(abc.ABC):
         df.set_index(("timestamp"), inplace=True)
 
     @abc.abstractmethod
-    def iterate_dataframes(self, **kwargs):
+    def iterate_dataframes(self, options, **kwargs):
         """Return a generator of stored dataframes."""
 
     def set_value_class(self, value_class):
@@ -419,7 +419,7 @@ class ElementValuesPerProperty(ElementData):
         self._add_indices_to_dataframe(df)
         return df
 
-    def iterate_dataframes(self, options, **kwargs):
+    def iterate_dataframes(self, prop, options, **kwargs):
         """Returns a generator over the dataframes by property.
 
         Returns
@@ -429,11 +429,10 @@ class ElementValuesPerProperty(ElementData):
 
         """
         df_master = self._get_dataframe()
-        for prop in self._properties:
-            columns = self._value_class.get_columns(df_master, self._name, options, **kwargs)
-            df = df_master[columns]
-            self._add_indices_to_dataframe(df)
-            yield prop, df
+        columns = self._value_class.get_columns(df_master, self._name, options, **kwargs)
+        df = df_master[columns]
+        self._add_indices_to_dataframe(df)
+        return prop, df
 
     @staticmethod
     def get_fields_from_filename(filename):

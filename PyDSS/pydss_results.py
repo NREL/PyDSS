@@ -257,7 +257,9 @@ class ElementValuesPerPropertyResults(_Results):
 
     def iterate_dataframes(self, element_class, name_or_prop, **kwargs):
         element = self._get_element(element_class, name_or_prop)
-        return element.iterate_dataframes(**kwargs)
+        for prop in element.properties:
+            options = self._check_options(element_class, prop, **kwargs)
+            yield element.iterate_dataframes(prop, options, **kwargs)
 
     def list_element_classes(self):
         return sorted(list(self._elements.keys()))
@@ -314,7 +316,7 @@ class ValuesByPropertyAcrossElementsResults(_Results):
     def iterate_dataframes(self, element_class, name_or_prop, **kwargs):
         options = self._check_options(element_class, name_or_prop, **kwargs)
         prop_agg = self._get_property_aggregator(element_class, name_or_prop)
-        return prop_agg.iterate_dataframes(**kwargs)
+        return prop_agg.iterate_dataframes(options, **kwargs)
 
     def list_element_classes(self):
         classes = set()

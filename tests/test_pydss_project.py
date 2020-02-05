@@ -90,20 +90,19 @@ def test_run_project_by_element(cleanup_project):
     expected_elem_classes = list(EXPECTED_ELEM_CLASSES_PROPERTIES.keys())
     expected_elem_classes.sort()
     assert elem_classes == expected_elem_classes
-    # FIXME: disabled because ELEMENT_FIELDS are not defined yet
-    #for elem_class in elem_classes:
-    #    expected_properties = EXPECTED_ELEM_CLASSES_PROPERTIES[elem_class]
-    #    expected_properties.sort()
-    #    properties = scenario.list_element_properties(elem_class)
-    #    assert properties == expected_properties
-    #    for name in scenario.list_element_names(elem_class):
-    #        for prop in properties:
-    #            df = scenario.get_dataframe(elem_class, prop, name)
-    #            assert isinstance(df, pd.DataFrame)
-    #            assert len(df) == 96
-    #        for prop, df in scenario.iterate_dataframes(elem_class, name):
-    #            assert prop in properties
-    #            assert isinstance(df, pd.DataFrame)
+    for elem_class in elem_classes:
+        expected_properties = EXPECTED_ELEM_CLASSES_PROPERTIES[elem_class]
+        expected_properties.sort()
+        properties = scenario.list_element_properties(elem_class)
+        assert properties == expected_properties
+        for name in scenario.list_element_names(elem_class):
+            for prop in properties:
+                df = scenario.get_dataframe(elem_class, prop, name)
+                assert isinstance(df, pd.DataFrame)
+                assert len(df) == 96
+            for prop, df in scenario.iterate_dataframes(elem_class, name):
+                assert prop in properties
+                assert isinstance(df, pd.DataFrame)
 
     # Test with an option.
     df = scenario.get_dataframe("Lines", "Currents", "Line.sw0", phase_terminal="A1")
@@ -131,21 +130,20 @@ def test_run_project_by_property(cleanup_project):
     expected_elem_classes = list(EXPECTED_ELEM_CLASSES_PROPERTIES.keys())
     expected_elem_classes.sort()
     assert elem_classes == expected_elem_classes
-    # FIXME: disabled because ELEMENT_FIELDS are not defined yet
-    #for elem_class in elem_classes:
-    #    expected_properties = EXPECTED_ELEM_CLASSES_PROPERTIES[elem_class]
-    #    expected_properties.sort()
-    #    properties = scenario.list_element_properties(elem_class)
-    #    assert properties == expected_properties
-    #    for prop in properties:
-    #        element_names = scenario.list_element_names(elem_class, prop)
-    #        for name in element_names:
-    #            df = scenario.get_dataframe(elem_class, prop, name)
-    #            assert isinstance(df, pd.DataFrame)
-    #            assert len(df) == 96
-    #        for name, df in scenario.iterate_dataframes(elem_class, prop):
-    #            assert name in element_names
-    #            assert isinstance(df, pd.DataFrame)
+    for elem_class in elem_classes:
+        expected_properties = EXPECTED_ELEM_CLASSES_PROPERTIES[elem_class]
+        expected_properties.sort()
+        properties = scenario.list_element_properties(elem_class)
+        assert properties == expected_properties
+        for prop in properties:
+            element_names = scenario.list_element_names(elem_class, prop)
+            for name in element_names:
+                df = scenario.get_dataframe(elem_class, prop, name)
+                assert isinstance(df, pd.DataFrame)
+                assert len(df) == 96
+            for name, df in scenario.iterate_dataframes(elem_class, prop):
+                assert name in element_names
+                assert isinstance(df, pd.DataFrame)
 
     # Test with an option.
     assert scenario.list_element_property_options("Lines", "Currents") == ["phase_terminal"]
