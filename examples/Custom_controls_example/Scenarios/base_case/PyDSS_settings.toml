@@ -9,7 +9,7 @@
 "Export Style" = "Single file"
 
 # Create dynamic plots- [Bool] - Enable rendering of dynamic plots using bokeh
-# Open plots in browser- [Bool] - Open plots  in s window. Will work if "Create dynamic plots" is set to true 
+# Open plots in browser- [Bool] - Open plots  in s window. Will work if "Create dynamic plots" is set to true
 
 "Create dynamic plots" = false
 "Open plots in browser" = true
@@ -20,7 +20,7 @@
 # Start Time (min)- [Float] - Start time in minutes. Floating number can be used to account for second or sub second time points
 # End Day- [Float] - End day for the simulation study
 # End Time (min)- [Float] - end time in minutes
-# Date offset- [Int] - Date offset to be added incase OpenDSS profiles do not start at the begining of the year 
+# Date offset- [Int] - Date offset to be added incase OpenDSS profiles do not start at the begining of the year
 # Step resolution (sec)- [Float] - Time step resolution in seconds
 # Max Control Iterations- [Int] - Maximum outer loop control iterations
 # Error tolerance- [Float] - Error tolerance in per unit
@@ -37,7 +37,7 @@
 "End Time (min)" = 1439.0
 "Date offset" = 0
 "Step resolution (sec)" = 900.0
-"Max Control Iterations" = 15
+"Max Control Iterations" = 50
 "Error tolerance" = 0.001
 "Control mode" = "Time"
 "Disable PyDSS controllers" = false
@@ -49,7 +49,7 @@
 
 
 # Co-simulation Mode - [Bool] - Set to true to enable Helics interface all other co-simulation settings only valid if this value is true
-# Federate name - [str] - Name of the federate 
+# Federate name - [str] - Name of the federate
 # Time delta - [float] - The property controlling the minimum time delta for a federate
 # Core type - [str] - Core tyoe to be used for communication
 # Uninterruptible - [Bool] - Can the federate be interepted
@@ -66,7 +66,7 @@
 # Fundamental frequency- [int] - Fundamental system frequeny in Hertz
 # Start frequency- [Float] - as multiple of fundamental frequency
 # End frequency- [Float] - as multiple of fundamental frequency
-# Frequency increment- [Float] - as multiple of fundamental 
+# Frequency increment- [Float] - as multiple of fundamental
 # Neglect shunt admittance- [Bool] - Neglect shunt addmittance for frequency sweep
 # Percentage load in series- [Float] - Percent of load that is series RL for Harmonic studies
 
@@ -89,4 +89,3 @@
 "Clear old log file" = false
 
 "Number of Monte Carlo scenarios" = 1
-

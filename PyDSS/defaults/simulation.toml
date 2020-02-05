@@ -43,9 +43,9 @@
 "End Time (min)" = 1439.0
 "Date offset" = 0
 "Step resolution (sec)" = 900.0
-"Max Control Iterations" = 15
+"Max Control Iterations" = 50
 "Error tolerance" = 0.001
-"Control mode" = "Time"
+"Control mode" = "Static"
 "Disable PyDSS controllers" = false
 "Simulation Type" = "QSTS"
 "Project Path" = ""
@@ -59,7 +59,7 @@
 # Run each iteration - [Bool] - if true, the the proprocessing script will run after time step. Else, the script will be executed 
 #	      							at the end of the simultion run 
 
-"Post processing script" = "AutomatedThermalUpgrade"
+"Post processing script" = ""
 "Run each iteration" = true 
 
 # Co-simulation Mode - [Bool] - Set to true to enable Helics interface all other co-simulation settings only valid if this value is true

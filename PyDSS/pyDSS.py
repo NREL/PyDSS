@@ -229,7 +229,6 @@ class instance(object):
                                             'Scenarios',
                                             dss_args['Active Scenario']))), \
             "Scenario '{}' does not exist.".format( dss_args['Active Scenario'])
-
         assert (os.path.exists(os.path.join(dss_args['Project Path'],
                                             dss_args["Active Project"],
                                             'DSSfiles',
@@ -257,5 +256,6 @@ if __name__ == '__main__':
     #       'f{PYDSS_BASE_DIR}/examples/Harmonics_examples/Scenarios/Freq_scan_qsts_visuals.toml')
 
     #a.run('f{PYDSS_BASE_DIR}/examples/Monte_carlo_examples/Scenarios/monte_carlo_settings.toml')
-
+    a.run(
+        r'C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\base_case.toml')
     del a

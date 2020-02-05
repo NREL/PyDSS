@@ -4,6 +4,7 @@ __pycache__/*
 */__pycache__/*
 __pycache__
 *.egg-info
+*.pyc
 docs/build/*
 tags
 cscope.files

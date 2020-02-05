@@ -1,0 +1,130 @@
+2020-01-28 11:50:52,155 - INFO - dssInstance - An instance of OpenDSS version 0.3.7 has been created.
+2020-01-28 11:50:52,220 - INFO - dssInstance - An instance of OpenDSS (<PyDSS.dssInstance.OpenDSS object at 0x0000014CEA8169B0>) has been deleted.
+2020-01-28 11:53:46,098 - INFO - dssInstance - An instance of OpenDSS version 0.3.7 has been created.
+2020-01-28 11:53:46,103 - INFO - dssInstance - Loading OpenDSS model
+2020-01-28 11:53:46,230 - INFO - dssInstance - OpenDSS:  
+2020-01-28 11:53:46,231 - INFO - dssInstance - OpenDSS fundamental frequency set to :  60 Hz
+2020-01-28 11:53:46,232 - INFO - SolveMode - Setting solver to QSTS mode.
+2020-01-28 11:53:46,475 - INFO - dssInstance - Running simulation from 2017-01-01 00:00:00 till 2017-01-01 23:59:00.
+2020-01-28 11:53:46,478 - INFO - dssInstance - Simulation time step 96.
+2020-01-28 11:53:48,051 - INFO - ResultContainer - Loads-Powers.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,065 - INFO - ResultContainer - Loads-VoltagesMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,081 - INFO - ResultContainer - Loads-kW.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,098 - INFO - ResultContainer - PVSystems-Powers.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,116 - INFO - ResultContainer - PVSystems-VoltagesMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,136 - INFO - ResultContainer - Storages-Powers.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,152 - INFO - ResultContainer - Storages-VoltagesMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,166 - INFO - ResultContainer - Storages-%stored.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,206 - INFO - ResultContainer - Buses-puVmagAngle.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,229 - INFO - ResultContainer - Buses-Distance.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,241 - INFO - ResultContainer - Circuits-TotalPower.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,251 - INFO - ResultContainer - Circuits-LineLosses.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,261 - INFO - ResultContainer - Circuits-Losses.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,273 - INFO - ResultContainer - Circuits-SubstationLosses.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,320 - INFO - ResultContainer - Lines-CurrentsMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,336 - INFO - ResultContainer - Lines-normamps.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,351 - INFO - ResultContainer - Lines-bus1.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,363 - INFO - ResultContainer - Transformers-CurrentsMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,373 - INFO - ResultContainer - Transformers-normamps.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,386 - INFO - ResultContainer - Transformers-bus.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,398 - INFO - ResultContainer - Transformers-taps.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 11:53:48,400 - INFO - ResultContainer - Exported OpenDSS event log to event_log.csv
+2020-01-28 11:53:48,404 - INFO - dssInstance - Simulation completed in 1.9291892051696777 seconds
+2020-01-28 11:53:48,404 - INFO - dssInstance - End of simulation
+2020-01-28 11:53:48,405 - INFO - dssInstance - An instance of OpenDSS (<PyDSS.dssInstance.OpenDSS object at 0x000001CE27566978>) has been deleted.
+2020-01-28 15:05:23,320 - INFO - dssInstance - An instance of OpenDSS version 0.3.7 has been created.
+2020-01-28 15:05:23,322 - INFO - dssInstance - Loading OpenDSS model
+2020-01-28 15:05:23,431 - INFO - dssInstance - OpenDSS:  
+2020-01-28 15:05:23,432 - INFO - dssInstance - OpenDSS fundamental frequency set to :  60 Hz
+2020-01-28 15:05:23,432 - INFO - SolveMode - Setting solver to QSTS mode.
+2020-01-28 15:05:23,651 - INFO - dssInstance - Running simulation from 2017-01-01 00:00:00 till 2017-01-01 23:59:00.
+2020-01-28 15:05:23,652 - INFO - dssInstance - Simulation time step 96.
+2020-01-28 15:05:25,272 - INFO - ResultContainer - Loads-Powers.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,282 - INFO - ResultContainer - Loads-VoltagesMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,292 - INFO - ResultContainer - Loads-kW.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,306 - INFO - ResultContainer - PVSystems-Powers.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,319 - INFO - ResultContainer - PVSystems-VoltagesMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,329 - INFO - ResultContainer - Storages-Powers.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,342 - INFO - ResultContainer - Storages-VoltagesMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,356 - INFO - ResultContainer - Storages-%stored.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,380 - INFO - ResultContainer - Buses-puVmagAngle.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,396 - INFO - ResultContainer - Buses-Distance.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,405 - INFO - ResultContainer - Circuits-TotalPower.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,415 - INFO - ResultContainer - Circuits-LineLosses.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,425 - INFO - ResultContainer - Circuits-Losses.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,433 - INFO - ResultContainer - Circuits-SubstationLosses.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,486 - INFO - ResultContainer - Lines-CurrentsMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,500 - INFO - ResultContainer - Lines-normamps.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,517 - INFO - ResultContainer - Lines-bus1.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,531 - INFO - ResultContainer - Transformers-CurrentsMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,541 - INFO - ResultContainer - Transformers-normamps.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,550 - INFO - ResultContainer - Transformers-bus.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,560 - INFO - ResultContainer - Transformers-taps.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:05:25,561 - INFO - ResultContainer - Exported OpenDSS event log to event_log.csv
+2020-01-28 15:05:25,567 - INFO - dssInstance - Simulation completed in 1.9161510467529297 seconds
+2020-01-28 15:05:25,571 - INFO - dssInstance - End of simulation
+2020-01-28 15:05:25,571 - INFO - dssInstance - An instance of OpenDSS (<PyDSS.dssInstance.OpenDSS object at 0x0000021E5F646940>) has been deleted.
+2020-01-28 15:08:06,895 - INFO - dssInstance - An instance of OpenDSS version 0.3.7 has been created.
+2020-01-28 15:08:06,896 - INFO - dssInstance - Loading OpenDSS model
+2020-01-28 15:08:07,028 - INFO - dssInstance - OpenDSS:  
+2020-01-28 15:08:07,028 - INFO - dssInstance - OpenDSS fundamental frequency set to :  60 Hz
+2020-01-28 15:08:07,029 - INFO - SolveMode - Setting solver to QSTS mode.
+2020-01-28 15:08:07,229 - INFO - dssInstance - Running simulation from 2017-01-01 00:00:00 till 2017-01-01 23:59:00.
+2020-01-28 15:08:07,231 - INFO - dssInstance - Simulation time step 96.
+2020-01-28 15:08:08,869 - INFO - ResultContainer - Loads-Powers.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:08,880 - INFO - ResultContainer - Loads-VoltagesMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:08,890 - INFO - ResultContainer - Loads-kW.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:08,907 - INFO - ResultContainer - PVSystems-Powers.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:08,920 - INFO - ResultContainer - PVSystems-VoltagesMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:08,932 - INFO - ResultContainer - Storages-Powers.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:08,944 - INFO - ResultContainer - Storages-VoltagesMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:08,953 - INFO - ResultContainer - Storages-%stored.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:08,976 - INFO - ResultContainer - Buses-puVmagAngle.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:08,992 - INFO - ResultContainer - Buses-Distance.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:09,002 - INFO - ResultContainer - Circuits-TotalPower.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:09,012 - INFO - ResultContainer - Circuits-LineLosses.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:09,021 - INFO - ResultContainer - Circuits-Losses.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:09,030 - INFO - ResultContainer - Circuits-SubstationLosses.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:09,076 - INFO - ResultContainer - Lines-CurrentsMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:09,093 - INFO - ResultContainer - Lines-normamps.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:09,106 - INFO - ResultContainer - Lines-bus1.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:09,116 - INFO - ResultContainer - Transformers-CurrentsMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:09,126 - INFO - ResultContainer - Transformers-normamps.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:09,142 - INFO - ResultContainer - Transformers-bus.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:09,154 - INFO - ResultContainer - Transformers-taps.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:08:09,156 - INFO - ResultContainer - Exported OpenDSS event log to event_log.csv
+2020-01-28 15:08:09,160 - INFO - dssInstance - Simulation completed in 1.9307940006256104 seconds
+2020-01-28 15:08:09,161 - INFO - dssInstance - End of simulation
+2020-01-28 15:08:09,161 - INFO - dssInstance - An instance of OpenDSS (<PyDSS.dssInstance.OpenDSS object at 0x0000022FE84369B0>) has been deleted.
+2020-01-28 15:59:39,104 - INFO - dssInstance - An instance of OpenDSS version 0.3.7 has been created.
+2020-01-28 15:59:39,105 - INFO - dssInstance - Loading OpenDSS model
+2020-01-28 15:59:39,247 - INFO - dssInstance - OpenDSS:  
+2020-01-28 15:59:39,248 - INFO - dssInstance - OpenDSS fundamental frequency set to :  60 Hz
+2020-01-28 15:59:39,248 - INFO - SolveMode - Setting solver to QSTS mode.
+2020-01-28 15:59:39,440 - INFO - dssInstance - Running simulation from 2017-01-01 00:00:00 till 2017-01-01 23:59:00.
+2020-01-28 15:59:39,442 - INFO - dssInstance - Simulation time step 96.
+2020-01-28 15:59:41,030 - INFO - ResultContainer - Loads-Powers.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,045 - INFO - ResultContainer - Loads-VoltagesMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,060 - INFO - ResultContainer - Loads-kW.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,077 - INFO - ResultContainer - PVSystems-Powers.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,094 - INFO - ResultContainer - PVSystems-VoltagesMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,108 - INFO - ResultContainer - Storages-Powers.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,124 - INFO - ResultContainer - Storages-VoltagesMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,137 - INFO - ResultContainer - Storages-%stored.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,176 - INFO - ResultContainer - Buses-puVmagAngle.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,193 - INFO - ResultContainer - Buses-Distance.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,206 - INFO - ResultContainer - Circuits-TotalPower.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,221 - INFO - ResultContainer - Circuits-LineLosses.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,235 - INFO - ResultContainer - Circuits-Losses.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,247 - INFO - ResultContainer - Circuits-SubstationLosses.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,302 - INFO - ResultContainer - Lines-CurrentsMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,321 - INFO - ResultContainer - Lines-normamps.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,337 - INFO - ResultContainer - Lines-bus1.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,352 - INFO - ResultContainer - Transformers-CurrentsMagAng.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,364 - INFO - ResultContainer - Transformers-normamps.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,378 - INFO - ResultContainer - Transformers-bus.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,392 - INFO - ResultContainer - Transformers-taps.csv exported to C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\External_interfacing_example\pyDSS_project\Exports\helics_interface
+2020-01-28 15:59:41,393 - INFO - ResultContainer - Exported OpenDSS event log to event_log.csv
+2020-01-28 15:59:41,397 - INFO - dssInstance - Simulation completed in 1.9575183391571045 seconds
+2020-01-28 15:59:41,401 - INFO - dssInstance - End of simulation
+2020-01-28 15:59:41,401 - INFO - dssInstance - An instance of OpenDSS (<PyDSS.dssInstance.OpenDSS object at 0x00000257A0B769B0>) has been deleted.

@@ -107,6 +107,10 @@ class __Dynamic:
         self.__dssSolution.StepSize(0)
         self.__dssSolution.SolveNoControl()
 
+    def Solve(self):
+        self.__dssSolution.StepSize(0)
+        self.__dssSolution.Solve()
+
     def getMode(self):
         return self.__dssSolution.ModeID()
 
@@ -191,6 +195,10 @@ class __QSTS:
         self.__dssSolution.StepSize(0)
         self.__dssSolution.SolveNoControl()
 
+    def Solve(self):
+        self.__dssSolution.StepSize(0)
+        self.__dssSolution.Solve()
+
     def getMode(self):
         return self.__dssSolution.ModeID()
 
@@ -221,7 +229,7 @@ class __Shapshot:
         self.__dssInstance = dssInstance
         self.__dssSolution = dssInstance.Solution
         self.__dssSolution.Mode(0)
-        self.__dssInstance.utils.run_command('Set ControlMode={}'.format(SimulationSettings['Control mode']))
+        #self.__dssInstance.utils.run_command('Set ControlMode={}'.format(SimulationSettings['Control mode']))
         self.__dssSolution.MaxControlIterations(SimulationSettings['Max Control Iterations'])
 
         return
@@ -243,6 +251,9 @@ class __Shapshot:
 
     def reSolve(self):
         return self.__dssSolution.SolveNoControl()
+
+    def Solve(self):
+        self.__dssSolution.Solve()
 
     def IncStep(self):
         return self.__dssSolution.Solve()
