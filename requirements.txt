@@ -13,3 +13,4 @@ matplotlib
 Click
 numpy
 feather-format
+sklearn
