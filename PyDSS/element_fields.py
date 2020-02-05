@@ -13,7 +13,7 @@ ELEMENT_FIELDS = {
             ],
         },
     ],
-    "Transformer": [
+    "Transformers": [
         {
             "names": ["Currents", "Powers", 'Voltages', 'PhaseLosses'],
             "options": [
@@ -114,6 +114,27 @@ ELEMENT_FIELDS = {
                     "options": [
                         "phase_terminal",
                     ],
+                }
+            ],
+    "Buses": [
+        {
+            "names": ["CplxSeqVoltages", "Voc", 'Voltages', 'puVLL', 'PuVoltage'],
+            "options": [
+                "phase_terminal",
+            ],
+        },
+        {
+            "names": ["SeqVoltages", "VMagAngle", 'SeqCurrents', 'puVmagAngle'],
+            "options": [
+                "phase_terminal", "mag_ang"
+            ],
+        },
+
+    ],
+    "Circuits": [
+                {
+                    "names": ["TotalPower", "LineLosses", "Losses", "SubstationLosses"],
+                    "options": [],
                 }
             ],
 }

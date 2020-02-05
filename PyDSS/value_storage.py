@@ -61,7 +61,10 @@ class _ValueStorageBase(abc.ABC):
         """
 
 class   ValueByList(_ValueStorageBase):
-    """"Stores a list of lists of numbers by an arbitrary label."""
+    """"Stores a list of lists of numbers by an arbitrary suffix. This is a generic method to handle lists returned from
+    a function call. An example would be returned values  "taps" function for transformer elements. The calss can be
+    used for any methods that returns a list.
+    """
     def __init__(self, name, prop, values, label_suffixes):
         """Constructor for ValueByLabel
 
@@ -163,7 +166,10 @@ class ValueByNumber(_ValueStorageBase):
 
 
 class ValueByLabel(_ValueStorageBase):
-    """Stores a list of lists of numbers by an arbitrary label."""
+    """Stores a list of lists of numbers by an arbitrary label. Use this class when working with cktElement function
+    calls like Currents, currentMagAng where every two consecutive values in the returned list are representing one
+    quantity. The class differentiates between complex and mag / angle representation and stores the values appropriately
+    """
     def __init__(self, name, prop, value, Nodes, is_complex, units):
         """Constructor for ValueByLabel
 
