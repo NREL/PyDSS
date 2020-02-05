@@ -12,6 +12,11 @@ ELEMENT_FIELDS = {
                 "phase_terminal", "mag_ang"
             ],
         },
+        {
+            "names": ["NormalAmps"],
+            "options": [
+            ],
+        },
     ],
     "Transformers": [
         {
@@ -30,6 +35,11 @@ ELEMENT_FIELDS = {
             "names": ["taps", "maxtap", 'mintap', 'numtaps', 'kv', 'kva'],
             "options": [
                 "wdg",
+            ],
+        },
+        {
+            "names": ["NormalAmps"],
+            "options": [
             ],
         },
     ],
@@ -58,6 +68,11 @@ ELEMENT_FIELDS = {
                     "names": ["SeqVoltages", "SeqPowers", 'SeqCurrents', 'VoltagesMagAng', 'CurrentsMagAng'],
                     "options": [
                         "phase_terminal", "mag_ang"
+                    ],
+                },
+                {
+                    "names": ["Pmpp"],
+                    "options": [
                     ],
                 },
             ],
@@ -129,7 +144,11 @@ ELEMENT_FIELDS = {
                 "phase_terminal", "mag_ang"
             ],
         },
-
+        {
+            "names": ["Distance"],
+            "options": [
+            ],
+        },
     ],
     "Circuits": [
                 {
