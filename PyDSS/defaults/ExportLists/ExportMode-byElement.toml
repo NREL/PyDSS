@@ -1,0 +1,7 @@
+["Line.pvl_110"]
+Publish = [ "Powers",]
+NoPublish = []
+
+["PVSystem.pvl_110"]
+Publish = [ "Powers", "kw",]
+NoPublish = []

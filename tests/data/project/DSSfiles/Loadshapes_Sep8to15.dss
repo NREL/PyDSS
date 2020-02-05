@@ -1,0 +1,26 @@
+!New Loadshapeshape.Loadshapemult npts= 768 mInterval=15 mult = (file=./Loadshape_Peak_Loadshape.csv )
+!New Loadshapeshape.pvmult npts= 35040 mInterval=15 mult = (file=./PV_Peak_Loadshape.csv )
+
+!______________________________________ Source Voltage Profiles ________________________________________
+New Loadshape.s_voltage npts= 768 mInterval=15 mult = (file=./Vsource_profile.csv, col=6, header=yes) !secondary G20V col =4, testcolumn is col=5 pu=1.03 for entire period, col=6 is primary voltage calc'd from 2% transformer
+
+!______________________________________Load Profiles____________________________________________________
+New Loadshape.lp_MPX000189063 npts= 768 mInterval=15 pmult = (file=./MPX000472455.csv, col=5, header=yes) qmult = (file=./MPX000472455.csv ,col=6, header=yes)
+New Loadshape.lp_MPX000190400 npts= 768 mInterval=15 pmult = (file=./MPX000472455.csv ,col=5, header=yes) qmult = (file=./MPX000472455.csv ,col=6, header=yes)
+New Loadshape.lp_MPX000472455 npts= 768 mInterval=15 pmult = (file=./MPX000472455.csv ,col=5, header=yes) qmult = (file=./MPX000472455.csv ,col=6, header=yes)
+New Loadshape.lp_MPX000513128 npts= 768 mInterval=15 pmult = (file=./MPX000472455.csv ,col=5, header=yes) qmult = (file=./MPX000472455.csv ,col=6, header=yes)
+New Loadshape.lp_MPX000193663 npts= 768 mInterval=15 pmult = (file=./MPX000472455.csv ,col=5, header=yes) qmult = (file=./MPX000472455.csv ,col=6, header=yes)
+New Loadshape.lp_MPX000193787 npts= 768 mInterval=15 pmult = (file=./MPX000472455.csv ,col=5, header=yes) qmult = (file=./MPX000472455.csv ,col=6, header=yes)
+New Loadshape.lp_MPX000193786 npts= 768 mInterval=15 pmult = (file=./MPX000472455.csv ,col=5, header=yes) qmult = (file=./MPX000472455.csv ,col=6 header=yes)
+New Loadshape.lp_MPX000415707 npts= 768 mInterval=15 pmult = (file=./MPX000472455.csv ,col=5, header=yes) qmult = (file=./MPX000472455.csv ,col=6 header=yes)
+New Loadshape.lp_MPX000514076 npts= 768 mInterval=15 pmult = (file=./MPX000472455.csv ,col=5, header=yes) qmult = (file=./MPX000472455.csv ,col=6, header=yes)
+New Loadshape.lp_MPX000635970 npts= 768 mInterval=15 pmult = (file=./MPX000635970.csv ,col=8, header=yes) qmult = (file=./MPX000635970.csv ,col=9, header=yes)
+New Loadshape.lp_MPX000637601 npts= 768 mInterval=15 pmult = (file=./MPX000637601.csv ,col=8, header=yes) qmult = (file=./MPX000637601.csv ,col=9, header=yes)
+New Loadshape.lp_MPX000460267 npts= 768 mInterval=15 pmult = (file=./MPX000460267.csv ,col=8, header=yes) qmult = (file=./MPX000460267.csv ,col=9, header=yes)
+New Loadshape.lp_MPX000594341 npts= 768 mInterval=15 pmult = (file=./MPX000594341.csv ,col=8, header=yes) qmult = (file=./MPX000594341.csv ,col=9, header=yes)
+
+!______________________________________PV Profiles_______________________________________________________
+New loadshape.pv_MPX000635970 npts= 768 mInterval=15 mult = (file=./MPX000635970.csv ,col=7, header=yes)
+New Loadshape.pv_MPX000637601 npts= 768 mInterval=15 mult = (file=./MPX000637601.csv ,col=7, header=yes)
+New Loadshape.pv_MPX000460267 npts= 768 mInterval=15 mult = (file=./MPX000460267.csv ,col=7, header=yes)
+New Loadshape.pv_MPX000594341 npts= 768 mInterval=15 mult = (file=./MPX000594341.csv ,col=7, header=yes)

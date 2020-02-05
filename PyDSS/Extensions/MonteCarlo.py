@@ -1,14 +1,21 @@
 from ast import literal_eval
+import os
+
 from scipy import stats
 import pandas as pd
 import numpy as np
 import logging
 
+from PyDSS.pyLogger import getLoggerTag
+
 
 class MonteCarloSim:
 
     def __init__(self, SimulationSettings, dssPaths, dssObjects, dssObjectsByClass):
-        LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
+        if SimulationSettings["Pre-configured logging"]:
+            LoggerTag = __name__
+        else:
+            LoggerTag = getLoggerTag(SimulationSettings)
         self.pyLogger = logging.getLogger(LoggerTag)
         self.__dssPaths = dssPaths
         self.__dssObjects = dssObjects
@@ -16,14 +23,14 @@ class MonteCarloSim:
         self.__dssObjectsByClass = dssObjectsByClass
 
         try:
-            MCfile = self.__Settings['Active Scenario'] + '\\MonteCarloSettings\\MonteCarloSettings.xlsx'
-            MCfilePath = self.__dssPaths['Import'] + '\\' + MCfile
+            MCfile = os.path.join(self.__Settings['Active Scenario'], 'MonteCarloSettings', 'MonteCarloSettings.xlsx')
+            MCfilePath = os.path.join(self.__dssPaths['Import'], MCfile)
             self.pyLogger.info('Reading monte carlo scenario settings file from ' + MCfilePath)
             MCsettings = pd.read_excel(MCfilePath,sheetname=0).T
             self.__MCsettingsDict = MCsettings.to_dict()
         except:
-            self.pyLogger.error('Monte Carlo scenario generation file not found')
-            return
+            self.pyLogger.error('Failed to read Monte Carlo scenario generation file %s', MCfilePath)
+            raise
         return
 
     def Create_Scenario(self):

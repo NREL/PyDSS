@@ -6,7 +6,7 @@ import os
 @click.option('--pydss_path',
               default=r'C:\Users\alatif\Desktop\PyDSS')
 @click.option('--sim_path',
-              default=r'C:\Users\alatif\Desktop\PyDSS\examples\External_interfacing_example\pyDSS_project\PyDSS Scenarios')
+              default=r'C:\Users\alatif\Desktop\PyDSS\examples\External_interfacing_example\pyDSS_project\Scenarios')
 @click.option('--sim_file',
               default=r'api_interface.toml')
 @click.option('--run_simulation',

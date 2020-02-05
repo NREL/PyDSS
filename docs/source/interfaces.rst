@@ -34,7 +34,7 @@ A small script is used to run the particular scenario.
 	@click.option('--pydss_path',
 				  default=r'C:\Users\alatif\Desktop\PyDSS')
 	@click.option('--sim_path',
-				  default=r'C:\Users\alatif\Desktop\PyDSS\examples\External_interfacing_example\pyDSS_project\PyDSS Scenarios')
+				  default=r'C:\Users\alatif\Desktop\PyDSS\examples\External_interfacing_example\pyDSS_project\Scenarios')
 	@click.option('--sim_file',
 				  default=r'socket_interface.toml') #The TOML file contains simulation settings for the particular scenario
 	def run_pyDSS(pydss_path, sim_path, sim_file):
@@ -234,7 +234,7 @@ A minimal HELICS interfacing example has been provided as a PyDSS project in ~Py
 	@click.option('--pydss_path',
 				  default=r'C:\Users\alatif\Desktop\PyDSS')
 	@click.option('--sim_path',
-				  default=r'C:\Users\alatif\Desktop\PyDSS\examples\External_interfacing_example\pyDSS_project\PyDSS Scenarios')
+				  default=r'C:\Users\alatif\Desktop\PyDSS\examples\External_interfacing_example\pyDSS_project\Scenarios')
 	@click.option('--sim_file',
 				  default=r'api_interface.toml')
 	@click.option('--run_simulation',

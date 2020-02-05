@@ -1,12 +1,14 @@
 from PyDSS.ResultContainer import ResultContainer as RC
+from PyDSS.ResultData import ResultData
 from PyDSS.pyContrReader import pyContrReader as pcr
 from PyDSS.pyPlotReader import pyPlotReader as ppr
-from PyDSS.dssElement import dssElement
+from PyDSS.dssElementFactory import create_dss_element
 from PyDSS.dssCircuit import dssCircuit
 from PyDSS.NetworkModifier import Modifier
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
+from PyDSS.utils.dataframe_utils import write_dataframe
 
 from PyDSS.pyPostprocessor import pyPostprocess
 import PyDSS.pyControllers as pyControllers
@@ -16,6 +18,7 @@ import PyDSS.pyPlots as pyPlots
 from PyDSS.Extensions.NetworkGraph import CreateGraph
 
 import numpy as np
+import pandas as pd
 import logging
 import time
 import os
@@ -42,7 +45,7 @@ class OpenDSS:
 
         rootPath = kwargs['Project Path']
         self._ActiveProject = kwargs['Active Project']
-        importPath = os.path.join(rootPath, kwargs['Active Project'], 'PyDSS Scenarios')
+        importPath = os.path.join(rootPath, kwargs['Active Project'], 'Scenarios')
         self._dssPath = {
             'root': rootPath,
             'Import': importPath,
@@ -55,19 +58,26 @@ class OpenDSS:
             'dssFilePath': os.path.join(rootPath, kwargs['Active Project'], 'DSSfiles', kwargs['DSS File']),
         }
 
-        LoggerTag = kwargs['Active Project'] + '_' + kwargs['Active Scenario']
-        self._Logger = pyLogger.getLogger(LoggerTag, self._dssPath['Log'], LoggerOptions=kwargs)
+        self._Options = kwargs
+        if kwargs["Pre-configured logging"]:
+            self._Logger = logging.getLogger(__name__)
+        else:
+            LoggerTag = pyLogger.getLoggerTag(kwargs)
+            self._Logger = pyLogger.getLogger(LoggerTag, self._dssPath['Log'], LoggerOptions=kwargs)
         self._Logger.info('An instance of OpenDSS version ' + dss.__version__ + ' has been created.')
 
         for key, path in self._dssPath.items():
             assert (os.path.exists(path)), '{} path: {} does not exist!'.format(key, path)
 
-        self._Options = kwargs
         self._dssInstance.Basic.ClearAll()
         self._dssInstance.utils.run_command('Log=NO')
         run_command('Clear')
         self._Logger.info('Loading OpenDSS model')
-        reply = run_command('compile ' + self._dssPath['dssFilePath'])
+        try:
+            orig_dir = os.getcwd()
+            reply = run_command('compile ' + self._dssPath['dssFilePath'])
+        finally:
+            os.chdir(orig_dir)
         self._Logger.info('OpenDSS:  ' + reply)
 
         assert ('error ' not in reply.lower()), 'Error compiling OpenDSS model.\n{}'.format(reply)
@@ -92,8 +102,12 @@ class OpenDSS:
         self._dssSolver.reSolve()
 
         if self._Options and self._Options['Log Results']:
-            self.ResultContainer = RC(kwargs, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
-                                      self._dssBuses, self._dssSolver, self._dssCommand)
+            if self._Options['Result Container'] == 'ResultContainer':
+                self.ResultContainer = RC(kwargs, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
+                                          self._dssBuses, self._dssSolver, self._dssCommand)
+            else:
+                self.ResultContainer = ResultData(kwargs, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
+                                                    self._dssBuses, self._dssSolver, self._dssCommand)
 
         pyCtrlReader = pcr(self._dssPath['pyControllers'])
         ControllerList = pyCtrlReader.pyControllers
@@ -204,14 +218,14 @@ class OpenDSS:
     def _UpdateDictionary(self):
         InvalidSelection = ['Settings', 'ActiveClass', 'dss', 'utils', 'PDElements', 'XYCurves', 'Bus', 'Properties']
         # TODO: this causes a segmentation fault. Aadil says it may not be needed.
-        # self._dssObjectsByClass={'LoadShape': self._GetRelaventObjectDict('LoadShape')}
+        #self._dssObjectsByClass={'LoadShape': self._GetRelaventObjectDict('LoadShape')}
 
         for ElmName in self._dssInstance.Circuit.AllElementNames():
             Class, Name =  ElmName.split('.', 1)
             if Class + 's' not in self._dssObjectsByClass:
                 self._dssObjectsByClass[Class + 's'] = {}
             self._dssInstance.Circuit.SetActiveElement(ElmName)
-            self._dssObjectsByClass[Class + 's'][ElmName] = dssElement(self._dssInstance)
+            self._dssObjectsByClass[Class + 's'][ElmName] = create_dss_element(Class, Name, self._dssInstance)
             self._dssObjects[ElmName] = self._dssObjectsByClass[Class + 's'][ElmName]
 
         for ObjName in self._dssObjects.keys():
@@ -232,7 +246,9 @@ class OpenDSS:
         ElmCollection = getattr(self._dssInstance, key)
         Elem = ElmCollection.First()
         while Elem:
-            ObjectList[self._dssInstance.Element.Name()] = dssElement(self._dssInstance)
+            FullName = self._dssInstance.Element.Name()
+            Class, Name =  FullName.split('.', 1)
+            ObjectList[FullName] = create_dss_element(Class, Name, self._dssInstance)
             Elem = ElmCollection.Next()
         return ObjectList
 
@@ -281,6 +297,9 @@ class OpenDSS:
         return
 
     def RunSimulation(self, file_prefix=''):
+        if self._Options["Export Elements"]:
+            self._ExportElements()
+
         startTime = time.time()
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
@@ -290,7 +309,7 @@ class OpenDSS:
             self.postprocessor = pyPostprocess.Create(self._dssInstance, self._dssSolver, self._dssObjects,
                                                      self._dssObjectsByClass, self._Options, self._Logger)
         else:
-            print('No post processing script selected')
+            self._Logger.info('No post processing script selected')
             self.postprocessor = None
 
         step = 0
@@ -341,6 +360,62 @@ class OpenDSS:
         if Visualize:
             Graph.CreateGraphVisualization(defaultGraphPlotSettings)
         return Graph.Get()
+
+    def _ExportElements(self):
+        dss = self._dssInstance
+        exports = (
+            # TODO: opendssdirect does not provide a function to export Bus information.
+            ("CapacitorsInfo", dss.Capacitors.Count, dss.utils.capacitors_to_dataframe),
+            ("FusesInfo", dss.Fuses.Count, dss.utils.fuses_to_dataframe),
+            ("GeneratorsInfo", dss.Generators.Count, dss.utils.generators_to_dataframe),
+            ("IsourceInfo", dss.Isource.Count, dss.utils.isource_to_dataframe),
+            ("LinesInfo", dss.Lines.Count, dss.utils.lines_to_dataframe),
+            ("LoadsInfo", dss.Loads.Count, dss.utils.loads_to_dataframe),
+            ("MetersInfo", dss.Meters.Count, dss.utils.meters_to_dataframe),
+            ("MonitorsInfo", dss.Monitors.Count, dss.utils.monitors_to_dataframe),
+            ("PVSystemsInfo", dss.PVsystems.Count, dss.utils.pvsystems_to_dataframe),
+            ("ReclosersInfo", dss.Reclosers.Count, dss.utils.reclosers_to_dataframe),
+            ("RegControlsInfo", dss.RegControls.Count, dss.utils.regcontrols_to_dataframe),
+            ("RelaysInfo", dss.Relays.Count, dss.utils.relays_to_dataframe),
+            ("SensorsInfo", dss.Sensors.Count, dss.utils.sensors_to_dataframe),
+            ("TransformersInfo", dss.Transformers.Count, dss.utils.transformers_to_dataframe),
+            ("VsourcesInfo", dss.Vsources.Count, dss.utils.vsources_to_dataframe),
+            ("XYCurvesInfo", dss.XYCurves.Count, dss.utils.xycurves_to_dataframe),
+            # TODO This can be very large. Consider making it configurable.
+            #("LoadShapeInfo", dss.LoadShape.Count, dss.utils.loadshape_to_dataframe),
+        )
+
+        for filename, count_func, get_func in exports:
+            if count_func() > 0:
+                df = get_func()
+                filepath = os.path.join(self._dssPath['Export'],
+                                        self._Options['Active Scenario'],
+                                        filename + "." + self._Options["Export Format"])
+                write_dataframe(df, filepath)
+                self._Logger.info('Exported %s information to %s.', filename, filepath)
+
+        self._ExportTransformers()
+
+    def _ExportTransformers(self):
+        dss = self._dssInstance
+        df_dict = {'Transformer': [], 'HighSideConnection': [], 'NumPhases': []}
+
+        dss.Circuit.SetActiveClass('Transformer')
+        flag = dss.ActiveClass.First()
+        while flag > 0:
+            name = dss.CktElement.Name()
+            df_dict['Transformer'].append(name)
+            df_dict['HighSideConnection'].append(dss.Properties.Value('conns').split('[')[1].split(',')[0].strip(' ').lower())
+            df_dict['NumPhases'].append(dss.CktElement.NumPhases())
+            flag = dss.ActiveClass.Next()
+
+        df = pd.DataFrame.from_dict(df_dict)
+
+        filepath = os.path.join(self._dssPath['Export'],
+                                self._Options['Active Scenario'],
+                                'TransformersPhaseInfo' + "." + self._Options["Export Format"])
+        write_dataframe(df, filepath)
+        self._Logger.info('Exported transformer phase information to %s.', filepath)
 
     def __del__(self):
         self._Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')

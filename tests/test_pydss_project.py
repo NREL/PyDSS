@@ -1,0 +1,169 @@
+
+import os
+import shutil
+import tempfile
+
+import pandas as pd
+import pytest
+
+from PyDSS.pydss_project import PyDssProject, PyDssScenario
+from PyDSS.pydss_results import PyDssResults, \
+    ElementValuesPerPropertyResults, ValuesByPropertyAcrossElementsResults
+
+
+PATH = os.path.join(tempfile.gettempdir(), "pydss-projects")
+
+
+@pytest.fixture
+def pydss_project():
+    if os.path.exists(PATH):
+        shutil.rmtree(PATH)
+    yield
+    if os.path.exists(PATH):
+        shutil.rmtree(PATH)
+
+
+def test_create_project(pydss_project):
+    project_name = "test-project"
+    project_dir = os.path.join(PATH, project_name)
+    # Intentionally not in alphabetic order so that we verify our designated
+    # ordering.
+    scenario_names = ("b_scenario1", "a_scenario2")
+    scenarios = [PyDssScenario(x) for x in scenario_names]
+    project = PyDssProject.create_project(PATH, project_name, scenarios)
+    assert os.path.exists(project_dir)
+    for dir_name in PyDssScenario._SCENARIO_DIRECTORIES:
+        for scenario in scenarios:
+            path = os.path.join(
+                project_dir,
+                PyDssProject._SCENARIOS,
+                scenario.name,
+                dir_name,
+            )
+            assert os.path.exists(path)
+
+    project2 = PyDssProject.load_project(project_dir)
+    assert project.name == project2.name
+    scenarios1 = project.scenarios
+    scenarios1.sort(key=lambda x: x.name)
+    scenarios2 = project2.scenarios
+    scenarios2.sort(key=lambda x: x.name)
+
+    assert len(scenarios1) == len(scenarios2)
+    for i in range(len(project.scenarios)):
+        assert scenarios1[i].name == scenarios2[i].name
+        assert scenarios1[i].controllers == scenarios2[i].controllers
+        assert scenarios1[i].plots == scenarios2[i].plots
+
+
+RUN_PROJECT_PATH = os.path.join("tests", "data", "project")
+
+
+@pytest.fixture
+def cleanup_project():
+    yield
+    export_path = os.path.join(RUN_PROJECT_PATH, "Exports", "scenario1")
+    logs_path = os.path.join(RUN_PROJECT_PATH, "Logs")
+    for path in (logs_path, export_path):
+        shutil.rmtree(path)
+        os.mkdir(path)
+
+
+EXPECTED_ELEM_CLASSES_PROPERTIES = {
+    "Loads": ["Powers"],
+    "PVSystems": ["Pmpp"],
+    "Storages": ["Powers"],
+    "Buses": ["puVmagAngle", "Distance"],
+    "Circuits": ["TotalPower", "LineLosses", "Losses", "SubstationLosses"],
+    "Lines": ["Currents", "NormalAmps"],
+    "Transformers": ["Currents", "NormalAmps"],
+}
+
+
+def test_run_project_by_element(cleanup_project):
+    PyDssProject.run_project(RUN_PROJECT_PATH)
+    results = PyDssResults(RUN_PROJECT_PATH)
+    assert len(results.scenarios) == 1
+    scenario = results.scenarios[0]
+    assert isinstance(scenario, ElementValuesPerPropertyResults)
+    elem_classes = scenario.list_element_classes()
+    expected_elem_classes = list(EXPECTED_ELEM_CLASSES_PROPERTIES.keys())
+    expected_elem_classes.sort()
+    assert elem_classes == expected_elem_classes
+    for elem_class in elem_classes:
+        expected_properties = EXPECTED_ELEM_CLASSES_PROPERTIES[elem_class]
+        expected_properties.sort()
+        properties = scenario.list_element_properties(elem_class)
+        assert properties == expected_properties
+        for name in scenario.list_element_names(elem_class):
+            for prop in properties:
+                df = scenario.get_dataframe(elem_class, prop, name)
+                assert isinstance(df, pd.DataFrame)
+                assert len(df) == 96
+            for prop, df in scenario.iterate_dataframes(elem_class, name):
+                assert prop in properties
+                assert isinstance(df, pd.DataFrame)
+
+    # Test with an option.
+    df = scenario.get_dataframe("Lines", "Currents", "Line.sw0", phase_terminal="A1")
+    assert isinstance(df, pd.DataFrame)
+    assert len(df) == 96
+
+    elem_name = "Line.sw0"
+    full_df = scenario.get_full_dataframe("Lines", elem_name)
+    for column in full_df.columns:
+        assert "Unnamed" not in column
+        if column not in ("frequency", "Simulation mode"):
+            assert elem_name in column
+    assert len(full_df.columns) >= len(scenario.list_element_properties("Lines"))
+    assert len(full_df) == 96
+
+
+def test_run_project_by_property(cleanup_project):
+    options = {"Export Iteration Order": "ValuesByPropertyAcrossElements"}
+    PyDssProject.run_project(RUN_PROJECT_PATH, options=options)
+    results = PyDssResults(RUN_PROJECT_PATH)
+    assert len(results.scenarios) == 1
+    scenario = results.scenarios[0]
+    assert isinstance(scenario, ValuesByPropertyAcrossElementsResults)
+    elem_classes = scenario.list_element_classes()
+    expected_elem_classes = list(EXPECTED_ELEM_CLASSES_PROPERTIES.keys())
+    expected_elem_classes.sort()
+    assert elem_classes == expected_elem_classes
+    for elem_class in elem_classes:
+        expected_properties = EXPECTED_ELEM_CLASSES_PROPERTIES[elem_class]
+        expected_properties.sort()
+        properties = scenario.list_element_properties(elem_class)
+        assert properties == expected_properties
+        for prop in properties:
+            element_names = scenario.list_element_names(elem_class, prop)
+            for name in element_names:
+                df = scenario.get_dataframe(elem_class, prop, name)
+                assert isinstance(df, pd.DataFrame)
+                assert len(df) == 96
+            for name, df in scenario.iterate_dataframes(elem_class, prop):
+                assert name in element_names
+                assert isinstance(df, pd.DataFrame)
+
+    # Test with an option.
+    assert scenario.list_element_property_options("Lines", "Currents") == ["phase_terminal"]
+    df = scenario.get_dataframe("Lines", "Currents", "Line.sw0", phase_terminal="A1")
+    assert isinstance(df, pd.DataFrame)
+    assert len(df) == 96
+
+    prop = "Currents"
+    full_df = scenario.get_full_dataframe("Lines", prop)
+    assert len(full_df.columns) >= len(scenario.list_element_names("Lines", prop))
+    for column in full_df.columns:
+        assert "Unnamed" not in column
+    assert len(full_df) == 96
+
+    element_info_files = scenario.list_element_info_files()
+    assert element_info_files
+    for filename in element_info_files:
+        df = scenario.read_element_info_file(filename)
+        assert isinstance(df, pd.DataFrame)
+
+    # Test the shortcut.
+    df = scenario.read_element_info_file("PVSystems")
+    assert isinstance(df, pd.DataFrame)

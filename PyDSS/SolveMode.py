@@ -2,8 +2,14 @@ from datetime import datetime, timedelta
 import logging
 import math
 
+from PyDSS.pyLogger import getLoggerTag
+
+
 def GetSolver(SimulationSettings ,dssInstance):
-    LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
+    if SimulationSettings["Pre-configured logging"]:
+        LoggerTag = __name__
+    else:
+        LoggerTag = getLoggerTag(SimulationSettings)
     pyLogger = logging.getLogger(LoggerTag)
     try:
         pyLogger.info('Setting solver to ' + SimulationSettings['Simulation Type'] + ' mode.')

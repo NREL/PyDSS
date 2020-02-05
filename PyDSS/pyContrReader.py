@@ -2,26 +2,36 @@ import pandas as pd
 import numpy as np
 import os
 
+import toml
+
+from PyDSS.config_data import convert_config_data_to_toml
+from PyDSS.utils.utils import load_data
+
+
 class pyContrReader:
     def __init__(self, Path):
         self.pyControllers = {}
         filenames = os.listdir(Path)
+        found_config_file = False
+        found_excel_file = False
         for filename in filenames:
-            print(filename)
-            if filename.endswith('.xlsx') and not filename.startswith('~$'):
-                pyControllerType  = filename.split('.')[0]
-                filepath = os.path.join(Path, filename)
-                assert (os.path.exists(filepath)), 'path: "{}" does not exist!'.format(filepath)
-                ControllerDataset = pd.read_excel(filepath, skiprows=[0,], index_col=[0])
-                pyControllerNames = ControllerDataset.index.tolist()
-                pyController = {}
-                for pyControllerName in pyControllerNames:
-                    pyControllerData = ControllerDataset.loc[pyControllerName]
-                    assert len(pyControllerData == 1), 'Multiple PyDSS controller definitions for a single OpenDSS ' +\
-                                                       'element not allowed'
-                    pyControllerDict = pyControllerData.to_dict()
-                    pyController[pyControllerName] = pyControllerDict
-                self.pyControllers[pyControllerType] = pyController
+            pyControllerType, ext = os.path.splitext(filename)
+            if filename.startswith('~$'):
+                continue
+            elif ext == '.xlsx':
+                filename = convert_config_data_to_toml(xlsx_filename)
+            elif ext != ".toml":
+                continue
+            if pyControllerType not in self.pyControllers:
+                self.pyControllers[pyControllerType] = {}
+            filepath = os.path.join(Path, filename)
+            assert (os.path.exists(filepath)), 'path: "{}" does not exist!'.format(filepath)
+            for name, controller in load_data(filepath).items():
+                if name in self.pyControllers[pyControllerType]:
+                    raise InvalidParameter(
+                        f"Multiple PyDSS controller definitions for a single OpenDSS element not allowed: {name}"
+                    )
+                self.pyControllers[pyControllerType][name] = controller
 
 
 class pySubscriptionReader:
@@ -41,47 +51,19 @@ class pySubscriptionReader:
         self.SubscriptionDict = SubscriptionData.T.to_dict()
 
 
-
-
 class pyExportReader:
     def __init__(self, filePath):
         self.pyControllers = {}
         self.publicationList = []
-        assert (os.path.exists(filePath)), 'path: "{}" does not exist!'.format(filePath)
-        ControllerDataset = pd.read_excel(filePath, skiprows=[0,], index_col=[0])
-        assert (ControllerDataset.columns[0] == 'Publish'), 'First column after class declarations in the ' +\
-                                                            'export defination files  should have column ' +\
-                                                            'name "Publish"'
+        xlsx_filename = os.path.splitext(filePath)[0] + '.xlsx'
+        if not os.path.exists(filePath) and os.path.exists(xlsx_filename):
+            convert_config_data_to_toml(xlsx_filename)
 
-        Publish = ControllerDataset['Publish']
-        assert (Publish.dtype == bool), 'The publish column can only have boolean values.'
-        ControllerDatasetFiltered = ControllerDataset[ControllerDataset.columns[1:]]
+        if not os.path.exists(filePath):
+            raise FileNotFoundError('path: "{}" does not exist!'.format(filePath))
 
-        pyControllerNames = ControllerDatasetFiltered.index.tolist()
-        pyController = {}
-        for pyControllerName, doPublish in zip(pyControllerNames, Publish.values):
-            pyControllerData = ControllerDatasetFiltered.loc[pyControllerName]
-            pulishdata = ControllerDataset['Publish'].loc[pyControllerName]
-            if isinstance(pulishdata, np.bool_):
-                pulishdata = [pulishdata]
-            else:
-                pulishdata = pulishdata.dropna().values
-            Data = pyControllerData.copy()
-            Data.index = range(len(Data))
-            for i, publish in enumerate(pulishdata):
-                if publish:
-                    if isinstance(Data, pd.core.frame.DataFrame):
-                        properties = Data.loc[i].dropna()
-                    else:
-                        properties = Data.dropna().values
-                    for property in properties:
-                        self.publicationList.append("{} {}".format(pyControllerName, property))
-
-            if len(pyControllerData) > 1:
-                pyControllerData = pd.Series(pyControllerData.values.flatten())
-                pyControllerDict = pyControllerData.dropna().to_dict()
-            else:
-                pyControllerDict = pyControllerData.dropna().to_dict()
-
-            self.pyControllers[pyControllerName] = pyControllerDict
-        self.publicationList = list(set(self.publicationList))
+        for elem, elem_data in load_data(filePath).items():
+            self.pyControllers[elem] = elem_data["Publish"][:]
+            self.pyControllers[elem] += elem_data["NoPublish"]
+            for item in elem_data["Publish"]:
+                self.publicationList.append(f"{elem} {item}")

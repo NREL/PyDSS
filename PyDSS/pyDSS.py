@@ -1,12 +1,14 @@
-from PyDSS.pyAnalyzer.dssSimulationResult import ResultObject
-from PyDSS.pyAnalyzer.dssGraphicsGenerator import CreatePlots
-from PyDSS import dssInstance
 import subprocess
 import pathlib
 import PyDSS
 import toml
 import os
+import logging
 
+from PyDSS.pyAnalyzer.dssSimulationResult import ResultObject
+from PyDSS.pyAnalyzer.dssGraphicsGenerator import CreatePlots
+from PyDSS import dssInstance
+from PyDSS.utils.utils import dump_data, load_data
 
 __author__ = "Aadil Latif"
 __copyright__ = """
@@ -37,6 +39,13 @@ __maintainer__ = "Aadil Latif"
 __email__ = "aadil.latif@nrel.gov, aadil.latif@gmail.com"
 __status__ = "Production"
 
+
+PYDSS_BASE_DIR = os.path.join(os.path.dirname(getattr(PyDSS, "__path__")[0]), "PyDSS")
+
+
+logger = logging.getLogger(__name__)
+
+
 class instance(object):
 
     valid_settings = {
@@ -44,6 +53,10 @@ class instance(object):
             'Return Results': {'type': bool, 'Options': [True, False]},
             'Export Mode': {'type': str, 'Options': ["byClass", "byElement"]},
             'Export Style': {'type': str, 'Options': ["Single file", "Separate files"]},
+            'Export Format': {'type': str, 'Options': ["csv", "feather"]},
+            'Export Compression': {'type': bool, 'Options': [True, False]},
+            'Export Iteration Order': {'type': str, 'Options': ["ElementValuesPerProperty", "ValuesByPropertyAcrossElements"]},
+            'Export Elements': {'type': bool, 'Options': [True, False]},
 
             'Create dynamic plots': {'type': bool, 'Options': [True, False]},
             'Open plots in browser': {'type': bool, 'Options': [True, False]},
@@ -60,6 +73,7 @@ class instance(object):
             'Error tolerance': {'type': float},
             'Simulation Type': {'type': str, 'Options': ["QSTS", "Dynamic", "Snapshot", "Monte Carlo"]},
             'Active Project': {'type': str},
+            'Scenarios': {'type': list},
             'Active Scenario': {'type': str},
             'DSS File': {'type': str},
 
@@ -78,6 +92,7 @@ class instance(object):
             'Log to external file': {'type': bool, 'Options': [True, False]},
             'Display on screen': {'type': bool, 'Options': [True, False]},
             'Clear old log file': {'type': bool, 'Options': [True, False]},
+            'Pre-configured logging': {'type': bool, 'Options': [True, False]},
 
             'Control mode': {'type': str, 'Options': ["Static", "Time"]},
             'Disable PyDSS controllers': {'type': bool, 'Options': [True, False]},
@@ -91,36 +106,8 @@ class instance(object):
             'Percentage load in series': {'type': float, 'Options': range(0, 100)},
 
             'Number of Monte Carlo scenarios': {'type': int},
+            'Result Container': {'type': str, 'Options': ['ResultContainer', 'ResultData']},
     }
-
-    def __init__(self):
-        return
-
-    def create_new_project(self, base_path, project_name, scenario_name):
-        logs = os.path.join(base_path, project_name, 'Logs')
-        exports = os.path.join(base_path, project_name, 'Exports')
-        dssfiles = os.path.join(base_path, project_name, 'DSSfiles')
-        scenario = os.path.join(base_path, project_name, 'PyDSS Scenarios', scenario_name)
-
-        pathlib.Path(logs).mkdir(parents=True, exist_ok=True)
-        pathlib.Path(exports).mkdir(parents=True, exist_ok=True)
-        pathlib.Path(dssfiles).mkdir(parents=True, exist_ok=True)
-        pathlib.Path(scenario).mkdir(parents=True, exist_ok=True)
-
-        self.create_scenario_template(scenario)
-        return
-
-    def create_scenario_template(self, scenario_path, base_path=None, project_name=None):
-        #TODO: once xlxs inputs changed to xlm or json
-        return
-
-    def read_toml_file(self, filename):
-        settings_text = ''
-        f = open(filename, "r")
-        text = settings_text.join(f.readlines())
-        toml_data = toml.loads(text)
-        f.close()
-        return toml_data
 
     def update_results_dict(self, results_container, args, results):
         results_container['{}-{}-{}-{}-{}'.format(
@@ -133,13 +120,12 @@ class instance(object):
         return results_container
 
 
-    def run(self, simulation_file, vis_settings_file=None):
+    def run(self, simulation_config, scenario):
         path = os.path.dirname(PyDSS.__file__)
-        default_vis_settings = self.read_toml_file(os.path.join(path, 'default_plot_settings.toml'))
+        default_vis_settings = load_data(os.path.join(path, 'defaults', 'pyPlotList', 'plots.toml'))
 
-        if vis_settings_file != None:
-            vis_settings = self.read_toml_file(vis_settings_file)
-            updated_vis_settings = {**default_vis_settings, **vis_settings}
+        if scenario.plots is not None:
+            updated_vis_settings = {**default_vis_settings, **scenario.plots}
         else:
             updated_vis_settings = default_vis_settings
 
@@ -148,33 +134,22 @@ class instance(object):
             bokeh_server_proc = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
 
         SimulationResults = {}
-        if isinstance(simulation_file, str):
-            args, results = self.__run_scenario(simulation_file,
-                                                updated_vis_settings['Simulations']['Run_simulations'],
-                                                updated_vis_settings['Simulations']['Generate_visuals'])
-            if results is not None:
-                SimulationResults = self.update_results_dict(SimulationResults, args, results)
-
-
-        elif isinstance(simulation_file, list):
-            for sim_file in simulation_file:
-                args, results = self.__run_scenario(sim_file,
-                                                    updated_vis_settings['Simulations']['Run_simulations'],
-                                                    updated_vis_settings['Simulations']['Generate_visuals'])
-                SimulationResults = self.update_results_dict(SimulationResults, args, results)
+        args, results = self.__run_scenario(simulation_config,
+                                            updated_vis_settings['Simulations']['Run_simulations'],
+                                            updated_vis_settings['Simulations']['Generate_visuals'])
+        if results is not None:
+            SimulationResults = self.update_results_dict(SimulationResults, args, results)
 
         if updated_vis_settings['Simulations']['Generate_visuals']:
             CreatePlots(updated_vis_settings, SimulationResults)
         if updated_vis_settings['Simulations']['Run_bokeh_server']:
             bokeh_server_proc.terminate()
-        print('end of update_results_dict')
         return
 
-    def update_scenario_settigs(self, Scenario_TOML_file_path):
+    def update_scenario_settings(self, simulation_config):
         path = os.path.dirname(PyDSS.__file__)
-        default_sim_settings = self.read_toml_file(os.path.join(path, 'default_simulation_settings.toml'))
-        sim_settings = self.read_toml_file(Scenario_TOML_file_path)
-        dss_args = {**default_sim_settings, **sim_settings}
+        default_sim_settings = load_data(os.path.join(path, 'defaults', 'simulation.toml'))
+        dss_args = {**default_sim_settings, **simulation_config}
         self.__validate_settings(dss_args)
         return dss_args
 
@@ -182,16 +157,18 @@ class instance(object):
         dss = dssInstance.OpenDSS(**dss_args)
         return dss
 
-    def __run_scenario(self, Scenario_TOML_file_path, run_simulation=True, generate_visuals=False):
-        dss_args = self.update_scenario_settigs(Scenario_TOML_file_path)
+    def __run_scenario(self, simulation_config, run_simulation=True, generate_visuals=False):
+        dss_args = self.update_scenario_settings(simulation_config)
+        self._dump_scenario_simulation_settings(dss_args)
+
         if run_simulation:
             dss = dssInstance.OpenDSS(**dss_args)
-            print('Running scenario: {}'.format(Scenario_TOML_file_path))
+            logger.info('Running scenario: %s', dss_args["Active Scenario"])
             if dss_args["Number of Monte Carlo scenarios"] > 0:
                 dss.RunMCsimulation(samples=dss_args['Number of Monte Carlo scenarios'])
             else:
                 dss.RunSimulation()
-            del dss
+            #del dss
             #print(dss)
         if generate_visuals:
             result = ResultObject(os.path.join(
@@ -204,6 +181,16 @@ class instance(object):
             result = None
         return dss_args, result
 
+    def _dump_scenario_simulation_settings(self, dss_args):
+        # Various settings may have been updated. Write the actual settings to a file.
+        scenario_simulation_filename = os.path.join(
+            dss_args["Project Path"],
+            dss_args["Active Project"],
+            "Scenarios",
+            dss_args["Active Scenario"],
+            "simulation.toml"
+        )
+        dump_data(dss_args, scenario_simulation_filename)
 
     def __validate_settings(self, dss_args):
         valid_settings = self.valid_settings
@@ -239,7 +226,7 @@ class instance(object):
 
         assert (os.path.exists(os.path.join(dss_args['Project Path'],
                                             dss_args["Active Project"],
-                                            'PyDSS Scenarios',
+                                            'Scenarios',
                                             dss_args['Active Scenario']))), \
             "Scenario '{}' does not exist.".format( dss_args['Active Scenario'])
         assert (os.path.exists(os.path.join(dss_args['Project Path'],
@@ -251,24 +238,24 @@ class instance(object):
 
 if __name__ == '__main__':
     a = instance()
-    #a.run(r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\base_case.toml')
-    #a.run(r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\self_consumption.toml')
-    #a.run(r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\volt_var.toml')
-    #a.run(r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\multiple_controllers.toml')
+    #a.run(f'{PYDSS_BASE_DIR}/examples/Custom_controls_example/Scenarios/base_case.toml')
+    #a.run(f'{PYDSS_BASE_DIR}/examples/Custom_controls_example/Scenarios/self_consumption.toml')
+    #a.run(f'{PYDSS_BASE_DIR}/examples/Custom_controls_example/Scenarios/volt_var.toml')
+    #a.run(f'{PYDSS_BASE_DIR}/examples/Custom_controls_example/Scenarios/multiple_controllers.toml')
 
-    # a.run([r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\base_case.toml',
-    #        r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\self_consumption.toml',
-    #        r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\volt_var.toml',
-    #        r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\multiple_controllers.toml'],
-    #       r'C:\Users\alatif\Desktop\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\automated_comparison.toml')
+    a.run([f'{PYDSS_BASE_DIR}/examples/Custom_controls_example/Scenarios/base_case.toml',
+           f'{PYDSS_BASE_DIR}/examples/Custom_controls_example/Scenarios/self_consumption.toml',
+           f'{PYDSS_BASE_DIR}/examples/Custom_controls_example/Scenarios/volt_var.toml',
+           f'{PYDSS_BASE_DIR}/examples/Custom_controls_example/Scenarios/multiple_controllers.toml'],
+           f'{PYDSS_BASE_DIR}/examples/Custom_controls_example/Scenarios/automated_comparison.toml')
 
-    # a.run(r'C:\Users\alatif\Desktop\PyDSS\examples\Dynamic_visualization_example\PyDSS Scenarios\Dynamic_visuals.toml',
-    #       r'C:\Users\alatif\Desktop\PyDSS\examples\Dynamic_visualization_example\PyDSS Scenarios\user_defined_vis_settings.toml')
+    # a.run('f{PYDSS_BASE_DIR}/examples/Dynamic_visualization_example/Scenarios/Dynamic_visuals.toml',
+    #       'f{PYDSS_BASE_DIR}/examples/Dynamic_visualization_example/Scenarios/user_defined_vis_settings.toml')
 
-    # a.run(r'C:\Users\alatif\Desktop\PyDSS\examples\Harmonics_examples\PyDSS Scenarios\freq_scan_qsts.toml',
-    #       r'C:\Users\alatif\Desktop\PyDSS\examples\Harmonics_examples\PyDSS Scenarios\Freq_scan_qsts_visuals.toml')
+    # a.run('f{PYDSS_BASE_DIR}/examples/Harmonics_examples/Scenarios/freq_scan_qsts.toml',
+    #       'f{PYDSS_BASE_DIR}/examples/Harmonics_examples/Scenarios/Freq_scan_qsts_visuals.toml')
 
-    #a.run(r'C:\Users\alatif\Desktop\PyDSS\examples\Monte_carlo_examples\PyDSS Scenarios\monte_carlo_settings.toml')
+    #a.run('f{PYDSS_BASE_DIR}/examples/Monte_carlo_examples/Scenarios/monte_carlo_settings.toml')
     a.run(
         r'C:\Users\ajain\Desktop\PyDSS_develop_branch\PyDSS\examples\Custom_controls_example\PyDSS Scenarios\base_case.toml')
     del a

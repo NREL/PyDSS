@@ -2,7 +2,7 @@ Automated scenario comparison
 =============================
 
 PyDSS enables users to automatically generate high quality plots using the exported simulation resuts. Users both both generate plots for an induvisual scenario or generate plots to compare multiple scenarios. It is important to note that to run to generate these plot users need to define a visualization toml file
-'Generate_visuals' should be set to true to enable the feature. Additionally any plot the user requires should also be set to true. A example has been provided on how to setup the comparison feature and can found at ~\\PyDSS\\examples\\Custom_controls_example\\PyDSS Scenarios. 'automated_comparison.toml' file contains contains the visualization settings 
+'Generate_visuals' should be set to true to enable the feature. Additionally any plot the user requires should also be set to true. A example has been provided on how to setup the comparison feature and can found at ~\\PyDSS\\examples\\Custom_controls_example\\Scenarios. 'automated_comparison.toml' file contains contains the visualization settings 
 
 .. code-block:: python
 
@@ -50,7 +50,7 @@ Once the visualization file has been correclty configured, the simulations canbe
 	@click.option('--pydss_path',
 				  default=r'C:\Users\alatif\Desktop\PyDSS')
 	@click.option('--sim_path',
-				  default=r'C:\Users\alatif\Desktop\PyDSS\examples\External_interfacing_example\pyDSS_project\PyDSS Scenarios')
+				  default=r'C:\Users\alatif\Desktop\PyDSS\examples\External_interfacing_example\pyDSS_project\Scenarios')
 	
 	def run_pyDSS(pydss_path, sim_path):
 		sys.path.append(pydss_path)
@@ -58,11 +58,11 @@ Once the visualization file has been correclty configured, the simulations canbe
 		from pyDSS import instance as dssInstance
 		a = dssInstance() # Create an instance of PyDSS
 		# the run command takes in list of scenrio TOML files and visualization TOML file as function inputs
-		a.run(['~\\PyDSS\\examples\\Custom_controls_example\\PyDSS Scenarios\\base_case.toml',     
-			'~\\PyDSS\examples\\Custom_controls_example\\PyDSS Scenarios\\self_consumption.toml',
-			'~\\PyDSS\\examples\\Custom_controls_example\\PyDSS Scenarios\\volt_var.toml',
-			'~\\PyDSS\examples\\Custom_controls_example\\PyDSS Scenarios\\multiple_controllers.toml'],
-		'~\\PyDSS\\examples\\Custom_controls_example\\PyDSS Scenarios\\automated_comparison.toml'      
+		a.run(['~\\PyDSS\\examples\\Custom_controls_example\\Scenarios\\base_case.toml',     
+			'~\\PyDSS\examples\\Custom_controls_example\\Scenarios\\self_consumption.toml',
+			'~\\PyDSS\\examples\\Custom_controls_example\\Scenarios\\volt_var.toml',
+			'~\\PyDSS\examples\\Custom_controls_example\\Scenarios\\multiple_controllers.toml'],
+		'~\\PyDSS\\examples\\Custom_controls_example\\Scenarios\\automated_comparison.toml'      
 		) #Run the simulation 
 
 	run_pyDSS()

@@ -1,12 +1,16 @@
 from PyDSS.pyContrReader import pySubscriptionReader as pySR
+from PyDSS.pyLogger import getLoggerTag
 from PyDSS.unitDefinations import type_info as Types
 from PyDSS.unitDefinations import unit_info as Units
 from PyDSS.pyContrReader import pyExportReader as pyER
 from PyDSS import unitDefinations
+from PyDSS.exceptions import InvalidParameter
+from PyDSS.utils.dataframe_utils import write_dataframe
 import pandas as pd
 import numpy as np
-import helics as h
+#import helics as h
 import pathlib
+import gzip
 import logging
 import shutil
 import math
@@ -16,7 +20,10 @@ import os
 class ResultContainer:
 
     def __init__(self, Options, SystemPaths, dssObjects, dssObjectsByClass, dssBuses, dssSolver, dssCommand):
-        LoggerTag = Options['Active Project'] + '_' + Options['Active Scenario']
+        if Options["Pre-configured logging"]:
+            LoggerTag = __name__
+        else:
+            LoggerTag = getLoggerTag(Options)
         self.metadata_info = unitDefinations.unit_info
         self.__dssDolver = dssSolver
         self.Results = {}
@@ -33,6 +40,8 @@ class ResultContainer:
         self.__DateTime = []
         self.__Frequency = []
         self.__SimulationMode = []
+        self.__ExportFormat = Options['Export Format']
+        self.__ExportCompression = Options['Export Compression']
 
         self.__publications = {}
         self.__subscriptions = {}
@@ -40,12 +49,12 @@ class ResultContainer:
         self.ExportFolder = os.path.join(self.SystemPaths['Export'], Options['Active Scenario'])
         pathlib.Path(self.ExportFolder).mkdir(parents=True, exist_ok=True)
         if self.__Settings['Export Mode'] == 'byElement':
-            self.FileReader = pyER(os.path.join(SystemPaths['ExportLists'], 'ExportMode-byElement.xlsx'))
+            self.FileReader = pyER(os.path.join(SystemPaths['ExportLists'], 'ExportMode-byElement.toml'))
             self.ExportList = self.FileReader.pyControllers
             self.PublicationList = self.FileReader.publicationList
             self.CreateListByElement()
         elif self.__Settings['Export Mode'] == 'byClass':
-            self.FileReader = pyER(os.path.join(SystemPaths['ExportLists'], 'ExportMode-byClass.xlsx'))
+            self.FileReader = pyER(os.path.join(SystemPaths['ExportLists'], 'ExportMode-byClass.toml'))
             self.ExportList = self.FileReader.pyControllers
             self.PublicationList = self.FileReader.publicationList
             self.CreateListByClass()
@@ -161,7 +170,7 @@ class ResultContainer:
         for Class, Properties in self.ExportList.items():
             if Class == 'Buses':
                 self.Results[Class] = {}
-                for PptyIndex, PptyName in Properties.items():
+                for PptyIndex, PptyName in enumerate(Properties):
                     if isinstance(PptyName, str):
                         self.Results[Class][PptyName] = {}
                         for BusName, BusObj in self.Buses.items():
@@ -173,7 +182,7 @@ class ResultContainer:
             else:
                 if Class in self.ObjectsByClass:
                     self.Results[Class] = {}
-                    for PptyIndex, PptyName in Properties.items():
+                    for PptyIndex, PptyName in enumerate(Properties):
                         if isinstance(PptyName, str):
                             self.Results[Class][PptyName] = {}
                             for ElementName, ElmObj in self.ObjectsByClass[Class].items():
@@ -189,7 +198,7 @@ class ResultContainer:
             if Element in self.ObjectsByElement:
                 self.Results[Element] = {}
                 self.CurrentResults[Element] = {}
-                for PptyIndex, PptyName in Properties.items():
+                for PptyIndex, PptyName in enumerate(Properties):
                     if isinstance(PptyName, str):
                         if self.ObjectsByElement[Element].IsValidAttribute(PptyName):
                             self.Results[Element][PptyName] = []
@@ -197,7 +206,7 @@ class ResultContainer:
             elif Element in self.Buses:
                 self.Results[Element] = {}
                 self.CurrentResults[Element] = {}
-                for PptyIndex, PptyName in Properties.items():
+                for PptyIndex, PptyName in enumerate(Properties):
                     if isinstance(PptyName, str):
                         if self.Buses[Element].inVariableDict(PptyName):
                             self.Results[Element][PptyName] = []
@@ -302,13 +311,14 @@ class ResultContainer:
                         else:
                             ElmLvlHeader = Element + ','
                     if self.__Settings['Export Style'] == 'Separate files':
-                        fname = '-'.join([Class, Property, Element, str(self.__StartDay), str(self.__EndDay) ,fileprefix]) + '.csv'
+                        fname = '-'.join([Class, Property, Element, str(self.__StartDay), str(self.__EndDay) ,fileprefix])
                         columns = [x for x in ElmLvlHeader.split(',') if x != '']
                         tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                         index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
                         df = pd.DataFrame(Data, index=index, columns=columns)
-                        df.to_csv(os.path.join(self.ExportFolder, fname))
-                        self.pyLogger.info(Class + '-' + Property  + '-' + Element + ".csv exported to " + self.ExportFolder)
+                        if self.__ExportFormat == "feather":
+                            df.reset_index(inplace=True)
+                        self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
                     elif self.__Settings['Export Style'] == 'Single file':
                         Class_ElementDatasets.append(Data)
                     PptyLvlHeader += ElmLvlHeader
@@ -322,9 +332,10 @@ class ResultContainer:
                     tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                     index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
                     df = pd.DataFrame(Dataset, index=index, columns=columns)
-                    fname = '-'.join([Class, Property, str(self.__StartDay), str(self.__EndDay), fileprefix]) + '.csv'
-                    df.to_csv(os.path.join(self.ExportFolder, fname))
-                    self.pyLogger.info(Class + '-' + Property + ".csv exported to " + self.ExportFolder)
+                    if self.__ExportFormat == "feather":
+                        df.reset_index(inplace=True)
+                    fname = '-'.join([Class, Property, str(self.__StartDay), str(self.__EndDay), fileprefix])
+                    self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
         return
 
     def __ExportResultsByElements(self, fileprefix=''):
@@ -354,13 +365,14 @@ class ResultContainer:
                     Header = Property + ','
 
                 if self.__Settings['Export Style'] == 'Separate files':
-                    fname = '-'.join([Element, Property, str(self.__StartDay), str(self.__EndDay), fileprefix]) + '.csv'
+                    fname = '-'.join([Element, Property, str(self.__StartDay), str(self.__EndDay), fileprefix])
                     columns = [x for x in Header.split(',') if x != '']
                     tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                     index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
                     df = pd.DataFrame(Data, index=index, columns=columns)
-                    df.to_csv(os.path.join(self.ExportFolder, fname))
-                    self.pyLogger.info(Element + '-' + Property + ".csv exported to " + self.ExportFolder)
+                    if self.__ExportFormat == "feather":
+                        df.reset_index(inplace=True)
+                    self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
                 elif self.__Settings['Export Style'] == 'Single file':
                     ElementDatasets.append(Data)
                 AllHeader += Header
@@ -369,13 +381,14 @@ class ResultContainer:
                 if len(ElementDatasets) > 0:
                     for D in ElementDatasets[1:]:
                         Dataset = np.append(Dataset, D, axis=1)
-                fname = '-'.join([Element, str(self.__StartDay), str(self.__EndDay), fileprefix]) + '.csv'
+                fname = '-'.join([Element, str(self.__StartDay), str(self.__EndDay), fileprefix])
                 columns = [x for x in AllHeader.split(',') if x != '']
                 tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                 index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
                 df = pd.DataFrame(Dataset, index=index, columns=columns)
-                df.to_csv(os.path.join(self.ExportFolder, fname))
-                self.pyLogger.info(Element + ".csv exported to " + self.ExportFolder)
+                if self.__ExportFormat == "feather":
+                    df.reset_index(inplace=True)
+                self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
         return
 
     def __ExportEventLog(self):
@@ -387,3 +400,8 @@ class ResultContainer:
         if os.path.exists(file_path):
             os.remove(file_path)
         shutil.move(event_log, self.ExportFolder)
+
+    def __ExportDataFrame(self, df, basename):
+        filename = basename + "." + self.__ExportFormat
+        write_dataframe(df, filename, compress=self.__ExportCompression)
+        self.pyLogger.info("Exported %s", filename)
