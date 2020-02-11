@@ -1,3 +1,7 @@
+
+import os
+
+
 class AbstractPostprocess:
     """An abstract class that serves as template for all pyPlot classes in :mod:`PyDSS.pyPlots.Plots` module.
 
@@ -14,9 +18,20 @@ class AbstractPostprocess:
 
     """
 
-    def __init__(self, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings):
+    def __init__(self, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, logger):
         """This is the constructor class.
         """
+        self.Settings = simulationSettings
+        self.Settings["PostProcess"]["Outputs"] = os.path.join(
+            self.Settings["Project"]["Project Path"],
+            self.Settings["Project"]["Active Project"],
+            "UpgradeOutputs",
+        )
+        self.Settings["PostProcess"]["master file"] = "MasterDisco.dss"  # TODO
+        os.makedirs(self.Settings["PostProcess"]["Outputs"], exist_ok=True)
+
+        self._dssInstance = dssInstance
+        self.logger = logger
 
     def run(self, step, stepMax):
         """Method used to run a post processing script.

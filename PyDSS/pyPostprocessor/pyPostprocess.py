@@ -17,7 +17,7 @@ for file in pythonFiles:
 def Create(dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger):
     test = None
     PostProcessorClass = None
-    ScriptName = simulationSettings['Post processing script']
+    ScriptName = simulationSettings['PostProcess']['Post processing script']
 
     assert (ScriptName in pythonFiles), \
         "Defination for '{}' post process script not found. \n " \

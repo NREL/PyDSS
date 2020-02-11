@@ -35,46 +35,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
     def __init__(self, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger):
         """Constructor method
         """
-        self.Settings = simulationSettings
-        super(AutomatedVoltageUpgrade).__init__()
-        self.__dssinstance = dssInstance
-        New_settings = {
-            "img_path": "../Images",
-            "master file": "MasterDisco.dss",
-            "DPV_penetration_HClimit": 0,
-            "DPV_penetration_target": 200,
-            "DPV control": "PF=1",  # "PF=1" or "PF=-0.95" or "VVar-CatA" or "VVar-CatB" or "VVar-VWatt-CatB"
-            "DPV system priority": "watt",  # "watt" or "var"
-            "Outputs": os.path.join(simulationSettings["Project Path"], simulationSettings["Active Project"], "UpgradeOutputs"),
-            "V_upper_lim": 1.05,
-            "V_lower_lim": 0.95,
-            "Target_V": 1,
-            "plot window open time": 1,  # seconds
-            "Min PVLoad multiplier": 1,
-            "Min Load multiplier": 0.1,
-            "Max Load multiplier": 1,
-            "Range B upper": 1.05,
-            "Range B lower": 0.95,
-            "nominal_voltage": 120,
-            "nominal pu voltage": 1,
-            "tps_to_test": [0.2, 1.2, 0.1, 0.9],
-            # [min load multiplier without PV, max load multiplier without PV, min load multiplier with PV, max load multiplier with PV]
-            "create topology plots": True,
-            # Set this to true only if coordinates for all buses in the network are available
-            "Cap sweep voltage gap": 1,
-            # This value determines difference increase between cap ON and OFF voltage setting, example (119.5, 120.5), (119,121) and so on
-            "max control iterations": 50,  # max OpenDSS Control iteration limit
-            "reg control bands": [1, 2],  # Reg control voltage bands within which taps will not change
-            "reg v delta": 0.5,  # Reg control voltage set point is varied in this range
-            "Max regulators": 4,
-            # This number gives the maximum number of regulators placed in the feeder apart from substation LTC
-            "Use LTC placement": True,
-        }
-        os.makedirs(New_settings["Outputs"], exist_ok=True)
-        for key,val in New_settings.items():
-            if key not in self.Settings:
-                self.Settings[key] = val
-        self.logger = Logger
+        super(AutomatedVoltageUpgrade, self).__init__(dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings)
         dss = dssInstance
         self.dssSolver = dssSolver
         self.start = time.time()

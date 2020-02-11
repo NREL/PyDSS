@@ -167,8 +167,6 @@ class ValueByNumber(_ValueStorageBase):
         return pd.DataFrame(self._data, columns=[self._make_column(self._name, self._prop)])
 
 
-
-
 class ValueByLabel(_ValueStorageBase):
     """Stores a list of lists of numbers by an arbitrary label. Use this class when working with cktElement function
     calls like Currents, currentMagAng where every two consecutive values in the returned list are representing one

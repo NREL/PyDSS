@@ -197,9 +197,9 @@ class PyDssProject:
         simulation_config = load_data(simulation_config)
         if options is not None:
             simulation_config.update(options)
-        simulation_config["Project Path"] = path
-        simulation_config["Active Project"] = name
-        simulation_config["Scenarios"] = [x.name for x in scenarios]
+        simulation_config["Project"]["Project Path"] = path
+        simulation_config["Project"]["Active Project"] = name
+        simulation_config["Project"]["Scenarios"] = [x.name for x in scenarios]
 
         project = cls(path, name, scenarios, simulation_config)
         project.serialize()
@@ -210,9 +210,9 @@ class PyDssProject:
     def run(self, logging_configured=True):
         """Run all scenarios in the project."""
         inst = instance()
-        self._simulation_config["Pre-configured logging"] = logging_configured
+        self._simulation_config["Logging"]["Pre-configured logging"] = logging_configured
         for scenario in self._scenarios:
-            self._simulation_config["Active Scenario"] = scenario.name
+            self._simulation_config["Project"]["Active Scenario"] = scenario.name
             inst.run(self._simulation_config, scenario)
 
     @staticmethod
@@ -256,19 +256,25 @@ class PyDssProject:
             os.path.join(path, SIMULATION_SETTINGS_FILENAME)
         )
         if options is not None:
-            simulation_config.update(options)
+            for category, params in options.items():
+                if category not in simulation_config:
+                    simulation_config[category] = {}
+                simulation_config[category].update(params)
             logger.info("Overrode config options: %s", options)
 
         scenarios_dir = os.path.join(path, PyDssProject._SCENARIOS)
-        scenario_names = set(os.listdir(scenarios_dir))
+        scenario_names = set(
+            [x for x in os.listdir(scenarios_dir)
+             if os.path.isdir(os.path.join(scenarios_dir, x))]
+        )
 
-        if len(scenario_names) != len(simulation_config["Scenarios"]):
+        if len(scenario_names) != len(simulation_config["Project"]["Scenarios"]):
             raise InvalidParameter(
                 "mismatch between scenarios in the config file vs directories "
                 "in project"
             )
 
-        for scenario_name in simulation_config["Scenarios"]:
+        for scenario_name in simulation_config["Project"]["Scenarios"]:
             if scenario_name not in scenario_names:
                 raise InvalidParameter(
                     f"scenario {scenario_name} does not have a directory"
@@ -276,7 +282,7 @@ class PyDssProject:
 
         scenarios = [
             PyDssScenario.deserialize(os.path.join(scenarios_dir, x))
-            for x in simulation_config["Scenarios"]
+            for x in simulation_config["Project"]["Scenarios"]
         ]
 
         return PyDssProject(path, name, scenarios, simulation_config)

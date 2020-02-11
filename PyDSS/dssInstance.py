@@ -26,14 +26,14 @@ import os
 from bokeh.plotting import curdoc
 from bokeh.layouts import row
 from bokeh.client import push_session
+from opendssdirect.utils import run_command
+import opendssdirect as dss
+
 
 CONTROLLER_PRIORITIES = 3
 
 class OpenDSS:
-    def __init__(self, **kwargs):
-        from opendssdirect.utils import run_command
-        import opendssdirect as dss
-
+    def __init__(self, params):
         self._TempResultList = []
         self._dssInstance = dss
         self._dssBuses = {}
@@ -42,28 +42,28 @@ class OpenDSS:
         self._DelFlag = 0
         self._pyPlotObjects = {}
         self.BokehSessionID = None
+        self._Options = params
 
-        rootPath = kwargs['Project Path']
-        self._ActiveProject = kwargs['Active Project']
-        importPath = os.path.join(rootPath, kwargs['Active Project'], 'Scenarios')
+        rootPath = params['Project']['Project Path']
+        self._ActiveProject = params['Project']['Active Project']
+        importPath = os.path.join(rootPath, params['Project']['Active Project'], 'Scenarios')
         self._dssPath = {
             'root': rootPath,
             'Import': importPath,
-            'pyPlots': os.path.join(importPath, kwargs['Active Scenario'], 'pyPlotList'),
-            'ExportLists': os.path.join(importPath, kwargs['Active Scenario'], 'ExportLists'),
-            'pyControllers': os.path.join(importPath, kwargs['Active Scenario'], 'pyControllerList'),
-            'Export': os.path.join(rootPath, kwargs['Active Project'], 'Exports'),
-            'Log': os.path.join(rootPath, kwargs['Active Project'], 'Logs'),
-            'dssFiles': os.path.join(rootPath, kwargs['Active Project'], 'DSSfiles'),
-            'dssFilePath': os.path.join(rootPath, kwargs['Active Project'], 'DSSfiles', kwargs['DSS File']),
+            'pyPlots': os.path.join(importPath, params['Project']['Active Scenario'], 'pyPlotList'),
+            'ExportLists': os.path.join(importPath, params['Project']['Active Scenario'], 'ExportLists'),
+            'pyControllers': os.path.join(importPath, params['Project']['Active Scenario'], 'pyControllerList'),
+            'Export': os.path.join(rootPath, params['Project']['Active Project'], 'Exports'),
+            'Log': os.path.join(rootPath, params['Project']['Active Project'], 'Logs'),
+            'dssFiles': os.path.join(rootPath, params['Project']['Active Project'], 'DSSfiles'),
+            'dssFilePath': os.path.join(rootPath, params['Project']['Active Project'], 'DSSfiles', params['Project']['DSS File']),
         }
 
-        self._Options = kwargs
-        if kwargs["Pre-configured logging"]:
+        if params["Logging"]["Pre-configured logging"]:
             self._Logger = logging.getLogger(__name__)
         else:
-            LoggerTag = pyLogger.getLoggerTag(kwargs)
-            self._Logger = pyLogger.getLogger(LoggerTag, self._dssPath['Log'], LoggerOptions=kwargs)
+            LoggerTag = pyLogger.getLoggerTag(params)
+            self._Logger = pyLogger.getLogger(LoggerTag, self._dssPath['Log'], LoggerOptions=params["Logging"])
         self._Logger.info('An instance of OpenDSS version ' + dss.__version__ + ' has been created.')
 
         for key, path in self._dssPath.items():
@@ -81,11 +81,11 @@ class OpenDSS:
         self._Logger.info('OpenDSS:  ' + reply)
 
         assert ('error ' not in reply.lower()), 'Error compiling OpenDSS model.\n{}'.format(reply)
-        run_command('Set DefaultBaseFrequency={}'.format(self._Options['Fundamental frequency']))
-        self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(self._Options['Fundamental frequency']) + ' Hz')
+        run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
+        self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(params['Frequency']['Fundamental frequency']) + ' Hz')
 
-        run_command('Set %SeriesRL={}'.format(self._Options['Percentage load in series']))
-        if self._Options['Neglect shunt admittance']:
+        run_command('Set %SeriesRL={}'.format(params['Frequency']['Percentage load in series']))
+        if params['Frequency']['Neglect shunt admittance']:
             run_command('Set NeglectLoadY=Yes')
 
         self._dssCircuit = dss.Circuit
@@ -94,19 +94,19 @@ class OpenDSS:
         self._dssClass = dss.ActiveClass
         self._dssCommand = run_command
         self._dssSolution = dss.Solution
-        self._dssSolver = SolveMode.GetSolver(SimulationSettings=kwargs, dssInstance=self._dssInstance)
+        self._dssSolver = SolveMode.GetSolver(SimulationSettings=params, dssInstance=self._dssInstance)
 
-        self._Modifier = Modifier(dss, run_command, self._Options)
+        self._Modifier = Modifier(dss, run_command, params)
         self._UpdateDictionary()
         self._CreateBusObjects()
         self._dssSolver.reSolve()
 
-        if self._Options and self._Options['Log Results']:
-            if self._Options['Result Container'] == 'ResultContainer':
-                self.ResultContainer = RC(kwargs, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
+        if params and params['Exports']['Log Results']:
+            if params['Exports']['Result Container'] == 'ResultContainer':
+                self.ResultContainer = RC(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
                                           self._dssBuses, self._dssSolver, self._dssCommand)
             else:
-                self.ResultContainer = ResultData(kwargs, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
+                self.ResultContainer = ResultData(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
                                                     self._dssBuses, self._dssSolver, self._dssCommand)
 
         pyCtrlReader = pcr(self._dssPath['pyControllers'])
@@ -114,13 +114,13 @@ class OpenDSS:
         if ControllerList is not None:
             self._CreateControllers(ControllerList)
 
-        if kwargs['Create dynamic plots']:
+        if params['Plots']['Create dynamic plots']:
             pyPlotReader = ppr(self._dssPath['pyPlots'])
             PlotList = pyPlotReader.pyPlots
             self._CreatePlots(PlotList)
             for Plot in self._pyPlotObjects:
                 self.BokehSessionID = self._pyPlotObjects[Plot].GetSessionID()
-                if kwargs['Open plots in browser']:
+                if kwargs['Plots']['Open plots in browser']:
                     self._pyPlotObjects[Plot].session.show()
                 break
         return
@@ -205,7 +205,7 @@ class OpenDSS:
             error += controller.Update(Priority, Time, UpdateResults)
             if Priority == 0:
                 pass
-        return abs(error) < self._Options['Error tolerance'], error
+        return abs(error) < self._Options['Project']['Error tolerance'], error
 
     def _CreateBusObjects(self):
         BusNames = self._dssCircuit.AllBusNames()
@@ -261,43 +261,43 @@ class OpenDSS:
             pass
 
         self._dssSolver.IncStep()
-        if self._Options['Co-simulation Mode']:
+        if self._Options['Helics']['Co-simulation Mode']:
             self.ResultContainer.updateSubscriptions()
 
-        if self._Options['Disable PyDSS controllers'] is False:
+        if self._Options['Project']['Disable PyDSS controllers'] is False:
             for priority in range(CONTROLLER_PRIORITIES):
-                for i in range(self._Options['Max Control Iterations']):
+                for i in range(self._Options['Project']['Max Control Iterations']):
                     has_converged, error = self._UpdateControllers(priority, step, UpdateResults=False)
                     self._Logger.debug('Control Loop {} convergence error: {}'.format(priority, error))
-                    if has_converged or i == self._Options['Max Control Iterations'] - 1:
+                    if has_converged or i == self._Options['Project']['Max Control Iterations'] - 1:
                         if not has_converged:
                             self._Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
                         break
                     self._dssSolver.reSolve()
 
             self._UpdatePlots()
-            if self._Options['Log Results']:
+            if self._Options['Exports']['Log Results']:
                 self.ResultContainer.UpdateResults()
-            if self._Options['Return Results']:
+            if self._Options['Project']['Return Results']:
                 return self.ResultContainer.CurrentResults
 
-        if self._Options['Enable frequency sweep'] and self._Options['Simulation Type'].lower() != 'dynamic':
+        if self._Options['Frequency']['Enable frequency sweep'] and self._Options['Project']['Simulation Type'].lower() != 'dynamic':
             self._dssSolver.setMode('Harmonic')
-            for freqency in np.arange(self._Options['Start frequency'], self._Options['End frequency'] + 1,
-                                      self._Options['frequency increment']):
-                self._dssSolver.setFrequency(freqency * self._Options['Fundamental frequency'])
+            for freqency in np.arange(self._Options['Frequency']['Start frequency'], self._Options['Frequency']['End frequency'] + 1,
+                                      self._Options['Frequency']['frequency increment']):
+                self._dssSolver.setFrequency(freqency * self._Options['Frequency']['Fundamental frequency'])
                 self._dssSolver.reSolve()
                 self._UpdatePlots()
-                if self._Options['Log Results']:
+                if self._Options['Exports']['Log Results']:
                     self.ResultContainer.UpdateResults()
-            if self._Options['Simulation Type'].lower() == 'snapshot':
+            if self._Options['Project']['Simulation Type'].lower() == 'snapshot':
                 self._dssSolver.setMode('Snapshot')
             else:
                 self._dssSolver.setMode('Yearly')
         return
 
     def RunSimulation(self, file_prefix=''):
-        if self._Options["Export Elements"]:
+        if self._Options["Exports"]["Export Elements"]:
             self._ExportElements()
 
         startTime = time.time()
@@ -305,7 +305,7 @@ class OpenDSS:
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
         self._Logger.info('Simulation time step {}.'.format(Steps))
 
-        if self._Options['Post processing script'] != "":
+        if self._Options['PostProcess']['Post processing script'] != "":
             self.postprocessor = pyPostprocess.Create(self._dssInstance, self._dssSolver, self._dssObjects,
                                                      self._dssObjectsByClass, self._Options, self._Logger)
         else:
@@ -319,7 +319,7 @@ class OpenDSS:
                 step = self.postprocessor.run(step, Steps)
             step+=1
 
-        if self._Options and self._Options['Log Results']:
+        if self._Options and self._Options['Exports']['Log Results']:
             self.ResultContainer.ExportResults(file_prefix)
 
         self._Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
@@ -390,7 +390,7 @@ class OpenDSS:
                 df = get_func()
                 # Always record in CSV format for readability.
                 filepath = os.path.join(self._dssPath['Export'],
-                                        self._Options['Active Scenario'],
+                                        self._Options['Project']['Active Scenario'],
                                         filename + ".csv")
                 write_dataframe(df, filepath)
                 self._Logger.info('Exported %s information to %s.', filename, filepath)
@@ -413,14 +413,14 @@ class OpenDSS:
         df = pd.DataFrame.from_dict(df_dict)
 
         filepath = os.path.join(self._dssPath['Export'],
-                                self._Options['Active Scenario'],
-                                'TransformersPhaseInfo' + "." + self._Options["Export Format"])
+                                self._Options['Project']['Active Scenario'],
+                                'TransformersPhaseInfo' + "." + self._Options["Exports"]["Export Format"])
         write_dataframe(df, filepath)
         self._Logger.info('Exported transformer phase information to %s.', filepath)
 
     def __del__(self):
         self._Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')
-        if self._Options["Log to external file"]:
+        if self._Options["Logging"]["Log to external file"]:
             handlers = list(self._Logger.handlers)
             for filehandler in handlers:
                 filehandler.flush()

@@ -25,7 +25,7 @@ class ResultData:
 
     def __init__(self, options, system_paths, dss_objects,
                  dss_objects_by_class, dss_buses, dss_solver, dss_command):
-        if options["Pre-configured logging"]:
+        if options["Logging"]["Pre-configured logging"]:
             logger_tag = __name__
         else:
             logger_tag = getLoggerTag(options)
@@ -39,26 +39,26 @@ class ResultData:
         self._elements = []
         self._property_aggregators = []
         self._dss_command = dss_command
-        self._settings = options
-        self._start_day = options["Start Day"]
-        self._end_day = options["End Day"]
+        self._start_day = options["Project"]["Start Day"]
+        self._end_day = options["Project"]["End Day"]
         self._timestamps = []
         self._frequency = []
         self._simulation_mode = []
-        self._export_format = options["Export Format"]
-        self._export_compression = options["Export Compression"]
-        self._export_iteration_order = options["Export Iteration Order"]
+        self._export_format = options["Exports"]["Export Format"]
+        self._export_compression = options["Exports"]["Export Compression"]
+        self._export_iteration_order = options["Exports"]["Export Iteration Order"]
         self._export_dir = os.path.join(
             self.system_paths["Export"],
-            options["Active Scenario"],
+            options["Project"]["Active Scenario"],
         )
         self._event_log = None
+        self._settings = options
 
-        if self._settings["Export Mode"] == "byElement":
+        if options["Exports"]["Export Mode"] == "byElement":
             raise InvalidParameter(
                 "Export Mode 'byElement' is not supported by ResultData"
             )
-        if self._settings["Co-simulation Mode"]:
+        if options["Helics"]["Co-simulation Mode"]:
             raise InvalidParameter(
                 "Co-simulation mode is not supported by ResultData"
             )
@@ -141,7 +141,7 @@ class ResultData:
         metadata["event_log"] = self._event_log
         metadata["element_info_files"] = []
 
-        if self._settings["Export Elements"]:
+        if self._settings["Exports"]["Export Elements"]:
             regex = re.compile(r"^\w+Info\.{}".format(self._export_format))
             for filename in os.listdir(self._export_dir):
                 if regex.search(filename):

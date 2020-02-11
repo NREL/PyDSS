@@ -18,7 +18,7 @@ class Modifier():
      }
 
     def __init__(self, dss, run_command, SimulationSettings):
-        if SimulationSettings["Pre-configured logging"]:
+        if SimulationSettings["Logging"]["Pre-configured logging"]:
             LoggerTag = __name__
         else:
             LoggerTag = getLoggerTag(SimulationSettings)

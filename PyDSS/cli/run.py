@@ -42,17 +42,17 @@ def run(project_path, options=None, verbose=False):
     config = PyDssProject.load_simulation_config(project_path)
     if verbose:
         # Override the config file.
-        config['Logging Level'] = logging.DEBUG
+        config["Logging"]["Logging Level"] = logging.DEBUG
 
     filename = None
     console_level = logging.INFO
     file_level = logging.INFO
-    if not config["Display on screen"]:
+    if not config["Logging"]["Display on screen"]:
         console_level = logging.ERROR
     if verbose:
         console_level = logging.DEBUG
         file_level = logging.DEBUG
-    if config["Log to external file"]:
+    if config["Logging"]["Log to external file"]:
         logs_path = os.path.join(project_path, "Logs")
         filename = os.path.join(
             logs_path,

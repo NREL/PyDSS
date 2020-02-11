@@ -120,7 +120,11 @@ def test_run_project_by_element(cleanup_project):
 
 
 def test_run_project_by_property(cleanup_project):
-    options = {"Export Iteration Order": "ValuesByPropertyAcrossElements"}
+    options = {
+        "Exports": {
+            "Export Iteration Order": "ValuesByPropertyAcrossElements",
+        },
+    }
     PyDssProject.run_project(RUN_PROJECT_PATH, options=options)
     results = PyDssResults(RUN_PROJECT_PATH)
     assert len(results.scenarios) == 1

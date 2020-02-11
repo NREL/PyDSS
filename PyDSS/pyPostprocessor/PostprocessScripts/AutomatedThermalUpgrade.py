@@ -50,57 +50,14 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
     def __init__(self, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger):
         """Constructor method
         """
-        super(AutomatedThermalUpgrade).__init__()
-        self.Settings = simulationSettings
-        # New settings to be added into simulationsettings
-
-        New_settings = {
-            "img_path": "../Images",
-            "master file": "MasterDisco.dss",  # "Master.dss",
-            "DPV_penetration_HClimit": 0,
-            "DPV_penetration_target": 0,
-            "DPV_penetration_step": 10,
-            "DPV control": "PF=1",  # "PF=1" or "PF=-0.95" or "VVar-CatA" or "VVar-CatB" or "VVar-VWatt-CatB"
-            "DPV system priority": "watt",  # "watt" or "var"
-            "Outputs": os.path.join(simulationSettings["Project Path"], simulationSettings["Active Project"], "UpgradeOutputs"),
-            "line loading limit": 1.0,  # 1=100%
-            "DT loading limit": 1.0,  # 1=100%,
-            "line_safety_margin": 1.5,
-            # 1.1=110%: implies new line added should be rated at least 10% above the DTs actual overloading
-            "xfmr_safety_margin": 1.5,
-            # 1.1=110%: implies new DT added should be rated at least 10% above DT's actual overloading
-            "V_upper_lim": 1.05,
-            "V_lower_lim": 0.95,
-            "Target_V": 1,
-            "plot window open time": 1,  # seconds
-            "Min PVLoad multiplier": 0.5,
-            "Min Load multiplier": 0.1,
-            "Max Load multiplier": 1,
-            "max Regulators": 5,
-            "Range B upper": 1.1,  # Range B limit inc
-            "Range B lower": 0.20,
-            "nominal_voltage": 120,
-            "Max iterations": 20,
-            "Create_upgrade_plots": True,
-            "tps_to_test": [0.2, 1.8, 0.1, 0.9],
-            # [min load multiplier without PV, max load multiplier without PV, min load multiplier with PV, max load multiplier with PV]
-            "units key": ["mi", "kft", "km", "m", "Ft", "in", "cm"],  # Units key for lines taken from OpenDSS
-            "max control iterations": 50,
-            "Create_upgrades_library": True,
-            }
-        os.makedirs(New_settings["Outputs"], exist_ok=True)
-        for key,val in New_settings.items():
-            if key not in self.Settings:
-                self.Settings[key] = val
-        # self.__dssinstance = dssInstance
-        self.logger = Logger
+        super(AutomatedThermalUpgrade, self).__init__(dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger)
         dss = dssInstance
         self.dssSolver = dssSolver
         # TODO: To be modified
         self.plot_violations_counter=0
-        start_pen = self.Settings["DPV_penetration_HClimit"]
-        target_pen = self.Settings["DPV_penetration_target"]
-        pen_step = self.Settings["DPV_penetration_step"]
+        start_pen = self.Settings["PostProcess"]["DPV_penetration_HClimit"]
+        target_pen = self.Settings["PostProcess"]["DPV_penetration_target"]
+        pen_step = self.Settings["PostProcess"]["DPV_penetration_step"]
         self.pen_level = start_pen
         #self.compile_feeder_initialize()
         self.export_line_DT_parameters()
@@ -114,7 +71,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
         # Determine available upgrades - either by looping over the existing feeder or by reading an
         #  externally created library
-        if self.Settings["Create_upgrades_library"]:
+        if self.Settings["PostProcess"]["Create_upgrades_library"]:
             print("Creating upgrades library from the feeder")
             self.determine_available_line_upgrades()
             self.determine_available_xfmr_upgrades()
@@ -127,8 +84,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         # Determine initial loadings
         self.determine_line_ldgs()
         self.determine_xfmr_ldgs()
-
-
 
         print("Voltages before upgrades", max(dss.Circuit.AllBusMagPu()), min(dss.Circuit.AllBusMagPu()))
         print("Substation power before upgrades: ", dss.Circuit.TotalPower())
@@ -156,7 +111,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             "Max xfmr loading observed": max(self.orig_xfmr_ldg_lst),
         }
 
-        if self.Settings["Create_upgrade_plots"]:
+        if self.Settings["PostProcess"]["Create_upgrade_plots"]:
             self.create_op_plots()
 
         # Mitigate thermal violations
@@ -171,7 +126,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             print("Iteration Count: ", self.Line_trial_counter)
             print("Number of devices with violations: ", num_elms_violated_curr_itr)
             self.Line_trial_counter += 1
-            if self.Line_trial_counter > self.Settings["Max iterations"]:
+            if self.Line_trial_counter > self.Settings["PostProcess"]["Max iterations"]:
                 print("Max iterations limit reached, quitting")
                 break
         self.determine_xfmr_ldgs()
@@ -194,7 +149,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.final_line_ldg_lst.sort(reverse=True)
         self.orig_xfmr_ldg_lst.sort(reverse=True)
         self.final_xfmr_ldg_lst.sort(reverse=True)
-        if self.Settings["Create_upgrade_plots"]:
+        if self.Settings["PostProcess"]["Create_upgrade_plots"]:
             self.create_op_plots()
 
         # Store final results
@@ -202,7 +157,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         print("After upgrades the solution converged: ", dss.Solution.Converged())
         print("Voltages after upgrades ", max(dss.Circuit.AllBusMagPu()), min(dss.Circuit.AllBusMagPu()))
         print("Substation power after upgrades: ", dss.Circuit.TotalPower())
-        if self.Settings["Create_upgrade_plots"]:
+        if self.Settings["PostProcess"]["Create_upgrade_plots"]:
             plt.figure(figsize=(40, 40), dpi=10)
             plt.clf()
             plt.plot(self.orig_line_ldg_lst, "o", label="Starting Line Loadings")
@@ -210,19 +165,19 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             plt.plot(self.orig_xfmr_ldg_lst, "o", label="Starting Transformer Loadings")
             plt.plot(self.final_xfmr_ldg_lst, "o", label="Ending Transformer Loadings")
             plt.legend()
-            plt.savefig(os.path.join(self.Settings["Outputs"], "Loading_comparisons.pdf"))
+            plt.savefig(os.path.join(self.Settings["PostProcess"]["Outputs"], "Loading_comparisons.pdf"))
         print("Writing Results to output file")
         self.write_dat_file()
         print("Processing upgrade results")
         print("Total time = ", end - start)
         # # TODO: Test impact of applied settings - can't compile the feeder again in PyDSS
         # self.compile_feeder_initialize()
-        # upgrades_file = os.path.join(self.Settings["Outputs"], "Thermal_upgrades_pen_{}.dss".format(self.pen_level))
+        # upgrades_file = os.path.join(self.Settings["PostProcess"]["Outputs"], "Thermal_upgrades_pen_{}.dss".format(self.pen_level))
         # dss.run_command("Redirect {}".format(upgrades_file))
         # self.dssSolver.Solve()
         # self.determine_line_ldgs()
         # self.determine_xfmr_ldgs()
-        # if self.Settings["Create_upgrade_plots"]:
+        # if self.Settings["PostProcess"]["Create_upgrade_plots"]:
         #     self.create_op_plots()
 
         self.feeder_parameters["Final violations"] = {
@@ -236,18 +191,18 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
         # Process outputs
         input_dict = {
-            "master file": self.Settings["master file"],
-            "DPV_penetration_HClimit": self.Settings["DPV_penetration_HClimit"],
-            "DPV_penetration_target": self.Settings["DPV_penetration_target"],
-            "DPV_penetration_step": self.Settings["DPV_penetration_step"],
-            "Outputs": self.Settings["Outputs"],
-            "Create_plots": self.Settings["Create_upgrade_plots"]
+            "master file": self.Settings["PostProcess"]["master file"],
+            "DPV_penetration_HClimit": self.Settings["PostProcess"]["DPV_penetration_HClimit"],
+            "DPV_penetration_target": self.Settings["PostProcess"]["DPV_penetration_target"],
+            "DPV_penetration_step": self.Settings["PostProcess"]["DPV_penetration_step"],
+            "Outputs": self.Settings["PostProcess"]["Outputs"],
+            "Create_plots": self.Settings["PostProcess"]["Create_upgrade_plots"]
         }
 
         postprocess_thermal_upgrades(input_dict, dss)
 
     def read_available_upgrades(self, file):
-        f = open(os.path.join(self.Settings["Outputs"], "{}.json".format(file)), 'r')
+        f = open(os.path.join(self.Settings["PostProcess"]["Outputs"], "{}.json".format(file)), 'r')
         data = json.load(f)
         return data
 
@@ -257,7 +212,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.generate_nodes()
         self.generate_edges()
         self.pos_dict = nx.get_node_attributes(self.G, 'pos')
-        if self.Settings["Create_upgrade_plots"]:
+        if self.Settings["PostProcess"]["Create_upgrade_plots"]:
             self.correct_node_coords()
         print("Length:", len(self.pos_dict))
         self.create_edge_node_dicts()
@@ -352,7 +307,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.DT_size_list = []
         self.DT_sec_coords = {}
         for key,vals in self.equip_ldgs.items():
-            if key.lower().startswith("line") and round(vals,2)>self.Settings["line loading limit"]*100:
+            if key.lower().startswith("line") and round(vals,2)>self.Settings["PostProcess"]["line loading limit"]*100:
                 key = key.split("Line_")[1]
                 key = "Line."+key
                 dss.Circuit.SetActiveElement("{}".format(key))
@@ -362,7 +317,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 self.edge_pos_plt_dict[from_bus] = self.pos_dict[from_bus]
                 self.edge_pos_plt_dict[to_bus] = self.pos_dict[to_bus]
                 self.edge_size_list.append(vals)
-            if key.lower().startswith("xfmr") and round(vals,2)>self.Settings["DT loading limit"]*100:
+            if key.lower().startswith("xfmr") and round(vals,2)>self.Settings["PostProcess"]["DT loading limit"]*100:
                 key = key.split("Xfmr_")[1]
                 key = "Transformer." + key
                 dss.Circuit.SetActiveElement("{}".format(key))
@@ -385,7 +340,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         # nx.draw_networkx_labels(self.G, pos=self.pos_dict, node_size=1, font_size=15)
         plt.title("Thermal violations")
         plt.axis("off")
-        plt.savefig(os.path.join(self.Settings["Outputs"],"Thermal_violations_{}.pdf".format(str(self.plot_violations_counter))))
+        plt.savefig(os.path.join(self.Settings["PostProcess"]["Outputs"],"Thermal_violations_{}.pdf".format(str(self.plot_violations_counter))))
         self.plot_violations_counter+=1
 
     def export_line_DT_parameters(self):
@@ -396,7 +351,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             ln_name = dss.Lines.Name()
             ln_lc = dss.Lines.LineCode()
             ln_len = dss.Lines.Length()
-            len_units = self.Settings["units key"][dss.Lines.Units()-1]
+            len_units = self.Settings["PostProcess"]["units key"][dss.Lines.Units()-1]
             #len_units_alt = dss.Properties.Value("Units")
             ln_phases = dss.Lines.Phases()
             ln_b1 = dss.Lines.Bus1()
@@ -447,11 +402,11 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
     def process_DT_upgrades_file(self):
         self.compiled_xfmr_upgrades = {}
-        f = open(os.path.join(self.Settings["Outputs"],"Originial_xfmr_parameters.json"), 'r')
+        f = open(os.path.join(self.Settings["PostProcess"]["Outputs"],"Originial_xfmr_parameters.json"), 'r')
         data = json.load(f)
         for xfmr,specs in data.items():
             par_xfmr_cnt = 0
-            with open(os.path.join(self.Settings["Outputs"],"Thermal_upgrades.dss"), "r") as datafile:
+            with open(os.path.join(self.Settings["PostProcess"]["Outputs"],"Thermal_upgrades.dss"), "r") as datafile:
                 for line in datafile:
                     if line.startswith("New Transformer."):
                         params = line.split()
@@ -463,12 +418,12 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         return
 
     def write_to_json(self, dict, file_name):
-        with open(os.path.join(self.Settings["Outputs"],"{}.json".format(file_name)), "w") as fp:
+        with open(os.path.join(self.Settings["PostProcess"]["Outputs"],"{}.json".format(file_name)), "w") as fp:
             json.dump(dict, fp, indent=4)
 
 
     def write_dat_file(self):
-        with open(os.path.join(self.Settings["Outputs"],"Thermal_upgrades_pen_{}.dss".format(str(self.pen_level))), "w") as datafile:
+        with open(os.path.join(self.Settings["PostProcess"]["Outputs"],"Thermal_upgrades_pen_{}.dss".format(str(self.pen_level))), "w") as datafile:
             for line in self.dss_upgrades:
                 datafile.write(line)
 
@@ -536,11 +491,11 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         print("PVsystems:",dss.PVsystems.Count())
         self.line_violations_alltps = {}
         self.all_line_ldgs_alltps = {}
-        for tp_cnt in range(len(self.Settings["tps_to_test"])):
+        for tp_cnt in range(len(self.Settings["PostProcess"]["tps_to_test"])):
             # First two tps are for disabled PV case
             if tp_cnt==0 or tp_cnt==1:
                 dss.run_command("BatchEdit PVSystem..* Enabled=False")
-                dss.run_command("set LoadMult = {LM}".format(LM = self.Settings["tps_to_test"][tp_cnt]))
+                dss.run_command("set LoadMult = {LM}".format(LM = self.Settings["PostProcess"]["tps_to_test"][tp_cnt]))
                 self.dssSolver.Solve()
                 if not dss.Solution.Converged():
                     print("OpenDSS solution did not converge, quitting...")
@@ -549,7 +504,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 print("tp count", tp_cnt)
             if tp_cnt==2 or tp_cnt==3:
                 dss.run_command("BatchEdit PVSystem..* Enabled=True")
-                dss.run_command("set LoadMult = {LM}".format(LM = self.Settings["tps_to_test"][tp_cnt]))
+                dss.run_command("set LoadMult = {LM}".format(LM = self.Settings["PostProcess"]["tps_to_test"][tp_cnt]))
                 self.dssSolver.Solve()
                 print(dss.Circuit.TotalPower())
                 if not dss.Solution.Converged():
@@ -571,7 +526,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         self.all_line_ldgs_alltps[line_name] = [[max(line_current)], line_limit]
                     elif line_name in self.all_line_ldgs_alltps:
                         self.all_line_ldgs_alltps[line_name][0].append(max(line_current))
-                if ldg > self.Settings["line loading limit"] and switch == "False":  # and switch==False:
+                if ldg > self.Settings["PostProcess"]["line loading limit"] and switch == "False":  # and switch==False:
                     if line_name not in self.line_violations_alltps:
                         self.line_violations_alltps[line_name] = [[max(line_current)], line_limit]
                     elif line_name in self.line_violations_alltps:
@@ -590,7 +545,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 dss.Lines.Name("{}".format(key))
                 phases = dss.Lines.Phases()
                 length = dss.Lines.Length()
-                units = self.Settings["units key"][dss.Lines.Units()-1]
+                units = self.Settings["PostProcess"]["units key"][dss.Lines.Units()-1]
                 ln_geo = ''
                 line_code = dss.Lines.LineCode()
                 ln_config = "linecode"
@@ -605,7 +560,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 kv_to_bus = dss.Bus.kVBase()
                 dss.Circuit.SetActiveElement("Line.{}".format(key))
                 norm_amps = dss.CktElement.NormalAmps()
-                num_par_lns = int((vals[0]*self.Settings["line_safety_margin"])/(vals[1]*self.Settings["line loading limit"]))+1
+                num_par_lns = int((vals[0]*self.Settings["PostProcess"]["line_safety_margin"])/(vals[1]*self.Settings["PostProcess"]["line loading limit"]))+1
                 if kv_from_bus != kv_to_bus:
                     print("For line {} the from and to bus kV ({} {}) do not match, quitting...".format(key,
                                                                                                         kv_from_bus,
@@ -621,7 +576,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if lc_key in self.avail_line_upgrades:
                     for lcs,lcs_vals in self.avail_line_upgrades[lc_key].items():
                         if lcs!=line_code:
-                            if lcs_vals[0]>((vals[0]*self.Settings["line_safety_margin"])/(self.Settings["line loading limit"])) and lcs_vals[0]<num_par_lns*norm_amps:
+                            if lcs_vals[0]>((vals[0]*self.Settings["PostProcess"]["line_safety_margin"])/(self.Settings["PostProcess"]["line loading limit"])) and lcs_vals[0]<num_par_lns*norm_amps:
                                 command_string = "Edit Line.{lnm} {cnfig}={lnc}".format(lnm=key, cnfig=ln_config, lnc=lcs)
                                 dss.run_command(command_string)
                                 self.dssSolver.Solve()
@@ -727,11 +682,11 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
     def determine_xfmr_ldgs_alltps(self):
         self.xfmr_violations_alltps = {}
         self.all_xfmr_ldgs_alltps = {}
-        for tp_cnt in range(len(self.Settings["tps_to_test"])):
+        for tp_cnt in range(len(self.Settings["PostProcess"]["tps_to_test"])):
             # First two tps are for disabled PV case
             if tp_cnt == 0 or tp_cnt == 1:
                 dss.run_command("BatchEdit PVSystem..* Enabled=False")
-                dss.run_command("set LoadMult = {LM}".format(LM=self.Settings["tps_to_test"][tp_cnt]))
+                dss.run_command("set LoadMult = {LM}".format(LM=self.Settings["PostProcess"]["tps_to_test"][tp_cnt]))
                 self.dssSolver.Solve()
                 if not dss.Solution.Converged():
                     print("OpenDSS solution did not converge, quitting...")
@@ -740,7 +695,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 print(dss.Circuit.TotalPower())
             if tp_cnt == 2 or tp_cnt == 3:
                 dss.run_command("BatchEdit PVSystem..* Enabled=True")
-                dss.run_command("set LoadMult = {LM}".format(LM=self.Settings["tps_to_test"][tp_cnt]))
+                dss.run_command("set LoadMult = {LM}".format(LM=self.Settings["PostProcess"]["tps_to_test"][tp_cnt]))
                 self.dssSolver.Solve()
                 if not dss.Solution.Converged():
                     print("OpenDSS solution did not converge, quitting...")
@@ -766,7 +721,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     self.all_xfmr_ldgs_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
                 elif xfmr_name in self.all_xfmr_ldgs_alltps:
                     self.all_xfmr_ldgs_alltps[xfmr_name][0].append(max(xfmr_current))
-                if ldg > self.Settings["DT loading limit"]:
+                if ldg > self.Settings["PostProcess"]["DT loading limit"]:
                     if xfmr_name not in self.xfmr_violations_alltps:
                         self.xfmr_violations_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
                     elif xfmr_name in self.xfmr_violations_alltps:
@@ -823,7 +778,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                                                                                                           norm_amps,
                                                                                                           vals[1]))
                     quit()
-                num_par_dts = int((vals[0] * self.Settings["xfmr_safety_margin"]) / (vals[1]*self.Settings["DT loading limit"])) + 1
+                num_par_dts = int((vals[0] * self.Settings["PostProcess"]["xfmr_safety_margin"]) / (vals[1]*self.Settings["PostProcess"]["DT loading limit"])) + 1
                 dt_key = "type_" + "{}_".format(phases) + "{}_".format(num_wdgs)
                 for kv_cnt in range(len(wdg_kv_list)):
                     dt_key = dt_key + "{}_".format(wdg_kv_list[kv_cnt])
@@ -834,7 +789,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if dt_key in self.avail_xfmr_upgrades:
                     for dt,dt_vals in self.avail_xfmr_upgrades[dt_key].items():
                         if dt!=key:
-                            if dt_vals[1][0]>((vals[0]*self.Settings["xfmr_safety_margin"])/(self.Settings["line loading limit"])) and dt_vals[1][0]<num_par_dts*norm_amps:
+                            if dt_vals[1][0]>((vals[0]*self.Settings["PostProcess"]["xfmr_safety_margin"])/(self.Settings["PostProcess"]["line loading limit"])) and dt_vals[1][0]<num_par_dts*norm_amps:
                                 command_string = "Edit Transformer.{xf} %noloadloss={nll} ".format(xf=key,
                                                                                                   nll=dt_vals[3][0])
                                 for wdgs_cnt in range(num_wdgs):
@@ -895,16 +850,16 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
     def redirect_dss_upgrades(self):
         # TODO: Probably not useful here
         # Get all available dss upgrades files
-        self.thermal_upgrades_files = [f for f in os.listdir(self.Settings["Outputs"]) if f.startswith("Thermal_upgrades_pen")]
-        if int(self.pen_level) > int(self.Settings["DPV_penetration_HClimit"]):
-            prev_pen_level = self.pen_level - self.Settings["DPV_penetration_step"]
+        self.thermal_upgrades_files = [f for f in os.listdir(self.Settings["PostProcess"]["Outputs"]) if f.startswith("Thermal_upgrades_pen")]
+        if int(self.pen_level) > int(self.Settings["PostProcess"]["DPV_penetration_HClimit"]):
+            prev_pen_level = self.pen_level - self.Settings["PostProcess"]["DPV_penetration_step"]
             expected_file_name = "Thermal_upgrades_pen_{}.dss".format(prev_pen_level)
             print(expected_file_name)
             if expected_file_name in self.thermal_upgrades_files:
-                expected_file_path = os.path.join(self.Settings["Outputs"],expected_file_name)
+                expected_file_path = os.path.join(self.Settings["PostProcess"]["Outputs"],expected_file_name)
                 dss.run_command("Redirect {}".format(expected_file_path))
                 # Also append all upgrades in the previous penetration level to the next level
-                with open(os.path.join(self.Settings["Outputs"], "Thermal_upgrades_pen_{}.dss".format(prev_pen_level)),"r") as datafile:
+                with open(os.path.join(self.Settings["PostProcess"]["Outputs"], "Thermal_upgrades_pen_{}.dss".format(prev_pen_level)),"r") as datafile:
                     for line in datafile:
                         self.dss_upgrades.append(line)
             elif expected_file_name not in self.thermal_upgrades_files:
