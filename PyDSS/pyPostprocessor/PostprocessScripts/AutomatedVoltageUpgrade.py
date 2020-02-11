@@ -39,15 +39,13 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         super(AutomatedVoltageUpgrade).__init__()
         self.__dssinstance = dssInstance
         New_settings = {
-            "Feeder": "../Test_Feeder_RIN_69_08_2030_sb100",
             "img_path": "../Images",
-            "DPV_scenarios": "../ten_random_RIN_69_08_2030_sb100",
             "master file": "MasterDisco.dss",
             "DPV_penetration_HClimit": 0,
             "DPV_penetration_target": 200,
             "DPV control": "PF=1",  # "PF=1" or "PF=-0.95" or "VVar-CatA" or "VVar-CatB" or "VVar-VWatt-CatB"
             "DPV system priority": "watt",  # "watt" or "var"
-            "Outputs": "C:\Documents_NREL\Grid_Cost_DER_PhaseII\Control_device_placement\Outputs",
+            "Outputs": os.path.join(simulationSettings["Project Path"], simulationSettings["Active Project"], "UpgradeOutputs"),
             "V_upper_lim": 1.05,
             "V_lower_lim": 0.95,
             "Target_V": 1,
@@ -72,6 +70,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             # This number gives the maximum number of regulators placed in the feeder apart from substation LTC
             "Use LTC placement": True,
         }
+        os.makedirs(New_settings["Outputs"], exist_ok=True)
         for key,val in New_settings.items():
             if key not in self.Settings:
                 self.Settings[key] = val

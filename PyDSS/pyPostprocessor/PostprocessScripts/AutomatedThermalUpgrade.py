@@ -55,16 +55,14 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         # New settings to be added into simulationsettings
 
         New_settings = {
-            "Feeder": "../Test_Feeder_RIN_69_08_2030_sb100",  # "../Test_Feeder_J1",
             "img_path": "../Images",
-            "DPV_scenarios": "../ten_random_RIN_69_08_2030_sb100",  # "../ten_random_J1",
             "master file": "MasterDisco.dss",  # "Master.dss",
             "DPV_penetration_HClimit": 0,
             "DPV_penetration_target": 0,
             "DPV_penetration_step": 10,
             "DPV control": "PF=1",  # "PF=1" or "PF=-0.95" or "VVar-CatA" or "VVar-CatB" or "VVar-VWatt-CatB"
             "DPV system priority": "watt",  # "watt" or "var"
-            "Outputs": r"C:\Documents_NREL\Grid_Cost_DER_PhaseII\Control_device_placement\Outputs",
+            "Outputs": os.path.join(simulationSettings["Project Path"], simulationSettings["Active Project"], "UpgradeOutputs"),
             "line loading limit": 1.0,  # 1=100%
             "DT loading limit": 1.0,  # 1=100%,
             "line_safety_margin": 1.5,
@@ -90,6 +88,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             "max control iterations": 50,
             "Create_upgrades_library": True,
             }
+        os.makedirs(New_settings["Outputs"], exist_ok=True)
         for key,val in New_settings.items():
             if key not in self.Settings:
                 self.Settings[key] = val
@@ -237,7 +236,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
         # Process outputs
         input_dict = {
-            "Feeder": self.Settings["Feeder"],
             "master file": self.Settings["master file"],
             "DPV_penetration_HClimit": self.Settings["DPV_penetration_HClimit"],
             "DPV_penetration_target": self.Settings["DPV_penetration_target"],
