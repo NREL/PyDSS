@@ -343,10 +343,9 @@ class PyDssScenario:
         elif isinstance(exports, str):
             mode = ExportMode(os.path.splitext(os.path.basename(exports))[0])
             self.exports = {mode: load_data(exports)}
-            assert False, f"{str(export_mode)}, {str(exports)}"
         else:
             assert isinstance(exports, dict)
-            self.export = exports
+            self.exports = exports
 
         if plots is None:
             self.plots = DEFAULT_PLOT_CONFIG
