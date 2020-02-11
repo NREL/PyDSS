@@ -137,9 +137,9 @@ class OpenDSS:
 
         for ControllerType, ElementsDict in ControllerDict.items():
             for ElmName, SettingsDict in ElementsDict.items():
-                 Controller = pyControllers.pyController.Create(ElmName, ControllerType, SettingsDict, self._dssObjects,
+                Controller = pyControllers.pyController.Create(ElmName, ControllerType, SettingsDict, self._dssObjects,
                                                   self._dssInstance, self._dssSolver)
-                 if Controller != -1:
+                if Controller != -1:
                     self._pyControls['Controller.' + ElmName] = Controller
                     self._Logger.info('Created pyController -> Controller.' + ElmName)
         return
@@ -388,9 +388,10 @@ class OpenDSS:
         for filename, count_func, get_func in exports:
             if count_func() > 0:
                 df = get_func()
+                # Always record in CSV format for readability.
                 filepath = os.path.join(self._dssPath['Export'],
                                         self._Options['Active Scenario'],
-                                        filename + "." + self._Options["Export Format"])
+                                        filename + ".csv")
                 write_dataframe(df, filepath)
                 self._Logger.info('Exported %s information to %s.', filename, filepath)
 
