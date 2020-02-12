@@ -28,10 +28,6 @@ class dssElement(dssObjectBase):
             "is_complex": False,
             "units": ['[kV]', '[Deg]']
         },
-        'Losses': {
-            "is_complex": True,
-            "units": ['[kVA]']
-        },
         'CplxSeqCurrents': {
             "is_complex": True,
             "units": ['[Amps]']
@@ -47,7 +43,7 @@ class dssElement(dssObjectBase):
     }
 
     VARIABLE_OUTPUTS_COMPLEX = (
-
+        "Losses",
     )
 
     _MAX_CONDUCTORS = 4
@@ -59,6 +55,10 @@ class dssElement(dssObjectBase):
 
         self._Class, name = fullName.split('.', 1)
         super(dssElement, self).__init__(dssInstance, name, fullName)
+        self._Enabled = dssInstance.CktElement.Enabled()
+        if not self._Enabled:
+            return
+
         self._Parameters = {}
         self._NumTerminals = dssInstance.CktElement.NumTerminals()
         self._NumConductors = dssInstance.CktElement.NumConductors()

@@ -15,7 +15,11 @@ class dssObjectBase(abc.ABC):
         self._FullName = fullName
         self._Variables = {}
         self._dssInstance = dssInstance
+        self._Enabled = True
 
+    @property
+    def Enabled(self):
+        return self._Enabled
 
     @abc.abstractmethod
     def SetActiveObject(self):

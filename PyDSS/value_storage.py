@@ -140,6 +140,7 @@ class   ValueByList(_ValueStorageBase):
 class ValueByNumber(_ValueStorageBase):
     """Stores a list of numbers for an element/property."""
     def __init__(self, name, prop, value):
+        assert not isinstance(value, list), str(value)
         self._data = [value]
         self._name = name
         self._prop = prop
@@ -272,6 +273,7 @@ class ValueByLabel(_ValueStorageBase):
         df = pd.DataFrame(self._data)
         df.columns = self._make_columns()
         return df
+
 
 def get_value_class(class_name):
     """Return the class with the given name."""

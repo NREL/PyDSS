@@ -84,6 +84,8 @@ class ResultData:
         for property_name in properties:
             assert isinstance(property_name, str)
             for name, obj in objs.items():
+                if not obj.Enabled:
+                    continue
                 if not obj.IsValidAttribute(property_name):
                     raise InvalidParameter(f"{element_class} / {property_name} {name} cannot be exported")
                 if name not in element_names:
@@ -369,7 +371,7 @@ class ElementValuesPerProperty(ElementData):
         return obj
 
     def add_values(self):
-        for  prop in self.properties:
+        for prop in self.properties:
             value = self._obj.GetValue(prop, convert=True)
             if self._data[prop] is None:
                 self._data[prop] = value
@@ -490,7 +492,9 @@ class ValuesByPropertyAcrossElements(ElementData):
             data["value_class"] = self._value_class.__name__
             return data
         else:
-            print('NO DF: {} - {}'.format(self._value_class.__name__, self._element_names))
+            print(f'NO DF: {self._element_class} - {self._property} - {self._element_names}')
+            # TODO: self._value_class can be None, so this fails.
+            #print('NO DF: {} - {}'.format(self._value_class.__name__, self._element_names))
 
     @classmethod
     def deserialize(cls, data):
