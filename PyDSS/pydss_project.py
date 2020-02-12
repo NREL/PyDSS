@@ -377,13 +377,21 @@ class PyDssScenario:
         name = os.path.basename(path)
         controllers = {}
         for filename in os.listdir(os.path.join(path, "pyControllerList")):
-            controller_type = ControllerType(os.path.splitext(filename)[0])
-            controllers[controller_type] = load_data(os.path.join(path, "pyControllerList", filename))
+            base, ext = os.path.splitext(filename)
+            if ext == ".toml":
+                controller_type = ControllerType(base)
+                controllers[controller_type] = load_data(
+                    os.path.join(path, "pyControllerList", filename)
+                )
 
         exports = {}
         for filename in os.listdir(os.path.join(path, "ExportLists")):
-            export_mode = ExportMode(os.path.splitext(filename)[0])
-            exports[export_mode] = load_data(os.path.join(path, "ExportLists", filename))
+            base, ext = os.path.splitext(filename)
+            if ext == ".toml":
+                export_mode = ExportMode(base)
+                exports[export_mode] = load_data(
+                    os.path.join(path, "ExportLists", filename)
+                )
 
         plots = load_config(os.path.join(path, "pyPlotList"))
         return cls(name, controllers=controllers, exports=exports, plots=plots)
