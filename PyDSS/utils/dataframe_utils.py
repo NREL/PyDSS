@@ -135,4 +135,7 @@ def write_dataframe(df, file_path, compress=False, keep_original=False,
         if not keep_original:
             os.remove(path)
 
+        filename = zipped_path
         logger.debug("Compressed %s", zipped_path)
+
+    return filename

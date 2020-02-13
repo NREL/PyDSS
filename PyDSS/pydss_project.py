@@ -135,6 +135,17 @@ class PyDssProject:
         return self._name
 
     @property
+    def project_path(self):
+        """Return the path to the project.
+
+        Returns
+        -------
+        str
+
+        """
+        return self._project_dir
+
+    @property
     def scenarios(self):
         """Return the project scenarios.
 
@@ -285,7 +296,7 @@ class PyDssProject:
             for x in simulation_config["Project"]["Scenarios"]
         ]
 
-        return PyDssProject(path, name, scenarios, simulation_config)
+        return PyDssProject(os.path.dirname(path), name, scenarios, simulation_config)
 
     @classmethod
     def run_project(cls, path, options=None):

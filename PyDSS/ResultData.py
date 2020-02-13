@@ -179,6 +179,8 @@ class ResultData:
                 self._export_format,
                 self._export_compression,
             )
+            if prop_metadata is None:
+                continue
             metadata["data"].append(prop_metadata)
 
         filename = os.path.join(self._export_dir, self.METADATA_FILENAME)
@@ -212,7 +214,10 @@ class ResultData:
     def get_indices_filename(path):
         indices_filename = None
         for filename in os.listdir(path):
-            if os.path.splitext(filename)[0] == ResultData.INDICES_BASENAME:
+            basename, ext = os.path.splitext(filename)
+            if ext == ".gz":
+                basename, ext = os.path.splitext(basename)
+            if basename == ResultData.INDICES_BASENAME:
                 if indices_filename is not None:
                     raise InvalidParameter(
                         f"found multiple indices files at {path}"
@@ -485,9 +490,9 @@ class ValuesByPropertyAcrossElements(ElementData):
             df = pd.concat(dataframes, axis=1, copy=False)
             filename = self._make_filename() + "." + fmt
             fullpath = os.path.join(path, filename)
-            write_dataframe(df, fullpath, compress=compress)
+            final_path = write_dataframe(df, fullpath, compress=compress)
 
-            data["file"] = fullpath
+            data["file"] = final_path
             data["element_names"] = self._element_names
             data["value_class"] = self._value_class.__name__
             return data
@@ -495,6 +500,7 @@ class ValuesByPropertyAcrossElements(ElementData):
             print(f'NO DF: {self._element_class} - {self._property} - {self._element_names}')
             # TODO: self._value_class can be None, so this fails.
             #print('NO DF: {} - {}'.format(self._value_class.__name__, self._element_names))
+            return None
 
     @classmethod
     def deserialize(cls, data):
