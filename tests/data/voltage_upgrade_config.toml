@@ -16,3 +16,4 @@ tps_to_test = [0.2, 1.2, 0.1, 0.9]
 "Max regulators" = 4
 # This number gives the maximum number of regulators placed in the feeder apart from substation LTC
 "Use LTC placement" = true
+"Thermal scenario name" = "sc-thermal"

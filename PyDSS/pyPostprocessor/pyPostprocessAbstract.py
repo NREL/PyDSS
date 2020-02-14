@@ -33,9 +33,9 @@ class AbstractPostprocess(abc.ABC):
         """
         self.project = project
         self.scenario = scenario
-        self.inputs = load_data(inputs["config_file"])
-        self.inputs["Outputs"] = project.get_post_process_directory(scenario.name)
-        os.makedirs(self.inputs["Outputs"], exist_ok=True)
+        self.config = load_data(inputs["config_file"])
+        self.config["Outputs"] = project.get_post_process_directory(scenario.name)
+        os.makedirs(self.config["Outputs"], exist_ok=True)
         self.Settings = simulationSettings
 
         self._dssInstance = dssInstance
@@ -53,7 +53,7 @@ class AbstractPostprocess(abc.ABC):
 
     def _check_input_fields(self):
         required_fields = self._get_required_input_fields()
-        fields = set(self.inputs.keys())
+        fields = set(self.config.keys())
         for field in required_fields:
             if field not in fields:
                 raise InvalidParameter(f"{self.__class__.__name__} requires input field {field}")
