@@ -575,7 +575,8 @@ class PyDssScenario:
                 raise InvalidParameter(
                     f"missing post-process field={field}"
                 )
-        if not os.path.exists(post_process_info["config_file"]):
+        config_file = post_process_info["config_file"]
+        if not os.path.exists(config_file):
             raise InvalidParameter(f"{config_file} does not exist")
 
         self.post_process_infos.append(post_process_info)
