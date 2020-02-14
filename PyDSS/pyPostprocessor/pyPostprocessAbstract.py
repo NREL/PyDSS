@@ -31,6 +31,9 @@ class AbstractPostprocess(abc.ABC):
     def __init__(self, project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, logger):
         """This is the constructor class.
         """
+        if simulationSettings["Project"]["Simulation Type"] != "Snapshot":
+            raise InvalidParameter("Upgrade post-processors are only supported on Snapshot simulations")
+
         self.project = project
         self.scenario = scenario
         self.config = load_data(inputs["config_file"])
