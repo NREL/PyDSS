@@ -109,13 +109,26 @@ class ResultData:
 
 
             # TODO: refactor prop_aggregators
+            # TODO: determine when to set store_frequency and store_mode to True
             prop_aggregators = []
             if self._export_iteration_order == "ValuesByPropertyAcrossElements":
                 for prop in properties:
-                    prop_aggregators.append(ValuesByPropertyAcrossElements.new(element_class, prop))
+                    prop_aggregators.append(ValuesByPropertyAcrossElements.new(
+                        element_class,
+                        prop,
+                        store_frequency=False,
+                        store_mode=False,
+                    ))
 
             for name, obj in elements:
-                elem = ElementValuesPerProperty.new(element_class, name, properties, obj)
+                elem = ElementValuesPerProperty.new(
+                    element_class,
+                    name,
+                    properties,
+                    obj,
+                    store_frequency=False,
+                    store_mode=False,
+                )
                 self._elements.append(elem)
 
                 if prop_aggregators:
@@ -251,7 +264,8 @@ class ResultData:
 class ElementData(abc.ABC):
     DELIMITER = "__"
 
-    def __init__(self, element_class, path, data_filename):
+    def __init__(self, element_class, path, data_filename,
+                 store_frequency=False, store_mode=False):
         self.cache_data = bool(int(os.environ.get("PYDSS_CACHE_DATA", 0)))
         self._cached_df = None
         self._element_class = element_class
@@ -259,6 +273,8 @@ class ElementData(abc.ABC):
         self._path = path
         self._indices_df = None
         self._value_class = None
+        self._store_frequency = store_frequency
+        self._store_mode = store_mode
 
     @abc.abstractmethod
     def serialize(self, path, fmt, compress):
@@ -304,8 +320,10 @@ class ElementData(abc.ABC):
             )
 
         df["timestamp"] = self._indices_df["timestamp"]
-        df["frequency"] = self._indices_df["frequency"]
-        df["Simulation mode"] = self._indices_df["Simulation mode"]
+        if self._store_frequency:
+            df["frequency"] = self._indices_df["frequency"]
+        if self._store_mode:
+            df["Simulation mode"] = self._indices_df["Simulation mode"]
         df.set_index(("timestamp"), inplace=True)
 
     @abc.abstractmethod
@@ -318,8 +336,10 @@ class ElementData(abc.ABC):
 
 class ElementValuesPerProperty(ElementData):
     """Contains values for one element for all properties of an element class."""
-    def __init__(self, element_class, name, properties, obj, data, path, data_filename):
-        super(ElementValuesPerProperty, self).__init__(element_class, path, data_filename)
+    def __init__(self, element_class, name, properties, obj, data, path,
+                 data_filename, store_frequency=False, store_mode=False):
+        super(ElementValuesPerProperty, self).__init__(
+            element_class, path, data_filename, store_frequency, store_mode)
         self._properties = properties
         self._name = name
         self._obj = obj
@@ -327,10 +347,12 @@ class ElementValuesPerProperty(ElementData):
         self._indices_df = None
 
     @classmethod
-    def new(cls, element_class, name, properties, obj):
+    def new(cls, element_class, name, properties, obj, store_frequency=False,
+            store_mode=False):
         """Creates a new instance of ElementValuesPerProperty."""
         data = {x: None for x in properties}
-        return cls(element_class, name, properties, obj, data, None, None)
+        return cls(element_class, name, properties, obj, data, None, None,
+                   store_frequency=store_frequency, store_mode=store_mode)
 
     def serialize(self, path, fmt, compress):
         data = {}
@@ -455,18 +477,26 @@ class ElementValuesPerProperty(ElementData):
 
 class ValuesByPropertyAcrossElements(ElementData):
     """Contains values for all elements for a specific property."""
-    def __init__(self, element_class, prop, elements, element_names, path, data_filename):
-        super(ValuesByPropertyAcrossElements, self).__init__(element_class, path, data_filename)
+    def __init__(self, element_class, prop, elements, element_names, path,
+                 data_filename, store_frequency=False, store_mode=False):
+        super(ValuesByPropertyAcrossElements, self).__init__(
+            element_class,
+            path,
+            data_filename,
+            store_frequency=store_frequency,
+            store_mode=store_mode,
+        )
         self._property = prop
         self._elements = elements
         self._element_names = element_names
         self._value_class = None
 
     @classmethod
-    def new(cls, element_class, prop):
+    def new(cls, element_class, prop, store_frequency=False, store_mode=False):
         elements = []
         element_names = []
-        return cls(element_class, prop, elements, element_names, None, None)
+        return cls(element_class, prop, elements, element_names, None, None,
+                   store_frequency=store_frequency, store_mode=store_mode)
 
     def serialize(self, path, fmt, compress):
         data = {
