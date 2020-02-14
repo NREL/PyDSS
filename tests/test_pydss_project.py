@@ -12,6 +12,8 @@ from PyDSS.pydss_results import PyDssResults, \
 
 
 PATH = os.path.join(tempfile.gettempdir(), "pydss-projects")
+THERMAL_CONFIG = "tests/data/thermal_upgrade_config.toml"
+VOLTAGE_CONFIG = "tests/data/voltage_upgrade_config.toml"
 
 
 @pytest.fixture
@@ -26,10 +28,20 @@ def pydss_project():
 def test_create_project(pydss_project):
     project_name = "test-project"
     project_dir = os.path.join(PATH, project_name)
+    thermal_upgrade = {
+        "script": "AutomatedThermalUpgrade",
+        "config_file": THERMAL_CONFIG,
+    }
+    voltage_upgrade = {
+        "script": "AutomatedVoltageUpgrade",
+        "config_file": VOLTAGE_CONFIG,
+    }
     # Intentionally not in alphabetic order so that we verify our designated
     # ordering.
-    scenario_names = ("b_scenario1", "a_scenario2")
-    scenarios = [PyDssScenario(x) for x in scenario_names]
+    scenarios = [
+        PyDssScenario("b_scenario1", post_process_infos=[thermal_upgrade]),
+        PyDssScenario("a_scenario2", post_process_infos=[voltage_upgrade]),
+    ]
     project = PyDssProject.create_project(PATH, project_name, scenarios)
     assert os.path.exists(project_dir)
     for dir_name in PyDssScenario._SCENARIO_DIRECTORIES:
@@ -54,6 +66,7 @@ def test_create_project(pydss_project):
         assert scenarios1[i].name == scenarios2[i].name
         assert scenarios1[i].controllers == scenarios2[i].controllers
         assert scenarios1[i].plots == scenarios2[i].plots
+        assert scenarios1[i].post_process_infos == scenarios2[i].post_process_infos
 
 
 RUN_PROJECT_PATH = os.path.join("tests", "data", "project")
@@ -62,11 +75,11 @@ RUN_PROJECT_PATH = os.path.join("tests", "data", "project")
 @pytest.fixture
 def cleanup_project():
     yield
-    export_path = os.path.join(RUN_PROJECT_PATH, "Exports", "scenario1")
-    logs_path = os.path.join(RUN_PROJECT_PATH, "Logs")
-    for path in (logs_path, export_path):
-        shutil.rmtree(path)
-        os.mkdir(path)
+    #export_path = os.path.join(RUN_PROJECT_PATH, "Exports", "scenario1")
+    #logs_path = os.path.join(RUN_PROJECT_PATH, "Logs")
+    #for path in (logs_path, export_path):
+    #    shutil.rmtree(path)
+    #    os.mkdir(path)
 
 
 EXPECTED_ELEM_CLASSES_PROPERTIES = {

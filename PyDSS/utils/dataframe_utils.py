@@ -111,31 +111,29 @@ def write_dataframe(df, file_path, compress=False, keep_original=False,
         raise InvalidParameter("DataFrame index must not be set")
 
     directory = os.path.dirname(file_path)
-    filename = os.path.basename(file_path)
-    ext = os.path.splitext(filename)[1]
-    path = os.path.join(directory, filename)
+    ext = os.path.splitext(file_path)[1]
 
     if ext == ".csv":
-        df.to_csv(path, **kwargs)
+        df.to_csv(file_path, **kwargs)
     elif ext == ".feather":
-        df.to_feather(path, **kwargs)
+        df.to_feather(file_path, **kwargs)
     elif ext == ".json":
-        df.to_json(path, **kwargs)
+        df.to_json(file_path, **kwargs)
     else:
         raise InvalidParameter(f"unsupported file extension {ext}")
 
-    logger.debug("Created %s", path)
+    logger.debug("Created %s", file_path)
 
     if compress:
-        zipped_path = path + ".gz"
-        with open(path, "rb") as f_in:
+        zipped_path = file_path + ".gz"
+        with open(file_path, "rb") as f_in:
             with gzip.open(zipped_path, "wb") as f_out:
                 shutil.copyfileobj(f_in, f_out)
 
         if not keep_original:
-            os.remove(path)
+            os.remove(file_path)
 
-        filename = zipped_path
+        file_path = zipped_path
         logger.debug("Compressed %s", zipped_path)
 
-    return filename
+    return file_path

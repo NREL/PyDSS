@@ -123,6 +123,43 @@ class PyDssProject:
         """
         return os.path.join(self._project_dir, "Exports")
 
+    def get_post_process_directory(self, scenario_name):
+        """Return the post-process output directory for scenario_name.
+
+        Parameters
+        ----------
+        scenario_name : str
+
+        Returns
+        -------
+        str
+
+        """
+        # Make sure the scenario exists. This will throw if not.
+        self.get_scenario(scenario_name)
+        return os.path.join(
+            self._project_dir, "Scenarios", scenario_name, "PostProcess"
+        )
+
+        raise InvalidParameter(f"{scenario} is not a valid scenario")
+    def get_scenario(self, name):
+        """Return the scenario with name.
+
+        Parameters
+        ----------
+        name : str
+
+        Returns
+        -------
+        PyDssScenario
+
+        """
+        for scenario in self._scenarios:
+            if scenario.name == name:
+                return scenario
+
+        raise InvalidParameter(f"{scenario} is not a valid scenario")
+
     @property
     def name(self):
         """Return the project name.
@@ -174,17 +211,15 @@ class PyDssProject:
         for name in self._PROJECT_DIRECTORIES:
             os.makedirs(os.path.join(self._project_dir, name), exist_ok=True)
 
+        self._serialize_scenarios()
+
         dump_data(
             self._simulation_config,
             os.path.join(self._project_dir, SIMULATION_SETTINGS_FILENAME),
         )
 
-        for scenario in self._scenarios:
-            scenario.serialize(
-                os.path.join(self._scenarios_dir, scenario.name)
-            )
 
-        logger.info("Setup folders at %s", self._project_dir)
+        logger.info("Initialized directories in %s", self._project_dir)
 
     @classmethod
     def create_project(cls, path, name, scenarios, simulation_config=None,
@@ -210,12 +245,12 @@ class PyDssProject:
             simulation_config.update(options)
         simulation_config["Project"]["Project Path"] = path
         simulation_config["Project"]["Active Project"] = name
-        simulation_config["Project"]["Scenarios"] = [x.name for x in scenarios]
 
         project = cls(path, name, scenarios, simulation_config)
         project.serialize()
+        sc_names = [x.name for x in project.scenarios]
         logger.info("Created project=%s with scenarios=%s at %s", name,
-                    scenarios, path)
+                    sc_names, path)
         return project
 
     def run(self, logging_configured=True):
@@ -224,7 +259,26 @@ class PyDssProject:
         self._simulation_config["Logging"]["Pre-configured logging"] = logging_configured
         for scenario in self._scenarios:
             self._simulation_config["Project"]["Active Scenario"] = scenario.name
-            inst.run(self._simulation_config, scenario)
+            inst.run(self._simulation_config, self, scenario)
+
+    def _serialize_scenarios(self):
+        self._simulation_config["Project"]["Scenarios"] = []
+        for scenario in self._scenarios:
+            data = {
+                "name": scenario.name,
+                "post_process_infos": [],
+            }
+            for pp_info in scenario.post_process_infos:
+                data["post_process_infos"].append(
+                    {
+                        "script": pp_info["script"],
+                        "config_file": pp_info["config_file"],
+                    }
+                )
+            self._simulation_config["Project"]["Scenarios"].append(data)
+            scenario.serialize(
+                os.path.join(self._scenarios_dir, scenario.name)
+            )
 
     @staticmethod
     def load_simulation_config(project_path):
@@ -285,14 +339,18 @@ class PyDssProject:
                 "in project"
             )
 
-        for scenario_name in simulation_config["Project"]["Scenarios"]:
+        names = [x["name"] for x in simulation_config["Project"]["Scenarios"]]
+        for scenario_name in names:
             if scenario_name not in scenario_names:
                 raise InvalidParameter(
                     f"scenario {scenario_name} does not have a directory"
                 )
 
         scenarios = [
-            PyDssScenario.deserialize(os.path.join(scenarios_dir, x))
+            PyDssScenario.deserialize(
+                os.path.join(scenarios_dir, x["name"]),
+                post_process_infos=x["post_process_infos"],
+            )
             for x in simulation_config["Project"]["Scenarios"]
         ]
 
@@ -319,11 +377,19 @@ class PyDssScenario:
 
     DEFAULT_CONTROLLER_TYPES = (ControllerType.PV_CONTROLLER,)
     DEFAULT_EXPORT_MODE = ExportMode.BY_CLASS
-    _SCENARIO_DIRECTORIES = ("ExportLists", "pyControllerList", "pyPlotList")
+    _SCENARIO_DIRECTORIES = (
+        "ExportLists",
+        "pyControllerList",
+        "pyPlotList",
+        "PostProcess"
+    )
+    REQUIRED_POST_PROCESS_FIELDS = ("script", "config_file")
 
     def __init__(self, name, controller_types=None, controllers=None,
-                 export_modes=None, exports=None, plots=None):
+                 export_modes=None, exports=None, plots=None,
+                 post_process_infos=None):
         self.name = name
+        self.post_process_infos = []
         if controller_types is not None and controllers is not None:
             raise InvalidParameter(
                 "controller_types and controllers cannot both be set"
@@ -371,14 +437,20 @@ class PyDssScenario:
         else:
             self.plots = plots
 
+        if post_process_infos is not None:
+            for pp_info in post_process_infos:
+                self.add_post_process(pp_info)
+
     @classmethod
-    def deserialize(cls, path):
+    def deserialize(cls, path, post_process_infos):
         """Deserialize a PyDssScenario from a path.
 
         Parameters
         ----------
         path : str
             full path to scenario
+        post_process_infos : list
+            list of post_process_info dictionaries
 
         Returns
         -------
@@ -405,7 +477,13 @@ class PyDssScenario:
                 )
 
         plots = load_config(os.path.join(path, "pyPlotList"))
-        return cls(name, controllers=controllers, exports=exports, plots=plots)
+        return cls(
+            name,
+            controllers=controllers,
+            exports=exports,
+            plots=plots,
+            post_process_infos=post_process_infos,
+        )
 
     def serialize(self, path):
         """Serialize a PyDssScenario to a directory.
@@ -482,6 +560,27 @@ class PyDssScenario:
         )
 
         return load_data(path)
+
+    def add_post_process(self, post_process_info):
+        """Add a post-process script to a scenario.
+
+        Parameters
+        ----------
+        post_process_info : dict
+            Must define all fields in PyDssScenario.REQUIRED_POST_PROCESS_FIELDS
+
+        """
+        for field in self.REQUIRED_POST_PROCESS_FIELDS:
+            if field not in post_process_info:
+                raise InvalidParameter(
+                    f"missing post-process field={field}"
+                )
+        if not os.path.exists(post_process_info["config_file"]):
+            raise InvalidParameter(f"{config_file} does not exist")
+
+        self.post_process_infos.append(post_process_info)
+        logger.info("Appended post-process script %s to %s",
+                    post_process_info["script"], self.name)
 
 
 def load_config(path):

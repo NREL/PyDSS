@@ -90,39 +90,6 @@ class instance(object):
             'Create dynamic plots': {'type': bool, 'Options': [True, False]},
             'Open plots in browser': {'type': bool, 'Options': [True, False]},
         },
-        "PostProcess": {
-            'Post processing script': {'type': str},
-            "Run each iteration": {'type': bool, 'Options': [True, False]},
-            "img_path": {'type': str},
-            "master file": {'type': str},
-            "DPV_penetration_HClimit": {'type': float},
-            "DPV_penetration_target": {'type': float},
-            "DPV_penetration_step": {'type': float},
-            "DPV control": {'type': str, 'Options': ["PF=1", "PF=-0.95", "VVar-CatA", "VVar-CatB", "VVar-VWatt-CatB"]},
-            "DPV system priority": {'type': str, 'Options': ["watt", "var"]},
-            "Outputs": {'type': str},
-            "line loading limit": {'type': float},
-            "DT loading limit": {'type': float},
-            "line_safety_margin": {'type': float},
-            "xfmr_safety_margin": {'type': float},
-            "V_upper_lim": {'type': float},
-            "V_lower_lim": {'type': float},
-            "Target_V": {'type': float},
-            "plot window open time": {'type': float},
-            "Min PVLoad multiplier": {'type': float},
-            "Min Load multiplier": {'type': float},
-            "Max Load multiplier": {'type': float},
-            "max Regulators": {'type': float},
-            "Range B upper": {'type': float},
-            "Range B lower": {'type': float},
-            "nominal_voltage": {'type': float},
-            "Max iterations": {'type': float},
-            "Create_upgrade_plots": {'type': bool, 'Options': [True, False]},
-            "tps_to_test": {'type': list},
-            "units key": {'type': list},
-            "max control iterations": {'type': float},
-            "Create_upgrades_library": {'type': bool, 'Options': [True, False]},
-        },
         "Project": {
             'Project Path': {'type': str},
             'Start Year': {'type': int, 'Options': range(1970, 2099)},
@@ -156,7 +123,7 @@ class instance(object):
         return results_container
 
 
-    def run(self, simulation_config, scenario):
+    def run(self, simulation_config, project, scenario):
         path = os.path.dirname(PyDSS.__file__)
         default_vis_settings = load_data(os.path.join(path, 'defaults', 'pyPlotList', 'plots.toml'))
 
@@ -170,9 +137,13 @@ class instance(object):
             bokeh_server_proc = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
 
         SimulationResults = {}
-        args, results = self.__run_scenario(simulation_config,
-                                            updated_vis_settings['Simulations']['Run_simulations'],
-                                            updated_vis_settings['Simulations']['Generate_visuals'])
+        args, results = self.__run_scenario(
+            project,
+            scenario,
+            simulation_config,
+            updated_vis_settings['Simulations']['Run_simulations'],
+            updated_vis_settings['Simulations']['Generate_visuals'],
+        )
         if results is not None:
             SimulationResults = self.update_results_dict(SimulationResults, args, results)
 
@@ -195,7 +166,7 @@ class instance(object):
         dss = dssInstance.OpenDSS(dss_args)
         return dss
 
-    def __run_scenario(self, simulation_config, run_simulation=True, generate_visuals=False):
+    def __run_scenario(self, project, scenario, simulation_config, run_simulation=True, generate_visuals=False):
         dss_args = self.update_scenario_settings(simulation_config)
         self._dump_scenario_simulation_settings(dss_args)
 
@@ -203,9 +174,9 @@ class instance(object):
             dss = dssInstance.OpenDSS(dss_args)
             logger.info('Running scenario: %s', dss_args["Project"]["Active Scenario"])
             if dss_args["MonteCarlo"]["Number of Monte Carlo scenarios"] > 0:
-                dss.RunMCsimulation(samples=dss_args["MonteCarlo"]['Number of Monte Carlo scenarios'])
+                dss.RunMCsimulation(project, scenario, samples=dss_args["MonteCarlo"]['Number of Monte Carlo scenarios'])
             else:
-                dss.RunSimulation()
+                dss.RunSimulation(project, scenario)
             #del dss
             #print(dss)
         if generate_visuals:

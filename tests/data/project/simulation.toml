@@ -29,10 +29,12 @@
 "Project Path" = "./tests/data"
 "Simulation Type" = "QSTS"
 "Active Project" = "project"
-"Scenarios" = ["scenario1"]
-"Active Scenario" = "scenario1"
+"Active Scenario" = ""
 "DSS File" = "Master_Spohn_existing_VV.dss"
 "Return Results" = false
+[[Project.Scenarios]]
+name = "scenario1"
+post_process_infos = []
 
 # Export Mode- [Str] - Possible options "byClass" and "byElement"
 # Export Style- [Str] - possible options "Single_file" and "Separate_files"

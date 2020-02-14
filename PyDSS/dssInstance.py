@@ -296,7 +296,7 @@ class OpenDSS:
                 self._dssSolver.setMode('Yearly')
         return
 
-    def RunSimulation(self, file_prefix=''):
+    def RunSimulation(self, project, scenario, file_prefix=''):
         if self._Options["Exports"]["Export Elements"]:
             self._ExportElements()
 
@@ -305,18 +305,27 @@ class OpenDSS:
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
         self._Logger.info('Simulation time step {}.'.format(Steps))
 
-        if self._Options['PostProcess']['Post processing script'] != "":
-            self.postprocessor = pyPostprocess.Create(self._dssInstance, self._dssSolver, self._dssObjects,
-                                                     self._dssObjectsByClass, self._Options, self._Logger)
-        else:
+        postprocessors = [
+            pyPostprocess.Create(
+                project,
+                scenario,
+                ppInfo,
+                self._dssInstance,
+                self._dssSolver,
+                self._dssObjects,
+                self._dssObjectsByClass,
+                self._Options,
+                self._Logger,
+            ) for ppInfo in scenario.post_process_infos
+        ]
+        if not postprocessors:
             self._Logger.info('No post processing script selected')
-            self.postprocessor = None
 
         step = 0
         while step < Steps:
             self.RunStep(step)
-            if self.postprocessor is not None:
-                step = self.postprocessor.run(step, Steps)
+            for postprocessor in postprocessors:
+                step = postprocessor.run(step, Steps)
             step+=1
 
         if self._Options and self._Options['Exports']['Log Results']:
@@ -325,12 +334,12 @@ class OpenDSS:
         self._Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
         self._Logger.info('End of simulation')
 
-    def RunMCsimulation(self, samples):
+    def RunMCsimulation(self, project, scenario, samples):
         from PyDSS.Extensions.MonteCarlo import MonteCarloSim
         MC = MonteCarloSim(self._Options, self._dssPath, self._dssObjects, self._dssObjectsByClass)
         for i in range(samples):
             MC.Create_Scenario()
-            self.RunSimulation('MC{}'.format(i))
+            self.RunSimulation(project, scenario, 'MC{}'.format(i))
         return
 
     def _UpdatePlots(self):

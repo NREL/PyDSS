@@ -1,10 +1,20 @@
 
+import abc
 import os
 
+from PyDSS.exceptions import InvalidParameter
+from PyDSS.utils.utils import load_data
 
-class AbstractPostprocess:
+
+class AbstractPostprocess(abc.ABC):
     """An abstract class that serves as template for all pyPlot classes in :mod:`PyDSS.pyPlots.Plots` module.
 
+    :param project: A :class:`PyDSS.pydss_project.PyDssProject` object representing a project
+    :type project: PyDssProject
+    :param scenario: A :class:`PyDSS.pydss_project.PyDssScenario` object representing a scenario
+    :type scenario: PyDssScenario
+    :param inputs: user inputs
+    :type inputs: dict
     :param dssInstance: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS 'Fault' element
     :type dssInstance: dict
     :param dssBuses: Dictionary of all :class:`PyDSS.dssBus.dssBus` objects in PyDSS
@@ -18,22 +28,32 @@ class AbstractPostprocess:
 
     """
 
-    def __init__(self, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, logger):
+    def __init__(self, project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, logger):
         """This is the constructor class.
         """
+        self.project = project
+        self.scenario = scenario
+        self.inputs = load_data(inputs["config_file"])
+        self.inputs["Outputs"] = project.get_post_process_directory(scenario.name)
+        os.makedirs(self.inputs["Outputs"], exist_ok=True)
         self.Settings = simulationSettings
-        self.Settings["PostProcess"]["Outputs"] = os.path.join(
-            self.Settings["Project"]["Project Path"],
-            self.Settings["Project"]["Active Project"],
-            "UpgradeOutputs",
-        )
-        self.Settings["PostProcess"]["master file"] = "MasterDisco.dss"  # TODO
-        os.makedirs(self.Settings["PostProcess"]["Outputs"], exist_ok=True)
 
         self._dssInstance = dssInstance
         self.logger = logger
+        self._check_input_fields()
 
+    @abc.abstractmethod
     def run(self, step, stepMax):
         """Method used to run a post processing script.
         """
-        pass
+
+    @abc.abstractmethod
+    def _get_required_input_fields(self):
+        """Return the required input fields."""
+
+    def _check_input_fields(self):
+        required_fields = self._get_required_input_fields()
+        fields = set(self.inputs.keys())
+        for field in required_fields:
+            if field not in fields:
+                raise InvalidParameter(f"{self.__class__.__name__} requires input field {field}")
