@@ -318,7 +318,10 @@ class OpenDSS:
                 self._Logger,
             ) for ppInfo in scenario.post_process_infos
         ]
-        if not postprocessors:
+        if postprocessors:
+            if self._Options["Project"]["Simulation Type"] != "Snapshot":
+                raise InvalidParameter("post-processors are currently only supported on Snapshot simulations")
+        else:
             self._Logger.info('No post processing script selected')
 
         step = 0
