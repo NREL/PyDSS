@@ -9,6 +9,7 @@ from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
 from PyDSS.utils.dataframe_utils import write_dataframe
+from PyDSS.exceptions import InvalidParameter
 
 from PyDSS.pyPostprocessor import pyPostprocess
 import PyDSS.pyControllers as pyControllers
