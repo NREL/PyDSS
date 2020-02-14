@@ -53,6 +53,12 @@ class ResultData:
         )
         self._event_log = None
         self._settings = options
+        self._store_frequency = False
+        self._store_mode = False
+        if options["Project"]["Simulation Type"] == "Dynamic" or \
+                options["Frequency"]["Enable frequency sweep"]:
+            self._store_frequency = True
+            self._store_mode = True
 
         if options["Exports"]["Export Mode"] == "byElement":
             raise InvalidParameter(
@@ -109,15 +115,14 @@ class ResultData:
 
 
             # TODO: refactor prop_aggregators
-            # TODO: determine when to set store_frequency and store_mode to True
             prop_aggregators = []
             if self._export_iteration_order == "ValuesByPropertyAcrossElements":
                 for prop in properties:
                     prop_aggregators.append(ValuesByPropertyAcrossElements.new(
                         element_class,
                         prop,
-                        store_frequency=False,
-                        store_mode=False,
+                        store_frequency=self._store_frequency,
+                        store_mode=self._store_mode,
                     ))
 
             for name, obj in elements:
@@ -126,8 +131,8 @@ class ResultData:
                     name,
                     properties,
                     obj,
-                    store_frequency=False,
-                    store_mode=False,
+                    store_frequency=self._store_frequency,
+                    store_mode=self._store_mode,
                 )
                 self._elements.append(elem)
 
