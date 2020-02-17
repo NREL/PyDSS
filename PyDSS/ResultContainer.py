@@ -316,7 +316,7 @@ class ResultContainer:
                         tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                         index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
                         df = pd.DataFrame(Data, index=index, columns=columns)
-                        if self.__ExportFormat == "feather":
+                        if self.__ExportFormat == "h5":
                             df.reset_index(inplace=True)
                         self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
                     elif self.__Settings['Exports']['Export Style'] == 'Single file':
@@ -332,7 +332,7 @@ class ResultContainer:
                     tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                     index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
                     df = pd.DataFrame(Dataset, index=index, columns=columns)
-                    if self.__ExportFormat == "feather":
+                    if self.__ExportFormat == "h5":
                         df.reset_index(inplace=True)
                     fname = '-'.join([Class, Property, str(self.__StartDay), str(self.__EndDay), fileprefix])
                     self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
@@ -370,7 +370,7 @@ class ResultContainer:
                     tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                     index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
                     df = pd.DataFrame(Data, index=index, columns=columns)
-                    if self.__ExportFormat == "feather":
+                    if self.__ExportFormat == "h5":
                         df.reset_index(inplace=True)
                     self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
                 elif self.__Settings['Exports']['Export Style'] == 'Single file':
@@ -386,7 +386,7 @@ class ResultContainer:
                 tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                 index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
                 df = pd.DataFrame(Dataset, index=index, columns=columns)
-                if self.__ExportFormat == "feather":
+                if self.__ExportFormat == "h5":
                     df.reset_index(inplace=True)
                 self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
         return

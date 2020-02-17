@@ -59,7 +59,7 @@ Data Format
 These configuration customizations exist for data exported using the new
 "ResultData" container:
 
-- "Export Format":  Set to "csv" or "feather"
+- "Export Format":  Set to "csv" or "h5"
 - "Export Compression":  Set to true or false.
 - "Export Elements":  Set to true to export static element parameters.
 

@@ -121,7 +121,7 @@ class PyDssProject:
         str
 
         """
-        return os.path.join(self._project_dir, "Exports")
+        return os.path.join(self._project_dir, "Exports", scenario)
 
     def get_post_process_directory(self, scenario_name):
         """Return the post-process output directory for scenario_name.

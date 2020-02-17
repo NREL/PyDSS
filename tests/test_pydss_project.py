@@ -1,4 +1,5 @@
 
+import datetime
 import os
 import shutil
 import tempfile
@@ -9,6 +10,7 @@ import pytest
 from PyDSS.pydss_project import PyDssProject, PyDssScenario
 from PyDSS.pydss_results import PyDssResults, \
     ElementValuesPerPropertyResults, ValuesByPropertyAcrossElementsResults
+from tests.common import RUN_PROJECT_PATH, SCENARIO_NAME, cleanup_project
 
 
 PATH = os.path.join(tempfile.gettempdir(), "pydss-projects")
@@ -69,17 +71,6 @@ def test_create_project(pydss_project):
         assert scenarios1[i].post_process_infos == scenarios2[i].post_process_infos
 
 
-RUN_PROJECT_PATH = os.path.join("tests", "data", "project")
-
-
-@pytest.fixture
-def cleanup_project():
-    yield
-    #export_path = os.path.join(RUN_PROJECT_PATH, "Exports", "scenario1")
-    #logs_path = os.path.join(RUN_PROJECT_PATH, "Logs")
-    #for path in (logs_path, export_path):
-    #    shutil.rmtree(path)
-    #    os.mkdir(path)
 
 
 EXPECTED_ELEM_CLASSES_PROPERTIES = {
@@ -94,7 +85,12 @@ EXPECTED_ELEM_CLASSES_PROPERTIES = {
 
 
 def test_run_project_by_element(cleanup_project):
-    PyDssProject.run_project(RUN_PROJECT_PATH)
+    options = {
+        "Exports": {
+            "Export Iteration Order": "ElementValuesPerProperty",
+        },
+    }
+    PyDssProject.run_project(RUN_PROJECT_PATH, options=options)
     results = PyDssResults(RUN_PROJECT_PATH)
     assert len(results.scenarios) == 1
     scenario = results.scenarios[0]
@@ -133,12 +129,8 @@ def test_run_project_by_element(cleanup_project):
 
 
 def test_run_project_by_property(cleanup_project):
-    options = {
-        "Exports": {
-            "Export Iteration Order": "ValuesByPropertyAcrossElements",
-        },
-    }
-    PyDssProject.run_project(RUN_PROJECT_PATH, options=options)
+    project = PyDssProject.load_project(RUN_PROJECT_PATH)
+    PyDssProject.run_project(RUN_PROJECT_PATH)
     results = PyDssResults(RUN_PROJECT_PATH)
     assert len(results.scenarios) == 1
     scenario = results.scenarios[0]
@@ -167,6 +159,8 @@ def test_run_project_by_property(cleanup_project):
     df = scenario.get_dataframe("Lines", "Currents", "Line.sw0", phase_terminal="A1")
     assert isinstance(df, pd.DataFrame)
     assert len(df) == 96
+    step = datetime.timedelta(seconds=project.simulation_config["Project"]["Step resolution (sec)"])
+    assert df.index[1] - df.index[0] == step
 
     prop = "Currents"
     full_df = scenario.get_full_dataframe("Lines", prop)

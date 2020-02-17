@@ -4,6 +4,7 @@ import logging
 import os
 import shutil
 
+import feather
 import pandas as pd
 
 from PyDSS.exceptions import InvalidParameter
@@ -14,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 def read_dataframe(filename, index_col=None, columns=None, parse_dates=False,
                    remove_unnamed=True, strip_column_units=False, **kwargs):
-    """Convert filename to a dataframe. Supports .csv, .json, .feather.
+    """Convert filename to a dataframe. Supports .csv, .json, .feather, .h5.
     Handles compressed files.
 
     Parameters
@@ -46,6 +47,7 @@ def read_dataframe(filename, index_col=None, columns=None, parse_dates=False,
     if not os.path.exists(filename):
         raise FileNotFoundError("filename={} does not exist".format(filename))
 
+    needs_new_index = False
     ext = os.path.splitext(filename)
     if ext[1] == ".gz":
         ext = os.path.splitext(ext[0])[1]
@@ -62,12 +64,18 @@ def read_dataframe(filename, index_col=None, columns=None, parse_dates=False,
     elif ext == ".feather":
         with open_func(filename, "rb") as f_in:
             df = feather.read_dataframe(f_in, **kwargs)
-            if index_col is not None:
-                df.set_index(index_col, inplace=True)
-                if parse_dates:
-                    df.set_index(pd.to_datetime(df.index), inplace=True)
+    elif ext == ".h5":
+        # This assumes that the file has a single dataframe, and so the
+        # key name is not relevant.
+        df = pd.read_hdf(filename, **kwargs)
+        needs_new_index = True
     else:
         raise InvalidParameter(f"unsupported file extension {ext}")
+
+    if index_col is not None and needs_new_index:
+        df.set_index(index_col, inplace=True)
+        if parse_dates:
+            df.set_index(pd.to_datetime(df.index), inplace=True)
 
     if remove_unnamed:
         cols_to_remove = [x for x in df.columns if x.startswith("Unnamed")]
@@ -88,9 +96,12 @@ def write_dataframe(df, file_path, compress=False, keep_original=False,
                     **kwargs):
     """Write the dataframe to a file with in a format matching the extension.
 
-    Note that the feather format does not support row indices. Index columns
-    will be lost for that format. If the dataframe has an index then it should
-    be converted to a column before calling this function.
+    Note that the feather and h5 formats do not support row indices.
+    Index columns will be lost for those formats. If the dataframe has an index
+    then it should be converted to a column before calling this function.
+
+    This function only supports storing a single dataframe inside an HDF5 file.
+    It always uses the key 'data'.
 
     Parameters
     ----------
@@ -117,6 +128,15 @@ def write_dataframe(df, file_path, compress=False, keep_original=False,
         df.to_csv(file_path, **kwargs)
     elif ext == ".feather":
         df.to_feather(file_path, **kwargs)
+    elif ext == ".h5":
+        # HDF5 supports built-in compression, levels 1-9
+        if "complevel" in kwargs:
+            complevel = kwags["complevel"]
+        elif compress:
+            complevel = 9
+        else:
+            complevel = 0
+        df.to_hdf(file_path, "data", mode="w", complevel=complevel, **kwargs)
     elif ext == ".json":
         df.to_json(file_path, **kwargs)
     else:
@@ -124,7 +144,7 @@ def write_dataframe(df, file_path, compress=False, keep_original=False,
 
     logger.debug("Created %s", file_path)
 
-    if compress:
+    if compress and ext != ".h5":
         zipped_path = file_path + ".gz"
         with open(file_path, "rb") as f_in:
             with gzip.open(zipped_path, "wb") as f_out:

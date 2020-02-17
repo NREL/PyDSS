@@ -422,9 +422,10 @@ class OpenDSS:
 
         df = pd.DataFrame.from_dict(df_dict)
 
+        # As above in _ExportElements, record in CSV format for readability.
         filepath = os.path.join(self._dssPath['Export'],
                                 self._Options['Project']['Active Scenario'],
-                                'TransformersPhaseInfo' + "." + self._Options["Exports"]["Export Format"])
+                                'TransformersPhaseInfo.csv')
         write_dataframe(df, filepath)
         self._Logger.info('Exported transformer phase information to %s.', filepath)
 

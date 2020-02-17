@@ -37,7 +37,7 @@
 # Return Results- [Bool] - Set true if running PyDSS in Cosimulation environment, RunStep function will return current system states
 # Export Mode- [Str] - Possible options "byClass" and "byElement"
 # Export Style- [Str] - possible options "Single_file" and "Separate_files"
-# Export Format- [Str] - possible options "csv", "feather"
+# Export Format- [Str] - possible options "csv", "h5"
 # Export Compression- [Bool]
 [Exports]
 "Export Mode" = "byClass"

@@ -52,7 +52,8 @@ class instance(object):
         "Exports": {
             'Export Mode': {'type': str, 'Options': ["byClass", "byElement"]},
             'Export Style': {'type': str, 'Options': ["Single file", "Separate files"]},
-            'Export Format': {'type': str, 'Options': ["csv", "feather"]},
+            # Feather is not supported because its underlying libraries do not support complex numbers
+            'Export Format': {'type': str, 'Options': ["csv", "h5"]},
             'Export Compression': {'type': bool, 'Options': [True, False]},
             'Export Iteration Order': {'type': str, 'Options': ["ElementValuesPerProperty", "ValuesByPropertyAcrossElements"]},
             'Export Elements': {'type': bool, 'Options': [True, False]},

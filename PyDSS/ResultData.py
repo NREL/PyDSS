@@ -162,7 +162,8 @@ class ResultData:
         metadata["element_info_files"] = []
 
         if self._settings["Exports"]["Export Elements"]:
-            regex = re.compile(r"^\w+Info\.{}".format(self._export_format))
+            # As per OpenDSS._ExportElements, these are always in CSV.
+            regex = re.compile(r"^\w+Info\.csv")
             for filename in os.listdir(self._export_dir):
                 if regex.search(filename):
                     metadata["element_info_files"].append(os.path.join(
