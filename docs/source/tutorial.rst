@@ -141,6 +141,12 @@ Find out all options available for a property
     scenario.list_element_property_options("Lines", "NormalAmps")
     []
 
+Find out what option values are present for a property
+======================================================
+
+    df = scenario.get_option_values("Lines", "Currents", "Line.pvl_112")
+    ["A1", "A2"]
+
 Read a dataframe for all elements
 =================================
 You may want to get data for all elements at once.

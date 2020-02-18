@@ -162,6 +162,9 @@ def test_run_project_by_property(cleanup_project):
     step = datetime.timedelta(seconds=project.simulation_config["Project"]["Step resolution (sec)"])
     assert df.index[1] - df.index[0] == step
 
+    option_values = scenario.get_option_values("Lines", "Currents", "Line.sw0")
+    assert option_values == ["A1", "A2"]
+
     prop = "Currents"
     full_df = scenario.get_full_dataframe("Lines", prop)
     assert len(full_df.columns) >= len(scenario.list_element_names("Lines", prop))

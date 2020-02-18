@@ -581,6 +581,8 @@ class ValuesByPropertyAcrossElements(ElementData):
         Parameters
         ----------
         element_name : str
+        options : list
+            list of str
         kwargs : **kwargs
             Filter on options
 
@@ -595,6 +597,22 @@ class ValuesByPropertyAcrossElements(ElementData):
         df = df[columns]
         self._add_indices_to_dataframe(df)
         return df
+
+    def get_option_values(self, element_name):
+        """Return option values in the data.
+
+        Parameters
+        ----------
+        element_name : str
+
+        Returns
+        -------
+        list
+
+        """
+        assert self._value_class is not None
+        df = self._get_dataframe()
+        return self._value_class.get_option_values(df, element_name)
 
     def iterate_dataframes(self, options, **kwargs):
         """Returns a generator over the dataframes by element name.

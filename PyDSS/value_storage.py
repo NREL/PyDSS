@@ -53,6 +53,37 @@ class _ValueStorageBase(abc.ABC):
 
         return columns
 
+    @staticmethod
+    def get_option_values(df, name):
+        """Return the option values parsed from the column names.
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+        name : str
+
+        Returns
+        -------
+        list
+
+        """
+        values = []
+        for column in df.columns:
+            col = column
+            index = column.find(" [")
+            if index != -1:
+                col = column[:index]
+            # [name, option1, option2, ...]
+            fields = col.split(_ValueStorageBase.DELIMITER)
+            _name = fields[0]
+            if _name != name:
+                continue
+            values += fields[1:]
+
+        if not values:
+            raise InvalidParameter(f"{name} does not exist in DataFrame")
+
+        return values
 
     @abc.abstractmethod
     def to_dataframe(self):
