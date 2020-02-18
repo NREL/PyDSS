@@ -19,7 +19,7 @@ class _ValueStorageBase(abc.ABC):
         df : pd.DataFrame
         name : str
         kwargs : **kwargs
-            Filter with option values
+            Filter on options. Option values can be strings or regular expressions.
 
         Returns
         -------
@@ -42,8 +42,14 @@ class _ValueStorageBase(abc.ABC):
                 continue
             match = True
             for key, val in kwargs.items():
-                if fields[field_indices[key]] != val:
-                    match = False
+                if isinstance(val, str):
+                    if fields[field_indices[key]] != val:
+                        match = False
+                else:
+                    # It is a regex.
+                    if val.search(fields[field_indices[key]]) is None:
+                        match = False
+                if not match:
                     break
             if match:
                 columns.append(column)

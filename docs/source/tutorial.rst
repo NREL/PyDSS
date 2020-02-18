@@ -123,7 +123,26 @@ Here is how you can get the data for a single phase/terminal::
     df.head()
 
                                                    Line.pvl_112__Currents__A1 [Amps]
-    timestamp                                                                                       
+    timestamp
+    2017-01-01 00:15:00  (3.5710399970412254e-08+1.3782673590867489e-05j)
+    2017-01-01 00:30:00  (3.3905962482094765e-08+1.3793145967611053e-05j)
+    2017-01-01 00:45:00   (3.381501301191747e-08+1.3786106705993006e-05j)
+    2017-01-01 01:00:00  (3.4120603231713176e-08+1.3804576042275585e-05j)
+    2017-01-01 01:15:00   (3.356035449542105e-08+1.3810414088766265e-05j)
+
+Read a dataframe for one element with an option matching a regular expression
+=============================================================================
+
+::
+
+    import re
+    # Get data for all phases but only terminal 1.
+    regex = re.compile(r"[ABCN]1")
+    df = scenario.get_dataframe("Lines", "Currents", "Line.pvl_112", phase_terminal=regex)
+    df.head()
+
+                                                   Line.pvl_112__Currents__A1 [Amps]
+    timestamp
     2017-01-01 00:15:00  (3.5710399970412254e-08+1.3782673590867489e-05j)
     2017-01-01 00:30:00  (3.3905962482094765e-08+1.3793145967611053e-05j)
     2017-01-01 00:45:00   (3.381501301191747e-08+1.3786106705993006e-05j)

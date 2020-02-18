@@ -441,7 +441,7 @@ class ElementValuesPerProperty(ElementData):
         prop : str
             property of an ElementValuesPerProperty Class
         kwargs : **kwargs
-            Filter on options
+            Filter on options. Option values can be strings or regular expressions.
 
         Returns
         -------
@@ -584,7 +584,7 @@ class ValuesByPropertyAcrossElements(ElementData):
         options : list
             list of str
         kwargs : **kwargs
-            Filter on options
+            Filter on options. Option values can be strings or regular expressions.
 
         Returns
         -------

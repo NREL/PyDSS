@@ -47,7 +47,7 @@ class _Results(abc.ABC):
         prop : str
         element_name : str
         kwargs : **kwargs
-            Filter on options
+            Filter on options. Option values can be strings or regular expressions.
 
         Returns
         -------
@@ -90,7 +90,7 @@ class _Results(abc.ABC):
             ElementValuesPerPropertyResults vs
             ValuesByPropertyAcrossElementsResults
         kwargs : **kwargs
-            Filter on options
+            Filter on options. Option values can be strings or regular expressions.
 
         Returns
         -------
