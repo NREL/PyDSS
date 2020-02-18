@@ -144,6 +144,8 @@ Find out all options available for a property
 Find out what option values are present for a property
 ======================================================
 
+::
+
     df = scenario.get_option_values("Lines", "Currents", "Line.pvl_112")
     ["A1", "A2"]
 
