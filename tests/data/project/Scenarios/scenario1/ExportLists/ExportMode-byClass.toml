@@ -21,7 +21,7 @@ NoPublish = []
 
 [Lines]
 Publish = []
-NoPublish = [ "Currents", "NormalAmps" ]
+NoPublish = [ "Currents", "NormalAmps", "VoltagesMagAng", "CurrentsMagAng" ]
 
 [Transformers]
 Publish = []

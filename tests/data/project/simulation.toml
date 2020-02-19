@@ -1,21 +1,3 @@
-# Log Results- [Bool] - Set true if results need to be exported
-# Return Results- [Bool] - Set true if running PyDSS in Cosimulation environment, RunStep function will return current system states
-# Export Mode- [Str] - Possible options "byClass" and "byElement"
-# Export Style- [Str] - possible options "Single_file" and "Separate_files"
-
-"Log Results" = true
-"Return Results" = false
-"Export Mode" = "byClass"
-"Export Style" = "Single file"
-"Export Iteration Order" = "ElementValuesPerProperty"
-"Export Elements" = true
-
-# Create dynamic plots- [Bool] - Enable rendering of dynamic plots using bokeh
-# Open plots in browser- [Bool] - Open plots  in s window. Will work if "Create dynamic plots" is set to true 
-
-"Create dynamic plots" = false
-"Open plots in browser" = true
-
 # Simulation Type- [String] - Possible options "QSTS", "Dynamic" and "Snapshot"
 # Start Year- [Int] - Start year for the simulation study (em nb .g 2017)
 # Start Day- [Int] - Start day for the simulation study. Index start at 1
@@ -31,7 +13,8 @@
 # Active Project- [String] - Name of project to run
 # Active Scenario- [String] - Project scenario to use
 # DSS File- [String] - The main OpenDSS file
-
+# Return Results- [Bool] - Set true if running PyDSS in Cosimulation environment, RunStep function will return current system states
+[Project]
 "Start Year" = 2017
 "Start Day" = 1
 "Start Time (min)" = 0.0
@@ -46,10 +29,31 @@
 "Project Path" = "./tests/data"
 "Simulation Type" = "QSTS"
 "Active Project" = "project"
-"Scenarios" = ["scenario1"]
-"Active Scenario" = "scenario1"
+"Active Scenario" = ""
 "DSS File" = "Master_Spohn_existing_VV.dss"
+"Return Results" = false
+[[Project.Scenarios]]
+name = "scenario1"
+post_process_infos = []
 
+# Export Mode- [Str] - Possible options "byClass" and "byElement"
+# Export Style- [Str] - possible options "Single_file" and "Separate_files"
+# Log Results- [Bool] - Set true if results need to be exported
+[Exports]
+"Export Mode" = "byClass"
+"Export Style" = "Single file"
+"Export Iteration Order" = "ValuesByPropertyAcrossElements"
+"Export Elements" = true
+"Export Format" = "h5"
+"Export Compression" = true
+"Result Container" = "ResultData"
+"Log Results" = true
+
+# Create dynamic plots- [Bool] - Enable rendering of dynamic plots using bokeh
+# Open plots in browser- [Bool] - Open plots  in s window. Will work if "Create dynamic plots" is set to true 
+[Plots]
+"Create dynamic plots" = false
+"Open plots in browser" = true
 
 # Co-simulation Mode - [Bool] - Set to true to enable Helics interface all other co-simulation settings only valid if this value is true
 # Federate name - [str] - Name of the federate 
@@ -57,7 +61,7 @@
 # Core type - [str] - Core tyoe to be used for communication
 # Uninterruptible - [Bool] - Can the federate be interepted
 # Helics logging level - [int] - logging level for the federate (use Helics documentation for choosig the right value)
-
+[Helics]
 "Co-simulation Mode" = false
 "Federate name" = "PyDSS"
 "Time delta" = 0.01
@@ -72,7 +76,7 @@
 # Frequency increment- [Float] - as multiple of fundamental 
 # Neglect shunt admittance- [Bool] - Neglect shunt addmittance for frequency sweep
 # Percentage load in series- [Float] - Percent of load that is series RL for Harmonic studies
-
+[Frequency]
 "Enable frequency sweep" = false
 "Fundamental frequency" = 60
 "Start frequency" = 1.0
@@ -85,12 +89,11 @@
 # Log to external file- [Bool] - Boolean variable
 # Display on screen- [Bool] - Boolean variable
 # Clear old log file- [Bool] - Boolean variable
-
+[Logging]
 "Logging Level" = "DEBUG"
 "Log to external file" = true
 "Display on screen" = true
 "Clear old log file" = false
 
+[MonteCarlo]
 "Number of Monte Carlo scenarios" = 0
-
-"Result Container" = "ResultData"

@@ -47,7 +47,7 @@ class _Results(abc.ABC):
         prop : str
         element_name : str
         kwargs : **kwargs
-            Filter on options
+            Filter on options. Option values can be strings or regular expressions.
 
         Returns
         -------
@@ -90,7 +90,7 @@ class _Results(abc.ABC):
             ElementValuesPerPropertyResults vs
             ValuesByPropertyAcrossElementsResults
         kwargs : **kwargs
-            Filter on options
+            Filter on options. Option values can be strings or regular expressions.
 
         Returns
         -------
@@ -225,6 +225,7 @@ class _Results(abc.ABC):
         return _read_event_log(self._metadata["event_log"])
 
     def _check_options(self, element_class, prop, **kwargs):
+        """Checks that kwargs are valid and returns available option names."""
         for option, val in kwargs.items():
             if not self._options.is_option_valid(element_class, prop, option):
                 raise InvalidParameter(
@@ -312,6 +313,10 @@ class ValuesByPropertyAcrossElementsResults(_Results):
     def get_full_dataframe(self, element_class, name_or_prop):
         prop_agg = self._get_property_aggregator(element_class, name_or_prop)
         return prop_agg.get_full_dataframe()
+
+    def get_option_values(self, element_class, prop, element_name):
+        prop_agg = self._get_property_aggregator(element_class, prop)
+        return prop_agg.get_option_values(element_name)
 
     def iterate_dataframes(self, element_class, name_or_prop, **kwargs):
         options = self._check_options(element_class, name_or_prop, **kwargs)

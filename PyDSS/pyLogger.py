@@ -2,7 +2,7 @@ import logging
 import os
 
 
-def getLogger(name, path, LoggerOptions=None):
+def getLogger(name, path, LoggerOptions):
     if LoggerOptions['Clear old log file']:
         test = os.listdir(os.getcwd())
         for item in test:
@@ -26,4 +26,4 @@ def getLogger(name, path, LoggerOptions=None):
 
 
 def getLoggerTag(options):
-    return options["Active Project"] + "_" + options["Active Scenario"]
+    return options["Project"]["Active Project"] + "_" + options["Project"]["Active Scenario"]

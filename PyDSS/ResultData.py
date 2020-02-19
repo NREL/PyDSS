@@ -25,7 +25,7 @@ class ResultData:
 
     def __init__(self, options, system_paths, dss_objects,
                  dss_objects_by_class, dss_buses, dss_solver, dss_command):
-        if options["Pre-configured logging"]:
+        if options["Logging"]["Pre-configured logging"]:
             logger_tag = __name__
         else:
             logger_tag = getLoggerTag(options)
@@ -39,26 +39,32 @@ class ResultData:
         self._elements = []
         self._property_aggregators = []
         self._dss_command = dss_command
-        self._settings = options
-        self._start_day = options["Start Day"]
-        self._end_day = options["End Day"]
+        self._start_day = options["Project"]["Start Day"]
+        self._end_day = options["Project"]["End Day"]
         self._timestamps = []
         self._frequency = []
         self._simulation_mode = []
-        self._export_format = options["Export Format"]
-        self._export_compression = options["Export Compression"]
-        self._export_iteration_order = options["Export Iteration Order"]
+        self._export_format = options["Exports"]["Export Format"]
+        self._export_compression = options["Exports"]["Export Compression"]
+        self._export_iteration_order = options["Exports"]["Export Iteration Order"]
         self._export_dir = os.path.join(
             self.system_paths["Export"],
-            options["Active Scenario"],
+            options["Project"]["Active Scenario"],
         )
         self._event_log = None
+        self._settings = options
+        self._store_frequency = False
+        self._store_mode = False
+        if options["Project"]["Simulation Type"] == "Dynamic" or \
+                options["Frequency"]["Enable frequency sweep"]:
+            self._store_frequency = True
+            self._store_mode = True
 
-        if self._settings["Export Mode"] == "byElement":
+        if options["Exports"]["Export Mode"] == "byElement":
             raise InvalidParameter(
                 "Export Mode 'byElement' is not supported by ResultData"
             )
-        if self._settings["Co-simulation Mode"]:
+        if options["Helics"]["Co-simulation Mode"]:
             raise InvalidParameter(
                 "Co-simulation mode is not supported by ResultData"
             )
@@ -84,6 +90,8 @@ class ResultData:
         for property_name in properties:
             assert isinstance(property_name, str)
             for name, obj in objs.items():
+                if not obj.Enabled:
+                    continue
                 if not obj.IsValidAttribute(property_name):
                     raise InvalidParameter(f"{element_class} / {property_name} {name} cannot be exported")
                 if name not in element_names:
@@ -110,10 +118,22 @@ class ResultData:
             prop_aggregators = []
             if self._export_iteration_order == "ValuesByPropertyAcrossElements":
                 for prop in properties:
-                    prop_aggregators.append(ValuesByPropertyAcrossElements.new(element_class, prop))
+                    prop_aggregators.append(ValuesByPropertyAcrossElements.new(
+                        element_class,
+                        prop,
+                        store_frequency=self._store_frequency,
+                        store_mode=self._store_mode,
+                    ))
 
             for name, obj in elements:
-                elem = ElementValuesPerProperty.new(element_class, name, properties, obj)
+                elem = ElementValuesPerProperty.new(
+                    element_class,
+                    name,
+                    properties,
+                    obj,
+                    store_frequency=self._store_frequency,
+                    store_mode=self._store_mode,
+                )
                 self._elements.append(elem)
 
                 if prop_aggregators:
@@ -141,8 +161,9 @@ class ResultData:
         metadata["event_log"] = self._event_log
         metadata["element_info_files"] = []
 
-        if self._settings["Export Elements"]:
-            regex = re.compile(r"^\w+Info\.{}".format(self._export_format))
+        if self._settings["Exports"]["Export Elements"]:
+            # As per OpenDSS._ExportElements, these are always in CSV.
+            regex = re.compile(r"^\w+Info\.csv")
             for filename in os.listdir(self._export_dir):
                 if regex.search(filename):
                     metadata["element_info_files"].append(os.path.join(
@@ -177,6 +198,8 @@ class ResultData:
                 self._export_format,
                 self._export_compression,
             )
+            if prop_metadata is None:
+                continue
             metadata["data"].append(prop_metadata)
 
         filename = os.path.join(self._export_dir, self.METADATA_FILENAME)
@@ -210,7 +233,10 @@ class ResultData:
     def get_indices_filename(path):
         indices_filename = None
         for filename in os.listdir(path):
-            if os.path.splitext(filename)[0] == ResultData.INDICES_BASENAME:
+            basename, ext = os.path.splitext(filename)
+            if ext == ".gz":
+                basename, ext = os.path.splitext(basename)
+            if basename == ResultData.INDICES_BASENAME:
                 if indices_filename is not None:
                     raise InvalidParameter(
                         f"found multiple indices files at {path}"
@@ -244,7 +270,8 @@ class ResultData:
 class ElementData(abc.ABC):
     DELIMITER = "__"
 
-    def __init__(self, element_class, path, data_filename):
+    def __init__(self, element_class, path, data_filename,
+                 store_frequency=False, store_mode=False):
         self.cache_data = bool(int(os.environ.get("PYDSS_CACHE_DATA", 0)))
         self._cached_df = None
         self._element_class = element_class
@@ -252,6 +279,8 @@ class ElementData(abc.ABC):
         self._path = path
         self._indices_df = None
         self._value_class = None
+        self._store_frequency = store_frequency
+        self._store_mode = store_mode
 
     @abc.abstractmethod
     def serialize(self, path, fmt, compress):
@@ -297,8 +326,10 @@ class ElementData(abc.ABC):
             )
 
         df["timestamp"] = self._indices_df["timestamp"]
-        df["frequency"] = self._indices_df["frequency"]
-        df["Simulation mode"] = self._indices_df["Simulation mode"]
+        if self._store_frequency:
+            df["frequency"] = self._indices_df["frequency"]
+        if self._store_mode:
+            df["Simulation mode"] = self._indices_df["Simulation mode"]
         df.set_index(("timestamp"), inplace=True)
 
     @abc.abstractmethod
@@ -311,8 +342,10 @@ class ElementData(abc.ABC):
 
 class ElementValuesPerProperty(ElementData):
     """Contains values for one element for all properties of an element class."""
-    def __init__(self, element_class, name, properties, obj, data, path, data_filename):
-        super(ElementValuesPerProperty, self).__init__(element_class, path, data_filename)
+    def __init__(self, element_class, name, properties, obj, data, path,
+                 data_filename, store_frequency=False, store_mode=False):
+        super(ElementValuesPerProperty, self).__init__(
+            element_class, path, data_filename, store_frequency, store_mode)
         self._properties = properties
         self._name = name
         self._obj = obj
@@ -320,12 +353,16 @@ class ElementValuesPerProperty(ElementData):
         self._indices_df = None
 
     @classmethod
-    def new(cls, element_class, name, properties, obj):
+    def new(cls, element_class, name, properties, obj, store_frequency=False,
+            store_mode=False):
         """Creates a new instance of ElementValuesPerProperty."""
         data = {x: None for x in properties}
-        return cls(element_class, name, properties, obj, data, None, None)
+        return cls(element_class, name, properties, obj, data, None, None,
+                   store_frequency=store_frequency, store_mode=store_mode)
 
     def serialize(self, path, fmt, compress):
+        # FIXME
+        assert False, "Serializing this type is broken because it produces duplicate column names"
         data = {}
         for field in ("element_class", "name", "properties"):
             data[field] = getattr(self, field)
@@ -369,7 +406,7 @@ class ElementValuesPerProperty(ElementData):
         return obj
 
     def add_values(self):
-        for  prop in self.properties:
+        for prop in self.properties:
             value = self._obj.GetValue(prop, convert=True)
             if self._data[prop] is None:
                 self._data[prop] = value
@@ -406,7 +443,7 @@ class ElementValuesPerProperty(ElementData):
         prop : str
             property of an ElementValuesPerProperty Class
         kwargs : **kwargs
-            Filter on options
+            Filter on options. Option values can be strings or regular expressions.
 
         Returns
         -------
@@ -448,18 +485,26 @@ class ElementValuesPerProperty(ElementData):
 
 class ValuesByPropertyAcrossElements(ElementData):
     """Contains values for all elements for a specific property."""
-    def __init__(self, element_class, prop, elements, element_names, path, data_filename):
-        super(ValuesByPropertyAcrossElements, self).__init__(element_class, path, data_filename)
+    def __init__(self, element_class, prop, elements, element_names, path,
+                 data_filename, store_frequency=False, store_mode=False):
+        super(ValuesByPropertyAcrossElements, self).__init__(
+            element_class,
+            path,
+            data_filename,
+            store_frequency=store_frequency,
+            store_mode=store_mode,
+        )
         self._property = prop
         self._elements = elements
         self._element_names = element_names
         self._value_class = None
 
     @classmethod
-    def new(cls, element_class, prop):
+    def new(cls, element_class, prop, store_frequency=False, store_mode=False):
         elements = []
         element_names = []
-        return cls(element_class, prop, elements, element_names, None, None)
+        return cls(element_class, prop, elements, element_names, None, None,
+                   store_frequency=store_frequency, store_mode=store_mode)
 
     def serialize(self, path, fmt, compress):
         data = {
@@ -483,14 +528,17 @@ class ValuesByPropertyAcrossElements(ElementData):
             df = pd.concat(dataframes, axis=1, copy=False)
             filename = self._make_filename() + "." + fmt
             fullpath = os.path.join(path, filename)
-            write_dataframe(df, fullpath, compress=compress)
+            final_path = write_dataframe(df, fullpath, compress=compress)
 
-            data["file"] = fullpath
+            data["file"] = final_path
             data["element_names"] = self._element_names
             data["value_class"] = self._value_class.__name__
             return data
         else:
-            print('NO DF: {} - {}'.format(self._value_class.__name__, self._element_names))
+            print(f'NO DF: {self._element_class} - {self._property} - {self._element_names}')
+            # TODO: self._value_class can be None, so this fails.
+            #print('NO DF: {} - {}'.format(self._value_class.__name__, self._element_names))
+            return None
 
     @classmethod
     def deserialize(cls, data):
@@ -535,8 +583,10 @@ class ValuesByPropertyAcrossElements(ElementData):
         Parameters
         ----------
         element_name : str
+        options : list
+            list of str
         kwargs : **kwargs
-            Filter on options
+            Filter on options. Option values can be strings or regular expressions.
 
         Returns
         -------
@@ -549,6 +599,22 @@ class ValuesByPropertyAcrossElements(ElementData):
         df = df[columns]
         self._add_indices_to_dataframe(df)
         return df
+
+    def get_option_values(self, element_name):
+        """Return option values in the data.
+
+        Parameters
+        ----------
+        element_name : str
+
+        Returns
+        -------
+        list
+
+        """
+        assert self._value_class is not None
+        df = self._get_dataframe()
+        return self._value_class.get_option_values(df, element_name)
 
     def iterate_dataframes(self, options, **kwargs):
         """Returns a generator over the dataframes by element name.

@@ -20,7 +20,7 @@ import os
 class ResultContainer:
 
     def __init__(self, Options, SystemPaths, dssObjects, dssObjectsByClass, dssBuses, dssSolver, dssCommand):
-        if Options["Pre-configured logging"]:
+        if Options["Logging"]["Pre-configured logging"]:
             LoggerTag = __name__
         else:
             LoggerTag = getLoggerTag(Options)
@@ -35,30 +35,30 @@ class ResultContainer:
         self.SystemPaths = SystemPaths
         self.__dssCommand = dssCommand
         self.__Settings = Options
-        self.__StartDay = Options['Start Day']
-        self.__EndDay = Options['End Day']
+        self.__StartDay = Options['Project']['Start Day']
+        self.__EndDay = Options['Project']['End Day']
         self.__DateTime = []
         self.__Frequency = []
         self.__SimulationMode = []
-        self.__ExportFormat = Options['Export Format']
-        self.__ExportCompression = Options['Export Compression']
+        self.__ExportFormat = Options['Exports']['Export Format']
+        self.__ExportCompression = Options['Exports']['Export Compression']
 
         self.__publications = {}
         self.__subscriptions = {}
 
-        self.ExportFolder = os.path.join(self.SystemPaths['Export'], Options['Active Scenario'])
+        self.ExportFolder = os.path.join(self.SystemPaths['Export'], Options['Project']['Active Scenario'])
         pathlib.Path(self.ExportFolder).mkdir(parents=True, exist_ok=True)
-        if self.__Settings['Export Mode'] == 'byElement':
+        if self.__Settings['Exports']['Export Mode'] == 'byElement':
             self.FileReader = pyER(os.path.join(SystemPaths['ExportLists'], 'ExportMode-byElement.toml'))
             self.ExportList = self.FileReader.pyControllers
             self.PublicationList = self.FileReader.publicationList
             self.CreateListByElement()
-        elif self.__Settings['Export Mode'] == 'byClass':
+        elif self.__Settings['Exports']['Export Mode'] == 'byClass':
             self.FileReader = pyER(os.path.join(SystemPaths['ExportLists'], 'ExportMode-byClass.toml'))
             self.ExportList = self.FileReader.pyControllers
             self.PublicationList = self.FileReader.publicationList
             self.CreateListByClass()
-        if self.__Settings['Co-simulation Mode']:
+        if self.__Settings['Helics']['Co-simulation Mode']:
             self.__createPyDSSfederate()
             self.__registerFederatePublications()
             self.__registerFederateSubscriptions()
@@ -68,15 +68,15 @@ class ResultContainer:
 
     def __createPyDSSfederate(self):
         fedinfo = h.helicsCreateFederateInfo()
-        h.helicsFederateInfoSetCoreName(fedinfo, self.__Settings['Federate name'])
-        h.helicsFederateInfoSetCoreTypeFromString(fedinfo, self.__Settings['Core type'])
+        h.helicsFederateInfoSetCoreName(fedinfo, self.__Settings['Helics']['Federate name'])
+        h.helicsFederateInfoSetCoreTypeFromString(fedinfo, self.__Settings['Helics']['Core type'])
         h.helicsFederateInfoSetCoreInitString(fedinfo, "--federates=1")
-        h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_delta, self.__Settings['Time delta'])
+        h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_delta, self.__Settings['Helics']['Time delta'])
         h.helicsFederateInfoSetIntegerProperty(fedinfo, h.helics_property_int_log_level,
-                                                self.__Settings['Helics logging level'])
+                                                self.__Settings['Helics']['Helics logging level'])
 
         h.helicsFederateInfoSetFlagOption(fedinfo, h.helics_flag_uninterruptible, True)
-        self.__PyDSSfederate = h.helicsCreateValueFederate(self.__Settings['Federate name'], fedinfo)
+        self.__PyDSSfederate = h.helicsCreateValueFederate(self.__Settings['Helics']['Federate name'], fedinfo)
         return
 
     def __registerFederateSubscriptions(self):
@@ -223,7 +223,7 @@ class ResultContainer:
                 ans[filter]['value'] = Values[0::2]
             elif filter == '0':
                 ans[filter]['value'] = Values[1::2]
-            if self.__Settings['Co-simulation Mode']:
+            if self.__Settings['Helics']['Co-simulation Mode']:
                 name = '{}.{}.{}'.format(Element, Property, filter)
                 if isinstance(ans[filter]['value'], list) and name in self.__publications:
                     h.helicsPublicationPublishVector(self.__publications[name], ans[filter]['value'])
@@ -240,7 +240,7 @@ class ResultContainer:
         return
 
     def UpdateResults(self):
-        if self.__Settings['Co-simulation Mode']:
+        if self.__Settings['Helics']['Co-simulation Mode']:
             r_seconds = self.__dssDolver.GetTotalSeconds()
             print('Time: ', r_seconds)
             c_seconds = 0
@@ -251,7 +251,7 @@ class ResultContainer:
         self.__Frequency.append(self.__dssDolver.getFrequency())
         self.__SimulationMode.append(self.__dssDolver.getMode())
 
-        if self.__Settings['Export Mode'] == 'byElement':
+        if self.__Settings['Exports']['Export Mode'] == 'byElement':
             for Element in self.Results.keys():
                 for Property in self.Results[Element].keys():
                     if '.' in Element:
@@ -262,7 +262,7 @@ class ResultContainer:
                         value = self.Buses[Element].GetVariable(Property)
                         self.Results[Element][Property].append(value)
                         self.__parse_current_values(Element, Property, value)
-        elif self.__Settings['Export Mode'] == 'byClass':
+        elif self.__Settings['Exports']['Export Mode'] == 'byClass':
             for Class in self.Results.keys():
                 for Property in self.Results[Class].keys():
                     for Element in self.Results[Class][Property].keys():
@@ -277,9 +277,9 @@ class ResultContainer:
         return
 
     def ExportResults(self, fileprefix=''):
-        if self.__Settings['Export Mode'] == 'byElement':
+        if self.__Settings['Exports']['Export Mode'] == 'byElement':
             self.__ExportResultsByElements(fileprefix)
-        elif self.__Settings['Export Mode'] == 'byClass':
+        elif self.__Settings['Exports']['Export Mode'] == 'byClass':
             self.__ExportResultsByClass(fileprefix)
         self.__ExportEventLog()
 
@@ -310,19 +310,19 @@ class ResultContainer:
                             ElmLvlHeader = '{} [{}],'.format(Element, self.metadata_info[Property])
                         else:
                             ElmLvlHeader = Element + ','
-                    if self.__Settings['Export Style'] == 'Separate files':
+                    if self.__Settings['Exports']['Export Style'] == 'Separate files':
                         fname = '-'.join([Class, Property, Element, str(self.__StartDay), str(self.__EndDay) ,fileprefix])
                         columns = [x for x in ElmLvlHeader.split(',') if x != '']
                         tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                         index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
                         df = pd.DataFrame(Data, index=index, columns=columns)
-                        if self.__ExportFormat == "feather":
+                        if self.__ExportFormat == "h5":
                             df.reset_index(inplace=True)
                         self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
-                    elif self.__Settings['Export Style'] == 'Single file':
+                    elif self.__Settings['Exports']['Export Style'] == 'Single file':
                         Class_ElementDatasets.append(Data)
                     PptyLvlHeader += ElmLvlHeader
-                if self.__Settings['Export Style'] == 'Single file':
+                if self.__Settings['Exports']['Export Style'] == 'Single file':
                     assert Class_ElementDatasets
                     Dataset = Class_ElementDatasets[0]
                     if len(Class_ElementDatasets) > 1:
@@ -332,7 +332,7 @@ class ResultContainer:
                     tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                     index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
                     df = pd.DataFrame(Dataset, index=index, columns=columns)
-                    if self.__ExportFormat == "feather":
+                    if self.__ExportFormat == "h5":
                         df.reset_index(inplace=True)
                     fname = '-'.join([Class, Property, str(self.__StartDay), str(self.__EndDay), fileprefix])
                     self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
@@ -364,19 +364,19 @@ class ResultContainer:
                     Data = np.transpose(np.array([self.Results[Element][Property]]))
                     Header = Property + ','
 
-                if self.__Settings['Export Style'] == 'Separate files':
+                if self.__Settings['Exports']['Export Style'] == 'Separate files':
                     fname = '-'.join([Element, Property, str(self.__StartDay), str(self.__EndDay), fileprefix])
                     columns = [x for x in Header.split(',') if x != '']
                     tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                     index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
                     df = pd.DataFrame(Data, index=index, columns=columns)
-                    if self.__ExportFormat == "feather":
+                    if self.__ExportFormat == "h5":
                         df.reset_index(inplace=True)
                     self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
-                elif self.__Settings['Export Style'] == 'Single file':
+                elif self.__Settings['Exports']['Export Style'] == 'Single file':
                     ElementDatasets.append(Data)
                 AllHeader += Header
-            if self.__Settings['Export Style'] == 'Single file':
+            if self.__Settings['Exports']['Export Style'] == 'Single file':
                 Dataset = ElementDatasets[0]
                 if len(ElementDatasets) > 0:
                     for D in ElementDatasets[1:]:
@@ -386,7 +386,7 @@ class ResultContainer:
                 tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
                 index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
                 df = pd.DataFrame(Dataset, index=index, columns=columns)
-                if self.__ExportFormat == "feather":
+                if self.__ExportFormat == "h5":
                     df.reset_index(inplace=True)
                 self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
         return

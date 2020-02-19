@@ -2,7 +2,9 @@
 
 import ast
 import click
+import logging
 
+from PyDSS.loggers import setup_logging
 from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, ExportMode
 
 
@@ -47,6 +49,7 @@ def create_project(path=None, project=None, scenarios=None,
                    simulation_config=None, controller_types=None,
                    export_modes=None, options=None):
     """Create PyDSS project."""
+    setup_logging("PyDSS", console_level=logging.INFO)
     if controller_types is not None:
         controller_types = [ControllerType(x) for x in controller_types.split(",")]
     if export_modes is not None:

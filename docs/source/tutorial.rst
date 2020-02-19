@@ -59,7 +59,7 @@ Data Format
 These configuration customizations exist for data exported using the new
 "ResultData" container:
 
-- "Export Format":  Set to "csv" or "feather"
+- "Export Format":  Set to "csv" or "h5"
 - "Export Compression":  Set to true or false.
 - "Export Elements":  Set to true to export static element parameters.
 
@@ -123,7 +123,37 @@ Here is how you can get the data for a single phase/terminal::
     df.head()
 
                                                    Line.pvl_112__Currents__A1 [Amps]
-    timestamp                                                                                       
+    timestamp
+    2017-01-01 00:15:00  (3.5710399970412254e-08+1.3782673590867489e-05j)
+    2017-01-01 00:30:00  (3.3905962482094765e-08+1.3793145967611053e-05j)
+    2017-01-01 00:45:00   (3.381501301191747e-08+1.3786106705993006e-05j)
+    2017-01-01 01:00:00  (3.4120603231713176e-08+1.3804576042275585e-05j)
+    2017-01-01 01:15:00   (3.356035449542105e-08+1.3810414088766265e-05j)
+
+    df = scenario.get_dataframe("Lines", "CurrentsMagAng", "Line.pvl_112", phase_terminal="A1", mag_ang="mag")
+    df.head()
+
+                             Line.sw0__A1__mag [Amps]
+    timestamp
+    2017-01-01 00:15:00                  6.469528
+    2017-01-01 00:30:00                  6.474451
+    2017-01-01 00:45:00                  6.461993
+    2017-01-01 01:00:00                  6.384335
+    2017-01-01 01:15:00                  6.347553
+
+Read a dataframe for one element with an option matching a regular expression
+=============================================================================
+
+::
+
+    import re
+    # Get data for all phases but only terminal 1.
+    regex = re.compile(r"[ABCN]1")
+    df = scenario.get_dataframe("Lines", "Currents", "Line.pvl_112", phase_terminal=regex)
+    df.head()
+
+                                                   Line.pvl_112__Currents__A1 [Amps]
+    timestamp
     2017-01-01 00:15:00  (3.5710399970412254e-08+1.3782673590867489e-05j)
     2017-01-01 00:30:00  (3.3905962482094765e-08+1.3793145967611053e-05j)
     2017-01-01 00:45:00   (3.381501301191747e-08+1.3786106705993006e-05j)
@@ -138,8 +168,19 @@ Find out all options available for a property
     scenario.list_element_property_options("Lines", "Currents")
     ["phase_terminal"]
 
+    scenario.list_element_property_options("Lines", "CurrentsMagAng")
+    ['phase_terminal', 'mag_ang']
+
     scenario.list_element_property_options("Lines", "NormalAmps")
     []
+
+Find out what option values are present for a property
+======================================================
+
+::
+
+    df = scenario.get_option_values("Lines", "Currents", "Line.pvl_112")
+    ["A1", "A2"]
 
 Read a dataframe for all elements
 =================================

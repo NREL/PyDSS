@@ -62,7 +62,6 @@ def setup_logging(name, filename=None, console_level=logging.INFO,
     if filename is None:
         log_config["handlers"].pop("file")
         log_config["loggers"][name]["handlers"].remove("file")
-        log_config["loggers"]["jade"]["handlers"].remove("file")
 
     logging.config.dictConfig(log_config)
     logger = logging.getLogger(name)

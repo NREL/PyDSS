@@ -28,10 +28,6 @@ class dssTransformer(dssElement):
             "is_complex": False,
             "units": ['[kV]', '[Deg]']
         },
-        'Losses': {
-            "is_complex": True,
-            "units": ['[kVA]']
-        },
         'CplxSeqCurrents': {
             "is_complex": True,
             "units": ['[Amps]']
@@ -47,7 +43,7 @@ class dssTransformer(dssElement):
     }
 
     VARIABLE_OUTPUTS_COMPLEX = (
-
+        'Losses',
     )
 
     VARIABLE_OUTPUTS_BY_LIST = [

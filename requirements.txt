@@ -9,8 +9,9 @@ pyproj
 descartes
 OpenDSSDirect.py==0.3.7
 Shapely
-matplotlib
+matplotlib==2.2.3
 Click
 numpy
 feather-format
 sklearn
+tables

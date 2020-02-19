@@ -14,16 +14,23 @@ for file in pythonFiles:
     exec('from PyDSS.pyPostprocessor.PostprocessScripts import {}'.format(file))
     exec('POST_PROCESSES["{}"] = {}.{}'.format(file, file, file))
 
-def Create(dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger):
+def Create(project, scenario, ppInfo, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger):
     test = None
     PostProcessorClass = None
-    ScriptName = simulationSettings['Post processing script']
+    ScriptName = ppInfo['script']
 
     assert (ScriptName in pythonFiles), \
-        "Defination for '{}' post process script not found. \n " \
-        "Please define the controller in ~PyDSS\pyPostprocessor\PostprocessScripts".format(
-            ScriptName
+        f"Definition for '{ScriptName}' post process script not found. \n" \
+        "Please define the controller in PyDSS/pyPostprocessor/PostprocessScripts"
+    PostProcessor = POST_PROCESSES[ScriptName](
+        project,
+        scenario,
+        ppInfo,
+        dssInstance,
+        dssSolver,
+        dssObjects,
+        dssObjectsByClass,
+        simulationSettings,
+        Logger,
     )
-    PostProcessor = POST_PROCESSES[ScriptName](dssInstance, dssSolver, dssObjects, dssObjectsByClass,
-                                               simulationSettings, Logger)
     return PostProcessor

@@ -1,5 +1,6 @@
 
 import abc
+import re
 
 import pandas as pd
 
@@ -19,7 +20,7 @@ class _ValueStorageBase(abc.ABC):
         df : pd.DataFrame
         name : str
         kwargs : **kwargs
-            Filter with option values
+            Filter on options. Option values can be strings or regular expressions.
 
         Returns
         -------
@@ -42,8 +43,17 @@ class _ValueStorageBase(abc.ABC):
                 continue
             match = True
             for key, val in kwargs.items():
-                if fields[field_indices[key]] != val:
-                    match = False
+                if isinstance(val, str):
+                    if fields[field_indices[key]] != val:
+                        match = False
+                elif isinstance(val, re.Pattern):
+                    if val.search(fields[field_indices[key]]) is None:
+                        match = False
+                elif val is None:
+                    continue
+                else:
+                    raise InvalidParameter(f"unhandled option value '{val}'")
+                if not match:
                     break
             if match:
                 columns.append(column)
@@ -53,6 +63,37 @@ class _ValueStorageBase(abc.ABC):
 
         return columns
 
+    @staticmethod
+    def get_option_values(df, name):
+        """Return the option values parsed from the column names.
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+        name : str
+
+        Returns
+        -------
+        list
+
+        """
+        values = []
+        for column in df.columns:
+            col = column
+            index = column.find(" [")
+            if index != -1:
+                col = column[:index]
+            # [name, option1, option2, ...]
+            fields = col.split(_ValueStorageBase.DELIMITER)
+            _name = fields[0]
+            if _name != name:
+                continue
+            values += fields[1:]
+
+        if not values:
+            raise InvalidParameter(f"{name} does not exist in DataFrame")
+
+        return values
 
     @abc.abstractmethod
     def to_dataframe(self):
@@ -64,10 +105,10 @@ class _ValueStorageBase(abc.ABC):
 
         """
 
-class   ValueByList(_ValueStorageBase):
+class ValueByList(_ValueStorageBase):
     """"Stores a list of lists of numbers by an arbitrary suffix. This is a generic method to handle lists returned from
-    a function call. An example would be returned values  "taps" function for transformer elements. The calss can be
-    used for any methods that returns a list.
+    a function call. An example would be returned values "taps" function for transformer elements. The class can be
+    used for any methods that return a list.
     """
     def __init__(self, name, prop, values, label_suffixes):
         """Constructor for ValueByLabel
@@ -140,6 +181,7 @@ class   ValueByList(_ValueStorageBase):
 class ValueByNumber(_ValueStorageBase):
     """Stores a list of numbers for an element/property."""
     def __init__(self, name, prop, value):
+        assert not isinstance(value, list), str(value)
         self._data = [value]
         self._name = name
         self._prop = prop
@@ -165,8 +207,6 @@ class ValueByNumber(_ValueStorageBase):
 
     def to_dataframe(self):
         return pd.DataFrame(self._data, columns=[self._make_column(self._name, self._prop)])
-
-
 
 
 class ValueByLabel(_ValueStorageBase):
@@ -224,8 +264,8 @@ class ValueByLabel(_ValueStorageBase):
                     self._labels.append(label)
                     self._data[label] = [complex(x[0], x[1])]
                 else:
-                    label_mag = label + ' ' + units[0]
-                    label_ang = label + ' ' + units[1]
+                    label_mag = label + self.DELIMITER + "mag" + ' ' + units[0]
+                    label_ang = label + self.DELIMITER + "ang" + ' ' + units[1]
                     self._labels.extend([label_mag, label_ang])
                     self._data[label_mag] = [x[0]]
                     self._data[label_ang] = [x[1]]
@@ -274,6 +314,7 @@ class ValueByLabel(_ValueStorageBase):
         df = pd.DataFrame(self._data)
         df.columns = self._make_columns()
         return df
+
 
 def get_value_class(class_name):
     """Return the class with the given name."""
