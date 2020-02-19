@@ -1,5 +1,6 @@
 
 import abc
+import re
 
 import pandas as pd
 
@@ -45,10 +46,13 @@ class _ValueStorageBase(abc.ABC):
                 if isinstance(val, str):
                     if fields[field_indices[key]] != val:
                         match = False
-                else:
-                    # It is a regex.
+                elif isinstance(val, re.Pattern):
                     if val.search(fields[field_indices[key]]) is None:
                         match = False
+                elif val is None:
+                    continue
+                else:
+                    raise InvalidParameter(f"unhandled option value '{val}'")
                 if not match:
                     break
             if match:

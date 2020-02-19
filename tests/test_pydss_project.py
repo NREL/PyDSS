@@ -171,6 +171,11 @@ def test_run_project_by_property(cleanup_project):
     assert len(df) == 96
     assert len(df.columns) == 1
 
+    df = scenario.get_dataframe("Lines", "CurrentsMagAng", "Line.sw0", phase_terminal=None, mag_ang="ang")
+    assert isinstance(df, pd.DataFrame)
+    assert len(df.columns) == 2
+    assert len(df) == 96
+
     regex = re.compile(r"[ABCN]1")
     df = scenario.get_dataframe("Lines", "Currents", "Line.sw0", phase_terminal=regex)
     assert isinstance(df, pd.DataFrame)
