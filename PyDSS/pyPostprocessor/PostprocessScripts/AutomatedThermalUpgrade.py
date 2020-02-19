@@ -443,7 +443,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
 
     def write_dat_file(self):
-        with open(os.path.join(self.config["Outputs"],"Thermal_upgrades_pen_{}.dss".format(str(self.pen_level))), "w") as datafile:
+        with open(os.path.join(self.config["Outputs"],"thermal_upgrades.dss"), "w") as datafile:
             for line in self.dss_upgrades:
                 datafile.write(line)
 

@@ -63,7 +63,7 @@ class postprocess_thermal_upgrades():
     def process_thermal_upgrades(self):
         for self.pen_level in range(self.init_pen, self.end_pen + 1, self.pen_step):
             self.pen_level_upgrades = {}
-            with open(os.path.join(self.Settings["Outputs"],"Thermal_upgrades_pen_{}.dss"
+            with open(os.path.join(self.Settings["Outputs"],"thermal_upgrades.dss"
                     .format(self.pen_level)),"r") as datafile:
                 for line in datafile:
                     new_line = line.split()
@@ -102,7 +102,7 @@ class postprocess_thermal_upgrades():
                                     dt_params = self.get_xfmr_upgrade_params(new_line)
                                     self.pen_level_upgrades[dt_name]["upgrade"][0]+=1
                                     self.pen_level_upgrades[dt_name]["upgrade"][1].append(dt_params)
-            self.write_to_json(self.pen_level_upgrades, "Processed_upgrades_pen_{}".format(self.pen_level))
+            self.write_to_json(self.pen_level_upgrades, "Processed_upgrades")
             if self.Settings["Create_plots"]:
                 self.create_edge_node_dicts()
                 self.plot_feeder()

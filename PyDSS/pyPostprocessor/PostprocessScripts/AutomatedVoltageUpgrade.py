@@ -58,16 +58,17 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         super(AutomatedVoltageUpgrade, self).__init__(project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger)
 
         # TODO Akshay: this seems prone to error. Do we need a programmatic way of getting the filename?
-        thermal_filename = "Thermal_upgrades_pen_0.dss"
+        thermal_filename = "thermal_upgrades.dss"
         thermal_dss_file = os.path.join(
             project.get_post_process_directory(self.config["Thermal scenario name"]),
             thermal_filename
         )
+        print(thermal_dss_file)
         if not os.path.exists(thermal_dss_file):
             raise InvalidParameter(f"AutomatedThermalUpgrade did not produce thermal_filename")
-        # TODO Akshay: redirect to the above file where appropriate
 
         dss = dssInstance
+        dss.run_command("Redirect {}".format(thermal_dss_file))
         self.dssSolver = dssSolver
         self.start = time.time()
         # Cap bank default settings -
@@ -962,7 +963,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         return
 
     def write_upgrades_to_file(self):
-        with open(os.path.join(self.config["Outputs"], "Voltage_upgrades.dss"), "w") as datafile:
+        with open(os.path.join(self.config["Outputs"], "voltage_upgrades.dss"), "w") as datafile:
             for line in self.dss_upgrades:
                 datafile.write(line)
         return

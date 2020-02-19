@@ -24,7 +24,7 @@ class postprocess_voltage_upgrades():
         self.cap_processed_ops  = {}
         self.source_xfmr_buses  = []
         self.read_orig_upgrades()
-        datafile = open(os.path.join(self.Settings["outputs"],"Voltage_upgrades.dss"), "r")
+        datafile = open(os.path.join(self.Settings["outputs"],"voltage_upgrades.dss"), "r")
         len_counter=0
         for line in datafile:
             len_counter+=1
@@ -72,7 +72,7 @@ class postprocess_voltage_upgrades():
                     # Now figure out whether settings were changed or not and what
                     # the final settings are
                     with open(os.path.join(self.Settings["outputs"],
-                                           "Voltage_upgrades.dss"), "r") as datafile:
+                                           "voltage_upgrades.dss"), "r") as datafile:
                         for line in datafile:
                             line=line.split()
                             cap_ctrl_nm = ''
@@ -100,7 +100,7 @@ class postprocess_voltage_upgrades():
                     ctrl_name       = key
                     # Now figure out what the final settings are
                     with open(os.path.join(self.Settings["outputs"],
-                                           "Voltage_upgrades.dss"), "r") as datafile:
+                                           "voltage_upgrades.dss"), "r") as datafile:
                         for line in datafile:
                             line = line.split()
                             cap_ctrl_nm = ''
@@ -124,7 +124,7 @@ class postprocess_voltage_upgrades():
                 ctrl_name       = "capctrl"+vals["cap_name"]
                 # Now figure out what the final settings are
                 with open(os.path.join(self.Settings["outputs"],
-                                       "Voltage_upgrades.dss"), "r") as datafile:
+                                       "voltage_upgrades.dss"), "r") as datafile:
                     for line in datafile:
                         line = line.split()
                         cap_ctrl_nm = ''
@@ -179,7 +179,7 @@ class postprocess_voltage_upgrades():
             # If LTC reg ctrl existed find out its final settings:
             if ctrl_name!='':
                 with open(os.path.join(self.Settings["outputs"],
-                                       "Voltage_upgrades.dss"), "r") as datafile:
+                                       "voltage_upgrades.dss"), "r") as datafile:
                     for line in datafile:
                         line = line.split()
                         reg_ctrl_nm = ''
@@ -205,7 +205,7 @@ class postprocess_voltage_upgrades():
             # If LTC reg ctrl did not exist, find its name and final settings
             elif ctrl_name == '':
                 with open(os.path.join(self.Settings["outputs"],
-                                       "Voltage_upgrades.dss"), "r") as datafile:
+                                       "voltage_upgrades.dss"), "r") as datafile:
                     # First find out name of the newly added reg ctrl
                     for line in datafile:
                         if line.lower().startswith("new regcontrol"):
@@ -283,7 +283,7 @@ class postprocess_voltage_upgrades():
                 new_xfmr            = 0
                 # Now get final settings
                 with open(os.path.join(self.Settings["outputs"],
-                                       "Voltage_upgrades.dss"), "r") as datafile:
+                                       "voltage_upgrades.dss"), "r") as datafile:
                     # First find out name of the newly added reg ctrl
                     for line in datafile:
                         line = line.split()
@@ -321,7 +321,7 @@ class postprocess_voltage_upgrades():
         #  by this point - it implies that it is neither sub LTC reg ctrl and nor is it an existing reg ctrl device
         new_regctrl_list = []
         with open(os.path.join(self.Settings["outputs"],
-                               "Voltage_upgrades.dss"), "r") as datafile:
+                               "voltage_upgrades.dss"), "r") as datafile:
             # First find out name of the newly added reg ctrl
             for n_line in datafile:
                 n_line = n_line.split()
@@ -344,7 +344,7 @@ class postprocess_voltage_upgrades():
                     new_xfmr        = 1
                     # get xfmr parameters
                     with open(os.path.join(self.Settings["outputs"],
-                                           "Voltage_upgrades.dss"), "r") as datafile:
+                                           "voltage_upgrades.dss"), "r") as datafile:
                         for line in datafile:
                             line = line.split()
                             tmp_xfmr_name = ''
@@ -353,7 +353,7 @@ class postprocess_voltage_upgrades():
                                     tmp_xfmr_name=params.split(".")[1].lower()
                             if tmp_xfmr_name==xfmr_name:
                                 with open(os.path.join(self.Settings["outputs"],
-                                                       "Voltage_upgrades.dss"), "r") as datafile:
+                                                       "voltage_upgrades.dss"), "r") as datafile:
                                     for nline in datafile:
                                         nline = nline.split()
                                         for param in nline:
@@ -363,7 +363,7 @@ class postprocess_voltage_upgrades():
                                                 xfmr_kva = float(param.lower().split("=")[1].split("(")[1].split(",")[0])
                     # Now get reg ctrl final settings
                     with open(os.path.join(self.Settings["outputs"],
-                                           "Voltage_upgrades.dss"), "r") as datafile:
+                                           "voltage_upgrades.dss"), "r") as datafile:
                         for line in datafile:
                             line = line.split()
                             reg_ctrl_nm = ''
