@@ -361,6 +361,8 @@ class ElementValuesPerProperty(ElementData):
                    store_frequency=store_frequency, store_mode=store_mode)
 
     def serialize(self, path, fmt, compress):
+        # FIXME
+        assert False, "Serializing this type is broken because it produces duplicate column names"
         data = {}
         for field in ("element_class", "name", "properties"):
             data[field] = getattr(self, field)

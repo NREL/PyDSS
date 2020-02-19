@@ -101,10 +101,10 @@ class _ValueStorageBase(abc.ABC):
 
         """
 
-class   ValueByList(_ValueStorageBase):
+class ValueByList(_ValueStorageBase):
     """"Stores a list of lists of numbers by an arbitrary suffix. This is a generic method to handle lists returned from
-    a function call. An example would be returned values  "taps" function for transformer elements. The calss can be
-    used for any methods that returns a list.
+    a function call. An example would be returned values "taps" function for transformer elements. The class can be
+    used for any methods that return a list.
     """
     def __init__(self, name, prop, values, label_suffixes):
         """Constructor for ValueByLabel
@@ -260,8 +260,8 @@ class ValueByLabel(_ValueStorageBase):
                     self._labels.append(label)
                     self._data[label] = [complex(x[0], x[1])]
                 else:
-                    label_mag = label + ' ' + units[0]
-                    label_ang = label + ' ' + units[1]
+                    label_mag = label + self.DELIMITER + "mag" + ' ' + units[0]
+                    label_ang = label + self.DELIMITER + "ang" + ' ' + units[1]
                     self._labels.extend([label_mag, label_ang])
                     self._data[label_mag] = [x[0]]
                     self._data[label_ang] = [x[1]]

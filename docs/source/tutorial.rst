@@ -130,6 +130,17 @@ Here is how you can get the data for a single phase/terminal::
     2017-01-01 01:00:00  (3.4120603231713176e-08+1.3804576042275585e-05j)
     2017-01-01 01:15:00   (3.356035449542105e-08+1.3810414088766265e-05j)
 
+    df = scenario.get_dataframe("Lines", "CurrentsMagAng", "Line.pvl_112", phase_terminal="A1", mag_ang="mag")
+    df.head()
+
+                             Line.sw0__A1__mag [Amps]
+    timestamp
+    2017-01-01 00:15:00                  6.469528
+    2017-01-01 00:30:00                  6.474451
+    2017-01-01 00:45:00                  6.461993
+    2017-01-01 01:00:00                  6.384335
+    2017-01-01 01:15:00                  6.347553
+
 Read a dataframe for one element with an option matching a regular expression
 =============================================================================
 
@@ -156,6 +167,9 @@ Find out all options available for a property
 
     scenario.list_element_property_options("Lines", "Currents")
     ["phase_terminal"]
+
+    scenario.list_element_property_options("Lines", "CurrentsMagAng")
+    ['phase_terminal', 'mag_ang']
 
     scenario.list_element_property_options("Lines", "NormalAmps")
     []
