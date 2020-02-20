@@ -209,14 +209,22 @@ class ResultData:
     def _export_event_log(self):
         # TODO: move to a base class
         event_log = "event_log.csv"
-        cmd = "Export EventLog {}".format(event_log)
-        out = self._dss_command(cmd)
-        self._logger.info("Exported OpenDSS event log to %s", out)
         file_path = os.path.join(self._export_dir, event_log)
         if os.path.exists(file_path):
             os.remove(file_path)
-        shutil.move(event_log, self._export_dir)
-        self._event_log = os.path.join(self._export_dir, event_log)
+
+        orig = os.getcwd()
+        os.chdir(self._export_dir)
+        try:
+            cmd = "Export EventLog {}".format(event_log)
+            out = self._dss_command(cmd)
+            if out != event_log:
+                raise Exception(f"Failed to export EventLog:  {out}")
+            self._logger.info("Exported OpenDSS event log to %s", out)
+            self._event_log = file_path
+        finally:
+            os.chdir(orig)
+
 
     def _export_dataframe(self, df, basename):
         filename = basename + "." + self._export_format
