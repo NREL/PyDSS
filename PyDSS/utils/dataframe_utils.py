@@ -62,6 +62,7 @@ def read_dataframe(filename, index_col=None, columns=None, parse_dates=False,
     elif ext == ".json":
         df = pd.read_json(filename, **kwargs)
     elif ext == ".feather":
+        needs_new_index = True
         with open_func(filename, "rb") as f_in:
             df = feather.read_dataframe(f_in, **kwargs)
     elif ext == ".h5":
@@ -121,7 +122,6 @@ def write_dataframe(df, file_path, compress=False, keep_original=False,
             isinstance(df.index, pd.core.indexes.base.Index):
         raise InvalidParameter("DataFrame index must not be set")
 
-    directory = os.path.dirname(file_path)
     ext = os.path.splitext(file_path)[1]
 
     if ext == ".csv":
@@ -131,7 +131,7 @@ def write_dataframe(df, file_path, compress=False, keep_original=False,
     elif ext == ".h5":
         # HDF5 supports built-in compression, levels 1-9
         if "complevel" in kwargs:
-            complevel = kwags["complevel"]
+            complevel = kwargs["complevel"]
         elif compress:
             complevel = 9
         else:
