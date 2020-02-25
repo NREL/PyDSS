@@ -102,6 +102,8 @@ class postprocess_thermal_upgrades():
                                     dt_params = self.get_xfmr_upgrade_params(new_line)
                                     self.pen_level_upgrades[dt_name]["upgrade"][0]+=1
                                     self.pen_level_upgrades[dt_name]["upgrade"][1].append(dt_params)
+            self.pen_level_upgrades["feederhead_name"] = self.Settings["feederhead_name"]
+            self.pen_level_upgrades["feederhead_basekV"] = self.Settings["feederhead_basekV"]
             self.write_to_json(self.pen_level_upgrades, "Processed_upgrades")
             if self.Settings["Create_plots"]:
                 self.create_edge_node_dicts()

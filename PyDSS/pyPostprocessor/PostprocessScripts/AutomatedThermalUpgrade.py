@@ -62,6 +62,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         "tps_to_test",
         "units key",
         "Create_upgrades_library",
+		"upgrade_library_path",
     )
 
     def __init__(self, project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger):
@@ -121,11 +122,19 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             self.equip_ldgs["Xfmr_" + key] = (vals[0] * 100 / vals[1])
         self.write_to_json(self.equip_ldgs, "Initial_equipment_loadings_pen_{}".format(self.pen_level))
 
+        # Store voltage violations before any upgrades - max, min and number
+        self.V_upper_thresh = 1.05
+        self.V_lower_thresh = 0.95
+        self.get_nodal_violations()
+
         self.feeder_parameters["Initial violations"] = {
             "Number of lines with violations": len(self.line_violations),
             "Number of xfmrs with violations": len(self.xfmr_violations),
             "Max line loading observed": max(self.orig_line_ldg_lst),
             "Max xfmr loading observed": max(self.orig_xfmr_ldg_lst),
+            "Maximum voltage on any bus": self.max_V_viol,
+            "Minimum voltage on any bus":self.min_V_viol,
+            "Number of buses outside ANSI A limits":len(self.cust_viol),
         }
 
         if self.config["Create_upgrade_plots"]:
@@ -196,23 +205,36 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         # self.determine_xfmr_ldgs()
         # if self.config["Create_upgrade_plots"]:
         #     self.create_op_plots()
-
+        self.get_nodal_violations()
         self.feeder_parameters["Final violations"] = {
             "Number of lines with violations": len(self.line_violations),
             "Number of xfmrs with violations": len(self.xfmr_violations),
             "Max line loading observed": max(self.final_line_ldg_lst),
             "Max xfmr loading observed": max(self.final_xfmr_ldg_lst),
+            "Maximum voltage on any bus": self.max_V_viol,
+            "Minimum voltage on any bus":self.min_V_viol,
+            "Number of buses outside ANSI A limits":len(self.cust_viol),
         }
         self.feeder_parameters["Simulation time (seconds)"] = end - start
         self.write_to_json(self.feeder_parameters, "Thermal_violations_comparison")
 
+        feeder_head_name = dss.Circuit.Name()
+        feeder_head_bus = dss.CktElement.BusNames()[0].split(".")[0]
+        dss.Circuit.SetActiveBus(feeder_head_bus)
+        feeder_head_basekv = dss.Bus.kVBase()
+        num_nodes = dss.Bus.NumNodes()
+        if num_nodes>1:
+            feeder_head_basekv = round(feeder_head_basekv*math.sqrt(3),1)
+
         # Process outputs
         input_dict = {
-            "DPV_penetration_HClimit": self.config["DPV_penetration_HClimit"],
-            "DPV_penetration_target": self.config["DPV_penetration_target"],
-            "DPV_penetration_step": self.config["DPV_penetration_step"],
-            "Outputs": self.config["Outputs"],
-            "Create_plots": self.config["Create_upgrade_plots"]
+            "DPV_penetration_HClimit"       : self.config["DPV_penetration_HClimit"],
+            "DPV_penetration_target"        : self.config["DPV_penetration_target"],
+            "DPV_penetration_step"          : self.config["DPV_penetration_step"],
+            "Outputs"                       : self.config["Outputs"],
+            "Create_plots"                  : self.config["Create_upgrade_plots"],
+            "feederhead_name"               : feeder_head_name,
+            "feederhead_basekV"             : feeder_head_basekv
         }
 
         postprocess_thermal_upgrades(input_dict, dss)
@@ -222,9 +244,44 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         return AutomatedThermalUpgrade.REQUIRED_INPUT_FIELDS
 
     def read_available_upgrades(self, file):
-        f = open(os.path.join(self.config["Outputs"], "{}.json".format(file)), 'r')
+        f = open(os.path.join(self.config["upgrade_library_path"], "{}.json".format(file)), 'r')
         data = json.load(f)
         return data
+
+    def get_nodal_violations(self):
+        # Get the maximum and minimum voltages and number of buses with violations
+        self.buses          = dss.Circuit.AllBusNames()
+        self.max_V_viol     = 0
+        self.min_V_viol     = 2
+        self.cust_viol      = []
+        for tp_cnt in range(len(self.config["tps_to_test"])):
+            # First two tps are for disabled PV case
+            if tp_cnt == 0 or tp_cnt == 1:
+                dss.run_command("BatchEdit PVSystem..* Enabled=False")
+                dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
+                self.dssSolver.Solve()
+                if not dss.Solution.Converged():
+                    print("OpenDSS solution did not converge, quitting...")
+                    quit()
+            if tp_cnt == 2 or tp_cnt == 3:
+                dss.run_command("BatchEdit PVSystem..* Enabled=True")
+                dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
+                self.dssSolver.Solve()
+                if not dss.Solution.Converged():
+                    print("OpenDSS solution did not converge, quitting...")
+                    quit()
+            for b in self.buses:
+                dss.Circuit.SetActiveBus(b)
+                bus_v = dss.Bus.puVmagAngle()[::2]
+                if max(bus_v) > self.max_V_viol:
+                    self.max_V_viol = max(bus_v)
+                if min(bus_v) < self.min_V_viol:
+                    self.min_V_viol = min(bus_v)
+                if max(bus_v)>self.V_upper_thresh and b not in self.cust_viol:
+                    self.cust_viol.append(b)
+                if min(bus_v)<self.V_lower_thresh and b not in self.cust_viol:
+                    self.cust_viol.append(b)
+        return
 
     def create_op_plots(self):
         self.all_bus_names = dss.Circuit.AllBusNames()
@@ -520,8 +577,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if not dss.Solution.Converged():
                     print("OpenDSS solution did not converge, quitting...")
                     quit()
-                print(dss.Circuit.TotalPower())
-                print("tp count", tp_cnt)
             if tp_cnt==2 or tp_cnt==3:
                 dss.run_command("BatchEdit PVSystem..* Enabled=True")
                 dss.run_command("set LoadMult = {LM}".format(LM = self.config["tps_to_test"][tp_cnt]))
@@ -530,7 +585,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if not dss.Solution.Converged():
                     print("OpenDSS solution did not converge, quitting...")
                     quit()
-                print("tp count", tp_cnt)
             dss.Circuit.SetActiveClass("Line")
             dss.ActiveClass.First()
             while True:
@@ -711,8 +765,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if not dss.Solution.Converged():
                     print("OpenDSS solution did not converge, quitting...")
                     quit()
-                print("tp count", tp_cnt)
-                print(dss.Circuit.TotalPower())
             if tp_cnt == 2 or tp_cnt == 3:
                 dss.run_command("BatchEdit PVSystem..* Enabled=True")
                 dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
@@ -720,8 +772,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if not dss.Solution.Converged():
                     print("OpenDSS solution did not converge, quitting...")
                     quit()
-                print("tp count", tp_cnt)
-                print(dss.Circuit.TotalPower())
             dss.Transformers.First()
             while True:
                 xfmr_name = dss.CktElement.Name().split(".")[1].lower()

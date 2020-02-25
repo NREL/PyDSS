@@ -14,3 +14,4 @@ tps_to_test = [0.2, 1.8, 0.1, 0.9]
 # [min load multiplier without PV, max load multiplier without PV, min load multiplier with PV, max load multiplier with PV]
 "units key" = ["mi", "kft", "km", "m", "Ft", "in", "cm"]  # Units key for lines taken from OpenDSS
 Create_upgrades_library = true # Can be set to False if we use an externally generated library
+upgrade_library_path = "C:/Documents_NREL/Grid_Cost_DER_PhaseII/Control_device_placement/Outputs"

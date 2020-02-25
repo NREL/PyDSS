@@ -39,6 +39,10 @@ class postprocess_voltage_upgrades():
         if len(self.reg_upgrades)>0:
             for key,vals in self.reg_upgrades.items():
                 self.cap_processed_ops["Regctrl.{}".format(key)]=vals
+
+        self.cap_processed_ops["feederhead_name"] = self.Settings["feederhead_name"]
+        self.cap_processed_ops["feederhead_basekV"] = self.Settings["feederhead_basekV"]
+
         self.write_to_json(self.cap_processed_ops,"Processed_voltage_upgrades")
 
     def write_to_json(self, dict, file_name):

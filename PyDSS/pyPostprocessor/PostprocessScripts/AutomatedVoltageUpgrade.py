@@ -10,7 +10,7 @@ import numpy as np
 import seaborn as sns
 from sklearn.cluster import AgglomerativeClustering
 import json
-
+import math
 from PyDSS.exceptions import InvalidParameter
 from PyDSS.pyPostprocessor.pyPostprocessAbstract import AbstractPostprocess
 from PyDSS.pyPostprocessor.PostprocessScripts.postprocess_voltage_upgrades import postprocess_voltage_upgrades
@@ -71,6 +71,16 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         dss.run_command("Redirect {}".format(thermal_dss_file))
         self.dssSolver = dssSolver
         self.start = time.time()
+
+        # Get feeder head meta data
+        feeder_head_name = dss.Circuit.Name()
+        feeder_head_bus = dss.CktElement.BusNames()[0].split(".")[0]
+        dss.Circuit.SetActiveBus(feeder_head_bus)
+        feeder_head_basekv = dss.Bus.kVBase()
+        num_nodes = dss.Bus.NumNodes()
+        if num_nodes > 1:
+            feeder_head_basekv = round(feeder_head_basekv * math.sqrt(3), 1)
+
         # Cap bank default settings -
         self.capON = round((self.config["nominal_voltage"] - self.config["Cap sweep voltage gap"] / 2), 1)
         self.capOFF = round((self.config["nominal_voltage"] + self.config["Cap sweep voltage gap"] / 2), 1)
@@ -220,6 +230,16 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 self.check_voltage_violations_multi_tps()
                 if self.config["create topology plots"]:
                     self.plot_violations()
+
+        # Writing out the results before adding new devices
+        self.write_upgrades_to_file()
+        # postprocess_voltage_upgrades(
+        #     {
+        #         "outputs": self.config["Outputs"],
+        #         "feederhead_name": feeder_head_name,
+        #         "feederhead_basekV": feeder_head_basekv
+        #     }
+        # )
 
         # New devices might be added after this
         self.check_voltage_violations_multi_tps()
@@ -402,7 +422,13 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             self.plot_violations()
         self.write_upgrades_to_file()
         print("total_time = ", end_t - start_t)
-        postprocess_voltage_upgrades({"outputs": self.config["Outputs"]})
+        postprocess_voltage_upgrades(
+            {
+                "outputs": self.config["Outputs"],
+                "feederhead_name": feeder_head_name,
+                "feederhead_basekV": feeder_head_basekv
+            }
+        )
         # # TODO: Check impact of upgrades - Cannot recompile feeder in PyDSS
         # print("Checking impact of redirected upgrades file")
         # upgrades_file = os.path.join(self.config["Outputs"], "Voltage_upgrades.dss")
