@@ -28,7 +28,8 @@ class postprocess_thermal_upgrades():
         self.init_pen = self.Settings["DPV_penetration_HClimit"]
         self.end_pen = self.Settings["DPV_penetration_target"]
         self.pen_step = self.Settings["DPV_penetration_step"]
-
+        dss.Vsources.First()
+        self.source = dss.CktElement.BusNames()[0].split(".")[0]
         if self.Settings["Create_plots"]:
             self.create_op_plots()
         self.get_orig_line_DT_params()
@@ -116,6 +117,8 @@ class postprocess_thermal_upgrades():
     def get_line_upgrade_params(self, new_line):
         for parameters in new_line:
             if parameters.lower().startswith("linecode"):
+                lc_name = parameters.split("=")[1]
+            elif parameters.lower().startswith("geometry"):
                 lc_name = parameters.split("=")[1]
         return lc_name
 

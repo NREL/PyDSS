@@ -81,7 +81,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.export_line_DT_parameters()
         start= time.time()
         print("Determining thermal upgrades for PV penetration level: ", self.pen_level)
-
+        dss.Vsources.First()
+        self.source = dss.CktElement.BusNames()[0].split(".")[0]
         self.feeder_parameters = {}
 
         self.dss_upgrades = [
@@ -427,6 +428,9 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         while True:
             ln_name = dss.Lines.Name()
             ln_lc = dss.Lines.LineCode()
+            if ln_lc == '':
+                ln_geo = dss.Lines.Geometry()
+                ln_lc = ln_geo
             ln_len = dss.Lines.Length()
             len_units = self.config["units key"][dss.Lines.Units()-1]
             #len_units_alt = dss.Properties.Value("Units")
@@ -456,6 +460,27 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             self.Linecodes_params[lc_name] = {"Ampacity":ampacity}
             if not dss.LineCodes.Next()>0:
                 break
+
+        # Add geometries to this linecodes dict as well
+        dss.Lines.First()
+        while True:
+            ln_name = dss.Lines.Name()
+            lc_name = dss.Lines.LineCode()
+            if lc_name == '':
+                ln_geo = dss.Lines.Geometry()
+                lc_name = ln_geo
+                dss.Circuit.SetActiveClass("linegeometry")
+                flag = dss.ActiveClass.First()
+                while flag > 0:
+                    geo = dss.CktElement.Name()
+                    if geo == lc_name:
+                        ampacity = dss.Properties.Value("normamps")
+                    flag = dss.ActiveClass.Next()
+                self.Linecodes_params[lc_name] = {"Ampacity": ampacity}
+            dss.Lines.Name(ln_name)
+            if not dss.Lines.Next() > 0:
+                break
+
         self.write_to_json(self.Linecodes_params, "Original_linecodes_parameters")
 
         dss.Transformers.First()
@@ -817,6 +842,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 n_phases = dss.CktElement.NumPhases()
                 hs_kv = float(dss.Properties.Value('kVs').split('[')[1].split(',')[0])
                 kva = float(dss.Properties.Value('kVA'))
+                lead_lag = dss.Properties.Value("leadlag")
                 if n_phases > 1:
                     norm_amps = kva / (hs_kv * math.sqrt(3))
                 else:
@@ -882,22 +908,24 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     # replacement was found
                     for dt_cnt in range(num_par_dts-1):
                         command_string = "New Transformer.{dtn}_upgrade_{tr_cnt}_{cnt} phases={phs} windings={wdgs}" \
-                                         " %noloadloss={nll} ".format(
+                                         " %noloadloss={nll} leadlag={ll} ".format(
                             dtn=key,
                             tr_cnt = self.Line_trial_counter,
                             cnt=dt_cnt,
                             phs=phases,
                             wdgs=num_wdgs,
-                            nll=per_losses[0]
+                            nll=per_losses[0],
+                            ll=lead_lag
                         )
 
                         for wdgs_cnt in range(num_wdgs):
-                            wdg_str = "wdg={numwdg} bus={bus_wdg} kv={wdgs_kv} kVA={wdgs_kva} %r={wdgs_r} ".format(
+                            wdg_str = "wdg={numwdg} bus={bus_wdg} kv={wdgs_kv} kVA={wdgs_kva} %r={wdgs_r} conn={cn}".format(
                                 numwdg=str(wdgs_cnt+1),
                                 bus_wdg=buses_list[wdgs_cnt],
                                 wdgs_kv=wdg_kv_list[wdgs_cnt],
                                 wdgs_kva = wdg_kva_list[wdgs_cnt],
-                                wdgs_r=per_R_list[wdgs_cnt]
+                                wdgs_r=per_R_list[wdgs_cnt],
+                                cn=conn_list[wdgs_cnt]
                             )
                             command_string=command_string + wdg_str
                         if num_wdgs == 3:
