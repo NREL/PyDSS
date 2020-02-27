@@ -113,7 +113,6 @@ class ResultData:
                     objs = self._objects_by_class[element_class]
                     elements = self._create_element_list(objs, properties)
 
-
             # TODO: refactor prop_aggregators
             prop_aggregators = []
             if self._export_iteration_order == "ValuesByPropertyAcrossElements":
@@ -150,8 +149,10 @@ class ResultData:
             elem.add_values()
 
     def ExportResults(self, fileprefix=""):
-        self._export_indices()
-        self._export_event_log()
+        if self._elements:
+            self._export_indices()
+        if self._settings["Exports"]["Export Event Log"]:
+            self._export_event_log()
         if self._export_iteration_order == "ElementValuesPerProperty":
             self._export_results_by_element(fileprefix=fileprefix)
         elif self._export_iteration_order == "ValuesByPropertyAcrossElements":
