@@ -3,6 +3,7 @@
 
 import os
 import json
+import logging
 
 # TODO: Figure out correct time points on which to run this algorithm. How to we reach a target HC and how
 # TODO: do we optimize it such that the most economical solution is reached. Eventually how do we move this
@@ -17,8 +18,9 @@ import json
 # End point if lesser than 1% or fewer than 5 nodes have Range A violations
 
 class postprocess_voltage_upgrades():
-    def __init__(self, Settings):
+    def __init__(self, Settings, logger):
         self.Settings           = Settings
+        self.logger             = logger
         self.cap_upgrades       = {}
         self.reg_upgrades       = {}
         self.cap_processed_ops  = {}
@@ -402,4 +404,6 @@ if __name__ == "__main__":
         "outputs"   : "../Outputs"
     # This number gives the maximum number of regulators placed in the feeder apart from substation LTC
     }
-    data = postprocess_voltage_upgrades(Settings)
+    logging.basicConfig()
+    logger = logging.getLogger(__name__)
+    data = postprocess_voltage_upgrades(Settings, logger)

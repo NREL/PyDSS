@@ -113,10 +113,9 @@ class create_upgrades_library():
                 dss.Circuit.SetActiveElement("Line.{}".format(line_name))
                 norm_amps = dss.Lines.NormAmps()
                 if kv_from_bus!=kv_to_bus:
-                    print("For line {} the from and to bus kV ({} {}) do not match, quitting...".format(line_name,
+                    raise InvalidParameter("For line {} the from and to bus kV ({} {}) do not match, quitting...".format(line_name,
                                                                                                         kv_from_bus,
                                                                                                         kv_to_bus))
-                    quit()
                 key = "type_" + "{}_".format(ln_config) + "{}_".format(phases) + "{}".format(round(kv_from_bus, 3))
                 # Add linecodes
                 if key not in self.avail_line_upgrades and ln_config=="linecode":

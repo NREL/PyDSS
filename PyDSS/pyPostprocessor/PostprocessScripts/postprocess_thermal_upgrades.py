@@ -2,6 +2,7 @@
 # Akshay Kumar Jain; Akshay.Jain@nrel.gov
 
 
+import logging
 import os
 import matplotlib.pyplot as plt
 import csv
@@ -22,8 +23,9 @@ plt.rcParams.update({'font.size': 14})
 # Post process thermal upgrades dss files to create network plots and also to create easier post processing files
 
 class postprocess_thermal_upgrades():
-    def __init__(self, Settings, dss):
+    def __init__(self, Settings, dss, logger):
         self.Settings = Settings
+        self.logger = logger
         self.sol = dss.Solution
         self.init_pen = self.Settings["DPV_penetration_HClimit"]
         self.end_pen = self.Settings["DPV_penetration_target"]
@@ -52,7 +54,7 @@ class postprocess_thermal_upgrades():
                         ln_ampacity = self.orig_lc_parameters[ln_par_val]["Ampacity"]
                 params["Ampacity"] = ln_ampacity
             except:
-                print("No linecode for line: ",line)
+                self.logger.info("No linecode for line: ",line)
                 pass
             self.orig_line_parameters["line."+line.lower()] = params
         f = open(os.path.join(self.Settings["Outputs"], "Original_xfmr_parameters.json"), "r")
@@ -64,8 +66,7 @@ class postprocess_thermal_upgrades():
     def process_thermal_upgrades(self):
         for self.pen_level in range(self.init_pen, self.end_pen + 1, self.pen_step):
             self.pen_level_upgrades = {}
-            with open(os.path.join(self.Settings["Outputs"],"thermal_upgrades.dss"
-                    .format(self.pen_level)),"r") as datafile:
+            with open(os.path.join(self.Settings["Outputs"], "thermal_upgrades.dss")) as datafile:
                 for line in datafile:
                     new_line = line.split()
                     for parameters in new_line:
@@ -169,7 +170,7 @@ class postprocess_thermal_upgrades():
         self.generate_edges()
         self.pos_dict = nx.get_node_attributes(self.G, 'pos')
         self.correct_node_coords()
-        print("Length:", len(self.pos_dict))
+        self.logger.info("Length: %s", len(self.pos_dict))
 
     def correct_node_coords(self):
         # If node doesn't have node attributes, attach parent or child node's attributes
@@ -281,5 +282,7 @@ if __name__ == "__main__":
         "Outputs"                   : "../Outputs",
         "Create_plots"              : True
     }
-    data = postprocess_thermal_upgrades(Settings)
+    logging.basicConfig()
+    logger = logging.getLogger(__name__)
+    data = postprocess_thermal_upgrades(Settings, dss, logger)
 

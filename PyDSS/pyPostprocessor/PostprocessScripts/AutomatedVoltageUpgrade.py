@@ -11,7 +11,7 @@ import seaborn as sns
 from sklearn.cluster import AgglomerativeClustering
 import json
 import math
-from PyDSS.exceptions import InvalidParameter
+from PyDSS.exceptions import InvalidParameter, OpenDssConvergenceError
 from PyDSS.pyPostprocessor.pyPostprocessAbstract import AbstractPostprocess
 from PyDSS.pyPostprocessor.PostprocessScripts.postprocess_voltage_upgrades import postprocess_voltage_upgrades
 
@@ -63,7 +63,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             project.get_post_process_directory(self.config["Thermal scenario name"]),
             thermal_filename
         )
-        print(thermal_dss_file)
+        self.logger.info("thermal_dss_file=%s", thermal_dss_file)
         if not os.path.exists(thermal_dss_file):
             raise InvalidParameter(f"AutomatedThermalUpgrade did not produce thermal_filename")
 
@@ -133,10 +133,10 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.feeder_parameters = {}
         # Use this block for capacitor settings
         self.check_voltage_violations_multi_tps()
-        print("Initial number of buses with violations are: ", len(self.buses_with_violations))
-        print("Initial objective function value: ", self.severity_indices[2])
-        print("Initial maximum voltage observed on any node:", self.max_V_viol)
-        print("Initial minimum voltage observed on any node:", self.min_V_viol)
+        self.logger.info("Initial number of buses with violations are: %s", len(self.buses_with_violations))
+        self.logger.info("Initial objective function value: %s", self.severity_indices[2])
+        self.logger.info("Initial maximum voltage observed on any node: %s", self.max_V_viol)
+        self.logger.info("Initial minimum voltage observed on any node: %s", self.min_V_viol)
 
         self.feeder_parameters["intial_violations"] ={
             "Number of buses with violations"       :len(self.buses_with_violations),
@@ -162,7 +162,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 if self.config["create topology plots"]:
                     self.plot_violations()
             else:
-                print("\n", "No cap banks exist in the system")
+                self.logger.info("No cap banks exist in the system")
 
         # Do a settings sweep of existing reg control devices (other than sub LTC) after correcting their other
         #  parameters such as ratios etc
@@ -238,7 +238,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         #         "outputs": self.config["Outputs"],
         #         "feederhead_name": feeder_head_name,
         #         "feederhead_basekV": feeder_head_basekv
-        #     }
+        #     },
+        #     self.logger,
         # )
 
         # New devices might be added after this
@@ -411,36 +412,37 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                         self.plot_violations()
 
             self.check_voltage_violations_multi_tps()
-            print("Compare objective with best and applied settings, ", self.cluster_optimal_reg_nodes[min_cluster][0],
+            self.logger.info("Compare objective with best and applied settings, %s, %s", self.cluster_optimal_reg_nodes[min_cluster][0],
                   self.severity_indices[2])
-            print("Additional regctrl  devices: ", min_cluster)
-            print(self.cluster_optimal_reg_nodes)
+            self.logger.info("Additional regctrl  devices: %s", min_cluster)
+            self.logger.info("cluster_optimal_reg_nodes=%s", self.cluster_optimal_reg_nodes)
 
         end_t = time.time()
         self.check_voltage_violations_multi_tps()
         if self.config["create topology plots"]:
             self.plot_violations()
         self.write_upgrades_to_file()
-        print("total_time = ", end_t - start_t)
+        self.logger.info("total_time = %s", end_t - start_t)
         postprocess_voltage_upgrades(
             {
                 "outputs": self.config["Outputs"],
                 "feederhead_name": feeder_head_name,
                 "feederhead_basekV": feeder_head_basekv
-            }
+            },
+            self.logger,
         )
         # # TODO: Check impact of upgrades - Cannot recompile feeder in PyDSS
-        # print("Checking impact of redirected upgrades file")
+        # self.logger.info("Checking impact of redirected upgrades file")
         # upgrades_file = os.path.join(self.config["Outputs"], "Voltage_upgrades.dss")
         # dss.run_command("Redirect {}".format(upgrades_file))
         # self.dssSolver.Solve()
         # self.check_voltage_violations_multi_tps()
         # if self.config["create topology plots"]:
         #     self.plot_violations()
-        print("Final number of buses with violations are: ", len(self.buses_with_violations))
-        print("Final objective function value: ", self.severity_indices[2])
-        print("Final maximum voltage observed on any node:", self.max_V_viol, self.busvmax)
-        print("Final minimum voltage observed on any node:", self.min_V_viol)
+        self.logger.info("Final number of buses with violations are: %s", len(self.buses_with_violations))
+        self.logger.info("Final objective function value: %s", self.severity_indices[2])
+        self.logger.info("Final maximum voltage observed on any node: %s %s", self.max_V_viol, self.busvmax)
+        self.logger.info("Final minimum voltage observed on any node: %s", self.min_V_viol)
 
         self.feeder_parameters["Final_violations"] = {
             "Number of buses with violations": len(self.buses_with_violations),
@@ -475,8 +477,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 off_setting = dss.CapControls.OFFSetting()
                 dss.Capacitors.Name(cap_name)
                 if not cap_name.lower() == dss.Capacitors.Name().lower():
-                    print("Incorrect Active Element")
-                    quit()
+                    raise InvalidParameter("Incorrect Active Element")
                 cap_size = dss.Capacitors.kvar()
                 cap_kv = dss.Capacitors.kV()
                 self.cap_control_info[cap_ctrl] = {
@@ -500,8 +501,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 xfmr_name = dss.RegControls.Transformer().lower()
                 dss.Transformers.Name(xfmr_name)
                 if not xfmr_name.lower() == dss.Transformers.Name().lower():
-                    print("Incorrect Active Element")
-                    quit()
+                    raise InvalidParameter("Incorrect Active Element")
                 xfmr_buses = dss.CktElement.BusNames()
                 # bus_names = []
                 # for buses in xfmr_buses:
@@ -697,17 +697,13 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
                 self.dssSolver.Solve()
                 if not dss.Solution.Converged():
-                    print("OpenDSS solution did not converge, quitting...")
-                    print("Here2")
-                    quit()
+                    raise OpenDssConvergenceError("OpenDSS solution did not converge")
             if tp_cnt == 2 or tp_cnt == 3:
                 dss.run_command("BatchEdit PVSystem..* Enabled=True")
                 dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
                 self.dssSolver.Solve()
                 if not dss.Solution.Converged():
-                    print("OpenDSS solution did not converge, quitting...")
-                    print("Here3")
-                    quit()
+                    raise OpenDssConvergenceError("OpenDSS solution did not converge")
             for b in self.all_bus_names:
                 dss.Circuit.SetActiveBus(b)
                 bus_v = dss.Bus.puVmagAngle()[::2]
@@ -876,7 +872,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 cap_on = dss.CapControls.ONSetting()
                 name = dss.CapControls.Name()
                 if abs(cap_on - cap_on_settings_check[cap_name]) > 0.1:
-                    print("Settings for cap bank {} not implemented".format(cap_name))
+                    self.logger.info("Settings for cap bank %s not implemented", cap_name)
                 if not dss.CapControls.Next() > 0:
                     break
 
@@ -1538,10 +1534,11 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             if self.config["create topology plots"]:
                 self.plot_created_clusters()
                 self.plot_violations()
-            print(self.max_V_viol, self.min_V_viol, self.severity_indices)
+            self.logger.info("max_V_viol=%s, min_V_viol=%s, severity_indices=%s",
+                             self.max_V_viol, self.min_V_viol, self.severity_indices)
             self.disable_regctrl_current_cluster()
             if (len(self.buses_with_violations)) == 0:
-                print("All nodal violations have been removed successfully.....quitting")
+                self.logger.info("All nodal violations have been removed successfully.....quitting")
                 break
 
     def disable_regctrl_current_cluster(self):
@@ -1664,7 +1661,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 if value <= min_severity:
                     min_severity = value
                     min_node = key
-            print("Min node is:", min_node)
+            self.logger.info("Min node is: %s", min_node)
             # If no nodes is found break the loop and go to next number of clusters:
             if min_node == '':
                 continue
@@ -1736,7 +1733,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     nodal_violations_pos[cluster_nodes] = self.pos_dict[cluster_nodes]
                 for common_nodes in self.upstream_nodes_dict[key]:
                     common_nodes_pos[common_nodes] = self.pos_dict[common_nodes]
-                print(self.upstream_reg_node[key])
+                self.logger.info("%s", self.upstream_reg_node[key])
                 reg_nodes_pos[self.upstream_reg_node[key]] = self.pos_dict[self.upstream_reg_node[key]]
                 nx.draw_networkx_nodes(self.G, pos=nodal_violations_pos,
                                        nodelist=values, node_size=5, node_color='C{}'.format(col))
@@ -1756,6 +1753,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
     def run(self, step, stepMax):
         """Induces and removes a fault as the simulation runs as per user defined settings. 
         """
-        print('Running voltage upgrade post process')
+        self.logger.info('Running voltage upgrade post process')
 
         return step
