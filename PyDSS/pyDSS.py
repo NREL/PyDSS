@@ -107,6 +107,7 @@ class instance(object):
             'Scenarios': {'type': list},
             'Active Scenario': {'type': str},
             'DSS File': {'type': str},
+            'DSS File Absolute Path': {'type': bool, 'Options': [True, False]},
             'Return Results': {'type': bool, 'Options': [True, False]},
             'Control mode': {'type': str, 'Options': ["Static", "Time"]},
             'Disable PyDSS controllers': {'type': bool, 'Options': [True, False]},

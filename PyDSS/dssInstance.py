@@ -60,6 +60,16 @@ class OpenDSS:
             'dssFilePath': os.path.join(rootPath, params['Project']['Active Project'], 'DSSfiles', params['Project']['DSS File']),
         }
 
+        if params['Project']['DSS File Absolute Path']:
+            self._dssPath['dssFilePath'] = params['Project']['DSS File']
+        else:
+            self._dssPath['dssFilePath'] = os.path.join(
+                rootPath,
+                params['Project']['Active Project'],
+                'DSSfiles',
+                params['Project']['DSS File']
+            )
+
         if params["Logging"]["Pre-configured logging"]:
             self._Logger = logging.getLogger(__name__)
         else:
