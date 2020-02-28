@@ -9,6 +9,7 @@ import shutil
 import sys
 import yaml
 
+import opendssdirect as dss
 import toml
 
 from PyDSS.exceptions import InvalidParameter
@@ -137,3 +138,38 @@ def interpret_datetime(timestamp):
             if i == len(formats) - 1:
                 raise
             continue
+
+
+def iter_elements(element_class, element_func):
+    """Yield the return of element_func for each element of type element_class.
+
+    Parameters
+    ----------
+    element_class : class
+        Subclass of opendssdirect.CktElement
+    element_func : function
+        Function to run on each element
+
+    Yields
+    ------
+    Return of element_func
+
+    Examples
+    --------
+    >>> import opendssdirect as dss
+
+    >>> def get_reg_control_info():
+        return {
+            "name": dss.RegControls.Name(),
+            "enabled": dss.CktElement.Enabled(),
+            "transformer": dss.RegControls.Transformer(),
+        }
+
+    >>> for reg_control in iter_elements(opendssdirect.RegControls, get_reg_control_info):
+        print(reg_control["name"])
+        
+    """
+    element_class.First()
+    for _ in range(element_class.Count()):
+        yield element_func()
+        element_class.Next()
