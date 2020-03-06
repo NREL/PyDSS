@@ -156,16 +156,16 @@ def iter_elements(element_class, element_func):
 
     Examples
     --------
-    >>> import opendssdirect as dss
+    import opendssdirect as dss
 
-    >>> def get_reg_control_info():
+    def get_reg_control_info():
         return {
             "name": dss.RegControls.Name(),
             "enabled": dss.CktElement.Enabled(),
             "transformer": dss.RegControls.Transformer(),
         }
 
-    >>> for reg_control in iter_elements(opendssdirect.RegControls, get_reg_control_info):
+    for reg_control in iter_elements(opendssdirect.RegControls, get_reg_control_info):
         print(reg_control["name"])
         
     """

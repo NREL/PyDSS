@@ -19,390 +19,169 @@ import logging
 
 class postprocess_voltage_upgrades():
     def __init__(self, Settings, logger):
-        self.Settings           = Settings
-        self.logger             = logger
-        self.cap_upgrades       = {}
-        self.reg_upgrades       = {}
-        self.cap_processed_ops  = {}
-        self.source_xfmr_buses  = []
-        self.read_orig_upgrades()
-        datafile = open(os.path.join(self.Settings["outputs"],"voltage_upgrades.dss"), "r")
-        len_counter=0
-        for line in datafile:
-            len_counter+=1
-        if len(self.orig_caps)>0 and len_counter>1:
-            self.get_cap_upgrades()
-        if len_counter>1:
-            self.get_sub_LTC_upgrades()
-        if len_counter>1:
-            self.get_existing_inline_regctrl_upgrades()
-        if len_counter > 1:
-            self.get_added_devices()
-        if len(self.reg_upgrades)>0:
-            for key,vals in self.reg_upgrades.items():
-                self.cap_processed_ops["Regctrl.{}".format(key)]=vals
+        self.Settings = Settings
+        self.logger = logger
+        self.new_reg_controls = self.Settings["new_reg_controls"]
+        self.orig_reg_controls = self.Settings["orig_reg_controls"]
+        self.new_capacitors = self.Settings["new_capacitors"]
+        self.orig_capacitors = self.Settings["orig_capacitors"]
+        self.new_capcontrols = self.Settings["new_capcontrols"]
+        self.orig_capcontrols = self.Settings["orig_capcontrols"]
+        self.orig_ckt_info = self.Settings["orig_ckt_info"]
+        self.orig_xfmr_info = self.Settings["orig_xfmr_info"]
+        self.final_cap_upgrades = {}
+        self.final_reg_upgrades = {}
+        self.processed_outputs = {}
 
-        self.cap_processed_ops["feederhead_name"] = self.Settings["feederhead_name"]
-        self.cap_processed_ops["feederhead_basekV"] = self.Settings["feederhead_basekV"]
+        # print('\nOri reg controls', self.orig_reg_controls)
+        # print('New reg controls', self.new_reg_controls)
+        # print('\nOri cap controls', self.orig_capcontrols)
+        # print('New cap controls', self.new_capcontrols)
+        # print('\nOri capacitors', self.orig_capacitors)
+        # print('New capacitors', self.new_capacitors)
+        # print('\nOri ckt info', self.orig_ckt_info)
+        # print('\nOri xfmr info', self.orig_xfmr_info)
 
-        self.write_to_json(self.cap_processed_ops,"Processed_voltage_upgrades")
+        # convert input list of nested dictionaries to a dictionary of nested dictionaries
+        self.new_reg_controls = {k: v for element in self.new_reg_controls for k, v in element.items()}
+        self.orig_reg_controls = {k: v for element in self.orig_reg_controls for k, v in element.items()}
+        self.new_capacitors = {k: v for element in self.new_capacitors for k, v in element.items()}
+        self.orig_capacitors = {k: v for element in self.orig_capacitors for k, v in element.items()}
+        self.new_capcontrols = {k: v for element in self.new_capcontrols for k, v in element.items()}
+        self.orig_capcontrols = {k: v for element in self.orig_capcontrols for k, v in element.items()}
+
+        if self.new_capcontrols:
+            self.get_capacitor_upgrades()
+        if self.new_reg_controls:
+            self.get_regulator_upgrades()
+
+        self.processed_outputs["feederhead_name"] = self.Settings["feederhead_name"]
+        self.processed_outputs["feederhead_basekV"] = self.Settings["feederhead_basekV"]
+        self.write_to_json(self.processed_outputs, "Processed_voltage_upgrades")
+
+    # function to compare two dictionaries with same format
+    # only compares common elements present in both original and new dictionaries
+    def compare_dict(self, old, new):
+        field_list = []
+        change = {}
+        sharedKeys = set(old.keys()).intersection(new.keys())
+        for key in sharedKeys:
+            change_flag = False
+            for sub_field in old[key]:
+                if old[key][sub_field] != new[key][sub_field]:
+                    change_flag = True
+                    field_list.append(sub_field)
+                    print(
+                        f'Key: {key}, {sub_field} 1: {old[key][sub_field]}, {sub_field} 2: {new[key][sub_field]}')
+            if change_flag == True:
+                change[key] = field_list
+        return change
+
+    # function to get capacitor upgrades
+    def get_capacitor_upgrades(self):
+        # STEP 1: compare controllers that exist in both: original and new- and get difference
+        change = self.compare_dict(self.orig_capcontrols, self.new_capcontrols)
+        modified_capacitors = list(change.keys())
+        # STEP 2: account for any new controllers added (which are not there in original)
+        new_addition = list(set(self.new_capcontrols.keys()) -
+                            (set(self.orig_capcontrols.keys()) & set(self.new_capcontrols.keys())))
+        cap_upgrades = [*modified_capacitors, *new_addition]  # combining these two lists to get upgraded capacitors
+        if cap_upgrades:
+            for ctrl_name in cap_upgrades:
+                self.final_cap_upgrades["ctrl_name"] = ctrl_name
+                self.final_cap_upgrades["cap_name"] = "Capacitor." + self.new_capcontrols[ctrl_name]["cap_name"]
+                self.final_cap_upgrades["cap_kvar"] = self.new_capcontrols[ctrl_name]["cap_kvar"]
+                self.final_cap_upgrades["cap_kv"] = self.new_capcontrols[ctrl_name]["cap_kv"]
+                self.final_cap_upgrades["cap_on"] = self.new_capcontrols[ctrl_name]["onsetting"]
+                self.final_cap_upgrades["cap_off"] = self.new_capcontrols[ctrl_name]["offsetting"]
+                self.final_cap_upgrades["ctrl_type"] = self.new_capcontrols[ctrl_name]["control_type"]
+                self.final_cap_upgrades["cap_settings"] = 1
+                # if there are differences between original and new controllers
+                if ctrl_name in modified_capacitors:
+                    # if control type in original controller is voltage, only settings are changed
+                    if self.orig_capcontrols[ctrl_name]["control_type"].lower().startswith("volt"):
+                        self.final_cap_upgrades["ctrl_added"] = 0
+                    # if original controller type was current, new controller (voltage type) is said to be added
+                    elif self.orig_capcontrols[ctrl_name]["control_type"].lower().startswith("current"):
+                        self.final_cap_upgrades["ctrl_added"] = 1
+                # if there are new controllers
+                elif ctrl_name in new_addition:
+                    self.final_cap_upgrades["ctrl_added"] = 1
+            self.processed_outputs[self.final_cap_upgrades["cap_name"]] = {
+                "New controller added": self.final_cap_upgrades["ctrl_added"],
+                "Controller settings modified": self.final_cap_upgrades["cap_settings"],
+                "Final Settings": {
+                    "capctrl name": self.final_cap_upgrades["ctrl_name"],
+                    "cap kvar": self.final_cap_upgrades["cap_kvar"],
+                    "cap kV": self.final_cap_upgrades["cap_kv"],
+                    "ctrl type": self.final_cap_upgrades["ctrl_type"],
+                    "ON setting (V)": self.final_cap_upgrades["cap_on"],
+                    "OFF setting (V)": self.final_cap_upgrades["cap_off"]
+                }
+            }
+
+    # function to assign settings if regulator upgrades are on substation transformer
+    def check_substation_LTC(self):
+        if self.orig_ckt_info["substation_xfmr"]["xfmr_name"].lower() == \
+                self.final_reg_upgrades["xfmr_name"]:
+            self.final_reg_upgrades["sub_xfmr"] = 1
+            self.final_reg_upgrades["xfmr_kva"] = self.orig_ckt_info["substation_xfmr"]["xfmr_kva"]
+            self.final_reg_upgrades["xfmr_kv"] = self.orig_ckt_info["substation_xfmr"]["xfmr_kv"]
+
+    # function to check for regulator upgrades
+    def get_regulator_upgrades(self):
+        # STEP 1: compare controllers that exist in both: original and new
+        change = self.compare_dict(self.orig_reg_controls, self.new_reg_controls)
+        modified_regulators = list(change.keys())
+        # STEP 2: account for any new controllers added (which are not there in original)
+        new_addition = list(set(self.new_reg_controls.keys()) -
+                            (set(self.orig_reg_controls.keys()) & set(self.new_reg_controls.keys())))
+        reg_upgrades = [*modified_regulators, *new_addition]  # combining these two lists to get upgraded regulators
+        # if there are any upgrades & enabled, only then write to the file
+        if reg_upgrades:
+            for ctrl_name in reg_upgrades:
+                if self.new_reg_controls[ctrl_name]['enabled'][0] == True:
+                    self.final_reg_upgrades["reg_settings"] = 1  # settings are changed
+                    self.final_reg_upgrades["reg_ctrl_name"] = ctrl_name.lower()
+                    self.final_reg_upgrades["reg_vsp"] = float(self.new_reg_controls[ctrl_name]["v_setpoint"][0])
+                    self.final_reg_upgrades["reg_band"] = float(self.new_reg_controls[ctrl_name]["v_deadband"][0])
+                    self.final_reg_upgrades["xfmr_kva"] = self.new_reg_controls[ctrl_name]["xfmr_kva"]
+                    self.final_reg_upgrades["xfmr_kv"] = self.new_reg_controls[ctrl_name]["xfmr_kv"]
+                    self.final_reg_upgrades["xfmr_name"] = self.new_reg_controls[ctrl_name]["xfmr_name"]
+                    self.final_reg_upgrades["new_xfmr"] = 0  # default = new transformer is not added
+                    self.final_reg_upgrades["sub_xfmr"] = 0  # default (is not substation xfmr)
+                    # if regulators are modified (and exist in both original and new)
+                    if ctrl_name in modified_regulators:
+                        self.final_reg_upgrades["reg_added"] = 0  # not a new regulator
+                        self.check_substation_LTC()  # check if regulator is on substation transformer
+                    elif ctrl_name in new_addition:
+                        self.final_reg_upgrades["reg_added"] = 1  # is a new regulator
+                        self.check_substation_LTC()   # check if regulator is on substation transformer
+                        # if regulator transformer is not in the original xfmr list, then a new xfmr
+                        if self.final_reg_upgrades["xfmr_name"] not in self.orig_xfmr_info:
+                            self.final_reg_upgrades["new_xfmr"] = 1  # is a new xfmr
+                    self.processed_outputs["Regctrl." + self.final_reg_upgrades["reg_ctrl_name"]] = {
+                        "New controller added": self.final_reg_upgrades["reg_added"],
+                        "Controller settings modified": self.final_reg_upgrades["reg_settings"],
+                        "New transformer added": self.final_reg_upgrades["new_xfmr"],
+                        "Substation LTC": self.final_reg_upgrades["sub_xfmr"],
+                        "Final settings": {
+                            "Transformer name": self.final_reg_upgrades["xfmr_name"],
+                            "Transformer kVA": self.final_reg_upgrades["xfmr_kva"],
+                            "Transformer kV": self.final_reg_upgrades["xfmr_kv"],
+                            "Reg ctrl V set point": self.final_reg_upgrades["reg_vsp"],
+                            "Reg ctrl deadband": self.final_reg_upgrades["reg_band"]
+                        }
+                     }
 
     def write_to_json(self, dict, file_name):
         with open(os.path.join(self.Settings["outputs"],"{}.json".format(file_name)), "w") as fp:
             json.dump(dict, fp, indent=4)
 
-    def read_orig_upgrades(self):
-        f = open(os.path.join(self.Settings["outputs"],"Initial_capacitors.json"),"r")
-        self.orig_caps = json.load(f)
-        f = open(os.path.join(self.Settings["outputs"], "Initial_regulators.json"), "r")
-        self.orig_regs = json.load(f)
-
-    def get_cap_upgrades(self):
-        # If cap controller did not initially exist, a new controller must have been added, elif
-        # controller existed but it was not voltage controlled then also a new controller will
-        # have to be added even though it would appear as an edit in the opendss upgrades files.
-        # Otherwise if controller existed and it was voltage controlled plus original ON and OFF
-        # settings were not used (indicated by "original" flag), then settings were modified
-        for key,vals in self.orig_caps.items():
-            ctrl_added = 1
-            ctrl_type = "Voltage"
-            if not key.startswith("capbank_noctrl"):
-                # This implies this capbank had a capcontroller - now figure out
-                # whether it was voltage controlled or not
-                if vals["Control type"].lower().startswith("volt"):
-                    ctrl_added  = 0
-                    cap_name    = "Capacitor."+vals["cap_name"]
-                    cap_kvar    = vals["cap kVAR"]
-                    cap_kv      = vals["cap_kv"]
-                    ctrl_name   = key
-                    # Now figure out whether settings were changed or not and what
-                    # the final settings are
-                    with open(os.path.join(self.Settings["outputs"],
-                                           "voltage_upgrades.dss"), "r") as datafile:
-                        for line in datafile:
-                            line=line.split()
-                            cap_ctrl_nm = ''
-                            for params in line:
-                                if params.lower().startswith("capcontrol"):
-                                    cap_ctrl_nm = params.split(".")[1].lower()
-                            if cap_ctrl_nm=='':
-                                continue
-                            if cap_ctrl_nm==key.lower():
-                                for params in line:
-                                    if params.lower().startswith("on"):
-                                        cap_on = float(params.split("=")[1])
-                                    if params.lower().startswith("off"):
-                                        cap_off = float(params.split("=")[1])
-                    if cap_on==float(vals["ON"]) and cap_off==float(vals["OFF"]):
-                        cap_settings = 0
-                    else:
-                        cap_settings = 1
-                else:
-                    ctrl_added      = 1
-                    cap_name        = "Capacitor."+vals["cap_name"]
-                    cap_kvar        = vals["cap kVAR"]
-                    cap_kv          = vals["cap_kv"]
-                    cap_settings    = 1
-                    ctrl_name       = key
-                    # Now figure out what the final settings are
-                    with open(os.path.join(self.Settings["outputs"],
-                                           "voltage_upgrades.dss"), "r") as datafile:
-                        for line in datafile:
-                            line = line.split()
-                            cap_ctrl_nm = ''
-                            for params in line:
-                                if params.lower().startswith("capcontrol"):
-                                    cap_ctrl_nm = params.split(".")[1].lower()
-                            if cap_ctrl_nm=='':
-                                continue
-                            if cap_ctrl_nm == key.lower():
-                                for params in line:
-                                    if params.lower().startswith("on"):
-                                        cap_on = float(params.split("=")[1])
-                                    if params.lower().startswith("off"):
-                                        cap_off = float(params.split("=")[1])
-            else:
-                ctrl_added      = 1
-                cap_name        = "Capacitor."+vals["cap_name"]
-                cap_kvar        = vals["cap kVAR"]
-                cap_kv          = vals["cap_kv"]
-                cap_settings    = 1
-                ctrl_name       = "capctrl"+vals["cap_name"]
-                # Now figure out what the final settings are
-                with open(os.path.join(self.Settings["outputs"],
-                                       "voltage_upgrades.dss"), "r") as datafile:
-                    for line in datafile:
-                        line = line.split()
-                        cap_ctrl_nm = ''
-                        for params in line:
-                            if params.lower().startswith("capcontrol"):
-                                cap_ctrl_nm = params.split(".")[1].lower()
-                        if cap_ctrl_nm == '':
-                            continue
-                        if cap_ctrl_nm == ctrl_name.lower():
-                            for params in line:
-                                if params.lower().startswith("on"):
-                                    cap_on = float(params.split("=")[1])
-                                if params.lower().startswith("off"):
-                                    cap_off = float(params.split("=")[1])
-            self.cap_processed_ops[cap_name] = {
-                "New controller added"          : ctrl_added,
-                "Controller settings modified"  : cap_settings,
-                "Final Settings"                : {
-                    "capctrl name"              : ctrl_name,
-                    "cap kvar"                  : cap_kvar,
-                    "cap kV"                    : cap_kv,
-                    "ctrl type"                 : ctrl_type,
-                    "ON setting (V)"            : cap_on,
-                    "OFF setting (V)"           : cap_off
-                }
-            }
-
-    def get_sub_LTC_upgrades(self):
-        # Figure out whether substation LTC exists - if yes figure whether a reg ctrl existed on it -
-        # if yes figure whether its settings were changed. If regctrl did not exist - go to upgrades file to
-        # figure out whether a new reg ctrl was added (check for enabled property) and get final settings.
-        # Else if no xfmr existed - will be taken care of in the get_added_devices() function
-        if "orig_substation_xfmr" in self.orig_regs:
-            xfmr_name       = self.orig_regs["orig_substation_xfmr"]["xfmr_name"]
-            reg_added       = 1
-            reg_settings    = 1
-            sub_xfmr        = 1
-            flag_enabled    = "true"
-            xfmr_kva        = self.orig_regs["orig_substation_xfmr"]["xfmr kVA"]
-            xfmr_kv         = self.orig_regs["orig_substation_xfmr"]["xfmr_kv"]
-            new_xfmr        = 0
-            # Figure out source buses
-            self.source_xfmr_buses = self.orig_regs["orig_substation_xfmr"]["bus_names"]
-            # Figure out whether reg ctrl(s) originally existed for sub xfmr
-            ctrl_name = ''
-            for key,vals in self.orig_regs.items():
-                if vals["xfmr_name"].lower()==xfmr_name.lower() and key.lower()!="orig_substation_xfmr":
-                    reg_added = 0
-                    ctrl_name = key.lower()
-                    orig_reg_vsp = float(vals["reg_vsp"])
-                    orig_reg_band = float(vals["reg_band"])
-            # If LTC reg ctrl existed find out its final settings:
-            if ctrl_name!='':
-                with open(os.path.join(self.Settings["outputs"],
-                                       "voltage_upgrades.dss"), "r") as datafile:
-                    for line in datafile:
-                        line = line.split()
-                        reg_ctrl_nm = ''
-                        for params in line:
-                            if params.lower().startswith("regcontrol"):
-                                reg_ctrl_nm = params.split(".")[1].lower()
-                        if reg_ctrl_nm=='':
-                            continue
-                        if reg_ctrl_nm==ctrl_name.lower():
-                            for params in line:
-                                if params.lower().startswith("vreg"):
-                                    reg_vsp = float(params.split("=")[1])
-                                if params.lower().startswith("band"):
-                                    reg_band = float(params.split("=")[1])
-                                if params.lower().startswith("enabled"):
-                                    flag_enabled = params.lower().split("=")[1]
-                if flag_enabled == "true":
-                    ctrl_enabled = 1
-                else:
-                    ctrl_enabled = 0
-                if reg_vsp==orig_reg_vsp and reg_band==orig_reg_band:
-                    reg_settings = 0
-            # If LTC reg ctrl did not exist, find its name and final settings
-            elif ctrl_name == '':
-                with open(os.path.join(self.Settings["outputs"],
-                                       "voltage_upgrades.dss"), "r") as datafile:
-                    # First find out name of the newly added reg ctrl
-                    for line in datafile:
-                        if line.lower().startswith("new regcontrol"):
-                            line = line.split()
-                            xfmr_nm = ''
-                            for params in line:
-                                if params.lower().startswith("transformer"):
-                                    xfmr_nm = params.split("=")[1].lower()
-                            if xfmr_nm=='':
-                                continue
-                            elif xfmr_nm==xfmr_name.lower():
-                                for params in line:
-                                    if params.lower().startswith("regcontrol"):
-                                        ctrl_name=params.split(".")[1].lower()
-                                    if params.lower().startswith("vreg"):
-                                        reg_vsp = float(params.split("=")[1])
-                                    if params.lower().startswith("band"):
-                                        reg_band = float(params.split("=")[1])
-                    # With the above logic, the new LTC regctrl should have been found if it was added - now figure
-                            #  out its final settings and whether or not it was disabled
-                    if not ctrl_name=='':
-                        flag_enabled = "true"
-                        for line in datafile:
-                            line = line.split()
-                            reg_ctrl_nm=''
-                            for params in line:
-                                if params.lower().startswith("regcontrol"):
-                                    reg_ctrl_nm=params.lower().split(".")[1]
-                            if reg_ctrl_nm=='':
-                                continue
-                            elif reg_ctrl_nm==ctrl_name.lower():
-                                for params in line:
-                                    if params.lower().startswith("vreg"):
-                                        reg_vsp = float(params.split("=")[1])
-                                    if params.lower().startswith("band"):
-                                        reg_band = float(params.split("=")[1])
-                                    if params.lower().startswith("enabled"):
-                                        flag_enabled = params.lower().split("=")[1]
-                        if flag_enabled=="true":
-                            ctrl_enabled = 1
-                        else:
-                            ctrl_enabled = 0
-            if flag_enabled=="true":
-                self.reg_upgrades[ctrl_name]        = {
-                    "New controller added"          : reg_added,
-                    "Controller settings modified"  : reg_settings,
-                    "New transformer added"         : new_xfmr,
-                    "Substation LTC"                : sub_xfmr,
-                    "Final settings"                :{
-                        "Transformer name"          : xfmr_name,
-                        "Transformer kVA"           : xfmr_kva,
-                        "Transformer kV"            : xfmr_kv,
-                        "Reg ctrl V set point"      : reg_vsp,
-                        "Reg ctrl deadband"         : reg_band
-                    }
-                }
-
-        return
-
-    def get_existing_inline_regctrl_upgrades(self):
-        for key,vals in self.orig_regs.items():
-            if key.lower()!="orig_substation_xfmr" and key.lower() not in self.reg_upgrades:
-                # If reg ctrl is not sub LTC and existed originally, find final settings and whether they were updated or
-                # not. If there is a weird case where multiple reg control objects are controlling a single xfmr, they might
-                #  not be properly captured
-                ctrl_name           = key.lower()
-                orig_reg_vsp        = float(vals["reg_vsp"])
-                orig_reg_band       = float(vals["reg_band"])
-                xfmr_kva            = vals["xfmr kVA"]
-                xfmr_kv             = vals["xfmr_kv"]
-                xfmr_name           = vals["xfmr_name"]
-                reg_added           = 0
-                reg_settings        = 1
-                sub_xfmr            = 0
-                new_xfmr            = 0
-                # Now get final settings
-                with open(os.path.join(self.Settings["outputs"],
-                                       "voltage_upgrades.dss"), "r") as datafile:
-                    # First find out name of the newly added reg ctrl
-                    for line in datafile:
-                        line = line.split()
-                        reg_ctrl_nm = ''
-                        for params in line:
-                            if params.lower().startswith("regcontrol"):
-                                reg_ctrl_nm = params.lower().split(".")[1]
-                        if reg_ctrl_nm == '':
-                            continue
-                        elif reg_ctrl_nm == ctrl_name.lower():
-                            for params in line:
-                                if params.lower().startswith("vreg"):
-                                    reg_vsp = float(params.split("=")[1])
-                                if params.lower().startswith("band"):
-                                    reg_band = float(params.split("=")[1])
-                if reg_vsp==orig_reg_vsp and reg_band==orig_reg_band:
-                    reg_settings=0
-                self.reg_upgrades[ctrl_name] = {
-                    "New controller added"          : reg_added,
-                    "Controller settings modified"  : reg_settings,
-                    "New transformer added"         : new_xfmr,
-                    "Substation LTC"                : sub_xfmr,
-                    "Final settings"                : {
-                        "Transformer name"          : xfmr_name,
-                        "Transformer kVA"           : xfmr_kva,
-                        "Transformer kV"            : xfmr_kv,
-                        "Reg ctrl V set point"      : reg_vsp,
-                        "Reg ctrl deadband"         : reg_band
-                    }
-                }
-        return
-
-    def get_added_devices(self):
-        # First determine what all new reg control devices were added - so basically if regctrl is not in reg upgrades
-        #  by this point - it implies that it is neither sub LTC reg ctrl and nor is it an existing reg ctrl device
-        new_regctrl_list = []
-        with open(os.path.join(self.Settings["outputs"],
-                               "voltage_upgrades.dss"), "r") as datafile:
-            # First find out name of the newly added reg ctrl
-            for n_line in datafile:
-                n_line = n_line.split()
-                reg_ctrl_nm = ''
-                for params in n_line:
-                    if params.lower().startswith("regcontrol"):
-                        reg_ctrl_nm = params.lower().split(".")[1]
-                if reg_ctrl_nm == '':
-                    continue
-                if reg_ctrl_nm not in self.reg_upgrades and reg_ctrl_nm not in new_regctrl_list:
-                    new_regctrl_list.append(reg_ctrl_nm)
-            # Now find out the new regctrl devices' xfmr name, xfmr ratings, set points etc
-            if len(new_regctrl_list)>0:
-                for ctrl_name in new_regctrl_list:
-                    ctrl_node       = ctrl_name.split("new_regctrl_")[1].lower()
-                    xfmr_name       = "new_xfmr_"+ctrl_node
-                    reg_added       = 1
-                    reg_settings    = 1
-                    sub_xfmr        = 0
-                    new_xfmr        = 1
-                    # get xfmr parameters
-                    with open(os.path.join(self.Settings["outputs"],
-                                           "voltage_upgrades.dss"), "r") as datafile:
-                        for line in datafile:
-                            line = line.split()
-                            tmp_xfmr_name = ''
-                            for params in line:
-                                if params.lower().startswith("transformer."):
-                                    tmp_xfmr_name=params.split(".")[1].lower()
-                            if tmp_xfmr_name==xfmr_name:
-                                with open(os.path.join(self.Settings["outputs"],
-                                                       "voltage_upgrades.dss"), "r") as datafile:
-                                    for nline in datafile:
-                                        nline = nline.split()
-                                        for param in nline:
-                                            if param.lower().startswith("kvs"):
-                                                xfmr_kv = float(param.lower().split("=")[1].split("(")[1].split(",")[0])
-                                            if param.lower().startswith("kvas"):
-                                                xfmr_kva = float(param.lower().split("=")[1].split("(")[1].split(",")[0])
-                    # Now get reg ctrl final settings
-                    with open(os.path.join(self.Settings["outputs"],
-                                           "voltage_upgrades.dss"), "r") as datafile:
-                        for line in datafile:
-                            line = line.split()
-                            reg_ctrl_nm = ''
-                            for params in line:
-                                if params.lower().startswith("regcontrol"):
-                                    reg_ctrl_nm = params.lower().split(".")[1]
-                            if reg_ctrl_nm == '':
-                                continue
-                            elif reg_ctrl_nm == ctrl_name.lower():
-                                for params in line:
-                                    if params.lower().startswith("vreg"):
-                                        reg_vsp = float(params.split("=")[1])
-                                    if params.lower().startswith("band"):
-                                        reg_band = float(params.split("=")[1])
-                    self.reg_upgrades[ctrl_name]        = {
-                        "New controller added"          : reg_added,
-                        "Controller settings modified"  : reg_settings,
-                        "New transformer added"         : new_xfmr,
-                        "Substation LTC"                : sub_xfmr,
-                        "Final settings"                : {
-                            "Transformer name"          : xfmr_name,
-                            "Transformer kVA"           : xfmr_kva,
-                            "Transformer kV"            : xfmr_kv,
-                            "Reg ctrl V set point"      : reg_vsp,
-                            "Reg ctrl deadband"         : reg_band
-                        }
-                        }
-        return
 
 if __name__ == "__main__":
     Settings = {
-        "outputs"   : "../Outputs"
-    # This number gives the maximum number of regulators placed in the feeder apart from substation LTC
+        "outputs": "../Outputs"
     }
     logging.basicConfig()
     logger = logging.getLogger(__name__)
