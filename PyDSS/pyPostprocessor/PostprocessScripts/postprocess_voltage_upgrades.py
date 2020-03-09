@@ -33,15 +33,6 @@ class postprocess_voltage_upgrades():
         self.final_reg_upgrades = {}
         self.processed_outputs = {}
 
-        # print('\nOri reg controls', self.orig_reg_controls)
-        # print('New reg controls', self.new_reg_controls)
-        # print('\nOri cap controls', self.orig_capcontrols)
-        # print('New cap controls', self.new_capcontrols)
-        # print('\nOri capacitors', self.orig_capacitors)
-        # print('New capacitors', self.new_capacitors)
-        # print('\nOri ckt info', self.orig_ckt_info)
-        # print('\nOri xfmr info', self.orig_xfmr_info)
-
         # convert input list of nested dictionaries to a dictionary of nested dictionaries
         self.new_reg_controls = {k: v for element in self.new_reg_controls for k, v in element.items()}
         self.orig_reg_controls = {k: v for element in self.orig_reg_controls for k, v in element.items()}

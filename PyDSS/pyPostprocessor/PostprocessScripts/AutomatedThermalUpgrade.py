@@ -72,6 +72,51 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         super(AutomatedThermalUpgrade, self).__init__(project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger)
         dss = dssInstance
         self.dssSolver = dssSolver
+
+        # TODO Sherin changes from here
+        from PyDSS.utils.utils import iter_elements
+
+        # to get xfmr information
+        def get_transformer_info():
+            xfmr_name = dss.Transformers.Name()
+            data_dict = {xfmr_name: {"num_phases": dss.Properties.Value("Phases"),
+                                     "num_wdgs": dss.Transformers.NumWindings()}}
+            data_dict[xfmr_name]["xfmr_kva"] = []
+            data_dict[xfmr_name]["xfmr_conn"] = []
+            data_dict[xfmr_name]["xfmr_kv"] = []
+            for wdgs in range(data_dict[xfmr_name]["num_wdgs"]):
+                dss.Transformers.Wdg(wdgs + 1)
+                data_dict[xfmr_name]["xfmr_kva"].append(float(dss.Properties.Value("kva")))
+                data_dict[xfmr_name]["xfmr_kv"].append(float(dss.Properties.Value("kv")))
+                data_dict[xfmr_name]["xfmr_conn"].append(dss.Properties.Value("conn"))
+            return data_dict
+
+        # function to get line information
+        def get_line_info():
+            ln_name = dss.Lines.Name()
+            data_dict = {ln_name: {"num_phases": dss.Lines.Phases(), "length": dss.Lines.Length(),
+                                   "ln_b1": dss.Lines.Bus1(), "ln_b2": dss.Lines.Bus2(),
+                                   "len_units": self.config["units key"][dss.Lines.Units()-1]}}
+            data_dict[ln_name]["linecode"] = dss.Lines.LineCode()
+            if data_dict[ln_name]["linecode"] == '':
+                data_dict[ln_name]["linecode"] = dss.Lines.Geometry()
+
+            dss.Circuit.SetActiveBus(data_dict[ln_name]["ln_b1"])
+            kv_b1 = dss.Bus.kVBase()
+            dss.Circuit.SetActiveBus(data_dict[ln_name]["ln_b2"])
+            kv_b2 = dss.Bus.kVBase()
+            dss.Circuit.SetActiveElement("Line.{}".format(ln_name))
+            if kv_b1 != kv_b2:
+                raise InvalidParameter("To and from bus voltages ({} {}) do not match for line {}".
+                                       format(kv_b2, kv_b1, ln_name))
+            data_dict[ln_name]["line_kV"] = kv_b1
+            return data_dict
+
+        self.orig_xfmrs = list(iter_elements(dss.Transformers, get_transformer_info))
+        self.orig_lines = list(iter_elements(dss.Lines, get_line_info))
+
+        # TODO Sherin changes till here
+
         # TODO: To be modified
         self.plot_violations_counter=0
         start_pen = self.config["DPV_penetration_HClimit"]
@@ -203,8 +248,19 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         # upgrades_file = os.path.join(self.config["Outputs"], "Thermal_upgrades_pen_{}.dss".format(self.pen_level))
         # dss.run_command("Redirect {}".format(upgrades_file))
         # self.dssSolver.Solve()
-        # self.determine_line_ldgs()
-        # self.determine_xfmr_ldgs()
+        dss.run_command("Clear")
+        base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
+        dss.run_command(f"Redirect {base_dss}")
+        upgrades_file = os.path.join(self.config["Outputs"], "thermal_upgrades.dss")
+        dss.run_command("Redirect {}".format(upgrades_file))
+        self.dssSolver.Solve()
+
+        # save new upgraded objects
+        self.new_xfmrs = list(iter_elements(dss.Transformers, get_transformer_info))
+        self.new_lines = list(iter_elements(dss.Lines, get_line_info))
+
+        self.determine_line_ldgs()
+        self.determine_xfmr_ldgs()
         # if self.config["Create_upgrade_plots"]:
         #     self.create_op_plots()
         self.get_nodal_violations()
@@ -236,7 +292,11 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             "Outputs"                       : self.config["Outputs"],
             "Create_plots"                  : self.config["Create_upgrade_plots"],
             "feederhead_name"               : feeder_head_name,
-            "feederhead_basekV"             : feeder_head_basekv
+            "feederhead_basekV"             : feeder_head_basekv,
+            "new_xfmrs": self.new_xfmrs,
+            "orig_xfmrs": self.orig_xfmrs,
+            "new_lines": self.new_lines,
+            "orig_lines": self.orig_lines,
         }
 
         postprocess_thermal_upgrades(input_dict, dss, self.logger)

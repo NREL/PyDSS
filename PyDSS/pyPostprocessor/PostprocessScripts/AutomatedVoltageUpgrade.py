@@ -121,7 +121,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             data_dict[reg_name]["bus_kv"] = dss.Bus.kVBase()
             dss.Circuit.SetActiveElement("Transformer.{}".format(data_dict[reg_name]["xfmr_name"]))
             # data_dict[reg_name]["xfmr_kva"] = dss.Transformers.kVA()
-            data_dict[reg_name]["xfmr_kva"] = dss.Properties.Value("kva")
+            data_dict[reg_name]["xfmr_kva"] = float(dss.Properties.Value("kva"))
             dss.Transformers.Wdg(1)  # setting winding to 1, to get kV for winding 1
             data_dict[reg_name]["xfmr_kv"] = dss.Transformers.kV()
             data_dict[reg_name]["xfmr_bus1"] = dss.CktElement.BusNames()[0].split(".")[0]

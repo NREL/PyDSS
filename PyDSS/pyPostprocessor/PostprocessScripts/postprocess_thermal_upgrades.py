@@ -30,12 +30,22 @@ class postprocess_thermal_upgrades():
         self.init_pen = self.Settings["DPV_penetration_HClimit"]
         self.end_pen = self.Settings["DPV_penetration_target"]
         self.pen_step = self.Settings["DPV_penetration_step"]
+        self.new_lines = self.Settings["new_lines"]
+        self.orig_lines = self.Settings["orig_lines"]
+        self.new_xfmrs = self.Settings["new_xfmrs"]
+        self.orig_xfmrs = self.Settings["orig_xfmrs"]
         dss.Vsources.First()
         self.source = dss.CktElement.BusNames()[0].split(".")[0]
         if self.Settings["Create_plots"]:
             self.create_op_plots()
         self.get_orig_line_DT_params()
         self.process_thermal_upgrades()
+        # print(f'new xfmr:{self.new_xfmrs}')
+        # print(f'ori xfmr:{self.orig_xfmrs}')
+        # print(f'new line:{self.new_lines}')
+        # print(f'ori line:{self.orig_lines}')
+
+    # TODO make function to post process orig and new objects
 
     def get_orig_line_DT_params(self):
         self.orig_line_parameters = {}
