@@ -51,14 +51,6 @@ class postprocess_voltage_upgrades():
         self.final_reg_upgrades = {}
         self.processed_outputs = {}
 
-        # convert input list of nested dictionaries to a dictionary of nested dictionaries
-        self.new_reg_controls = {k: v for element in self.new_reg_controls for k, v in element.items()}
-        self.orig_reg_controls = {k: v for element in self.orig_reg_controls for k, v in element.items()}
-        self.new_capacitors = {k: v for element in self.new_capacitors for k, v in element.items()}
-        self.orig_capacitors = {k: v for element in self.orig_capacitors for k, v in element.items()}
-        self.new_capcontrols = {k: v for element in self.new_capcontrols for k, v in element.items()}
-        self.orig_capcontrols = {k: v for element in self.orig_capcontrols for k, v in element.items()}
-
         if self.new_capcontrols:
             self.get_capacitor_upgrades()
         if self.new_reg_controls:

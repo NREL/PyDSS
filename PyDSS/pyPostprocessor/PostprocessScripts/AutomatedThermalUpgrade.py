@@ -37,16 +37,13 @@ plt.rcParams.update({'font.size': 14})
 # to get xfmr information
 def get_transformer_info():
     xfmr_name = dss.Transformers.Name()
-    data_dict = {xfmr_name: {"num_phases": dss.Properties.Value("Phases"),
-                             "num_wdgs": dss.Transformers.NumWindings()}}
-    data_dict[xfmr_name]["kva"] = []
-    data_dict[xfmr_name]["conn"] = []
-    data_dict[xfmr_name]["kv"] = []
-    for wdgs in range(data_dict[xfmr_name]["num_wdgs"]):
+    data_dict = {"name": xfmr_name, "num_phases": dss.Properties.Value("Phases"),
+                 "num_wdgs": dss.Transformers.NumWindings(), "kva": [], "conn": [], "kv": []}
+    for wdgs in range(data_dict["num_wdgs"]):
         dss.Transformers.Wdg(wdgs + 1)
-        data_dict[xfmr_name]["kva"].append(float(dss.Properties.Value("kva")))
-        data_dict[xfmr_name]["kv"].append(float(dss.Properties.Value("kv")))
-        data_dict[xfmr_name]["conn"].append(dss.Properties.Value("conn"))
+        data_dict["kva"].append(float(dss.Properties.Value("kva")))
+        data_dict["kv"].append(float(dss.Properties.Value("kv")))
+        data_dict["conn"].append(dss.Properties.Value("conn"))
     return data_dict
 
 
@@ -91,8 +88,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         dss = dssInstance
         self.dssSolver = dssSolver
 
-        self.orig_xfmrs = list(iter_elements(dss.Transformers, get_transformer_info))
-        self.orig_lines = list(iter_elements(dss.Lines, self.get_line_info))
+        self.orig_xfmrs = {x["name"]: x for x in iter_elements(dss.Transformers, get_transformer_info)}
+        self.orig_lines = {x["name"]: x for x in iter_elements(dss.Lines, self.get_line_info)}
 
         # TODO: To be modified
         self.plot_violations_counter=0
@@ -233,8 +230,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.dssSolver.Solve()
 
         # save new upgraded objects
-        self.new_xfmrs = list(iter_elements(dss.Transformers, get_transformer_info))
-        self.new_lines = list(iter_elements(dss.Lines, self.get_line_info))
+        self.new_xfmrs = {x["name"]: x for x in iter_elements(dss.Transformers, get_transformer_info)}
+        self.new_lines = {x["name"]: x for x in iter_elements(dss.Lines, self.get_line_info)}
 
         self.determine_line_ldgs()
         self.determine_xfmr_ldgs()
@@ -285,22 +282,21 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
     # function to get line information
     def get_line_info(self):
         ln_name = dss.Lines.Name()
-        data_dict = {ln_name: {"num_phases": dss.Lines.Phases(), "length": dss.Lines.Length(),
-                               "ln_b1": dss.Lines.Bus1(), "ln_b2": dss.Lines.Bus2(),
-                               "len_units": self.config["units key"][dss.Lines.Units() - 1]}}
-        data_dict[ln_name]["linecode"] = dss.Lines.LineCode()
-        if data_dict[ln_name]["linecode"] == '':
-            data_dict[ln_name]["linecode"] = dss.Lines.Geometry()
-
-        dss.Circuit.SetActiveBus(data_dict[ln_name]["ln_b1"])
+        data_dict = {"name": ln_name, "num_phases": dss.Lines.Phases(), "length": dss.Lines.Length(),
+                     "ln_b1": dss.Lines.Bus1(), "ln_b2": dss.Lines.Bus2(),
+                     "len_units": self.config["units key"][dss.Lines.Units() - 1],
+                     "linecode": dss.Lines.LineCode()}
+        if data_dict["linecode"] == '':
+            data_dict["linecode"] = dss.Lines.Geometry()
+        dss.Circuit.SetActiveBus(data_dict["ln_b1"])
         kv_b1 = dss.Bus.kVBase()
-        dss.Circuit.SetActiveBus(data_dict[ln_name]["ln_b2"])
+        dss.Circuit.SetActiveBus(data_dict["ln_b2"])
         kv_b2 = dss.Bus.kVBase()
         dss.Circuit.SetActiveElement("Line.{}".format(ln_name))
         if kv_b1 != kv_b2:
             raise InvalidParameter("To and from bus voltages ({} {}) do not match for line {}".
                                    format(kv_b2, kv_b1, ln_name))
-        data_dict[ln_name]["line_kV"] = kv_b1
+        data_dict["line_kV"] = kv_b1
         return data_dict
 
     def read_available_upgrades(self, file):
