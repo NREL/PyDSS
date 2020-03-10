@@ -14,8 +14,89 @@ import math
 from PyDSS.exceptions import InvalidParameter, OpenDssConvergenceError
 from PyDSS.pyPostprocessor.pyPostprocessAbstract import AbstractPostprocess
 from PyDSS.pyPostprocessor.PostprocessScripts.postprocess_voltage_upgrades import postprocess_voltage_upgrades
+from PyDSS.utils.utils import iter_elements
 
 plt.rcParams.update({'font.size': 14})
+
+
+# to get metadata: source bus, substation xfmr information
+def get_ckt_info():
+    data_dict = {}
+    dss.Vsources.First()
+    source_bus = dss.CktElement.BusNames()[0].split(".")[0]
+    data_dict['source_bus'] = source_bus
+    dss.Transformers.First()
+    while True:
+        bus_names = dss.CktElement.BusNames()
+        bus_names_only = []
+        for buses in bus_names:
+            bus_names_only.append(buses.split(".")[0].lower())
+        if source_bus.lower() in bus_names_only:
+            sub_xfmr = dss.Transformers.Name()
+            data_dict["substation_xfmr"] = {
+                "xfmr_name": sub_xfmr,
+                "xfmr_kva": dss.Transformers.kVA(),
+                "xfmr_kv": dss.Transformers.kV(),
+                "bus_names": bus_names_only
+            }
+        if not dss.Transformers.Next() > 0:
+            break
+    return data_dict
+
+
+# function to get regulator information
+def get_reg_control_info():
+    reg_name = dss.RegControls.Name()
+    data_dict = {
+        reg_name: {
+            "xfmr_name": dss.RegControls.Transformer(),
+            "ptratio": dss.RegControls.PTRatio(),
+            "delay": dss.RegControls.Delay(),
+        }
+    }
+    dss.Circuit.SetActiveElement("Regcontrol.{}".format(reg_name))
+    data_dict[reg_name]["v_setpoint"] = dss.Properties.Value("vreg"),  # this returns a tuple - account in pp
+    data_dict[reg_name]["v_deadband"] = dss.Properties.Value("band"),  # this returns a tuple - account in pp
+    data_dict[reg_name]["enabled"] = dss.CktElement.Enabled(),  # this returns a tuple - account in postprocess
+    data_dict[reg_name]["reg_bus"] = dss.CktElement.BusNames()[0].split(".")[0]
+    dss.Circuit.SetActiveBus(data_dict[reg_name]["reg_bus"])
+    data_dict[reg_name]["bus_num_phases"] = dss.CktElement.NumPhases()
+    data_dict[reg_name]["bus_kv"] = dss.Bus.kVBase()
+    dss.Circuit.SetActiveElement("Transformer.{}".format(data_dict[reg_name]["xfmr_name"]))
+    data_dict[reg_name]["xfmr_kva"] = float(dss.Properties.Value("kva"))
+    dss.Transformers.Wdg(1)  # setting winding to 1, to get kV for winding 1
+    data_dict[reg_name]["xfmr_kv"] = dss.Transformers.kV()
+    data_dict[reg_name]["xfmr_bus1"] = dss.CktElement.BusNames()[0].split(".")[0]
+    data_dict[reg_name]["xfmr_bus2"] = dss.CktElement.BusNames()[1].split(".")[0]
+    return data_dict
+
+
+# function to get capacitor information
+def get_capacitor_info():
+    return {dss.Capacitors.Name():
+                {"kv": dss.Capacitors.kV(),
+                 "kvar": dss.Capacitors.kvar(),
+                 }}
+
+
+def get_cap_controls_info():
+    ctrl_name = dss.CapControls.Name()
+    data_dict = {
+        ctrl_name: {
+            "cap_name": dss.CapControls.Capacitor(),
+            "offsetting": dss.CapControls.OFFSetting(),
+            "onsetting": dss.CapControls.ONSetting(),
+            "control_type": dss.Properties.Value("type"),
+            "ctratio": dss.CapControls.CTRatio(),
+            "ptratio": dss.CapControls.PTRatio(),
+        }
+    }
+    cap_name = dss.CapControls.Capacitor()
+    dss.Capacitors.Name(cap_name)
+    data_dict[ctrl_name]["cap_kvar"] = dss.Capacitors.kvar()
+    data_dict[ctrl_name]["cap_kv"] = dss.Capacitors.kV()
+    return data_dict
+
 
 class AutomatedVoltageUpgrade(AbstractPostprocess):
     """The class is used to induce faults on bus for dynamic simulation studies. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class. 
@@ -52,7 +133,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         "Thermal scenario name",
     )
 
-
     def __init__(self, project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger):
         """Constructor method
         """
@@ -72,87 +152,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.dssSolver = dssSolver
         self.start = time.time()
 
-        from PyDSS.utils.utils import iter_elements
-        # to get metadata: source bus, substation xfmr information
-        def get_ckt_info():
-            data_dict = {}
-            # data_dict["feeder_head_name"] = dss.Circuit.Name()
-            # data_dict["feeder_head_bus"] = dss.CktElement.BusNames()[0].split(".")[0]
-            dss.Vsources.First()
-            source_bus = dss.CktElement.BusNames()[0].split(".")[0]
-            data_dict['source_bus'] = source_bus
-            # gives substation transformer info
-            sub_xfmr = ''
-            dss.Transformers.First()
-            while True:
-                bus_names = dss.CktElement.BusNames()
-                bus_names_only = []
-                for buses in bus_names:
-                    bus_names_only.append(buses.split(".")[0].lower())
-                if source_bus.lower() in bus_names_only:
-                    sub_xfmr = dss.Transformers.Name()
-                    data_dict["substation_xfmr"] = {
-                        "xfmr_name": sub_xfmr,
-                        "xfmr_kva": dss.Transformers.kVA(),
-                        "xfmr_kv": dss.Transformers.kV(),
-                        "bus_names": bus_names_only
-                    }
-                if not dss.Transformers.Next() > 0:
-                    break
-            return data_dict
-
-        # function to get regulator information
-        def get_reg_control_info():
-            reg_name = dss.RegControls.Name()
-            data_dict = {
-                reg_name: {
-                    "xfmr_name": dss.RegControls.Transformer(),
-                    "ptratio": dss.RegControls.PTRatio(),
-                    "delay": dss.RegControls.Delay(),
-                }
-            }
-            dss.Circuit.SetActiveElement("Regcontrol.{}".format(reg_name))
-            data_dict[reg_name]["v_setpoint"] = dss.Properties.Value("vreg"),  # this returns a tuple - account in pp
-            data_dict[reg_name]["v_deadband"] = dss.Properties.Value("band"),  # this returns a tuple - account in pp
-            data_dict[reg_name]["enabled"] = dss.CktElement.Enabled(),  # this returns a tuple - account in postprocess
-            data_dict[reg_name]["reg_bus"] = dss.CktElement.BusNames()[0].split(".")[0]
-            dss.Circuit.SetActiveBus(data_dict[reg_name]["reg_bus"])
-            data_dict[reg_name]["bus_num_phases"] = dss.CktElement.NumPhases()
-            data_dict[reg_name]["bus_kv"] = dss.Bus.kVBase()
-            dss.Circuit.SetActiveElement("Transformer.{}".format(data_dict[reg_name]["xfmr_name"]))
-            # data_dict[reg_name]["xfmr_kva"] = dss.Transformers.kVA()
-            data_dict[reg_name]["xfmr_kva"] = float(dss.Properties.Value("kva"))
-            dss.Transformers.Wdg(1)  # setting winding to 1, to get kV for winding 1
-            data_dict[reg_name]["xfmr_kv"] = dss.Transformers.kV()
-            data_dict[reg_name]["xfmr_bus1"] = dss.CktElement.BusNames()[0].split(".")[0]
-            data_dict[reg_name]["xfmr_bus2"] = dss.CktElement.BusNames()[1].split(".")[0]
-            return data_dict
-
-        # function to get capacitor information
-        def get_capacitor_info():
-            return {dss.Capacitors.Name():
-                        {"kv": dss.Capacitors.kV(),
-                         "kvar": dss.Capacitors.kvar(),
-                         }}
-
-        def get_cap_controls_info():
-            ctrl_name = dss.CapControls.Name()
-            data_dict = {
-                ctrl_name: {
-                    "cap_name": dss.CapControls.Capacitor(),
-                    "offsetting": dss.CapControls.OFFSetting(),
-                    "onsetting": dss.CapControls.ONSetting(),
-                    "control_type": dss.Properties.Value("type"),
-                    "ctratio": dss.CapControls.CTRatio(),
-                    "ptratio": dss.CapControls.PTRatio(),
-                }
-            }
-            cap_name = dss.CapControls.Capacitor()
-            dss.Capacitors.Name(cap_name)
-            data_dict[ctrl_name]["cap_kvar"] = dss.Capacitors.kvar()
-            data_dict[ctrl_name]["cap_kv"] = dss.Capacitors.kV()
-            return data_dict
-
         self.orig_ckt_info = get_ckt_info()
         self.orig_reg_controls = list(iter_elements(dss.RegControls, get_reg_control_info))
         self.orig_capacitors = list(iter_elements(dss.Capacitors, get_capacitor_info))
@@ -167,7 +166,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         num_nodes = dss.Bus.NumNodes()
         if num_nodes > 1:
             feeder_head_basekv = round(feeder_head_basekv * math.sqrt(3), 1)
-        
+
         # Cap bank default settings -
         self.capON = round((self.config["nominal_voltage"] - self.config["Cap sweep voltage gap"] / 2), 1)
         self.capOFF = round((self.config["nominal_voltage"] + self.config["Cap sweep voltage gap"] / 2), 1)
@@ -487,7 +486,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     dss.run_command(command_string)
                     dss.run_command("CalcVoltageBases")
                     self.write_dss_file(command_string)
-                # self.write_dss_file("CalcVoltageBases")
                 # After all additional devices have been placed perform the cap bank settings sweep again-
                 # only if new devices were accepted
 

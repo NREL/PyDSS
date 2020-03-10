@@ -20,6 +20,7 @@ import scipy.spatial.distance as ssd
 from sklearn.cluster import AgglomerativeClustering
 import matplotlib.image as mpimg
 from PyDSS.pyPostprocessor.PostprocessScripts.postprocess_thermal_upgrades import postprocess_thermal_upgrades
+from PyDSS.utils.utils import iter_elements
 plt.rcParams.update({'font.size': 14})
 
 # For an overloaded line if a sensible close enough line code is available then simply change the line code
@@ -31,6 +32,23 @@ plt.rcParams.update({'font.size': 14})
 # TODO: Add xhl, xht, xlt and buses functionality for DTs
 # TODO: Units of the line and transformers
 # TODO: Correct line and xfmr violations safety margin issue
+
+
+# to get xfmr information
+def get_transformer_info():
+    xfmr_name = dss.Transformers.Name()
+    data_dict = {xfmr_name: {"num_phases": dss.Properties.Value("Phases"),
+                             "num_wdgs": dss.Transformers.NumWindings()}}
+    data_dict[xfmr_name]["kva"] = []
+    data_dict[xfmr_name]["conn"] = []
+    data_dict[xfmr_name]["kv"] = []
+    for wdgs in range(data_dict[xfmr_name]["num_wdgs"]):
+        dss.Transformers.Wdg(wdgs + 1)
+        data_dict[xfmr_name]["kva"].append(float(dss.Properties.Value("kva")))
+        data_dict[xfmr_name]["kv"].append(float(dss.Properties.Value("kv")))
+        data_dict[xfmr_name]["conn"].append(dss.Properties.Value("conn"))
+    return data_dict
+
 
 class AutomatedThermalUpgrade(AbstractPostprocess):
     """The class is used to induce faults on bus for dynamic simulation studies. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class. 
@@ -73,49 +91,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         dss = dssInstance
         self.dssSolver = dssSolver
 
-        # TODO Sherin changes from here
-        from PyDSS.utils.utils import iter_elements
-
-        # to get xfmr information
-        def get_transformer_info():
-            xfmr_name = dss.Transformers.Name()
-            data_dict = {xfmr_name: {"num_phases": dss.Properties.Value("Phases"),
-                                     "num_wdgs": dss.Transformers.NumWindings()}}
-            data_dict[xfmr_name]["xfmr_kva"] = []
-            data_dict[xfmr_name]["xfmr_conn"] = []
-            data_dict[xfmr_name]["xfmr_kv"] = []
-            for wdgs in range(data_dict[xfmr_name]["num_wdgs"]):
-                dss.Transformers.Wdg(wdgs + 1)
-                data_dict[xfmr_name]["xfmr_kva"].append(float(dss.Properties.Value("kva")))
-                data_dict[xfmr_name]["xfmr_kv"].append(float(dss.Properties.Value("kv")))
-                data_dict[xfmr_name]["xfmr_conn"].append(dss.Properties.Value("conn"))
-            return data_dict
-
-        # function to get line information
-        def get_line_info():
-            ln_name = dss.Lines.Name()
-            data_dict = {ln_name: {"num_phases": dss.Lines.Phases(), "length": dss.Lines.Length(),
-                                   "ln_b1": dss.Lines.Bus1(), "ln_b2": dss.Lines.Bus2(),
-                                   "len_units": self.config["units key"][dss.Lines.Units()-1]}}
-            data_dict[ln_name]["linecode"] = dss.Lines.LineCode()
-            if data_dict[ln_name]["linecode"] == '':
-                data_dict[ln_name]["linecode"] = dss.Lines.Geometry()
-
-            dss.Circuit.SetActiveBus(data_dict[ln_name]["ln_b1"])
-            kv_b1 = dss.Bus.kVBase()
-            dss.Circuit.SetActiveBus(data_dict[ln_name]["ln_b2"])
-            kv_b2 = dss.Bus.kVBase()
-            dss.Circuit.SetActiveElement("Line.{}".format(ln_name))
-            if kv_b1 != kv_b2:
-                raise InvalidParameter("To and from bus voltages ({} {}) do not match for line {}".
-                                       format(kv_b2, kv_b1, ln_name))
-            data_dict[ln_name]["line_kV"] = kv_b1
-            return data_dict
-
         self.orig_xfmrs = list(iter_elements(dss.Transformers, get_transformer_info))
-        self.orig_lines = list(iter_elements(dss.Lines, get_line_info))
-
-        # TODO Sherin changes till here
+        self.orig_lines = list(iter_elements(dss.Lines, self.get_line_info))
 
         # TODO: To be modified
         self.plot_violations_counter=0
@@ -257,7 +234,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
         # save new upgraded objects
         self.new_xfmrs = list(iter_elements(dss.Transformers, get_transformer_info))
-        self.new_lines = list(iter_elements(dss.Lines, get_line_info))
+        self.new_lines = list(iter_elements(dss.Lines, self.get_line_info))
 
         self.determine_line_ldgs()
         self.determine_xfmr_ldgs()
@@ -304,6 +281,27 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
     @staticmethod
     def _get_required_input_fields():
         return AutomatedThermalUpgrade.REQUIRED_INPUT_FIELDS
+
+    # function to get line information
+    def get_line_info(self):
+        ln_name = dss.Lines.Name()
+        data_dict = {ln_name: {"num_phases": dss.Lines.Phases(), "length": dss.Lines.Length(),
+                               "ln_b1": dss.Lines.Bus1(), "ln_b2": dss.Lines.Bus2(),
+                               "len_units": self.config["units key"][dss.Lines.Units() - 1]}}
+        data_dict[ln_name]["linecode"] = dss.Lines.LineCode()
+        if data_dict[ln_name]["linecode"] == '':
+            data_dict[ln_name]["linecode"] = dss.Lines.Geometry()
+
+        dss.Circuit.SetActiveBus(data_dict[ln_name]["ln_b1"])
+        kv_b1 = dss.Bus.kVBase()
+        dss.Circuit.SetActiveBus(data_dict[ln_name]["ln_b2"])
+        kv_b2 = dss.Bus.kVBase()
+        dss.Circuit.SetActiveElement("Line.{}".format(ln_name))
+        if kv_b1 != kv_b2:
+            raise InvalidParameter("To and from bus voltages ({} {}) do not match for line {}".
+                                   format(kv_b2, kv_b1, ln_name))
+        data_dict[ln_name]["line_kV"] = kv_b1
+        return data_dict
 
     def read_available_upgrades(self, file):
         f = open(os.path.join(self.config["upgrade_library_path"], "{}.json".format(file)), 'r')

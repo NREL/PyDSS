@@ -20,8 +20,8 @@ from sklearn.cluster import AgglomerativeClustering
 import matplotlib.image as mpimg
 plt.rcParams.update({'font.size': 14})
 
-# Post process thermal upgrades dss files to create network plots and also to create easier post processing files
 
+# Post process thermal upgrades dss files to create network plots and also to create easier post processing files
 class postprocess_thermal_upgrades():
     def __init__(self, Settings, dss, logger):
         self.Settings = Settings
@@ -40,10 +40,6 @@ class postprocess_thermal_upgrades():
             self.create_op_plots()
         self.get_orig_line_DT_params()
         self.process_thermal_upgrades()
-        # print(f'new xfmr:{self.new_xfmrs}')
-        # print(f'ori xfmr:{self.orig_xfmrs}')
-        # print(f'new line:{self.new_lines}')
-        # print(f'ori line:{self.orig_lines}')
 
     # TODO make function to post process orig and new objects
 

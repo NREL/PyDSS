@@ -17,6 +17,24 @@ import logging
 
 # End point if lesser than 1% or fewer than 5 nodes have Range A violations
 
+
+# function to compare two dictionaries with same format
+# only compares common elements present in both original and new dictionaries
+def compare_dict(old, new):
+    field_list = []
+    change = {}
+    sharedKeys = set(old.keys()).intersection(new.keys())
+    for key in sharedKeys:
+        change_flag = False
+        for sub_field in old[key]:
+            if old[key][sub_field] != new[key][sub_field]:
+                change_flag = True
+                field_list.append(sub_field)
+        if change_flag:
+            change[key] = field_list
+    return change
+
+
 class postprocess_voltage_upgrades():
     def __init__(self, Settings, logger):
         self.Settings = Settings
@@ -50,28 +68,10 @@ class postprocess_voltage_upgrades():
         self.processed_outputs["feederhead_basekV"] = self.Settings["feederhead_basekV"]
         self.write_to_json(self.processed_outputs, "Processed_voltage_upgrades")
 
-    # function to compare two dictionaries with same format
-    # only compares common elements present in both original and new dictionaries
-    def compare_dict(self, old, new):
-        field_list = []
-        change = {}
-        sharedKeys = set(old.keys()).intersection(new.keys())
-        for key in sharedKeys:
-            change_flag = False
-            for sub_field in old[key]:
-                if old[key][sub_field] != new[key][sub_field]:
-                    change_flag = True
-                    field_list.append(sub_field)
-                    print(
-                        f'Key: {key}, {sub_field} 1: {old[key][sub_field]}, {sub_field} 2: {new[key][sub_field]}')
-            if change_flag == True:
-                change[key] = field_list
-        return change
-
     # function to get capacitor upgrades
     def get_capacitor_upgrades(self):
         # STEP 1: compare controllers that exist in both: original and new- and get difference
-        change = self.compare_dict(self.orig_capcontrols, self.new_capcontrols)
+        change = compare_dict(self.orig_capcontrols, self.new_capcontrols)
         modified_capacitors = list(change.keys())
         # STEP 2: account for any new controllers added (which are not there in original)
         new_addition = list(set(self.new_capcontrols.keys()) -
@@ -122,7 +122,7 @@ class postprocess_voltage_upgrades():
     # function to check for regulator upgrades
     def get_regulator_upgrades(self):
         # STEP 1: compare controllers that exist in both: original and new
-        change = self.compare_dict(self.orig_reg_controls, self.new_reg_controls)
+        change = compare_dict(self.orig_reg_controls, self.new_reg_controls)
         modified_regulators = list(change.keys())
         # STEP 2: account for any new controllers added (which are not there in original)
         new_addition = list(set(self.new_reg_controls.keys()) -
