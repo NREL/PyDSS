@@ -14,8 +14,80 @@ import math
 from PyDSS.exceptions import InvalidParameter, OpenDssConvergenceError
 from PyDSS.pyPostprocessor.pyPostprocessAbstract import AbstractPostprocess
 from PyDSS.pyPostprocessor.PostprocessScripts.postprocess_voltage_upgrades import postprocess_voltage_upgrades
+from PyDSS.utils.utils import iter_elements
 
 plt.rcParams.update({'font.size': 14})
+
+
+# to get metadata: source bus, substation xfmr information
+def get_ckt_info():
+    data_dict = {}
+    dss.Vsources.First()
+    source_bus = dss.CktElement.BusNames()[0].split(".")[0]
+    data_dict['source_bus'] = source_bus
+    dss.Transformers.First()
+    while True:
+        bus_names = dss.CktElement.BusNames()
+        bus_names_only = []
+        for buses in bus_names:
+            bus_names_only.append(buses.split(".")[0].lower())
+        if source_bus.lower() in bus_names_only:
+            sub_xfmr = dss.Transformers.Name()
+            data_dict["substation_xfmr"] = {
+                "xfmr_name": sub_xfmr,
+                "xfmr_kva": dss.Transformers.kVA(),
+                "xfmr_kv": dss.Transformers.kV(),
+                "bus_names": bus_names_only
+            }
+        if not dss.Transformers.Next() > 0:
+            break
+    return data_dict
+
+
+# function to get regulator information
+def get_reg_control_info():
+    reg_name = dss.RegControls.Name()
+    data_dict = {"name": reg_name, "xfmr_name": dss.RegControls.Transformer(),
+                 "ptratio": dss.RegControls.PTRatio(),
+                 "delay": dss.RegControls.Delay()}
+    dss.Circuit.SetActiveElement("Regcontrol.{}".format(reg_name))
+    data_dict["v_setpoint"] = dss.Properties.Value("vreg"),  # this returns a tuple - account in pp
+    data_dict["v_deadband"] = dss.Properties.Value("band"),  # this returns a tuple - account in pp
+    data_dict["enabled"] = dss.CktElement.Enabled(),  # this returns a tuple - account in postprocess
+    data_dict["reg_bus"] = dss.CktElement.BusNames()[0].split(".")[0]
+    dss.Circuit.SetActiveBus(data_dict["reg_bus"])
+    data_dict["bus_num_phases"] = dss.CktElement.NumPhases()
+    data_dict["bus_kv"] = dss.Bus.kVBase()
+    dss.Circuit.SetActiveElement("Transformer.{}".format(data_dict["xfmr_name"]))
+    data_dict["xfmr_kva"] = float(dss.Properties.Value("kva"))
+    dss.Transformers.Wdg(1)  # setting winding to 1, to get kV for winding 1
+    data_dict["xfmr_kv"] = dss.Transformers.kV()
+    data_dict["xfmr_bus1"] = dss.CktElement.BusNames()[0].split(".")[0]
+    data_dict["xfmr_bus2"] = dss.CktElement.BusNames()[1].split(".")[0]
+    return data_dict
+
+
+# function to get capacitor information
+def get_capacitor_info():
+    return {"name": dss.Capacitors.Name(), "kv": dss.Capacitors.kV(), "kvar": dss.Capacitors.kvar()}
+
+
+def get_cap_controls_info():
+    ctrl_name = dss.CapControls.Name()
+    data_dict = {
+            "name": ctrl_name,
+            "cap_name": dss.CapControls.Capacitor(),
+            "offsetting": dss.CapControls.OFFSetting(),
+            "onsetting": dss.CapControls.ONSetting(),
+            "control_type": dss.Properties.Value("type"),
+            "ctratio": dss.CapControls.CTRatio(),
+            "ptratio": dss.CapControls.PTRatio(),
+        }
+    dss.Capacitors.Name(data_dict["cap_name"])
+    data_dict["cap_kvar"] = dss.Capacitors.kvar()
+    data_dict["cap_kv"] = dss.Capacitors.kV()
+    return data_dict
+
 
 class AutomatedVoltageUpgrade(AbstractPostprocess):
     """The class is used to induce faults on bus for dynamic simulation studies. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class. 
@@ -66,11 +138,16 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.logger.info("thermal_dss_file=%s", thermal_dss_file)
         if not os.path.exists(thermal_dss_file):
             raise InvalidParameter(f"AutomatedThermalUpgrade did not produce thermal_filename")
-
         dss = dssInstance
         dss.run_command("Redirect {}".format(thermal_dss_file))
         self.dssSolver = dssSolver
         self.start = time.time()
+
+        self.orig_ckt_info = get_ckt_info()
+        self.orig_reg_controls = {x["name"]: x for x in iter_elements(dss.RegControls, get_reg_control_info)}
+        self.orig_capacitors = {x["name"]: x for x in iter_elements(dss.Capacitors, get_capacitor_info)}
+        self.orig_capcontrols = {x["name"]: x for x in iter_elements(dss.CapControls, get_cap_controls_info)}
+        self.orig_xfmr_info = dss.Transformers.AllNames()
 
         # Get feeder head meta data
         feeder_head_name = dss.Circuit.Name()
@@ -400,7 +477,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     dss.run_command(command_string)
                     dss.run_command("CalcVoltageBases")
                     self.write_dss_file(command_string)
-                self.write_dss_file("CalcVoltageBases")
                 # After all additional devices have been placed perform the cap bank settings sweep again-
                 # only if new devices were accepted
 
@@ -410,6 +486,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     self.check_voltage_violations_multi_tps()
                     if self.config["create topology plots"]:
                         self.plot_violations()
+                self.write_dss_file("CalcVoltageBases")
 
             self.check_voltage_violations_multi_tps()
             self.logger.info("Compare objective with best and applied settings, %s, %s", self.cluster_optimal_reg_nodes[min_cluster][0],
@@ -423,19 +500,39 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             self.plot_violations()
         self.write_upgrades_to_file()
         self.logger.info("total_time = %s", end_t - start_t)
+
+        # # TODO: Check impact of upgrades - Cannot recompile feeder in PyDSS
+        self.logger.info("Checking impact of redirected upgrades file")
+        dss.run_command("Clear")
+        base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
+        dss.run_command(f"Redirect {base_dss}")
+        dss.run_command(f"Redirect {thermal_dss_file}")
+        upgrades_file = os.path.join(self.config["Outputs"], "voltage_upgrades.dss")
+        dss.run_command("Redirect {}".format(upgrades_file))
+        self.dssSolver.Solve()
+
+        self.new_reg_controls = {x["name"]: x for x in iter_elements(dss.RegControls, get_reg_control_info)}
+        self.new_capacitors = {x["name"]: x for x in iter_elements(dss.Capacitors, get_capacitor_info)}
+        self.new_capcontrols = {x["name"]: x for x in iter_elements(dss.CapControls, get_cap_controls_info)}
+        self.new_xfmr_info = dss.Transformers.AllNames()
+
         postprocess_voltage_upgrades(
             {
                 "outputs": self.config["Outputs"],
                 "feederhead_name": feeder_head_name,
-                "feederhead_basekV": feeder_head_basekv
+                "feederhead_basekV": feeder_head_basekv,
+                "orig_ckt_info": self.orig_ckt_info,
+                "new_reg_controls": self.new_reg_controls,
+                "orig_reg_controls": self.orig_reg_controls,
+                "new_capacitors": self.new_capacitors,
+                "orig_capacitors": self.orig_capacitors,
+                "new_capcontrols": self.new_capcontrols,
+                "orig_capcontrols": self.orig_capcontrols,
+                "orig_xfmr_info": self.orig_xfmr_info,
+                "new_xfmr_info": self.new_xfmr_info,
             },
             self.logger,
         )
-        # # TODO: Check impact of upgrades - Cannot recompile feeder in PyDSS
-        # self.logger.info("Checking impact of redirected upgrades file")
-        # upgrades_file = os.path.join(self.config["Outputs"], "Voltage_upgrades.dss")
-        # dss.run_command("Redirect {}".format(upgrades_file))
-        # self.dssSolver.Solve()
         # self.check_voltage_violations_multi_tps()
         # if self.config["create topology plots"]:
         #     self.plot_violations()
