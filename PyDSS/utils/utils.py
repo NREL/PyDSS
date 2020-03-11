@@ -20,6 +20,12 @@ MAX_PATH_LENGTH = 255
 logger = logging.getLogger(__name__)
 
 
+def check_redirect(file_name):
+    result = dss.run_command("Redirect {}".format(file_name))
+    if result != '':
+        raise Exception(f'Redirect failed {result}')
+
+
 def _get_module_from_extension(filename, **kwargs):
     ext = os.path.splitext(filename)[1].lower()
     if ext == ".json":
