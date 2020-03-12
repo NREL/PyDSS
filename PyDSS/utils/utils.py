@@ -21,9 +21,24 @@ logger = logging.getLogger(__name__)
 
 
 def check_redirect(file_name):
-    result = dss.run_command("Redirect {}".format(file_name))
-    if result != '':
-        raise Exception(f'Redirect failed {result}')
+    """Runs redirect command for dss file
+    And checks for exception
+
+    Parameters
+    ----------
+    file_name : str
+        dss file to be redirected
+
+    Raises
+    -------
+    Exception
+        Raised if the command fails
+
+    """
+    logger.debug(f"Redirecting DSS file: {file_name}")
+    result = dss.run_command(f"Redirect {file_name}")
+    if result != "":
+        raise Exception(f"Redirect failed for {file_name}, message: {result}")
 
 
 def _get_module_from_extension(filename, **kwargs):
