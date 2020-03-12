@@ -20,7 +20,7 @@ import scipy.spatial.distance as ssd
 from sklearn.cluster import AgglomerativeClustering
 import matplotlib.image as mpimg
 from PyDSS.pyPostprocessor.PostprocessScripts.postprocess_thermal_upgrades import postprocess_thermal_upgrades
-from PyDSS.utils.utils import iter_elements
+from PyDSS.utils.utils import iter_elements, check_redirect
 plt.rcParams.update({'font.size': 14})
 
 # For an overloaded line if a sensible close enough line code is available then simply change the line code
@@ -219,14 +219,11 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.logger.info("Total time = %s", end - start)
         # # TODO: Test impact of applied settings - can't compile the feeder again in PyDSS
         # self.compile_feeder_initialize()
-        # upgrades_file = os.path.join(self.config["Outputs"], "Thermal_upgrades_pen_{}.dss".format(self.pen_level))
-        # dss.run_command("Redirect {}".format(upgrades_file))
-        # self.dssSolver.Solve()
         dss.run_command("Clear")
         base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
-        dss.run_command(f"Redirect {base_dss}")
+        check_redirect(base_dss)
         upgrades_file = os.path.join(self.config["Outputs"], "thermal_upgrades.dss")
-        dss.run_command("Redirect {}".format(upgrades_file))
+        check_redirect(upgrades_file)
         self.dssSolver.Solve()
 
         # save new upgraded objects
@@ -980,7 +977,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             self.logger.debug("expected_file_name", expected_file_name)
             if expected_file_name in self.thermal_upgrades_files:
                 expected_file_path = os.path.join(self.config["Outputs"],expected_file_name)
-                dss.run_command("Redirect {}".format(expected_file_path))
+                check_redirect(expected_file_path)
                 # Also append all upgrades in the previous penetration level to the next level
                 with open(os.path.join(self.config["Outputs"], "Thermal_upgrades_pen_{}.dss".format(prev_pen_level)),"r") as datafile:
                     for line in datafile:

@@ -14,7 +14,7 @@ import math
 from PyDSS.exceptions import InvalidParameter, OpenDssConvergenceError
 from PyDSS.pyPostprocessor.pyPostprocessAbstract import AbstractPostprocess
 from PyDSS.pyPostprocessor.PostprocessScripts.postprocess_voltage_upgrades import postprocess_voltage_upgrades
-from PyDSS.utils.utils import iter_elements
+from PyDSS.utils.utils import iter_elements, check_redirect
 
 plt.rcParams.update({'font.size': 14})
 
@@ -139,7 +139,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         if not os.path.exists(thermal_dss_file):
             raise InvalidParameter(f"AutomatedThermalUpgrade did not produce thermal_filename")
         dss = dssInstance
-        dss.run_command("Redirect {}".format(thermal_dss_file))
+        check_redirect(thermal_dss_file)
         self.dssSolver = dssSolver
         self.start = time.time()
 
@@ -505,10 +505,10 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.logger.info("Checking impact of redirected upgrades file")
         dss.run_command("Clear")
         base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
-        dss.run_command(f"Redirect {base_dss}")
-        dss.run_command(f"Redirect {thermal_dss_file}")
+        check_redirect(base_dss)
+        check_redirect(thermal_dss_file)
         upgrades_file = os.path.join(self.config["Outputs"], "voltage_upgrades.dss")
-        dss.run_command("Redirect {}".format(upgrades_file))
+        check_redirect(upgrades_file)
         self.dssSolver.Solve()
 
         self.new_reg_controls = {x["name"]: x for x in iter_elements(dss.RegControls, get_reg_control_info)}
