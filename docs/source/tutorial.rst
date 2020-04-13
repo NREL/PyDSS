@@ -4,12 +4,17 @@ This page describes how to run simulations with PyDSS.
 
 Installation
 ************
+There are two ways to install PyDSS.
 
-1. Install via pip. ::
+1. Install via pip.
+
+::
 
     pip install -i https://test.pypi.org/simple/ PyDSS==0.0.1
 
-2. Clone the repository. ::
+2. Clone the repository.
+
+::
 
    git clone https://github.com/NREL/PyDSS
    cd PyDSS
@@ -35,13 +40,18 @@ Refer to ``pydss create-project --help`` to see additional options.
 Next, configure the project.
 
 - Copy OpenDSS files to <project-name>/DSSfiles
-- Customize the simulation settings in <project-name>/simulation.toml
-- Customize data to be exported for each scenario in
-  <project-name>/Scenarios/<scenario-name>/ExportLists
+- Customize the simulation settings in <project-name>/simulation.toml.
+  In particular, set the value for "DSS File" to the master file in the
+  DSSfiles directory.
 - Customize the PyDSS controllers in
-  <project-name>/Scenarios/<scenario-name>/pyControllerList
+  <project-name>/Scenarios/<scenario-name>/pyControllerList.
+  There needs to be one controller section for each PVSystem defined in the
+  OpenDSS configuration. The name of each section must be the PVSystem
+  identifier (replace "PVSystem.pv1234" with your names).
 - Customize the the plots to be generated in
   <project-name>/Scenarios/<scenario-name>/pyPlotList
+- Customize data to be exported for each scenario in
+  <project-name>/Scenarios/<scenario-name>/ExportLists
 
 Exporting Data
 ==============
