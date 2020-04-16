@@ -118,7 +118,7 @@ class OpenDSS:
                                           self._dssBuses, self._dssSolver, self._dssCommand)
             else:
                 self.ResultContainer = ResultData(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
-                                                    self._dssBuses, self._dssSolver, self._dssCommand)
+                                                    self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance)
 
         pyCtrlReader = pcr(self._dssPath['pyControllers'])
         ControllerList = pyCtrlReader.pyControllers
@@ -308,9 +308,6 @@ class OpenDSS:
         return
 
     def RunSimulation(self, project, scenario, file_prefix=''):
-        if self._Options["Exports"]["Export Elements"]:
-            self._ExportElements()
-
         startTime = time.time()
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
@@ -340,7 +337,10 @@ class OpenDSS:
             step+=1
 
         if self._Options and self._Options['Exports']['Log Results']:
-            self.ResultContainer.ExportResults(file_prefix)
+            self.ResultContainer.ExportResults(
+                project.hdf_store,
+                fileprefix=file_prefix,
+            )
 
         self._Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
         self._Logger.info('End of simulation')
@@ -380,64 +380,6 @@ class OpenDSS:
         if Visualize:
             Graph.CreateGraphVisualization(defaultGraphPlotSettings)
         return Graph.Get()
-
-    def _ExportElements(self):
-        dss = self._dssInstance
-        exports = (
-            # TODO: opendssdirect does not provide a function to export Bus information.
-            ("CapacitorsInfo", dss.Capacitors.Count, dss.utils.capacitors_to_dataframe),
-            ("FusesInfo", dss.Fuses.Count, dss.utils.fuses_to_dataframe),
-            ("GeneratorsInfo", dss.Generators.Count, dss.utils.generators_to_dataframe),
-            ("IsourceInfo", dss.Isource.Count, dss.utils.isource_to_dataframe),
-            ("LinesInfo", dss.Lines.Count, dss.utils.lines_to_dataframe),
-            ("LoadsInfo", dss.Loads.Count, dss.utils.loads_to_dataframe),
-            ("MetersInfo", dss.Meters.Count, dss.utils.meters_to_dataframe),
-            ("MonitorsInfo", dss.Monitors.Count, dss.utils.monitors_to_dataframe),
-            ("PVSystemsInfo", dss.PVsystems.Count, dss.utils.pvsystems_to_dataframe),
-            ("ReclosersInfo", dss.Reclosers.Count, dss.utils.reclosers_to_dataframe),
-            ("RegControlsInfo", dss.RegControls.Count, dss.utils.regcontrols_to_dataframe),
-            ("RelaysInfo", dss.Relays.Count, dss.utils.relays_to_dataframe),
-            ("SensorsInfo", dss.Sensors.Count, dss.utils.sensors_to_dataframe),
-            ("TransformersInfo", dss.Transformers.Count, dss.utils.transformers_to_dataframe),
-            ("VsourcesInfo", dss.Vsources.Count, dss.utils.vsources_to_dataframe),
-            ("XYCurvesInfo", dss.XYCurves.Count, dss.utils.xycurves_to_dataframe),
-            # TODO This can be very large. Consider making it configurable.
-            #("LoadShapeInfo", dss.LoadShape.Count, dss.utils.loadshape_to_dataframe),
-        )
-
-        for filename, count_func, get_func in exports:
-            if count_func() > 0:
-                df = get_func()
-                # Always record in CSV format for readability.
-                filepath = os.path.join(self._dssPath['Export'],
-                                        self._Options['Project']['Active Scenario'],
-                                        filename + ".csv")
-                write_dataframe(df, filepath)
-                self._Logger.info('Exported %s information to %s.', filename, filepath)
-
-        self._ExportTransformers()
-
-    def _ExportTransformers(self):
-        dss = self._dssInstance
-        df_dict = {'Transformer': [], 'HighSideConnection': [], 'NumPhases': []}
-
-        dss.Circuit.SetActiveClass('Transformer')
-        flag = dss.ActiveClass.First()
-        while flag > 0:
-            name = dss.CktElement.Name()
-            df_dict['Transformer'].append(name)
-            df_dict['HighSideConnection'].append(dss.Properties.Value('conns').split('[')[1].split(',')[0].strip(' ').lower())
-            df_dict['NumPhases'].append(dss.CktElement.NumPhases())
-            flag = dss.ActiveClass.Next()
-
-        df = pd.DataFrame.from_dict(df_dict)
-
-        # As above in _ExportElements, record in CSV format for readability.
-        filepath = os.path.join(self._dssPath['Export'],
-                                self._Options['Project']['Active Scenario'],
-                                'TransformersPhaseInfo.csv')
-        write_dataframe(df, filepath)
-        self._Logger.info('Exported transformer phase information to %s.', filepath)
 
     def __del__(self):
         self._Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')

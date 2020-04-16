@@ -13,7 +13,7 @@ ELEMENT_FIELDS = {
             ],
         },
         {
-            "names": ["NormalAmps"],
+            "names": ["Losses", "NormalAmps"],
             "options": [
             ],
         },
@@ -38,7 +38,7 @@ ELEMENT_FIELDS = {
             ],
         },
         {
-            "names": ["NormalAmps"],
+            "names": ["Losses", "NormalAmps", "tap"],
             "options": [
             ],
         },

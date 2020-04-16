@@ -44,6 +44,7 @@ post_process_infos = []
 "Export Style" = "Single file"
 "Export Iteration Order" = "ValuesByPropertyAcrossElements"
 "Export Elements" = true
+"Export Tables" = true
 "Export Event Log" = true
 "Export Format" = "h5"
 "Export Compression" = true

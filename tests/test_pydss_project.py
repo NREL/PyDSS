@@ -8,6 +8,9 @@ import tempfile
 import pandas as pd
 import pytest
 
+from PyDSS.common import PROJECT_TAR, PROJECT_ZIP
+from PyDSS.exceptions import InvalidParameter
+from PyDSS.pydss_fs_interface import PROJECT_DIRECTORIES, SCENARIOS, STORE_FILENAME
 from PyDSS.pydss_project import PyDssProject, PyDssScenario
 from PyDSS.pydss_results import PyDssResults, \
     ElementValuesPerPropertyResults, ValuesByPropertyAcrossElementsResults
@@ -51,7 +54,7 @@ def test_create_project(pydss_project):
         for scenario in scenarios:
             path = os.path.join(
                 project_dir,
-                PyDssProject._SCENARIOS,
+                SCENARIOS,
                 scenario.name,
                 dir_name,
             )
@@ -131,9 +134,36 @@ EXPECTED_ELEM_CLASSES_PROPERTIES = {
 #    assert len(full_df) == 96
 
 
-def test_run_project_by_property(cleanup_project):
+def test_run_project_by_property_dirs(cleanup_project):
+    run_test_project_by_property(tar_project=False, zip_project=False)
+
+
+def test_run_project_by_property_tar(cleanup_project):
+    run_test_project_by_property(tar_project=True, zip_project=False)
+    assert os.path.exists(os.path.join(RUN_PROJECT_PATH, PROJECT_TAR))
+    assert not os.path.exists(os.path.join(RUN_PROJECT_PATH, PROJECT_ZIP))
+    assert not os.path.exists(os.path.join(RUN_PROJECT_PATH, "Exports"))
+
+
+def test_run_project_by_property_zip(cleanup_project):
+    run_test_project_by_property(tar_project=False, zip_project=True)
+    assert os.path.exists(os.path.join(RUN_PROJECT_PATH, PROJECT_ZIP))
+    assert not os.path.exists(os.path.join(RUN_PROJECT_PATH, PROJECT_TAR))
+    assert not os.path.exists(os.path.join(RUN_PROJECT_PATH, "Exports"))
+
+
+def test_run_project_by_property_err(cleanup_project):
+    with pytest.raises(InvalidParameter):
+        run_test_project_by_property(tar_project=True, zip_project=True)
+
+
+def run_test_project_by_property(tar_project, zip_project):
     project = PyDssProject.load_project(RUN_PROJECT_PATH)
-    PyDssProject.run_project(RUN_PROJECT_PATH)
+    PyDssProject.run_project(
+        RUN_PROJECT_PATH,
+        tar_project=tar_project,
+        zip_project=zip_project
+    )
     results = PyDssResults(RUN_PROJECT_PATH)
     assert len(results.scenarios) == 1
     scenario = results.scenarios[0]
@@ -201,3 +231,5 @@ def test_run_project_by_property(cleanup_project):
     # Test the shortcut.
     df = scenario.read_element_info_file("PVSystems")
     assert isinstance(df, pd.DataFrame)
+
+    cap_changes = scenario.read_capacitor_changes()

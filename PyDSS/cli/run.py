@@ -1,5 +1,5 @@
 """
-CLI to create a new PyDSS project
+CLI to run a PyDSS project
 """
 
 import ast
@@ -26,6 +26,20 @@ logger = logging.getLogger(__name__)
             "Example:  pydss run ./project --options \"{\\\"Exports\\\": {\\\"Export Iteration Order\\\": \\\"ElementValuesPerProperty\\\"}}\"",
 )
 @click.option(
+    "-t", "--tar-project",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Tar project files after successful execution."
+)
+@click.option(
+    "-z", "--zip-project",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Zip project files after successful execution."
+)
+@click.option(
     "--verbose",
     is_flag=True,
     default=False,
@@ -33,7 +47,7 @@ logger = logging.getLogger(__name__)
     help="Enable verbose log output."
 )
 @click.command()
-def run(project_path, options=None, verbose=False):
+def run(project_path, options=None, tar_project=False, zip_project=False, verbose=False):
     """Run a PyDSS simulation."""
     if not os.path.exists(project_path):
         print(f"project-path={project_path} does not exist")
@@ -59,6 +73,10 @@ def run(project_path, options=None, verbose=False):
             os.path.basename(project_path) + ".log",
         )
 
+    if not os.path.exists(logs_path):
+        print("Logs path does not exist. 'run' is not supported on a tarred project.")
+        sys.exit(1)
+
     setup_logging(
         "PyDSS",
         filename=filename,
@@ -73,4 +91,4 @@ def run(project_path, options=None, verbose=False):
             print(f"options must be of type dict; received {type(options)}")
             sys.exit(1)
 
-    PyDssProject.run_project(project_path, options=options)
+    PyDssProject.run_project(project_path, options=options, tar_project=tar_project, zip_project=zip_project)

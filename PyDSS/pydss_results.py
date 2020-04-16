@@ -5,14 +5,13 @@ from collections import namedtuple
 import os
 import re
 
-from PyDSS.utils.dataframe_utils import read_dataframe
+import pandas as pd
+
 from PyDSS.element_options import ElementOptions
 from PyDSS.exceptions import InvalidParameter
 from PyDSS.pydss_project import PyDssProject
-from PyDSS.ResultData import ResultData, ElementValuesPerProperty, \
+from PyDSS.ResultData import ElementValuesPerProperty, \
     ValuesByPropertyAcrossElements
-from PyDSS.utils.utils import load_data
-
 
 
 class PyDssResults:
@@ -20,22 +19,84 @@ class PyDssResults:
     def __init__(self, project_path):
         options = ElementOptions()
         self._project = PyDssProject.load_project(project_path)
+        fs_intf = self._project.fs_interface
         self._scenarios = []
-        exports_dir = os.path.join(project_path, "Exports")
-        for scenario in os.listdir(exports_dir):
-            scenario_result = _get_scenario_results(exports_dir, scenario, options)
+        filename = self._project.get_hdf_store_filename()
+        self._hdf_store = pd.HDFStore(filename, "r")
+
+        for name in self._project.list_scenario_names():
+            metadata = self._project.read_scenario_export_metadata(name)
+            if metadata["type"] == "ElementValuesPerProperty":
+                scenario_result = ElementValuesPerPropertyResults(
+                    name,
+                    self._hdf_store,
+                    fs_intf,
+                    metadata,
+                    options
+                )
+            elif metadata["type"] == "ValuesByPropertyAcrossElements":
+                scenario_result = ValuesByPropertyAcrossElementsResults(
+                    name,
+                    self._hdf_store,
+                    fs_intf,
+                    metadata,
+                    options
+                )
+            else:
+                assert False, f"type={metadata['type']} is invalid"
             self._scenarios.append(scenario_result)
+
+    def __del__(self):
+        if self._hdf_store.is_open:
+            self._hdf_store.close()
 
     @property
     def scenarios(self):
+        """Return the PyDssScenarioResults instances for the project.
+
+        Returns
+        -------
+        list
+            list of PyDssScenarioResults
+
+        """
         return self._scenarios
 
 
-class _Results(abc.ABC):
-
-    def __init__(self, metadata, options):
+class PyDssScenarioResults(abc.ABC):
+    """Contains results for one scenario."""
+    def __init__(self, name, store, fs_intf, metadata, options):
+        self._name = name
+        self._hdf_store = store
         self._metadata = metadata
         self._options = options
+        self._fs_intf = fs_intf
+
+    @property
+    def name(self):
+        """Return the name of the scenario.
+
+        Returns
+        -------
+        str
+
+        """
+        return self._name
+
+    @abc.abstractmethod
+    def export_data(self, path, fmt="csv", compress=False):
+        """Export data to path.
+
+        Parameters
+        ----------
+        path : str
+            Output directory
+        fmt : str
+            Filer format type (csv, h5)
+        compress : bool
+            Compress data
+
+        """
 
     @abc.abstractmethod
     def get_dataframe(self, element_class, prop, element_name, **kwargs):
@@ -75,6 +136,20 @@ class _Results(abc.ABC):
         Returns
         -------
         pd.DataFrame
+
+        """
+
+    @abc.abstractmethod
+    def get_option_values(self, element_class, prop, element_name):
+        """Return the option values for the element property.
+
+        element_class : str
+        prop : str
+        element_name : str
+
+        Returns
+        -------
+        list
 
         """
 
@@ -200,7 +275,7 @@ class _Results(abc.ABC):
                 )
             filename = actual
 
-        return read_dataframe(filename)
+        return self._fs_intf.read_csv(filename)
 
     def read_capacitor_changes(self):
         """Read the capacitor state changes from the OpenDSS event log.
@@ -211,7 +286,8 @@ class _Results(abc.ABC):
             Maps capacitor names to count of state changes.
 
         """
-        return _read_capacitor_changes(self._metadata["event_log"])
+        text = self._fs_intf.read_file(self._metadata["event_log"])
+        return _read_capacitor_changes(text)
 
     def read_event_log(self):
         """Returns the event log for the scenario.
@@ -222,11 +298,12 @@ class _Results(abc.ABC):
             list of dictionaries (one dict for each row in the file)
 
         """
-        return _read_event_log(self._metadata["event_log"])
+        text = self._fs_intf.read_file(self._metadata["event_log"])
+        return _read_event_log(text)
 
     def _check_options(self, element_class, prop, **kwargs):
         """Checks that kwargs are valid and returns available option names."""
-        for option, val in kwargs.items():
+        for option in kwargs:
             if not self._options.is_option_valid(element_class, prop, option):
                 raise InvalidParameter(
                     f"class={element_class} property={prop} option={option} is invalid"
@@ -234,11 +311,20 @@ class _Results(abc.ABC):
 
         return self._options.list_options(element_class, prop)
 
+    def _read_file(self, path):
+        self._fs_intf.read_file(path)
 
-class ElementValuesPerPropertyResults(_Results):
+
+class ElementValuesPerPropertyResults(PyDssScenarioResults):
     """Result wrapper for ElementValuesPerProperty"""
-    def __init__(self, metadata, options):
-        super(ElementValuesPerPropertyResults, self).__init__(metadata, options)
+    def __init__(self, name, hdf_store, fs_intf, metadata, options):
+        super(ElementValuesPerPropertyResults, self).__init__(
+            name, hdf_store, fs_intf, metadata, options
+        )
+        # FIXME
+        # This workflow has not been updated to support the latest data format
+        # changes. It can be fixed relatively easily if it is needed.
+        assert False, "not supported"
         self._elements = {}
 
         for elem_class, elements in metadata["data"].items():
@@ -246,6 +332,9 @@ class ElementValuesPerPropertyResults(_Results):
             for element in elements:
                 obj = ElementValuesPerProperty.deserialize(element)
                 self._elements[elem_class].append(obj)
+
+    def export_data(self, path, fmt="csv", compress=False):
+        assert False
 
     def get_dataframe(self, element_class, prop, element_name, **kwargs):
         options = self._check_options(element_class, prop, **kwargs)
@@ -294,16 +383,24 @@ class ElementValuesPerPropertyResults(_Results):
 _ClassProperty = namedtuple("ClassProperty", "element_class, property")
 
 
-class ValuesByPropertyAcrossElementsResults(_Results):
+class ValuesByPropertyAcrossElementsResults(PyDssScenarioResults):
     """Result wrapper for ValuesByPropertyAcrossElements"""
-    def __init__(self, metadata, options):
-        super(ValuesByPropertyAcrossElementsResults, self).__init__(metadata, options)
+    def __init__(self, name, hdf_store, fs_intf, metadata, options):
+        super(ValuesByPropertyAcrossElementsResults, self).__init__(
+            name, hdf_store, fs_intf, metadata, options
+        )
         self._property_aggregators = {}
 
         for element in metadata["data"]:
-            obj = ValuesByPropertyAcrossElements.deserialize(element)
+            obj = ValuesByPropertyAcrossElements.deserialize(hdf_store, element)
             key = _ClassProperty(obj.element_class, obj.prop)
             self._property_aggregators[key] = obj
+
+    def export_data(self, path, fmt="csv", compress=False):
+        for element_class in self.list_element_classes():
+            for prop in self.list_element_properties(element_class):
+                prop_agg = self._get_property_aggregator(element_class, prop)
+                prop_agg.export_data(path, fmt, compress)
 
     def get_dataframe(self, element_class, prop, element_name, **kwargs):
         options = self._check_options(element_class, prop, **kwargs)
@@ -358,31 +455,13 @@ class ValuesByPropertyAcrossElementsResults(_Results):
         return prop_agg
 
 
-def _get_scenario_results(path, scenario, options):
-    filename = os.path.join(path, scenario, ResultData.METADATA_FILENAME)
-    if not os.path.exists(filename):
-        raise InvalidParameter(
-            f"metadata file not found for scenario={scenario}"
-        )
-
-    metadata = load_data(filename)
-    if metadata["type"] == "ElementValuesPerProperty":
-        results = ElementValuesPerPropertyResults(metadata, options)
-    elif metadata["type"] == "ValuesByPropertyAcrossElements":
-        results = ValuesByPropertyAcrossElementsResults(metadata, options)
-    else:
-        assert False, f"type={metadata['type']} is invalid"
-
-    return results
-
-
-def _read_capacitor_changes(event_log):
+def _read_capacitor_changes(event_log_text):
     """Read the capacitor state changes from an OpenDSS event log.
 
     Parameters
     ----------
-    event_log : str
-        Path to event log
+    event_log_text : str
+        Text of event log
 
     Returns
     -------
@@ -393,7 +472,7 @@ def _read_capacitor_changes(event_log):
     capacitor_changes = {}
     regex = re.compile(r"(Capacitor\.\w+)")
 
-    data = _read_event_log(event_log)
+    data = _read_event_log(event_log_text)
     for row in data:
         match = regex.search(row["Element"])
         if match:
@@ -407,13 +486,13 @@ def _read_capacitor_changes(event_log):
     return capacitor_changes
 
 
-def _read_event_log(filename):
+def _read_event_log(event_log_text):
     """Return OpenDSS event log information.
 
     Parameters
     ----------
-    filename : str
-        path to event log file.
+    event_log_text : str
+        Text of event log
 
 
     Returns
@@ -424,15 +503,16 @@ def _read_event_log(filename):
     """
     data = []
 
-    with open(filename) as f_in:
-        for line in f_in:
-            tokens = [x.strip() for x in line.split(",")]
-            row = {}
-            for token in tokens:
-                name_and_value = [x.strip() for x in token.split("=")]
-                name = name_and_value[0]
-                value = name_and_value[1]
-                row[name] = value
-            data.append(row)
+    for line in event_log_text.split("\n"):
+        if line == "":
+            continue
+        tokens = [x.strip() for x in line.split(",")]
+        row = {}
+        for token in tokens:
+            name_and_value = [x.strip() for x in token.split("=")]
+            name = name_and_value[0]
+            value = name_and_value[1]
+            row[name] = value
+        data.append(row)
 
     return data
