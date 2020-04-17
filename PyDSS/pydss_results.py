@@ -2,6 +2,7 @@
 
 import abc
 from collections import namedtuple
+import logging
 import os
 import re
 
@@ -12,6 +13,9 @@ from PyDSS.exceptions import InvalidParameter
 from PyDSS.pydss_project import PyDssProject
 from PyDSS.ResultData import ElementValuesPerProperty, \
     ValuesByPropertyAcrossElements
+
+
+logger = logging.getLogger(__name__)
 
 
 class PyDssResults:
@@ -61,6 +65,30 @@ class PyDssResults:
 
         """
         return self._scenarios
+
+    def get_scenario(self, name):
+        """Return the PyDssScenarioResults object for scenario with name.
+
+        Parameters
+        ----------
+        name : str
+            Scenario name
+
+        Results
+        -------
+        PyDssScenarioResults
+
+        Raises
+        ------
+        InvalidParameter
+            Raised if the scenario does not exist.
+
+        """
+        for scenario in self._scenarios:
+            if name == scenario.name:
+                return scenario
+
+        raise InvalidParameter(f"scenario {name} does not exist")
 
 
 class PyDssScenarioResults(abc.ABC):
