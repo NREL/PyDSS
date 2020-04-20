@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 
 class PyDssFileSystemInterface(abc.ABC):
     """Interface to read PyDSS files on differing filesystem structures."""
+
     @abc.abstractmethod
     def read_file(self, path):
         """Return the contents of file.

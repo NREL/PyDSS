@@ -23,32 +23,33 @@ class PyDssResults:
     def __init__(self, project_path):
         options = ElementOptions()
         self._project = PyDssProject.load_project(project_path)
-        fs_intf = self._project.fs_interface
+        self._fs_intf = self._project.fs_interface
         self._scenarios = []
         filename = self._project.get_hdf_store_filename()
         self._hdf_store = pd.HDFStore(filename, "r")
 
-        for name in self._project.list_scenario_names():
-            metadata = self._project.read_scenario_export_metadata(name)
-            if metadata["type"] == "ElementValuesPerProperty":
-                scenario_result = ElementValuesPerPropertyResults(
-                    name,
-                    self._hdf_store,
-                    fs_intf,
-                    metadata,
-                    options
-                )
-            elif metadata["type"] == "ValuesByPropertyAcrossElements":
-                scenario_result = ValuesByPropertyAcrossElementsResults(
-                    name,
-                    self._hdf_store,
-                    fs_intf,
-                    metadata,
-                    options
-                )
-            else:
-                assert False, f"type={metadata['type']} is invalid"
-            self._scenarios.append(scenario_result)
+        if self._project.simulation_config["Exports"]["Log Results"]:
+            for name in self._project.list_scenario_names():
+                metadata = self._project.read_scenario_export_metadata(name)
+                if metadata["type"] == "ElementValuesPerProperty":
+                    scenario_result = ElementValuesPerPropertyResults(
+                        name,
+                        self._hdf_store,
+                        fs_intf,
+                        metadata,
+                        options
+                    )
+                elif metadata["type"] == "ValuesByPropertyAcrossElements":
+                    scenario_result = ValuesByPropertyAcrossElementsResults(
+                        name,
+                        self._hdf_store,
+                        fs_intf,
+                        metadata,
+                        options
+                    )
+                else:
+                    assert False, f"type={metadata['type']} is invalid"
+                self._scenarios.append(scenario_result)
 
     def __del__(self):
         if self._hdf_store.is_open:
@@ -89,6 +90,22 @@ class PyDssResults:
                 return scenario
 
         raise InvalidParameter(f"scenario {name} does not exist")
+
+    def read_file(self, path):
+        """Read a file from the PyDSS project.
+
+        Parameters
+        ----------
+        path : str
+            Path to the file relative from the project directory.
+
+        Returns
+        -------
+        str
+            Contents of the file
+
+        """
+        return self._fs_intf.read_file(path)
 
 
 class PyDssScenarioResults(abc.ABC):
@@ -314,7 +331,7 @@ class PyDssScenarioResults(abc.ABC):
             Maps capacitor names to count of state changes.
 
         """
-        text = self._fs_intf.read_file(self._metadata["event_log"])
+        text = self.read_file(self._metadata["event_log"])
         return _read_capacitor_changes(text)
 
     def read_event_log(self):
@@ -326,7 +343,7 @@ class PyDssScenarioResults(abc.ABC):
             list of dictionaries (one dict for each row in the file)
 
         """
-        text = self._fs_intf.read_file(self._metadata["event_log"])
+        text = self.read_file(self._metadata["event_log"])
         return _read_event_log(text)
 
     def _check_options(self, element_class, prop, **kwargs):
@@ -339,7 +356,20 @@ class PyDssScenarioResults(abc.ABC):
 
         return self._options.list_options(element_class, prop)
 
-    def _read_file(self, path):
+    def read_file(self, path):
+        """Read a file from the PyDSS project.
+
+        Parameters
+        ----------
+        path : str
+            Path to the file relative from the project directory.
+
+        Returns
+        -------
+        str
+            Contents of the file
+
+        """
         self._fs_intf.read_file(path)
 
 
