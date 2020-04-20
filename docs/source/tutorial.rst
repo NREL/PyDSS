@@ -72,7 +72,7 @@ These configuration customizations exist for data exported using the new
 - "Export Format":  Set to "csv" or "h5"
 - "Export Compression":  Set to true or false.
 - "Export Elements":  Set to true to export static element parameters.
-- "Export Tables":  Set to true to export data tables for each element property.
+- "Export Data Tables":  Set to true to export data tables for each element property.
 - "Export Event Log":  Set to true to export the OpenDSS event log.
 
 

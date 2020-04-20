@@ -206,7 +206,7 @@ class ResultData:
                 continue
             metadata["data"].append(prop_metadata)
 
-            if self._settings["Exports"]["Export Tables"]:
+            if self._settings["Exports"]["Export Data Tables"]:
                 prop_agg.export_data(
                     self._export_dir,
                     self._settings["Exports"]["Export Format"],
