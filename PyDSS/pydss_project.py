@@ -270,7 +270,7 @@ class PyDssProject:
         self._simulation_config["Logging"]["Pre-configured logging"] = logging_configured
         store_filename = os.path.join(self._project_dir, STORE_FILENAME)
         complevel = 0
-        if self._simulation_config["Exports"]["Export Compression"]:
+        if self._simulation_config["Exports"].get("Export Compression", False):
             complevel = 9
         with pd.HDFStore(store_filename, mode="w", complevel=complevel) as hdf_store:
             self._hdf_store = hdf_store
