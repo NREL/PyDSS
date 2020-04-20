@@ -35,7 +35,7 @@ class PyDssResults:
                     scenario_result = ElementValuesPerPropertyResults(
                         name,
                         self._hdf_store,
-                        fs_intf,
+                        self._fs_intf,
                         metadata,
                         options
                     )
@@ -43,7 +43,7 @@ class PyDssResults:
                     scenario_result = ValuesByPropertyAcrossElementsResults(
                         name,
                         self._hdf_store,
-                        fs_intf,
+                        self._fs_intf,
                         metadata,
                         options
                     )
