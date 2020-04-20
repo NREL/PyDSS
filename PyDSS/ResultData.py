@@ -606,12 +606,21 @@ class ValuesByPropertyAcrossElements(ElementData):
                    store_frequency=store_frequency, store_mode=store_mode)
 
     def export_data(self, path, fmt, compress):
+        # This will make one dataframe with all elements in it. Unlike
+        # get_full_dataframe, the column names will be descriptive.
         all_options = ElementOptions()
         options = all_options.list_options(self.element_class, self.prop)
+        master_df = None
         for name, df in self.iterate_dataframes(options):
-            base = "__".join([self.element_class, self.prop, name])
-            filename = os.path.join(path, base + "." + fmt.replace(".", ""))
-            write_dataframe(df, filename, compress=compress)
+            if master_df is None:
+                master_df = df
+            else:
+                for col in df.columns:
+                    master_df[col] = df[col].values
+
+        base = "__".join([self.element_class, self.prop])
+        filename = os.path.join(path, base + "." + fmt.replace(".", ""))
+        write_dataframe(master_df, filename, compress=compress)
 
     def set_hdf_store(self, hdf_store):
         """Set the HDFStore for the object."""
