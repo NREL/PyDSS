@@ -91,6 +91,17 @@ class PyDssResults:
 
         raise InvalidParameter(f"scenario {name} does not exist")
 
+    @property
+    def project_path(self):
+        """Return the path to the PyDSS project.
+
+        Returns
+        -------
+        str
+
+        """
+        return self._project.project_path
+
     def read_file(self, path):
         """Read a file from the PyDSS project.
 
