@@ -571,6 +571,8 @@ def _read_event_log(event_log_text):
 
     """
     data = []
+    if not event_log_text:
+        return data
 
     for line in event_log_text.split("\n"):
         if line == "":
