@@ -714,11 +714,14 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     # replacement was found
                     # self.logger.info("%s Parallel lines required for line %s", num_par_lns-1, key)
                     for ln_cnt in range(num_par_lns-1):
-                        command_string = "New Line.{lnm}_upgrade_{tr_cnt}_{cnt} bus1={b1} bus2={b2} length={lt} units={u}" \
+                        curr_time = str(time.time())
+                        time_stamp = curr_time.split(".")[0] + "_" + curr_time.split(".")[1]
+                        command_string = "New Line.{lnm}_upgrade_{tr_cnt}_{cnt}_{tm} bus1={b1} bus2={b2} length={lt} units={u}" \
                                          " {cnfig}={lc} phases={ph} enabled=True".format(
                             lnm=key,
                             tr_cnt = self.Line_trial_counter,
                             cnt=ln_cnt,
+                            tm = time_stamp,
                             b1=from_bus,
                             b2=to_bus,
                             lt=length,
@@ -928,12 +931,15 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if dt_key not in self.avail_xfmr_upgrades or dt_fnd_flag==0:
                     # Add parallel DTs since no suitable (correct ratings or economical) DT
                     # replacement was found
+                    curr_time = str(time.time())
+                    time_stamp = curr_time.split(".")[0] + "_" + curr_time.split(".")[1]
                     for dt_cnt in range(num_par_dts-1):
-                        command_string = "New Transformer.{dtn}_upgrade_{tr_cnt}_{cnt} phases={phs} windings={wdgs}" \
+                        command_string = "New Transformer.{dtn}_upgrade_{tr_cnt}_{cnt}_{tm} phases={phs} windings={wdgs}" \
                                          " %noloadloss={nll} leadlag={ll} ".format(
                             dtn=key,
                             tr_cnt = self.Line_trial_counter,
                             cnt=dt_cnt,
+                            tm = time_stamp,
                             phs=phases,
                             wdgs=num_wdgs,
                             nll=per_losses[0],
