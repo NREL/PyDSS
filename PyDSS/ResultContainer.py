@@ -276,7 +276,7 @@ class ResultContainer:
                             self.__parse_current_values(Element, Property, value)
         return
 
-    def ExportResults(self, fileprefix=''):
+    def ExportResults(self, hdf_store, fileprefix=''):
         if self.__Settings['Exports']['Export Mode'] == 'byElement':
             self.__ExportResultsByElements(fileprefix)
         elif self.__Settings['Exports']['Export Mode'] == 'byClass':

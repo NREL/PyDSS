@@ -1,6 +1,10 @@
 """Exceptions used in PyDSS"""
 
 
+class InvalidConfiguration(Exception):
+    """Raised when a bad configuration is detected."""
+
+
 class InvalidParameter(Exception):
     """Raised when bad user input is detected."""
 

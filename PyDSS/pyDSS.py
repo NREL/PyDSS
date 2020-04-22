@@ -58,6 +58,7 @@ class instance(object):
             'Export Iteration Order': {'type': str, 'Options': ["ElementValuesPerProperty", "ValuesByPropertyAcrossElements"]},
             'Export Elements': {'type': bool, 'Options': [True, False]},
             'Export Event Log': {'type': bool, 'Options': [True, False]},
+            'Export Data Tables': {'type': bool, 'Options': [True, False]},
             'Log Results': {'type': bool, 'Options': [True, False]},
             'Result Container': {'type': str, 'Options': ['ResultContainer', 'ResultData']},
         },

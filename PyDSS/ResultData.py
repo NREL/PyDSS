@@ -1,13 +1,15 @@
 
 import abc
+import json
 import logging
 import os
 import pathlib
-import re
 import shutil
 
+import numpy as np
 import pandas as pd
 
+from PyDSS.element_options import ElementOptions
 from PyDSS.pyContrReader import pyExportReader
 from PyDSS.pyLogger import getLoggerTag
 from PyDSS.unitDefinations import unit_info
@@ -24,7 +26,8 @@ class ResultData:
     INDICES_BASENAME = "indices"
 
     def __init__(self, options, system_paths, dss_objects,
-                 dss_objects_by_class, dss_buses, dss_solver, dss_command):
+                 dss_objects_by_class, dss_buses, dss_solver, dss_command,
+                 dss_instance):
         if options["Logging"]["Pre-configured logging"]:
             logger_tag = __name__
         else:
@@ -39,11 +42,14 @@ class ResultData:
         self._elements = []
         self._property_aggregators = []
         self._dss_command = dss_command
+        self._dss_instance = dss_instance
         self._start_day = options["Project"]["Start Day"]
         self._end_day = options["Project"]["End Day"]
         self._timestamps = []
         self._frequency = []
         self._simulation_mode = []
+        self._hdf_store = None
+        self._scenario = options["Project"]["Active Scenario"]
         self._export_format = options["Exports"]["Export Format"]
         self._export_compression = options["Exports"]["Export Compression"]
         self._export_iteration_order = options["Exports"]["Export Iteration Order"]
@@ -51,7 +57,8 @@ class ResultData:
             self.system_paths["Export"],
             options["Project"]["Active Scenario"],
         )
-        self._event_log = None
+        # Use / because this is used in HDFStore
+        self._export_relative_dir = f"Exports/" + options["Project"]["Active Scenario"]
         self._settings = options
         self._store_frequency = False
         self._store_mode = False
@@ -148,32 +155,35 @@ class ResultData:
         for elem in self._elements:
             elem.add_values()
 
-    def ExportResults(self, fileprefix=""):
+    def ExportResults(self, hdf_store, fileprefix=""):
+        self._hdf_store = hdf_store
+
+        metadata = {
+            "type": None,
+            "data": [],
+            "event_log": None,
+            "element_info_files": [],
+        }
+
+        if self._settings["Exports"]["Export Event Log"]:
+            self._export_event_log(metadata)
+        if self._settings["Exports"]["Export Elements"]:
+            self._export_elements(metadata)
         if self._elements:
             self._export_indices()
-        if self._settings["Exports"]["Export Event Log"]:
-            self._export_event_log()
         if self._export_iteration_order == "ElementValuesPerProperty":
-            self._export_results_by_element(fileprefix=fileprefix)
+            self._export_results_by_element(metadata, fileprefix=fileprefix)
         elif self._export_iteration_order == "ValuesByPropertyAcrossElements":
-            self._export_results_by_property(fileprefix=fileprefix)
+            self._export_results_by_property(metadata)
 
-    def _export_common(self, metadata):
-        metadata["event_log"] = self._event_log
-        metadata["element_info_files"] = []
+        filename = os.path.join(self._export_dir, self.METADATA_FILENAME)
+        dump_data(metadata, filename, indent=4)
+        self._logger.info("Exported metadata to %s", filename)
+        self._hdf_store = None
 
-        if self._settings["Exports"]["Export Elements"]:
-            # As per OpenDSS._ExportElements, these are always in CSV.
-            regex = re.compile(r"^\w+Info\.csv")
-            for filename in os.listdir(self._export_dir):
-                if regex.search(filename):
-                    metadata["element_info_files"].append(os.path.join(
-                        self._export_dir, filename
-                    ))
-
-    def _export_results_by_element(self, fileprefix=""):
-        metadata = {"data": {}, "type": "ElementValuesPerProperty"}
-        self._export_common(metadata)
+    def _export_results_by_element(self, metadata, fileprefix=""):
+        metadata["type"] = "ElementValuesPerProperty"
+        metadata["data"] = {}
 
         for elem in self._elements:
             if elem.element_class not in metadata["data"]:
@@ -185,29 +195,25 @@ class ResultData:
             )
             metadata["data"][elem.element_class].append(elem_metadata)
 
-        filename = os.path.join(self._export_dir, self.METADATA_FILENAME)
-        dump_data(metadata, filename, indent=4)
-        self._logger.info("Exported metadata to %s", filename)
-
-    def _export_results_by_property(self, fileprefix=""):
-        metadata = {"data": [], "type": "ValuesByPropertyAcrossElements"}
-        self._export_common(metadata)
+    def _export_results_by_property(self, metadata):
+        metadata["type"] = "ValuesByPropertyAcrossElements"
 
         for prop_agg in self._property_aggregators:
-            prop_metadata = prop_agg.serialize(
-                self._export_dir,
-                self._export_format,
-                self._export_compression,
-            )
+            prop_agg.set_hdf_store(self._hdf_store)
+            prop_agg.set_scenario(self._scenario)
+            prop_metadata = prop_agg.serialize()
             if prop_metadata is None:
                 continue
             metadata["data"].append(prop_metadata)
 
-        filename = os.path.join(self._export_dir, self.METADATA_FILENAME)
-        dump_data(metadata, filename, indent=4)
-        self._logger.info("Exported metadata to %s", filename)
+            if self._settings["Exports"]["Export Data Tables"]:
+                prop_agg.export_data(
+                    self._export_dir,
+                    self._settings["Exports"]["Export Format"],
+                    self._settings["Exports"]["Export Compression"],
+                )
 
-    def _export_event_log(self):
+    def _export_event_log(self, metadata):
         # TODO: move to a base class
         event_log = "event_log.csv"
         file_path = os.path.join(self._export_dir, event_log)
@@ -222,21 +228,81 @@ class ResultData:
             if out != event_log:
                 raise Exception(f"Failed to export EventLog:  {out}")
             self._logger.info("Exported OpenDSS event log to %s", out)
-            self._event_log = file_path
+            metadata["event_log"] = self._export_relative_dir + f"/{event_log}"
         finally:
             os.chdir(orig)
-
 
     def _export_dataframe(self, df, basename):
         filename = basename + "." + self._export_format
         write_dataframe(df, filename, compress=self._export_compression)
         self._logger.info("Exported %s", filename)
 
+    def _export_elements(self, metadata):
+        dss = self._dss_instance
+        exports = (
+            # TODO: opendssdirect does not provide a function to export Bus information.
+            ("CapacitorsInfo", dss.Capacitors.Count, dss.utils.capacitors_to_dataframe),
+            ("FusesInfo", dss.Fuses.Count, dss.utils.fuses_to_dataframe),
+            ("GeneratorsInfo", dss.Generators.Count, dss.utils.generators_to_dataframe),
+            ("IsourceInfo", dss.Isource.Count, dss.utils.isource_to_dataframe),
+            ("LinesInfo", dss.Lines.Count, dss.utils.lines_to_dataframe),
+            ("LoadsInfo", dss.Loads.Count, dss.utils.loads_to_dataframe),
+            ("MetersInfo", dss.Meters.Count, dss.utils.meters_to_dataframe),
+            ("MonitorsInfo", dss.Monitors.Count, dss.utils.monitors_to_dataframe),
+            ("PVSystemsInfo", dss.PVsystems.Count, dss.utils.pvsystems_to_dataframe),
+            ("ReclosersInfo", dss.Reclosers.Count, dss.utils.reclosers_to_dataframe),
+            ("RegControlsInfo", dss.RegControls.Count, dss.utils.regcontrols_to_dataframe),
+            ("RelaysInfo", dss.Relays.Count, dss.utils.relays_to_dataframe),
+            ("SensorsInfo", dss.Sensors.Count, dss.utils.sensors_to_dataframe),
+            ("TransformersInfo", dss.Transformers.Count, dss.utils.transformers_to_dataframe),
+            ("VsourcesInfo", dss.Vsources.Count, dss.utils.vsources_to_dataframe),
+            ("XYCurvesInfo", dss.XYCurves.Count, dss.utils.xycurves_to_dataframe),
+            # TODO This can be very large. Consider making it configurable.
+            #("LoadShapeInfo", dss.LoadShape.Count, dss.utils.loadshape_to_dataframe),
+        )
+
+        for filename, count_func, get_func in exports:
+            if count_func() > 0:
+                df = get_func()
+                # Always record in CSV format for readability.
+                # There are also warning messages from PyTables because the
+                # data may contain strings.
+                fname = filename + ".csv"
+                relpath = os.path.join(self._export_relative_dir, fname)
+                filepath = os.path.join(self._export_dir, fname)
+                write_dataframe(df, filepath)
+                metadata["element_info_files"].append(relpath)
+                self._logger.info("Exported %s information to %s.", filename, filepath)
+
+        self._export_transformers(metadata)
+
+    def _export_transformers(self, metadata):
+        dss = self._dss_instance
+        df_dict = {"Transformer": [], "HighSideConnection": [], "NumPhases": []}
+
+        dss.Circuit.SetActiveClass("Transformer")
+        flag = dss.ActiveClass.First()
+        while flag > 0:
+            name = dss.CktElement.Name()
+            df_dict["Transformer"].append(name)
+            df_dict["HighSideConnection"].append(dss.Properties.Value("conns").split("[")[1].split(",")[0].strip(" ").lower())
+            df_dict["NumPhases"].append(dss.CktElement.NumPhases())
+            flag = dss.ActiveClass.Next()
+
+        df = pd.DataFrame.from_dict(df_dict)
+
+        relpath = os.path.join(self._export_relative_dir, "TransformersPhaseInfo.csv")
+        filepath = os.path.join(self._export_dir, "TransformersPhaseInfo.csv")
+        write_dataframe(df, filepath)
+        metadata["element_info_files"].append(relpath)
+        self._logger.info("Exported transformer phase information to %s.", filepath)
+
     def _export_indices(self):
         tuples = list(zip(*[self._timestamps, self._frequency, self._simulation_mode]))
         df = pd.DataFrame(tuples, columns=("timestamp", "frequency", "Simulation mode"))
-        path = os.path.join(self._export_dir, ResultData.INDICES_BASENAME + "." + self._export_format)
-        write_dataframe(df, path, compress=self._export_compression)
+        path = f"{self._export_relative_dir}/indices"
+        self._hdf_store.put(path, df)
+        self._logger.debug("Stored indices at %s", path)
 
     @staticmethod
     def get_indices_filename(path):
@@ -279,17 +345,18 @@ class ResultData:
 class ElementData(abc.ABC):
     DELIMITER = "__"
 
-    def __init__(self, element_class, path, data_filename,
-                 store_frequency=False, store_mode=False):
+    def __init__(self, element_class,
+                 store_frequency=False, store_mode=False, scenario=None,
+                 hdf_store=None):
         self.cache_data = bool(int(os.environ.get("PYDSS_CACHE_DATA", 0)))
         self._cached_df = None
         self._element_class = element_class
-        self._data_filename = data_filename
-        self._path = path
         self._indices_df = None
         self._value_class = None
         self._store_frequency = store_frequency
         self._store_mode = store_mode
+        self._scenario = scenario
+        self._hdf_store = hdf_store
 
     @abc.abstractmethod
     def serialize(self, path, fmt, compress):
@@ -299,6 +366,21 @@ class ElementData(abc.ABC):
     @abc.abstractmethod
     def deserialize(cls, data):
         """Deserialize from a dictionary."""
+
+    @abc.abstractmethod
+    def export_data(self, path, fmt, compress):
+        """Export data to path.
+
+        Parameters
+        ----------
+        path : str
+            Output directory
+        fmt : str
+            Filer format type (csv, h5)
+        compress : bool
+            Compress data
+
+        """
 
     @property
     def path(self):
@@ -317,22 +399,24 @@ class ElementData(abc.ABC):
         return df
 
     def _get_dataframe(self):
+        def get_df():
+            path = f"Exports/{self._scenario}/{self._get_df_id()}"
+            return self._hdf_store.get(path)
+
         if self.cache_data:
             if self._cached_df is not None:
                 df = self._cached_df
             else:
-                df = read_dataframe(self._data_filename)
+                df = get_df()
                 self._cached_df = df
         else:
-            df = read_dataframe(self._data_filename)
+            df = get_df()
 
         return df
 
     def _add_indices_to_dataframe(self, df):
         if self._indices_df is None:
-            self._indices_df = read_dataframe(
-                ResultData.get_indices_filename(self.path)
-            )
+            self._indices_df = self._hdf_store.get(f"Exports/{self._scenario}/indices")
 
         df["timestamp"] = self._indices_df["timestamp"]
         if self._store_frequency:
@@ -351,10 +435,12 @@ class ElementData(abc.ABC):
 
 class ElementValuesPerProperty(ElementData):
     """Contains values for one element for all properties of an element class."""
-    def __init__(self, element_class, name, properties, obj, data, path,
-                 data_filename, store_frequency=False, store_mode=False):
+    def __init__(self, element_class, name, properties, obj, data,
+                 store_frequency=False, store_mode=False,
+                 scenario=None, hdf_store=None):
         super(ElementValuesPerProperty, self).__init__(
-            element_class, path, data_filename, store_frequency, store_mode)
+            element_class, store_frequency, store_mode,
+            scenario=scenario, hdf_store=hdf_store)
         self._properties = properties
         self._name = name
         self._obj = obj
@@ -366,7 +452,7 @@ class ElementValuesPerProperty(ElementData):
             store_mode=False):
         """Creates a new instance of ElementValuesPerProperty."""
         data = {x: None for x in properties}
-        return cls(element_class, name, properties, obj, data, None, None,
+        return cls(element_class, name, properties, obj, data,
                    store_frequency=store_frequency, store_mode=store_mode)
 
     def serialize(self, path, fmt, compress):
@@ -485,23 +571,27 @@ class ElementValuesPerProperty(ElementData):
         basename = os.path.splitext(os.path.basename(filename))[0]
         return basename.split(ElementValuesPerProperty.DELIMITER)
 
-    def _make_filename(self):
+    def _get_df_id(self):
         return self.DELIMITER.join((self.element_class, self.name))
 
     def _make_column_name(self, prop, index):
         return self.DELIMITER.join((self.name, prop, str(index)))
 
+    def export_data(self, path, fmt, compress):
+        assert False
+
 
 class ValuesByPropertyAcrossElements(ElementData):
     """Contains values for all elements for a specific property."""
-    def __init__(self, element_class, prop, elements, element_names, path,
-                 data_filename, store_frequency=False, store_mode=False):
+    def __init__(self, element_class, prop, elements, element_names,
+                 store_frequency=False, store_mode=False,
+                 scenario=None, hdf_store=None):
         super(ValuesByPropertyAcrossElements, self).__init__(
             element_class,
-            path,
-            data_filename,
             store_frequency=store_frequency,
             store_mode=store_mode,
+            scenario=scenario,
+            hdf_store=hdf_store,
         )
         self._property = prop
         self._elements = elements
@@ -512,13 +602,39 @@ class ValuesByPropertyAcrossElements(ElementData):
     def new(cls, element_class, prop, store_frequency=False, store_mode=False):
         elements = []
         element_names = []
-        return cls(element_class, prop, elements, element_names, None, None,
+        return cls(element_class, prop, elements, element_names,
                    store_frequency=store_frequency, store_mode=store_mode)
 
-    def serialize(self, path, fmt, compress):
+    def export_data(self, path, fmt, compress):
+        # This will make one dataframe with all elements in it. Unlike
+        # get_full_dataframe, the column names will be descriptive.
+        all_options = ElementOptions()
+        options = all_options.list_options(self.element_class, self.prop)
+        master_df = None
+        for name, df in self.iterate_dataframes(options):
+            if master_df is None:
+                master_df = df
+            else:
+                for col in df.columns:
+                    master_df[col] = df[col].values
+
+        base = "__".join([self.element_class, self.prop])
+        filename = os.path.join(path, base + "." + fmt.replace(".", ""))
+        write_dataframe(master_df, filename, compress=compress)
+
+    def set_hdf_store(self, hdf_store):
+        """Set the HDFStore for the object."""
+        self._hdf_store = hdf_store
+
+    def set_scenario(self, scenario):
+        """Set the scenario for the object."""
+        self._scenario = scenario
+
+    def serialize(self):
         data = {
             "element_class": self.element_class,
             "property": self.prop,
+            "scenario": self._scenario,
         }
 
         if self._elements:
@@ -535,11 +651,11 @@ class ValuesByPropertyAcrossElements(ElementData):
 
         if len(dataframes):
             df = pd.concat(dataframes, axis=1, copy=False)
-            filename = self._make_filename() + "." + fmt
-            fullpath = os.path.join(path, filename)
-            final_path = write_dataframe(df, fullpath, compress=compress)
+            df_id = self._get_df_id()
+            path = f"Exports/{self._scenario}/{df_id}"
+            self._hdf_store.put(path, df)
 
-            data["file"] = final_path
+            data["df_id"] = df_id
             data["element_names"] = self._element_names
             data["value_class"] = self._value_class.__name__
             return data
@@ -550,15 +666,14 @@ class ValuesByPropertyAcrossElements(ElementData):
             return None
 
     @classmethod
-    def deserialize(cls, data):
-        data_filename = data["file"]
+    def deserialize(cls, hdf_store, data):
         obj = cls(
             data["element_class"],
             data["property"],
             [],  # TODO
             data["element_names"],
-            os.path.dirname(data_filename),
-            data_filename,
+            scenario=data["scenario"],
+            hdf_store=hdf_store,
         )
 
         obj.set_value_class(get_value_class(data["value_class"]))
@@ -567,7 +682,7 @@ class ValuesByPropertyAcrossElements(ElementData):
     def _make_column_name(self, name, index):
         return self.DELIMITER.join((name, str(index)))
 
-    def _make_filename(self):
+    def _get_df_id(self):
         return self.DELIMITER.join((self._element_class, self._property))
 
     def append_element(self, element):
