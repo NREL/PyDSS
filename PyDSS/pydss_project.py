@@ -269,6 +269,8 @@ class PyDssProject:
         inst = instance()
         self._simulation_config["Logging"]["Pre-configured logging"] = logging_configured
         store_filename = os.path.join(self._project_dir, STORE_FILENAME)
+        # complevel can be 0 (no compression) through 9 for the highest.
+        # Refer to HDFStore docs in order to expose more granularity.
         complevel = 0
         if self._simulation_config["Exports"].get("Export Compression", False):
             complevel = 9

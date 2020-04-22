@@ -73,6 +73,8 @@ These configuration customizations exist for data exported using the new
 - "Export Compression":  Set to true or false.
 - "Export Elements":  Set to true to export static element parameters.
 - "Export Data Tables":  Set to true to export data tables for each element property.
+  Note that this duplicates data. Enable this to preserve a human-readable
+  dataset that does not require PyDSS to interpret.
 - "Export Event Log":  Set to true to export the OpenDSS event log.
 
 
