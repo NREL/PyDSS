@@ -326,9 +326,9 @@ class ValueContainer:
         dtype = self._TYPE_MAPPING.get(value.value_type)
         assert dtype is not None
         scaleoffset = None
-        if isinstance(dtype, np.float) or isinstance(dtype, np.complex):
+        if dtype == np.float:
             scaleoffset = 4
-        elif isinstance(dtype, np.int):
+        elif dtype == np.int:
             scaleoffset = 0
         self._dataset = DatasetWrapper(
             hdf_store,
