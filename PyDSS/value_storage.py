@@ -370,6 +370,7 @@ class DatasetWrapper:
             self, hdf_store, path, max_size, dtype, columns, chunk_size=32764,
             scaleoffset=None
         ):
+        self._buf_index = 0
         self._hdf_store = hdf_store
         self._chunk_size = min(chunk_size, max_size)
         self._num_columns = len(columns)
@@ -395,7 +396,9 @@ class DatasetWrapper:
         self._dataset_index = 0
 
         self._buf = np.empty(chunks, dtype=dtype)
-        self._buf_index = 0
+
+    def __del__(self):
+        assert self._buf_index == 0, "DatasetWrapper destructed with data in memory"
 
     def add_value(self, value):
         """Add the value to the internal buffer, flushing when full."""
