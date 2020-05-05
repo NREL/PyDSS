@@ -349,6 +349,10 @@ class ValueContainer:
         """
         self._dataset.add_value(value.value)
 
+    def flush_data(self):
+        """Flush any outstanding data to disk."""
+        self._dataset.flush_data()
+
     def max_num_bytes(self):
         """Return the maximum number of bytes the container could hold.
 
@@ -371,7 +375,7 @@ class DatasetWrapper:
         self._num_columns = len(columns)
         self._max_size = max_size
         if self._num_columns == 1:
-            shape = (self._chunk_size,)
+            shape = (self._max_size,)
             chunks = (self._chunk_size,)
         else:
             shape = (self._max_size, self._num_columns)
@@ -398,11 +402,14 @@ class DatasetWrapper:
         self._buf[self._buf_index] = value
         self._buf_index += 1
         if self._buf_index == self._chunk_size:
-            self.flush()
+            self.flush_data()
 
-    def flush(self):
+    def flush_data(self):
         """Flush the data in the temporary buffer to storage."""
         length = self._buf_index
+        if length == 0:
+            return
+
         new_index = self._dataset_index + length
         self._dataset[self._dataset_index:new_index] = self._buf[0:length]
         self._buf_index = 0

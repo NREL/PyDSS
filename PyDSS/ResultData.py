@@ -43,7 +43,7 @@ class ResultData:
         self._dss_instance = dss_instance
         self._start_day = options["Project"]["Start Day"]
         self._end_day = options["Project"]["End Day"]
-        self.time_dataset = None
+        self._time_dataset = None
         self._frequency_dataset = None
         self._mode_dataset = None
         self._simulation_mode = []
@@ -130,7 +130,7 @@ class ResultData:
 
     def InitializeDataStore(self, hdf_store, num_steps):
         self._hdf_store = hdf_store
-        self.time_dataset = DatasetWrapper(
+        self._time_dataset = DatasetWrapper(
             hdf_store=hdf_store,
             path=f"Exports/{self._scenario}/Timestamp",
             max_size=num_steps,
@@ -156,7 +156,7 @@ class ResultData:
             element.initialize_data_store(hdf_store, self._scenario, num_steps)
 
     def UpdateResults(self):
-        self.time_dataset.add_value(self._dss_solver.GetDateTime().timestamp())
+        self._time_dataset.add_value(self._dss_solver.GetDateTime().timestamp())
         self._frequency_dataset.add_value(self._dss_solver.getFrequency())
         self._mode_dataset.add_value(self._dss_solver.getMode())
 
@@ -164,6 +164,12 @@ class ResultData:
             elem.add_values()
 
     def ExportResults(self, fileprefix=""):
+        # Flush any remaining data in temp buffers.
+        for dataset in (self._time_dataset, self._frequency_dataset, self._mode_dataset):
+            dataset.flush_data()
+        for element in self._elements:
+            element.flush_data()
+
         metadata = {
             "event_log": None,
             "element_info_files": [],
@@ -366,6 +372,13 @@ class ElementData:
     @property
     def element_class(self):
         return self._element_class
+
+    def flush_data(self):
+        """Flush any outstanding data to disk."""
+        for container in self._data.values():
+            assert container is not None, \
+                "flush cannot be called until at least one value has been collected"
+            container.flush_data()
 
     def max_num_bytes(self):
         """Return the maximum number of bytes the element could store.
