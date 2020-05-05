@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 @click.option(
     "-o", "--options",
     help="dict-formatted simulation settings that override the config file. " \
-            "Example:  pydss run ./project --options \"{\\\"Exports\\\": {\\\"Export Iteration Order\\\": \\\"ElementValuesPerProperty\\\"}}\"",
+            "Example:  pydss run ./project --options \"{\\\"Exports\\\": {\\\"Export Compression\\\": \\\"true\\\"}}\"",
 )
 @click.option(
     "-t", "--tar-project",

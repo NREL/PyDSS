@@ -312,6 +312,7 @@ class OpenDSS:
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
         self._Logger.info('Simulation time step {}.'.format(Steps))
+        self.ResultContainer.InitializeDataStore(project.hdf_store, Steps)
 
         postprocessors = [
             pyPostprocess.Create(
@@ -338,7 +339,6 @@ class OpenDSS:
 
         if self._Options and self._Options['Exports']['Log Results']:
             self.ResultContainer.ExportResults(
-                project.hdf_store,
                 fileprefix=file_prefix,
             )
 

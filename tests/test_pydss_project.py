@@ -12,8 +12,7 @@ from PyDSS.common import PROJECT_TAR, PROJECT_ZIP
 from PyDSS.exceptions import InvalidParameter
 from PyDSS.pydss_fs_interface import PROJECT_DIRECTORIES, SCENARIOS, STORE_FILENAME
 from PyDSS.pydss_project import PyDssProject, PyDssScenario
-from PyDSS.pydss_results import PyDssResults, \
-    ElementValuesPerPropertyResults, ValuesByPropertyAcrossElementsResults
+from PyDSS.pydss_results import PyDssResults, PyDssScenarioResults
 from tests.common import RUN_PROJECT_PATH, SCENARIO_NAME, cleanup_project
 
 
@@ -88,52 +87,6 @@ EXPECTED_ELEM_CLASSES_PROPERTIES = {
 }
 
 
-# TODO: disabling because this mode is currently broken because it produces
-# dataframes with duplicate column names.
-#def test_run_project_by_element(cleanup_project):
-#    options = {
-#        "Exports": {
-#            "Export Iteration Order": "ElementValuesPerProperty",
-#        },
-#    }
-#    PyDssProject.run_project(RUN_PROJECT_PATH, options=options)
-#    results = PyDssResults(RUN_PROJECT_PATH)
-#    assert len(results.scenarios) == 1
-#    scenario = results.scenarios[0]
-#    assert isinstance(scenario, ElementValuesPerPropertyResults)
-#    elem_classes = scenario.list_element_classes()
-#    expected_elem_classes = list(EXPECTED_ELEM_CLASSES_PROPERTIES.keys())
-#    expected_elem_classes.sort()
-#    assert elem_classes == expected_elem_classes
-#    for elem_class in elem_classes:
-#        expected_properties = EXPECTED_ELEM_CLASSES_PROPERTIES[elem_class]
-#        expected_properties.sort()
-#        properties = scenario.list_element_properties(elem_class)
-#        assert properties == expected_properties
-#        for name in scenario.list_element_names(elem_class):
-#            for prop in properties:
-#                df = scenario.get_dataframe(elem_class, prop, name)
-#                assert isinstance(df, pd.DataFrame)
-#                assert len(df) == 96
-#            for prop, df in scenario.iterate_dataframes(elem_class, name):
-#                assert prop in properties
-#                assert isinstance(df, pd.DataFrame)
-#
-#    # Test with an option.
-#    df = scenario.get_dataframe("Lines", "Currents", "Line.sw0", phase_terminal="A1")
-#    assert isinstance(df, pd.DataFrame)
-#    assert len(df) == 96
-#
-#    elem_name = "Line.sw0"
-#    full_df = scenario.get_full_dataframe("Lines", elem_name)
-#    for column in full_df.columns:
-#        assert "Unnamed" not in column
-#        if column not in ("frequency", "Simulation mode"):
-#            assert elem_name in column
-#    assert len(full_df.columns) >= len(scenario.list_element_properties("Lines"))
-#    assert len(full_df) == 96
-
-
 def test_run_project_by_property_dirs(cleanup_project):
     run_test_project_by_property(tar_project=False, zip_project=False)
 
@@ -167,7 +120,7 @@ def run_test_project_by_property(tar_project, zip_project):
     results = PyDssResults(RUN_PROJECT_PATH)
     assert len(results.scenarios) == 1
     scenario = results.scenarios[0]
-    assert isinstance(scenario, ValuesByPropertyAcrossElementsResults)
+    assert isinstance(scenario, PyDssScenarioResults)
     elem_classes = scenario.list_element_classes()
     expected_elem_classes = list(EXPECTED_ELEM_CLASSES_PROPERTIES.keys())
     expected_elem_classes.sort()

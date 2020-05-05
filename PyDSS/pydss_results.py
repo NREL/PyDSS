@@ -1,18 +1,19 @@
 """Provides access to PyDSS result data."""
 
 import abc
-from collections import namedtuple
+from collections import defaultdict, namedtuple
 import logging
 import os
 import re
 
+import h5py
 import pandas as pd
 
 from PyDSS.element_options import ElementOptions
 from PyDSS.exceptions import InvalidParameter
 from PyDSS.pydss_project import PyDssProject
-from PyDSS.ResultData import ElementValuesPerProperty, \
-    ValuesByPropertyAcrossElements
+from PyDSS.utils.dataframe_utils import write_dataframe
+from PyDSS.value_storage import ValueStorageBase
 
 
 logger = logging.getLogger(__name__)
@@ -20,40 +21,42 @@ logger = logging.getLogger(__name__)
 
 class PyDssResults:
     """Interface to perform analysis on PyDSS output data."""
-    def __init__(self, project_path):
+    def __init__(self, project_path, in_memory=False, frequency=False, mode=False):
+        """Constructs PyDssResults object.
+
+        Parameters
+        ----------
+        project_path : str
+        in_memory : bool
+            If true, load all exported data into memory.
+        frequency : bool
+            If true, add frequency column to all dataframes.
+        mode : bool
+            If true, add mode column to all dataframes.
+
+        """
         options = ElementOptions()
         self._project = PyDssProject.load_project(project_path)
         self._fs_intf = self._project.fs_interface
         self._scenarios = []
         filename = self._project.get_hdf_store_filename()
-        self._hdf_store = pd.HDFStore(filename, "r")
+        driver = "core" if in_memory else None
+        self._hdf_store = h5py.File(filename, "r", driver=driver)
 
         if self._project.simulation_config["Exports"]["Log Results"]:
             for name in self._project.list_scenario_names():
                 metadata = self._project.read_scenario_export_metadata(name)
-                if metadata["type"] == "ElementValuesPerProperty":
-                    scenario_result = ElementValuesPerPropertyResults(
-                        name,
-                        self._hdf_store,
-                        self._fs_intf,
-                        metadata,
-                        options
-                    )
-                elif metadata["type"] == "ValuesByPropertyAcrossElements":
-                    scenario_result = ValuesByPropertyAcrossElementsResults(
-                        name,
-                        self._hdf_store,
-                        self._fs_intf,
-                        metadata,
-                        options
-                    )
-                else:
-                    assert False, f"type={metadata['type']} is invalid"
+                scenario_result = PyDssScenarioResults(
+                    name,
+                    project_path,
+                    self._hdf_store,
+                    self._fs_intf,
+                    metadata,
+                    options,
+                    frequency=frequency,
+                    mode=mode,
+                )
                 self._scenarios.append(scenario_result)
-
-    def __del__(self):
-        if self._hdf_store.is_open:
-            self._hdf_store.close()
 
     @property
     def scenarios(self):
@@ -121,12 +124,34 @@ class PyDssResults:
 
 class PyDssScenarioResults(abc.ABC):
     """Contains results for one scenario."""
-    def __init__(self, name, store, fs_intf, metadata, options):
+    def __init__(
+            self, name, project_path, store, fs_intf, metadata, options,
+            frequency=False, mode=False
+        ):
         self._name = name
+        self._project_path = project_path
         self._hdf_store = store
         self._metadata = metadata
         self._options = options
         self._fs_intf = fs_intf
+        self._group = self._hdf_store["Exports"][name]
+        self._elem_classes = [
+            x for x in self._group.keys() if isinstance(self._group[x], h5py.Group)
+        ]
+        self._elems_by_class = defaultdict(dict)
+        self._props_by_class = defaultdict(list)
+        self._indices_df = None
+        self._add_frequency = frequency
+        self._add_mode = mode
+
+        for elem_class in self._elem_classes:
+            class_group = self._group[elem_class]
+            self._elems_by_class[elem_class] = list(class_group.keys())
+            if not self._elems_by_class[elem_class]:
+                continue
+            # Assume all elements have the same properties stored.
+            elem = self._elems_by_class[elem_class][0]
+            self._props_by_class[elem_class] = list(class_group[elem].keys())
 
     @property
     def name(self):
@@ -139,22 +164,32 @@ class PyDssScenarioResults(abc.ABC):
         """
         return self._name
 
-    @abc.abstractmethod
-    def export_data(self, path, fmt="csv", compress=False):
+    def export_data(self, path=None, fmt="csv", compress=False):
         """Export data to path.
 
         Parameters
         ----------
         path : str
-            Output directory
+            Output directory; defaults to scenario exports path
         fmt : str
             Filer format type (csv, h5)
         compress : bool
             Compress data
 
         """
+        if path is None:
+            path = os.path.join(self._project_path, "Exports", self._name)
+        os.makedirs(path, exist_ok=True)
 
-    @abc.abstractmethod
+        for elem_class in self.list_element_classes():
+            for prop in self.list_element_properties(elem_class):
+                df = self.get_full_dataframe(elem_class, prop)
+                base = "__".join([elem_class, prop])
+                filename = os.path.join(path, base + "." + fmt.replace(".", ""))
+                write_dataframe(df, filename, compress=compress)
+
+        logger.info("Exported data to %s", path)
+
     def get_dataframe(self, element_class, prop, element_name, **kwargs):
         """Return the dataframe for an element.
 
@@ -176,26 +211,54 @@ class PyDssScenarioResults(abc.ABC):
             Raised if the element is not stored.
 
         """
+        class_group = self._group.get(element_class)
+        if class_group is None:
+            raise InvalidParameter(f"class {element_class} is not stored")
+        elem_group = class_group.get(element_name)
+        if elem_group is None:
+            raise InvalidParameter(f"element {element_name} is not stored")
+        dataset = elem_group.get(prop)
+        if dataset is None:
+            raise InvalidParameter(f"{prop} is not stored")
+        columns = dataset.attrs["columns"]
+        df = pd.DataFrame(dataset[:], columns=columns)
 
-    @abc.abstractmethod
-    def get_full_dataframe(self, element_class, name_or_prop):
+        if kwargs:
+            options = self._check_options(element_class, prop, **kwargs)
+            columns = ValueStorageBase.get_columns(df, element_name, options, **kwargs)
+            df = df[columns]
+
+        self._add_indices_to_dataframe(df)
+        return df
+
+    def get_full_dataframe(self, element_class, prop):
         """Return a dataframe containing all data.  The dataframe is copied.
 
         Parameters
         ----------
         element_class : str
-        name_or_prop : str
-            The element name or property, depending on
-            ElementValuesPerPropertyResults vs
-            ValuesByPropertyAcrossElementsResults
+        prop : str
 
         Returns
         -------
         pd.DataFrame
 
         """
+        if prop not in self.list_element_properties(element_class):
+            raise InvalidParameter(f"property {prop} is not stored")
 
-    @abc.abstractmethod
+        master_df = None
+        for name, df in self.iterate_dataframes(element_class, prop):
+            if master_df is None:
+                master_df = df
+            else:
+                for column in ("Frequency", "Simulation Mode"):
+                    if column in df.columns:
+                        df.drop(column, axis=1, inplace=True)
+                master_df = master_df.join(df)
+
+        return master_df
+
     def get_option_values(self, element_class, prop, element_name):
         """Return the option values for the element property.
 
@@ -208,18 +271,16 @@ class PyDssScenarioResults(abc.ABC):
         list
 
         """
+        df = self.get_dataframe(element_class, prop, element_name)
+        return ValueStorageBase.get_option_values(df, element_name)
 
-    @abc.abstractmethod
-    def iterate_dataframes(self, element_class, name_or_prop, **kwargs):
+    def iterate_dataframes(self, element_class, prop, **kwargs):
         """Returns a generator over the dataframes by element name.
 
         Parameters
         ----------
         element_class : str
-        name_or_prop : str
-            The element name or property, depending on
-            ElementValuesPerPropertyResults vs
-            ValuesByPropertyAcrossElementsResults
+        prop : str
         kwargs : **kwargs
             Filter on options. Option values can be strings or regular expressions.
 
@@ -229,19 +290,21 @@ class PyDssScenarioResults(abc.ABC):
             Tuple containing the name or property and a pd.DataFrame
 
         """
+        for name in self.list_element_names(element_class):
+            df = self.get_dataframe(element_class, prop, name, **kwargs)
+            yield name, df
 
-    @abc.abstractmethod
     def list_element_classes(self):
-        """Return the element classes combinations stored in the results.
+        """Return the element classes stored in the results.
 
         Returns
         -------
         list
 
         """
+        return self._elem_classes[:]
 
-    @abc.abstractmethod
-    def list_element_names(self, element_class, prop):
+    def list_element_names(self, element_class, prop=None):
         """Return the element names for a property stored in the results.
 
         Parameters
@@ -259,8 +322,11 @@ class PyDssScenarioResults(abc.ABC):
             Raised if the property is not stored.
 
         """
+        # TODO: prop is deprecated
+        if element_class not in self._elems_by_class:
+            raise InvalidParameter(f"{element_class} is not stored")
+        return self._elems_by_class[element_class]
 
-    @abc.abstractmethod
     def list_element_properties(self, element_class):
         """Return the properties stored in the results for a class.
 
@@ -278,6 +344,9 @@ class PyDssScenarioResults(abc.ABC):
             Raised if the element_class is not stored.
 
         """
+        if element_class not in self._props_by_class:
+            raise InvalidParameter(f"class={element_class} is not stored")
+        return self._props_by_class[element_class]
 
     def list_element_property_options(self, element_class, prop):
         """List the possible options for the element class and property.
@@ -383,145 +452,26 @@ class PyDssScenarioResults(abc.ABC):
         """
         self._fs_intf.read_file(path)
 
+    def _add_indices_to_dataframe(self, df):
+        if self._indices_df is None:
+            self._make_indices_df()
 
-class ElementValuesPerPropertyResults(PyDssScenarioResults):
-    """Result wrapper for ElementValuesPerProperty"""
-    def __init__(self, name, hdf_store, fs_intf, metadata, options):
-        super(ElementValuesPerPropertyResults, self).__init__(
-            name, hdf_store, fs_intf, metadata, options
-        )
-        # FIXME
-        # This workflow has not been updated to support the latest data format
-        # changes. It can be fixed relatively easily if it is needed.
-        assert False, "not supported"
-        self._elements = {}
+        df["Timestamp"] = self._indices_df["Timestamp"]
+        if self._add_frequency:
+            df["Frequency"] = self._indices_df["Frequency"]
+        if self._add_mode:
+            df["Simulation Mode"] = self._indices_df["Simulation Mode"]
+        df.set_index("Timestamp", inplace=True)
 
-        for elem_class, elements in metadata["data"].items():
-            self._elements[elem_class] = []
-            for element in elements:
-                obj = ElementValuesPerProperty.deserialize(element)
-                self._elements[elem_class].append(obj)
-
-    def export_data(self, path, fmt="csv", compress=False):
-        assert False
-
-    def get_dataframe(self, element_class, prop, element_name, **kwargs):
-        options = self._check_options(element_class, prop, **kwargs)
-        element = self._get_element(element_class, element_name)
-        return element.get_dataframe(prop, options, **kwargs)
-
-    def get_full_dataframe(self, element_class, name_or_prop):
-        element = self._get_element(element_class, name_or_prop)
-        return element.get_full_dataframe()
-
-    def iterate_dataframes(self, element_class, name_or_prop, **kwargs):
-        element = self._get_element(element_class, name_or_prop)
-        for prop in element.properties:
-            options = self._check_options(element_class, prop, **kwargs)
-            yield element.iterate_dataframes(prop, options, **kwargs)
-
-    def list_element_classes(self):
-        return sorted(list(self._elements.keys()))
-
-    def list_element_names(self, element_class, prop=None):
-        return [x.name for x in self._elements.get(element_class)]
-
-    def list_element_properties(self, element_class):
-        elements = self._get_elements(element_class)
-        assert elements
-        properties = sorted(elements[0].properties)
-        return properties
-
-    def _get_element(self, element_class, element_name):
-        for element in self._get_elements(element_class):
-            if element.name == element_name:
-                return element
-
-        raise InvalidParameter(
-            f"{element_class} / {element_name} is not stored"
-        )
-
-    def _get_elements(self, element_class):
-        elements = self._elements.get(element_class)
-        if elements is None:
-            raise InvalidParameter(f"{element_class} is not stored")
-
-        return elements
-
-
-_ClassProperty = namedtuple("ClassProperty", "element_class, property")
-
-
-class ValuesByPropertyAcrossElementsResults(PyDssScenarioResults):
-    """Result wrapper for ValuesByPropertyAcrossElements"""
-    def __init__(self, name, hdf_store, fs_intf, metadata, options):
-        super(ValuesByPropertyAcrossElementsResults, self).__init__(
-            name, hdf_store, fs_intf, metadata, options
-        )
-        self._property_aggregators = {}
-
-        for element in metadata["data"]:
-            obj = ValuesByPropertyAcrossElements.deserialize(hdf_store, element)
-            key = _ClassProperty(obj.element_class, obj.prop)
-            self._property_aggregators[key] = obj
-
-    def export_data(self, path, fmt="csv", compress=False):
-        for element_class in self.list_element_classes():
-            for prop in self.list_element_properties(element_class):
-                prop_agg = self._get_property_aggregator(element_class, prop)
-                prop_agg.export_data(path, fmt, compress)
-
-    def get_dataframe(self, element_class, prop, element_name, **kwargs):
-        options = self._check_options(element_class, prop, **kwargs)
-        prop_agg = self._get_property_aggregator(element_class, prop)
-        return prop_agg.get_dataframe(element_name, options, **kwargs)
-
-    def get_full_dataframe(self, element_class, name_or_prop):
-        prop_agg = self._get_property_aggregator(element_class, name_or_prop)
-        return prop_agg.get_full_dataframe()
-
-    def get_option_values(self, element_class, prop, element_name):
-        prop_agg = self._get_property_aggregator(element_class, prop)
-        return prop_agg.get_option_values(element_name)
-
-    def iterate_dataframes(self, element_class, name_or_prop, **kwargs):
-        options = self._check_options(element_class, name_or_prop, **kwargs)
-        prop_agg = self._get_property_aggregator(element_class, name_or_prop)
-        return prop_agg.iterate_dataframes(options, **kwargs)
-
-    def list_element_classes(self):
-        classes = set()
-        for key in self._property_aggregators:
-            classes.add(key.element_class)
-        elem_classes = list(classes)
-        elem_classes.sort()
-        return elem_classes
-
-    def list_element_properties(self, element_class):
-        properties = []
-        for key in self._property_aggregators:
-            if key.element_class == element_class:
-                properties.append(key.property)
-
-        if not properties:
-            raise InvalidParameter(f"class={element_class} is not stored")
-
-        properties.sort()
-        return properties
-
-    def list_element_names(self, element_class, prop):
-        prop_agg = self._get_property_aggregator(element_class, prop)
-        return prop_agg.element_names
-
-    def _get_property_aggregator(self, element_class, prop):
-        key = _ClassProperty(element_class, prop)
-        prop_agg = self._property_aggregators.get(key)
-        if prop_agg is None:
-            raise InvalidParameter(
-                f"class={element_class} / property={prop} is not stored"
-            )
-
-        return prop_agg
+    def _make_indices_df(self):
+        data = {"Timestamp": self._group["Timestamp"][:]}
+        if self._add_frequency:
+            data["Frequency"] = self._group["Frequency"][:]
+        if self._add_mode:
+            data["Simulation Mode"] = self._group["Mode"][:]
+        df = pd.DataFrame(data)
+        df["Timestamp"] = pd.to_datetime(df["Timestamp"], unit="s")
+        self._indices_df = df
 
 
 def _read_capacitor_changes(event_log_text):

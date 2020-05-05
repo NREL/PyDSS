@@ -48,6 +48,7 @@
 "Export Iteration Order" = "ValuesByPropertyAcrossElements"
 "Export Elements" = true
 "Export Data Tables" = false
+"Export Data In Memory" = true
 "Export Event Log" = true
 "Log Results" = true
 "Result Container" = "ResultContainer"
