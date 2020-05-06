@@ -12,10 +12,11 @@ import pandas as pd
 from PyDSS.pyContrReader import pyExportReader
 from PyDSS.pyLogger import getLoggerTag
 from PyDSS.unitDefinations import unit_info
+from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.exceptions import InvalidParameter
 from PyDSS.utils.dataframe_utils import read_dataframe, write_dataframe
 from PyDSS.utils.utils import dump_data
-from PyDSS.value_storage import ValueContainer, DatasetWrapper
+from PyDSS.value_storage import ValueContainer
 
 
 class ResultData:
@@ -130,21 +131,21 @@ class ResultData:
 
     def InitializeDataStore(self, hdf_store, num_steps):
         self._hdf_store = hdf_store
-        self._time_dataset = DatasetWrapper(
+        self._time_dataset = DatasetBuffer(
             hdf_store=hdf_store,
             path=f"Exports/{self._scenario}/Timestamp",
             max_size=num_steps,
             dtype=float,
             columns=("Timestamp",),
         )
-        self._frequency_dataset = DatasetWrapper(
+        self._frequency_dataset = DatasetBuffer(
             hdf_store=hdf_store,
             path=f"Exports/{self._scenario}/Frequency",
             max_size=num_steps,
             dtype=float,
             columns=("Frequency",),
         )
-        self._mode_dataset = DatasetWrapper(
+        self._mode_dataset = DatasetBuffer(
             hdf_store=hdf_store,
             path=f"Exports/{self._scenario}/Mode",
             max_size=num_steps,
@@ -156,12 +157,12 @@ class ResultData:
             element.initialize_data_store(hdf_store, self._scenario, num_steps)
 
     def UpdateResults(self):
-        self._time_dataset.add_value(self._dss_solver.GetDateTime().timestamp())
-        self._frequency_dataset.add_value(self._dss_solver.getFrequency())
-        self._mode_dataset.add_value(self._dss_solver.getMode())
+        self._time_dataset.write_value(self._dss_solver.GetDateTime().timestamp())
+        self._frequency_dataset.write_value(self._dss_solver.getFrequency())
+        self._mode_dataset.write_value(self._dss_solver.getMode())
 
         for elem in self._elements:
-            elem.add_values()
+            elem.append_values()
 
     def ExportResults(self, fileprefix=""):
         # Flush any remaining data in temp buffers.
@@ -361,7 +362,7 @@ class ElementData:
         self._num_steps = num_steps
         self._scenario = scenario
 
-    def add_values(self):
+    def append_values(self):
         for prop in self.properties:
             value = self._obj.GetValue(prop, convert=True)
             if self._data[prop] is None:

@@ -119,6 +119,8 @@ class OpenDSS:
             else:
                 self.ResultContainer = ResultData(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
                                                     self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance)
+        else:
+            self.ResultContainer = None
 
         pyCtrlReader = pcr(self._dssPath['pyControllers'])
         ControllerList = pyCtrlReader.pyControllers
@@ -312,7 +314,8 @@ class OpenDSS:
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
         self._Logger.info('Simulation time step {}.'.format(Steps))
-        self.ResultContainer.InitializeDataStore(project.hdf_store, Steps)
+        if self.ResultContainer is not None:
+            self.ResultContainer.InitializeDataStore(project.hdf_store, Steps)
 
         postprocessors = [
             pyPostprocess.Create(

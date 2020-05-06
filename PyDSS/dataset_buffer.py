@@ -1,0 +1,104 @@
+"""Contains DatasetBuffer"""
+
+import logging
+
+import h5py
+import numpy as np
+
+
+KiB = 1024
+MiB = KiB * KiB
+GiB = MiB * MiB
+
+
+logger = logging.getLogger(__name__)
+
+
+class DatasetBuffer:
+    """Provides a write buffer to an HDF dataset to increase performance.
+    Users must call flush_data before the object goes out of scope to ensure
+    that all data is flushed.
+
+    """
+    # TODO add support for context manager, though PyDSS wouldn't be able to
+    # take advantage in its current implementation.
+
+    # The optimal number of chunks to store in memory will vary widely.
+    # The h5py docs recommend keeping chunk byte sizes between 10 KiB - 1 MiB.
+    # This attempts to support a higher-end PyDSS case. Might need to provide
+    # customization capabilities.
+    # Each element property will have one "chunk" of data in memory.
+    # Storing 50,000 element properties with a 32 KiB buffer in each of 36
+    # parallel processes would require 54 GiB of RAM.
+    MAX_CHUNK_BYTES = 32 * KiB
+
+    def __init__(self, hdf_store, path, max_size, dtype, columns, scaleoffset=None):
+        self._buf_index = 0
+        self._hdf_store = hdf_store
+        self._max_size = max_size
+        num_columns = len(columns)
+        self._chunk_size = self.compute_chunk_count(num_columns, max_size, dtype)
+        if num_columns == 1:
+            shape = (self._max_size,)
+            chunks = (self._chunk_size,)
+        else:
+            shape = (self._max_size, num_columns)
+            chunks = (self._chunk_size, num_columns)
+
+        self._dataset = self._hdf_store.create_dataset(
+            name=path,
+            shape=shape,
+            chunks=chunks,
+            dtype=dtype,
+            compression="gzip",
+            compression_opts=4,
+            shuffle=True,
+            scaleoffset=scaleoffset,
+        )
+        self._dataset.attrs["columns"] = columns
+        self._dataset_index = 0
+
+        self._buf = np.empty(chunks, dtype=dtype)
+
+    def __del__(self):
+        assert self._buf_index == 0, "DatasetWrapper destructed with data in memory"
+
+    def flush_data(self):
+        """Flush the data in the temporary buffer to storage."""
+        length = self._buf_index
+        if length == 0:
+            return
+
+        new_index = self._dataset_index + length
+        self._dataset[self._dataset_index:new_index] = self._buf[0:length]
+        self._buf_index = 0
+        self._dataset_index = new_index
+
+    def max_num_bytes(self):
+        """Return the maximum number of bytes the container could hold.
+
+        Returns
+        -------
+        int
+
+        """
+        size_row = self._buf.size * self._buf.itemsize / len(self._buf)
+        return size_row * self._max_size
+
+    def write_value(self, value):
+        """Write the value to the internal buffer, flushing when full."""
+        self._buf[self._buf_index] = value
+        self._buf_index += 1
+        if self._buf_index == self._chunk_size:
+            self.flush_data()
+
+    @staticmethod
+    def compute_chunk_count(num_columns, max_size, dtype):
+        tmp = np.empty((1, num_columns), dtype=dtype)
+        size_one_row = tmp.size * tmp.itemsize
+        chunk_count = min(
+            int(DatasetBuffer.MAX_CHUNK_BYTES / size_one_row),
+            max_size
+        )
+        logger.debug("chunk_count=%s", chunk_count)
+        return chunk_count

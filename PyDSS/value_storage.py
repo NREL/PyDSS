@@ -6,6 +6,7 @@ import h5py
 import numpy as np
 import pandas as pd
 
+from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.exceptions import InvalidParameter
 
 
@@ -185,7 +186,6 @@ class ValueByList(ValueStorageBase):
             self.DELIMITER.join((self._name, f"{x}")) for x in self._labels
         ]
 
-
     @property
     def num_columns(self):
         return len(self._data)
@@ -330,7 +330,7 @@ class ValueContainer:
             scaleoffset = 4
         elif dtype == np.int:
             scaleoffset = 0
-        self._dataset = DatasetWrapper(
+        self._dataset = DatasetBuffer(
             hdf_store,
             path,
             max_size,
@@ -347,7 +347,7 @@ class ValueContainer:
         value : ValueStorageBase
 
         """
-        self._dataset.add_value(value.value)
+        self._dataset.write_value(value.value)
 
     def flush_data(self):
         """Flush any outstanding data to disk."""
@@ -362,68 +362,3 @@ class ValueContainer:
 
         """
         return self._dataset.max_num_bytes()
-
-
-class DatasetWrapper:
-    """Wrapper class around an HDF dataset."""
-    def __init__(
-            self, hdf_store, path, max_size, dtype, columns, chunk_size=32764,
-            scaleoffset=None
-        ):
-        self._buf_index = 0
-        self._hdf_store = hdf_store
-        self._chunk_size = min(chunk_size, max_size)
-        self._num_columns = len(columns)
-        self._max_size = max_size
-        if self._num_columns == 1:
-            shape = (self._max_size,)
-            chunks = (self._chunk_size,)
-        else:
-            shape = (self._max_size, self._num_columns)
-            chunks = (self._chunk_size, self._num_columns)
-
-        self._dataset = self._hdf_store.create_dataset(
-            name=path,
-            shape=shape,
-            chunks=chunks,
-            dtype=dtype,
-            compression="gzip",
-            compression_opts=4,
-            shuffle=True,
-            scaleoffset=scaleoffset,
-        )
-        self._dataset.attrs["columns"] = columns
-        self._dataset_index = 0
-
-        self._buf = np.empty(chunks, dtype=dtype)
-
-    def __del__(self):
-        assert self._buf_index == 0, "DatasetWrapper destructed with data in memory"
-
-    def add_value(self, value):
-        """Add the value to the internal buffer, flushing when full."""
-        self._buf[self._buf_index] = value
-        self._buf_index += 1
-        if self._buf_index == self._chunk_size:
-            self.flush_data()
-
-    def flush_data(self):
-        """Flush the data in the temporary buffer to storage."""
-        length = self._buf_index
-        if length == 0:
-            return
-
-        new_index = self._dataset_index + length
-        self._dataset[self._dataset_index:new_index] = self._buf[0:length]
-        self._buf_index = 0
-        self._dataset_index = new_index
-
-    def max_num_bytes(self):
-        """Return the maximum number of bytes the container could hold.
-
-        Returns
-        -------
-        int
-
-        """
-        return self._buf.itemsize * self._num_columns * self._max_size
