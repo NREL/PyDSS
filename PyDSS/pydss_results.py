@@ -9,6 +9,7 @@ import re
 import h5py
 import pandas as pd
 
+from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.element_options import ElementOptions
 from PyDSS.exceptions import InvalidParameter
 from PyDSS.pydss_project import PyDssProject
@@ -220,8 +221,7 @@ class PyDssScenarioResults(abc.ABC):
         dataset = elem_group.get(prop)
         if dataset is None:
             raise InvalidParameter(f"{prop} is not stored")
-        columns = dataset.attrs["columns"]
-        df = pd.DataFrame(dataset[:], columns=columns)
+        df = DatasetBuffer.to_dataframe(dataset)
 
         if kwargs:
             options = self._check_options(element_class, prop, **kwargs)

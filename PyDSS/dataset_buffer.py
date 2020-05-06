@@ -4,6 +4,7 @@ import logging
 
 import h5py
 import numpy as np
+import pandas as pd
 
 
 KiB = 1024
@@ -61,7 +62,7 @@ class DatasetBuffer:
         self._buf = np.empty(chunks, dtype=dtype)
 
     def __del__(self):
-        assert self._buf_index == 0, "DatasetWrapper destructed with data in memory"
+        assert self._buf_index == 0, "DatasetBuffer destructed with data in memory"
 
     def flush_data(self):
         """Flush the data in the temporary buffer to storage."""
@@ -102,3 +103,18 @@ class DatasetBuffer:
         )
         logger.debug("chunk_count=%s", chunk_count)
         return chunk_count
+
+    @staticmethod
+    def to_dataframe(dataset):
+        """Create a pandas DataFrame from a dataset created with this class.
+
+        Parameters
+        ----------
+        dataset : h5py.Dataset
+
+        Returns
+        -------
+        pd.DataFrame
+
+        """
+        return pd.DataFrame(dataset[:], columns=dataset.attrs["columns"])

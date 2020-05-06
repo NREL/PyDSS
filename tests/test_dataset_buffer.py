@@ -4,6 +4,7 @@ import tempfile
 
 import h5py
 import numpy as np
+import pandas as pd
 
 from PyDSS.dataset_buffer import DatasetBuffer
 
@@ -61,6 +62,11 @@ def test_dataset_buffer__write_value():
             for i in range(max_size):
                 for j in range(4):
                     assert data[i][j] == 1.0
+
+            df = DatasetBuffer.to_dataframe(store["data"])
+            assert isinstance(df, pd.DataFrame)
+            assert len(df) == max_size
+            assert df.iloc[0, 0] == 1.0
     finally:
         if os.path.exists(filename):
             os.remove(filename)
