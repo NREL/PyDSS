@@ -400,7 +400,7 @@ class PyDssProject:
         options : dict
             options that override the config file
         in_memory : bool
-            If True, load all data into memory.
+            If True, load all exported data into memory.
 
         """
         name = os.path.basename(path)
