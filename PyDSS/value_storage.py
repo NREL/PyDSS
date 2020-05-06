@@ -170,7 +170,7 @@ class ValueByList(ValueStorageBase):
         self._prop = prop
         self._labels = []
         self._data = {}
-        self._value_type = complex
+        self._value_type = None
         self._value = []
 
         assert (isinstance(values, list) and len(values) == len(label_suffixes)), \
@@ -180,6 +180,8 @@ class ValueByList(ValueStorageBase):
             self._data[label] = [val]
             self._labels.append(label)
             self._value.append(val)
+            if self._value_type is None:
+                self._value_type = type(val)
 
     def make_columns(self):
         return [
