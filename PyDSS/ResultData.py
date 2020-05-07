@@ -165,12 +165,7 @@ class ResultData:
             elem.append_values()
 
     def ExportResults(self, fileprefix=""):
-        # Flush any remaining data in temp buffers.
-        for dataset in (self._time_dataset, self._frequency_dataset, self._mode_dataset):
-            dataset.flush_data()
-        for element in self._elements:
-            element.flush_data()
-
+        self.FlushData()
         metadata = {
             "event_log": None,
             "element_info_files": [],
@@ -185,6 +180,12 @@ class ResultData:
         dump_data(metadata, filename, indent=4)
         self._logger.info("Exported metadata to %s", filename)
         self._hdf_store = None
+
+    def FlushData(self):
+        for dataset in (self._time_dataset, self._frequency_dataset, self._mode_dataset):
+            dataset.flush_data()
+        for element in self._elements:
+            element.flush_data()
 
     def _export_results_by_element(self, metadata, fileprefix=""):
         metadata["data"] = {}

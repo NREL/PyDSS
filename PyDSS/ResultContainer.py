@@ -286,6 +286,9 @@ class ResultContainer:
             self.__ExportResultsByClass(fileprefix)
         self.__ExportEventLog()
 
+    def FlushData(self):
+        pass
+
     def __ExportResultsByClass(self, fileprefix=''):
         for Class in self.Results.keys():
             for Property in self.Results[Class].keys():
