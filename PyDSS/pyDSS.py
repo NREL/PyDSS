@@ -59,6 +59,8 @@ class instance(object):
             'Export Elements': {'type': bool, 'Options': [True, False]},
             'Export Event Log': {'type': bool, 'Options': [True, False]},
             'Export Data Tables': {'type': bool, 'Options': [True, False]},
+            'Export Data In Memory': {'type': bool, 'Options': [True, False]},
+            'HDF Max Chunk Bytes': {'type': int, 'Options': range(16 * 1024, 1024 * 1024 + 1)},
             'Log Results': {'type': bool, 'Options': [True, False]},
             'Result Container': {'type': str, 'Options': ['ResultContainer', 'ResultData']},
         },

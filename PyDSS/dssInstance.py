@@ -119,6 +119,8 @@ class OpenDSS:
             else:
                 self.ResultContainer = ResultData(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
                                                     self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance)
+        else:
+            self.ResultContainer = None
 
         pyCtrlReader = pcr(self._dssPath['pyControllers'])
         ControllerList = pyCtrlReader.pyControllers
@@ -312,6 +314,8 @@ class OpenDSS:
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
         self._Logger.info('Simulation time step {}.'.format(Steps))
+        if self.ResultContainer is not None:
+            self.ResultContainer.InitializeDataStore(project.hdf_store, Steps)
 
         postprocessors = [
             pyPostprocess.Create(
@@ -329,16 +333,22 @@ class OpenDSS:
         if not postprocessors:
             self._Logger.info('No post processing script selected')
 
-        step = 0
-        while step < Steps:
-            self.RunStep(step)
-            for postprocessor in postprocessors:
-                step = postprocessor.run(step, Steps)
-            step+=1
+        try:
+            step = 0
+            while step < Steps:
+                self.RunStep(step)
+                for postprocessor in postprocessors:
+                    step = postprocessor.run(step, Steps)
+                step+=1
+
+        finally:
+            if self._Options and self._Options['Exports']['Log Results']:
+                # This is here to guarantee that DatasetBuffers aren't left
+                # with any data in memory.
+                self.ResultContainer.FlushData()
 
         if self._Options and self._Options['Exports']['Log Results']:
             self.ResultContainer.ExportResults(
-                project.hdf_store,
                 fileprefix=file_prefix,
             )
 

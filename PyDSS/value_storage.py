@@ -2,14 +2,20 @@
 import abc
 import re
 
+import h5py
+import numpy as np
 import pandas as pd
 
+from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.exceptions import InvalidParameter
 
 
-class _ValueStorageBase(abc.ABC):
+class ValueStorageBase(abc.ABC):
 
     DELIMITER = "__"
+
+    def __init__(self):
+        self._dataset = None
 
     @staticmethod
     def get_columns(df, name, options, **kwargs):
@@ -35,7 +41,7 @@ class _ValueStorageBase(abc.ABC):
             if index != -1:
                 col = column[:index]
             # [name, option1, option2, ...]
-            fields = col.split(_ValueStorageBase.DELIMITER)
+            fields = col.split(ValueStorageBase.DELIMITER)
             if options and kwargs:
                 assert len(fields) == 1 + len(options), f"fields={fields} options={options}"
             _name = fields[0]
@@ -84,7 +90,7 @@ class _ValueStorageBase(abc.ABC):
             if index != -1:
                 col = column[:index]
             # [name, option1, option2, ...]
-            fields = col.split(_ValueStorageBase.DELIMITER)
+            fields = col.split(ValueStorageBase.DELIMITER)
             _name = fields[0]
             if _name != name:
                 continue
@@ -96,16 +102,50 @@ class _ValueStorageBase(abc.ABC):
         return values
 
     @abc.abstractmethod
-    def to_dataframe(self):
-        """Convert the stored data to a DataFrame.
+    def make_columns(self):
+        """Return a list of column names
 
         Returns
         -------
-        pd.DataFrame
+        list
 
         """
 
-class ValueByList(_ValueStorageBase):
+    @property
+    @abc.abstractmethod
+    def num_columns(self):
+        """Return the number of columns in the data.
+
+        Returns
+        -------
+        int
+
+        """
+
+    @property
+    @abc.abstractmethod
+    def value(self):
+        """Return the value.
+
+        Returns
+        -------
+        list | float | complex
+
+        """
+
+    @property
+    @abc.abstractmethod
+    def value_type(self):
+        """Return the type of value being stored.
+
+        Returns
+        -------
+        Type
+
+        """
+
+
+class ValueByList(ValueStorageBase):
     """"Stores a list of lists of numbers by an arbitrary suffix. This is a generic method to handle lists returned from
     a function call. An example would be returned values "taps" function for transformer elements. The class can be
     used for any methods that return a list.
@@ -125,10 +165,13 @@ class ValueByList(_ValueStorageBase):
             Pairs of values that can be interpreted as complex numbers.
 
         """
+        super().__init__()
         self._name = name
         self._prop = prop
         self._labels = []
         self._data = {}
+        self._value_type = None
+        self._value = []
 
         assert (isinstance(values, list) and len(values) == len(label_suffixes)), \
             '"values" and "label_suffixes" should be lists of equal lengths'
@@ -136,80 +179,55 @@ class ValueByList(_ValueStorageBase):
             label = prop + '__' + lab_suf
             self._data[label] = [val]
             self._labels.append(label)
+            self._value.append(val)
+            if self._value_type is None:
+                self._value_type = type(val)
 
-    def _make_columns(self):
+    def make_columns(self):
         return [
             self.DELIMITER.join((self._name, f"{x}")) for x in self._labels
         ]
-
-    def __iter__(self):
-        return self._data.__iter__()
-
-    def __len__(self):
-        return len(self._data)
-
-    def append(self, other):
-        """Append values from another instance of ValueByLabel"""
-        for key in other:
-            assert key in self._data
-            for val in other.get(key):
-                self._data[key].append(val)
-
-    def get(self, key):
-        """Return the list of data for key.
-
-        Parameters
-        ----------
-        key : str
-
-        Returns
-        -------
-        list
-
-        """
-        return self._data[key]
 
     @property
     def num_columns(self):
         return len(self._data)
 
-    def to_dataframe(self):
-        df = pd.DataFrame(self._data)
-        df.columns = self._make_columns()
-        return df
-
-class ValueByNumber(_ValueStorageBase):
-    """Stores a list of numbers for an element/property."""
-    def __init__(self, name, prop, value):
-        assert not isinstance(value, list), str(value)
-        self._data = [value]
-        self._name = name
-        self._prop = prop
-
-    def __iter__(self):
-        return self._data.__iter__()
-
-    def __len__(self):
-        return len(self._data)
-
-    def append(self, other):
-        """Append values from another instance of ValueByNumber"""
-        self._data += other
+    @property
+    def value(self):
+        return self._value
 
     @property
-    @staticmethod
-    def num_columns():
+    def value_type(self):
+        return self._value_type
+
+
+class ValueByNumber(ValueStorageBase):
+    """Stores a list of numbers for an element/property."""
+    def __init__(self, name, prop, value):
+        super().__init__()
+        assert not isinstance(value, list), str(value)
+        self._name = name
+        self._prop = prop
+        self._value_type = type(value)
+        self._value = value
+
+    @property
+    def num_columns(self):
         return 1
 
-    @staticmethod
-    def _make_column(name, prop):
-        return _ValueStorageBase.DELIMITER.join((name, prop))
+    def make_columns(self):
+        return [ValueStorageBase.DELIMITER.join((self._name, self._prop))]
 
-    def to_dataframe(self):
-        return pd.DataFrame(self._data, columns=[self._make_column(self._name, self._prop)])
+    @property
+    def value(self):
+        return self._value
+
+    @property
+    def value_type(self):
+        return self._value_type
 
 
-class ValueByLabel(_ValueStorageBase):
+class ValueByLabel(ValueStorageBase):
     """Stores a list of lists of numbers by an arbitrary label. Use this class when working with cktElement function
     calls like Currents, currentMagAng where every two consecutive values in the returned list are representing one
     quantity. The class differentiates between complex and mag / angle representation and stores the values appropriately
@@ -229,6 +247,7 @@ class ValueByLabel(_ValueStorageBase):
             Pairs of values that can be interpreted as complex numbers.
 
         """
+        super().__init__()
         phs = {
             1: 'A',
             2: 'B',
@@ -239,7 +258,8 @@ class ValueByLabel(_ValueStorageBase):
         self._name = name
         self._prop = prop
         self._labels = []
-        self._data = {}
+        self._value = []
+        self._value_type = complex if is_complex else float
 
         n = 2
         m = int(len(value) / (len(Nodes)*n))
@@ -262,67 +282,86 @@ class ValueByLabel(_ValueStorageBase):
                 if is_complex:
                     label += " " + units[0]
                     self._labels.append(label)
-                    self._data[label] = [complex(x[0], x[1])]
+                    self._value += [complex(x[0], x[1])]
                 else:
+                    # TODO: only generate labels once.
+                    # Should be able to do that with an existing instance.
                     label_mag = label + self.DELIMITER + "mag" + ' ' + units[0]
                     label_ang = label + self.DELIMITER + "ang" + ' ' + units[1]
                     self._labels.extend([label_mag, label_ang])
-                    self._data[label_mag] = [x[0]]
-                    self._data[label_ang] = [x[1]]
+                    self._value += [x[0], x[1]]
+
+    @property
+    def value(self):
+        return self._value
 
     @staticmethod
     def chunk_list(values, nLists):
         return  [values[i * nLists:(i + 1) * nLists] for i in range((len(values) + nLists - 1) // nLists)]
 
-    def __iter__(self):
-        return self._data.__iter__()
-
-    def __len__(self):
-        return len(self._data)
-
-    def append(self, other):
-        """Append values from another instance of ValueByLabel"""
-        for key in other:
-            assert key in self._data
-            for val in other.get(key):
-                self._data[key].append(val)
-
-    def get(self, key):
-        """Return the list of data for key.
-
-        Parameters
-        ----------
-        key : str
-
-        Returns
-        -------
-        list
-
-        """
-        return self._data[key]
-
     @property
     def num_columns(self):
-        return len(self._data)
+        return len(self._labels)
 
-    def _make_columns(self):
+    def make_columns(self):
         return [
             self.DELIMITER.join((self._name, f"{x}")) for x in self._labels
         ]
 
-    def to_dataframe(self):
-        df = pd.DataFrame(self._data)
-        df.columns = self._make_columns()
-        return df
+    @property
+    def value_type(self):
+        return self._value_type
 
 
-def get_value_class(class_name):
-    """Return the class with the given name."""
-    if class_name == "ValueByNumber":
-        cls = ValueByNumber
-    elif class_name == "ValueByLabel":
-        cls = ValueByLabel
-    else:
-        raise InvalidParameter(f"invalid class name={class_name}")
+class ValueContainer:
+    """Container for a sequence of instances of ValueStorageBase."""
 
-    return cls
+    # These could potentially be reduced in bit lengths. Compression probably
+    # makes that unnecessary.
+    _TYPE_MAPPING = {
+        float: np.float,
+        int: np.int,
+        complex: np.complex
+    }
+
+    def __init__(self, value, hdf_store, path, max_size, max_chunk_bytes=None):
+        dtype = self._TYPE_MAPPING.get(value.value_type)
+        assert dtype is not None
+        scaleoffset = None
+        if dtype == np.float:
+            scaleoffset = 4
+        elif dtype == np.int:
+            scaleoffset = 0
+        self._dataset = DatasetBuffer(
+            hdf_store,
+            path,
+            max_size,
+            dtype,
+            value.make_columns(),
+            scaleoffset=scaleoffset,
+            max_chunk_bytes=max_chunk_bytes,
+        )
+
+    def append(self, value):
+        """Append a value to the container.
+
+        Parameters
+        ----------
+        value : ValueStorageBase
+
+        """
+        self._dataset.write_value(value.value)
+
+    def flush_data(self):
+        """Flush any outstanding data to disk."""
+        self._dataset.flush_data()
+
+    def max_num_bytes(self):
+        """Return the maximum number of bytes the container could hold.
+
+        Returns
+        -------
+        int
+
+        """
+        return self._dataset.max_num_bytes()

@@ -45,9 +45,11 @@ post_process_infos = []
 "Export Iteration Order" = "ValuesByPropertyAcrossElements"
 "Export Elements" = true
 "Export Data Tables" = false
+"Export Data In Memory" = true
 "Export Event Log" = true
 "Export Format" = "h5"
 "Export Compression" = true
+"HDF Max Chunk Bytes" = 32768
 "Result Container" = "ResultData"
 "Log Results" = true
 

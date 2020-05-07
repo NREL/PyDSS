@@ -6,6 +6,7 @@ import shutil
 import tarfile
 import zipfile
 
+import h5py
 import pandas as pd
 
 import PyDSS
@@ -23,6 +24,9 @@ from PyDSS.utils.utils import dump_data, load_data
 
 
 logger = logging.getLogger(__name__)
+
+
+DATA_FORMAT_VERSION = "1.0.0"
 
 
 class PyDssProject:
@@ -269,16 +273,22 @@ class PyDssProject:
         inst = instance()
         self._simulation_config["Logging"]["Pre-configured logging"] = logging_configured
         store_filename = os.path.join(self._project_dir, STORE_FILENAME)
-        # complevel can be 0 (no compression) through 9 for the highest.
-        # Refer to HDFStore docs in order to expose more granularity.
-        complevel = 0
-        if self._simulation_config["Exports"].get("Export Compression", False):
-            complevel = 9
-        with pd.HDFStore(store_filename, mode="w", complevel=complevel) as hdf_store:
+        driver = None
+        if self._simulation_config["Exports"].get("Export Data In Memory", True):
+            driver = "core"
+        with h5py.File(store_filename, mode="w", driver=driver) as hdf_store:
             self._hdf_store = hdf_store
+            self._hdf_store.attrs["version"] = DATA_FORMAT_VERSION
             for scenario in self._scenarios:
                 self._simulation_config["Project"]["Active Scenario"] = scenario.name
                 inst.run(self._simulation_config, self, scenario)
+
+        if self._simulation_config["Exports"].get("Export Data Tables", False):
+            # Hack. Have to import here. Need to re-organize to fix.
+            from PyDSS.pydss_results import PyDssResults
+            results = PyDssResults(self._project_dir)
+            for scenario in results.scenarios:
+                scenario.export_data()
 
         if tar_project:
             self._tar_project_files()
@@ -384,7 +394,7 @@ class PyDssProject:
         return load_data(filename)
 
     @classmethod
-    def load_project(cls, path, options=None):
+    def load_project(cls, path, options=None, in_memory=False):
         """Load a PyDssProject from directory.
 
         Parameters
@@ -393,6 +403,8 @@ class PyDssProject:
             full path to existing project
         options : dict
             options that override the config file
+        in_memory : bool
+            If True, load all exported data into memory.
 
         """
         name = os.path.basename(path)

@@ -239,6 +239,9 @@ class ResultContainer:
             self.CurrentResults[Element][Property] = ans
         return
 
+    def InitializeDataStore(self, _, __):
+        pass
+
     def UpdateResults(self):
         if self.__Settings['Helics']['Co-simulation Mode']:
             r_seconds = self.__dssDolver.GetTotalSeconds()
@@ -276,12 +279,15 @@ class ResultContainer:
                             self.__parse_current_values(Element, Property, value)
         return
 
-    def ExportResults(self, hdf_store, fileprefix=''):
+    def ExportResults(self, fileprefix=''):
         if self.__Settings['Exports']['Export Mode'] == 'byElement':
             self.__ExportResultsByElements(fileprefix)
         elif self.__Settings['Exports']['Export Mode'] == 'byClass':
             self.__ExportResultsByClass(fileprefix)
         self.__ExportEventLog()
+
+    def FlushData(self):
+        pass
 
     def __ExportResultsByClass(self, fileprefix=''):
         for Class in self.Results.keys():

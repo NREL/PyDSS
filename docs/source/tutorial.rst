@@ -69,13 +69,22 @@ Data Format
 These configuration customizations exist for data exported using the new
 "ResultData" container:
 
-- "Export Format":  Set to "csv" or "h5"
-- "Export Compression":  Set to true or false.
-- "Export Elements":  Set to true to export static element parameters.
-- "Export Data Tables":  Set to true to export data tables for each element property.
-  Note that this duplicates data. Enable this to preserve a human-readable
-  dataset that does not require PyDSS to interpret.
-- "Export Event Log":  Set to true to export the OpenDSS event log.
+- ``Export Elements``:  Set to true to export static element parameters.
+- ``Export Data Tables``:  Set to true to export data tables for each element
+  property.  Note that this duplicates data. Enable this to preserve a
+  human-readable dataset that does not require PyDSS to interpret.
+- ``Export Format``:  Set to ``csv`` or ``h5``. Only applicable when
+  ``Export Data Tables`` is set to true.
+- ``Export Compression``:  Set to true or false. Only applicable when
+  ``Export Data Tables`` is set to true.
+- ``Export Data In Memory``:  Set to true to keep exported data in memory.
+  Otherwise, it is flushed to disk periodically.
+- ``HDF Max Chunk Bytes``: PyDSS uses the h5py library to write exported data to
+  disk. Inline compression is always used, so chunking is enabled. This
+  parameter will control the maximum size of dataset chunks. Refer to
+  http://docs.h5py.org/en/stable/high/dataset.html#chunked-storage for more
+  information.
+- ``Export Event Log``:  Set to true to export the OpenDSS event log.
 
 
 Run a project
@@ -207,22 +216,5 @@ You may want to get data for all elements at once.
 
 Performance Considerations
 **************************
-Here are some details on how the data is stored in files.
-
-If the simulation setting ``Export Iteration Order`` is
-``ValuesByPropertyAcrossElements`` then there is one data file per element
-class / property combination. All elements are included within that file.  By
-default the data is not kept in memory.  Anytime you request data for an
-element the code will read the file and return only the relevant columns. If
-you want to iterate over all elements then you should call
-``iterate_dataframes`` instead of ``get_dataframe``.
-
-If the simulation setting ``Export Iteration Order`` is
-``ElementValuesPerProperty`` then there is one data file per element for each
-element class. Use this if you will be reading all data for one element at a
-time instead of iterating across elements by property.
-
 If your dataset is small enough to fit in your system's memory then you can
-enable caching by setting the environment variable ``PYDSS_CACHE_DATA`` to 1.
-If this is set then the code will read each dataframe from file once and only
-once.
+load it all into memory by passing ``in_memory=True`` to ``PyDssResults``.

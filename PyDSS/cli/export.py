@@ -68,10 +68,4 @@ def export(project_path, fmt="csv", compress=False, output_dir=None, verbose=Fal
 
     results = PyDssResults(project_path)
     for scenario in results.scenarios:
-        if output_dir is None:
-            path = os.path.join(project_path, "Exports", scenario.name)
-        else:
-            path = os.path.join(output_dir, scenario.name)
-        os.makedirs(path, exist_ok=True)
-        scenario.export_data(path, fmt=fmt, compress=compress)
-        print(f"Exported PyDSS scenario={scenario.name} to {path}")
+        scenario.export_data(output_dir, fmt=fmt, compress=compress)
