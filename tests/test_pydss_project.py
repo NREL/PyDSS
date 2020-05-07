@@ -11,7 +11,7 @@ import pytest
 from PyDSS.common import PROJECT_TAR, PROJECT_ZIP
 from PyDSS.exceptions import InvalidParameter
 from PyDSS.pydss_fs_interface import PROJECT_DIRECTORIES, SCENARIOS, STORE_FILENAME
-from PyDSS.pydss_project import PyDssProject, PyDssScenario
+from PyDSS.pydss_project import PyDssProject, PyDssScenario, DATA_FORMAT_VERSION
 from PyDSS.pydss_results import PyDssResults, PyDssScenarioResults
 from tests.common import RUN_PROJECT_PATH, SCENARIO_NAME, cleanup_project
 
@@ -119,6 +119,7 @@ def run_test_project_by_property(tar_project, zip_project):
     )
     results = PyDssResults(RUN_PROJECT_PATH)
     assert len(results.scenarios) == 1
+    assert results._hdf_store.attrs["version"] == DATA_FORMAT_VERSION
     scenario = results.scenarios[0]
     assert isinstance(scenario, PyDssScenarioResults)
     elem_classes = scenario.list_element_classes()

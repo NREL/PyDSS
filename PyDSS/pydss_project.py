@@ -26,6 +26,9 @@ from PyDSS.utils.utils import dump_data, load_data
 logger = logging.getLogger(__name__)
 
 
+DATA_FORMAT_VERSION = "1.0.0"
+
+
 class PyDssProject:
     """Represents the project options for a PyDSS simulation."""
     def __init__(self, path, name, scenarios, simulation_config, fs_intf=None):
@@ -275,6 +278,7 @@ class PyDssProject:
             driver = "core"
         with h5py.File(store_filename, mode="w", driver=driver) as hdf_store:
             self._hdf_store = hdf_store
+            self._hdf_store.attrs["version"] = DATA_FORMAT_VERSION
             for scenario in self._scenarios:
                 self._simulation_config["Project"]["Active Scenario"] = scenario.name
                 inst.run(self._simulation_config, self, scenario)
