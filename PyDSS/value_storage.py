@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 from PyDSS.dataset_buffer import DatasetBuffer
-from PyDSS.exceptions import InvalidParameter
+from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 
 
 class ValueStorageBase(abc.ABC):
@@ -209,6 +209,10 @@ class ValueByNumber(ValueStorageBase):
         self._name = name
         self._prop = prop
         self._value_type = type(value)
+        if self._value_type == str:
+            raise InvalidConfiguration(
+                f"Data export feature does not support strings: name={name} prop={prop} value={value}"
+            )
         self._value = value
 
     @property
