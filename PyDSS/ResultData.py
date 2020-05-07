@@ -322,8 +322,6 @@ class ResultData:
 
 
 class ElementData:
-    DELIMITER = "__"
-
     def __init__(self, element_class, name, properties, obj, data, max_chunk_bytes,
                  store_frequency=False, store_mode=False,
                  scenario=None, hdf_store=None):

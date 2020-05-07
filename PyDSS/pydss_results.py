@@ -1,6 +1,5 @@
 """Provides access to PyDSS result data."""
 
-import abc
 from collections import defaultdict, namedtuple
 import logging
 import os
@@ -123,7 +122,7 @@ class PyDssResults:
         return self._fs_intf.read_file(path)
 
 
-class PyDssScenarioResults(abc.ABC):
+class PyDssScenarioResults:
     """Contains results for one scenario."""
     def __init__(
             self, name, project_path, store, fs_intf, metadata, options,
