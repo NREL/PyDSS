@@ -53,6 +53,7 @@ class ResultData:
         self._export_format = options["Exports"]["Export Format"]
         self._export_compression = options["Exports"]["Export Compression"]
         self._export_iteration_order = options["Exports"]["Export Iteration Order"]
+        self._max_chunk_bytes = options["Exports"]["HDF Max Chunk Bytes"]
         self._export_dir = os.path.join(
             self.system_paths["Export"],
             options["Project"]["Active Scenario"],
@@ -124,6 +125,7 @@ class ResultData:
                     name,
                     properties,
                     obj,
+                    max_chunk_bytes=self._max_chunk_bytes,
                     store_frequency=self._store_frequency,
                     store_mode=self._store_mode,
                 )
@@ -137,6 +139,7 @@ class ResultData:
             max_size=num_steps,
             dtype=float,
             columns=("Timestamp",),
+            max_chunk_bytes=self._max_chunk_bytes
         )
         self._frequency_dataset = DatasetBuffer(
             hdf_store=hdf_store,
@@ -144,6 +147,7 @@ class ResultData:
             max_size=num_steps,
             dtype=float,
             columns=("Frequency",),
+            max_chunk_bytes=self._max_chunk_bytes
         )
         self._mode_dataset = DatasetBuffer(
             hdf_store=hdf_store,
@@ -151,6 +155,7 @@ class ResultData:
             max_size=num_steps,
             dtype="S10",
             columns=("Mode",),
+            max_chunk_bytes=self._max_chunk_bytes
         )
 
         for element in self._elements:
@@ -319,7 +324,7 @@ class ResultData:
 class ElementData:
     DELIMITER = "__"
 
-    def __init__(self, element_class, name, properties, obj, data,
+    def __init__(self, element_class, name, properties, obj, data, max_chunk_bytes,
                  store_frequency=False, store_mode=False,
                  scenario=None, hdf_store=None):
         self._properties = properties
@@ -330,13 +335,14 @@ class ElementData:
         self._element_class = element_class
         self._scenario = scenario
         self._hdf_store = hdf_store
+        self._max_chunk_bytes = max_chunk_bytes
 
     @classmethod
-    def new(cls, element_class, name, properties, obj, store_frequency=False,
-            store_mode=False):
+    def new(cls, element_class, name, properties, obj, max_chunk_bytes,
+            store_frequency=False, store_mode=False):
         """Creates a new instance of ElementData."""
         data = {x: None for x in properties}
-        return cls(element_class, name, properties, obj, data,
+        return cls(element_class, name, properties, obj, data, max_chunk_bytes,
                    store_frequency=store_frequency, store_mode=store_mode)
 
     def export_data(self, path, fmt, compress):
@@ -368,7 +374,13 @@ class ElementData:
             value = self._obj.GetValue(prop, convert=True)
             if self._data[prop] is None:
                 path = f"Exports/{self._scenario}/{self._element_class}/{self._name}/{prop}"
-                self._data[prop] = ValueContainer(value, self._hdf_store, path, self._num_steps)
+                self._data[prop] = ValueContainer(
+                    value,
+                    self._hdf_store,
+                    path,
+                    self._num_steps,
+                    max_chunk_bytes=self._max_chunk_bytes,
+                )
             self._data[prop].append(value)
 
     @property

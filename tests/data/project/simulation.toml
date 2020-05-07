@@ -49,6 +49,7 @@ post_process_infos = []
 "Export Event Log" = true
 "Export Format" = "h5"
 "Export Compression" = true
+"HDF Max Chunk Bytes" = 32768
 "Result Container" = "ResultData"
 "Log Results" = true
 

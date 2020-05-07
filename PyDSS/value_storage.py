@@ -324,7 +324,7 @@ class ValueContainer:
         complex: np.complex
     }
 
-    def __init__(self, value, hdf_store, path, max_size):
+    def __init__(self, value, hdf_store, path, max_size, max_chunk_bytes=None):
         dtype = self._TYPE_MAPPING.get(value.value_type)
         assert dtype is not None
         scaleoffset = None
@@ -338,7 +338,8 @@ class ValueContainer:
             max_size,
             dtype,
             value.make_columns(),
-            scaleoffset=scaleoffset
+            scaleoffset=scaleoffset,
+            max_chunk_bytes=max_chunk_bytes,
         )
 
     def append(self, value):

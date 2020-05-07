@@ -69,15 +69,22 @@ Data Format
 These configuration customizations exist for data exported using the new
 "ResultData" container:
 
-- "Export Format":  Set to "csv" or "h5"
-- "Export Compression":  Set to true or false.
-- "Export Elements":  Set to true to export static element parameters.
-- "Export Data Tables":  Set to true to export data tables for each element property.
-- "Export Data In Memory":  Set to true to keep exported data in memory.
+- ``Export Elements``:  Set to true to export static element parameters.
+- ``Export Data Tables``:  Set to true to export data tables for each element
+  property.  Note that this duplicates data. Enable this to preserve a
+  human-readable dataset that does not require PyDSS to interpret.
+- ``Export Format``:  Set to ``csv`` or ``h5``. Only applicable when
+  ``Export Data Tables`` is set to true.
+- ``Export Compression``:  Set to true or false. Only applicable when
+  ``Export Data Tables`` is set to true.
+- ``Export Data In Memory``:  Set to true to keep exported data in memory.
   Otherwise, it is flushed to disk periodically.
-  Note that this duplicates data. Enable this to preserve a human-readable
-  dataset that does not require PyDSS to interpret.
-- "Export Event Log":  Set to true to export the OpenDSS event log.
+- ``HDF Max Chunk Bytes``: PyDSS uses the h5py library to write exported data to
+  disk. Inline compression is always used, so chunking is enabled. This
+  parameter will control the maximum size of dataset chunks. Refer to
+  http://docs.h5py.org/en/stable/high/dataset.html#chunked-storage for more
+  information.
+- ``Export Event Log``:  Set to true to export the OpenDSS event log.
 
 
 Run a project
