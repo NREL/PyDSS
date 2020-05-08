@@ -234,6 +234,7 @@ If script in Python, please call ``PyDssProject.run(..., dry_run=True)`` method,
 .. code-block:: python
 
   project = PyDssProject.load_project("/data/pydss_project")
+  project.run(dry_run=True)
   print(project.estimated_space)
 
 .. note::
