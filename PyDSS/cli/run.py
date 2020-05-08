@@ -11,7 +11,7 @@ import click
 
 from PyDSS.pydss_project import PyDssProject
 from PyDSS.loggers import setup_logging
-from PyDSS.utils.utils import get_cli_string, make_human_reable_size
+from PyDSS.utils.utils import get_cli_string, make_human_readable_size
 
 
 logger = logging.getLogger(__name__)
@@ -108,7 +108,7 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
             maxlen = len("ScenarioName")
         template = "{:<{width}}   {}\n".format("ScenarioName", "EstimatedSpace", width=maxlen)
         for k, v in project.estimated_space.items():
-            vstr = make_human_reable_size(v)
+            vstr = make_human_readable_size(v)
             template += "{:<{width}} : {}\n".format(k, vstr, width=maxlen)
         template = template.strip()
         print(template)

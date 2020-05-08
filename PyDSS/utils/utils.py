@@ -196,7 +196,7 @@ def iter_elements(element_class, element_func):
         element_class.Next()
 
 
-def make_human_reable_size(size, decimals=2):
+def make_human_readable_size(size, decimals=2):
     """Convert bytes to human readable representation.
 
     Parameters
