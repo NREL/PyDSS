@@ -194,3 +194,25 @@ def iter_elements(element_class, element_func):
     for _ in range(element_class.Count()):
         yield element_func()
         element_class.Next()
+
+
+def make_human_reable_size(size, decimals=2):
+    """Convert bytes to human readable representation.
+
+    Parameters
+    ----------
+    size : float
+        Size in bytes.
+    decimals : int, optional
+        the decimal places, by default 2
+
+    Returns
+    -------
+    str:
+        Human reable size string with unit.
+    """
+    for unit in ["B","KB","MB","GB","TB"]:
+        if size < 1024.0:
+            break
+        size /= 1024.0
+    return f"{size:.{decimals}f} {unit}"
