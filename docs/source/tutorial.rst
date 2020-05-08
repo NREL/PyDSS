@@ -237,7 +237,7 @@ If use ``pydss`` CLI, please enable ``dry_run`` flag provided in ``run``,
 Based on test data - 10 days timeseries with 10 sec step resolution (86394 steps), the test results show below:
 
 * With compression on ``store.h5``, the size is ``3.8 MB``.
-* Without comporession on ``store.h5``, the size is ``403.0 MB``
+* Without compression on ``store.h5``, the size is ``403.0 MB``
 * Estimated space based first time step, the size is ``400.8 MB``
 
 Therefore, the compression ratio is ``95%``. Pretty good!
