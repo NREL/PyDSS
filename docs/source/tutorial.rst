@@ -219,9 +219,9 @@ Performance Considerations
 If your dataset is small enough to fit in your system's memory then you can
 load it all into memory by passing ``in_memory=True`` to ``PyDssResults``.
 
-Estimate space required by ``QSTS`` simulation
-==============================================
-To estimate the memory space (bytes) required by ``QSTS`` simulation *before compression*.
+Estimate space required by PyDSS simulation
+===========================================
+To estimate the memory space required by PyDSS simulation *before compression*.
 
 If use ``pydss`` CLI, please enable ``dry_run`` flag provided in ``run``,
 
@@ -229,16 +229,7 @@ If use ``pydss`` CLI, please enable ``dry_run`` flag provided in ``run``,
 
   $ pydss run /data/pydss_project --dry-run
 
-If script in Python, please call ``PyDssProject.run(..., dry_run=True)`` method,
-
-.. code-block:: python
-
-  project = PyDssProject.load_project("/data/pydss_project")
-  project.run(dry_run=True)
-  print(project.estimated_space)
-
 .. note::
 
   Please notice that the space caculated here is just an estimation, not an exact requirement.
   Basically, ``estimated space = (space required at first step) * nSteps``.
-  
