@@ -46,8 +46,15 @@ logger = logging.getLogger(__name__)
     show_default=True,
     help="Enable verbose log output."
 )
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Dry run for getting estimated space."
+)
 @click.command()
-def run(project_path, options=None, tar_project=False, zip_project=False, verbose=False):
+def run(project_path, options=None, tar_project=False, zip_project=False, verbose=False, dry_run=False):
     """Run a PyDSS simulation."""
     if not os.path.exists(project_path):
         print(f"project-path={project_path} does not exist")
@@ -91,4 +98,5 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
             print(f"options must be of type dict; received {type(options)}")
             sys.exit(1)
 
-    PyDssProject.run_project(project_path, options=options, tar_project=tar_project, zip_project=zip_project)
+    PyDssProject.run_project(project_path, options=options, tar_project=tar_project, zip_project=zip_project,
+                             dry_run=dry_run)

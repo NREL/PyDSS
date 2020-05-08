@@ -9,7 +9,7 @@ from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
 from PyDSS.utils.dataframe_utils import write_dataframe
-from PyDSS.exceptions import InvalidParameter
+from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 
 from PyDSS.pyPostprocessor import pyPostprocess
 import PyDSS.pyControllers as pyControllers
@@ -308,6 +308,22 @@ class OpenDSS:
             else:
                 self._dssSolver.setMode('Yearly')
         return
+
+    def DryRunSimulation(self, project, scenario):
+        """Run one time point for getting estimated space."""
+        if not self._Options['Exports']['Log Results']:
+            raise InvalidConfiguration("Log Reults must set to be True.")
+
+        Steps, _, _ = self._dssSolver.SimulationSteps()
+        self._Logger.info('Dry run simulation...')
+        self.ResultContainer.InitializeDataStore(project.hdf_store, Steps)
+
+        try:
+            self.RunStep(0)
+        finally:
+            self.ResultContainer.FlushData()
+
+        return self.ResultContainer.max_num_bytes() * Steps
 
     def RunSimulation(self, project, scenario, file_prefix=''):
         startTime = time.time()
