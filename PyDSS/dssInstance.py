@@ -323,7 +323,7 @@ class OpenDSS:
         finally:
             self.ResultContainer.FlushData()
 
-        return self.ResultContainer.max_num_bytes() * Steps
+        return self.ResultContainer.max_num_bytes()
 
     def RunSimulation(self, project, scenario, file_prefix=''):
         startTime = time.time()
