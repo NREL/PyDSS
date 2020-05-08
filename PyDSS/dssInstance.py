@@ -9,6 +9,7 @@ from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
 from PyDSS.utils.dataframe_utils import write_dataframe
+from PyDSS.utils.utils import make_human_reable_size
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 
 from PyDSS.pyPostprocessor import pyPostprocess
@@ -353,6 +354,11 @@ class OpenDSS:
             step = 0
             while step < Steps:
                 self.RunStep(step)
+
+                if step == 0:
+                    size = make_human_reable_size(self.ResultContainer.max_num_bytes())
+                    self._Logger.info('Memory requirement estimation: %s, estimated based on first time step run.', size)
+
                 for postprocessor in postprocessors:
                     step = postprocessor.run(step, Steps)
                 step+=1
