@@ -98,5 +98,17 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
             print(f"options must be of type dict; received {type(options)}")
             sys.exit(1)
 
-    PyDssProject.run_project(project_path, options=options, tar_project=tar_project, zip_project=zip_project,
-                             dry_run=dry_run)
+    project = PyDssProject.load_project(project_path, options=options)
+    project.run(tar_project=tar_project, zip_project=zip_project, dry_run=dry_run)
+
+    if dry_run:
+        print("="*37)
+        maxlen = max([len(k) for k in project.estimated_space.keys()])
+        if len("ScenarioName") > maxlen:
+            maxlen = len("ScenarioName")
+        template = "{:<{width}}   {}\n".format("ScenarioName", "EstimatedSpace (bytes)", width=maxlen)
+        for k, v in project.estimated_space.items():
+            template += "{:<{width}} : {}\n".format(k, str(v), width=maxlen)
+        template = template.strip()
+        print(template)
+        print("="*37)
