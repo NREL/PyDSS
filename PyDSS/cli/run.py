@@ -106,9 +106,14 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
         maxlen = max([len(k) for k in project.estimated_space.keys()])
         if len("ScenarioName") > maxlen:
             maxlen = len("ScenarioName")
-        template = "{:<{width}}   {}\n".format("ScenarioName", "EstimatedSpace (bytes)", width=maxlen)
+        template = "{:<{width}}   {}\n".format("ScenarioName", "EstimatedSpace", width=maxlen)
         for k, v in project.estimated_space.items():
-            template += "{:<{width}} : {}\n".format(k, str(v), width=maxlen)
+            for unit in ["B","KB","MB","GB","TB"]:
+                if v < 1024.0:
+                    break
+                v /= 1024.0
+            vstr = f"{v:.{2}f} {unit}"
+            template += "{:<{width}} : {}\n".format(k, vstr, width=maxlen)
         template = template.strip()
         print(template)
         print("="*37)
