@@ -313,6 +313,9 @@ class PyDssProject:
         elif zip_project:
             self._zip_project_files()
 
+        if dry_run and os.path.exists(store_filename):
+            os.remove(store_filename)
+
     def _serialize_scenarios(self):
         self._simulation_config["Project"]["Scenarios"] = []
         for scenario in self._scenarios:
