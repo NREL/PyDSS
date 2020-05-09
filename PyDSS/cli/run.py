@@ -107,9 +107,14 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
         if len("ScenarioName") > maxlen:
             maxlen = len("ScenarioName")
         template = "{:<{width}}   {}\n".format("ScenarioName", "EstimatedSpace", width=maxlen)
+        
+        total_size = 0
         for k, v in project.estimated_space.items():
+            total_size += v
             vstr = make_human_readable_size(v)
             template += "{:<{width}} : {}\n".format(k, vstr, width=maxlen)
         template = template.strip()
         print(template)
+        print("-"*30)
+        print(f"TotalSpace: {make_human_readable_size(total_size)}")
         print("="*30)
