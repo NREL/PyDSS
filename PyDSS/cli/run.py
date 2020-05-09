@@ -118,3 +118,4 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
         print("-"*30)
         print(f"TotalSpace: {make_human_readable_size(total_size)}")
         print("="*30)
+        print("Note: compression may reduce the size by ~90% depending on the data.")
