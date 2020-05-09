@@ -146,7 +146,7 @@ class instance(object):
             bokeh_server_proc = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
 
         SimulationResults = {}
-        args, results = self.__run_scenario(
+        args, results = self.run_scenario(
             project,
             scenario,
             simulation_config,
@@ -171,7 +171,7 @@ class instance(object):
         dss = dssInstance.OpenDSS(dss_args)
         return dss
 
-    def __run_scenario(self, project, scenario, simulation_config):
+    def run_scenario(self, project, scenario, simulation_config):
         dss_args = self.update_scenario_settings(simulation_config)
         self._dump_scenario_simulation_settings(dss_args)
 

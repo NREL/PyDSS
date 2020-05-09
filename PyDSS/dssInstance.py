@@ -293,8 +293,6 @@ class OpenDSS:
             self._UpdatePlots()
             if self._Options['Exports']['Log Results']:
                 self.ResultContainer.UpdateResults()
-            if self._Options['Project']['Return Results']:
-                return self.ResultContainer.CurrentResults
 
         if self._Options['Frequency']['Enable frequency sweep'] and self._Options['Project']['Simulation Type'].lower() != 'dynamic':
             self._dssSolver.setMode('Harmonic')
@@ -309,7 +307,7 @@ class OpenDSS:
                 self._dssSolver.setMode('Snapshot')
             else:
                 self._dssSolver.setMode('Yearly')
-        return
+        return self.ResultContainer.CurrentResults
 
     def RunSimulation(self, project, scenario, file_prefix=''):
         startTime = time.time()
