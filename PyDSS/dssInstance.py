@@ -357,7 +357,7 @@ class OpenDSS:
 
                 if step == 0:
                     size = make_human_readable_size(self.ResultContainer.max_num_bytes())
-                    self._Logger.info('Memory requirement estimation: %s, estimated based on first time step run.', size)
+                    self._Logger.info('Storage requirement estimation: %s, estimated based on first time step run.', size)
 
                 for postprocessor in postprocessors:
                     step = postprocessor.run(step, Steps)

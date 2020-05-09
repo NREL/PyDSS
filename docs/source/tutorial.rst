@@ -221,7 +221,7 @@ load it all into memory by passing ``in_memory=True`` to ``PyDssResults``.
 
 Estimate space required by PyDSS simulation
 ===========================================
-To estimate the memory space required by PyDSS simulation *before compression*.
+To estimate the storage space required by PyDSS simulation *before compression*.
 
 If use ``pydss`` CLI, please enable ``dry_run`` flag provided in ``run``,
 
