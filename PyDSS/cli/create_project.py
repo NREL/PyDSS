@@ -5,7 +5,7 @@ import click
 import logging
 
 from PyDSS.loggers import setup_logging
-from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, ExportMode
+from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, ExportMode, VisualizationType
 
 
 @click.option(
@@ -35,6 +35,11 @@ from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, Exp
     help="comma-delimited list of controller types",
 )
 @click.option(
+    "-v", "--visualization-types",
+    default=None,
+    help="comma-delimited list of dynamic visualization types",
+)
+@click.option(
     "-e", "--export-modes",
     default=None,
     help="comma-delimited list of export modes",
@@ -47,13 +52,15 @@ from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, Exp
 @click.command()
 def create_project(path=None, project=None, scenarios=None,
                    simulation_config=None, controller_types=None,
-                   export_modes=None, options=None):
+                   export_modes=None, options=None, visualization_types=None):
     """Create PyDSS project."""
     setup_logging("PyDSS", console_level=logging.INFO)
     if controller_types is not None:
         controller_types = [ControllerType(x) for x in controller_types.split(",")]
     if export_modes is not None:
         export_modes = [ExportMode(x) for x in export_modes.split(",")]
+    if visualization_types is not None:
+        visualization_types = [VisualizationType(x) for x in visualization_types.split(",")]
 
     if options is not None:
         options = ast.literal_eval(options)
@@ -63,9 +70,10 @@ def create_project(path=None, project=None, scenarios=None,
 
     scenarios = [
         PyDssScenario(
-            x.strip(),
+            name=x.strip(),
             controller_types=controller_types,
             export_modes=export_modes,
+            visualization_types=visualization_types,
         ) for x in scenarios.split(",")
     ]
     PyDssProject.create_project(

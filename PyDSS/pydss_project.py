@@ -13,7 +13,7 @@ import PyDSS
 from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, \
     SIMULATION_SETTINGS_FILENAME, DEFAULT_SIMULATION_SETTINGS_FILE, \
     ControllerType, ExportMode, DEFAULT_PLOT_CONFIG, PLOTS_FILENAME, \
-    filename_from_enum
+    filename_from_enum, VisualizationType
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 from PyDSS.pyDSS import instance
 from PyDSS.pydss_fs_interface import PyDssDirectoryInterface, \
@@ -269,6 +269,9 @@ class PyDssProject:
             raise InvalidConfiguration("cannot run from an archived project")
         if tar_project and zip_project:
             raise InvalidParameter("tar_project and zip_project cannot both be True")
+        if self._simulation_config['Project']['DSS File'] == "":
+            raise InvalidConfiguration("a valid opendss file needs to be passed")
+
 
         inst = instance()
         self._simulation_config["Logging"]["Pre-configured logging"] = logging_configured
@@ -465,24 +468,44 @@ class PyDssScenario:
     """Represents a PyDSS Scenario."""
 
     DEFAULT_CONTROLLER_TYPES = (ControllerType.PV_CONTROLLER,)
+    DEFAULT_VISUALIZATION_TYPES = (VisualizationType.FREQUENCY_PLOT, VisualizationType.HISTOGRAM_PLOT,
+                                   VisualizationType.TABLE_PLOT, VisualizationType.THREEDIM_PLOT,
+                                   VisualizationType.TIMESERIES_PLOT, VisualizationType.TOPOLOGY_PLOT,
+                                   VisualizationType.VOLTDIST_PLOT, VisualizationType.XY_PLOT,)
     DEFAULT_EXPORT_MODE = ExportMode.BY_CLASS
     _SCENARIO_DIRECTORIES = (
         "ExportLists",
         "pyControllerList",
         "pyPlotList",
-        "PostProcess"
+        "PostProcess",
+        'Monte_Carlo'
     )
     REQUIRED_POST_PROCESS_FIELDS = ("script", "config_file")
 
     def __init__(self, name, controller_types=None, controllers=None,
-                 export_modes=None, exports=None, plots=None,
-                 post_process_infos=None):
+                 export_modes=None, exports=None, visualizations=None,
+                 post_process_infos=None, visualization_types=None):
         self.name = name
         self.post_process_infos = []
-        if controller_types is not None and controllers is not None:
-            raise InvalidParameter(
-                "controller_types and controllers cannot both be set"
-            )
+
+        if visualization_types is None and visualizations is None:
+            self.visualizations = {
+                x: self.load_visualization_config_from_type(x)
+                for x in PyDssScenario.DEFAULT_VISUALIZATION_TYPES
+            }
+        elif visualization_types is not None:
+            self.visualizations = {
+                x: self.load_visualization_config_from_type(x)
+                for x in visualization_types
+            }
+        elif isinstance(visualizations, str):
+            basename = os.path.splitext(os.path.basename(visualizations))[0]
+            visualization_type = VisualizationType(basename)
+            self.visualizations = {visualization_type: load_data(controllers)}
+        else:
+            assert isinstance(visualizations, dict)
+            self.visualizations = visualizations
+
         if (controller_types is None and controllers is None):
             self.controllers = {
                 x: self.load_controller_config_from_type(x)
@@ -519,13 +542,6 @@ class PyDssScenario:
             assert isinstance(exports, dict)
             self.exports = exports
 
-        if plots is None:
-            self.plots = DEFAULT_PLOT_CONFIG
-        elif isinstance(plots, str):
-            self.plots = load_data(plots)
-        else:
-            self.plots = plots
-
         if post_process_infos is not None:
             for pp_info in post_process_infos:
                 self.add_post_process(pp_info)
@@ -550,13 +566,13 @@ class PyDssScenario:
         """
         controllers = fs_intf.read_controller_config(name)
         exports = fs_intf.read_export_config(name)
-        plots = fs_intf.read_plot_config(name)
+        visualizations = fs_intf.read_visualization_config(name)
 
         return cls(
             name,
             controllers=controllers,
             exports=exports,
-            plots=plots,
+            visualizations=visualizations,
             post_process_infos=post_process_infos,
         )
 
@@ -585,10 +601,42 @@ class PyDssScenario:
                 os.path.join(path, "ExportLists", filename_from_enum(mode))
             )
 
-        dump_data(
-            self.plots,
-            os.path.join(path, "pyPlotList", PLOTS_FILENAME)
+        for visualization_type, visualizations in self.visualizations.items():
+            filename = os.path.join(
+                path, "pyPlotList", filename_from_enum(visualization_type)
+            )
+            dump_data(visualizations, filename)
+
+        # @Danial the plots.toml file is not used by a single scenario.
+        # It is used to craete plots that compare results from multiple scenarios
+        # dump_data(
+        #     self.plots,
+        #     os.path.join(path, PLOTS_FILENAME)
+        # )
+
+    @staticmethod
+    def load_visualization_config_from_type(visualization_type):
+        """Load a default visualization config from a type.
+
+        Parameters
+        ----------
+        visualization_type : VisualizationType
+
+        Returns
+        -------
+        dict
+
+        """
+
+        path = os.path.join(
+            os.path.dirname(getattr(PyDSS, "__path__")[0]),
+            "PyDSS",
+            "defaults",
+            "pyPlotList",
+            filename_from_enum(visualization_type),
         )
+
+        return load_data(path)
 
     @staticmethod
     def load_controller_config_from_type(controller_type):

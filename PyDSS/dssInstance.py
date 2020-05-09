@@ -9,7 +9,7 @@ from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
 from PyDSS.utils.dataframe_utils import write_dataframe
-from PyDSS.exceptions import InvalidParameter
+from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 
 from PyDSS.pyPostprocessor import pyPostprocess
 import PyDSS.pyControllers as pyControllers
@@ -48,6 +48,7 @@ class OpenDSS:
         rootPath = params['Project']['Project Path']
         self._ActiveProject = params['Project']['Active Project']
         importPath = os.path.join(rootPath, params['Project']['Active Project'], 'Scenarios')
+
         self._dssPath = {
             'root': rootPath,
             'Import': importPath,
@@ -124,6 +125,7 @@ class OpenDSS:
 
         pyCtrlReader = pcr(self._dssPath['pyControllers'])
         ControllerList = pyCtrlReader.pyControllers
+
         if ControllerList is not None:
             self._CreateControllers(ControllerList)
 
@@ -133,7 +135,7 @@ class OpenDSS:
             self._CreatePlots(PlotList)
             for Plot in self._pyPlotObjects:
                 self.BokehSessionID = self._pyPlotObjects[Plot].GetSessionID()
-                if kwargs['Plots']['Open plots in browser']:
+                if params['Plots']['Open plots in browser']:
                     self._pyPlotObjects[Plot].session.show()
                 break
         return
@@ -165,7 +167,7 @@ class OpenDSS:
             newPlotNames = list(PlotNames)
             PlotType1= ['Topology', 'GISplot']
             PlotType2 = ['SagPlot', 'Histogram']
-            PlotType3 = ['XYPlot', 'TimeSeries', 'FrequencySweep']
+            PlotType3 = ['XY', 'TimeSeries', 'FrequencySweep']
 
             for Name in newPlotNames:
                 PlotSettings = PlotNames[Name]

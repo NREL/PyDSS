@@ -55,7 +55,8 @@ class instance(object):
             # Feather is not supported because its underlying libraries do not support complex numbers
             'Export Format': {'type': str, 'Options': ["csv", "h5"]},
             'Export Compression': {'type': bool, 'Options': [True, False]},
-            'Export Iteration Order': {'type': str, 'Options': ["ElementValuesPerProperty", "ValuesByPropertyAcrossElements"]},
+            'Export Iteration Order': {'type': str, 'Options': ["ElementValuesPerProperty",
+                                                                "ValuesByPropertyAcrossElements"]},
             'Export Elements': {'type': bool, 'Options': [True, False]},
             'Export Event Log': {'type': bool, 'Options': [True, False]},
             'Export Data Tables': {'type': bool, 'Options': [True, False]},
@@ -130,16 +131,18 @@ class instance(object):
 
 
     def run(self, simulation_config, project, scenario):
-        path = os.path.dirname(PyDSS.__file__)
-        default_vis_settings = load_data(os.path.join(path, 'defaults', 'pyPlotList', 'plots.toml'))
+        print(simulation_config)
+        #TODO: plots should be project.plots rather than scenario.plots
 
-        if scenario.plots is not None:
-            updated_vis_settings = {**default_vis_settings, **scenario.plots}
-        else:
-            updated_vis_settings = default_vis_settings
+        # path = os.path.dirname(PyDSS.__file__)
+        # default_vis_settings = load_data(os.path.join(path, 'defaults', 'plots.toml'))
+        # if scenario.plots is not None:
+        #     updated_vis_settings = {**default_vis_settings, **scenario.plots}
+        # else:
+        #     updated_vis_settings = default_vis_settings
 
         bokeh_server_proc = None
-        if updated_vis_settings['Simulations']['Run_bokeh_server']:
+        if simulation_config['Plots']['Create dynamic plots']:
             bokeh_server_proc = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
 
         SimulationResults = {}
@@ -147,15 +150,11 @@ class instance(object):
             project,
             scenario,
             simulation_config,
-            updated_vis_settings['Simulations']['Run_simulations'],
-            updated_vis_settings['Simulations']['Generate_visuals'],
         )
         if results is not None:
             SimulationResults = self.update_results_dict(SimulationResults, args, results)
 
-        if updated_vis_settings['Simulations']['Generate_visuals']:
-            CreatePlots(updated_vis_settings, SimulationResults)
-        if updated_vis_settings['Simulations']['Run_bokeh_server']:
+        if simulation_config['Plots']['Create dynamic plots']:
             bokeh_server_proc.terminate()
         return
 
@@ -172,28 +171,17 @@ class instance(object):
         dss = dssInstance.OpenDSS(dss_args)
         return dss
 
-    def __run_scenario(self, project, scenario, simulation_config, run_simulation=True, generate_visuals=False):
+    def __run_scenario(self, project, scenario, simulation_config):
         dss_args = self.update_scenario_settings(simulation_config)
         self._dump_scenario_simulation_settings(dss_args)
 
-        if run_simulation:
-            dss = dssInstance.OpenDSS(dss_args)
-            logger.info('Running scenario: %s', dss_args["Project"]["Active Scenario"])
-            if dss_args["MonteCarlo"]["Number of Monte Carlo scenarios"] > 0:
-                dss.RunMCsimulation(project, scenario, samples=dss_args["MonteCarlo"]['Number of Monte Carlo scenarios'])
-            else:
-                dss.RunSimulation(project, scenario)
-            #del dss
-            #print(dss)
-        if generate_visuals:
-            result = ResultObject(os.path.join(
-                dss_args["Project"]['Project Path'],
-                dss_args["Project"]["Active Project"],
-                'Exports',
-                dss_args["Project"]['Active Scenario']
-            ))
+        dss = dssInstance.OpenDSS(dss_args)
+        logger.info('Running scenario: %s', dss_args["Project"]["Active Scenario"])
+        if dss_args["MonteCarlo"]["Number of Monte Carlo scenarios"] > 0:
+            dss.RunMCsimulation(project, scenario, samples=dss_args["MonteCarlo"]['Number of Monte Carlo scenarios'])
         else:
-            result = None
+            dss.RunSimulation(project, scenario)
+        result = None
         return dss_args, result
 
     def _dump_scenario_simulation_settings(self, dss_args):

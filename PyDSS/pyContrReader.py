@@ -6,7 +6,7 @@ import toml
 
 from PyDSS.config_data import convert_config_data_to_toml
 from PyDSS.utils.utils import load_data
-
+from PyDSS.exceptions import InvalidParameter
 
 class pyContrReader:
     def __init__(self, Path):
@@ -19,7 +19,7 @@ class pyContrReader:
             if filename.startswith('~$'):
                 continue
             elif ext == '.xlsx':
-                filename = convert_config_data_to_toml(xlsx_filename)
+                filename = convert_config_data_to_toml(filename)
             elif ext != ".toml":
                 continue
             if pyControllerType not in self.pyControllers:

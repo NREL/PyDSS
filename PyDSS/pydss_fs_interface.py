@@ -12,7 +12,7 @@ import pandas as pd
 import toml
 
 from PyDSS.common import PLOTS_FILENAME, PROJECT_TAR, PROJECT_ZIP, \
-    ControllerType, ExportMode, SIMULATION_SETTINGS_FILENAME
+    ControllerType, ExportMode, SIMULATION_SETTINGS_FILENAME,VisualizationType
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.utils.utils import load_data
 
@@ -137,15 +137,18 @@ class PyDssFileSystemInterface(abc.ABC):
 
     def _check_scenarios(self):
         scenarios = self._list_scenario_names()
+
         if scenarios is None:
             return
 
         exp_scenarios = self.scenario_names
         exp_scenarios.sort()
-        if scenarios != exp_scenarios:
-            raise InvalidConfiguration(
-                f"internal scenarios {scenarios} do not match {exp_scenarios}"
-            )
+
+        for scenario in exp_scenarios:
+            if scenario not in scenarios:
+                raise InvalidConfiguration(
+                    f"{scenario} is not a valid scenario. Valid scenarios: {scenarios}"
+                )
 
     @abc.abstractmethod
     def _list_scenario_names(self):
@@ -188,6 +191,18 @@ class PyDssDirectoryInterface(PyDssFileSystemInterface):
         ]
         scenarios.sort()
         return scenarios
+
+    def read_visualization_config(self, scenario):
+        visuals = {}
+
+        path = os.path.join(self._project_dir, SCENARIOS, scenario, "pyPlotList")
+        for filename in os.listdir(path):
+            base, ext = os.path.splitext(filename)
+            if ext == ".toml":
+                visual_type = VisualizationType(base)
+                visuals[visual_type] = load_data(os.path.join(path, filename))
+
+        return visuals
 
     def read_controller_config(self, scenario):
         controllers = {}
