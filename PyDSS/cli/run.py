@@ -11,7 +11,7 @@ import click
 
 from PyDSS.pydss_project import PyDssProject
 from PyDSS.loggers import setup_logging
-from PyDSS.utils.utils import get_cli_string
+from PyDSS.utils.utils import get_cli_string, make_human_readable_size
 
 
 logger = logging.getLogger(__name__)
@@ -46,8 +46,15 @@ logger = logging.getLogger(__name__)
     show_default=True,
     help="Enable verbose log output."
 )
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Dry run for getting estimated space."
+)
 @click.command()
-def run(project_path, options=None, tar_project=False, zip_project=False, verbose=False):
+def run(project_path, options=None, tar_project=False, zip_project=False, verbose=False, dry_run=False):
     """Run a PyDSS simulation."""
     if not os.path.exists(project_path):
         print(f"project-path={project_path} does not exist")
@@ -91,4 +98,24 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
             print(f"options must be of type dict; received {type(options)}")
             sys.exit(1)
 
-    PyDssProject.run_project(project_path, options=options, tar_project=tar_project, zip_project=zip_project)
+    project = PyDssProject.load_project(project_path, options=options)
+    project.run(tar_project=tar_project, zip_project=zip_project, dry_run=dry_run)
+
+    if dry_run:
+        print("="*30)
+        maxlen = max([len(k) for k in project.estimated_space.keys()])
+        if len("ScenarioName") > maxlen:
+            maxlen = len("ScenarioName")
+        template = "{:<{width}}   {}\n".format("ScenarioName", "EstimatedSpace", width=maxlen)
+        
+        total_size = 0
+        for k, v in project.estimated_space.items():
+            total_size += v
+            vstr = make_human_readable_size(v)
+            template += "{:<{width}} : {}\n".format(k, vstr, width=maxlen)
+        template = template.strip()
+        print(template)
+        print("-"*30)
+        print(f"TotalSpace: {make_human_readable_size(total_size)}")
+        print("="*30)
+        print("Note: compression may reduce the size by ~90% depending on the data.")

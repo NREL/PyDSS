@@ -5,6 +5,7 @@ import toml
 import os
 import logging
 
+from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.pyAnalyzer.dssSimulationResult import ResultObject
 from PyDSS.pyAnalyzer.dssGraphicsGenerator import CreatePlots
 from PyDSS import dssInstance
@@ -118,6 +119,9 @@ class instance(object):
         },
     }
 
+    def __init__(self):
+        self._estimated_space = None
+
     def update_results_dict(self, results_container, args, results):
         results_container['{}-{}-{}-{}-{}'.format(
             args["Active Project"],
@@ -129,7 +133,7 @@ class instance(object):
         return results_container
 
 
-    def run(self, simulation_config, project, scenario):
+    def run(self, simulation_config, project, scenario, dry_run=False):
         path = os.path.dirname(PyDSS.__file__)
         default_vis_settings = load_data(os.path.join(path, 'defaults', 'pyPlotList', 'plots.toml'))
 
@@ -149,6 +153,7 @@ class instance(object):
             simulation_config,
             updated_vis_settings['Simulations']['Run_simulations'],
             updated_vis_settings['Simulations']['Generate_visuals'],
+            dry_run
         )
         if results is not None:
             SimulationResults = self.update_results_dict(SimulationResults, args, results)
@@ -172,9 +177,18 @@ class instance(object):
         dss = dssInstance.OpenDSS(dss_args)
         return dss
 
-    def __run_scenario(self, project, scenario, simulation_config, run_simulation=True, generate_visuals=False):
+    def __run_scenario(self, project, scenario, simulation_config, run_simulation=True, generate_visuals=False, dry_run=False):
         dss_args = self.update_scenario_settings(simulation_config)
         self._dump_scenario_simulation_settings(dss_args)
+
+        if dry_run:
+            dss = dssInstance.OpenDSS(dss_args)
+            logger.info('Dry run scenario: %s', dss_args["Project"]["Active Scenario"])
+            if dss_args["MonteCarlo"]["Number of Monte Carlo scenarios"] > 0:
+                raise InvalidConfiguration("Dry run does not support MonteCarlo simulation.")
+            else:
+                self._estimated_space = dss.DryRunSimulation(project, scenario)
+            return None, None
 
         if run_simulation:
             dss = dssInstance.OpenDSS(dss_args)
@@ -195,6 +209,9 @@ class instance(object):
         else:
             result = None
         return dss_args, result
+
+    def get_estimated_space(self):
+        return self._estimated_space
 
     def _dump_scenario_simulation_settings(self, dss_args):
         # Various settings may have been updated. Write the actual settings to a file.

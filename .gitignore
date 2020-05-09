@@ -11,3 +11,4 @@ cscope.files
 tests/data/project/Exports/*
 tests/data/project/Scenarios/scenario1/simulation.toml
 .idea/*
+.vscode/*
