@@ -7,7 +7,7 @@ import numpy as np
 import logging
 
 from PyDSS.pyLogger import getLoggerTag
-
+from PyDSS.utils import utils
 
 class MonteCarloSim:
 
@@ -23,11 +23,11 @@ class MonteCarloSim:
         self.__dssObjectsByClass = dssObjectsByClass
 
         try:
-            MCfile = os.path.join(self.__Settings['Project']['Active Scenario'], 'MonteCarloSettings', 'MonteCarloSettings.xlsx')
+            MCfile = os.path.join(self.__Settings['Project']['Active Scenario'], 'Monte_Carlo', 'MonteCarloSettings.toml')
             MCfilePath = os.path.join(self.__dssPaths['Import'], MCfile)
+
             self.pyLogger.info('Reading monte carlo scenario settings file from ' + MCfilePath)
-            MCsettings = pd.read_excel(MCfilePath,sheetname=0).T
-            self.__MCsettingsDict = MCsettings.to_dict()
+            self.__MCsettingsDict = utils.load_data(MCfilePath)
         except:
             self.pyLogger.error('Failed to read Monte Carlo scenario generation file %s', MCfilePath)
             raise

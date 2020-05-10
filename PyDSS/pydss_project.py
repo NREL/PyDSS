@@ -12,8 +12,8 @@ import pandas as pd
 import PyDSS
 from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, \
     SIMULATION_SETTINGS_FILENAME, DEFAULT_SIMULATION_SETTINGS_FILE, \
-    ControllerType, ExportMode, DEFAULT_PLOT_CONFIG, PLOTS_FILENAME, \
-    filename_from_enum, VisualizationType
+    ControllerType, ExportMode, MONTE_CARLO_SETTINGS_FILENAME,\
+    filename_from_enum, VisualizationType, DEFAULT_MONTE_CARLO
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 from PyDSS.pyDSS import instance
 from PyDSS.pydss_fs_interface import PyDssDirectoryInterface, \
@@ -373,7 +373,7 @@ class PyDssProject:
             os.chdir(orig)
 
     @staticmethod
-    def load_simulation_config(project_path):
+    def load_simulation_config(project_path, scenario):
         """Return the simulation settings for a project, using defaults if the
         file is not defined.
 
@@ -386,18 +386,17 @@ class PyDssProject:
         dict
 
         """
-        filename = os.path.join(project_path, SIMULATION_SETTINGS_FILENAME)
+        filename = os.path.join(project_path, scenario)
         if not os.path.exists(filename):
             filename = os.path.join(
                 project_path,
                 DEFAULT_SIMULATION_SETTINGS_FILE,
             )
             assert os.path.exists(filename)
-
         return load_data(filename)
 
     @classmethod
-    def load_project(cls, path, options=None, in_memory=False):
+    def load_project(cls, path, options=None, in_memory=False, scenario=None):
         """Load a PyDssProject from directory.
 
         Parameters
@@ -417,7 +416,7 @@ class PyDssProject:
         elif os.path.exists(os.path.join(path, PROJECT_ZIP)):
             fs_intf = PyDssZipFileInterface(path)
         else:
-            fs_intf = PyDssDirectoryInterface(path)
+            fs_intf = PyDssDirectoryInterface(path, scenario)
 
         simulation_config = fs_intf.simulation_config
         if options is not None:
@@ -445,7 +444,7 @@ class PyDssProject:
         )
 
     @classmethod
-    def run_project(cls, path, options=None, tar_project=False, zip_project=False):
+    def run_project(cls, path, options=None, tar_project=False, zip_project=False, scenario=None):
         """Load a PyDssProject from directory and run all scenarios.
 
         Parameters
@@ -460,7 +459,7 @@ class PyDssProject:
             zip project files after successful execution
 
         """
-        project = cls.load_project(path, options=options)
+        project = cls.load_project(path, options=options, scenario=scenario)
         return project.run(tar_project=tar_project, zip_project=zip_project)
 
 
@@ -609,10 +608,10 @@ class PyDssScenario:
 
         # @Danial the plots.toml file is not used by a single scenario.
         # It is used to craete plots that compare results from multiple scenarios
-        # dump_data(
-        #     self.plots,
-        #     os.path.join(path, PLOTS_FILENAME)
-        # )
+        dump_data(
+            DEFAULT_MONTE_CARLO,
+            os.path.join(path, "Monte_Carlo", MONTE_CARLO_SETTINGS_FILENAME)
+        )
 
     @staticmethod
     def load_visualization_config_from_type(visualization_type):

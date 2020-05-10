@@ -14,9 +14,10 @@
 "Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS\\examples"
 "Active Project" = "monte_carlo"
 "Active Scenario" = ""
-"DSS File" = ""
+"DSS File" = "Master_Spohn_existing_VV.dss"
 "DSS File Absolute Path" = false
 "Return Results" = false
+
 [[Project.Scenarios]]
 name = "scenario_1"
 post_process_infos = []
@@ -60,7 +61,7 @@ Uninterruptible = true
 "Pre-configured logging" = false
 
 [MonteCarlo]
-"Number of Monte Carlo scenarios" = -1
+"Number of Monte Carlo scenarios" = 5
 
 [Plots]
 "Create dynamic plots" = false

@@ -279,7 +279,8 @@ class OpenDSS:
         if self._Options['Helics']['Co-simulation Mode']:
             self.ResultContainer.updateSubscriptions()
 
-        if self._Options['Project']['Disable PyDSS controllers'] is False:
+        if self._Options['Project']['Disable PyDSS controllers'] is False:# and \
+            #self._Options['Frequency']['Enable frequency sweep'] is False:
             for priority in range(CONTROLLER_PRIORITIES):
                 for i in range(self._Options['Project']['Max Control Iterations']):
                     has_converged, error = self._UpdateControllers(priority, step, UpdateResults=False)
@@ -289,14 +290,15 @@ class OpenDSS:
                             self._Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
                         break
                     self._dssSolver.reSolve()
-
             self._UpdatePlots()
             if self._Options['Exports']['Log Results']:
                 self.ResultContainer.UpdateResults()
 
-        if self._Options['Frequency']['Enable frequency sweep'] and self._Options['Project']['Simulation Type'].lower() != 'dynamic':
+        if self._Options['Frequency']['Enable frequency sweep'] and \
+                self._Options['Project']['Simulation Type'].lower() != 'dynamic':
             self._dssSolver.setMode('Harmonic')
-            for freqency in np.arange(self._Options['Frequency']['Start frequency'], self._Options['Frequency']['End frequency'] + 1,
+            for freqency in np.arange(self._Options['Frequency']['Start frequency'],
+                                      self._Options['Frequency']['End frequency'] + 1,
                                       self._Options['Frequency']['frequency increment']):
                 self._dssSolver.setFrequency(freqency * self._Options['Frequency']['Fundamental frequency'])
                 self._dssSolver.reSolve()

@@ -163,13 +163,13 @@ class PyDssFileSystemInterface(abc.ABC):
 
 class PyDssDirectoryInterface(PyDssFileSystemInterface):
     """Reads PyDSS files when the project is expanded into directories."""
-    def __init__(self, project_dir):
+    def __init__(self, project_dir, scenario):
         self._project_dir = project_dir
         self._scenarios_dir = os.path.join(self._project_dir, SCENARIOS)
         self._dss_dir = os.path.join(self._project_dir, "DSSfiles")
 
         self._simulation_config = load_data(
-            os.path.join(self._project_dir, SIMULATION_SETTINGS_FILENAME)
+            os.path.join(self._project_dir, scenario)
         )
 
         self._check_scenarios()

@@ -12,7 +12,7 @@ import click
 from PyDSS.pydss_project import PyDssProject
 from PyDSS.loggers import setup_logging
 from PyDSS.utils.utils import get_cli_string
-
+from PyDSS.common import SIMULATION_SETTINGS_FILENAME
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +25,15 @@ logger = logging.getLogger(__name__)
     help="dict-formatted simulation settings that override the config file. " \
             "Example:  pydss run ./project --options \"{\\\"Exports\\\": {\\\"Export Compression\\\": \\\"true\\\"}}\"",
 )
+
+@click.option(
+    "-s", "--scenario",
+    required=False,
+    default = SIMULATION_SETTINGS_FILENAME,
+    show_default=True,
+    help="scenario toml file to run (over rides default)",
+)
+
 @click.option(
     "-t", "--tar-project",
     is_flag=True,
@@ -47,13 +56,13 @@ logger = logging.getLogger(__name__)
     help="Enable verbose log output."
 )
 @click.command()
-def run(project_path, options=None, tar_project=False, zip_project=False, verbose=False):
+def run(project_path, options=None, tar_project=False, zip_project=False, verbose=False, scenario=None):
     """Run a PyDSS simulation."""
     if not os.path.exists(project_path):
         print(f"project-path={project_path} does not exist")
         sys.exit(1)
 
-    config = PyDssProject.load_simulation_config(project_path)
+    config = PyDssProject.load_simulation_config(project_path, scenario)
     if verbose:
         # Override the config file.
         config["Logging"]["Logging Level"] = logging.DEBUG
@@ -91,4 +100,5 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
             print(f"options must be of type dict; received {type(options)}")
             sys.exit(1)
 
-    PyDssProject.run_project(project_path, options=options, tar_project=tar_project, zip_project=zip_project)
+    PyDssProject.run_project(project_path, options=options, tar_project=tar_project, zip_project=zip_project,
+                             scenario=scenario)

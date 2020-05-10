@@ -1,0 +1,21 @@
+[1]
+Class = "PVSystems"
+Property = "kVA"
+Distribution = "norm"
+Parameters = "[10,0.1]"
+useWildCard = false
+Wildcard = ""	
+isList = false
+ListLength = 0
+isInteger = false
+
+[2]
+Class = "Loadshape"
+Property = "mult"
+Distribution = "weibull_min"
+Parameters = "[1,5]"
+useWildCard = true
+Wildcard = "pvmult"	
+isList = true
+ListLength = 100
+isInteger = false

@@ -8,22 +8,23 @@
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
-"Control mode" = "Static"
+"Control mode" = "Time"
 "Disable PyDSS controllers" = false
 "Simulation Type" = "QSTS"
 "Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS\\examples"
 "Active Project" = "harmonics"
 "Active Scenario" = ""
-"DSS File" = ""
+"DSS File" = "Run_Scan.dss"
 "DSS File Absolute Path" = false
 "Return Results" = false
+
 [[Project.Scenarios]]
 name = "qsts"
 post_process_infos = []
 
-[[Project.Scenarios]]
-name = "static"
-post_process_infos = []
+# [[Project.Scenarios]]
+# name = "static"
+# post_process_infos = []
 
 [Exports]
 "Export Mode" = "byClass"
@@ -40,11 +41,11 @@ post_process_infos = []
 "Result Container" = "ResultContainer"
 
 [Frequency]
-"Enable frequency sweep" = false
+"Enable frequency sweep" = true
 "Fundamental frequency" = 60
 "Start frequency" = 1.0
 "End frequency" = 15.0
-"frequency increment" = 2.0
+"frequency increment" = 0.0833333333333333
 "Neglect shunt admittance" = false
 "Percentage load in series" = 50.0
 

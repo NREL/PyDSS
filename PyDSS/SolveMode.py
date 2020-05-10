@@ -210,7 +210,7 @@ class __QSTS:
             self.__dssSolution.Seconds(self.__Second)
             self.__dssSolution.Number(1)
             self.__dssSolution.StepSize(self.__sStepRes)
-            self.__dssSolution.MaxControlIterations(self.Settings['Max Control Iterations'])
+            self.__dssSolution.MaxControlIterations(self.Settings['Project']['Max Control Iterations'])
 
 class __Shapshot:
     def __init__(self, dssInstance, SimulationSettings, Logger):
