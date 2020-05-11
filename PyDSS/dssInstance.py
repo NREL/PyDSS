@@ -308,13 +308,13 @@ class OpenDSS:
                 self._dssSolver.setMode('Yearly')
         return self.ResultContainer.CurrentResults
 
-    def RunSimulation(self, project, scenario, file_prefix=''):
+    def RunSimulation(self, project, scenario, MC_scenario_number=None):
         startTime = time.time()
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
         self._Logger.info('Simulation time step {}.'.format(Steps))
         if self.ResultContainer is not None:
-            self.ResultContainer.InitializeDataStore(project.hdf_store, Steps)
+            self.ResultContainer.InitializeDataStore(project.hdf_store, Steps, MC_scenario_number)
 
         postprocessors = [
             pyPostprocess.Create(
@@ -348,7 +348,7 @@ class OpenDSS:
 
         if self._Options and self._Options['Exports']['Log Results']:
             self.ResultContainer.ExportResults(
-                fileprefix=file_prefix,
+                fileprefix=None,
             )
 
         self._Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
@@ -359,7 +359,7 @@ class OpenDSS:
         MC = MonteCarloSim(self._Options, self._dssPath, self._dssObjects, self._dssObjectsByClass)
         for i in range(samples):
             MC.Create_Scenario()
-            self.RunSimulation(project, scenario, 'MC{}'.format(i))
+            self.RunSimulation(project, scenario, i)
         return
 
     def _UpdatePlots(self):

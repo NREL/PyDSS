@@ -40,6 +40,7 @@ class ResultData:
         self._objects_by_class = dss_objects_by_class
         self.system_paths = system_paths
         self._elements = []
+        self._base_scenario = options["Project"]["Active Scenario"]
         self._dss_command = dss_command
         self._dss_instance = dss_instance
         self._start_day = options["Project"]["Start Day"]
@@ -131,7 +132,9 @@ class ResultData:
                 )
                 self._elements.append(elem)
 
-    def InitializeDataStore(self, hdf_store, num_steps):
+    def InitializeDataStore(self, hdf_store, num_steps, MC_scenario_number=None):
+        if MC_scenario_number is not None:
+            self._scenario = self._base_scenario + f"_MC{MC_scenario_number}"
         self._hdf_store = hdf_store
         self._time_dataset = DatasetBuffer(
             hdf_store=hdf_store,
