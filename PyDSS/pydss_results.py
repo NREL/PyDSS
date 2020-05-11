@@ -449,7 +449,7 @@ class PyDssScenarioResults:
             Contents of the file
 
         """
-        self._fs_intf.read_file(path)
+        return self._fs_intf.read_file(path)
 
     def _add_indices_to_dataframe(self, df):
         if self._indices_df is None:
