@@ -31,9 +31,10 @@ DATA_FORMAT_VERSION = "1.0.0"
 
 class PyDssProject:
     """Represents the project options for a PyDSS simulation."""
-    def __init__(self, path, name, scenarios, simulation_config, fs_intf=None):
+    def __init__(self, path, name, scenarios, simulation_config, fs_intf=None, simulation_file=None):
         self._name = name
         self._scenarios = scenarios
+        self._simulation_file = simulation_file
         self._simulation_config = simulation_config
         self._project_dir = os.path.join(path, self._name)
         self._scenarios_dir = os.path.join(self._project_dir, SCENARIOS)
@@ -198,19 +199,22 @@ class PyDssProject:
         os.makedirs(self._project_dir, exist_ok=True)
         for name in PROJECT_DIRECTORIES:
             os.makedirs(os.path.join(self._project_dir, name), exist_ok=True)
-
         self._serialize_scenarios()
-
-        dump_data(
-            self._simulation_config,
-            os.path.join(self._project_dir, SIMULATION_SETTINGS_FILENAME),
-        )
+        if self._simulation_file:
+            dump_data(
+                self._simulation_config,
+                os.path.join(self._project_dir, self._simulation_file),
+            )
+        else:
+            dump_data(
+                self._simulation_config,
+                os.path.join(self._project_dir, SIMULATION_SETTINGS_FILENAME),
+            )
 
         logger.info("Initialized directories in %s", self._project_dir)
 
     @classmethod
-    def create_project(cls, path, name, scenarios, simulation_config=None,
-                       options=None):
+    def create_project(cls, path, name, scenarios, simulation_config=None, options=None, simulation_file=None):
         """Create a new PyDssProject on the filesystem.
 
         Parameters
@@ -232,8 +236,8 @@ class PyDssProject:
             simulation_config.update(options)
         simulation_config["Project"]["Project Path"] = path
         simulation_config["Project"]["Active Project"] = name
-
-        project = cls(path, name, scenarios, simulation_config)
+        project = cls(path, name, scenarios, simulation_config, simulation_file)
+        project._simulation_file = simulation_file
         project.serialize()
         sc_names = project.list_scenario_names()
         logger.info("Created project=%s with scenarios=%s at %s", name,
@@ -705,7 +709,6 @@ class PyDssScenario:
         self.post_process_infos.append(post_process_info)
         logger.info("Appended post-process script %s to %s",
                     post_process_info["script"], self.name)
-
 
 def load_config(path):
     """Return a configuration from files.

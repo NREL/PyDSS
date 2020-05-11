@@ -18,7 +18,7 @@
 "DSS File Absolute Path" = false
 "Return Results" = false
 [[Project.Scenarios]]
-name = "fault"
+name = "test"
 post_process_infos = []
 
 [Exports]

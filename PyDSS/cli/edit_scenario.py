@@ -8,10 +8,11 @@ from PyDSS.loggers import setup_logging
 from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, ExportMode, VisualizationType
 
 
+
 @click.option(
     "-P", "--path",
     required=True,
-    help="path in which to create project",
+    help="Path where project exists",
 )
 @click.option(
     "-p", "--project",
@@ -19,46 +20,13 @@ from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, Exp
     help="project name",
 )
 @click.option(
-    "-s", "--scenarios",
+    "-s", "--scenario",
     required=True,
-    help="comma-delimited scenario names",
+    help="Project name (should exist)",
 )
-@click.option(
-    "-f", "--simulation-file",
-    required=False,
-    show_default=True,
-    default="simulation.toml",
-    help="simulation file name",
-)
-@click.option(
-    "-S", "--simulation-config",
-    default=None,
-    type=click.Path(exists=True),
-    help="simulation configuration settings",
-)
-@click.option(
-    "-c", "--controller-types",
-    default=None,
-    help="comma-delimited list of controller types",
-)
-@click.option(
-    "-v", "--visualization-types",
-    default=None,
-    help="comma-delimited list of dynamic visualization types",
-)
-@click.option(
-    "-e", "--export-modes",
-    default=None,
-    help="comma-delimited list of export modes",
-)
-@click.option(
-    "-o", "--options",
-    help="dict-formatted simulation settings that override the config file. " \
-         "Example:  pydss run ./project --options \"{\\\"Simulation Type\\\": \\\"QSTS\\\"}\"",
-)
+
 @click.command()
-def create_project(path=None, project=None, scenarios=None, simulation_file=None, simulation_config=None,
-                   controller_types=None, export_modes=None, options=None, visualization_types=None):
+def edit_scenario(path=None, project=None, scenarios=None):
     """Create PyDSS project."""
     setup_logging("PyDSS", console_level=logging.INFO)
     if controller_types is not None:
@@ -87,6 +55,5 @@ def create_project(path=None, project=None, scenarios=None, simulation_file=None
         project,
         scenarios,
         simulation_config,
-        options=options,
-        simulation_file=simulation_file
+        options=options
     )
