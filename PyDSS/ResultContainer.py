@@ -290,7 +290,7 @@ class ResultContainer:
         pass
 
     def max_num_bytes(self):
-        pass
+        0
 
     def __ExportResultsByClass(self, fileprefix=''):
         for Class in self.Results.keys():
