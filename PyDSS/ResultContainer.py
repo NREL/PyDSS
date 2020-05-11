@@ -289,6 +289,9 @@ class ResultContainer:
     def FlushData(self):
         pass
 
+    def max_num_bytes(self):
+        pass
+
     def __ExportResultsByClass(self, fileprefix=''):
         for Class in self.Results.keys():
             for Property in self.Results[Class].keys():
