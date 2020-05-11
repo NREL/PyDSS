@@ -162,12 +162,14 @@ class ResultData:
             element.initialize_data_store(hdf_store, self._scenario, num_steps)
 
     def UpdateResults(self):
+        self.CurrentResults = {}
         self._time_dataset.write_value(self._dss_solver.GetDateTime().timestamp())
         self._frequency_dataset.write_value(self._dss_solver.getFrequency())
         self._mode_dataset.write_value(self._dss_solver.getMode())
 
         for elem in self._elements:
-            elem.append_values()
+            data = elem.append_values()
+            self.CurrentResults = {**self.CurrentResults, **data}
 
     def ExportResults(self, fileprefix=""):
         self.FlushData()
@@ -370,8 +372,14 @@ class ElementData:
         self._scenario = scenario
 
     def append_values(self):
+        curr_data = {}
         for prop in self.properties:
             value = self._obj.GetValue(prop, convert=True)
+            if len(value.make_columns()) > 1:
+                for property, val in zip(value.make_columns(), value._value):
+                    curr_data[property] = val
+            else:
+                curr_data[value.make_columns()[0]] = value._value
             if self._data[prop] is None:
                 path = f"Exports/{self._scenario}/{self._element_class}/{self._name}/{prop}"
                 self._data[prop] = ValueContainer(
@@ -382,6 +390,7 @@ class ElementData:
                     max_chunk_bytes=self._max_chunk_bytes,
                 )
             self._data[prop].append(value)
+        return curr_data
 
     @property
     def element_class(self):
