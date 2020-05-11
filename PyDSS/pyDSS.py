@@ -5,8 +5,6 @@ import toml
 import os
 import logging
 
-from PyDSS.pyAnalyzer.dssSimulationResult import ResultObject
-from PyDSS.pyAnalyzer.dssGraphicsGenerator import CreatePlots
 from PyDSS import dssInstance
 from PyDSS.utils.utils import dump_data, load_data
 
@@ -119,43 +117,19 @@ class instance(object):
         },
     }
 
-    def update_results_dict(self, results_container, args, results):
-        results_container['{}-{}-{}-{}-{}'.format(
-            args["Active Project"],
-            args["Active Scenario"],
-            args["Start Year"],
-            args["Start Day"],
-            args["End Day"],
-        )] = (args, results)
-        return results_container
-
-
     def run(self, simulation_config, project, scenario):
-        print(simulation_config)
-        #TODO: plots should be project.plots rather than scenario.plots
-
-        # path = os.path.dirname(PyDSS.__file__)
-        # default_vis_settings = load_data(os.path.join(path, 'defaults', 'plots.toml'))
-        # if scenario.plots is not None:
-        #     updated_vis_settings = {**default_vis_settings, **scenario.plots}
-        # else:
-        #     updated_vis_settings = default_vis_settings
-
         bokeh_server_proc = None
         if simulation_config['Plots']['Create dynamic plots']:
             bokeh_server_proc = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
-
-        SimulationResults = {}
-        args, results = self.run_scenario(
-            project,
-            scenario,
-            simulation_config,
-        )
-        if results is not None:
-            SimulationResults = self.update_results_dict(SimulationResults, args, results)
-
-        if simulation_config['Plots']['Create dynamic plots']:
-            bokeh_server_proc.terminate()
+        try:
+            self.run_scenario(
+                project,
+                scenario,
+                simulation_config,
+            )
+        finally:
+            if simulation_config['Plots']['Create dynamic plots']:
+                bokeh_server_proc.terminate()
         return
 
     def update_scenario_settings(self, simulation_config):
@@ -181,8 +155,7 @@ class instance(object):
             dss.RunMCsimulation(project, scenario, samples=dss_args["MonteCarlo"]['Number of Monte Carlo scenarios'])
         else:
             dss.RunSimulation(project, scenario)
-        result = None
-        return dss_args, result
+        return dss_args
 
     def _dump_scenario_simulation_settings(self, dss_args):
         # Various settings may have been updated. Write the actual settings to a file.
