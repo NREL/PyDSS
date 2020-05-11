@@ -2,7 +2,7 @@ from  PyDSS.pyPlots.pyPlotAbstract import PlotAbstract
 from bokeh.plotting import figure, curdoc
 from bokeh.io import output_file
 from bokeh.client import push_session
-from bokeh.layouts import  column
+from bokeh.layouts import column
 from bokeh.palettes import Set1
 from ast import literal_eval as LE
 

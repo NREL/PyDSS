@@ -22,6 +22,7 @@ class VisualizationType(enum.Enum):
     XY_PLOT = "XY"
     THREEDIM_PLOT = "ThreeDim"
     TABLE_PLOT = "Table"
+    NETWORK_GRAPH = "NetworkGraph"
 
 class ControllerType(enum.Enum):
     PV_CONTROLLER = "PvController"

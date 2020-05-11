@@ -3,7 +3,7 @@ seaborn
 setuptools
 scipy
 bokeh
-networkx==1.11
+networkx
 toml==0.10.0
 pyproj
 descartes

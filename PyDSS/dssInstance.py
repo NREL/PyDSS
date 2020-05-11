@@ -15,9 +15,6 @@ from PyDSS.pyPostprocessor import pyPostprocess
 import PyDSS.pyControllers as pyControllers
 import PyDSS.pyPlots as pyPlots
 
-
-from PyDSS.Extensions.NetworkGraph import CreateGraph
-
 import numpy as np
 import pandas as pd
 import logging
@@ -165,7 +162,7 @@ class OpenDSS:
         Figures = []
         for PlotType, PlotNames in PlotsDict.items():
             newPlotNames = list(PlotNames)
-            PlotType1= ['Topology', 'GISplot']
+            PlotType1= ['Topology', 'GISplot', 'NetworkGraph']
             PlotType2 = ['SagPlot', 'Histogram']
             PlotType3 = ['XY', 'TimeSeries', 'FrequencySweep']
 
