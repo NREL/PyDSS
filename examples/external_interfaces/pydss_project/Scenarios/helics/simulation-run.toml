@@ -11,33 +11,20 @@
 "Control mode" = "Static"
 "Disable PyDSS controllers" = false
 "Simulation Type" = "QSTS"
-"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS\\examples"
-"Active Project" = "custom_contols"
-"Active Scenario" = ""
+"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS\\examples\\external_interfaces"
+"Active Project" = "pydss_project"
+"Active Scenario" = "helics"
 "DSS File" = "Master_Spohn_existing_VV.dss"
 "DSS File Absolute Path" = false
 "Return Results" = false
-
 [[Project.Scenarios]]
-name = "base_case"
+name = "helics"
 post_process_infos = []
-
-# [[Project.Scenarios]]
-# name = "volt_var"
-# post_process_infos = []
-
-# [[Project.Scenarios]]
-# name = "self_consumption"
-# post_process_infos = []
-
-# [[Project.Scenarios]]
-# name = "multiple_controls"
-# post_process_infos = []
 
 [Exports]
 "Export Mode" = "byClass"
 "Export Style" = "Single file"
-"Export Format" = "h5"
+"Export Format" = "csv"
 "Export Compression" = false
 "Export Iteration Order" = "ValuesByPropertyAcrossElements"
 "Export Elements" = true
@@ -58,7 +45,9 @@ post_process_infos = []
 "Percentage load in series" = 50.0
 
 [Helics]
-"Co-simulation Mode" = false
+Broker = "mainbroker"
+"Broker port" = 50001
+"Co-simulation Mode" = true
 "Federate name" = "PyDSS"
 "Time delta" = 0.01
 "Core type" = "zmq"
@@ -70,7 +59,7 @@ Uninterruptible = true
 "Log to external file" = true
 "Display on screen" = true
 "Clear old log file" = false
-"Pre-configured logging" = false
+"Pre-configured logging" = true
 
 [MonteCarlo]
 "Number of Monte Carlo scenarios" = -1

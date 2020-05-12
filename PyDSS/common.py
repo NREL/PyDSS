@@ -38,6 +38,7 @@ CONFIG_EXT = ".toml"
 class ExportMode(enum.Enum):
     BY_CLASS = "ExportMode-byClass"
     BY_ELEMENT = "ExportMode-byElement"
+    SUBSCRIPTIONS = 'Subscriptions'
 
 
 def filename_from_enum(obj):

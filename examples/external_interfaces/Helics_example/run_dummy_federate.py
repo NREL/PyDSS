@@ -51,22 +51,17 @@ print("PI SENDER: Value federate created")
 # Register the publication #
 pub1 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.load1.power", "double", "kW")
 print("PI SENDER: Publication registered")
-pub2 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.load2.power", "double", "kW")
+pub2 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.feederhead.voltage", "double", "kW")
 print("PI SENDER: Publication registered")
-pub3 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.load3.power", "double", "kW")
-print("PI SENDER: Publication registered")
-sub1 = h.helicsFederateRegisterSubscription(vfed, "Circuit.heco19021.TotalPower.E", "kW")
+sub1 = h.helicsFederateRegisterSubscription(vfed, "PyDSS.PVSystem.pvgnem_mpx000635970.Powers", "kW")
 # Enter execution mode #
 h.helicsFederateEnterExecutingMode(vfed)
-print("PI SENDER: Entering execution mode")
-
-# This federate will be publishing deltat*pi for numsteps steps #
 
 for t in range(0, 96):
     currenttime = h.helicsFederateRequestTime(vfed, t * 15 * 60)
+    print(t * 15 * 60, currenttime)
     h.helicsPublicationPublishDouble(pub1, 5.0)
-    h.helicsPublicationPublishDouble(pub2, -1.0)
-    h.helicsPublicationPublishDouble(pub3, random.random() * 12)
+    h.helicsPublicationPublishDouble(pub2, 1.0)
 
     value = h.helicsInputGetString(sub1)
     print(
@@ -75,7 +70,7 @@ for t in range(0, 96):
         )
     )
 
-    time.sleep(0.01)
+    time.sleep(1)
 
 h.helicsFederateFinalize(vfed)
 print("PI SENDER: Federate finalized")

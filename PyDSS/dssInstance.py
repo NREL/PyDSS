@@ -274,7 +274,7 @@ class OpenDSS:
 
         self._dssSolver.IncStep()
         if self._Options['Helics']['Co-simulation Mode']:
-            self.ResultContainer.updateSubscriptions()
+            self.ResultContainer.updateHelicsSubscriptions()
 
         if self._Options['Project']['Disable PyDSS controllers'] is False:# and \
             #self._Options['Frequency']['Enable frequency sweep'] is False:

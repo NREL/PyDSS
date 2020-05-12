@@ -75,6 +75,8 @@ class instance(object):
         "Helics": {
             'Co-simulation Mode': {'type': bool, 'Options': [True, False]},
             'Federate name': {'type': str},
+            'Broker': {'type': str},
+            'Broker port': {'type': int},
             'Time delta': {'type': float},
             'Core type': {'type': str},
             'Uninterruptible': {'type': bool, 'Options': [True, False]},
