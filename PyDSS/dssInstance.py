@@ -8,6 +8,7 @@ from PyDSS.NetworkModifier import Modifier
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
+from PyDSS import helics_interface as HI
 from PyDSS.utils.dataframe_utils import write_dataframe
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 
@@ -135,6 +136,10 @@ class OpenDSS:
                 if params['Plots']['Open plots in browser']:
                     self._pyPlotObjects[Plot].session.show()
                 break
+
+        if params['Helics']["Co-simulation Mode"]:
+            self._HI = HI.helics_interface(self._dssSolver, self._dssObjects, self._dssObjectsByClass, params,
+                                           self._dssPath)
         return
 
     def _ModifyNetwork(self):
@@ -274,7 +279,7 @@ class OpenDSS:
 
         self._dssSolver.IncStep()
         if self._Options['Helics']['Co-simulation Mode']:
-            self.ResultContainer.updateHelicsSubscriptions()
+            self._HI.updateHelicsSubscriptions()
 
         if self._Options['Project']['Disable PyDSS controllers'] is False:# and \
             #self._Options['Frequency']['Enable frequency sweep'] is False:
@@ -306,6 +311,11 @@ class OpenDSS:
                 self._dssSolver.setMode('Snapshot')
             else:
                 self._dssSolver.setMode('Yearly')
+
+        if self._Options['Helics']['Co-simulation Mode']:
+            self._HI.updateHelicsPublications()
+            self._HI.request_time_increment()
+
         return self.ResultContainer.CurrentResults
 
     def RunSimulation(self, project, scenario, MC_scenario_number=None):
