@@ -124,11 +124,11 @@ class instance(object):
 
     def update_results_dict(self, results_container, args, results):
         results_container['{}-{}-{}-{}-{}'.format(
-            args["Active Project"],
-            args["Active Scenario"],
-            args["Start Year"],
-            args["Start Day"],
-            args["End Day"],
+            args["Project"]["Active Project"],
+            args["Project"]["Active Scenario"],
+            args["Project"]["Start Year"],
+            args["Project"]["Start Day"],
+            args["Project"]["End Day"],
         )] = (args, results)
         return results_container
 
