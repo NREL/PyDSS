@@ -148,7 +148,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.V_lower_thresh = 0.95
         self.get_nodal_violations()
 
-        self.feeder_parameters["Initial violations"] = {
+        self.feeder_parameters["initial_violations"] = {
             "Number of lines with violations": len(self.line_violations),
             "Number of xfmrs with violations": len(self.xfmr_violations),
             "Max line loading observed": max(self.orig_line_ldg_lst),
@@ -160,6 +160,15 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
         if self.config["Create_upgrade_plots"]:
             self.create_op_plots()
+
+        self.upgrade_status = ''  # parameter stating status of thermal upgrades - needed or not
+
+        if len(self.xfmr_violations) > 0 or len(self.line_violations) > 0:
+            self.upgrade_status = 'Thermal Upgrades were needed'  # status - whether voltage upgrades done or not
+            self.logger.info("Thermal Upgrades Required.")
+        else:
+            self.logger.info("No Thermal Upgrades Required.")
+            self.upgrade_status = 'No Thermal Upgrades needed'  # status - whether voltage upgrades done or not
 
         # Mitigate thermal violations
         self.Line_trial_counter = 0
@@ -176,9 +185,20 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             if self.Line_trial_counter > self.config["Max iterations"]:
                 self.logger.info("Max iterations limit reached, quitting")
                 break
-        self.determine_xfmr_ldgs()
-        self.determine_line_ldgs()
+        # self.determine_xfmr_ldgs()
+        # self.determine_line_ldgs()
         end = time.time()
+
+        # upgrading process is over
+        # so clear and redirect dss file - to compute final violations, and get new elements
+        # TODO: Test impact of applied settings - can't compile the feeder again in PyDSS
+        # self.compile_feeder_initialize()
+        dss.run_command("Clear")
+        base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
+        check_redirect(base_dss)
+        upgrades_file = os.path.join(self.config["Outputs"], "thermal_upgrades.dss")
+        check_redirect(upgrades_file)
+        self.dssSolver.Solve()
 
         # Get final loadings
         self.final_line_ldg_lst = []
@@ -217,14 +237,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.write_dat_file()
         self.logger.debug("Processing upgrade results")
         self.logger.info("Total time = %s", end - start)
-        # # TODO: Test impact of applied settings - can't compile the feeder again in PyDSS
-        # self.compile_feeder_initialize()
-        dss.run_command("Clear")
-        base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
-        check_redirect(base_dss)
-        upgrades_file = os.path.join(self.config["Outputs"], "thermal_upgrades.dss")
-        check_redirect(upgrades_file)
-        self.dssSolver.Solve()
 
         # save new upgraded objects
         self.new_xfmrs = {x["name"]: x for x in iter_elements(dss.Transformers, get_transformer_info)}
@@ -234,18 +246,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.determine_xfmr_ldgs()
         # if self.config["Create_upgrade_plots"]:
         #     self.create_op_plots()
-        self.get_nodal_violations()
-        self.feeder_parameters["Final violations"] = {
-            "Number of lines with violations": len(self.line_violations),
-            "Number of xfmrs with violations": len(self.xfmr_violations),
-            "Max line loading observed": max(self.final_line_ldg_lst),
-            "Max xfmr loading observed": max(self.final_xfmr_ldg_lst),
-            "Maximum voltage on any bus": self.max_V_viol,
-            "Minimum voltage on any bus":self.min_V_viol,
-            "Number of buses outside ANSI A limits":len(self.cust_viol),
-        }
-        self.feeder_parameters["Simulation time (seconds)"] = end - start
-        self.write_to_json(self.feeder_parameters, "Thermal_violations_comparison")
 
         feeder_head_name = dss.Circuit.Name()
         feeder_head_bus = dss.CktElement.BusNames()[0].split(".")[0]
@@ -254,6 +254,24 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         num_nodes = dss.Bus.NumNodes()
         if num_nodes>1:
             feeder_head_basekv = round(feeder_head_basekv*math.sqrt(3),1)
+
+        # final computation of violations
+        self.get_nodal_violations()
+        self.feeder_parameters["final_violations"] = {
+            "Number of lines with violations": len(self.line_violations),
+            "Number of xfmrs with violations": len(self.xfmr_violations),
+            "Max line loading observed": max(self.final_line_ldg_lst),
+            "Max xfmr loading observed": max(self.final_xfmr_ldg_lst),
+            "Maximum voltage on any bus": self.max_V_viol,
+            "Minimum voltage on any bus": self.min_V_viol,
+            "Number of buses outside ANSI A limits": len(self.cust_viol),
+        }
+        self.feeder_parameters["Simulation time (seconds)"] = end - start
+        self.feeder_parameters["Upgrade status"] = self.upgrade_status
+        self.feeder_parameters["feederhead_name"] = feeder_head_name
+        self.feeder_parameters["feederhead_basekV"] = feeder_head_basekv
+
+        self.write_to_json(self.feeder_parameters, "Thermal_violations_comparison")
 
         # Process outputs
         input_dict = {

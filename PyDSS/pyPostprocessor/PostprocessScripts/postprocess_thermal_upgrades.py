@@ -40,6 +40,9 @@ class postprocess_thermal_upgrades():
             self.create_op_plots()
         self.get_orig_line_DT_params()
         self.process_thermal_upgrades()
+        # convert pen_level_upgrades to dataframe - to compute parallel lines and transformers
+        self.processed_upgrades_df = pd.DataFrame.from_dict(self.pen_level_upgrades)
+        self.get_all_parallel()  # save csv of parallel lines and transformers
 
     # TODO make function to post process orig and new objects
 
@@ -67,7 +70,6 @@ class postprocess_thermal_upgrades():
         data = json.load(f)
         for xfmr, params in data.items():
             self.orig_DT_parameters["transformer."+xfmr.lower()] = params
-
 
     def process_thermal_upgrades(self):
         for self.pen_level in range(self.init_pen, self.end_pen + 1, self.pen_step):
@@ -116,6 +118,7 @@ class postprocess_thermal_upgrades():
             if self.Settings["Create_plots"]:
                 self.create_edge_node_dicts()
                 self.plot_feeder()
+
 
     def write_to_json(self, dict, file_name):
         with open(os.path.join(self.Settings["Outputs"],"{}.json".format(file_name)), "w") as fp:
@@ -276,6 +279,42 @@ class postprocess_thermal_upgrades():
         plt.title("Thermal violations")
         plt.axis("off")
         plt.savefig(os.path.join(self.Settings["Outputs"],"Thermal_upgrades.pdf"))
+
+    def parallel_upgrades(self, equipment_type):
+        '''upgrade_df is a dataframe version of the processed_thermal_upgrades.json
+        file produced by Akshay's upgrade codeself.
+        equipment_type is a string equal to either "Transformer" or "Line" '''
+        parallel_equip_df = pd.DataFrame()
+        parallel_equip_ids = []
+        parallel_equip_counts = []
+
+        for k in self.processed_upgrades_df.keys():
+            # print(k)
+            equip_str = equipment_type + '.'
+            if equip_str in k:
+                # count of new lines added to address overload. Often 1, but could be > 1 with severe overloads
+                parallel_count = self.processed_upgrades_df[k]['new'][0]
+
+                if parallel_count > 1:
+                    parallel_equip_ids.append(k)
+                    parallel_equip_counts.append(parallel_count)
+
+        parallel_equip_df['element_id'] = parallel_equip_ids
+        parallel_equip_df['count_of_equipment_in_parallel'] = parallel_equip_counts
+
+        return parallel_equip_df
+
+    def get_all_parallel(self):
+        ''' processed_upgrade_file is the name of the json file written out from
+        Akshay's thermal upgrades code'''
+
+        xfmr_parallel_df = self.parallel_upgrades('Transformer')
+        line_parallel_df = self.parallel_upgrades('Line')
+
+        xfmr_parallel_df.to_csv(os.path.join(self.Settings["Outputs"] + 'summary_of_parallel_transformer_upgrades.csv'))
+        line_parallel_df.to_csv(os.path.join(self.Settings["Outputs"] + 'summary_of_parallel_line_upgrades.csv'))
+        return
+
 
 # Test Disco feeder
 if __name__ == "__main__":

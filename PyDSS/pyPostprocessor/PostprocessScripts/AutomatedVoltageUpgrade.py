@@ -143,6 +143,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.dssSolver = dssSolver
         self.start = time.time()
 
+        # reading original objects (before upgrades)
         self.orig_ckt_info = get_ckt_info()
         self.orig_reg_controls = {x["name"]: x for x in iter_elements(dss.RegControls, get_reg_control_info)}
         self.orig_capacitors = {x["name"]: x for x in iter_elements(dss.Capacitors, get_capacitor_info)}
@@ -208,14 +209,28 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             pass
         self.write_flag = 1
         self.feeder_parameters = {}
+
+        # TODO change made by Sherin - capability to change voltage violation limits
+        # upper and lower limit can be assigned to another value for initial checks
+        # and can be changed at a later stage
+        # self.upper_limit = self.config["Range B upper"]
+        # self.lower_limit = self.config["Range B lower"]
+
+        self.upper_limit = self.config["Initial upper limit"]
+        self.lower_limit = self.config["Initial lower limit"]
+
         # Use this block for capacitor settings
-        self.check_voltage_violations_multi_tps()
+        # initial check for violations
+        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                lower_limit=self.lower_limit)
         self.logger.info("Initial number of buses with violations are: %s", len(self.buses_with_violations))
         self.logger.info("Initial objective function value: %s", self.severity_indices[2])
         self.logger.info("Initial maximum voltage observed on any node: %s", self.max_V_viol)
         self.logger.info("Initial minimum voltage observed on any node: %s", self.min_V_viol)
 
-        self.feeder_parameters["intial_violations"] ={
+        self.feeder_parameters["initial_violations"] ={
+            "Voltage upper threshold": self.upper_limit,
+            "Voltage lower threshold": self.lower_limit,
             "Number of buses with violations"       :len(self.buses_with_violations),
             "Buses at all tps with violations"      :self.severity_indices[0],
             "Severity of bus violations"            : self.severity_indices[1],
@@ -224,284 +239,314 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             "Minimum voltage observed"              : self.min_V_viol
         }
 
-        if len(self.buses_with_violations) > 0:
-            if self.config["create topology plots"]:
-                self.plot_violations()
-            # Correct cap banks settings if caps are present in the feeder
-            if dss.Capacitors.Count() > 0:
-                self.get_capacitor_state()
-                self.correct_cap_bank_settings()
-                if self.config["create topology plots"]:
-                    self.plot_violations()
-                if len(self.buses_with_violations) > 0:
-                    self.cap_settings_sweep()
-                self.check_voltage_violations_multi_tps()
-                if self.config["create topology plots"]:
-                    self.plot_violations()
-            else:
-                self.logger.info("No cap banks exist in the system")
+        self.upgrade_status = ''  # status - whether voltage upgrades done or not
+        # if there are no buses with violations based on initial check, don't get into upgrade process
+        # directly go to end of file
+        if len(self.buses_with_violations) <= 0:
+            self.logger.info("No Voltage Upgrades Required.")
+            self.upgrade_status = 'No Voltage Upgrades needed'  # status - whether voltage upgrades done or not
 
-        # Do a settings sweep of existing reg control devices (other than sub LTC) after correcting their other
-        #  parameters such as ratios etc
-        self.check_voltage_violations_multi_tps()
-        self.reg_sweep_viols = {}
-        if dss.RegControls.Count() > 0 and len(self.buses_with_violations) > 0:
-            self.initial_regctrls_settings = {}
-            dss.RegControls.First()
-            while True:
-                name = dss.RegControls.Name()
-                xfmr = dss.RegControls.Transformer()
-                dss.Circuit.SetActiveElement("Transformer.{}".format(xfmr))
-                xfmr_buses = dss.CktElement.BusNames()
-                xfmr_b1 = xfmr_buses[0].split(".")[0]
-                xfmr_b2 = xfmr_buses[1].split(".")[0]
-                # # Skipping over substation LTC if it exists
-                # for n, d in self.G.in_degree().items():
-                #     if d==0:
-                #         sourcebus = n
-                sourcebus = self.source
-                if xfmr_b1.lower() == sourcebus.lower() or xfmr_b2.lower() == sourcebus.lower():
-                    dss.Circuit.SetActiveElement("Regcontrol.{}".format(name))
-                    # dss.RegControls.Next()
-                    if not dss.RegControls.Next() > 0:
-                        break
-                    continue
-                dss.Circuit.SetActiveElement("Regcontrol.{}".format(name))
-                bus_name = dss.CktElement.BusNames()[0].split(".")[0]
-                dss.Circuit.SetActiveBus(bus_name)
-                phases = dss.CktElement.NumPhases()
-                kV = dss.Bus.kVBase()
-                dss.Circuit.SetActiveElement("Regcontrol.{}".format(name))
-                winding = self.LTC_wdg
-                reg_delay = self.LTC_delay
-                pt_ratio = kV * 1000 / (self.config["nominal_voltage"])
-                try:
-                    Vreg = dss.Properties.Value("vreg")
-                except:
-                    Vreg = self.config["nominal_voltage"]
-                try:
-                    bandwidth = dss.Properties.Value("band")
-                except:
-                    bandwidth = 3.0
-                self.initial_regctrls_settings[name] = [Vreg, bandwidth]
-                command_string = "Edit RegControl.{rn} transformer={tn} winding={w} vreg={sp} ptratio={rt} band={b} " \
-                                 "enabled=true delay={d} !original".format(
-                    rn=name,
-                    tn=xfmr,
-                    w=winding,
-                    sp=Vreg,
-                    rt=pt_ratio,
-                    b=bandwidth,
-                    d=reg_delay
-                )
-                dss.run_command(command_string)
-                self.dssSolver.Solve()
-                # add this to a dss_upgrades.dss file
-                self.write_dss_file(command_string)
-                if not dss.RegControls.Next() > 0:
-                    break
-            self.check_voltage_violations_multi_tps()
-            self.reg_sweep_viols["original"] = self.severity_indices[2]
-            if len(self.buses_with_violations) > 0:
-                self.reg_controls_sweep()
-                self.check_voltage_violations_multi_tps()
-                if self.config["create topology plots"]:
-                    self.plot_violations()
+        # else, if there are bus violations based on initial check, start voltage upgrades process
+        else:
+            # change voltage checking thresholds
+            self.upper_limit = self.config["Final upper limit"]
+            self.lower_limit = self.config["Final lower limit"]
 
-        # Writing out the results before adding new devices
-        self.write_upgrades_to_file()
-        # postprocess_voltage_upgrades(
-        #     {
-        #         "outputs": self.config["Outputs"],
-        #         "feederhead_name": feeder_head_name,
-        #         "feederhead_basekV": feeder_head_basekv
-        #     },
-        #     self.logger,
-        # )
-
-        # New devices might be added after this
-        self.check_voltage_violations_multi_tps()
-        self.cluster_optimal_reg_nodes = {}
-        self.cluster_optimal_reg_nodes["pre_reg"] = [self.severity_indices[2]]
-        self.sub_LTC_added_flag = 0
-
-        # Use this block for adding a substation LTC, correcting its settings and running a sub LTC settings sweep -
-        # if LTC exists first try to correct its non set point simulation settings - if this does not correct everything
-        #  correct its set points through a sweep - if LTC does not exist add one including a xfmr if required - then
-        #  do a settings sweep if required
-        # self.add_ctrls_flag = 0
-        # TODO: If adding a substation LTC increases violations even after the control sweep then before then remove it
-        # TODO: - this might however interfere with voltage regulator logic so may be let it be there
-        if self.config["Use LTC placement"]:
-            self.check_voltage_violations_multi_tps()
+            self.upgrade_status = 'Voltage Upgrades were needed'  # status - whether voltage upgrades done or not
+            self.logger.info("Voltage Upgrades Required.")
+            # Use this block for capacitor settings
             if len(self.buses_with_violations) > 0:
                 if self.config["create topology plots"]:
                     self.plot_violations()
-                # Add substation LTC if not available (may require addition of a new substation xfmr as well)
-                # if available correct its settings
-                self.subLTC_sweep_viols = {}
-                self.LTC_exists_flag = 0
-                if dss.RegControls.Count() > 0 and len(self.buses_with_violations) > 0:
-                    self.initial_subLTC_settings = {}
-                    dss.RegControls.First()
-                    while True:
-                        name = dss.RegControls.Name()
-                        xfmr = dss.RegControls.Transformer()
-                        dss.Circuit.SetActiveElement("Transformer.{}".format(xfmr))
-                        xfmr_buses = dss.CktElement.BusNames()
-                        xfmr_b1 = xfmr_buses[0].split(".")[0]
-                        xfmr_b2 = xfmr_buses[1].split(".")[0]
-                        # for n, d in self.G.in_degree().items():
-                        #     if d==0:
-                        #         sourcebus = n
-                        sourcebus = self.source
-                        # Skipping over all reg controls other than sub LTC
-                        if xfmr_b1.lower() == sourcebus.lower() or xfmr_b2.lower() == sourcebus.lower():
-                            self.LTC_exists_flag = 1
-                            dss.Circuit.SetActiveElement("Regcontrol.{}".format(name))
-                            bus_name = dss.CktElement.BusNames()[0].split(".")[0]
-                            dss.Circuit.SetActiveBus(bus_name)
-                            phases = dss.CktElement.NumPhases()
-                            kV = dss.Bus.kVBase()
-                            winding = self.LTC_wdg
-                            reg_delay = self.LTC_delay
-                            pt_ratio = kV * 1000 / (self.config["nominal_voltage"])
-                            try:
-                                Vreg = dss.Properties.Value("vreg")
-                            except:
-                                Vreg = self.config["nominal_voltage"]
-                            try:
-                                bandwidth = dss.Properties.Value("band")
-                            except:
-                                bandwidth = 3.0
-                            self.initial_subLTC_settings[name] = [Vreg, bandwidth]
-                            command_string = "Edit RegControl.{rn} transformer={tn} winding={w} vreg={sp} ptratio={rt} band={b} " \
-                                             "enabled=true delay={d} !original".format(
-                                rn=name,
-                                tn=xfmr,
-                                w=winding,
-                                sp=Vreg,
-                                rt=pt_ratio,
-                                b=bandwidth,
-                                d=reg_delay
-                            )
-                            dss.run_command(command_string)
-                            self.dssSolver.Solve()
-                            # add this to a dss_upgrades.dss file
-                            self.write_dss_file(command_string)
-                            dss.Circuit.SetActiveElement("Regcontrol.{}".format(name))
+                # Correct cap banks settings if caps are present in the feeder
+                if dss.Capacitors.Count() > 0:
+                    self.get_capacitor_state()
+                    self.correct_cap_bank_settings()
+                    if self.config["create topology plots"]:
+                        self.plot_violations()
+                    if len(self.buses_with_violations) > 0:
+                        self.cap_settings_sweep(upper_limit=self.upper_limit,
+                                                            lower_limit=self.lower_limit)
+                    self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                            lower_limit=self.lower_limit)
+                    if self.config["create topology plots"]:
+                        self.plot_violations()
+                else:
+                    self.logger.info("No cap banks exist in the system")
+
+            # Do a settings sweep of existing reg control devices (other than sub LTC) after correcting their other
+            #  parameters such as ratios etc
+            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                    lower_limit=self.lower_limit)
+            self.reg_sweep_viols = {}
+            if dss.RegControls.Count() > 0 and len(self.buses_with_violations) > 0:
+                self.initial_regctrls_settings = {}
+                dss.RegControls.First()
+                while True:
+                    name = dss.RegControls.Name()
+                    xfmr = dss.RegControls.Transformer()
+                    dss.Circuit.SetActiveElement("Transformer.{}".format(xfmr))
+                    xfmr_buses = dss.CktElement.BusNames()
+                    xfmr_b1 = xfmr_buses[0].split(".")[0]
+                    xfmr_b2 = xfmr_buses[1].split(".")[0]
+                    # # Skipping over substation LTC if it exists
+                    # for n, d in self.G.in_degree().items():
+                    #     if d==0:
+                    #         sourcebus = n
+                    sourcebus = self.source
+                    if xfmr_b1.lower() == sourcebus.lower() or xfmr_b2.lower() == sourcebus.lower():
+                        dss.Circuit.SetActiveElement("Regcontrol.{}".format(name))
+                        # dss.RegControls.Next()
                         if not dss.RegControls.Next() > 0:
                             break
-                    if self.LTC_exists_flag == 1:
-                        self.check_voltage_violations_multi_tps()
-                        self.subLTC_sweep_viols["original"] = self.severity_indices[2]
-                        if len(self.buses_with_violations) > 0:
-                            self.LTC_controls_sweep()
-                            self.check_voltage_violations_multi_tps()
-                            if self.config["create topology plots"]:
-                                self.plot_violations()
-                    elif self.LTC_exists_flag == 0:
+                        continue
+                    dss.Circuit.SetActiveElement("Regcontrol.{}".format(name))
+                    bus_name = dss.CktElement.BusNames()[0].split(".")[0]
+                    dss.Circuit.SetActiveBus(bus_name)
+                    phases = dss.CktElement.NumPhases()
+                    kV = dss.Bus.kVBase()
+                    dss.Circuit.SetActiveElement("Regcontrol.{}".format(name))
+                    winding = self.LTC_wdg
+                    reg_delay = self.LTC_delay
+                    pt_ratio = kV * 1000 / (self.config["nominal_voltage"])
+                    try:
+                        Vreg = dss.Properties.Value("vreg")
+                    except:
+                        Vreg = self.config["nominal_voltage"]
+                    try:
+                        bandwidth = dss.Properties.Value("band")
+                    except:
+                        bandwidth = 3.0
+                    self.initial_regctrls_settings[name] = [Vreg, bandwidth]
+                    command_string = "Edit RegControl.{rn} transformer={tn} winding={w} vreg={sp} ptratio={rt} band={b} " \
+                                     "enabled=true delay={d} !original".format(
+                        rn=name,
+                        tn=xfmr,
+                        w=winding,
+                        sp=Vreg,
+                        rt=pt_ratio,
+                        b=bandwidth,
+                        d=reg_delay
+                    )
+                    dss.run_command(command_string)
+                    self.dssSolver.Solve()
+                    # add this to a dss_upgrades.dss file
+                    self.write_dss_file(command_string)
+                    if not dss.RegControls.Next() > 0:
+                        break
+                self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
+                self.reg_sweep_viols["original"] = self.severity_indices[2]
+                if len(self.buses_with_violations) > 0:
+                    self.reg_controls_sweep(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
+                    self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
+                    if self.config["create topology plots"]:
+                        self.plot_violations()
+
+            # Writing out the results before adding new devices
+            self.write_upgrades_to_file()
+            # postprocess_voltage_upgrades(
+            #     {
+            #         "outputs": self.config["Outputs"],
+            #         "feederhead_name": feeder_head_name,
+            #         "feederhead_basekV": feeder_head_basekv
+            #     },
+            #     self.logger,
+            # )
+
+            # New devices might be added after this
+            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
+            self.cluster_optimal_reg_nodes = {}
+            self.cluster_optimal_reg_nodes["pre_reg"] = [self.severity_indices[2]]
+            self.sub_LTC_added_flag = 0
+
+            # Use this block for adding a substation LTC, correcting its settings and running a sub LTC settings sweep -
+            # if LTC exists first try to correct its non set point simulation settings - if this does not correct everything
+            #  correct its set points through a sweep - if LTC does not exist add one including a xfmr if required - then
+            #  do a settings sweep if required
+            # self.add_ctrls_flag = 0
+            # TODO: If adding a substation LTC increases violations even after the control sweep then before then remove it
+            # TODO: - this might however interfere with voltage regulator logic so may be let it be there
+            if self.config["Use LTC placement"]:
+                self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
+                if len(self.buses_with_violations) > 0:
+                    if self.config["create topology plots"]:
+                        self.plot_violations()
+                    # Add substation LTC if not available (may require addition of a new substation xfmr as well)
+                    # if available correct its settings
+                    self.subLTC_sweep_viols = {}
+                    self.LTC_exists_flag = 0
+                    if dss.RegControls.Count() > 0 and len(self.buses_with_violations) > 0:
+                        self.initial_subLTC_settings = {}
+                        dss.RegControls.First()
+                        while True:
+                            name = dss.RegControls.Name()
+                            xfmr = dss.RegControls.Transformer()
+                            dss.Circuit.SetActiveElement("Transformer.{}".format(xfmr))
+                            xfmr_buses = dss.CktElement.BusNames()
+                            xfmr_b1 = xfmr_buses[0].split(".")[0]
+                            xfmr_b2 = xfmr_buses[1].split(".")[0]
+                            # for n, d in self.G.in_degree().items():
+                            #     if d==0:
+                            #         sourcebus = n
+                            sourcebus = self.source
+                            # Skipping over all reg controls other than sub LTC
+                            if xfmr_b1.lower() == sourcebus.lower() or xfmr_b2.lower() == sourcebus.lower():
+                                self.LTC_exists_flag = 1
+                                dss.Circuit.SetActiveElement("Regcontrol.{}".format(name))
+                                bus_name = dss.CktElement.BusNames()[0].split(".")[0]
+                                dss.Circuit.SetActiveBus(bus_name)
+                                phases = dss.CktElement.NumPhases()
+                                kV = dss.Bus.kVBase()
+                                winding = self.LTC_wdg
+                                reg_delay = self.LTC_delay
+                                pt_ratio = kV * 1000 / (self.config["nominal_voltage"])
+                                try:
+                                    Vreg = dss.Properties.Value("vreg")
+                                except:
+                                    Vreg = self.config["nominal_voltage"]
+                                try:
+                                    bandwidth = dss.Properties.Value("band")
+                                except:
+                                    bandwidth = 3.0
+                                self.initial_subLTC_settings[name] = [Vreg, bandwidth]
+                                command_string = "Edit RegControl.{rn} transformer={tn} winding={w} vreg={sp} ptratio={rt} band={b} " \
+                                                 "enabled=true delay={d} !original".format(
+                                    rn=name,
+                                    tn=xfmr,
+                                    w=winding,
+                                    sp=Vreg,
+                                    rt=pt_ratio,
+                                    b=bandwidth,
+                                    d=reg_delay
+                                )
+                                dss.run_command(command_string)
+                                self.dssSolver.Solve()
+                                # add this to a dss_upgrades.dss file
+                                self.write_dss_file(command_string)
+                                dss.Circuit.SetActiveElement("Regcontrol.{}".format(name))
+                            if not dss.RegControls.Next() > 0:
+                                break
+                        if self.LTC_exists_flag == 1:
+                            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                                    lower_limit=self.lower_limit)
+                            self.subLTC_sweep_viols["original"] = self.severity_indices[2]
+                            if len(self.buses_with_violations) > 0:
+                                self.LTC_controls_sweep(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
+                                self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                                        lower_limit=self.lower_limit)
+                                if self.config["create topology plots"]:
+                                    self.plot_violations()
+                        elif self.LTC_exists_flag == 0:
+                            self.add_substation_LTC()
+                            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                                    lower_limit=self.lower_limit)
+                            self.cluster_optimal_reg_nodes["sub_LTC"] = [self.severity_indices[2]]
+                            self.sub_LTC_added_flag = 1
+                            if len(self.buses_with_violations) > 0:
+                                self.LTC_controls_sweep(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
+                                self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                                        lower_limit=self.lower_limit)
+                                if self.config["create topology plots"]:
+                                    self.plot_violations()
+                    elif dss.RegControls.Count() == 0 and len(self.buses_with_violations) > 0:
                         self.add_substation_LTC()
-                        self.check_voltage_violations_multi_tps()
+                        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                                lower_limit=self.lower_limit)
                         self.cluster_optimal_reg_nodes["sub_LTC"] = [self.severity_indices[2]]
                         self.sub_LTC_added_flag = 1
                         if len(self.buses_with_violations) > 0:
-                            self.LTC_controls_sweep()
-                            self.check_voltage_violations_multi_tps()
+                            self.LTC_controls_sweep(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
+                            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                                    lower_limit=self.lower_limit)
                             if self.config["create topology plots"]:
                                 self.plot_violations()
-                elif dss.RegControls.Count() == 0 and len(self.buses_with_violations) > 0:
-                    self.add_substation_LTC()
-                    self.check_voltage_violations_multi_tps()
-                    self.cluster_optimal_reg_nodes["sub_LTC"] = [self.severity_indices[2]]
-                    self.sub_LTC_added_flag = 1
-                    if len(self.buses_with_violations) > 0:
-                        self.LTC_controls_sweep()
-                        self.check_voltage_violations_multi_tps()
+
+            # Correct regulator settings if regs are present in the feeder other than the sub station LTC
+            # TODO: Remove regs of last iteration
+            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                    lower_limit=self.lower_limit)
+            if len(self.buses_with_violations) > 1:
+                if self.config["create topology plots"]:
+                    self.plot_violations()
+                # for n, d in self.G.in_degree().items():
+                #     if d == 0:
+                #         self.source = n
+                # Place additional regulators if required
+                self.max_regs = int(min(self.config["Max regulators"], len(self.buses_with_violations)))
+                self.get_shortest_path()
+                self.get_full_distance_dict()
+                self.cluster_square_array()
+                min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * self.upper_limit
+                min_cluster = ''
+                for key, vals in self.cluster_optimal_reg_nodes.items():
+                    if vals[0] < min_severity:
+                        min_severity = vals[0]
+                        min_cluster = key
+                # Logic is if violations were less before addition of any device, revert back to that condition by removing
+                #  added LTC and not adding best determined in-line regs, else if LTC was best - pass and do not add new
+                #  in-line regs, or if some better LTC placemenr was determined apply that
+                if min_cluster == "pre_reg":
+                    # This will remove LTC controller, but if initially there was no substation transformer
+                    # (highly unlikely) the added transformer will still be there
+                    if self.sub_LTC_added_flag == 1:
+                        if self.subxfmr == '':
+                            LTC_reg_node = self.source
+                        elif self.subxfmr != '':
+                            LTC_reg_node = self.sub_LTC_bus
+                        LTC_name = "New_regctrl_" + LTC_reg_node
+                        command_string = "Edit RegControl.{ltc_nm} enabled=False".format(
+                            ltc_nm=LTC_name
+                        )
+                        dss.run_command(command_string)
+                        self.write_dss_file(command_string)
+                    else:
+                        pass
+                elif min_cluster == "sub_LTC":
+                    pass
+                else:
+                    for reg_nodes in self.cluster_optimal_reg_nodes[min_cluster][2]:
+                        self.write_flag = 1
+                        self.add_new_xfmr(reg_nodes)
+                        self.add_new_regctrl(reg_nodes)
+                        rn_name = "New_regctrl_" + reg_nodes
+                        command_string = "Edit RegControl.{rn} vreg={vsp} band={b}".format(
+                            rn=rn_name,
+                            vsp=self.cluster_optimal_reg_nodes[min_cluster][1][0],
+                            b=self.cluster_optimal_reg_nodes[min_cluster][1][1]
+                        )
+                        dss.run_command(command_string)
+                        dss.run_command("CalcVoltageBases")
+                        self.write_dss_file(command_string)
+                    # After all additional devices have been placed perform the cap bank settings sweep again-
+                    # only if new devices were accepted
+
+                    self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                            lower_limit=self.lower_limit)
+                    if dss.CapControls.Count() > 0 and len(self.buses_with_violations) > 0:
+                        self.cap_settings_sweep(upper_limit=self.upper_limit,
+                                                            lower_limit=self.lower_limit)
+                        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                                lower_limit=self.lower_limit)
                         if self.config["create topology plots"]:
                             self.plot_violations()
+                    self.write_dss_file("CalcVoltageBases")
 
-        # Correct regulator settings if regs are present in the feeder other than the sub station LTC
-        # TODO: Remove regs of last iteration
-        self.check_voltage_violations_multi_tps()
-        if len(self.buses_with_violations) > 1:
-            if self.config["create topology plots"]:
-                self.plot_violations()
-            # for n, d in self.G.in_degree().items():
-            #     if d == 0:
-            #         self.source = n
-            # Place additional regulators if required
-            self.max_regs = int(min(self.config["Max regulators"], len(self.buses_with_violations)))
-            self.get_shortest_path()
-            self.get_full_distance_dict()
-            self.cluster_square_array()
-            min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * self.config[
-                "Range B upper"]
-            min_cluster = ''
-            for key, vals in self.cluster_optimal_reg_nodes.items():
-                if vals[0] < min_severity:
-                    min_severity = vals[0]
-                    min_cluster = key
-            # Logic is if violations were less before addition of any device, revert back to that condition by removing
-            #  added LTC and not adding best determined in-line regs, else if LTC was best - pass and do not add new
-            #  in-line regs, or if some better LTC placemenr was determined apply that
-            if min_cluster == "pre_reg":
-                # This will remove LTC controller, but if initially there was no substation transformer
-                # (highly unlikely) the added transformer will still be there
-                if self.sub_LTC_added_flag == 1:
-                    if self.subxfmr == '':
-                        LTC_reg_node = self.source
-                    elif self.subxfmr != '':
-                        LTC_reg_node = self.sub_LTC_bus
-                    LTC_name = "New_regctrl_" + LTC_reg_node
-                    command_string = "Edit RegControl.{ltc_nm} enabled=False".format(
-                        ltc_nm=LTC_name
-                    )
-                    dss.run_command(command_string)
-                    self.write_dss_file(command_string)
-                else:
-                    pass
-            elif min_cluster == "sub_LTC":
-                pass
-            else:
-                for reg_nodes in self.cluster_optimal_reg_nodes[min_cluster][2]:
-                    self.write_flag = 1
-                    self.add_new_xfmr(reg_nodes)
-                    self.add_new_regctrl(reg_nodes)
-                    rn_name = "New_regctrl_" + reg_nodes
-                    command_string = "Edit RegControl.{rn} vreg={vsp} band={b}".format(
-                        rn=rn_name,
-                        vsp=self.cluster_optimal_reg_nodes[min_cluster][1][0],
-                        b=self.cluster_optimal_reg_nodes[min_cluster][1][1]
-                    )
-                    dss.run_command(command_string)
-                    dss.run_command("CalcVoltageBases")
-                    self.write_dss_file(command_string)
-                # After all additional devices have been placed perform the cap bank settings sweep again-
-                # only if new devices were accepted
-
-                self.check_voltage_violations_multi_tps()
-                if dss.CapControls.Count() > 0 and len(self.buses_with_violations) > 0:
-                    self.cap_settings_sweep()
-                    self.check_voltage_violations_multi_tps()
-                    if self.config["create topology plots"]:
-                        self.plot_violations()
-                self.write_dss_file("CalcVoltageBases")
-
-            self.check_voltage_violations_multi_tps()
-            self.logger.info("Compare objective with best and applied settings, %s, %s", self.cluster_optimal_reg_nodes[min_cluster][0],
-                  self.severity_indices[2])
-            self.logger.info("Additional regctrl  devices: %s", min_cluster)
-            self.logger.info("cluster_optimal_reg_nodes=%s", self.cluster_optimal_reg_nodes)
+                self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                        lower_limit=self.lower_limit)
+                self.logger.info("Compare objective with best and applied settings, %s, %s", self.cluster_optimal_reg_nodes[min_cluster][0],
+                      self.severity_indices[2])
+                self.logger.info("Additional regctrl  devices: %s", min_cluster)
+                self.logger.info("cluster_optimal_reg_nodes=%s", self.cluster_optimal_reg_nodes)
 
         end_t = time.time()
-        self.check_voltage_violations_multi_tps()
-        if self.config["create topology plots"]:
-            self.plot_violations()
+        # self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+        #                                         lower_limit=self.lower_limit)
+        # if self.config["create topology plots"]:
+        #     self.plot_violations()
         self.write_upgrades_to_file()
         self.logger.info("total_time = %s", end_t - start_t)
 
-        # # TODO: Check impact of upgrades - Cannot recompile feeder in PyDSS
+        # TODO: Check impact of upgrades - Cannot recompile feeder in PyDSS
         self.logger.info("Checking impact of redirected upgrades file")
         dss.run_command("Clear")
         base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
@@ -516,6 +561,38 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.new_capcontrols = {x["name"]: x for x in iter_elements(dss.CapControls, get_cap_controls_info)}
         self.new_xfmr_info = dss.Transformers.AllNames()
 
+        # change violation checking thresholds to initial limit - to ensure uniform comparison betn initial & final
+        self.upper_limit = self.config["Initial upper limit"]
+        self.lower_limit = self.config["Initial lower limit"]
+
+        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                lower_limit=self.lower_limit)
+        if self.config["create topology plots"]:
+            self.plot_violations()
+        self.logger.info("Final number of buses with violations are: %s", len(self.buses_with_violations))
+        self.logger.info("Final objective function value: %s", self.severity_indices[2])
+        self.logger.info("Final maximum voltage observed on any node: %s %s", self.max_V_viol, self.busvmax)
+        self.logger.info("Final minimum voltage observed on any node: %s", self.min_V_viol)
+
+        self.feeder_parameters["final_violations"] = {
+            "Voltage upper threshold": self.upper_limit,
+            "Voltage lower threshold": self.lower_limit,
+            "Number of buses with violations": len(self.buses_with_violations),
+            "Buses at all tps with violations": self.severity_indices[0],
+            "Severity of bus violations": self.severity_indices[1],
+            "Objective function value": self.severity_indices[2],
+            "Maximum voltage observed": self.max_V_viol,
+            "Minimum voltage observed": self.min_V_viol
+        }
+
+        self.feeder_parameters["Simulation time (seconds)"] = end_t-start_t
+        self.feeder_parameters["Upgrade status"] = self.upgrade_status
+        self.feeder_parameters["feederhead_name"] = feeder_head_name
+        self.feeder_parameters["feederhead_basekV"] = feeder_head_basekv
+
+        self.write_to_json(self.feeder_parameters,"Voltage_violations_comparison")
+
+        # go to voltage upgrades post processing script
         postprocess_voltage_upgrades(
             {
                 "outputs": self.config["Outputs"],
@@ -533,26 +610,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             },
             self.logger,
         )
-        # self.check_voltage_violations_multi_tps()
-        # if self.config["create topology plots"]:
-        #     self.plot_violations()
-        self.logger.info("Final number of buses with violations are: %s", len(self.buses_with_violations))
-        self.logger.info("Final objective function value: %s", self.severity_indices[2])
-        self.logger.info("Final maximum voltage observed on any node: %s %s", self.max_V_viol, self.busvmax)
-        self.logger.info("Final minimum voltage observed on any node: %s", self.min_V_viol)
-
-        self.feeder_parameters["Final_violations"] = {
-            "Number of buses with violations": len(self.buses_with_violations),
-            "Buses at all tps with violations": self.severity_indices[0],
-            "Severity of bus violations": self.severity_indices[1],
-            "Objective function value": self.severity_indices[2],
-            "Maximum voltage observed": self.max_V_viol,
-            "Minimum voltage observed": self.min_V_viol
-        }
-
-        self.feeder_parameters["Simulation time (seconds)"] = end_t-start_t
-
-        self.write_to_json(self.feeder_parameters,"Voltage_violations_comparison")
 
     @staticmethod
     def _get_required_input_fields():
@@ -778,7 +835,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         plt.axis("off")
         plt.show()
 
-    def check_voltage_violations_multi_tps(self):
+    # this function checks for voltage violations based on upper and lower limit passed
+    def check_voltage_violations_multi_tps(self, upper_limit, lower_limit):
         # TODO: This objective currently gives more weightage if same node has violations at more than 1 time point
         num_nodes_counter = 0
         severity_counter = 0
@@ -813,12 +871,12 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     self.busvmax = b
                 if min(bus_v) < self.min_V_viol:
                     self.min_V_viol = min(bus_v)
-                if max(bus_v) > self.config["Range B upper"]:
+                if max(bus_v) > upper_limit:
                     maxv = max(bus_v)
-                    maxv_dev = maxv - self.config["Range B upper"]
-                if min(bus_v) < self.config["Range B lower"]:
+                    maxv_dev = maxv - upper_limit
+                if min(bus_v) < lower_limit:
                     minv = min(bus_v)
-                    minv_dev = self.config["Range B upper"] - minv
+                    minv_dev = upper_limit - minv
                 if maxv_dev > minv_dev:
                     v_used = maxv
                     num_nodes_counter += 1
@@ -974,7 +1032,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     break
 
         # self.get_nodal_violations()
-        self.check_voltage_violations_multi_tps()
+        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                lower_limit=self.lower_limit)
 
     def get_viols_with_initial_cap_settings(self):
         if len(self.cap_initial_settings) > 0:
@@ -987,11 +1046,12 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                         dss.CapControls.OFFSetting(vals[1])
                     if not dss.CapControls.Next() > 0:
                         break
-            self.check_voltage_violations_multi_tps()
+            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                    lower_limit=self.lower_limit)
             key = "original"
             self.cap_sweep_res_dict[key] = self.severity_indices[2]
 
-    def cap_settings_sweep(self):
+    def cap_settings_sweep(self, upper_limit, lower_limit):
         # This function increases differences between cap ON and OFF voltages in user defined increments,
         #  default 1 volt, until upper and lower bounds are reached.
         self.cap_sweep_res_dict = {}
@@ -999,8 +1059,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.cap_on_setting = self.capON
         self.cap_off_setting = self.capOFF
         self.cap_control_gap = self.config["Cap sweep voltage gap"]
-        while self.cap_on_setting > self.config["Range B lower"] * self.config[
-            "nominal_voltage"] or self.cap_off_setting < self.config["Range B upper"] * self.config[
+        while self.cap_on_setting > lower_limit * self.config[
+            "nominal_voltage"] or self.cap_off_setting < upper_limit * self.config[
             "nominal_voltage"]:
             # Apply cap ON and OFF settings and determine their impact
             key = "{}_{}".format(self.cap_on_setting, self.cap_off_setting)
@@ -1015,19 +1075,20 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 self.dssSolver.Solve()
                 if not dss.CapControls.Next() > 0:
                     break
-            self.check_voltage_violations_multi_tps()
+            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                    lower_limit=self.lower_limit)
             self.cap_sweep_res_dict[key] = self.severity_indices[2]
-            if (self.cap_on_setting - self.cap_control_gap / 2) <= self.config["Range B lower"] * self.config[
+            if (self.cap_on_setting - self.cap_control_gap / 2) <= lower_limit * self.config[
                 "nominal_voltage"]:
-                self.cap_on_setting = self.config["Range B lower"] * self.config["nominal_voltage"]
+                self.cap_on_setting = lower_limit * self.config["nominal_voltage"]
             else:
                 self.cap_on_setting = self.cap_on_setting - self.cap_control_gap / 2
-            if (self.cap_off_setting + self.cap_control_gap / 2) >= self.config["Range B upper"] * self.config[
+            if (self.cap_off_setting + self.cap_control_gap / 2) >= upper_limit * self.config[
                 "nominal_voltage"]:
-                self.cap_off_setting = self.config["Range B upper"] * self.config["nominal_voltage"]
+                self.cap_off_setting = upper_limit * self.config["nominal_voltage"]
             else:
                 self.cap_off_setting = self.cap_off_setting + self.cap_control_gap / 2
-        self.apply_best_capsetting()
+        self.apply_best_capsetting(upper_limit=self.upper_limit)
 
     def apply_orig_cap_setting(self):
         for key, vals in self.cap_initial_settings.items():
@@ -1044,14 +1105,14 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     self.write_dss_file(command_string)
                 if not dss.CapControls.Next() > 0:
                     break
-        self.check_voltage_violations_multi_tps()
+        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                lower_limit=self.lower_limit)
 
-    def apply_best_capsetting(self):
+    def apply_best_capsetting(self, upper_limit):
         best_setting = ''
         # Start with assumption that each node has a violation at all time points and each violation if outside bounds
         #  by upper voltage limit - basically the maximum possible severity
-        min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * self.config[
-            "Range B upper"]
+        min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * upper_limit
         for key, val in self.cap_sweep_res_dict.items():
             if val < min_severity:
                 min_severity = val
@@ -1075,7 +1136,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 self.dssSolver.Solve()
                 if not dss.CapControls.Next() > 0:
                     break
-        self.check_voltage_violations_multi_tps()
+        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                lower_limit=self.lower_limit)
 
     def write_dss_file(self, device_command):
         self.dss_upgrades.append(device_command + "\n")
@@ -1087,10 +1149,10 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 datafile.write(line)
         return
 
-    def reg_controls_sweep(self):
+    def reg_controls_sweep(self, upper_limit, lower_limit):
         self.vsps = []
-        v = self.config["Range B lower"] * self.config["nominal_voltage"]
-        while v < self.config["Range B upper"] * self.config["nominal_voltage"]:
+        v = lower_limit * self.config["nominal_voltage"]
+        while v < upper_limit * self.config["nominal_voltage"]:
             self.vsps.append(v)
             v += self.config["reg v delta"]
         for reg_sp in self.vsps:
@@ -1124,17 +1186,17 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     self.dssSolver.Solve()
                     if not dss.RegControls.Next() > 0:
                         break
-                self.check_voltage_violations_multi_tps()
+                self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                        lower_limit=self.lower_limit)
                 self.reg_sweep_viols["{}_{}".format(str(reg_sp), str(bandw))] = self.severity_indices[2]
-        self.apply_best_regsetting()
+        self.apply_best_regsetting(upper_limit=self.upper_limit)
 
-    def apply_best_regsetting(self):
+    def apply_best_regsetting(self, upper_limit):
         # TODO: Remove substation LTC from the settings sweep
         best_setting = ''
         # Start with assumption that each node has a violation at all time points and each violation if outside bounds
         #  by upper voltage limit - basically the maximum possible severity
-        min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * self.config[
-            "Range B upper"]
+        min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * upper_limit
         for key, val in self.reg_sweep_viols.items():
             if val < min_severity:
                 min_severity = val
@@ -1220,7 +1282,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         elif self.subxfmr != '':
             self.write_flag = 1
             self.add_new_regctrl(self.sub_LTC_bus)
-        self.check_voltage_violations_multi_tps()
+        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                lower_limit=self.lower_limit)
         return
 
     def add_new_xfmr(self, node):
@@ -1413,7 +1476,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                                     self.write_dss_file(command_string)
                                 # check for violations
                                 # self.get_nodal_violations()
-                                self.check_voltage_violations_multi_tps()
+                                self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                                        lower_limit=self.lower_limit)
                                 break
                             if not dss.RegControls.Next() > 0:
                                 break
@@ -1438,17 +1502,18 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                             self.write_dss_file(command_string)
                         # check for violations
                         # self.get_nodal_violations()
-                        self.check_voltage_violations_multi_tps()
+                        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                                lower_limit=self.lower_limit)
                         break
                     dss.Circuit.SetActiveElement("Transformer." + xfmr_name)
                 if not dss.Transformers.Next() > 0:
                     break
         return
 
-    def LTC_controls_sweep(self):
+    def LTC_controls_sweep(self, upper_limit, lower_limit):
         self.vsps = []
-        v = self.config["Range B lower"] * self.config["nominal_voltage"]
-        while v < self.config["Range B upper"] * self.config["nominal_voltage"]:
+        v = lower_limit * self.config["nominal_voltage"]
+        while v < upper_limit * self.config["nominal_voltage"]:
             self.vsps.append(v)
             v += self.config["reg v delta"]
         for reg_sp in self.vsps:
@@ -1478,17 +1543,17 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     dss.Circuit.SetActiveElement("Regcontrol.{}".format(regctrl_name))
                     if not dss.RegControls.Next() > 0:
                         break
-                self.check_voltage_violations_multi_tps()
+                self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                        lower_limit=self.lower_limit)
                 self.subLTC_sweep_viols["{}_{}".format(str(reg_sp), str(bandw))] = self.severity_indices[2]
-        self.apply_best_LTCsetting()
+        self.apply_best_LTCsetting(upper_limit=self.upper_limit)
 
-    def apply_best_LTCsetting(self):
+    def apply_best_LTCsetting(self, upper_limit):
         # TODO: Remove substation LTC from the settings sweep
         best_setting = ''
         # Start with assumption that each node has a violation at all time points and each violation if outside bounds
         #  by upper voltage limit - basically the maximum possible severity
-        min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * self.config[
-            "Range B upper"]
+        min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * upper_limit
         for key, val in self.subLTC_sweep_viols.items():
             if val < min_severity:
                 min_severity = val
@@ -1525,7 +1590,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 dss.Circuit.SetActiveElement("Regcontrol.{}".format(reg_ctrl_nm))
                 if not dss.RegControls.Next() > 0:
                     break
-        self.check_voltage_violations_multi_tps()
+        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                lower_limit=self.lower_limit)
 
     def apply_orig_LTC_setting(self):
         for key, vals in self.initial_subLTC_settings.items():
@@ -1616,13 +1682,14 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 else:
                     self.clusters_dict[labels[lab]].append(self.cluster_nodes_list[lab])
             self.identify_correct_reg_node()
-            self.add_new_reg_common_nodes()
+            self.add_new_reg_common_nodes(upper_limit=self.upper_limit)
             if self.no_reg_flag == 1:
                 continue
             self.write_flag = 0
-            self.reg_controls_sweep()
+            self.reg_controls_sweep(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
             self.write_flag = 1
-            self.check_voltage_violations_multi_tps()
+            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                    lower_limit=self.lower_limit)
             self.cluster_optimal_reg_nodes[self.optimal_clusters] = [self.severity_indices[2],
                                                                      [self.v_sp, self.reg_band], []]
             # Store all optimal nodes for a given number of clusters
@@ -1699,7 +1766,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 break
         return
 
-    def add_new_reg_common_nodes(self):
+    def add_new_reg_common_nodes(self, upper_limit):
         # Identify whether a transformer exists at this node or not. If yes simply add a new reg control -
         # in fact calling the add_new_regctrl function will automatically check whether a reg control exists or not
         # -  so only thing to be ensured is that a transformer should exist - for next time when this function is called
@@ -1751,8 +1818,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     self.disable_added_xfmr(node)
                     self.write_flag = 1
             # For a given cluster identify the node which leads to minimum number of buses with violations
-            min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * self.config[
-                "Range B upper"]
+            min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * upper_limit
             min_node = ''
             for key, value in self.vdev_cluster_nodes.items():
                 if value <= min_severity:
@@ -1774,7 +1840,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             )
             dss.run_command(command_string)
             self.dssSolver.Solve()
-            self.check_voltage_violations_multi_tps()
+            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                    lower_limit=self.lower_limit)
             # Even here we do not need to write out the setting as the only setting to be written would
             # self.write_dss_file(command_string)
         # if no reg control nodes are found then continue
