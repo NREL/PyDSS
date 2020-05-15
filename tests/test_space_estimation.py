@@ -1,8 +1,13 @@
+import os
+
 import pytest
 
 from PyDSS.pydss_project import PyDssProject
 
 from tests.common import cleanup_project
+
+
+RUN_PROJECT_PATH = os.path.join("tests", "data", "project")
 
 
 def test_space_estimation_with_dry_run(cleanup_project):
