@@ -138,6 +138,7 @@ class OpenDSS:
                 break
 
         if params['Helics']["Co-simulation Mode"]:
+            self._increment_flag = True
             self._HI = HI.helics_interface(self._dssSolver, self._dssObjects, self._dssObjectsByClass, params,
                                            self._dssPath)
         return
@@ -270,17 +271,25 @@ class OpenDSS:
         return ObjectList
 
     def RunStep(self, step, updateObjects=None):
+        # updating paramters bebore simulation run
 
-        if updateObjects:
-            for object, params in updateObjects.items():
-                cl, name = object.split('.')
-                self._Modifier.Edit_Element(cl, name, params)
-            pass
 
-        self._dssSolver.IncStep()
         if self._Options['Helics']['Co-simulation Mode']:
+            if self._increment_flag:
+                self._dssSolver.IncStep()
+            else:
+                self._dssSolver.reSolve()
             self._HI.updateHelicsSubscriptions()
+        else:
+            self._dssSolver.IncStep()
+            if updateObjects:
+                for object, params in updateObjects.items():
+                    cl, name = object.split('.')
+                    self._Modifier.Edit_Element(cl, name, params)
+                pass
 
+
+        # run simulation time step and get results
         if self._Options['Project']['Disable PyDSS controllers'] is False:# and \
             #self._Options['Frequency']['Enable frequency sweep'] is False:
             for priority in range(CONTROLLER_PRIORITIES):
@@ -314,7 +323,7 @@ class OpenDSS:
 
         if self._Options['Helics']['Co-simulation Mode']:
             self._HI.updateHelicsPublications()
-            self._HI.request_time_increment()
+            self._increment_flag, helics_time = self._HI.request_time_increment()
 
         return self.ResultContainer.CurrentResults
 
@@ -348,7 +357,8 @@ class OpenDSS:
                 self.RunStep(step)
                 for postprocessor in postprocessors:
                     step = postprocessor.run(step, Steps)
-                step+=1
+                if self._increment_flag:
+                    step+=1
 
         finally:
             if self._Options and self._Options['Exports']['Log Results']:
@@ -376,29 +386,6 @@ class OpenDSS:
         for Plot in self._pyPlotObjects:
             self._pyPlotObjects[Plot].UpdatePlot()
         return
-
-    def CreateGraph(self, Visualize=False):
-        self._Logger.info('Creating graph representation')
-        defaultGraphPlotSettings = {
-                'Layout'                 : 'Circular', # Shell, Circular, Fruchterman
-                'Iterations'             : 100,
-                'ShowRefNode'            : False,
-                'NodeSize'               : None, #None for auto fit
-                'LineColorProperty'      : 'Class',
-                'NodeColorProperty'      : 'ConnectedPCs',
-                'Open plots in browser'  : True,
-                'OutputPath'             : self._dssPath['Export'],
-                'OutputFile'             : None
-        }
-        defaultGraphPlotSettings['OutputFile'] = self._ActiveProject + \
-                                                  '_' + defaultGraphPlotSettings['LineColorProperty'] + \
-                                                  '_' + defaultGraphPlotSettings['NodeColorProperty'] + \
-                                                  '_' + defaultGraphPlotSettings['Layout'] + '.html'
-
-        Graph = CreateGraph(self._dssInstance)
-        if Visualize:
-            Graph.CreateGraphVisualization(defaultGraphPlotSettings)
-        return Graph.Get()
 
     def __del__(self):
         self._Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')

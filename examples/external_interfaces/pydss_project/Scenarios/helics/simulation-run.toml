@@ -45,9 +45,12 @@ post_process_infos = []
 "Percentage load in series" = 50.0
 
 [Helics]
+"Co-simulation Mode" = true
+"Iterative Mode" = true
+"Error tolerance" = 0.1
+"Max co-iterations" = 20
 Broker = "mainbroker"
 "Broker port" = 50001
-"Co-simulation Mode" = true
 "Federate name" = "PyDSS"
 "Time delta" = 0.01
 "Core type" = "zmq"
@@ -55,7 +58,7 @@ Uninterruptible = true
 "Helics logging level" = 5
 
 [Logging]
-"Logging Level" = "INFO"
+"Logging Level" = "DEBUG"
 "Log to external file" = true
 "Display on screen" = true
 "Clear old log file" = false

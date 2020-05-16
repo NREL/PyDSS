@@ -33,7 +33,7 @@ post_process_infos = []
 "HDF Max Chunk Bytes" = 32768
 "Export Event Log" = true
 "Log Results" = true
-"Result Container" = "ResultContainer"
+"Result Container" = "ResultData"
 
 [Frequency]
 "Enable frequency sweep" = false
@@ -45,6 +45,7 @@ post_process_infos = []
 "Percentage load in series" = 50.0
 
 [Helics]
+"Broker port" = 50001
 "Co-simulation Mode" = false
 "Federate name" = "PyDSS"
 "Time delta" = 0.01

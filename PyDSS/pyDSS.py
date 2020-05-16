@@ -74,6 +74,9 @@ class instance(object):
         },
         "Helics": {
             'Co-simulation Mode': {'type': bool, 'Options': [True, False]},
+            'Iterative Mode': {'type': bool, 'Options': [True, False]},
+            'Max co-iterations': {'type': int, 'Options': range(1, 1000)},
+            'Error tolerance': {'type': float},
             'Federate name': {'type': str},
             'Broker': {'type': str},
             'Broker port': {'type': int},
