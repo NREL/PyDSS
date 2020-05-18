@@ -125,7 +125,6 @@ class helics_interface():
                 value = None
                 if sub_info['Data type'].lower() == 'double':
                     value = helics.helicsInputGetDouble(sub_info['Subscription'])
-                    print(element_name, value)
                 elif sub_info['Data type'].lower() == 'vector':
                     value = helics.helicsInputGetVector(sub_info['Subscription'])
                 elif sub_info['Data type'].lower() == 'string':
@@ -153,7 +152,7 @@ class helics_interface():
                         else:
                             self._subscription_dState[element_name].insert(0,self._subscription_dState[element_name].pop())
                         self._subscription_dState[element_name][0] = value
-                        print(self._subscription_dState[element_name])
+                        #print(self._subscription_dState[element_name])
         self.c_seconds_old = self.c_seconds
 
     def _registerFederatePublications(self):

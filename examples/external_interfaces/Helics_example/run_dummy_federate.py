@@ -61,7 +61,7 @@ sub1 = h.helicsFederateRegisterSubscription(vfed, "PyDSS.PVSystem.pvgnem_mpx0006
 h.helicsFederateEnterExecutingMode(vfed)
 
 
-for t in range(1, 96):
+for t in range(1, 5):
     time_requested = t * 15 * 60
     #while time_requested < r_seconds:
     currenttime = h.helicsFederateRequestTime(vfed, time_requested)

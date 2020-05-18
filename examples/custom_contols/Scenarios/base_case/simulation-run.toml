@@ -21,10 +21,22 @@
 name = "base_case"
 post_process_infos = []
 
+[[Project.Scenarios]]
+name = "volt_var"
+post_process_infos = []
+
+[[Project.Scenarios]]
+name = "self_consumption"
+post_process_infos = []
+
+[[Project.Scenarios]]
+name = "multiple_controls"
+post_process_infos = []
+
 [Exports]
 "Export Mode" = "byClass"
 "Export Style" = "Single file"
-"Export Format" = "h5"
+"Export Format" = "csv"
 "Export Compression" = false
 "Export Iteration Order" = "ValuesByPropertyAcrossElements"
 "Export Elements" = true
@@ -33,7 +45,7 @@ post_process_infos = []
 "HDF Max Chunk Bytes" = 32768
 "Export Event Log" = true
 "Log Results" = true
-"Result Container" = "ResultData"
+"Result Container" = "ResultContainer"
 
 [Frequency]
 "Enable frequency sweep" = false
@@ -46,6 +58,11 @@ post_process_infos = []
 
 [Helics]
 "Co-simulation Mode" = false
+"Iterative Mode" = false
+"Error tolerance" = 0.0001
+"Max co-iterations" = 15
+Broker = "mainbroker"
+"Broker port" = 50001
 "Federate name" = "PyDSS"
 "Time delta" = 0.01
 "Core type" = "zmq"

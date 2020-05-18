@@ -136,9 +136,8 @@ class OpenDSS:
                 if params['Plots']['Open plots in browser']:
                     self._pyPlotObjects[Plot].session.show()
                 break
-
+        self._increment_flag = True
         if params['Helics']["Co-simulation Mode"]:
-            self._increment_flag = True
             self._HI = HI.helics_interface(self._dssSolver, self._dssObjects, self._dssObjectsByClass, params,
                                            self._dssPath)
         return
@@ -273,7 +272,6 @@ class OpenDSS:
     def RunStep(self, step, updateObjects=None):
         # updating paramters bebore simulation run
 
-
         if self._Options['Helics']['Co-simulation Mode']:
             if self._increment_flag:
                 self._dssSolver.IncStep()
@@ -287,7 +285,6 @@ class OpenDSS:
                     cl, name = object.split('.')
                     self._Modifier.Edit_Element(cl, name, params)
                 pass
-
 
         # run simulation time step and get results
         if self._Options['Project']['Disable PyDSS controllers'] is False:# and \
@@ -332,7 +329,7 @@ class OpenDSS:
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
         self._Logger.info('Simulation time step {}.'.format(Steps))
-        if self.ResultContainer is not None:
+        if self._Options['Exports']['Result Container'] == 'ResultData' and self.ResultContainer is not None:
             self.ResultContainer.InitializeDataStore(project.hdf_store, Steps, MC_scenario_number)
 
         postprocessors = [
@@ -368,7 +365,7 @@ class OpenDSS:
 
         if self._Options and self._Options['Exports']['Log Results']:
             self.ResultContainer.ExportResults(
-                fileprefix=None,
+                fileprefix="",
             )
 
         self._Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')

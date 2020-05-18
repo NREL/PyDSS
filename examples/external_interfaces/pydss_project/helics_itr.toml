@@ -8,22 +8,26 @@
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
-"Control mode" = "Time"
+"Control mode" = "Static"
 "Disable PyDSS controllers" = false
 "Simulation Type" = "QSTS"
-"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS\\examples"
-"Active Project" = "harmonics"
+"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS\\examples\\external_interfaces"
+"Active Project" = "pydss_project"
 "Active Scenario" = ""
-"DSS File" = "Run_Scan.dss"
+"DSS File" = "Master_Spohn_existing_VV.dss"
 "DSS File Absolute Path" = false
 "Return Results" = false
 
 [[Project.Scenarios]]
-name = "qsts"
+name = "helics"
 post_process_infos = []
 
 # [[Project.Scenarios]]
-# name = "static"
+# name = "python"
+# post_process_infos = []
+
+# [[Project.Scenarios]]
+# name = "socket"
 # post_process_infos = []
 
 [Exports]
@@ -38,19 +42,24 @@ post_process_infos = []
 "HDF Max Chunk Bytes" = 32768
 "Export Event Log" = true
 "Log Results" = true
-"Result Container" = "ResultContainer"
+"Result Container" = "ResultData"
 
 [Frequency]
-"Enable frequency sweep" = true
+"Enable frequency sweep" = false
 "Fundamental frequency" = 60
 "Start frequency" = 1.0
 "End frequency" = 15.0
-"frequency increment" = 0.0833333333333333
+"frequency increment" = 2.0
 "Neglect shunt admittance" = false
 "Percentage load in series" = 50.0
 
 [Helics]
-"Co-simulation Mode" = false
+"Co-simulation Mode" = true
+"Iterative Mode" = true
+"Error tolerance" = 0.1
+"Max co-iterations" = 20
+"Broker" = "mainbroker"
+"Broker port" = 50001
 "Federate name" = "PyDSS"
 "Time delta" = 0.01
 "Core type" = "zmq"
@@ -58,7 +67,7 @@ Uninterruptible = true
 "Helics logging level" = 5
 
 [Logging]
-"Logging Level" = "INFO"
+"Logging Level" = "DEBUG"
 "Log to external file" = true
 "Display on screen" = true
 "Clear old log file" = false
