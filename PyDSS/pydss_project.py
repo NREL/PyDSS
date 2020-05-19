@@ -31,7 +31,8 @@ DATA_FORMAT_VERSION = "1.0.0"
 
 class PyDssProject:
     """Represents the project options for a PyDSS simulation."""
-    def __init__(self, path, name, scenarios, simulation_config, fs_intf=None, simulation_file=None):
+    def __init__(self, path, name, scenarios, simulation_config, fs_intf=None,
+                 simulation_file=SIMULATION_SETTINGS_FILENAME):
         self._name = name
         self._scenarios = scenarios
         self._simulation_config = simulation_config
@@ -210,7 +211,8 @@ class PyDssProject:
         logger.info("Initialized directories in %s", self._project_dir)
 
     @classmethod
-    def create_project(cls, path, name, scenarios, simulation_config=None, options=None, simulation_file=None):
+    def create_project(cls, path, name, scenarios, simulation_config=None, options=None,
+                       simulation_file=SIMULATION_SETTINGS_FILENAME):
         """Create a new PyDssProject on the filesystem.
 
         Parameters

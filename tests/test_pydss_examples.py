@@ -1,20 +1,14 @@
 
-import datetime
 import os
-import re
+import sys
 import shutil
 import tempfile
 from distutils.dir_util import copy_tree
 
-import pandas as pd
 import pytest
 import subprocess
-from PyDSS.common import PROJECT_TAR, PROJECT_ZIP
-from PyDSS.exceptions import InvalidParameter
-from PyDSS.pydss_fs_interface import PROJECT_DIRECTORIES, SCENARIOS, STORE_FILENAME
-from PyDSS.pydss_project import PyDssProject, PyDssScenario, DATA_FORMAT_VERSION
-from PyDSS.pydss_results import PyDssResults, PyDssScenarioResults
-from tests.common import RUN_PROJECT_PATH, SCENARIO_NAME, cleanup_project
+from PyDSS.pydss_project import PyDssProject
+
 
 
 PATH = os.path.join(tempfile.gettempdir(), "pydss-projects")
@@ -45,19 +39,19 @@ def test_external_interfaces_example():
     scenarios = [
         {
             'TOML': 'helics.toml',
-            'file': r"external_interfaces\Helics_example\Federate_runner.bat",
+            'file': r"external_interfaces\Helics_example\run_dummy_federate.py",
         },
         {
             'TOML': 'helics_itr.toml',
-            'file': r"external_interfaces\Helics_example\Federate_runner.bat",
+            'file': r"external_interfaces\Helics_example\run_dummy_federate.py",
         },
         {
             'TOML': 'simulation.toml',
-            'file': r"external_interfaces\Socket_example\Run_socket_controller_example.bat",
+            'file': r"external_interfaces\Socket_example\run_socket_controller.py",
         },
         {
             'TOML': None,
-            'file': r"external_interfaces\Python_example\Run_python_example.bat",
+            'file': r"external_interfaces\Python_example\run_pyDSS.py",
         },
     ]
     run_example(example_name, scenarios)
@@ -136,7 +130,8 @@ def run_example(example_name, scenarios):
                 os.chdir(dir_path)
                 print(dir_path)
                 print(f"Running {sup_file_path} in a subprocess")
-                proc = subprocess.Popen(sup_file_path, shell=True, stdout=subprocess.PIPE)
+                print(sys.executable)
+                proc = subprocess.Popen([sys.executable, sup_file_path], shell=True)
             finally:
                 os.chdir(dir_main)
         try:
@@ -151,3 +146,5 @@ def run_example(example_name, scenarios):
             if proc != None:
                 proc.terminate()
     return
+
+#test_external_interfaces_example()
