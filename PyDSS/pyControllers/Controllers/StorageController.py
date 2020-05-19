@@ -367,8 +367,6 @@ class StorageController(ControllerAbstract):
         return 0
 
     def TimeTriggeredControl(self):
-        """ Charge and discharge cycles depend on defined time base schedules
-        """
         HrCharge = self.__Settings['HrCharge']
         HrDischarge = self.__Settings['HrDischarge']
         rateCharge = self.__Settings['%rateCharge']
@@ -380,7 +378,7 @@ class StorageController(ControllerAbstract):
         MnD = int((HrDischarge - HrD) * 60)
 
         Minutes = int(self.__dssInstance.Solution.Seconds()/60)
-        Hour = self.__dssInstance.Solution.Hour()
+        Hour = self.__dssInstance.Solution.Hour() % 24
         if Hour == HrC and Minutes == MnC:
             self.__ControlledElm.SetParameter('State', 'CHARGING')
             self.__ControlledElm.SetParameter('%charge', str(rateCharge))

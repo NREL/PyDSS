@@ -13,15 +13,11 @@ PyDSS is a high-level Python package that is a wrapper for OpenDSS and aims to e
 Installation
 ============
 
-PyDSS can be installed by typing the following command on the command prompt:
-
-.. code-block:: python
+PyDSS can be installed by typing the following command on the command prompt::
 
 	pip install -i https://test.pypi.org/simple/ PyDSS==0.0.1
 	
-Alternately, if you choose to clone the git repo from https://github.com/nrel/pydss , use the followiing commands to build the module and install it.
-
-.. code-block:: python
+Alternately, if you choose to clone the git repo from https://github.com/nrel/pydss , use the followiing commands to build the module and install it. ::
 
 	python setup.py -build
 	python setup.py -install
@@ -31,17 +27,15 @@ Running PyDSS
 
 Running PyDSS requires a valid OpenDSS model to run. Additionally, it requires a development of a project structure detailed  in the following subsections.
 
-Settings up a PyDSS project
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Setting up a PyDSS project
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-PyDSS requires a specific directory format to define projects detailed below.
+PyDSS requires a specific directory format to define projects detailed below. ::
  
-.. code-block:: python
-
 	~\PyDSS-Projects (There should be no spaces in the complete base path)
             |__ \IEEE13node
             |      |__ \DSSfiles (Should contain OpenDSS files)
-            |      |__ \PyDSS Scenarios (All scenarios should be defined within this folder)
+            |      |__ \Scenarios (All scenarios should be defined within this folder)
             |      |       |__ \Self_consumption (A PyDSS scenario will be defined within this directory)
             |      |       |       |__ \ExportLists.json (Define export list for the project)
             |      |       |       |__ \pyControllerList.json (Define a set of custom controls)
@@ -55,7 +49,7 @@ PyDSS requires a specific directory format to define projects detailed below.
             |      |__ \Logs (PyDSS logs will be exported to this folder)
             |__ \EPRIJ1feeder
             |__ \<Project name>
-                   :
+
 			   
 Running PyDSS is simple. The following code snippet shows how to run a defined simulation scenario.
 
@@ -70,7 +64,7 @@ Running PyDSS is simple. The following code snippet shows how to run a defined s
 	@click.option('--pydss_path',
 				  default=r'C:\\Users\\alatif\\Desktop\\PyDSS')
 	@click.option('--sim_path',
-				  default=r'~PyDSS\\examples\\Custom_controls_example\\PyDSS Scenarios')
+				  default=r'~PyDSS\\examples\\Custom_controls_example\\Scenarios')
 	@click.option('--sim_file',
 				  default=r'multiple_controllers.toml') #The TOML file contains simulation settings for the particular scenario
 	@click.option('--vis_file',

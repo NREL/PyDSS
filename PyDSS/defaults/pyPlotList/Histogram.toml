@@ -1,0 +1,8 @@
+["histogram1.html"]
+Width = 1400
+Height = 800
+ObjectType = "Buses"
+Scaler = 1
+Property = "puVmagAngle"
+index = "MaxEven"
+bins = 100

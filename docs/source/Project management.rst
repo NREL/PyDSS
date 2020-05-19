@@ -10,7 +10,7 @@ The schema is PyDSS follows is as follows:
 	~\PyDSS-Projects (There should be no spaces in the complete base path)
             |__ \IEEE13node
             |      |__ \DSSfiles (Should contain OpenDSS files)
-            |      |__ \PyDSS Scenarios (All scenarios should be defined within this folder)
+            |      |__ \Scenarios (All scenarios should be defined within this folder)
             |      |       |__ \Self_consumption (A PyDSS scenario will be defined within this directory)
             |      |       |       |__ \ExportLists.json (Define export list for the project)
             |      |       |       |__ \pyControllerList.json (Define a set of custom controls)

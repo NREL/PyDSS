@@ -1,4 +1,5 @@
 import PyDSS.dssElement as dE
+from PyDSS.pyLogger import getLoggerTag
 import logging
 
 
@@ -17,7 +18,10 @@ class Modifier():
      }
 
     def __init__(self, dss, run_command, SimulationSettings):
-        LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
+        if SimulationSettings["Logging"]["Pre-configured logging"]:
+            LoggerTag = __name__
+        else:
+            LoggerTag = getLoggerTag(SimulationSettings)
         self.pyLogger = logging.getLogger(LoggerTag)
         self.__dssInstance = dss
         self.__dssCircuit = dss.Circuit

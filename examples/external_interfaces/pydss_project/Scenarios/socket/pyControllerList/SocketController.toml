@@ -1,0 +1,17 @@
+["Load.mpx000635970"]
+IP = "127.0.0.1"
+Port = 5001
+Encoding = false
+Buffer = 1024
+Index = "Even,Even"
+Inputs = "VoltagesMagAng,Powers"
+Outputs = "kW"
+
+["Load.mpx000460267"]
+IP = "127.0.0.1"
+Port = 5002
+Encoding = false
+Buffer = 1024
+Index = "Even,Even"
+Inputs = "VoltagesMagAng,Powers"
+Outputs = "kW"

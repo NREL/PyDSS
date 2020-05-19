@@ -1,0 +1,15 @@
+["FS1.html"]
+"Object Name" =	"Line.l84"
+"Object Type" = "Element"
+Property = "Powers"
+Indices = "SumEven"
+Width = 800
+Height = 800
+
+["FS2.html"]
+"Object Name" = "Line.l84"
+"Object Type" = "Element"
+Property = "Powers"
+Indices = "SumEven"
+Width	= 800
+Height = 800

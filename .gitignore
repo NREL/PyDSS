@@ -2,3 +2,13 @@ Export/*
 ProjectFiles/*/PyDSS Settings/*
 __pycache__/*
 */__pycache__/*
+__pycache__
+*.egg-info
+*.pyc
+docs/build/*
+tags
+cscope.files
+tests/data/project/Exports/*
+tests/data/project/Scenarios/scenario1/simulation.toml
+.idea/*
+.vscode/*

@@ -2,16 +2,22 @@ from datetime import datetime, timedelta
 import logging
 import math
 
+from PyDSS.pyLogger import getLoggerTag
+
+
 def GetSolver(SimulationSettings ,dssInstance):
-    LoggerTag = SimulationSettings['Active Project'] + '_' + SimulationSettings['Active Scenario']
+    if SimulationSettings["Logging"]["Pre-configured logging"]:
+        LoggerTag = __name__
+    else:
+        LoggerTag = getLoggerTag(SimulationSettings)
     pyLogger = logging.getLogger(LoggerTag)
     try:
-        pyLogger.info('Setting solver to ' + SimulationSettings['Simulation Type'] + ' mode.')
-        if SimulationSettings['Simulation Type'].lower() == 'snapshot':
+        pyLogger.info('Setting solver to ' + SimulationSettings['Project']['Simulation Type'] + ' mode.')
+        if SimulationSettings['Project']['Simulation Type'].lower() == 'snapshot':
             return __Shapshot(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger)
-        elif SimulationSettings['Simulation Type'].lower() == 'qsts':
+        elif SimulationSettings['Project']['Simulation Type'].lower() == 'qsts':
             return __QSTS(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger)
-        elif SimulationSettings['Simulation Type'].lower() == 'dynamic':
+        elif SimulationSettings['Project']['Simulation Type'].lower() == 'dynamic':
             return __Dynamic(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger)
         else:
             pyLogger.error('Invalid solver mode chosen')
@@ -25,19 +31,19 @@ class __Dynamic:
         print('Running Dynamic simulation')
         self.Settings = SimulationSettings
         self.pyLogger = Logger
-        StartDay = SimulationSettings['Start Day']
-        StartTimeMin = SimulationSettings['Start Time (min)']
-        EndTimeMin = SimulationSettings['End Time (min)']
-        sStepResolution = SimulationSettings['Step resolution (sec)']
+        StartDay = SimulationSettings['Project']['Start Day']
+        StartTimeMin = SimulationSettings['Project']['Start Time (min)']
+        EndTimeMin = SimulationSettings['Project']['End Time (min)']
+        sStepResolution = SimulationSettings['Project']['Step resolution (sec)']
 
-        self.__Time = datetime.strptime('{} {}'.format(SimulationSettings['Start Year'],
-                                                       SimulationSettings['Start Day'] + SimulationSettings[
+        self.__Time = datetime.strptime('{} {}'.format(SimulationSettings['Project']['Start Year'],
+                                                       SimulationSettings['Project']['Start Day'] + SimulationSettings['Project'][
                                                            'Date offset']
                                                        ), '%Y %j')
         self.__Time = self.__Time + timedelta(minutes=StartTimeMin)
         self.__StartTime = self.__Time
-        self.__EndTime = datetime.strptime('{} {}'.format(SimulationSettings['Start Year'],
-                                                       SimulationSettings['End Day'] + SimulationSettings[
+        self.__EndTime = datetime.strptime('{} {}'.format(SimulationSettings['Project']['Start Year'],
+                                                       SimulationSettings['Project']['End Day'] + SimulationSettings['Project'][
                                                            'Date offset']
                                                        ), '%Y %j')
 
@@ -52,7 +58,7 @@ class __Dynamic:
         self.__dssSolution.Seconds(StartTimeMin * 60)
         self.__dssSolution.Number(1)
         self.__dssSolution.StepSize(self.__sStepRes)
-        self.__dssSolution.MaxControlIterations(SimulationSettings['Max Control Iterations'])
+        self.__dssSolution.MaxControlIterations(SimulationSettings['Project']['Max Control Iterations'])
         return
 
     def setFrequency(self, frequency):
@@ -82,8 +88,8 @@ class __Dynamic:
         self.__Time = self.__Time + timedelta(seconds=self.__sStepRes)
         self.__Hour = int(self.__dssSolution.DblHour() // 1)
         self.__Second = (self.__dssSolution.DblHour() % 1) * 60 * 60
-        self.pyLogger.info('OpenDSS time [h] - ' + str(self.__dssSolution.DblHour()))
-        self.pyLogger.info('PyDSS datetime - ' + str(self.__Time))
+        self.pyLogger.debug('OpenDSS time [h] - ' + str(self.__dssSolution.DblHour()))
+        self.pyLogger.debug('PyDSS datetime - ' + str(self.__Time))
 
     def GetTotalSeconds(self):
         return (self.__Time - self.__StartTime).total_seconds()
@@ -101,6 +107,10 @@ class __Dynamic:
         self.__dssSolution.StepSize(0)
         self.__dssSolution.SolveNoControl()
 
+    def Solve(self):
+        self.__dssSolution.StepSize(0)
+        self.__dssSolution.Solve()
+
     def getMode(self):
         return self.__dssSolution.ModeID()
 
@@ -111,19 +121,19 @@ class __QSTS:
     def __init__(self, dssInstance, SimulationSettings, Logger):
         self.Settings = SimulationSettings
         self.pyLogger = Logger
-        StartDay = SimulationSettings['Start Day']
-        StartTimeMin = SimulationSettings['Start Time (min)']
-        EndTimeMin = SimulationSettings['End Time (min)']
-        sStepResolution = SimulationSettings['Step resolution (sec)']
+        StartDay = SimulationSettings['Project']['Start Day']
+        StartTimeMin = SimulationSettings['Project']['Start Time (min)']
+        EndTimeMin = SimulationSettings['Project']['End Time (min)']
+        sStepResolution = SimulationSettings['Project']['Step resolution (sec)']
 
-        self.__Time = datetime.strptime('{} {}'.format(SimulationSettings['Start Year'],
-                                                       SimulationSettings['Start Day'] + SimulationSettings[
+        self.__Time = datetime.strptime('{} {}'.format(SimulationSettings['Project']['Start Year'],
+                                                       SimulationSettings['Project']['Start Day'] + SimulationSettings['Project'][
                                                            'Date offset']
                                                        ), '%Y %j')
         self.__Time = self.__Time + timedelta(minutes=StartTimeMin)
         self.__StartTime = self.__Time
-        self.__EndTime = datetime.strptime('{} {}'.format(SimulationSettings['Start Year'],
-                                                       SimulationSettings['End Day'] + SimulationSettings[
+        self.__EndTime = datetime.strptime('{} {}'.format(SimulationSettings['Project']['Start Year'],
+                                                       SimulationSettings['Project']['End Day'] + SimulationSettings['Project'][
                                                            'Date offset']
                                                        ), '%Y %j')
 
@@ -136,7 +146,7 @@ class __QSTS:
         self.__dssSolution.Seconds(StartTimeMin * 60)
         self.__dssSolution.Number(1)
         self.__dssSolution.StepSize(self.__sStepRes)
-        self.__dssSolution.MaxControlIterations(SimulationSettings['Max Control Iterations'])
+        self.__dssSolution.MaxControlIterations(SimulationSettings['Project']['Max Control Iterations'])
         return
     def setFrequency(self, frequency):
         self.__dssSolution.Frequency(frequency)
@@ -166,8 +176,8 @@ class __QSTS:
         self.__Time = self.__Time + timedelta(seconds=self.__sStepRes)
         self.__Hour = int(self.__dssSolution.DblHour() // 1)
         self.__Second = (self.__dssSolution.DblHour() % 1) * 60 * 60
-        self.pyLogger.info('OpenDSS time [h] - ' + str(self.__dssSolution.DblHour()))
-        self.pyLogger.info('PyDSS datetime - ' + str(self.__Time))
+        self.pyLogger.debug('OpenDSS time [h] - ' + str(self.__dssSolution.DblHour()))
+        self.pyLogger.debug('PyDSS datetime - ' + str(self.__Time))
 
     def GetTotalSeconds(self):
         return (self.__Time - self.__StartTime).total_seconds()
@@ -185,6 +195,10 @@ class __QSTS:
         self.__dssSolution.StepSize(0)
         self.__dssSolution.SolveNoControl()
 
+    def Solve(self):
+        self.__dssSolution.StepSize(0)
+        self.__dssSolution.Solve()
+
     def getMode(self):
         return self.__dssSolution.ModeID()
 
@@ -196,16 +210,16 @@ class __QSTS:
             self.__dssSolution.Seconds(self.__Second)
             self.__dssSolution.Number(1)
             self.__dssSolution.StepSize(self.__sStepRes)
-            self.__dssSolution.MaxControlIterations(self.Settings['Max Control Iterations'])
+            self.__dssSolution.MaxControlIterations(self.Settings['Project']['Max Control Iterations'])
 
 class __Shapshot:
     def __init__(self, dssInstance, SimulationSettings, Logger):
         self.Settings = SimulationSettings
         self.pyLogger = Logger
-        StartTimeMin = SimulationSettings['Start Time (min)']
+        StartTimeMin = SimulationSettings['Project']['Start Time (min)']
         self.__Time = datetime.strptime(
-            '{} {}'.format(SimulationSettings['Start Year'], SimulationSettings['Start Day'] +
-                           SimulationSettings['Date offset']), '%Y %j'
+            '{} {}'.format(SimulationSettings['Project']['Start Year'], SimulationSettings['Project']['Start Day'] +
+                           SimulationSettings['Project']['Date offset']), '%Y %j'
         )
 
         self.__Time = self.__Time + timedelta(minutes=StartTimeMin)
@@ -215,8 +229,8 @@ class __Shapshot:
         self.__dssInstance = dssInstance
         self.__dssSolution = dssInstance.Solution
         self.__dssSolution.Mode(0)
-        self.__dssInstance.utils.run_command('Set ControlMode={}'.format(SimulationSettings['Control mode']))
-        self.__dssSolution.MaxControlIterations(SimulationSettings['Max Control Iterations'])
+        #self.__dssInstance.utils.run_command('Set ControlMode={}'.format(SimulationSettings['Project']['Control mode']))
+        self.__dssSolution.MaxControlIterations(SimulationSettings['Project']['Max Control Iterations'])
 
         return
 
@@ -237,6 +251,9 @@ class __Shapshot:
 
     def reSolve(self):
         return self.__dssSolution.SolveNoControl()
+
+    def Solve(self):
+        self.__dssSolution.Solve()
 
     def IncStep(self):
         return self.__dssSolution.Solve()
