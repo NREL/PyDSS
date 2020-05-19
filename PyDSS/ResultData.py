@@ -322,8 +322,6 @@ class ResultData:
 
 
 class ElementData:
-    DELIMITER = "__"
-
     def __init__(self, element_class, name, properties, obj, data, max_chunk_bytes,
                  store_frequency=False, store_mode=False,
                  scenario=None, hdf_store=None):
@@ -397,8 +395,8 @@ class ElementData:
     def flush_data(self):
         """Flush any outstanding data to disk."""
         for container in self._data.values():
-            assert container is not None, \
-                "flush cannot be called until at least one value has been collected"
+            if container is None:
+                continue
             container.flush_data()
 
     def max_num_bytes(self):

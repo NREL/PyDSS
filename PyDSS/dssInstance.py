@@ -10,6 +10,8 @@ from PyDSS import SolveMode
 from PyDSS import pyLogger
 from PyDSS import helics_interface as HI
 from PyDSS.utils.dataframe_utils import write_dataframe
+from PyDSS.utils.utils import make_human_readable_size
+
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 
 from PyDSS.pyPostprocessor import pyPostprocess
@@ -323,6 +325,22 @@ class OpenDSS:
 
         return self.ResultContainer.CurrentResults
 
+    def DryRunSimulation(self, project, scenario):
+        """Run one time point for getting estimated space."""
+        if not self._Options['Exports']['Log Results']:
+            raise InvalidConfiguration("Log Reults must set to be True.")
+
+        Steps, _, _ = self._dssSolver.SimulationSteps()
+        self._Logger.info('Dry run simulation...')
+        self.ResultContainer.InitializeDataStore(project.hdf_store, Steps)
+
+        try:
+            self.RunStep(0)
+        finally:
+            self.ResultContainer.FlushData()
+
+        return self.ResultContainer.max_num_bytes()
+
     def RunSimulation(self, project, scenario, MC_scenario_number=None):
         startTime = time.time()
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
@@ -351,6 +369,11 @@ class OpenDSS:
             step = 0
             while step < Steps:
                 self.RunStep(step)
+
+                if step == 0 and self.ResultContainer is not None:
+                    size = make_human_readable_size(self.ResultContainer.max_num_bytes())
+                    self._Logger.info('Storage requirement estimation: %s, estimated based on first time step run.', size)
+
                 for postprocessor in postprocessors:
                     step = postprocessor.run(step, Steps)
                 if self._increment_flag:

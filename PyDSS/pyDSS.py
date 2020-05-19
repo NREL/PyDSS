@@ -5,6 +5,7 @@ import toml
 import os
 import logging
 
+from PyDSS.exceptions import InvalidConfiguration
 from PyDSS import dssInstance
 from PyDSS.utils.utils import dump_data, load_data
 
@@ -122,7 +123,10 @@ class instance(object):
         },
     }
 
-    def run(self, simulation_config, project, scenario):
+    def __init__(self):
+        self._estimated_space = None
+
+    def run(self, simulation_config, project, scenario, dry_run=False):
         bokeh_server_proc = None
         if simulation_config['Plots']['Create dynamic plots']:
             bokeh_server_proc = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
@@ -135,6 +139,7 @@ class instance(object):
         finally:
             if simulation_config['Plots']['Create dynamic plots']:
                 bokeh_server_proc.terminate()
+
         return
 
     def update_scenario_settings(self, simulation_config):
@@ -150,10 +155,19 @@ class instance(object):
         dss = dssInstance.OpenDSS(dss_args)
         return dss
 
-    def run_scenario(self, project, scenario, simulation_config):
+    def run_scenario(self, project, scenario, simulation_config , dry_run=False):
         dss_args = self.update_scenario_settings(simulation_config)
         self._dump_scenario_simulation_settings(dss_args)
-
+        
+        if dry_run:
+            dss = dssInstance.OpenDSS(dss_args)
+            logger.info('Dry run scenario: %s', dss_args["Project"]["Active Scenario"])
+            if dss_args["MonteCarlo"]["Number of Monte Carlo scenarios"] > 0:
+                raise InvalidConfiguration("Dry run does not support MonteCarlo simulation.")
+            else:
+                self._estimated_space = dss.DryRunSimulation(project, scenario)
+            return None, None
+        
         dss = dssInstance.OpenDSS(dss_args)
         logger.info('Running scenario: %s', dss_args["Project"]["Active Scenario"])
         if dss_args["MonteCarlo"]["Number of Monte Carlo scenarios"] > 0:
@@ -161,6 +175,9 @@ class instance(object):
         else:
             dss.RunSimulation(project, scenario)
         return dss_args
+
+    def get_estimated_space(self):
+        return self._estimated_space
 
     def _dump_scenario_simulation_settings(self, dss_args):
         # Various settings may have been updated. Write the actual settings to a file.

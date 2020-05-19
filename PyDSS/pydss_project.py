@@ -4,6 +4,7 @@ import logging
 import os
 import shutil
 import tarfile
+import tempfile
 import zipfile
 
 import h5py
@@ -45,6 +46,7 @@ class PyDssProject:
         self._fs_intf = fs_intf  # Only needed for reading a project that was
                                  # already executed.
         self._hdf_store = None
+        self._estimated_space = {}
 
     @property
     def dss_files_path(self):
@@ -198,6 +200,16 @@ class PyDssProject:
         """
         return self._simulation_config
 
+    @property
+    def estimated_space(self):
+        """Return the estimated space in bytes.
+        
+        Returns
+        -------
+        int
+        """
+        return self._estimated_space
+
     def serialize(self):
         """Create the project on the filesystem."""
         os.makedirs(self._project_dir, exist_ok=True)
@@ -264,7 +276,7 @@ class PyDssProject:
     def list_scenario_names(self):
         return [x.name for x in self.scenarios]
 
-    def run(self, logging_configured=True, tar_project=False, zip_project=False):
+    def run(self, logging_configured=True, tar_project=False, zip_project=False, dry_run=False):
         """Run all scenarios in the project."""
         if isinstance(self._fs_intf, PyDssArchiveFileInterfaceBase):
             raise InvalidConfiguration("cannot run from an archived project")
@@ -276,7 +288,12 @@ class PyDssProject:
 
         inst = instance()
         self._simulation_config["Logging"]["Pre-configured logging"] = logging_configured
-        store_filename = os.path.join(self._project_dir, STORE_FILENAME)
+
+        if dry_run:
+            store_filename = os.path.join(tempfile.gettempdir(), STORE_FILENAME)
+        else:
+            store_filename = os.path.join(self._project_dir, STORE_FILENAME)
+
         driver = None
         if self._simulation_config["Exports"].get("Export Data In Memory", True):
             driver = "core"
@@ -285,7 +302,8 @@ class PyDssProject:
             self._hdf_store.attrs["version"] = DATA_FORMAT_VERSION
             for scenario in self._scenarios:
                 self._simulation_config["Project"]["Active Scenario"] = scenario.name
-                inst.run(self._simulation_config, self, scenario)
+                inst.run(self._simulation_config, self, scenario, dry_run)
+                self._estimated_space[scenario.name] = inst.get_estimated_space()
 
         if self._simulation_config["Exports"].get("Export Data Tables", False):
             # Hack. Have to import here. Need to re-organize to fix.
@@ -298,6 +316,9 @@ class PyDssProject:
             self._tar_project_files()
         elif zip_project:
             self._zip_project_files()
+
+        if dry_run and os.path.exists(store_filename):
+            os.remove(store_filename)
 
     def _serialize_scenarios(self):
         self._simulation_config["Project"]["Scenarios"] = []
@@ -445,7 +466,8 @@ class PyDssProject:
         )
 
     @classmethod
-    def run_project(cls, path, options=None, tar_project=False, zip_project=False, simulation_file=None):
+    def run_project(cls, path, options=None, tar_project=False, zip_project=False, simulation_file=None, , dry_run=False):
+
         """Load a PyDssProject from directory and run all scenarios.
 
         Parameters
@@ -458,11 +480,12 @@ class PyDssProject:
             tar project files after successful execution
         zip_project : bool
             zip project files after successful execution
-
+        dry_run: bool
+            dry run for getting estimated space.
         """
-        project = cls.load_project(path, options=options, simulation_file=simulation_file)
-        return project.run(tar_project=tar_project, zip_project=zip_project)
 
+        project = cls.load_project(path, options=options, simulation_file=simulation_file)
+        return project.run(tar_project=tar_project, zip_project=zip_project, dry_run=dry_run)
 
 class PyDssScenario:
     """Represents a PyDSS Scenario."""
