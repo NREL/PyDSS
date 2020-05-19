@@ -13,8 +13,8 @@ import pandas as pd
 import PyDSS
 from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, \
     SIMULATION_SETTINGS_FILENAME, DEFAULT_SIMULATION_SETTINGS_FILE, \
-    ControllerType, ExportMode, DEFAULT_PLOT_CONFIG, PLOTS_FILENAME, \
-    filename_from_enum
+    ControllerType, ExportMode, MONTE_CARLO_SETTINGS_FILENAME,\
+    filename_from_enum, VisualizationType, DEFAULT_MONTE_CARLO
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 from PyDSS.pyDSS import instance
 from PyDSS.pydss_fs_interface import PyDssDirectoryInterface, \
@@ -32,11 +32,16 @@ DATA_FORMAT_VERSION = "1.0.0"
 
 class PyDssProject:
     """Represents the project options for a PyDSS simulation."""
-    def __init__(self, path, name, scenarios, simulation_config, fs_intf=None):
+    def __init__(self, path, name, scenarios, simulation_config, fs_intf=None,
+                 simulation_file=SIMULATION_SETTINGS_FILENAME):
         self._name = name
         self._scenarios = scenarios
         self._simulation_config = simulation_config
         self._project_dir = os.path.join(path, self._name)
+        if simulation_file is None:
+            self._simulation_file = os.path.join(self._project_dir, SIMULATION_SETTINGS_FILENAME)
+        else:
+            self._simulation_file = simulation_file
         self._scenarios_dir = os.path.join(self._project_dir, SCENARIOS)
         self._fs_intf = fs_intf  # Only needed for reading a project that was
                                  # already executed.
@@ -210,19 +215,16 @@ class PyDssProject:
         os.makedirs(self._project_dir, exist_ok=True)
         for name in PROJECT_DIRECTORIES:
             os.makedirs(os.path.join(self._project_dir, name), exist_ok=True)
-
         self._serialize_scenarios()
-
         dump_data(
             self._simulation_config,
-            os.path.join(self._project_dir, SIMULATION_SETTINGS_FILENAME),
+            os.path.join(self._project_dir, self._simulation_file),
         )
-
         logger.info("Initialized directories in %s", self._project_dir)
 
     @classmethod
-    def create_project(cls, path, name, scenarios, simulation_config=None,
-                       options=None):
+    def create_project(cls, path, name, scenarios, simulation_config=None, options=None,
+                       simulation_file=SIMULATION_SETTINGS_FILENAME):
         """Create a new PyDssProject on the filesystem.
 
         Parameters
@@ -244,8 +246,7 @@ class PyDssProject:
             simulation_config.update(options)
         simulation_config["Project"]["Project Path"] = path
         simulation_config["Project"]["Active Project"] = name
-
-        project = cls(path, name, scenarios, simulation_config)
+        project = cls(path, name, scenarios, simulation_config, simulation_file)
         project.serialize()
         sc_names = project.list_scenario_names()
         logger.info("Created project=%s with scenarios=%s at %s", name,
@@ -281,6 +282,9 @@ class PyDssProject:
             raise InvalidConfiguration("cannot run from an archived project")
         if tar_project and zip_project:
             raise InvalidParameter("tar_project and zip_project cannot both be True")
+        if self._simulation_config['Project']['DSS File'] == "":
+            raise InvalidConfiguration("a valid opendss file needs to be passed")
+
 
         inst = instance()
         self._simulation_config["Logging"]["Pre-configured logging"] = logging_configured
@@ -391,7 +395,7 @@ class PyDssProject:
             os.chdir(orig)
 
     @staticmethod
-    def load_simulation_config(project_path):
+    def load_simulation_config(project_path, simulations_file):
         """Return the simulation settings for a project, using defaults if the
         file is not defined.
 
@@ -404,18 +408,17 @@ class PyDssProject:
         dict
 
         """
-        filename = os.path.join(project_path, SIMULATION_SETTINGS_FILENAME)
+        filename = os.path.join(project_path, simulations_file)
         if not os.path.exists(filename):
             filename = os.path.join(
                 project_path,
                 DEFAULT_SIMULATION_SETTINGS_FILE,
             )
             assert os.path.exists(filename)
-
         return load_data(filename)
 
     @classmethod
-    def load_project(cls, path, options=None, in_memory=False):
+    def load_project(cls, path, options=None, in_memory=False, simulation_file=None):
         """Load a PyDssProject from directory.
 
         Parameters
@@ -435,7 +438,7 @@ class PyDssProject:
         elif os.path.exists(os.path.join(path, PROJECT_ZIP)):
             fs_intf = PyDssZipFileInterface(path)
         else:
-            fs_intf = PyDssDirectoryInterface(path)
+            fs_intf = PyDssDirectoryInterface(path, simulation_file)
 
         simulation_config = fs_intf.simulation_config
         if options is not None:
@@ -463,7 +466,8 @@ class PyDssProject:
         )
 
     @classmethod
-    def run_project(cls, path, options=None, tar_project=False, zip_project=False, dry_run=False):
+    def run_project(cls, path, options=None, tar_project=False, zip_project=False, simulation_file=None, , dry_run=False):
+
         """Load a PyDssProject from directory and run all scenarios.
 
         Parameters
@@ -479,32 +483,52 @@ class PyDssProject:
         dry_run: bool
             dry run for getting estimated space.
         """
-        project = cls.load_project(path, options=options)
-        return project.run(tar_project=tar_project, zip_project=zip_project, dry_run=dry_run)
 
+        project = cls.load_project(path, options=options, simulation_file=simulation_file)
+        return project.run(tar_project=tar_project, zip_project=zip_project, dry_run=dry_run)
 
 class PyDssScenario:
     """Represents a PyDSS Scenario."""
 
     DEFAULT_CONTROLLER_TYPES = (ControllerType.PV_CONTROLLER,)
+    DEFAULT_VISUALIZATION_TYPES = (VisualizationType.FREQUENCY_PLOT, VisualizationType.HISTOGRAM_PLOT,
+                                   VisualizationType.TABLE_PLOT, VisualizationType.THREEDIM_PLOT,
+                                   VisualizationType.TIMESERIES_PLOT, VisualizationType.TOPOLOGY_PLOT,
+                                   VisualizationType.VOLTDIST_PLOT, VisualizationType.XY_PLOT,)
     DEFAULT_EXPORT_MODE = ExportMode.BY_CLASS
     _SCENARIO_DIRECTORIES = (
         "ExportLists",
         "pyControllerList",
         "pyPlotList",
-        "PostProcess"
+        "PostProcess",
+        'Monte_Carlo'
     )
     REQUIRED_POST_PROCESS_FIELDS = ("script", "config_file")
 
     def __init__(self, name, controller_types=None, controllers=None,
-                 export_modes=None, exports=None, plots=None,
-                 post_process_infos=None):
+                 export_modes=None, exports=None, visualizations=None,
+                 post_process_infos=None, visualization_types=None):
         self.name = name
         self.post_process_infos = []
-        if controller_types is not None and controllers is not None:
-            raise InvalidParameter(
-                "controller_types and controllers cannot both be set"
-            )
+
+        if visualization_types is None and visualizations is None:
+            self.visualizations = {
+                x: self.load_visualization_config_from_type(x)
+                for x in PyDssScenario.DEFAULT_VISUALIZATION_TYPES
+            }
+        elif visualization_types is not None:
+            self.visualizations = {
+                x: self.load_visualization_config_from_type(x)
+                for x in visualization_types
+            }
+        elif isinstance(visualizations, str):
+            basename = os.path.splitext(os.path.basename(visualizations))[0]
+            visualization_type = VisualizationType(basename)
+            self.visualizations = {visualization_type: load_data(controllers)}
+        else:
+            assert isinstance(visualizations, dict)
+            self.visualizations = visualizations
+
         if (controller_types is None and controllers is None):
             self.controllers = {
                 x: self.load_controller_config_from_type(x)
@@ -541,13 +565,6 @@ class PyDssScenario:
             assert isinstance(exports, dict)
             self.exports = exports
 
-        if plots is None:
-            self.plots = DEFAULT_PLOT_CONFIG
-        elif isinstance(plots, str):
-            self.plots = load_data(plots)
-        else:
-            self.plots = plots
-
         if post_process_infos is not None:
             for pp_info in post_process_infos:
                 self.add_post_process(pp_info)
@@ -572,13 +589,13 @@ class PyDssScenario:
         """
         controllers = fs_intf.read_controller_config(name)
         exports = fs_intf.read_export_config(name)
-        plots = fs_intf.read_plot_config(name)
+        visualizations = fs_intf.read_visualization_config(name)
 
         return cls(
             name,
             controllers=controllers,
             exports=exports,
-            plots=plots,
+            visualizations=visualizations,
             post_process_infos=post_process_infos,
         )
 
@@ -607,10 +624,42 @@ class PyDssScenario:
                 os.path.join(path, "ExportLists", filename_from_enum(mode))
             )
 
+        for visualization_type, visualizations in self.visualizations.items():
+            filename = os.path.join(
+                path, "pyPlotList", filename_from_enum(visualization_type)
+            )
+            dump_data(visualizations, filename)
+
+        # @Danial the plots.toml file is not used by a single scenario.
+        # It is used to craete plots that compare results from multiple scenarios
         dump_data(
-            self.plots,
-            os.path.join(path, "pyPlotList", PLOTS_FILENAME)
+            DEFAULT_MONTE_CARLO,
+            os.path.join(path, "Monte_Carlo", MONTE_CARLO_SETTINGS_FILENAME)
         )
+
+    @staticmethod
+    def load_visualization_config_from_type(visualization_type):
+        """Load a default visualization config from a type.
+
+        Parameters
+        ----------
+        visualization_type : VisualizationType
+
+        Returns
+        -------
+        dict
+
+        """
+
+        path = os.path.join(
+            os.path.dirname(getattr(PyDSS, "__path__")[0]),
+            "PyDSS",
+            "defaults",
+            "pyPlotList",
+            filename_from_enum(visualization_type),
+        )
+
+        return load_data(path)
 
     @staticmethod
     def load_controller_config_from_type(controller_type):
@@ -680,7 +729,6 @@ class PyDssScenario:
         self.post_process_infos.append(post_process_info)
         logger.info("Appended post-process script %s to %s",
                     post_process_info["script"], self.name)
-
 
 def load_config(path):
     """Return a configuration from files.

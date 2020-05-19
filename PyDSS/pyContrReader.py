@@ -6,7 +6,7 @@ import toml
 
 from PyDSS.config_data import convert_config_data_to_toml
 from PyDSS.utils.utils import load_data
-
+from PyDSS.exceptions import InvalidParameter
 
 class pyContrReader:
     def __init__(self, Path):
@@ -19,7 +19,7 @@ class pyContrReader:
             if filename.startswith('~$'):
                 continue
             elif ext == '.xlsx':
-                filename = convert_config_data_to_toml(xlsx_filename)
+                filename = convert_config_data_to_toml(filename)
             elif ext != ".toml":
                 continue
             if pyControllerType not in self.pyControllers:
@@ -36,19 +36,13 @@ class pyContrReader:
 
 class pySubscriptionReader:
     def __init__(self, filePath):
-        self.SubscriptionDict = {}
-        assert (os.path.exists(filePath)), 'path: "{}" does not exist!'.format(filePath)
-        SubscriptionData = pd.read_excel(filePath, skiprows=[0,], index_col=[0])
-        requiredColumns = {'Property', 'Subscription ID', 'Unit', 'Subscribe', 'Data type'}
-        fileColumns = set(SubscriptionData.columns)
-        diff  = requiredColumns.difference(fileColumns)
+        self.SubscriptionList = {}
+        if not os.path.exists(filePath):
+            raise FileNotFoundError('path: "{}" does not exist!'.format(filePath))
 
-        assert (len(diff) == 0), 'Missing column in the subscriptions file.\nRequired columns: {}'.format(
-            requiredColumns
-        )
-        Subscribe = SubscriptionData['Subscribe']
-        assert (Subscribe.dtype == bool), 'The subscribe column can only have boolean values.'
-        self.SubscriptionDict = SubscriptionData.T.to_dict()
+        for elem, elem_data in load_data(filePath).items():
+            if elem_data["Subscribe"]:
+                self.SubscriptionList[elem] = elem_data
 
 
 class pyExportReader:

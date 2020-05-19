@@ -6,8 +6,6 @@ import os
 import logging
 
 from PyDSS.exceptions import InvalidConfiguration
-from PyDSS.pyAnalyzer.dssSimulationResult import ResultObject
-from PyDSS.pyAnalyzer.dssGraphicsGenerator import CreatePlots
 from PyDSS import dssInstance
 from PyDSS.utils.utils import dump_data, load_data
 
@@ -56,7 +54,8 @@ class instance(object):
             # Feather is not supported because its underlying libraries do not support complex numbers
             'Export Format': {'type': str, 'Options': ["csv", "h5"]},
             'Export Compression': {'type': bool, 'Options': [True, False]},
-            'Export Iteration Order': {'type': str, 'Options': ["ElementValuesPerProperty", "ValuesByPropertyAcrossElements"]},
+            'Export Iteration Order': {'type': str, 'Options': ["ElementValuesPerProperty",
+                                                                "ValuesByPropertyAcrossElements"]},
             'Export Elements': {'type': bool, 'Options': [True, False]},
             'Export Event Log': {'type': bool, 'Options': [True, False]},
             'Export Data Tables': {'type': bool, 'Options': [True, False]},
@@ -76,7 +75,12 @@ class instance(object):
         },
         "Helics": {
             'Co-simulation Mode': {'type': bool, 'Options': [True, False]},
+            'Iterative Mode': {'type': bool, 'Options': [True, False]},
+            'Max co-iterations': {'type': int, 'Options': range(1, 1000)},
+            'Error tolerance': {'type': float},
             'Federate name': {'type': str},
+            'Broker': {'type': str},
+            'Broker port': {'type': int},
             'Time delta': {'type': float},
             'Core type': {'type': str},
             'Uninterruptible': {'type': bool, 'Options': [True, False]},
@@ -122,46 +126,20 @@ class instance(object):
     def __init__(self):
         self._estimated_space = None
 
-    def update_results_dict(self, results_container, args, results):
-        results_container['{}-{}-{}-{}-{}'.format(
-            args["Project"]["Active Project"],
-            args["Project"]["Active Scenario"],
-            args["Project"]["Start Year"],
-            args["Project"]["Start Day"],
-            args["Project"]["End Day"],
-        )] = (args, results)
-        return results_container
-
-
     def run(self, simulation_config, project, scenario, dry_run=False):
-        path = os.path.dirname(PyDSS.__file__)
-        default_vis_settings = load_data(os.path.join(path, 'defaults', 'pyPlotList', 'plots.toml'))
-
-        if scenario.plots is not None:
-            updated_vis_settings = {**default_vis_settings, **scenario.plots}
-        else:
-            updated_vis_settings = default_vis_settings
-
         bokeh_server_proc = None
-        if updated_vis_settings['Simulations']['Run_bokeh_server']:
+        if simulation_config['Plots']['Create dynamic plots']:
             bokeh_server_proc = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
+        try:
+            self.run_scenario(
+                project,
+                scenario,
+                simulation_config,
+            )
+        finally:
+            if simulation_config['Plots']['Create dynamic plots']:
+                bokeh_server_proc.terminate()
 
-        SimulationResults = {}
-        args, results = self.__run_scenario(
-            project,
-            scenario,
-            simulation_config,
-            updated_vis_settings['Simulations']['Run_simulations'],
-            updated_vis_settings['Simulations']['Generate_visuals'],
-            dry_run
-        )
-        if results is not None:
-            SimulationResults = self.update_results_dict(SimulationResults, args, results)
-
-        if updated_vis_settings['Simulations']['Generate_visuals']:
-            CreatePlots(updated_vis_settings, SimulationResults)
-        if updated_vis_settings['Simulations']['Run_bokeh_server']:
-            bokeh_server_proc.terminate()
         return
 
     def update_scenario_settings(self, simulation_config):
@@ -177,10 +155,10 @@ class instance(object):
         dss = dssInstance.OpenDSS(dss_args)
         return dss
 
-    def __run_scenario(self, project, scenario, simulation_config, run_simulation=True, generate_visuals=False, dry_run=False):
+    def run_scenario(self, project, scenario, simulation_config , dry_run=False):
         dss_args = self.update_scenario_settings(simulation_config)
         self._dump_scenario_simulation_settings(dss_args)
-
+        
         if dry_run:
             dss = dssInstance.OpenDSS(dss_args)
             logger.info('Dry run scenario: %s', dss_args["Project"]["Active Scenario"])
@@ -189,26 +167,14 @@ class instance(object):
             else:
                 self._estimated_space = dss.DryRunSimulation(project, scenario)
             return None, None
-
-        if run_simulation:
-            dss = dssInstance.OpenDSS(dss_args)
-            logger.info('Running scenario: %s', dss_args["Project"]["Active Scenario"])
-            if dss_args["MonteCarlo"]["Number of Monte Carlo scenarios"] > 0:
-                dss.RunMCsimulation(project, scenario, samples=dss_args["MonteCarlo"]['Number of Monte Carlo scenarios'])
-            else:
-                dss.RunSimulation(project, scenario)
-            #del dss
-            #print(dss)
-        if generate_visuals:
-            result = ResultObject(os.path.join(
-                dss_args["Project"]['Project Path'],
-                dss_args["Project"]["Active Project"],
-                'Exports',
-                dss_args["Project"]['Active Scenario']
-            ))
+        
+        dss = dssInstance.OpenDSS(dss_args)
+        logger.info('Running scenario: %s', dss_args["Project"]["Active Scenario"])
+        if dss_args["MonteCarlo"]["Number of Monte Carlo scenarios"] > 0:
+            dss.RunMCsimulation(project, scenario, samples=dss_args["MonteCarlo"]['Number of Monte Carlo scenarios'])
         else:
-            result = None
-        return dss_args, result
+            dss.RunSimulation(project, scenario)
+        return dss_args
 
     def get_estimated_space(self):
         return self._estimated_space

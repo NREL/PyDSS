@@ -1,15 +1,13 @@
 
-import abc
-import json
 import logging
 import os
 import pathlib
 import shutil
 
-import numpy as np
+import helics
 import pandas as pd
 
-from PyDSS.pyContrReader import pyExportReader
+from PyDSS.pyContrReader import pyExportReader, pySubscriptionReader
 from PyDSS.pyLogger import getLoggerTag
 from PyDSS.unitDefinations import unit_info
 from PyDSS.dataset_buffer import DatasetBuffer
@@ -17,7 +15,7 @@ from PyDSS.exceptions import InvalidParameter
 from PyDSS.utils.dataframe_utils import read_dataframe, write_dataframe
 from PyDSS.utils.utils import dump_data
 from PyDSS.value_storage import ValueContainer
-
+from PyDSS.unitDefinations import type_info
 
 class ResultData:
     """Exports data to files."""
@@ -40,6 +38,8 @@ class ResultData:
         self._objects_by_class = dss_objects_by_class
         self.system_paths = system_paths
         self._elements = []
+        self._options = options
+
         self._dss_command = dss_command
         self._dss_instance = dss_instance
         self._start_day = options["Project"]["Start Day"]
@@ -50,6 +50,7 @@ class ResultData:
         self._simulation_mode = []
         self._hdf_store = None
         self._scenario = options["Project"]["Active Scenario"]
+        self._base_scenario = options["Project"]["Active Scenario"]
         self._export_format = options["Exports"]["Export Format"]
         self._export_compression = options["Exports"]["Export Compression"]
         self._export_iteration_order = options["Exports"]["Export Iteration Order"]
@@ -60,9 +61,9 @@ class ResultData:
         )
         # Use / because this is used in HDFStore
         self._export_relative_dir = f"Exports/" + options["Project"]["Active Scenario"]
-        self._settings = options
         self._store_frequency = False
         self._store_mode = False
+        self.CurrentResults = {}
         if options["Project"]["Simulation Type"] == "Dynamic" or \
                 options["Frequency"]["Enable frequency sweep"]:
             self._store_frequency = True
@@ -71,10 +72,6 @@ class ResultData:
         if options["Exports"]["Export Mode"] == "byElement":
             raise InvalidParameter(
                 "Export Mode 'byElement' is not supported by ResultData"
-            )
-        if options["Helics"]["Co-simulation Mode"]:
-            raise InvalidParameter(
-                "Co-simulation mode is not supported by ResultData"
             )
 
         pathlib.Path(self._export_dir).mkdir(parents=True, exist_ok=True)
@@ -85,12 +82,9 @@ class ResultData:
                 "ExportMode-byClass.toml",
             ),
         )
+
         self._export_list = self._file_reader.pyControllers
         self._create_list_by_class()
-
-    @staticmethod
-    def updateSubscriptions(self):
-        assert False
 
     def _create_element_list(self, objs, properties):
         elements = []
@@ -101,7 +95,7 @@ class ResultData:
                 if not obj.Enabled:
                     continue
                 if not obj.IsValidAttribute(property_name):
-                    raise InvalidParameter(f"{element_class} / {property_name} {name} cannot be exported")
+                    raise InvalidParameter(f"{name} / {property_name} {name} cannot be exported")
                 if name not in element_names:
                     elements.append((name, obj))
                     element_names.add(name)
@@ -131,7 +125,9 @@ class ResultData:
                 )
                 self._elements.append(elem)
 
-    def InitializeDataStore(self, hdf_store, num_steps):
+    def InitializeDataStore(self, hdf_store, num_steps, MC_scenario_number=None):
+        if MC_scenario_number is not None:
+            self._scenario = self._base_scenario + f"_MC{MC_scenario_number}"
         self._hdf_store = hdf_store
         self._time_dataset = DatasetBuffer(
             hdf_store=hdf_store,
@@ -162,12 +158,16 @@ class ResultData:
             element.initialize_data_store(hdf_store, self._scenario, num_steps)
 
     def UpdateResults(self):
+        self.CurrentResults.clear()
         self._time_dataset.write_value(self._dss_solver.GetDateTime().timestamp())
         self._frequency_dataset.write_value(self._dss_solver.getFrequency())
         self._mode_dataset.write_value(self._dss_solver.getMode())
 
         for elem in self._elements:
-            elem.append_values()
+            data = elem.append_values()
+            self.CurrentResults.update(data)
+            #self.CurrentResults = {**self.CurrentResults, **data}
+        return self.CurrentResults
 
     def ExportResults(self, fileprefix=""):
         self.FlushData()
@@ -176,9 +176,9 @@ class ResultData:
             "element_info_files": [],
         }
 
-        if self._settings["Exports"]["Export Event Log"]:
+        if self._options["Exports"]["Export Event Log"]:
             self._export_event_log(metadata)
-        if self._settings["Exports"]["Export Elements"]:
+        if self._options["Exports"]["Export Elements"]:
             self._export_elements(metadata)
 
         filename = os.path.join(self._export_dir, self.METADATA_FILENAME)
@@ -368,8 +368,14 @@ class ElementData:
         self._scenario = scenario
 
     def append_values(self):
+        curr_data = {}
         for prop in self.properties:
             value = self._obj.GetValue(prop, convert=True)
+            if len(value.make_columns()) > 1:
+                for column, val in zip(value.make_columns(), value.value):
+                    curr_data[column] = val
+            else:
+                curr_data[value.make_columns()[0]] = value.value
             if self._data[prop] is None:
                 path = f"Exports/{self._scenario}/{self._element_class}/{self._name}/{prop}"
                 self._data[prop] = ValueContainer(
@@ -380,6 +386,7 @@ class ElementData:
                     max_chunk_bytes=self._max_chunk_bytes,
                 )
             self._data[prop].append(value)
+        return curr_data
 
     @property
     def element_class(self):

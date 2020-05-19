@@ -78,6 +78,11 @@
 # Helics logging level - [int] - logging level for the federate (use Helics documentation for choosig the right value)
 [Helics]
 "Co-simulation Mode" = false
+"Iterative Mode" = false
+"Error tolerance" = 0.0001
+"Max co-iterations" = 15
+"Broker" = "mainbroker"
+"Broker port" = 50001
 "Federate name" = "PyDSS"
 "Time delta" = 0.01
 "Core type" = "zmq"

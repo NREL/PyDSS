@@ -1,0 +1,11 @@
+["xy1.html"]
+NodeColorProperty = "kVBase"
+LineColorProperty = "length"
+Iterations = 50
+#Layout options = [Circular, Spring, Fruchterman, Spectral, Random, Shell]
+Layout = "Spring" 
+ShowRefNode = false
+NodeSize = 10
+"Open plots in browser" = true
+OutputPath	= ""
+OutputFile = ""

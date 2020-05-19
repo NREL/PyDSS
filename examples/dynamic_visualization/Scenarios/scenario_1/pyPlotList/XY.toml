@@ -1,0 +1,18 @@
+["xy1.html"]
+yObjName = "PVSystem.pvgnem_mpx000635970"
+yObjectType = "Element"
+yProperty = "v.Powers"
+yScaler = -1
+yindex = "SumOdd"
+xObjName = "PVSystem.pvgnem_mpx000635970"
+xObjectType = "Element"
+xProperty = "v.VoltagesMagAng"
+xScaler	= 1
+xindex = "Index=0"
+cObjName = "PVSystem.pvgnem_mpx000635970"
+cObjectType = "Element"
+cProperty = "v.Powers"
+cScaler	= -1
+cindex	= "SumEven"
+Width = 800
+Height = 800
