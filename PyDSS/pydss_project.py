@@ -466,7 +466,7 @@ class PyDssProject:
         )
 
     @classmethod
-    def run_project(cls, path, options=None, tar_project=False, zip_project=False, simulation_file=None, , dry_run=False):
+    def run_project(cls, path, options=None, tar_project=False, zip_project=False, simulation_file=None, dry_run=False):
 
         """Load a PyDssProject from directory and run all scenarios.
 
