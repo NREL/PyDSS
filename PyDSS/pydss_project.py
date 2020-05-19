@@ -302,7 +302,7 @@ class PyDssProject:
             self._hdf_store.attrs["version"] = DATA_FORMAT_VERSION
             for scenario in self._scenarios:
                 self._simulation_config["Project"]["Active Scenario"] = scenario.name
-                inst.run(self._simulation_config, self, scenario, dry_run)
+                inst.run(self._simulation_config, self, scenario, dry_run=dry_run)
                 self._estimated_space[scenario.name] = inst.get_estimated_space()
 
         if self._simulation_config["Exports"].get("Export Data Tables", False):
@@ -418,7 +418,7 @@ class PyDssProject:
         return load_data(filename)
 
     @classmethod
-    def load_project(cls, path, options=None, in_memory=False, simulation_file=None):
+    def load_project(cls, path, options=None, in_memory=False, simulation_file=SIMULATION_SETTINGS_FILENAME):
         """Load a PyDssProject from directory.
 
         Parameters
@@ -432,6 +432,8 @@ class PyDssProject:
 
         """
         name = os.path.basename(path)
+        #if simulation_file is None:
+            #simulation_file = SIMULATION_SETTINGS_FILENAME
 
         if os.path.exists(os.path.join(path, PROJECT_TAR)):
             fs_intf = PyDssTarFileInterface(path)

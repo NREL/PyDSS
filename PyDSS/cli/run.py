@@ -110,7 +110,7 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
             sys.exit(1)
 
     project = PyDssProject.load_project(project_path, options=options)
-    project.run(tar_project=tar_project, zip_project=zip_project, scenario=simulations_file, dry_run=dry_run)
+    project.run(tar_project=tar_project, zip_project=zip_project, dry_run=dry_run)
 
     if dry_run:
         print("="*30)

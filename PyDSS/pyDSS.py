@@ -135,6 +135,7 @@ class instance(object):
                 project,
                 scenario,
                 simulation_config,
+                dry_run=dry_run,
             )
         finally:
             if simulation_config['Plots']['Create dynamic plots']:
