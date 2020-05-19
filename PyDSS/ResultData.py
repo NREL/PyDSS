@@ -39,7 +39,7 @@ class ResultData:
         self.system_paths = system_paths
         self._elements = []
         self._options = options
-        self._base_scenario = options["Project"]["Active Scenario"]
+
         self._dss_command = dss_command
         self._dss_instance = dss_instance
         self._start_day = options["Project"]["Start Day"]
@@ -50,6 +50,7 @@ class ResultData:
         self._simulation_mode = []
         self._hdf_store = None
         self._scenario = options["Project"]["Active Scenario"]
+        self._base_scenario = options["Project"]["Active Scenario"]
         self._export_format = options["Exports"]["Export Format"]
         self._export_compression = options["Exports"]["Export Compression"]
         self._export_iteration_order = options["Exports"]["Export Iteration Order"]
@@ -60,9 +61,9 @@ class ResultData:
         )
         # Use / because this is used in HDFStore
         self._export_relative_dir = f"Exports/" + options["Project"]["Active Scenario"]
-        self._settings = options
         self._store_frequency = False
         self._store_mode = False
+        self.CurrentResults = {}
         if options["Project"]["Simulation Type"] == "Dynamic" or \
                 options["Frequency"]["Enable frequency sweep"]:
             self._store_frequency = True
@@ -157,14 +158,15 @@ class ResultData:
             element.initialize_data_store(hdf_store, self._scenario, num_steps)
 
     def UpdateResults(self):
-        self.CurrentResults = {}
+        self.CurrentResults.clear()
         self._time_dataset.write_value(self._dss_solver.GetDateTime().timestamp())
         self._frequency_dataset.write_value(self._dss_solver.getFrequency())
         self._mode_dataset.write_value(self._dss_solver.getMode())
 
         for elem in self._elements:
             data = elem.append_values()
-            self.CurrentResults = {**self.CurrentResults, **data}
+            self.CurrentResults.update(data)
+            #self.CurrentResults = {**self.CurrentResults, **data}
         return self.CurrentResults
 
     def ExportResults(self, fileprefix=""):
@@ -174,9 +176,9 @@ class ResultData:
             "element_info_files": [],
         }
 
-        if self._settings["Exports"]["Export Event Log"]:
+        if self._options["Exports"]["Export Event Log"]:
             self._export_event_log(metadata)
-        if self._settings["Exports"]["Export Elements"]:
+        if self._options["Exports"]["Export Elements"]:
             self._export_elements(metadata)
 
         filename = os.path.join(self._export_dir, self.METADATA_FILENAME)
@@ -372,10 +374,10 @@ class ElementData:
         for prop in self.properties:
             value = self._obj.GetValue(prop, convert=True)
             if len(value.make_columns()) > 1:
-                for property, val in zip(value.make_columns(), value._value):
-                    curr_data[property] = val
+                for column, val in zip(value.make_columns(), value.value):
+                    curr_data[column] = val
             else:
-                curr_data[value.make_columns()[0]] = value._value
+                curr_data[value.make_columns()[0]] = value.value
             if self._data[prop] is None:
                 path = f"Exports/{self._scenario}/{self._element_class}/{self._name}/{prop}"
                 self._data[prop] = ValueContainer(

@@ -4,7 +4,7 @@ import logging
 import helics
 import os
 
-class helics_interface():
+class helics_interface:
 
     n_states = 5
     init_state = 1

@@ -34,9 +34,12 @@ class PyDssProject:
     def __init__(self, path, name, scenarios, simulation_config, fs_intf=None, simulation_file=None):
         self._name = name
         self._scenarios = scenarios
-        self._simulation_file = simulation_file
         self._simulation_config = simulation_config
         self._project_dir = os.path.join(path, self._name)
+        if simulation_file is None:
+            self._simulation_file = os.path.join(self._project_dir, SIMULATION_SETTINGS_FILENAME)
+        else:
+            self._simulation_file = simulation_file
         self._scenarios_dir = os.path.join(self._project_dir, SCENARIOS)
         self._fs_intf = fs_intf  # Only needed for reading a project that was
                                  # already executed.
@@ -200,17 +203,10 @@ class PyDssProject:
         for name in PROJECT_DIRECTORIES:
             os.makedirs(os.path.join(self._project_dir, name), exist_ok=True)
         self._serialize_scenarios()
-        if self._simulation_file:
-            dump_data(
-                self._simulation_config,
-                os.path.join(self._project_dir, self._simulation_file),
-            )
-        else:
-            dump_data(
-                self._simulation_config,
-                os.path.join(self._project_dir, SIMULATION_SETTINGS_FILENAME),
-            )
-
+        dump_data(
+            self._simulation_config,
+            os.path.join(self._project_dir, self._simulation_file),
+        )
         logger.info("Initialized directories in %s", self._project_dir)
 
     @classmethod
@@ -237,7 +233,6 @@ class PyDssProject:
         simulation_config["Project"]["Project Path"] = path
         simulation_config["Project"]["Active Project"] = name
         project = cls(path, name, scenarios, simulation_config, simulation_file)
-        project._simulation_file = simulation_file
         project.serialize()
         sc_names = project.list_scenario_names()
         logger.info("Created project=%s with scenarios=%s at %s", name,
@@ -377,7 +372,7 @@ class PyDssProject:
             os.chdir(orig)
 
     @staticmethod
-    def load_simulation_config(project_path, scenario):
+    def load_simulation_config(project_path, simulations_file):
         """Return the simulation settings for a project, using defaults if the
         file is not defined.
 
@@ -390,7 +385,7 @@ class PyDssProject:
         dict
 
         """
-        filename = os.path.join(project_path, scenario)
+        filename = os.path.join(project_path, simulations_file)
         if not os.path.exists(filename):
             filename = os.path.join(
                 project_path,
@@ -400,7 +395,7 @@ class PyDssProject:
         return load_data(filename)
 
     @classmethod
-    def load_project(cls, path, options=None, in_memory=False, scenario=None):
+    def load_project(cls, path, options=None, in_memory=False, simulation_file=None):
         """Load a PyDssProject from directory.
 
         Parameters
@@ -420,7 +415,7 @@ class PyDssProject:
         elif os.path.exists(os.path.join(path, PROJECT_ZIP)):
             fs_intf = PyDssZipFileInterface(path)
         else:
-            fs_intf = PyDssDirectoryInterface(path, scenario)
+            fs_intf = PyDssDirectoryInterface(path, simulation_file)
 
         simulation_config = fs_intf.simulation_config
         if options is not None:
@@ -448,7 +443,7 @@ class PyDssProject:
         )
 
     @classmethod
-    def run_project(cls, path, options=None, tar_project=False, zip_project=False, scenario=None):
+    def run_project(cls, path, options=None, tar_project=False, zip_project=False, simulation_file=None):
         """Load a PyDssProject from directory and run all scenarios.
 
         Parameters
@@ -463,7 +458,7 @@ class PyDssProject:
             zip project files after successful execution
 
         """
-        project = cls.load_project(path, options=options, scenario=scenario)
+        project = cls.load_project(path, options=options, simulation_file=simulation_file)
         return project.run(tar_project=tar_project, zip_project=zip_project)
 
 

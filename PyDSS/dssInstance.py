@@ -284,11 +284,10 @@ class OpenDSS:
                 for object, params in updateObjects.items():
                     cl, name = object.split('.')
                     self._Modifier.Edit_Element(cl, name, params)
-                pass
+
 
         # run simulation time step and get results
-        if self._Options['Project']['Disable PyDSS controllers'] is False:# and \
-            #self._Options['Frequency']['Enable frequency sweep'] is False:
+        if not self._Options['Project']['Disable PyDSS controllers']:
             for priority in range(CONTROLLER_PRIORITIES):
                 for i in range(self._Options['Project']['Max Control Iterations']):
                     has_converged, error = self._UpdateControllers(priority, step, UpdateResults=False)

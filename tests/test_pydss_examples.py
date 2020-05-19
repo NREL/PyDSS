@@ -132,19 +132,22 @@ def run_example(example_name, scenarios):
             assert os.path.exists(sup_file_path)
             dir_path = os.path.dirname(sup_file_path)
             dir_main = os.getcwd()
-            os.chdir(dir_path)
-            print(dir_path)
-            print(f"Running {sup_file_path} in a subprocess")
-            proc = subprocess.Popen(sup_file_path, shell=True, stdout=subprocess.PIPE)
-            os.chdir(dir_main)
+            try:
+                os.chdir(dir_path)
+                print(dir_path)
+                print(f"Running {sup_file_path} in a subprocess")
+                proc = subprocess.Popen(sup_file_path, shell=True, stdout=subprocess.PIPE)
+            finally:
+                os.chdir(dir_main)
+        try:
+            if sim_file:
+                project_path = os.path.join(base_projects_path, example_name)
+                assert os.path.exists(base_projects_path)
+                PyDssProject.run_project(project_path, options=None, tar_project=False, zip_project=False,
+                                         simulation_file=sim_file)
+        finally:
+            print("Run complete")
 
-        if sim_file:
-            project_path = os.path.join(base_projects_path, example_name)
-            assert os.path.exists(base_projects_path)
-            PyDssProject.run_project(project_path, options=None, tar_project=False, zip_project=False,
-                                     scenario=sim_file)
-        print("Run complete")
-
-        if proc != None:
-            proc.terminate()
+            if proc != None:
+                proc.terminate()
     return

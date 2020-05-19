@@ -1,4 +1,4 @@
-"""CLI to create a new PyDSS project"""
+"""CLI to edit an existing project or scenario"""
 
 import ast
 import click

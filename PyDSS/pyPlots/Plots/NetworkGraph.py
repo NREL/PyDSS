@@ -15,11 +15,9 @@ class NetworkGraph(PlotAbstract):
 
     def __init__(self, PlotProperties, dssBuses, dssObjectsbyClass, dssCircuit, dssSolver):
         super(NetworkGraph).__init__()
-        print(PlotProperties)
         self._settings = PlotProperties
         self.__dssInstance = dss
-        a = {}
-        self.__dssGraph = nx.DiGraph(**a)
+        self.__dssGraph = nx.DiGraph()
         self.__CreateNodes()
         self.__CreatePDEdges()
         self.__CreatePCEdges()
