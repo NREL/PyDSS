@@ -166,7 +166,6 @@ class ResultData:
         for elem in self._elements:
             data = elem.append_values()
             self.CurrentResults.update(data)
-            #self.CurrentResults = {**self.CurrentResults, **data}
         return self.CurrentResults
 
     def ExportResults(self, fileprefix=""):

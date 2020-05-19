@@ -24,40 +24,42 @@ def pydss_project():
 
 
 base_projects_path = None
-def copy_examples_to_temp_folder():
+def copy_examples_to_temp_folder(example_name):
+    if "/" in example_name:
+        example_name = example_name.split("/")[0]
     #assert os.path.exists(EXAMPLES_path)
     proc = None
-    base_projects_path = os.path.join(PATH, "pydss_projects")
+    base_projects_path = os.path.join(PATH,example_name)
     print(f"Temporary path: {base_projects_path}")
     os.makedirs(base_projects_path, exist_ok=True)
     assert os.path.exists(base_projects_path)
     copy_tree(EXAMPLES_path, base_projects_path)
     return base_projects_path
 
-def test_external_interfaces_example():
+def test_external_interfaces_example(pydss_project):
     example_name = "external_interfaces/pydss_project"
     scenarios = [
         {
             'TOML': 'helics.toml',
-            'file': r"external_interfaces\Helics_example\run_dummy_federate.py",
+            'file': r"external_interfaces/Helics_example/run_dummy_federate.py",
         },
         {
             'TOML': 'helics_itr.toml',
-            'file': r"external_interfaces\Helics_example\run_dummy_federate.py",
+            'file': r"external_interfaces/Helics_example/run_dummy_federate.py",
         },
         {
             'TOML': 'simulation.toml',
-            'file': r"external_interfaces\Socket_example\run_socket_controller.py",
+            'file': r"external_interfaces/Socket_example/run_socket_controller.py",
         },
         {
             'TOML': None,
-            'file': r"external_interfaces\Python_example\run_pyDSS.py",
+            'file': r"external_interfaces/Python_example/run_pyDSS.py",
         },
     ]
     run_example(example_name, scenarios)
     return
 
-def test_monte_carlo_example():
+def test_monte_carlo_example(pydss_project):
     example_name = "monte_carlo"
     scenarios = [
         {
@@ -68,7 +70,7 @@ def test_monte_carlo_example():
     run_example(example_name, scenarios)
     return
 
-def test_dynamic_visualization_example():
+def test_dynamic_visualization_example(pydss_project):
     example_name = "dynamic_visualization"
     scenarios = [
         {
@@ -83,7 +85,7 @@ def test_dynamic_visualization_example():
     run_example(example_name, scenarios)
     return
 
-def test_custom_contols_example():
+def test_custom_contols_example(pydss_project):
     example_name = "custom_contols"
     scenarios = [
         {
@@ -94,7 +96,7 @@ def test_custom_contols_example():
     run_example(example_name, scenarios)
     return
 
-def test_harmonics_example():
+def test_harmonics_example(pydss_project):
     example_name = "harmonics"
     scenarios = [
         {
@@ -114,7 +116,7 @@ def run_example(example_name, scenarios):
     proc = None
     assert isinstance(example_name, str)
     assert isinstance(scenarios, list)
-    base_projects_path = copy_examples_to_temp_folder()
+    base_projects_path = copy_examples_to_temp_folder(example_name)
     for S in scenarios:
         assert isinstance(S, dict)
         sim_file = S["TOML"]
