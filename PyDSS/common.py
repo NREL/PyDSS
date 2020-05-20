@@ -9,6 +9,7 @@ from PyDSS.utils.utils import load_data
 PLOTS_FILENAME = "plots.toml"
 SIMULATION_SETTINGS_FILENAME = "simulation.toml"
 MONTE_CARLO_SETTINGS_FILENAME = "MonteCarloSettings.toml"
+SUBSCRIPTIONS_FILENAME = "Subscriptions.toml"
 PROJECT_TAR = "project.tar"
 PROJECT_ZIP = "project.zip"
 
@@ -54,6 +55,13 @@ EXPORT_BY_CLASS_FILENAME = filename_from_enum(ExportMode.BY_CLASS)
 EXPORT_BY_ELEMENT_FILENAME = filename_from_enum(ExportMode.BY_ELEMENT)
 
 
+DEFAULT_SUBSCRIPTIONS_FILE = os.path.join(
+    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    "PyDSS",
+    "defaults",
+    "ExportLists",
+    SUBSCRIPTIONS_FILENAME,
+)
 DEFAULT_SIMULATION_SETTINGS_FILE = os.path.join(
     os.path.dirname(getattr(PyDSS, "__path__")[0]),
     "PyDSS",
@@ -108,3 +116,4 @@ DEFAULT_PLOT_CONFIG = load_data(DEFAULT_PLOT_SETTINGS_FILE)
 DEFAULT_EXPORT_BY_CLASS = load_data(DEFAULT_EXPORT_BY_CLASS_SETTINGS_FILE)
 DEFAULT_EXPORT_BY_ELEMENT = load_data(DEFAULT_EXPORT_BY_ELEMENT_SETTINGS_FILE)
 DEFAULT_MONTE_CARLO = load_data(DEFAULT_MONTE_CARLO_SETTINGS_FILE)
+DEFAULT_SUBSCRIPTION = load_data(DEFAULT_SUBSCRIPTIONS_FILE)

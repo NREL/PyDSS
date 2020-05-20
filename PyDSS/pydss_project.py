@@ -14,7 +14,8 @@ import PyDSS
 from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, \
     SIMULATION_SETTINGS_FILENAME, DEFAULT_SIMULATION_SETTINGS_FILE, \
     ControllerType, ExportMode, MONTE_CARLO_SETTINGS_FILENAME,\
-    filename_from_enum, VisualizationType, DEFAULT_MONTE_CARLO
+    filename_from_enum, VisualizationType, DEFAULT_MONTE_CARLO,\
+    SUBSCRIPTIONS_FILENAME, DEFAULT_SUBSCRIPTION
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 from PyDSS.pyDSS import instance
 from PyDSS.pydss_fs_interface import PyDssDirectoryInterface, \
@@ -637,6 +638,11 @@ class PyDssScenario:
         dump_data(
             DEFAULT_MONTE_CARLO,
             os.path.join(path, "Monte_Carlo", MONTE_CARLO_SETTINGS_FILENAME)
+        )
+
+        dump_data(
+            DEFAULT_SUBSCRIPTION,
+            os.path.join(path, "ExportLists", SUBSCRIPTIONS_FILENAME)
         )
 
     @staticmethod

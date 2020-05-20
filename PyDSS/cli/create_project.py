@@ -1,6 +1,7 @@
 """CLI to create a new PyDSS project"""
 
 import ast
+import sys
 import click
 import logging
 
