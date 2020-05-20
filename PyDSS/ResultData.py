@@ -114,7 +114,7 @@ class ResultData:
                     elements = self._create_element_list(objs, properties)
 
             for name, obj in elements:
-                elem = ElementData.new(
+                elem = ElementData(
                     element_class,
                     name,
                     properties,
@@ -321,26 +321,18 @@ class ResultData:
 
 
 class ElementData:
-    def __init__(self, element_class, name, properties, obj, data, max_chunk_bytes,
+    def __init__(self, element_class, name, properties, obj, max_chunk_bytes,
                  store_frequency=False, store_mode=False,
                  scenario=None, hdf_store=None):
         self._properties = properties
         self._name = name
         self._obj = obj
-        self._data = data
+        self._data = {x: None for x in properties}
         self._num_steps = None
         self._element_class = element_class
         self._scenario = scenario
         self._hdf_store = hdf_store
         self._max_chunk_bytes = max_chunk_bytes
-
-    @classmethod
-    def new(cls, element_class, name, properties, obj, max_chunk_bytes,
-            store_frequency=False, store_mode=False):
-        """Creates a new instance of ElementData."""
-        data = {x: None for x in properties}
-        return cls(element_class, name, properties, obj, data, max_chunk_bytes,
-                   store_frequency=store_frequency, store_mode=store_mode)
 
     def export_data(self, path, fmt, compress):
         """Export data to path.
@@ -365,6 +357,9 @@ class ElementData:
         self._hdf_store = hdf_store
         self._num_steps = num_steps
         self._scenario = scenario
+        # Reset these for MonteCarlo simulations.
+        for prop in self._data:
+            self._data[prop] = None
 
     def append_values(self):
         curr_data = {}
