@@ -113,6 +113,20 @@ class PyDssFileSystemInterface(abc.ABC):
 
         """
 
+    @abc.abstractmethod
+    def read_visualization_config(self, scenario):
+        """Read visualization config for a scenario.
+
+        Parameters
+        ----------
+        scenario : str
+
+        Returns
+        -------
+        dict
+
+        """
+
     @property
     def scenario_names(self):
         """Return the scenario names in the project.
@@ -288,6 +302,10 @@ class PyDssArchiveFileInterfaceBase(PyDssFileSystemInterface):
         return self._simulation_config
 
     def read_controller_config(self, scenario):
+        # Not currently needed for reading projects.
+        pass
+
+    def read_visualization_config(self, scenario):
         # Not currently needed for reading projects.
         pass
 
