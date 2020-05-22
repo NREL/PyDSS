@@ -25,3 +25,8 @@ NoPublish = [ "CurrentsMagAng", "normamps",]
 [Transformers]
 Publish = []
 NoPublish = [ "CurrentsMagAng", "normamps", "taps",]
+
+[IndMach012s]
+Publish = []
+NoPublish = [ "CurrentsMagAng", "VoltagesMagAng", "Powers"]
+

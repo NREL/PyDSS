@@ -3,22 +3,23 @@
 "Start Day" = 1
 "Start Time (min)" = 0.0
 "End Day" = 1
-"End Time (min)" = 1439.0
+"End Time (min)" = 0.015
 "Date offset" = 0
-"Step resolution (sec)" = 900.0
+"Step resolution (sec)" = 0.00016666667
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
-"Control mode" = "Static"
+"Control mode" = "Time"
 "Disable PyDSS controllers" = false
-"Simulation Type" = "QSTS"
-"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS\\examples"
+"Simulation Type" = "Dynamic"
+"Project Path" = "./examples"
 "Active Project" = "dynamics"
 "Active Scenario" = ""
-"DSS File" = ""
+"DSS File" = "Master.DSS"
 "DSS File Absolute Path" = false
 "Return Results" = false
+
 [[Project.Scenarios]]
-name = "test"
+name = "fault"
 post_process_infos = []
 
 [Exports]

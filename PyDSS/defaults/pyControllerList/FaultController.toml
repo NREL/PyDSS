@@ -1,0 +1,6 @@
+["Fault.thefault"]
+"Bus1" = "B3.1"
+"Bus2" = "B3.0"
+"Fault resistance" = 0.0001
+"Fault start time (sec)" = 0.3
+"Fault duration (sec)" = 0.01

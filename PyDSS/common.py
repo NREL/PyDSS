@@ -30,6 +30,9 @@ class ControllerType(enum.Enum):
     SOCKET_CONTROLLER = "SocketController"
     STORAGE_CONTROLLER = "StorageController"
     XMFR_CONTROLLER = "xmfrController"
+    MOTOR_STALL = "MotorStall"
+    PV_VOLTAGE_RIDETHROUGH = "PvVoltageRideThru"
+    FAULT_CONTROLLER = "FaultController"
 
 
 CONTROLLER_TYPES = tuple(x.value for x in ControllerType)

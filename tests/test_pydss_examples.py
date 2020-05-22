@@ -111,6 +111,17 @@ def test_harmonics_example(pydss_project):
     run_example(example_name, scenarios)
     return
 
+def test_dynamics_example(pydss_project):
+    example_name = "dynamics"
+    scenarios = [
+        {
+            'TOML': 'simulation.toml',
+            'file': None,
+        },
+    ]
+    run_example(example_name, scenarios)
+    return
+
 def run_example(example_name, scenarios):
 
     proc = None
