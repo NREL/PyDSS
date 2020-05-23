@@ -15,7 +15,7 @@ from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, \
     SIMULATION_SETTINGS_FILENAME, DEFAULT_SIMULATION_SETTINGS_FILE, \
     ControllerType, ExportMode, MONTE_CARLO_SETTINGS_FILENAME,\
     filename_from_enum, VisualizationType, DEFAULT_MONTE_CARLO,\
-    SUBSCRIPTIONS_FILENAME, DEFAULT_SUBSCRIPTION
+    SUBSCRIPTIONS_FILENAME, DEFAULT_SUBSCRIPTION, OPENDSS_MASTER_FILENAME
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 from PyDSS.pyDSS import instance
 from PyDSS.pydss_fs_interface import PyDssDirectoryInterface, \
@@ -24,7 +24,7 @@ from PyDSS.pydss_fs_interface import PyDssDirectoryInterface, \
     SCENARIOS, STORE_FILENAME
 from PyDSS.utils.utils import dump_data, load_data
 
-
+from distutils.dir_util import copy_tree
 logger = logging.getLogger(__name__)
 
 
@@ -211,11 +211,16 @@ class PyDssProject:
         """
         return self._estimated_space
 
-    def serialize(self):
+    def serialize(self, opendss_project_folder):
         """Create the project on the filesystem."""
         os.makedirs(self._project_dir, exist_ok=True)
         for name in PROJECT_DIRECTORIES:
             os.makedirs(os.path.join(self._project_dir, name), exist_ok=True)
+        if opendss_project_folder:
+            dest = os.path.join(self._project_dir, PROJECT_DIRECTORIES[0])
+            print("OpenDSS project: ", opendss_project_folder)
+            print("Destination: ", dest)
+            copy_tree(opendss_project_folder, dest)
         self._serialize_scenarios()
         dump_data(
             self._simulation_config,
@@ -225,7 +230,8 @@ class PyDssProject:
 
     @classmethod
     def create_project(cls, path, name, scenarios, simulation_config=None, options=None,
-                       simulation_file=SIMULATION_SETTINGS_FILENAME):
+                       simulation_file=SIMULATION_SETTINGS_FILENAME, opendss_project_folder=None,
+                       master_dss_file=OPENDSS_MASTER_FILENAME):
         """Create a new PyDssProject on the filesystem.
 
         Parameters
@@ -245,10 +251,12 @@ class PyDssProject:
         simulation_config = load_data(simulation_config)
         if options is not None:
             simulation_config.update(options)
+        if master_dss_file:
+            simulation_config["Project"]["DSS File"] = master_dss_file
         simulation_config["Project"]["Project Path"] = path
         simulation_config["Project"]["Active Project"] = name
         project = cls(path, name, scenarios, simulation_config, simulation_file)
-        project.serialize()
+        project.serialize(opendss_project_folder=opendss_project_folder)
         sc_names = project.list_scenario_names()
         logger.info("Created project=%s with scenarios=%s at %s", name,
                     sc_names, path)

@@ -9,6 +9,7 @@ from PyDSS.utils.utils import load_data
 PLOTS_FILENAME = "plots.toml"
 SIMULATION_SETTINGS_FILENAME = "simulation.toml"
 MONTE_CARLO_SETTINGS_FILENAME = "MonteCarloSettings.toml"
+OPENDSS_MASTER_FILENAME = "Master.dss"
 SUBSCRIPTIONS_FILENAME = "Subscriptions.toml"
 PROJECT_TAR = "project.tar"
 PROJECT_ZIP = "project.zip"

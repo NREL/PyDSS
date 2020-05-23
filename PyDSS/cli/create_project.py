@@ -32,6 +32,20 @@ from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, Exp
     help="simulation file name",
 )
 @click.option(
+    "-F", "--opendss-project-folder",
+    default=None,
+    required=False,
+    type=click.Path(exists=True),
+    help="simulation file name",
+)
+@click.option(
+    "-m", "--master-dss-file",
+    required=False,
+    show_default=True,
+    default=None,
+    help="simulation file name",
+)
+@click.option(
     "-S", "--simulation-config",
     default=None,
     type=click.Path(exists=True),
@@ -59,7 +73,8 @@ from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, Exp
 )
 @click.command()
 def create_project(path=None, project=None, scenarios=None, simulation_file=None, simulation_config=None,
-                   controller_types=None, export_modes=None, options=None, visualization_types=None):
+                   controller_types=None, export_modes=None, options=None, visualization_types=None,
+                   opendss_project_folder=None, master_dss_file=None):
     """Create PyDSS project."""
     setup_logging("PyDSS", console_level=logging.INFO)
     if controller_types is not None:
@@ -89,5 +104,7 @@ def create_project(path=None, project=None, scenarios=None, simulation_file=None
         scenarios,
         simulation_config,
         options=options,
-        simulation_file=simulation_file
+        simulation_file=simulation_file,
+        master_dss_file=master_dss_file,
+        opendss_project_folder = opendss_project_folder
     )
