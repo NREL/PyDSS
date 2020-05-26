@@ -355,7 +355,7 @@ class OpenDSS:
             while step < Steps:
                 self.RunStep(step)
 
-                if step == 0:
+                if self._Options['Exports']['Log Results'] and step == 0:
                     size = make_human_readable_size(self.ResultContainer.max_num_bytes())
                     self._Logger.info('Storage requirement estimation: %s, estimated based on first time step run.', size)
 
