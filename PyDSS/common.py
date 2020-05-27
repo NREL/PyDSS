@@ -44,6 +44,7 @@ class ExportMode(enum.Enum):
     BY_CLASS = "ExportMode-byClass"
     BY_ELEMENT = "ExportMode-byElement"
     SUBSCRIPTIONS = 'Subscriptions'
+    EXPORTS = "Exports"
 
 
 def filename_from_enum(obj):

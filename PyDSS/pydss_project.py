@@ -28,7 +28,7 @@ from distutils.dir_util import copy_tree
 logger = logging.getLogger(__name__)
 
 
-DATA_FORMAT_VERSION = "1.0.0"
+DATA_FORMAT_VERSION = "1.0.1"
 
 
 class PyDssProject:

@@ -74,8 +74,6 @@ def test_create_project(pydss_project):
         assert scenarios1[i].post_process_infos == scenarios2[i].post_process_infos
 
 
-
-
 EXPECTED_ELEM_CLASSES_PROPERTIES = {
     "Loads": ["Powers"],
     "PVSystems": ["Pmpp"],

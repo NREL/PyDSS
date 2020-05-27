@@ -2,20 +2,21 @@
 import logging
 import os
 import pathlib
-import shutil
 
-import helics
 import pandas as pd
 
-from PyDSS.pyContrReader import pyExportReader, pySubscriptionReader
 from PyDSS.pyLogger import getLoggerTag
 from PyDSS.unitDefinations import unit_info
 from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.exceptions import InvalidParameter
-from PyDSS.utils.dataframe_utils import read_dataframe, write_dataframe
+from PyDSS.export_list_reader import ExportListReader, StoreValuesType
+from PyDSS.utils.dataframe_utils import write_dataframe
 from PyDSS.utils.utils import dump_data
-from PyDSS.value_storage import ValueContainer
-from PyDSS.unitDefinations import type_info
+from PyDSS.value_storage import ValueContainer, DatasetPropertyType
+
+
+logger = logging.getLogger(__name__)
+
 
 class ResultData:
     """Exports data to files."""
@@ -76,54 +77,44 @@ class ResultData:
 
         pathlib.Path(self._export_dir).mkdir(parents=True, exist_ok=True)
 
-        self._file_reader = pyExportReader(
-            os.path.join(
+        export_list_filename = os.path.join(
+            system_paths["ExportLists"],
+            "Exports.toml",
+        )
+        if not os.path.exists(export_list_filename):
+            export_list_filename = os.path.join(
                 system_paths["ExportLists"],
                 "ExportMode-byClass.toml",
-            ),
-        )
+            )
+        self._export_list = ExportListReader(export_list_filename)
+        self._create_exports()
 
-        self._export_list = self._file_reader.pyControllers
-        self._create_list_by_class()
-
-    def _create_element_list(self, objs, properties):
-        elements = []
-        element_names = set()
-        for property_name in properties:
-            assert isinstance(property_name, str)
+    def _create_exports(self):
+        elements = {}  # element name to ElementData
+        for elem_class in self._export_list.list_element_classes():
+            if elem_class == "Buses":
+                objs = self._buses
+            elif elem_class in self._objects_by_class:
+                objs = self._objects_by_class[elem_class]
+            else:
+                continue
             for name, obj in objs.items():
                 if not obj.Enabled:
                     continue
-                if not obj.IsValidAttribute(property_name):
-                    raise InvalidParameter(f"{name} / {property_name} {name} cannot be exported")
-                if name not in element_names:
-                    elements.append((name, obj))
-                    element_names.add(name)
-        return elements
+                for prop in self._export_list.iter_export_properties(elem_class=elem_class):
+                    if prop.custom_function is None and not obj.IsValidAttribute(prop.name):
+                        raise InvalidParameter(f"{name} / {prop.name} cannot be exported")
+                    if prop.should_store_name(name):
+                        if name not in elements:
+                            elements[name] = ElementData(
+                                name,
+                                obj,
+                                max_chunk_bytes=self._max_chunk_bytes,
+                            )
+                        elements[name].append_property(prop)
+                        self._logger.debug("Store %s %s name=%s", elem_class, prop.name, name)
 
-    def _create_list_by_class(self):
-        for element_class, properties in self._export_list.items():
-            elements = []
-            element_names = set()
-            if element_class == "Buses":
-                objs = self._buses
-                elements = self._create_element_list(objs, properties)
-            else:
-                if element_class in  self._objects_by_class:
-                    objs = self._objects_by_class[element_class]
-                    elements = self._create_element_list(objs, properties)
-
-            for name, obj in elements:
-                elem = ElementData(
-                    element_class,
-                    name,
-                    properties,
-                    obj,
-                    max_chunk_bytes=self._max_chunk_bytes,
-                    store_frequency=self._store_frequency,
-                    store_mode=self._store_mode,
-                )
-                self._elements.append(elem)
+        self._elements = elements.values()
 
     def InitializeDataStore(self, hdf_store, num_steps, MC_scenario_number=None):
         if MC_scenario_number is not None:
@@ -159,17 +150,22 @@ class ResultData:
 
     def UpdateResults(self):
         self.CurrentResults.clear()
-        self._time_dataset.write_value(self._dss_solver.GetDateTime().timestamp())
+
+        timestamp = self._dss_solver.GetDateTime().timestamp()
+        self._time_dataset.write_value(timestamp)
         self._frequency_dataset.write_value(self._dss_solver.getFrequency())
         self._mode_dataset.write_value(self._dss_solver.getMode())
 
         for elem in self._elements:
-            data = elem.append_values()
+            data = elem.append_values(timestamp)
             self.CurrentResults.update(data)
         return self.CurrentResults
 
     def ExportResults(self, fileprefix=""):
         self.FlushData()
+        for element in self._elements:
+            element.export_sums()
+
         metadata = {
             "event_log": None,
             "element_info_files": [],
@@ -299,10 +295,9 @@ class ResultData:
                 raise InvalidParameter(f"index must be provided for {prop}")
             if index == 0:
                 return units["E"]
-            elif index == 1:
+            if index == 1:
                 return units["O"]
-            else:
-                raise InvalidParameter("index must be 0 or 1")
+            raise InvalidParameter("index must be 0 or 1")
 
         return units
 
@@ -321,70 +316,88 @@ class ResultData:
 
 
 class ElementData:
-    def __init__(self, element_class, name, properties, obj, max_chunk_bytes,
-                 store_frequency=False, store_mode=False,
-                 scenario=None, hdf_store=None):
-        self._properties = properties
+    """Stores all property data for an element."""
+    def __init__(self, name, obj, max_chunk_bytes, scenario=None, hdf_store=None):
+        self._properties = []
         self._name = name
         self._obj = obj
-        self._data = {x: None for x in properties}
+        self._data = {}  # Containers for properties per time point on disk.
+        self._sums = {}  # Keeps running sums in memory.
         self._num_steps = None
-        self._element_class = element_class
         self._scenario = scenario
         self._hdf_store = hdf_store
         self._max_chunk_bytes = max_chunk_bytes
 
-    def export_data(self, path, fmt, compress):
-        """Export data to path.
-
-        Parameters
-        ----------
-        path : str
-            Output directory
-        fmt : str
-            Filer format type (csv, h5)
-        compress : bool
-            Compress data
-
-        """
-        pass
-
-    @property
-    def path(self):
-        return self._path
+    @staticmethod
+    def _data_key(prop):
+        return (prop.elem_class, prop.name)
 
     def initialize_data_store(self, hdf_store, scenario, num_steps):
         self._hdf_store = hdf_store
         self._num_steps = num_steps
         self._scenario = scenario
         # Reset these for MonteCarlo simulations.
-        for prop in self._data:
-            self._data[prop] = None
+        for key in self._data:
+            self._data[key] = None
 
-    def append_values(self):
+    def append_property(self, prop):
+        self._properties.append(prop)
+        key = self._data_key(prop)
+        self._data[key] = None
+        if prop.store_values_type == StoreValuesType.SUM:
+            self._sums[key] = None
+
+    def append_values(self, timestamp):
         curr_data = {}
         for prop in self.properties:
-            value = self._obj.GetValue(prop, convert=True)
+            if prop.custom_function is None:
+                value = self._obj.GetValue(prop.name, convert=True)
+            else:
+                value = prop.custom_function(self._obj)
+            key = self._data_key(prop)
+            if prop.store_values_type == StoreValuesType.SUM:
+                if self._sums[key] is None:
+                    self._sums[key] = value
+                else:
+                    self._sums[key] += value
+                # These values are not written to disk until the end.
+                continue
+            if not prop.should_store_value(value.value):
+                continue
             if len(value.make_columns()) > 1:
                 for column, val in zip(value.make_columns(), value.value):
                     curr_data[column] = val
             else:
                 curr_data[value.make_columns()[0]] = value.value
-            if self._data[prop] is None:
-                path = f"Exports/{self._scenario}/{self._element_class}/{self._name}/{prop}"
-                self._data[prop] = ValueContainer(
+            if self._data[key] is None:
+                path = f"Exports/{self._scenario}/{prop.elem_class}/{self._name}/{prop.name}"
+                self._data[key] = ValueContainer(
                     value,
                     self._hdf_store,
                     path,
                     self._num_steps,
+                    dataset_property_type=prop.get_dataset_property_type(),
                     max_chunk_bytes=self._max_chunk_bytes,
+                    store_timestamp=prop.should_store_timestamp(),
                 )
-            self._data[prop].append(value)
+
+            self._data[key].append(value, timestamp=timestamp)
         return curr_data
 
-    @property
-    def element_class(self):
-        return self._element_class
+    def export_sums(self):
+        """Export properties stored as sums to disk."""
+        for key, value in self._sums.items():
+            path = f"Exports/{self._scenario}/{key[0]}/{self._name}/{key[1]}Sum"
+            container = ValueContainer(
+                value,
+                self._hdf_store,
+                path,
+                1,
+                max_chunk_bytes=self._max_chunk_bytes,
+                dataset_property_type=DatasetPropertyType.SUM,
+            )
+            container.append(value)
+            container.flush_data()
 
     def flush_data(self):
         """Flush any outstanding data to disk."""
@@ -403,8 +416,9 @@ class ElementData:
         """
         total = 0
         for container in self._data.values():
-            assert container is not None, \
-                "max_num_bytes cannot be called until at least one value has been collected"
+            if container is None:
+                logger.warning("max_num_bytes is unknown; no value has been collected yet")
+                continue
             total += container.max_num_bytes()
         return total
 
