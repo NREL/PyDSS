@@ -32,7 +32,7 @@ store_values_type = "all"
 
 [Circuits.Losses]
 publish = true
-store_values_type = "all"
+store_values_type = "sum"
 
 [Circuits.SubstationLosses]
 publish = true

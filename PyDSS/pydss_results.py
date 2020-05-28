@@ -229,7 +229,7 @@ class PyDssScenarioResults:
                 try:
                     df = self.get_full_dataframe(elem_class, prop)
                 except InvalidParameter:
-                    logger.info(f"cannot create full dataframe for %s", elem_class, prop)
+                    logger.info(f"cannot create full dataframe for %s %s", elem_class, prop)
                     self._export_filtered_dataframes(elem_class, prop, path, fmt, compress)
                     continue
                 base = "__".join([elem_class, prop])
@@ -250,6 +250,8 @@ class PyDssScenarioResults:
                                     item = str(item)
                                 new_val.append(item)
                             data[elem_class][elem_name][prop] = new_val
+                        elif isinstance(val, complex):
+                            data[elem_class][elem_name][prop] = str(val)
 
             filename = os.path.join(path, "element_property_sums.json")
             dump_data(data, filename, indent=2)

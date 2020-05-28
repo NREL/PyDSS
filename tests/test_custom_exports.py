@@ -46,6 +46,7 @@ def test_custom_exports(cleanup_project):
     normal_amps_sum = scenario.get_element_property_sum("Lines", "NormalAmpsSum", "Line.pvl_110")
     assert normal_amps_sum == 96 * 65.0
     scenario.get_element_property_sum("Lines", "CurrentsSum", "Line.pvl_110")
+    scenario.get_element_property_sum("Circuits", "LossesSum", "Circuit.heco19021")
 
     sums_json = os.path.join(
         CUSTOM_EXPORTS_PROJECT_PATH,
