@@ -417,7 +417,7 @@ class ElementData:
         total = 0
         for container in self._data.values():
             if container is None:
-                logger.warning("max_num_bytes is unknown; no value has been collected yet")
+                logger.debug("max_num_bytes is unknown; no value has been collected yet")
                 continue
             total += container.max_num_bytes()
         return total
