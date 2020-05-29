@@ -168,7 +168,7 @@ class PyDssScenarioResults:
                     dataset = self._group[elem_class][elem_name][prop]
                     dataset_property_type = get_dataset_property_type(dataset)
                     if dataset_property_type == DatasetPropertyType.SUM:
-                        self._add_elem_prop_sum(elem_class, elem_name, prop, dataset)
+                        self._add_elem_prop_sum(elem_class, prop, elem_name, dataset)
                     elif dataset_property_type == DatasetPropertyType.TIMESTAMP:
                         continue
                     else:
@@ -191,10 +191,10 @@ class PyDssScenarioResults:
             for name in self._elems_by_class[elem_class]:
                 self._elem_props[name] = list(self._props_by_class[elem_class])
 
-    def _add_elem_prop_sum(self, elem_class, elem_name, prop, dataset):
-        if elem_name not in self._elem_prop_sums[elem_class]:
-            self._elem_prop_sums[elem_class][elem_name] = {}
-        self._elem_prop_sums[elem_class][elem_name][prop] = dataset[0]
+    def _add_elem_prop_sum(self, elem_class, prop, elem_name, dataset):
+        if prop not in self._elem_prop_sums[elem_class]:
+            self._elem_prop_sums[elem_class][prop] = {}
+        self._elem_prop_sums[elem_class][prop][elem_name] = dataset[0]
 
     @property
     def name(self):
@@ -238,20 +238,18 @@ class PyDssScenarioResults:
 
         if self._elem_prop_sums:
             data = copy.deepcopy(self._elem_prop_sums)
-            for elem_class in data:
-                for elem_name in data[elem_class]:
-                    for prop, val in data[elem_class][elem_name].items():
-                        # JSON lib cannot serialize complex numbers.
-                        if isinstance(val, np.ndarray):
-                            new_val = []
-                            convert_str = val.dtype == "complex"
-                            for item in val:
-                                if convert_str:
-                                    item = str(item)
-                                new_val.append(item)
-                            data[elem_class][elem_name][prop] = new_val
-                        elif isinstance(val, complex):
-                            data[elem_class][elem_name][prop] = str(val)
+            for elem_class, prop, name, val in self.iterate_element_property_sums():
+                # JSON lib cannot serialize complex numbers.
+                if isinstance(val, np.ndarray):
+                    new_val = []
+                    convert_str = val.dtype == "complex"
+                    for item in val:
+                        if convert_str:
+                            item = str(item)
+                        new_val.append(item)
+                    data[elem_class][prop][name] = new_val
+                elif isinstance(val, complex):
+                    data[elem_class][prop][name] = str(val)
 
             filename = os.path.join(path, "element_property_sums.json")
             dump_data(data, filename, indent=2)
@@ -310,15 +308,26 @@ class PyDssScenarioResults:
             self._add_indices_to_dataframe(df)
         return df
 
+    @property
+    def element_property_sums(self):
+        """Return all element property sums.
+
+        Returns
+        -------
+        dict
+
+        """
+        return self._elem_prop_sums
+
     def get_element_property_sum(self, element_class, prop, element_name):
         """Return the sum stored for the element property."""
         if element_class not in self._elem_prop_sums:
             raise InvalidParameter(f"{element_class} is not stored")
-        if element_name not in self._elem_prop_sums[element_class]:
-            raise InvalidParameter(f"{element_name} is not stored")
-        if prop not in self._elem_prop_sums[element_class][element_name]:
+        if prop not in self._elem_prop_sums[element_class]:
             raise InvalidParameter(f"{prop} is not stored")
-        return self._elem_prop_sums[element_class][element_name][prop]
+        if element_name not in self._elem_prop_sums[element_class][prop]:
+            raise InvalidParameter(f"{element_name} is not stored")
+        return self._elem_prop_sums[element_class][prop][element_name]
 
     def get_full_dataframe(self, element_class, prop):
         """Return a dataframe containing all data.  The dataframe is copied.
@@ -391,6 +400,20 @@ class PyDssScenarioResults:
                 df = self.get_dataframe(element_class, prop, name, **kwargs)
                 yield name, df
 
+    def iterate_element_property_sums(self):
+        """Return a generator over all element property sums.
+
+        Yields
+        ------
+        tuple
+            element_class, property, element_name, value
+
+        """
+        for elem_class in self._elem_prop_sums:
+            for prop in self._elem_prop_sums[elem_class]:
+                for name, val in self._elem_prop_sums[elem_class][prop].items():
+                    yield elem_class, prop, name, val
+
     def list_element_classes(self):
         """Return the element classes stored in the results.
 
@@ -450,10 +473,13 @@ class PyDssScenarioResults:
         return self._elem_props.get(element_name, [])
 
     def list_element_property_sums(self, element_class, element_name):
-        try:
-            return list(self._elem_prop_sums[element_class][element_name].keys())
-        except KeyError:
-            return []
+        sums = []
+        for elem_class in self._elem_prop_sums:
+            for prop in self._elem_prop_sums[elem_class]:
+                for name in self._elem_prop_sums[elem_class][prop]:
+                    if name == element_name:
+                        sums.append(pop)
+        return sums
 
     def list_element_property_options(self, element_class, prop):
         """List the possible options for the element class and property.
