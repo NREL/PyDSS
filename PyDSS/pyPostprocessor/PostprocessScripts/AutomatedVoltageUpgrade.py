@@ -132,6 +132,13 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         super(AutomatedVoltageUpgrade, self).__init__(project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger)
 
         # TODO Akshay: this seems prone to error. Do we need a programmatic way of getting the filename?
+        # Just send this list as input to the upgrades code via DISCO -  this list may be empty or have as many
+        # paths as the user desires - if empty the mults in the 'tps_to_test' input will be used else if non-empty
+        # max and min load mults from the load.dss files will be used. Tne tps to test input should always be specified
+        # irrespective of whether it gets used or not
+        self.other_load_dss_files = []
+        # self.other_load_dss_files = [r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint1_files/Loads.dss",
+        #                              r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint2_files/Loads.dss"]
         thermal_filename = "thermal_upgrades.dss"
         thermal_dss_file = os.path.join(
             project.get_post_process_directory(self.config["Thermal scenario name"]),
@@ -145,6 +152,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.dssSolver = dssSolver
         self.start = time.time()
 
+        if len(self.other_load_dss_files)>0:
+            self.get_load_mults()
         # reading original objects (before upgrades)
         self.orig_ckt_info = get_ckt_info()
         self.orig_reg_controls = {x["name"]: x for x in iter_elements(dss.RegControls, get_reg_control_info)}
@@ -617,6 +626,37 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
     def _get_required_input_fields():
         return AutomatedVoltageUpgrade.REQUIRED_INPUT_FIELDS
 
+    def get_load_mults(self):
+        self.orig_loads = {}
+        self.dssSolver.Solve()
+        dss.Loads.First()
+        while True:
+            load_name = dss.Loads.Name().split(".")[0].lower()
+            kW = dss.Loads.kW()
+            self.orig_loads[load_name] = [kW]
+            if not dss.Loads.Next()>0:
+                break
+        for dss_path in self.other_load_dss_files:
+            self.read_load_files(dss_path)
+        self.get_min_max_load_mult()
+
+    def read_load_files(self, dss_path):
+        with open(dss_path, "r") as datafile:
+            for line in datafile:
+                if line.lower().startswith("new load."):
+                    for params in line.split():
+                        if params.lower().startswith("load."):
+                            ld_name = params.lower().split("load.")[1]
+                        if params.lower().startswith("kw"):
+                            ld_kw = float(params.lower().split("=")[1])
+                    if ld_name in self.orig_loads:
+                        self.orig_loads[ld_name].append(ld_kw)
+
+    def get_min_max_load_mult(self):
+        self.min_max_load_kw = {}
+        for key,vals in self.orig_loads.items():
+            self.min_max_load_kw[key] = [min(vals),max(vals)]
+
     def get_existing_controller_info(self):
         self.cap_control_info = {}
         self.reg_control_info = {}
@@ -847,58 +887,132 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.buses_with_violations = []
         self.buses_with_violations_pos = {}
         self.nodal_violations_dict = {}
-        for tp_cnt in range(len(self.config["tps_to_test"])):
-            # First two tps are for disabled PV case
-            if tp_cnt == 0 or tp_cnt == 1:
-                dss.run_command("BatchEdit PVSystem..* Enabled=False")
-                dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
-                self.dssSolver.Solve()
-                if not dss.Solution.Converged():
-                    raise OpenDssConvergenceError("OpenDSS solution did not converge")
-            if tp_cnt == 2 or tp_cnt == 3:
-                dss.run_command("BatchEdit PVSystem..* Enabled=True")
-                dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
-                self.dssSolver.Solve()
-                if not dss.Solution.Converged():
-                    raise OpenDssConvergenceError("OpenDSS solution did not converge")
-            for b in self.all_bus_names:
-                dss.Circuit.SetActiveBus(b)
-                bus_v = dss.Bus.puVmagAngle()[::2]
-                # Select that bus voltage of the three phases which is outside bounds the most,
-                #  else if everything is within bounds use nominal pu voltage.
-                maxv_dev = 0
-                minv_dev = 0
-                if max(bus_v) > self.max_V_viol:
-                    self.max_V_viol = max(bus_v)
-                    self.busvmax = b
-                if min(bus_v) < self.min_V_viol:
-                    self.min_V_viol = min(bus_v)
-                if max(bus_v) > upper_limit:
-                    maxv = max(bus_v)
-                    maxv_dev = maxv - upper_limit
-                if min(bus_v) < lower_limit:
-                    minv = min(bus_v)
-                    minv_dev = upper_limit - minv
-                if maxv_dev > minv_dev:
-                    v_used = maxv
-                    num_nodes_counter += 1
-                    severity_counter += maxv_dev
-                    if b.lower() not in self.buses_with_violations:
-                        self.buses_with_violations.append(b.lower())
-                        self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
-                elif minv_dev > maxv_dev:
-                    v_used = minv
-                    num_nodes_counter += 1
-                    severity_counter += minv_dev
-                    if b.lower() not in self.buses_with_violations:
-                        self.buses_with_violations.append(b.lower())
-                        self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
-                else:
-                    v_used = self.config["nominal pu voltage"]
-                if b not in self.nodal_violations_dict:
-                    self.nodal_violations_dict[b.lower()] = [v_used]
-                elif b in self.nodal_violations_dict:
-                    self.nodal_violations_dict[b.lower()].append(v_used)
+        # If multiple load files are being used, the 'tps_to_test property is not used, else if a single load file is
+        # used use the 'tps to test' input
+        if len(self.other_load_dss_files)>0:
+            for tp_cnt in range(len(self.config["tps_to_test"])):
+                # First two tps are for disabled PV case
+                if tp_cnt == 0 or tp_cnt == 1:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=False")
+                    dss.Loads.First()
+                    while True:
+                        load_name = dss.Loads.Name().split(".")[0].lower()
+                        if load_name not in self.min_max_load_kw:
+                            print("Load not found, quitting...")
+                            quit()
+                        new_kw = self.min_max_load_kw[load_name][tp_cnt]
+                        dss.Loads.kW(new_kw)
+                        if not dss.Loads.Next()>0:
+                            break
+                    self.dssSolver.Solve()
+                    if not dss.Solution.Converged():
+                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                if tp_cnt == 2 or tp_cnt == 3:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=True")
+                    dss.Loads.First()
+                    while True:
+                        load_name = dss.Loads.Name().split(".")[0].lower()
+                        if load_name not in self.min_max_load_kw:
+                            print("Load not found, quitting...")
+                            quit()
+                        new_kw = self.min_max_load_kw[load_name][tp_cnt-2]
+                        dss.Loads.kW(new_kw)
+                        if not dss.Loads.Next() > 0:
+                            break
+                    self.dssSolver.Solve()
+                    if not dss.Solution.Converged():
+                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                for b in self.all_bus_names:
+                    dss.Circuit.SetActiveBus(b)
+                    bus_v = dss.Bus.puVmagAngle()[::2]
+                    # Select that bus voltage of the three phases which is outside bounds the most,
+                    #  else if everything is within bounds use nominal pu voltage.
+                    maxv_dev = 0
+                    minv_dev = 0
+                    if max(bus_v) > self.max_V_viol:
+                        self.max_V_viol = max(bus_v)
+                        self.busvmax = b
+                    if min(bus_v) < self.min_V_viol:
+                        self.min_V_viol = min(bus_v)
+                    if max(bus_v) > upper_limit:
+                        maxv = max(bus_v)
+                        maxv_dev = maxv - upper_limit
+                    if min(bus_v) < lower_limit:
+                        minv = min(bus_v)
+                        minv_dev = upper_limit - minv
+                    if maxv_dev > minv_dev:
+                        v_used = maxv
+                        num_nodes_counter += 1
+                        severity_counter += maxv_dev
+                        if b.lower() not in self.buses_with_violations:
+                            self.buses_with_violations.append(b.lower())
+                            self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
+                    elif minv_dev > maxv_dev:
+                        v_used = minv
+                        num_nodes_counter += 1
+                        severity_counter += minv_dev
+                        if b.lower() not in self.buses_with_violations:
+                            self.buses_with_violations.append(b.lower())
+                            self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
+                    else:
+                        v_used = self.config["nominal pu voltage"]
+                    if b not in self.nodal_violations_dict:
+                        self.nodal_violations_dict[b.lower()] = [v_used]
+                    elif b in self.nodal_violations_dict:
+                        self.nodal_violations_dict[b.lower()].append(v_used)
+        elif len(self.other_load_dss_files)==0:
+            for tp_cnt in range(len(self.config["tps_to_test"])):
+                # First two tps are for disabled PV case
+                if tp_cnt == 0 or tp_cnt == 1:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=False")
+                    dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
+                    self.dssSolver.Solve()
+                    if not dss.Solution.Converged():
+                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                if tp_cnt == 2 or tp_cnt == 3:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=True")
+                    dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
+                    self.dssSolver.Solve()
+                    if not dss.Solution.Converged():
+                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                for b in self.all_bus_names:
+                    dss.Circuit.SetActiveBus(b)
+                    bus_v = dss.Bus.puVmagAngle()[::2]
+                    # Select that bus voltage of the three phases which is outside bounds the most,
+                    #  else if everything is within bounds use nominal pu voltage.
+                    maxv_dev = 0
+                    minv_dev = 0
+                    if max(bus_v) > self.max_V_viol:
+                        self.max_V_viol = max(bus_v)
+                        self.busvmax = b
+                    if min(bus_v) < self.min_V_viol:
+                        self.min_V_viol = min(bus_v)
+                    if max(bus_v) > upper_limit:
+                        maxv = max(bus_v)
+                        maxv_dev = maxv - upper_limit
+                    if min(bus_v) < lower_limit:
+                        minv = min(bus_v)
+                        minv_dev = upper_limit - minv
+                    if maxv_dev > minv_dev:
+                        v_used = maxv
+                        num_nodes_counter += 1
+                        severity_counter += maxv_dev
+                        if b.lower() not in self.buses_with_violations:
+                            self.buses_with_violations.append(b.lower())
+                            self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
+                    elif minv_dev > maxv_dev:
+                        v_used = minv
+                        num_nodes_counter += 1
+                        severity_counter += minv_dev
+                        if b.lower() not in self.buses_with_violations:
+                            self.buses_with_violations.append(b.lower())
+                            self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
+                    else:
+                        v_used = self.config["nominal pu voltage"]
+                    if b not in self.nodal_violations_dict:
+                        self.nodal_violations_dict[b.lower()] = [v_used]
+                    elif b in self.nodal_violations_dict:
+                        self.nodal_violations_dict[b.lower()].append(v_used)
         self.severity_indices = [num_nodes_counter, severity_counter, num_nodes_counter * severity_counter]
         return
 
