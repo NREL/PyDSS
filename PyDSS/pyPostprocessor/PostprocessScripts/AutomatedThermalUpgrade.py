@@ -87,7 +87,15 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         super(AutomatedThermalUpgrade, self).__init__(project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger)
         dss = dssInstance
         self.dssSolver = dssSolver
-
+        # Just send this list as input to the upgrades code via DISCO -  this list may be empty or have as many
+        # paths as the user desires - if empty the mults in the 'tps_to_test' input will be used else if non-empty
+        # max and min load mults from the load.dss files will be used. Tne tps to test input should always be specified
+        # irrespective of whether it gets used or not
+        self.other_load_dss_files = []
+        # self.other_load_dss_files = [r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint1_files/Loads.dss",
+        #                              r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint2_files/Loads.dss"]
+        if len(self.other_load_dss_files)>0:
+            self.get_load_mults()
         self.orig_xfmrs = {x["name"]: x for x in iter_elements(dss.Transformers, get_transformer_info)}
         self.orig_lines = {x["name"]: x for x in iter_elements(dss.Lines, self.get_line_info)}
 
@@ -294,6 +302,37 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
     def _get_required_input_fields():
         return AutomatedThermalUpgrade.REQUIRED_INPUT_FIELDS
 
+    def get_load_mults(self):
+        self.orig_loads = {}
+        self.dssSolver.Solve()
+        dss.Loads.First()
+        while True:
+            load_name = dss.Loads.Name().split(".")[0].lower()
+            kW = dss.Loads.kW()
+            self.orig_loads[load_name] = [kW]
+            if not dss.Loads.Next()>0:
+                break
+        for dss_path in self.other_load_dss_files:
+            self.read_load_files(dss_path)
+        self.get_min_max_load_mult()
+
+    def read_load_files(self, dss_path):
+        with open(dss_path, "r") as datafile:
+            for line in datafile:
+                if line.lower().startswith("new load."):
+                    for params in line.split():
+                        if params.lower().startswith("load."):
+                            ld_name = params.lower().split("load.")[1]
+                        if params.lower().startswith("kw"):
+                            ld_kw = float(params.lower().split("=")[1])
+                    if ld_name in self.orig_loads:
+                        self.orig_loads[ld_name].append(ld_kw)
+
+    def get_min_max_load_mult(self):
+        self.min_max_load_kw = {}
+        for key,vals in self.orig_loads.items():
+            self.min_max_load_kw[key] = [min(vals),max(vals)]
+
     # function to get line information
     def get_line_info(self):
         ln_name = dss.Lines.Name()
@@ -325,31 +364,76 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.max_V_viol     = 0
         self.min_V_viol     = 2
         self.cust_viol      = []
-        for tp_cnt in range(len(self.config["tps_to_test"])):
-            # First two tps are for disabled PV case
-            if tp_cnt == 0 or tp_cnt == 1:
-                dss.run_command("BatchEdit PVSystem..* Enabled=False")
-                dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
-                self.dssSolver.Solve()
-                if not dss.Solution.Converged():
-                    raise OpenDssConvergenceError("OpenDSS solution did not converge")
-            if tp_cnt == 2 or tp_cnt == 3:
-                dss.run_command("BatchEdit PVSystem..* Enabled=True")
-                dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
-                self.dssSolver.Solve()
-                if not dss.Solution.Converged():
-                    raise OpenDssConvergenceError("OpenDSS solution did not converge")
-            for b in self.buses:
-                dss.Circuit.SetActiveBus(b)
-                bus_v = dss.Bus.puVmagAngle()[::2]
-                if max(bus_v) > self.max_V_viol:
-                    self.max_V_viol = max(bus_v)
-                if min(bus_v) < self.min_V_viol:
-                    self.min_V_viol = min(bus_v)
-                if max(bus_v)>self.V_upper_thresh and b not in self.cust_viol:
-                    self.cust_viol.append(b)
-                if min(bus_v)<self.V_lower_thresh and b not in self.cust_viol:
-                    self.cust_viol.append(b)
+        if len(self.other_load_dss_files)>0:
+            for tp_cnt in range(len(self.config["tps_to_test"])):
+                # First two tps are for disabled PV case
+                if tp_cnt == 0 or tp_cnt == 1:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=False")
+                    dss.Loads.First()
+                    while True:
+                        load_name = dss.Loads.Name().split(".")[0].lower()
+                        if load_name not in self.min_max_load_kw:
+                            print("Load not found, quitting...")
+                            quit()
+                        new_kw = self.min_max_load_kw[load_name][tp_cnt]
+                        dss.Loads.kW(new_kw)
+                        if not dss.Loads.Next() > 0:
+                            break
+                    self.dssSolver.Solve()
+                    if not dss.Solution.Converged():
+                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                if tp_cnt == 2 or tp_cnt == 3:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=True")
+                    dss.Loads.First()
+                    while True:
+                        load_name = dss.Loads.Name().split(".")[0].lower()
+                        if load_name not in self.min_max_load_kw:
+                            print("Load not found, quitting...")
+                            quit()
+                        new_kw = self.min_max_load_kw[load_name][tp_cnt - 2]
+                        dss.Loads.kW(new_kw)
+                        if not dss.Loads.Next() > 0:
+                            break
+                    self.dssSolver.Solve()
+                    if not dss.Solution.Converged():
+                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                for b in self.buses:
+                    dss.Circuit.SetActiveBus(b)
+                    bus_v = dss.Bus.puVmagAngle()[::2]
+                    if max(bus_v) > self.max_V_viol:
+                        self.max_V_viol = max(bus_v)
+                    if min(bus_v) < self.min_V_viol:
+                        self.min_V_viol = min(bus_v)
+                    if max(bus_v)>self.V_upper_thresh and b not in self.cust_viol:
+                        self.cust_viol.append(b)
+                    if min(bus_v)<self.V_lower_thresh and b not in self.cust_viol:
+                        self.cust_viol.append(b)
+        elif len(self.other_load_dss_files)==0:
+            for tp_cnt in range(len(self.config["tps_to_test"])):
+                # First two tps are for disabled PV case
+                if tp_cnt == 0 or tp_cnt == 1:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=False")
+                    dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
+                    self.dssSolver.Solve()
+                    if not dss.Solution.Converged():
+                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                if tp_cnt == 2 or tp_cnt == 3:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=True")
+                    dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
+                    self.dssSolver.Solve()
+                    if not dss.Solution.Converged():
+                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                for b in self.buses:
+                    dss.Circuit.SetActiveBus(b)
+                    bus_v = dss.Bus.puVmagAngle()[::2]
+                    if max(bus_v) > self.max_V_viol:
+                        self.max_V_viol = max(bus_v)
+                    if min(bus_v) < self.min_V_viol:
+                        self.min_V_viol = min(bus_v)
+                    if max(bus_v)>self.V_upper_thresh and b not in self.cust_viol:
+                        self.cust_viol.append(b)
+                    if min(bus_v)<self.V_lower_thresh and b not in self.cust_viol:
+                        self.cust_viol.append(b)
         return
 
     def create_op_plots(self):
@@ -642,43 +726,100 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.logger.info("PVsystems: %s",dss.PVsystems.Count())
         self.line_violations_alltps = {}
         self.all_line_ldgs_alltps = {}
-        for tp_cnt in range(len(self.config["tps_to_test"])):
-            # First two tps are for disabled PV case
-            if tp_cnt==0 or tp_cnt==1:
-                dss.run_command("BatchEdit PVSystem..* Enabled=False")
-                dss.run_command("set LoadMult = {LM}".format(LM = self.config["tps_to_test"][tp_cnt]))
-                self.dssSolver.Solve()
-                if not dss.Solution.Converged():
-                    raise OpenDssConvergenceError("OpenDSS solution did not converge")
-            if tp_cnt==2 or tp_cnt==3:
-                dss.run_command("BatchEdit PVSystem..* Enabled=True")
-                dss.run_command("set LoadMult = {LM}".format(LM = self.config["tps_to_test"][tp_cnt]))
-                self.dssSolver.Solve()
-                self.logger.info("TotalPower=%s", dss.Circuit.TotalPower())
-                if not dss.Solution.Converged():
-                    raise OpenDssConvergenceError("OpenDSS solution did not converge")
-            dss.Circuit.SetActiveClass("Line")
-            dss.ActiveClass.First()
-            while True:
-                switch = dss.Properties.Value("switch")
-                line_name = dss.CktElement.Name().split(".")[1].lower()
-                n_phases = dss.CktElement.NumPhases()
-                line_limit = dss.CktElement.NormalAmps()
-                Currents = dss.CktElement.CurrentsMagAng()[:2 * n_phases]
-                line_current = Currents[::2]
-                ldg = round( max(line_current)/ float(line_limit), 2)
-                if switch == "False":
-                    if line_name not in self.all_line_ldgs_alltps:
-                        self.all_line_ldgs_alltps[line_name] = [[max(line_current)], line_limit]
-                    elif line_name in self.all_line_ldgs_alltps:
-                        self.all_line_ldgs_alltps[line_name][0].append(max(line_current))
-                if ldg > self.config["line loading limit"] and switch == "False":  # and switch==False:
-                    if line_name not in self.line_violations_alltps:
-                        self.line_violations_alltps[line_name] = [[max(line_current)], line_limit]
-                    elif line_name in self.line_violations_alltps:
-                        self.line_violations_alltps[line_name][0].append(max(line_current))
-                if not dss.ActiveClass.Next() > 0:
-                    break
+        if len(self.other_load_dss_files)>0:
+            for tp_cnt in range(len(self.config["tps_to_test"])):
+                # First two tps are for disabled PV case
+                if tp_cnt==0 or tp_cnt==1:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=False")
+                    dss.Loads.First()
+                    while True:
+                        load_name = dss.Loads.Name().split(".")[0].lower()
+                        if load_name not in self.min_max_load_kw:
+                            print("Load not found, quitting...")
+                            quit()
+                        new_kw = self.min_max_load_kw[load_name][tp_cnt]
+                        dss.Loads.kW(new_kw)
+                        if not dss.Loads.Next() > 0:
+                            break
+                    self.dssSolver.Solve()
+                    if not dss.Solution.Converged():
+                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                if tp_cnt==2 or tp_cnt==3:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=True")
+                    dss.Loads.First()
+                    while True:
+                        load_name = dss.Loads.Name().split(".")[0].lower()
+                        if load_name not in self.min_max_load_kw:
+                            print("Load not found, quitting...")
+                            quit()
+                        new_kw = self.min_max_load_kw[load_name][tp_cnt - 2]
+                        dss.Loads.kW(new_kw)
+                        if not dss.Loads.Next() > 0:
+                            break
+                    self.dssSolver.Solve()
+                    self.logger.info("TotalPower=%s", dss.Circuit.TotalPower())
+                    if not dss.Solution.Converged():
+                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                dss.Circuit.SetActiveClass("Line")
+                dss.ActiveClass.First()
+                while True:
+                    switch = dss.Properties.Value("switch")
+                    line_name = dss.CktElement.Name().split(".")[1].lower()
+                    n_phases = dss.CktElement.NumPhases()
+                    line_limit = dss.CktElement.NormalAmps()
+                    Currents = dss.CktElement.CurrentsMagAng()[:2 * n_phases]
+                    line_current = Currents[::2]
+                    ldg = round( max(line_current)/ float(line_limit), 2)
+                    if switch == "False":
+                        if line_name not in self.all_line_ldgs_alltps:
+                            self.all_line_ldgs_alltps[line_name] = [[max(line_current)], line_limit]
+                        elif line_name in self.all_line_ldgs_alltps:
+                            self.all_line_ldgs_alltps[line_name][0].append(max(line_current))
+                    if ldg > self.config["line loading limit"] and switch == "False":  # and switch==False:
+                        if line_name not in self.line_violations_alltps:
+                            self.line_violations_alltps[line_name] = [[max(line_current)], line_limit]
+                        elif line_name in self.line_violations_alltps:
+                            self.line_violations_alltps[line_name][0].append(max(line_current))
+                    if not dss.ActiveClass.Next() > 0:
+                        break
+        if len(self.other_load_dss_files) == 0:
+            for tp_cnt in range(len(self.config["tps_to_test"])):
+                # First two tps are for disabled PV case
+                if tp_cnt==0 or tp_cnt==1:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=False")
+                    dss.run_command("set LoadMult = {LM}".format(LM = self.config["tps_to_test"][tp_cnt]))
+                    self.dssSolver.Solve()
+                    if not dss.Solution.Converged():
+                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                if tp_cnt==2 or tp_cnt==3:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=True")
+                    dss.run_command("set LoadMult = {LM}".format(LM = self.config["tps_to_test"][tp_cnt]))
+                    self.dssSolver.Solve()
+                    self.logger.info("TotalPower=%s", dss.Circuit.TotalPower())
+                    if not dss.Solution.Converged():
+                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                dss.Circuit.SetActiveClass("Line")
+                dss.ActiveClass.First()
+                while True:
+                    switch = dss.Properties.Value("switch")
+                    line_name = dss.CktElement.Name().split(".")[1].lower()
+                    n_phases = dss.CktElement.NumPhases()
+                    line_limit = dss.CktElement.NormalAmps()
+                    Currents = dss.CktElement.CurrentsMagAng()[:2 * n_phases]
+                    line_current = Currents[::2]
+                    ldg = round( max(line_current)/ float(line_limit), 2)
+                    if switch == "False":
+                        if line_name not in self.all_line_ldgs_alltps:
+                            self.all_line_ldgs_alltps[line_name] = [[max(line_current)], line_limit]
+                        elif line_name in self.all_line_ldgs_alltps:
+                            self.all_line_ldgs_alltps[line_name][0].append(max(line_current))
+                    if ldg > self.config["line loading limit"] and switch == "False":  # and switch==False:
+                        if line_name not in self.line_violations_alltps:
+                            self.line_violations_alltps[line_name] = [[max(line_current)], line_limit]
+                        elif line_name in self.line_violations_alltps:
+                            self.line_violations_alltps[line_name][0].append(max(line_current))
+                    if not dss.ActiveClass.Next() > 0:
+                        break
         return
 
     def correct_line_violations(self):
@@ -828,46 +969,106 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
     def determine_xfmr_ldgs_alltps(self):
         self.xfmr_violations_alltps = {}
         self.all_xfmr_ldgs_alltps = {}
-        for tp_cnt in range(len(self.config["tps_to_test"])):
-            # First two tps are for disabled PV case
-            if tp_cnt == 0 or tp_cnt == 1:
-                dss.run_command("BatchEdit PVSystem..* Enabled=False")
-                dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
-                self.dssSolver.Solve()
-                if not dss.Solution.Converged():
-                    raise OpenDssConvergenceError("OpenDSS solution did not converge")
-            if tp_cnt == 2 or tp_cnt == 3:
-                dss.run_command("BatchEdit PVSystem..* Enabled=True")
-                dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
-                self.dssSolver.Solve()
-                if not dss.Solution.Converged():
-                    raise OpenDssConvergenceError("OpenDSS solution did not converge")
-            dss.Transformers.First()
-            while True:
-                xfmr_name = dss.CktElement.Name().split(".")[1].lower()
-                # Kwami's approach
-                n_phases = dss.CktElement.NumPhases()
-                hs_kv = float(dss.Properties.Value('kVs').split('[')[1].split(',')[0])
-                kva = float(dss.Properties.Value('kVA'))
-                if n_phases > 1:
-                    xfmr_limit = kva / (hs_kv * math.sqrt(3))
-                else:
-                    xfmr_limit = kva / (hs_kv)
-                Currents = dss.CktElement.CurrentsMagAng()[:2 * n_phases]
-                xfmr_current = Currents[::2]
-                max_flow = max(xfmr_current)
-                ldg = max_flow / xfmr_limit
-                if xfmr_name not in self.all_xfmr_ldgs_alltps:
-                    self.all_xfmr_ldgs_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
-                elif xfmr_name in self.all_xfmr_ldgs_alltps:
-                    self.all_xfmr_ldgs_alltps[xfmr_name][0].append(max(xfmr_current))
-                if ldg > self.config["DT loading limit"]:
-                    if xfmr_name not in self.xfmr_violations_alltps:
-                        self.xfmr_violations_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
-                    elif xfmr_name in self.xfmr_violations_alltps:
-                        self.xfmr_violations_alltps[xfmr_name][0].append(max(xfmr_current))
-                if not dss.Transformers.Next() > 0:
-                    break
+        if len(self.other_load_dss_files)>0:
+            for tp_cnt in range(len(self.config["tps_to_test"])):
+                # First two tps are for disabled PV case
+                if tp_cnt == 0 or tp_cnt == 1:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=False")
+                    dss.Loads.First()
+                    while True:
+                        load_name = dss.Loads.Name().split(".")[0].lower()
+                        if load_name not in self.min_max_load_kw:
+                            print("Load not found, quitting...")
+                            quit()
+                        new_kw = self.min_max_load_kw[load_name][tp_cnt]
+                        dss.Loads.kW(new_kw)
+                        if not dss.Loads.Next() > 0:
+                            break
+                    self.dssSolver.Solve()
+                    if not dss.Solution.Converged():
+                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                if tp_cnt == 2 or tp_cnt == 3:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=True")
+                    dss.Loads.First()
+                    while True:
+                        load_name = dss.Loads.Name().split(".")[0].lower()
+                        if load_name not in self.min_max_load_kw:
+                            print("Load not found, quitting...")
+                            quit()
+                        new_kw = self.min_max_load_kw[load_name][tp_cnt - 2]
+                        dss.Loads.kW(new_kw)
+                        if not dss.Loads.Next() > 0:
+                            break
+                    self.dssSolver.Solve()
+                    if not dss.Solution.Converged():
+                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                dss.Transformers.First()
+                while True:
+                    xfmr_name = dss.CktElement.Name().split(".")[1].lower()
+                    # Kwami's approach
+                    n_phases = dss.CktElement.NumPhases()
+                    hs_kv = float(dss.Properties.Value('kVs').split('[')[1].split(',')[0])
+                    kva = float(dss.Properties.Value('kVA'))
+                    if n_phases > 1:
+                        xfmr_limit = kva / (hs_kv * math.sqrt(3))
+                    else:
+                        xfmr_limit = kva / (hs_kv)
+                    Currents = dss.CktElement.CurrentsMagAng()[:2 * n_phases]
+                    xfmr_current = Currents[::2]
+                    max_flow = max(xfmr_current)
+                    ldg = max_flow / xfmr_limit
+                    if xfmr_name not in self.all_xfmr_ldgs_alltps:
+                        self.all_xfmr_ldgs_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
+                    elif xfmr_name in self.all_xfmr_ldgs_alltps:
+                        self.all_xfmr_ldgs_alltps[xfmr_name][0].append(max(xfmr_current))
+                    if ldg > self.config["DT loading limit"]:
+                        if xfmr_name not in self.xfmr_violations_alltps:
+                            self.xfmr_violations_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
+                        elif xfmr_name in self.xfmr_violations_alltps:
+                            self.xfmr_violations_alltps[xfmr_name][0].append(max(xfmr_current))
+                    if not dss.Transformers.Next() > 0:
+                        break
+        elif len(self.other_load_dss_files) == 0:
+            for tp_cnt in range(len(self.config["tps_to_test"])):
+                # First two tps are for disabled PV case
+                if tp_cnt == 0 or tp_cnt == 1:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=False")
+                    dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
+                    self.dssSolver.Solve()
+                    if not dss.Solution.Converged():
+                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                if tp_cnt == 2 or tp_cnt == 3:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=True")
+                    dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
+                    self.dssSolver.Solve()
+                    if not dss.Solution.Converged():
+                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                dss.Transformers.First()
+                while True:
+                    xfmr_name = dss.CktElement.Name().split(".")[1].lower()
+                    # Kwami's approach
+                    n_phases = dss.CktElement.NumPhases()
+                    hs_kv = float(dss.Properties.Value('kVs').split('[')[1].split(',')[0])
+                    kva = float(dss.Properties.Value('kVA'))
+                    if n_phases > 1:
+                        xfmr_limit = kva / (hs_kv * math.sqrt(3))
+                    else:
+                        xfmr_limit = kva / (hs_kv)
+                    Currents = dss.CktElement.CurrentsMagAng()[:2 * n_phases]
+                    xfmr_current = Currents[::2]
+                    max_flow = max(xfmr_current)
+                    ldg = max_flow / xfmr_limit
+                    if xfmr_name not in self.all_xfmr_ldgs_alltps:
+                        self.all_xfmr_ldgs_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
+                    elif xfmr_name in self.all_xfmr_ldgs_alltps:
+                        self.all_xfmr_ldgs_alltps[xfmr_name][0].append(max(xfmr_current))
+                    if ldg > self.config["DT loading limit"]:
+                        if xfmr_name not in self.xfmr_violations_alltps:
+                            self.xfmr_violations_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
+                        elif xfmr_name in self.xfmr_violations_alltps:
+                            self.xfmr_violations_alltps[xfmr_name][0].append(max(xfmr_current))
+                    if not dss.Transformers.Next() > 0:
+                        break
         return
 
     def correct_xfmr_violations(self):
