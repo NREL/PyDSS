@@ -4,7 +4,7 @@ import math
 from PyDSS.value_storage import ValueContainer, ValueByNumber
 
 
-def calculate_line_loading_percent(line):
+def calculate_line_loading_percent(line, timestamp, step_number, options):
     normal_amps = line.GetValue("NormalAmps", convert=True).value
     currents = line.GetValue("Currents", convert=True).value
     current = max([math.sqrt(x.real**2 + x.imag**2) for x in currents])
@@ -12,7 +12,7 @@ def calculate_line_loading_percent(line):
     return ValueByNumber(line.Name, "LineLoading", loading)
 
 
-def calculate_transformer_loading_percent(transformer):
+def calculate_transformer_loading_percent(transformer, timestamp, step_number, options):
     normal_amps = transformer.GetValue("NormalAmps", convert=True).value
     currents = transformer.GetValue("Currents", convert=True).value
     current = max([math.sqrt(x.real**2 + x.imag**2) for x in currents])

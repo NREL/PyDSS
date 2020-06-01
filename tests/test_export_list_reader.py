@@ -70,7 +70,7 @@ def test_export_list_reader__limits():
     assert export_prop.limits.max == 1.0
     assert not export_prop.should_store_value(-2.0)
     assert not export_prop.should_store_value(2.0)
-    assert export_prop.should_store_value(-0.5)
+    assert export_prop.should_store_value(-0.5,)
     assert export_prop.should_store_value(0.5)
 
     with pytest.raises(InvalidConfiguration):
@@ -98,3 +98,25 @@ def test_export_list_reader__legacy_file():
         "Circuits Losses",
         "Circuits SubstationLosses",
     ]
+
+
+def test_export_list_reader__window_size():
+    prop = ExportListProperty(
+        "Buses",
+        "puVmagAngle",
+        {"store_values_type": "moving_average"},
+    )
+    assert prop.window_size == 100
+    assert prop.moving_average_store_interval == prop.window_size
+
+    prop = ExportListProperty(
+        "Buses",
+        "puVmagAngle",
+        {
+            "store_values_type": "moving_average",
+            "window_size": 75,
+            "moving_average_store_interval": 50,
+        },
+    )
+    assert prop.window_size == 75
+    assert prop.moving_average_store_interval == 50

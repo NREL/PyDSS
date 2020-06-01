@@ -15,6 +15,8 @@ MinMax = namedtuple("MinMax", "min, max")
 
 
 CUSTOM_FUNCTIONS = {
+    # All functions must have the signature
+    # func(dssObjectBase, sim_timestamp, sim_step_number, sim_options)
     "Lines.LoadingPercent": calculate_line_loading_percent,
     "Transformers.LoadingPercent": calculate_transformer_loading_percent,
 }
@@ -27,6 +29,7 @@ class LimitsFilter(enum.Enum):
 
 class StoreValuesType(enum.Enum):
     ALL = "all"
+    MOVING_AVERAGE = "moving_average"
     SUM = "sum"
 
 
@@ -39,8 +42,15 @@ class ExportListProperty:
         self._limits_filter = LimitsFilter(data.get("limits_filter", "outside"))
         self._store_values_type = StoreValuesType(data.get("store_values_type", "all"))
         self._names, self._are_names_regex = self._parse_names(data)
+        self._sample_interval = data.get("sample_interval", 1)
+        self._ma_store_interval = data.get("moving_average_store_interval")
+        self._window_size = data.get("window_size", 100)
         custom_prop = f"{elem_class}.{prop}"
         self._custom_function = CUSTOM_FUNCTIONS.get(custom_prop)
+
+        if self._store_values_type == StoreValuesType.MOVING_AVERAGE and \
+                self._ma_store_interval is None:
+            self._ma_store_interval = self._window_size
 
     @staticmethod
     def _parse_limits(data):
@@ -89,11 +99,19 @@ class ExportListProperty:
         DatasetPropertyType
 
         """
-        if self._limits is not None:
+        if self._limits is not None or \
+                self._store_values_type == StoreValuesType.MOVING_AVERAGE:
             return DatasetPropertyType.FILTERED
         if self._store_values_type == StoreValuesType.SUM:
             return DatasetPropertyType.SUM
         return DatasetPropertyType.ELEMENT_PROPERTY
+
+    def get_max_size(self, num_steps):
+        """Return the max number of items that could be stored."""
+        num_samples = num_steps / self._sample_interval
+        if self._store_values_type == StoreValuesType.MOVING_AVERAGE:
+            return int(num_samples / self._ma_store_interval)
+        return int(num_samples)
 
     @property
     def custom_function(self):
@@ -110,6 +128,11 @@ class ExportListProperty:
         """
         return self._limits
 
+    @property
+    def moving_average_store_interval(self):
+        """Return the interval on which moving averages are stored."""
+        return self._ma_store_interval
+
     def should_store_name(self, name):
         """Return True if name matches the input criteria."""
         if self._names is None:
@@ -123,6 +146,10 @@ class ExportListProperty:
 
         return name in self._names
 
+    def should_sample_value(self, step_number):
+        """Return True if it's time to read a new value."""
+        return step_number % self._sample_interval == 0
+
     def should_store_value(self, value):
         """Return True if the value meets the input criteria."""
         if self._limits is None:
@@ -134,7 +161,8 @@ class ExportListProperty:
 
     def should_store_timestamp(self):
         """Return True if the timestamp should be stored with the value."""
-        return self.limits is not None
+        return self.limits is not None or \
+            self._store_values_type == StoreValuesType.MOVING_AVERAGE
 
     @property
     def store_values_type(self):
@@ -154,6 +182,17 @@ class ExportListProperty:
             data["limits_filter"] = self._limits_filter.value
 
         return data
+
+    @property
+    def window_size(self):
+        """Return the window size for moving averages.
+
+        Returns
+        -------
+        int
+
+        """
+        return self._window_size
 
 
 class ExportListReader:

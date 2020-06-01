@@ -262,7 +262,7 @@ class PyDssScenarioResults:
             filename = os.path.join(path, base + "." + fmt.replace(".", ""))
             write_dataframe(df, filename, compress=compress)
 
-    def get_dataframe(self, element_class, prop, element_name, **kwargs):
+    def get_dataframe(self, element_class, prop, element_name, real_only=False, **kwargs):
         """Return the dataframe for an element.
 
         Parameters
@@ -270,6 +270,8 @@ class PyDssScenarioResults:
         element_class : str
         prop : str
         element_name : str
+        real_only : bool
+            If dtype of any column is complex, drop the imaginary component.
         kwargs : **kwargs
             Filter on options. Option values can be strings or regular expressions.
 
@@ -306,6 +308,12 @@ class PyDssScenarioResults:
             df.set_index("Timestamp", inplace=True)
         else:
             self._add_indices_to_dataframe(df)
+
+        if real_only:
+            for column in df.columns:
+                if df[column].dtype == np.complex:
+                    df[column] = [x.real for x in df[column]]
+
         return df
 
     @property

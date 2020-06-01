@@ -8,6 +8,8 @@ import pytest
 
 from PyDSS.common import PROJECT_TAR, PROJECT_ZIP
 from PyDSS.pydss_fs_interface import STORE_FILENAME
+from PyDSS.pydss_project import PyDssProject
+from PyDSS.utils.utils import dump_data
 
 
 RUN_PROJECT_PATH = os.path.join("tests", "data", "project")
@@ -56,3 +58,17 @@ def cleanup_project():
         )
         if os.path.exists(scenario_config_file):
             os.remove(scenario_config_file)
+
+
+def run_project_with_custom_exports(path, scenario, sim_file, data):
+    """Runs a project while overriding an export config file."""
+    exports = f"{path}/Scenarios/{scenario}/ExportLists/Exports.toml"
+    backup = exports + ".bk"
+    shutil.copyfile(exports, backup)
+    dump_data(data, exports)
+
+    try:
+        PyDssProject.run_project(path, simulation_file=sim_file)
+    finally:
+        os.remove(exports)
+        os.rename(backup, exports)

@@ -1,4 +1,5 @@
 
+from collections import deque
 import logging
 import os
 import pathlib
@@ -12,7 +13,7 @@ from PyDSS.exceptions import InvalidParameter
 from PyDSS.export_list_reader import ExportListReader, StoreValuesType
 from PyDSS.utils.dataframe_utils import write_dataframe
 from PyDSS.utils.utils import dump_data
-from PyDSS.value_storage import ValueContainer, DatasetPropertyType
+from PyDSS.value_storage import ValueContainer, ValueByNumber, DatasetPropertyType
 
 
 logger = logging.getLogger(__name__)
@@ -110,6 +111,7 @@ class ResultData:
                                 name,
                                 obj,
                                 max_chunk_bytes=self._max_chunk_bytes,
+                                options=self._options
                             )
                         elements[name].append_property(prop)
                         self._logger.debug("Store %s %s name=%s", elem_class, prop.name, name)
@@ -187,19 +189,6 @@ class ResultData:
         for element in self._elements:
             element.flush_data()
 
-    def _export_results_by_element(self, metadata, fileprefix=""):
-        metadata["data"] = {}
-
-        for elem in self._elements:
-            if elem.element_class not in metadata["data"]:
-                metadata["data"][elem.element_class] = []
-            elem_metadata = elem.serialize(
-                self._export_dir,
-                self._export_format,
-                self._export_compression,
-            )
-            metadata["data"][elem.element_class].append(elem_metadata)
-
     def _export_event_log(self, metadata):
         # TODO: move to a base class
         event_log = "event_log.csv"
@@ -218,11 +207,6 @@ class ResultData:
             metadata["event_log"] = self._export_relative_dir + f"/{event_log}"
         finally:
             os.chdir(orig)
-
-    def _export_dataframe(self, df, basename):
-        filename = basename + "." + self._export_format
-        write_dataframe(df, filename, compress=self._export_compression)
-        self._logger.info("Exported %s", filename)
 
     def _export_elements(self, metadata):
         dss = self._dss_instance
@@ -317,16 +301,19 @@ class ResultData:
 
 class ElementData:
     """Stores all property data for an element."""
-    def __init__(self, name, obj, max_chunk_bytes, scenario=None, hdf_store=None):
+    def __init__(self, name, obj, max_chunk_bytes, options, scenario=None, hdf_store=None):
         self._properties = []
         self._name = name
         self._obj = obj
         self._data = {}  # Containers for properties per time point on disk.
+        self._circular_buf = {}  # Keeps last n values in memory for averages.
         self._sums = {}  # Keeps running sums in memory.
         self._num_steps = None
         self._scenario = scenario
         self._hdf_store = hdf_store
         self._max_chunk_bytes = max_chunk_bytes
+        self._options = options
+        self._step_number = 1
 
     @staticmethod
     def _data_key(prop):
@@ -339,6 +326,7 @@ class ElementData:
         # Reset these for MonteCarlo simulations.
         for key in self._data:
             self._data[key] = None
+        self._step_number = 1
 
     def append_property(self, prop):
         self._properties.append(prop)
@@ -346,14 +334,18 @@ class ElementData:
         self._data[key] = None
         if prop.store_values_type == StoreValuesType.SUM:
             self._sums[key] = None
+        elif prop.store_values_type == StoreValuesType.MOVING_AVERAGE:
+            self._circular_buf[key] = _CircularBufferHelper(prop)
 
     def append_values(self, timestamp):
         curr_data = {}
         for prop in self.properties:
+            if not prop.should_sample_value(self._step_number):
+                continue
             if prop.custom_function is None:
                 value = self._obj.GetValue(prop.name, convert=True)
             else:
-                value = prop.custom_function(self._obj)
+                value = prop.custom_function(self._obj, timestamp, self._step_number, self._options)
             key = self._data_key(prop)
             if prop.store_values_type == StoreValuesType.SUM:
                 if self._sums[key] is None:
@@ -364,24 +356,38 @@ class ElementData:
                 continue
             if not prop.should_store_value(value.value):
                 continue
+            suffix = ""
+            if prop.store_values_type == StoreValuesType.MOVING_AVERAGE:
+                buf = self._circular_buf[key]
+                buf.append(value.value)
+                if buf.should_store():
+                    suffix = "Avg"
+                    value = ValueByNumber(
+                        self._name,
+                        prop.name + suffix,
+                        buf.average(),
+                    )
+                else:
+                    continue
             if len(value.make_columns()) > 1:
                 for column, val in zip(value.make_columns(), value.value):
                     curr_data[column] = val
             else:
                 curr_data[value.make_columns()[0]] = value.value
             if self._data[key] is None:
-                path = f"Exports/{self._scenario}/{prop.elem_class}/{self._name}/{prop.name}"
+                path = f"Exports/{self._scenario}/{prop.elem_class}/{self._name}/{prop.name}{suffix}"
                 self._data[key] = ValueContainer(
                     value,
                     self._hdf_store,
                     path,
-                    self._num_steps,
+                    prop.get_max_size(self._num_steps),
                     dataset_property_type=prop.get_dataset_property_type(),
                     max_chunk_bytes=self._max_chunk_bytes,
                     store_timestamp=prop.should_store_timestamp(),
                 )
 
             self._data[key].append(value, timestamp=timestamp)
+        self._step_number += 1
         return curr_data
 
     def export_sums(self):
@@ -429,3 +435,22 @@ class ElementData:
     @property
     def properties(self):
         return self._properties[:]
+
+
+class _CircularBufferHelper:
+    def __init__(self, prop):
+        self._buf = deque(maxlen=prop.window_size)
+        self._count = 0
+        self._store_interval = prop.moving_average_store_interval
+
+    def append(self, val):
+        self._buf.append(val)
+        self._count += 1
+        if self._count == self._store_interval:
+            self._count = 0
+
+    def average(self):
+        return sum(self._buf) / len(self._buf)
+
+    def should_store(self):
+        return self._count == 0
