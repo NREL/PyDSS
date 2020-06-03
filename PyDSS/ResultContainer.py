@@ -1,115 +1,416 @@
-import subprocess
+from PyDSS.pyContrReader import pySubscriptionReader as pySR
+from PyDSS.pyLogger import getLoggerTag
+from PyDSS.unitDefinations import type_info as Types
+from PyDSS.unitDefinations import unit_info as Units
+from PyDSS.pyContrReader import pyExportReader as pyER
+from PyDSS import unitDefinations
+from PyDSS.exceptions import InvalidParameter
+from PyDSS.utils.dataframe_utils import write_dataframe
+import pandas as pd
+import numpy as np
+#import helics as h
 import pathlib
-import PyDSS
-import toml
-import os
+import gzip
 import logging
-
-from PyDSS.exceptions import InvalidConfiguration
-from PyDSS import dssInstance
-from PyDSS.utils.utils import dump_data, load_data
-from PyDSS.valiate_settings import validate_settings
-
-__author__ = "Aadil Latif"
-__copyright__ = """
-    BSD 3-Clause License
-
-    Copyright (c) 2018, Alliance for Sustainable Energy LLC, All rights reserved.
-
-    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
-    following conditions are met:
-    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following
-    disclaimer.
-    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
-    following disclaimer in the documentation and/or other materials provided with the distribution.
-    * Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote 
-    products derived from this software without specific prior written permission.
-
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
-    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
-    USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-"""
-__license__ = "BSD 3-Clause License"
-__version__ = "2.0.1"
-__maintainer__ = "Aadil Latif"
-__email__ = "aadil.latif@nrel.gov, aadil.latif@gmail.com"
-__status__ = "Production"
-
-PYDSS_BASE_DIR = os.path.join(os.path.dirname(getattr(PyDSS, "__path__")[0]), "PyDSS")
-
-logger = logging.getLogger(__name__)
+import shutil
+import math
+import os
 
 
-class instance(object):
+class ResultContainer:
 
-    def __init__(self):
-        self._estimated_space = None
+    def __init__(self, Options, SystemPaths, dssObjects, dssObjectsByClass, dssBuses, dssSolver, dssCommand):
+        if Options["Logging"]["Pre-configured logging"]:
+            LoggerTag = __name__
+        else:
+            LoggerTag = getLoggerTag(Options)
+        self.metadata_info = unitDefinations.unit_info
+        self.__dssDolver = dssSolver
+        self.Results = {}
+        self.CurrentResults = {}
+        self.pyLogger = logging.getLogger(LoggerTag)
+        self.Buses = dssBuses
+        self.ObjectsByElement = dssObjects
+        self.ObjectsByClass = dssObjectsByClass
+        self.SystemPaths = SystemPaths
+        self.__dssCommand = dssCommand
+        self.__Settings = Options
+        self.__StartDay = Options['Project']['Start Day']
+        self.__EndDay = Options['Project']['End Day']
+        self.__DateTime = []
+        self.__Frequency = []
+        self.__SimulationMode = []
+        self.__ExportFormat = Options['Exports']['Export Format']
+        self.__ExportCompression = Options['Exports']['Export Compression']
 
-    def run(self, simulation_config, project, scenario, dry_run=False):
-        bokeh_server_proc = None
-        if simulation_config['Plots']['Create dynamic plots']:
-            bokeh_server_proc = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
-        try:
-            self.run_scenario(
-                project,
-                scenario,
-                simulation_config,
-                dry_run=dry_run,
-            )
-        finally:
-            if simulation_config['Plots']['Create dynamic plots']:
-                bokeh_server_proc.terminate()
+        self.__publications = {}
+        self.__subscriptions = {}
+
+        self.ExportFolder = os.path.join(self.SystemPaths['Export'], Options['Project']['Active Scenario'])
+        pathlib.Path(self.ExportFolder).mkdir(parents=True, exist_ok=True)
+        if self.__Settings['Exports']['Export Mode'] == 'byElement':
+            self.FileReader = pyER(os.path.join(SystemPaths['ExportLists'], 'ExportMode-byElement.toml'))
+            self.ExportList = self.FileReader.pyControllers
+            self.PublicationList = self.FileReader.publicationList
+            self.CreateListByElement()
+        elif self.__Settings['Exports']['Export Mode'] == 'byClass':
+            self.FileReader = pyER(os.path.join(SystemPaths['ExportLists'], 'ExportMode-byClass.toml'))
+            self.ExportList = self.FileReader.pyControllers
+            self.PublicationList = self.FileReader.publicationList
+            self.CreateListByClass()
+        if self.__Settings['Helics']['Co-simulation Mode']:
+            self.__createPyDSSfederate()
+            self.__registerFederatePublications()
+            self.__registerFederateSubscriptions()
+            h.helicsFederateEnterExecutingMode(self.__PyDSSfederate)
+            self.pyLogger.debug('Entered HELICS execution mode')
+        return
+
+    def __createPyDSSfederate(self):
+        fedinfo = h.helicsCreateFederateInfo()
+        h.helicsFederateInfoSetCoreName(fedinfo, self.__Settings['Helics']['Federate name'])
+        h.helicsFederateInfoSetCoreTypeFromString(fedinfo, self.__Settings['Helics']['Core type'])
+        h.helicsFederateInfoSetCoreInitString(fedinfo, "--federates=1")
+        h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_delta, self.__Settings['Helics']['Time delta'])
+        h.helicsFederateInfoSetIntegerProperty(fedinfo, h.helics_property_int_log_level,
+                                                self.__Settings['Helics']['Helics logging level'])
+
+        h.helicsFederateInfoSetFlagOption(fedinfo, h.helics_flag_uninterruptible, True)
+        self.__PyDSSfederate = h.helicsCreateValueFederate(self.__Settings['Helics']['Federate name'], fedinfo)
+        return
+
+    def __registerFederateSubscriptions(self):
+        self.FileReader = pySR(os.path.join(self.SystemPaths['ExportLists'], 'Helics-Subcriptions.xlsx'))
+        self.__subscriptions = self.FileReader.SubscriptionDict
+
+        for element, subscription in self.__subscriptions.items():
+            assert element in self.ObjectsByElement, '"{}" listed in the subscription file not '.format(element) +\
+                                                     "available in PyDSS's master object dictionary."
+            if subscription["Subscribe"] == True:
+                sub = h.helicsFederateRegisterSubscription(self.__PyDSSfederate, subscription["Subscription ID"],
+                                                           subscription["Unit"])
+                self.pyLogger.debug('PyDSS subscribing to "{}" of  with units "{}"'.format(
+                    subscription["Subscription ID"],
+                    subscription["Unit"])
+                )
+                subscription['Subscription'] = sub
+            self.__subscriptions[element] = subscription
+        return
+
+    def updateSubscriptions(self):
+        for element, subscriptionData in self.__subscriptions.items():
+            if 'Subscription' in subscriptionData:
+                if subscriptionData['Data type'].lower() == 'double':
+                    value = h.helicsInputGetDouble(subscriptionData['Subscription'])
+                elif subscriptionData['Data type'].lower() == 'vector':
+                    value = h.helicsInputGetVector(subscriptionData['Subscription'])
+                elif subscriptionData['Data type'].lower() == 'string':
+                    value = h.helicsInputGetString(subscriptionData['Subscription'])
+                elif subscriptionData['Data type'].lower() == 'boolean':
+                    value = h.helicsInputGetBoolean(subscriptionData['Subscription'])
+                elif subscriptionData['Data type'].lower() == 'integer':
+                    value = h.helicsInputGetInteger(subscriptionData['Subscription'])
+                dssElement = self.ObjectsByElement[element]
+                dssElement.SetParameter(subscriptionData['Property'], value)
+                self.pyLogger.debug('Value for "{}.{}" changed to "{}"'.format(
+                    element,
+                    subscriptionData['Property'],
+                    value
+                ))
 
         return
 
-    def update_scenario_settings(self, simulation_config):
-        path = os.path.dirname(PyDSS.__file__)
-        dss_args = load_data(os.path.join(path, 'defaults', 'simulation.toml'))
-        for category, params in dss_args.items():
-            if category in simulation_config:
-                params.update(simulation_config[category])
-        validate_settings(dss_args)
-        return dss_args
+    def __registerFederatePublications(self):
+        self.__publications = {}
+        for object, property_dict in self.CurrentResults.items():
+            objClass = None
+            for Class in self.ObjectsByClass:
+                if object in self.ObjectsByClass[Class]:
+                    objClass = Class
+                    break
+            for property, type_dict in property_dict.items():
+                if '{} {}'.format(objClass, property) in self.PublicationList:
+                    for typeID, type in type_dict.items():
+                        name = '{}.{}.{}'.format(object, property, typeID)
 
-    def create_dss_instance(self, dss_args):
-        dss = dssInstance.OpenDSS(dss_args)
-        return dss
+                        self.__publications[name] = h.helicsFederateRegisterGlobalTypePublication(
+                            self.__PyDSSfederate,
+                            name,
+                            type['type'],
+                            type['unit']
+                        )
 
-    def run_scenario(self, project, scenario, simulation_config, dry_run=False):
-        dss_args = self.update_scenario_settings(simulation_config)
-        self._dump_scenario_simulation_settings(dss_args)
+        return
 
-        if dry_run:
-            dss = dssInstance.OpenDSS(dss_args)
-            logger.info('Dry run scenario: %s', dss_args["Project"]["Active Scenario"])
-            if dss_args["MonteCarlo"]["Number of Monte Carlo scenarios"] > 0:
-                raise InvalidConfiguration("Dry run does not support MonteCarlo simulation.")
+    def __initCurrentResults(self, PptyName):
+        data = {}
+        if PptyName in Units:
+            if isinstance(Units[PptyName], dict):
+                for subset, unit in Units[PptyName].items():
+                    data[subset] = {
+                        'value': None,
+                        'unit': Units[PptyName][subset],
+                        'type': Types[PptyName]
+                    }
             else:
-                self._estimated_space = dss.DryRunSimulation(project, scenario)
-            return None, None
-
-        dss = dssInstance.OpenDSS(dss_args)
-        logger.info('Running scenario: %s', dss_args["Project"]["Active Scenario"])
-        if dss_args["MonteCarlo"]["Number of Monte Carlo scenarios"] > 0:
-            dss.RunMCsimulation(project, scenario, samples=dss_args["MonteCarlo"]['Number of Monte Carlo scenarios'])
+                data['A'] = {
+                    'value': None,
+                    'unit': Units[PptyName],
+                    'type': Types[PptyName]
+                }
         else:
-            dss.RunSimulation(project, scenario)
-        return dss_args
+            data['A'] = {
+                'value': None,
+                'unit': 'NA',
+                'type': 'double'
+            }
+        return data
 
-    def get_estimated_space(self):
-        return self._estimated_space
+    def CreateListByClass(self):
+        for Class, Properties in self.ExportList.items():
+            if Class == 'Buses':
+                self.Results[Class] = {}
+                for PptyIndex, PptyName in enumerate(Properties):
+                    if isinstance(PptyName, str):
+                        self.Results[Class][PptyName] = {}
+                        for BusName, BusObj in self.Buses.items():
+                            if self.Buses[BusName].inVariableDict(PptyName):
+                                self.Results[Class][PptyName][BusName] = []
+                                if BusName not in self.CurrentResults:
+                                    self.CurrentResults[BusName] = {}
+                                self.CurrentResults[BusName][PptyName] = self.__initCurrentResults(PptyName)
+            else:
+                if Class in self.ObjectsByClass:
+                    self.Results[Class] = {}
+                    for PptyIndex, PptyName in enumerate(Properties):
+                        if isinstance(PptyName, str):
+                            self.Results[Class][PptyName] = {}
+                            for ElementName, ElmObj in self.ObjectsByClass[Class].items():
+                                if self.ObjectsByClass[Class][ElementName].IsValidAttribute(PptyName):
+                                    self.Results[Class][PptyName][ElementName] = []
+                                    if ElementName not in self.CurrentResults:
+                                        self.CurrentResults[ElementName] = {}
+                                    self.CurrentResults[ElementName][PptyName] = self.__initCurrentResults(PptyName)
+        return
 
-    def _dump_scenario_simulation_settings(self, dss_args):
-        # Various settings may have been updated. Write the actual settings to a file.
-        scenario_simulation_filename = os.path.join(
-            dss_args["Project"]["Project Path"],
-            dss_args["Project"]["Active Project"],
-            "Scenarios",
-            dss_args["Project"]["Active Scenario"],
-            "simulation-run.toml"
-        )
-        dump_data(dss_args, scenario_simulation_filename)
+    def CreateListByElement(self):
+        for Element, Properties in self.ExportList.items():
+            if Element in self.ObjectsByElement:
+                self.Results[Element] = {}
+                self.CurrentResults[Element] = {}
+                for PptyIndex, PptyName in enumerate(Properties):
+                    if isinstance(PptyName, str):
+                        if self.ObjectsByElement[Element].IsValidAttribute(PptyName):
+                            self.Results[Element][PptyName] = []
+                            self.CurrentResults[Element][PptyName] = self.__initCurrentResults(PptyName)
+            elif Element in self.Buses:
+                self.Results[Element] = {}
+                self.CurrentResults[Element] = {}
+                for PptyIndex, PptyName in enumerate(Properties):
+                    if isinstance(PptyName, str):
+                        if self.Buses[Element].inVariableDict(PptyName):
+                            self.Results[Element][PptyName] = []
+                            self.CurrentResults[Element][PptyName] = self.__initCurrentResults(PptyName)
+        return
+
+    def __parse_current_values(self, Element, Property, Values):
+
+        ans = self.CurrentResults[Element][Property]
+        for filter, data in ans.items():
+            if filter == 'A':
+                ans[filter]['value'] = Values
+            elif filter == 'E':
+                ans[filter]['value'] = Values[0::2]
+            elif filter == '0':
+                ans[filter]['value'] = Values[1::2]
+            if self.__Settings['Helics']['Co-simulation Mode']:
+                name = '{}.{}.{}'.format(Element, Property, filter)
+                if isinstance(ans[filter]['value'], list) and name in self.__publications:
+                    h.helicsPublicationPublishVector(self.__publications[name], ans[filter]['value'])
+                elif isinstance(Values, float) and name in self.__publications:
+                    h.helicsPublicationPublishDouble(self.__publications[name], ans[filter]['value'])
+                elif isinstance(Values, str) and name in self.__publications:
+                    h.helicsPublicationPublishString(self.__publications[name], ans[filter]['value'])
+                elif isinstance(Values, bool) and name in self.__publications:
+                    h.helicsPublicationPublishBoolean(self.__publications[name], ans[filter]['value'])
+                elif isinstance(Values, int) and name in self.__publications:
+                    h.helicsPublicationPublishInteger(self.__publications[name], ans[filter]['value'])
+
+            self.CurrentResults[Element][Property] = ans
+        return
+
+    def InitializeDataStore(self, _, __):
+        pass
+
+    def UpdateResults(self):
+        if self.__Settings['Helics']['Co-simulation Mode']:
+            r_seconds = self.__dssDolver.GetTotalSeconds()
+            print('Time: ', r_seconds)
+            c_seconds = 0
+            while c_seconds < r_seconds:
+                c_seconds = h.helicsFederateRequestTime(self.__PyDSSfederate, r_seconds)
+
+        self.__DateTime.append(self.__dssDolver.GetDateTime())
+        self.__Frequency.append(self.__dssDolver.getFrequency())
+        self.__SimulationMode.append(self.__dssDolver.getMode())
+
+        if self.__Settings['Exports']['Export Mode'] == 'byElement':
+            for Element in self.Results.keys():
+                for Property in self.Results[Element].keys():
+                    if '.' in Element:
+                        value = self.ObjectsByElement[Element].GetValue(Property)
+                        self.Results[Element][Property].append(value)
+                        self.__parse_current_values(Element, Property, value)
+                    else:
+                        value = self.Buses[Element].GetVariable(Property)
+                        self.Results[Element][Property].append(value)
+                        self.__parse_current_values(Element, Property, value)
+        elif self.__Settings['Exports']['Export Mode'] == 'byClass':
+            for Class in self.Results.keys():
+                for Property in self.Results[Class].keys():
+                    for Element in self.Results[Class][Property].keys():
+                        if Class == 'Buses':
+                            value = self.Buses[Element].GetVariable(Property)
+                            self.Results[Class][Property][Element].append(value)
+                            self.__parse_current_values(Element, Property, value)
+                        else:
+                            value = self.ObjectsByClass[Class][Element].GetValue(Property)
+                            self.Results[Class][Property][Element].append(value)
+                            self.__parse_current_values(Element, Property, value)
+        return
+
+    def ExportResults(self, fileprefix=''):
+        if self.__Settings['Exports']['Export Mode'] == 'byElement':
+            self.__ExportResultsByElements(fileprefix)
+        elif self.__Settings['Exports']['Export Mode'] == 'byClass':
+            self.__ExportResultsByClass(fileprefix)
+        self.__ExportEventLog()
+
+    def FlushData(self):
+        pass
+
+    def max_num_bytes(self):
+        return 0
+
+    def __ExportResultsByClass(self, fileprefix=''):
+        for Class in self.Results.keys():
+            for Property in self.Results[Class].keys():
+                Class_ElementDatasets = []
+                PptyLvlHeader = ''
+                for Element in self.Results[Class][Property].keys():
+                    ElmLvlHeader = ''
+                    if isinstance(self.Results[Class][Property][Element][0], list):
+                        Data = np.array(self.Results[Class][Property][Element])
+                        for i in range(len(self.Results[Class][Property][Element][0])):
+                            if Property in self.metadata_info:
+                                if i % 2 == 0 and 'E' in self.metadata_info[Property]:
+                                    ElmLvlHeader += '{} ph:{} [{}],'.format(Element,  math.floor(i / 2) + 1,
+                                                                           self.metadata_info[Property]['E'])
+                                elif i % 2 == 1 and 'O' in self.metadata_info[Property]:
+                                    ElmLvlHeader += '{} ph:{} [{}],'.format(Element, math.floor(i / 2) + 1,
+                                                                           self.metadata_info[Property]['O'])
+                                else:
+                                    ElmLvlHeader += '{}-{} [{}],'.format(Element, i, self.metadata_info[Property])
+                            else:
+                                ElmLvlHeader += Element + '-' + str(i) + ','
+                    else:
+                        Data = np.transpose(np.array([self.Results[Class][Property][Element]]))
+                        if Property in self.metadata_info:
+                            ElmLvlHeader = '{} [{}],'.format(Element, self.metadata_info[Property])
+                        else:
+                            ElmLvlHeader = Element + ','
+                    if self.__Settings['Exports']['Export Style'] == 'Separate files':
+                        fname = '-'.join([Class, Property, Element, str(self.__StartDay), str(self.__EndDay) ,fileprefix])
+                        columns = [x for x in ElmLvlHeader.split(',') if x != '']
+                        tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
+                        index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
+                        df = pd.DataFrame(Data, index=index, columns=columns)
+                        if self.__ExportFormat == "h5":
+                            df.reset_index(inplace=True)
+                        self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
+                    elif self.__Settings['Exports']['Export Style'] == 'Single file':
+                        Class_ElementDatasets.append(Data)
+                    PptyLvlHeader += ElmLvlHeader
+                if self.__Settings['Exports']['Export Style'] == 'Single file':
+                    assert Class_ElementDatasets
+                    Dataset = Class_ElementDatasets[0]
+                    if len(Class_ElementDatasets) > 1:
+                        for D in Class_ElementDatasets[1:]:
+                            Dataset = np.append(Dataset, D, axis=1)
+                    columns = [x for x in PptyLvlHeader.split(',') if x != '']
+                    tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
+                    index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
+                    df = pd.DataFrame(Dataset, index=index, columns=columns)
+                    if self.__ExportFormat == "h5":
+                        df.reset_index(inplace=True)
+                    fname = '-'.join([Class, Property, str(self.__StartDay), str(self.__EndDay), fileprefix])
+                    self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
+        return
+
+    def __ExportResultsByElements(self, fileprefix=''):
+        for Element in self.Results.keys():
+            ElementDatasets = []
+            AllHeader = ''
+
+            for Property in self.Results[Element].keys():
+                Header = ''
+
+                if isinstance(self.Results[Element][Property][0], list):
+                    Data = np.array(self.Results[Element][Property])
+                    for i in range(len(self.Results[Element][Property][0])):
+                        if Property in self.metadata_info:
+                            if i % 2 == 0 and 'E' in self.metadata_info[Property]:
+                                Header += '{} ph:{} [{}],'.format(Property, math.floor(i / 2) + 1,
+                                                                  self.metadata_info[Property]['E'])
+                            elif i % 2 == 1 and 'O' in self.metadata_info[Property]:
+                                Header += '{} ph:{} [{}],'.format(Property, math.floor(i / 2) + 1,
+                                                                  self.metadata_info[Property]['O'])
+                            else:
+                                Header += '{}-{} [{}],'.format(Property, i, self.metadata_info[Property])
+                        else:
+                            Header += Property + '-' + str(i) + ','
+                else:
+                    Data = np.transpose(np.array([self.Results[Element][Property]]))
+                    Header = Property + ','
+
+                if self.__Settings['Exports']['Export Style'] == 'Separate files':
+                    fname = '-'.join([Element, Property, str(self.__StartDay), str(self.__EndDay), fileprefix])
+                    columns = [x for x in Header.split(',') if x != '']
+                    tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
+                    index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
+                    df = pd.DataFrame(Data, index=index, columns=columns)
+                    if self.__ExportFormat == "h5":
+                        df.reset_index(inplace=True)
+                    self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
+                elif self.__Settings['Exports']['Export Style'] == 'Single file':
+                    ElementDatasets.append(Data)
+                AllHeader += Header
+            if self.__Settings['Exports']['Export Style'] == 'Single file':
+                Dataset = ElementDatasets[0]
+                if len(ElementDatasets) > 0:
+                    for D in ElementDatasets[1:]:
+                        Dataset = np.append(Dataset, D, axis=1)
+                fname = '-'.join([Element, str(self.__StartDay), str(self.__EndDay), fileprefix])
+                columns = [x for x in AllHeader.split(',') if x != '']
+                tuples = list(zip(*[self.__DateTime, self.__Frequency, self.__SimulationMode]))
+                index = pd.MultiIndex.from_tuples(tuples, names=['timestamp', 'frequency', 'Simulation mode'])
+                df = pd.DataFrame(Dataset, index=index, columns=columns)
+                if self.__ExportFormat == "h5":
+                    df.reset_index(inplace=True)
+                self.__ExportDataFrame(df, os.path.join(self.ExportFolder, fname))
+        return
+
+    def __ExportEventLog(self):
+        event_log = "event_log.csv"
+        cmd = "Export EventLog {}".format(event_log)
+        out = self.__dssCommand(cmd)
+        self.pyLogger.info("Exported OpenDSS event log to %s", out)
+        file_path = os.path.join(self.ExportFolder, event_log)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        shutil.move(event_log, self.ExportFolder)
+
+    def __ExportDataFrame(self, df, basename):
+        filename = basename + "." + self.__ExportFormat
+        write_dataframe(df, filename, compress=self.__ExportCompression)
+        self.pyLogger.info("Exported %s", filename)

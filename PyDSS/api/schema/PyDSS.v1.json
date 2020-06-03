@@ -1,0 +1,381 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "PyDSS API",
+        "version": "1.0",
+        "description": "API for PyDSS",
+        "contact": {
+            "name": "Kapil Duwadi",
+            "email": "kapil.duwadi@nrel.gov"
+        },
+        "license": {
+            "name": "Apache 2.0"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://0.0.0.0:8080/"
+        }, {
+            "description": "",
+            "url": "ttps://api.naerm.team"
+        }
+    ],
+    "paths": {
+        "/simulators/pydss": {
+            "parameters": [],
+            "post": {
+                "summary": "",
+                "operationId": "post-simulators-pydss",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Status": {
+                                            "type": "string",
+                                            "description": "Status of the request: sucess or failed"
+                                        },
+                                        "Message": {
+                                            "type": "string",
+                                            "description": "description of the status of post request"
+                                        },
+                                        "UUID": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "uuid of PyDSS instance"
+                                        }
+                                    },
+                                    "required": ["Status", "Message", "UUID"]
+                                },
+                                "examples": {
+                                    "create_pydss_instance": {
+                                        "value": {
+                                            "Status": "Success",
+                                            "Message": "Starting PyDSS",
+                                            "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Instantiate PyDSS object"
+            },
+            "put": {
+                "summary": "",
+                "operationId": "put-simulators-pydss",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Status": {
+                                            "type": "string",
+                                            "description": "staus of the request"
+                                        },
+                                        "Message": {
+                                            "type": "string",
+                                            "description": "description of what happened after submitting put request"
+                                        },
+                                        "UUID": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "uuid of the PyDSS instance to which put request is submitted"
+                                        }
+                                    },
+                                    "required": ["Status", "Message", "UUID"]
+                                },
+                                "examples": {
+                                    "solve_powerflow": {
+                                        "value": {
+                                            "Status": "Success",
+                                            "Message": "solve_powerflow command submitted, awaiting response ",
+                                            "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Perform operation on PyDSS instance",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "UUID": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "description": "uuid of the PyDSS instance to execute command"
+                                    },
+                                    "command": {
+                                        "type": "string",
+                                        "description": "which command to execute"
+                                    },
+                                    "parameters": {
+                                        "type": [
+                                            "string", "object"
+                                        ],
+                                        "required": ["filename"],
+                                        "description": "inputs to execute the command",
+                                        "properties": {
+                                            "filename": {
+                                                "type": "string",
+                                                "description": "filepath for toml file "
+                                            }
+                                        }
+                                    }
+                                },
+                                "required": ["UUID", "command", "parameters"]
+                            },
+                            "examples": {
+                                "command_tosolve_powerflow": {
+                                    "value": {
+                                        "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+                                        "command": "solve_powerflow",
+                                        "parameters": {
+                                            "filename": "C:\\Users\\KDUWADI\\Desktop\\NREL_Projects\\NAERM-DOE\\PSSEapi\\Projects\\Test\\PyDSS Scenarios\\NoController\\PyDSS_settings.toml"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "description": "The argumnets must be a json."
+                }
+            },
+            "delete": {
+                "summary": "",
+                "operationId": "delete-simulators-pydss",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Status": {
+                                            "type": "string",
+                                            "description": "status of delete request"
+                                        },
+                                        "Message": {
+                                            "type": "string",
+                                            "description": "description of status of delete request"
+                                        },
+                                        "UUID": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "uuid of pydss instance which is closed"
+                                        }
+                                    },
+                                    "required": ["Status", "Message", "UUID"]
+                                },
+                                "examples": {
+                                    "delete_response_example": {
+                                        "value": {
+                                            "Status": "Success",
+                                            "Message": "Attempting to close PyDSS instance",
+                                            "UUID": "17a8f9d3-18d8-47ef-8d60-1e271d7e0769"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Delete a PyDSS instance",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "UUID": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "description": "uuid of PyDSS instance which is requested to be closed"
+                                    }
+                                },
+                                "required": ["UUID"]
+                            },
+                            "examples": {
+                                "delete_request_example": {
+                                    "value": {
+                                        "UUID": "17a8f9d3-18d8-47ef-8d60-1e271d7e0769"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "description": "delete request for PyDSS instance"
+                }
+            }
+        },
+        "/simulators/pydss/instances": {
+            "get": {
+                "summary": "Your GET endpoint",
+                "tags": [],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Status": {
+                                            "type": "string",
+                                            "description": "status of get request for PyDSS instances"
+                                        },
+                                        "Instances": {
+                                            "type": "array",
+                                            "description": "array of uuid of all instances",
+                                            "items": {}
+                                        }
+                                    },
+                                    "required": ["Status", "Instances"]
+                                },
+                                "examples": {
+                                    "get_instances": {
+                                        "value": {
+                                            "Status": "Success",
+                                            "Instances": ["96c21e00-cd3c-4943-a914-14451f5f7ab6"]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "get-simulators-pydss-instances",
+                "description": "returns uuid of all PyDSS instances"
+            }
+        },
+        "/simulators/pydss/status/uuid/{uuid}": {
+            "parameters": [
+                {
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "name": "uuid",
+                    "in": "path",
+                    "required": true
+                }
+            ],
+            "get": {
+                "summary": "Your GET endpoint",
+                "tags": [],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Status": {
+                                            "type": "string",
+                                            "description": "status of the request"
+                                        },
+                                        "Message": {
+                                            "type": "string",
+                                            "description": "description of the status of the request"
+                                        },
+                                        "UUID": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "uuid of the PyDSS instance for which status request is submitted"
+                                        }
+                                    },
+                                    "required": ["Status", "Message", "UUID"]
+                                },
+                                "examples": {
+                                    "status_return_example": {
+                                        "value": {
+                                            "Status": "Success",
+                                            "Message": null,
+                                            "UUID": "17a8f9d3-18d8-47ef-8d60-1e271d7e0769"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "get-simulators-pydss-status-uuid-uuid",
+                "description": "Get the status of pydss instance",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "UUID": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "description": "uuid of the pydss instance for which status is requested"
+                                    }
+                                },
+                                "required": ["UUID"]
+                            },
+                            "examples": {
+                                "get_status_example": {
+                                    "value": {
+                                        "UUID": "17a8f9d3-18d8-47ef-8d60-1e271d7e0769"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "description": "pass in the UUID to get the status"
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "command": {
+                "title": "command",
+                "type": "object",
+                "description": "Model for capturing command being sent to PyDSS instance",
+                "x-examples": {
+                    "solve_powerflow": {
+                        "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+                        "command": "solve_powerflow",
+                        "parameters": {
+                            "filename": "C:\\Users\\KDUWADI\\Desktop\\NREL_Projects\\NAERM-DOE\\PSSEapi\\Projects\\Test\\PyDSS Scenarios\\NoController\\PyDSS_settings.toml"
+                        }
+                    }
+                },
+                "properties": {
+                    "uuid": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "uuid of the PyDSS instance in which command is to be executed."
+                    },
+                    "command": {
+                        "type": "string",
+                        "description": "command to be executed"
+                    },
+                    "parameters": {
+                        "type": "object",
+                        "description": "input object for executing command "
+                    }
+                },
+                "required": ["uuid", "command", "parameters"]
+            }
+        },
+        "securitySchemes": {}
+    }
+}

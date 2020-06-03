@@ -12,6 +12,8 @@ from PyDSS.cli.export import export
 from PyDSS.cli.extract import extract, extract_element_files
 from PyDSS.cli.run import run
 from PyDSS.cli.edit_scenario import edit_scenario
+from PyDSS.cli.run_server import serve
+1
 
 logger = logging.getLogger(__name__)
 
@@ -28,3 +30,4 @@ cli.add_command(extract)
 cli.add_command(extract_element_files)
 cli.add_command(run)
 cli.add_command(edit_scenario)
+cli.add_command(serve)

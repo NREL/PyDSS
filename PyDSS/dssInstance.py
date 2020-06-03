@@ -28,15 +28,19 @@ from bokeh.plotting import curdoc
 from bokeh.layouts import row
 from bokeh.client import push_session
 from opendssdirect.utils import run_command
-import opendssdirect as dss
+#import opendssdirect as dss
 
 
 CONTROLLER_PRIORITIES = 3
 
 class OpenDSS:
-    def __init__(self, params):
-        self._TempResultList = []
+    def __init__(self):
+        import opendssdirect as dss
         self._dssInstance = dss
+
+    def init(self, params):
+        print("initializing pydss")
+        self._TempResultList = []
         self._dssBuses = {}
         self._dssObjects = {}
         self._dssObjectsByClass = {}
@@ -76,7 +80,7 @@ class OpenDSS:
         else:
             LoggerTag = pyLogger.getLoggerTag(params)
             self._Logger = pyLogger.getLogger(LoggerTag, self._dssPath['Log'], LoggerOptions=params["Logging"])
-        self._Logger.info('An instance of OpenDSS version ' + dss.__version__ + ' has been created.')
+        self._Logger.info('An instance of OpenDSS version ' + self._dssInstance.__version__ + ' has been created.')
 
         for key, path in self._dssPath.items():
             assert (os.path.exists(path)), '{} path: {} does not exist!'.format(key, path)
@@ -100,15 +104,15 @@ class OpenDSS:
         if params['Frequency']['Neglect shunt admittance']:
             run_command('Set NeglectLoadY=Yes')
 
-        self._dssCircuit = dss.Circuit
-        self._dssElement = dss.Element
-        self._dssBus = dss.Bus
-        self._dssClass = dss.ActiveClass
+        self._dssCircuit = self._dssInstance.Circuit
+        self._dssElement = self._dssInstance.Element
+        self._dssBus = self._dssInstance.Bus
+        self._dssClass = self._dssInstance.ActiveClass
         self._dssCommand = run_command
-        self._dssSolution = dss.Solution
+        self._dssSolution = self._dssInstance.Solution
         self._dssSolver = SolveMode.GetSolver(SimulationSettings=params, dssInstance=self._dssInstance)
 
-        self._Modifier = Modifier(dss, run_command, params)
+        self._Modifier = Modifier(self._dssInstance, run_command, params)
         self._UpdateDictionary()
         self._CreateBusObjects()
         self._dssSolver.reSolve()
@@ -272,7 +276,7 @@ class OpenDSS:
         return ObjectList
 
     def RunStep(self, step, updateObjects=None):
-        # updating paramters bebore simulation run
+        # updating parameters bebore simulation run
 
         if self._Options['Helics']['Co-simulation Mode']:
             if self._increment_flag:
