@@ -44,6 +44,7 @@ class ExportMode(enum.Enum):
     BY_CLASS = "ExportMode-byClass"
     BY_ELEMENT = "ExportMode-byElement"
     SUBSCRIPTIONS = 'Subscriptions'
+    EXPORTS = "Exports"
 
 
 def filename_from_enum(obj):
@@ -57,6 +58,7 @@ SOCKET_CONTROLLER_FILENAME = filename_from_enum(ControllerType.XMFR_CONTROLLER)
 XMFR_CONTROLLER_FILENAME = filename_from_enum(ControllerType.SOCKET_CONTROLLER)
 EXPORT_BY_CLASS_FILENAME = filename_from_enum(ExportMode.BY_CLASS)
 EXPORT_BY_ELEMENT_FILENAME = filename_from_enum(ExportMode.BY_ELEMENT)
+EXPORTS_FILENAME = filename_from_enum(ExportMode.EXPORTS)
 
 
 DEFAULT_SUBSCRIPTIONS_FILE = os.path.join(
@@ -104,6 +106,13 @@ DEFAULT_EXPORT_BY_ELEMENT_SETTINGS_FILE = os.path.join(
     "PyDSS",
     "defaults",
     "ExportLists",
+    EXPORTS_FILENAME,
+)
+DEFAULT_EXPORTS_SETTINGS_FILE = os.path.join(
+    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    "PyDSS",
+    "defaults",
+    "ExportLists",
     EXPORT_BY_ELEMENT_FILENAME,
 )
 DEFAULT_MONTE_CARLO_SETTINGS_FILE = os.path.join(
@@ -113,11 +122,3 @@ DEFAULT_MONTE_CARLO_SETTINGS_FILE = os.path.join(
     "Monte_Carlo",
     MONTE_CARLO_SETTINGS_FILENAME,
 )
-
-DEFAULT_CONTROLLER_CONFIG = load_data(DEFAULT_CONTROLLER_CONFIG_FILE)
-DEFAULT_PYDSS_SIMULATION_CONFIG = load_data(DEFAULT_SIMULATION_SETTINGS_FILE)
-DEFAULT_PLOT_CONFIG = load_data(DEFAULT_PLOT_SETTINGS_FILE)
-DEFAULT_EXPORT_BY_CLASS = load_data(DEFAULT_EXPORT_BY_CLASS_SETTINGS_FILE)
-DEFAULT_EXPORT_BY_ELEMENT = load_data(DEFAULT_EXPORT_BY_ELEMENT_SETTINGS_FILE)
-DEFAULT_MONTE_CARLO = load_data(DEFAULT_MONTE_CARLO_SETTINGS_FILE)
-DEFAULT_SUBSCRIPTION = load_data(DEFAULT_SUBSCRIPTIONS_FILE)

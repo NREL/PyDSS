@@ -1,0 +1,75 @@
+[Loads.Powers]
+publish = true
+store_values_type = "all"
+
+[PVSystems.Powers]
+publish = false
+store_values_type = "all"
+
+[Storages.Powers]
+publish = true
+store_values_type = "all"
+
+[Buses.puVmagAngle]
+publish = false
+store_values_type = "all"
+
+[Buses.Distance]
+publish = false
+store_values_type = "moving_average"
+window_size = 10
+moving_average_store_interval = 5
+
+[Circuits.TotalPower]
+publish = true
+store_values_type = "all"
+
+[Circuits.LineLosses]
+publish = true
+store_values_type = "all"
+
+[Circuits.Losses]
+publish = true
+store_values_type = "sum"
+
+[Circuits.SubstationLosses]
+publish = true
+store_values_type = "all"
+
+[Lines.Currents]
+publish = false
+store_values_type = "sum"
+
+[Lines.NormalAmps]
+publish = false
+store_values_type = "sum"
+
+[Lines.VoltagesMagAng]
+names = ["Line.pvl_110", "Line.pvl_111", "Line.pvl_112", "Line.pvl_113"]
+publish = false
+store_values_type = "all"
+
+[Lines.CurrentsMagAng]
+name_regexes = ["pvl"]
+publish = false
+store_values_type = "all"
+
+[Transformers.Currents]
+publish = false
+store_values_type = "all"
+
+[Transformers.NormalAmps]
+publish = false
+store_values_type = "all"
+
+[Lines.LoadingPercent]
+publish = false
+limits = [0.0, 0.2]
+
+[Transformers.LoadingPercent]
+publish = false
+limits = [0.0, 0.2]
+
+[Transformers.tap]
+publish = false
+store_values_type = "sum"

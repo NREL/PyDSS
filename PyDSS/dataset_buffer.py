@@ -2,7 +2,6 @@
 
 import logging
 
-import h5py
 import numpy as np
 import pandas as pd
 
@@ -35,7 +34,7 @@ class DatasetBuffer:
 
     def __init__(
             self, hdf_store, path, max_size, dtype, columns, scaleoffset=None,
-            max_chunk_bytes=None
+            max_chunk_bytes=None, attributes=None
         ):
         if max_chunk_bytes is None:
             max_chunk_bytes = DEFAULT_MAX_CHUNK_BYTES
@@ -68,12 +67,16 @@ class DatasetBuffer:
         )
         self._dataset.attrs["columns"] = columns
         self._dataset_index = 0
-
+        self._path = path
         self._buf = np.empty(chunks, dtype=dtype)
+
+        if attributes is not None:
+            for attr, val in attributes.items():
+                self._dataset.attrs[attr] = val
 
     def __del__(self):
         assert self._buf_index == 0, \
-            "DatasetBuffer destructed with data in memory"
+            f"DatasetBuffer destructed with data in memory: {self._path}"
 
     def flush_data(self):
         """Flush the data in the temporary buffer to storage."""
@@ -85,6 +88,7 @@ class DatasetBuffer:
         self._dataset[self._dataset_index:new_index] = self._buf[0:length]
         self._buf_index = 0
         self._dataset_index = new_index
+        self._dataset.attrs["length"] = new_index
 
     def max_num_bytes(self):
         """Return the maximum number of bytes the container could hold.
@@ -130,4 +134,26 @@ class DatasetBuffer:
         pd.DataFrame
 
         """
-        return pd.DataFrame(dataset[:], columns=dataset.attrs["columns"])
+        if "length" in dataset.attrs.keys():
+            length = dataset.attrs["length"]
+        else:
+            # This can be removed once projects with the older format aren't
+            # supported.
+            length = len(dataset)
+        return pd.DataFrame(dataset[:length], columns=dataset.attrs["columns"])
+
+    @staticmethod
+    def to_datetime(dataset):
+        """Create a pandas DatetimeIndex from a dataset.
+
+        Parameters
+        ----------
+        dataset : h5py.Dataset
+
+        Returns
+        -------
+        pd.DatetimeIndex
+
+        """
+        length = dataset.attrs["length"]
+        return pd.to_datetime(dataset[:length], unit="s")

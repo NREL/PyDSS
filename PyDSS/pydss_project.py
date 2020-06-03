@@ -14,8 +14,8 @@ import PyDSS
 from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, \
     SIMULATION_SETTINGS_FILENAME, DEFAULT_SIMULATION_SETTINGS_FILE, \
     ControllerType, ExportMode, MONTE_CARLO_SETTINGS_FILENAME,\
-    filename_from_enum, VisualizationType, DEFAULT_MONTE_CARLO,\
-    SUBSCRIPTIONS_FILENAME, DEFAULT_SUBSCRIPTION, OPENDSS_MASTER_FILENAME
+    filename_from_enum, VisualizationType, DEFAULT_MONTE_CARLO_SETTINGS_FILE,\
+    SUBSCRIPTIONS_FILENAME, DEFAULT_SUBSCRIPTIONS_FILE, OPENDSS_MASTER_FILENAME
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 from PyDSS.pyDSS import instance
 from PyDSS.pydss_fs_interface import PyDssDirectoryInterface, \
@@ -28,7 +28,7 @@ from distutils.dir_util import copy_tree
 logger = logging.getLogger(__name__)
 
 
-DATA_FORMAT_VERSION = "1.0.0"
+DATA_FORMAT_VERSION = "1.0.1"
 
 
 class PyDssProject:
@@ -506,7 +506,7 @@ class PyDssScenario:
                                    VisualizationType.TABLE_PLOT, VisualizationType.THREEDIM_PLOT,
                                    VisualizationType.TIMESERIES_PLOT, VisualizationType.TOPOLOGY_PLOT,
                                    VisualizationType.VOLTDIST_PLOT, VisualizationType.XY_PLOT,)
-    DEFAULT_EXPORT_MODE = ExportMode.BY_CLASS
+    DEFAULT_EXPORT_MODE = ExportMode.EXPORTS
     _SCENARIO_DIRECTORIES = (
         "ExportLists",
         "pyControllerList",
@@ -641,15 +641,13 @@ class PyDssScenario:
             )
             dump_data(visualizations, filename)
 
-        # @Danial the plots.toml file is not used by a single scenario.
-        # It is used to craete plots that compare results from multiple scenarios
         dump_data(
-            DEFAULT_MONTE_CARLO,
+            load_data(DEFAULT_MONTE_CARLO_SETTINGS_FILE),
             os.path.join(path, "Monte_Carlo", MONTE_CARLO_SETTINGS_FILENAME)
         )
 
         dump_data(
-            DEFAULT_SUBSCRIPTION,
+            load_data(DEFAULT_SUBSCRIPTIONS_FILE),
             os.path.join(path, "ExportLists", SUBSCRIPTIONS_FILENAME)
         )
 
