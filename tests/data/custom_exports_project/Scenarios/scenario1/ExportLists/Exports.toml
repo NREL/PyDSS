@@ -56,7 +56,8 @@ store_values_type = "all"
 
 [Transformers.Currents]
 publish = false
-store_values_type = "all"
+store_values_type = "moving_average"
+window_size = 10
 
 [Transformers.NormalAmps]
 publish = false

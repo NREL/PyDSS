@@ -400,11 +400,8 @@ class ElementData:
                 buf.append(value.value)
                 if buf.should_store():
                     suffix = "Avg"
-                    value = ValueByNumber(
-                        self._name,
-                        prop.name + suffix,
-                        buf.average(),
-                    )
+                    value.set_element_property(prop.name + suffix)
+                    value.set_value(buf.average())
                 else:
                     continue
             if len(value.make_columns()) > 1:
@@ -488,6 +485,9 @@ class _CircularBufferHelper:
             self._count = 0
 
     def average(self):
+        assert self._buf
+        if isinstance(self._buf[0], list):
+            return pd.DataFrame(self._buf).mean().values
         return sum(self._buf) / len(self._buf)
 
     def should_store(self):
