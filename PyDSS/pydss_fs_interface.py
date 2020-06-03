@@ -114,6 +114,20 @@ class PyDssFileSystemInterface(abc.ABC):
         """
 
     @abc.abstractmethod
+    def read_scenario_pv_profiles(self, scenario_name):
+        """Return the PV profiles for a scenario.
+
+        Parameters
+        ----------
+        scenario_name : str
+
+        Returns
+        -------
+        dict
+
+        """
+
+    @abc.abstractmethod
     def read_visualization_config(self, scenario):
         """Read visualization config for a scenario.
 
@@ -253,6 +267,15 @@ class PyDssDirectoryInterface(PyDssFileSystemInterface):
         )
         return load_data(filename)
 
+    def read_scenario_pv_profiles(self, scenario_name):
+        filename = os.path.join(
+            self._project_dir,
+            "Exports",
+            scenario_name,
+            "pv_profiles.json",
+        )
+        return load_data(filename)
+
     @property
     def simulation_config(self):
         return self._simulation_config
@@ -328,6 +351,14 @@ class PyDssArchiveFileInterfaceBase(PyDssFileSystemInterface):
             "Exports",
             scenario_name,
             "metadata.json",
+        )
+        return self._load_data(filename)
+
+    def read_scenario_pv_profiles(self, scenario_name):
+        filename = os.path.join(
+            "Exports",
+            scenario_name,
+            "pv_profiles.json",
         )
         return self._load_data(filename)
 

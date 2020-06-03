@@ -9,7 +9,7 @@ import pandas as pd
 from PyDSS.pyLogger import getLoggerTag
 from PyDSS.unitDefinations import unit_info
 from PyDSS.dataset_buffer import DatasetBuffer
-from PyDSS.exceptions import InvalidParameter
+from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
 from PyDSS.export_list_reader import ExportListReader, StoreValuesType
 from PyDSS.utils.dataframe_utils import write_dataframe
 from PyDSS.utils.utils import dump_data
@@ -177,6 +177,8 @@ class ResultData:
             self._export_event_log(metadata)
         if self._options["Exports"]["Export Elements"]:
             self._export_elements(metadata)
+        if self._options["Exports"]["Export PV Profiles"]:
+            self._export_pv_profiles()
 
         filename = os.path.join(self._export_dir, self.METADATA_FILENAME)
         dump_data(metadata, filename, indent=4)
@@ -266,7 +268,43 @@ class ResultData:
         filepath = os.path.join(self._export_dir, "TransformersPhaseInfo.csv")
         write_dataframe(df, filepath)
         metadata["element_info_files"].append(relpath)
-        self._logger.info("Exported transformer phase information to %s.", filepath)
+        self._logger.info("Exported transformer phase information to %s", filepath)
+
+    def _export_pv_profiles(self):
+        dss = self._dss_instance
+        pv_systems = self._objects_by_class.get("PVSystems")
+        if pv_systems is None:
+            raise InvalidConfiguration("PVSystems are not exported")
+
+        pv_infos = []
+        profiles = set()
+        for full_name, obj in pv_systems.items():
+            profile_name = obj.GetParameter("yearly").lower()
+            profiles.add(profile_name)
+            pv_infos.append({
+                "irradiance": obj.GetParameter("irradiance"),
+                "name": full_name,
+                "pmpp": obj.GetParameter("pmpp"),
+                "load_shape_profile": profile_name,
+            })
+
+        pmult_sums = {}
+        dss.LoadShape.First()
+        while True:
+            name = dss.LoadShape.Name().lower()
+            if name in profiles:
+                pmult_sums[name] = sum(dss.LoadShape.PMult())
+            if dss.LoadShape.Next() == 0:
+                break
+
+        for pv_info in pv_infos:
+            profile = pv_info["load_shape_profile"]
+            pv_info["load_shape_pmult_sum"] = pmult_sums[profile]
+
+        data = {"pv_systems": pv_infos}
+        filename = os.path.join(self._export_dir, "pv_profiles.json")
+        dump_data(data, filename, indent=2)
+        self._logger.info("Exported PV profile information to %s", filename)
 
     @staticmethod
     def get_units(prop, index=None):

@@ -66,6 +66,15 @@ def test_custom_exports(cleanup_project):
     data = load_data(sums_json)
     assert data
 
+    pv_profiles = scenario.read_pv_profiles()
+    assert pv_profiles["pv_systems"]
+    for info in pv_profiles["pv_systems"]:
+        assert isinstance(info["name"], str)
+        assert isinstance(info["irradiance"], float)
+        assert isinstance(info["pmpp"], float)
+        assert isinstance(info["load_shape_profile"], str)
+        assert isinstance(info["load_shape_pmult_sum"], float)
+
 
 def test_export_moving_averages(cleanup_project):
     # Compares the moving average storage/calculation with a rolling average

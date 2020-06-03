@@ -567,6 +567,16 @@ class PyDssScenarioResults:
         text = self.read_file(self._metadata["event_log"])
         return _read_event_log(text)
 
+    def read_pv_profiles(self):
+        """Returns exported PV profiles for all PV systems.
+
+        Returns
+        -------
+        dict
+
+        """
+        return self._fs_intf.read_scenario_pv_profiles(self._name)
+
     def _check_options(self, element_class, prop, **kwargs):
         """Checks that kwargs are valid and returns available option names."""
         for option in kwargs:

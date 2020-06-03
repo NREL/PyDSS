@@ -79,6 +79,8 @@ These configuration customizations exist for data exported using the new
   ``Export Data Tables`` is set to true.
 - ``Export Data In Memory``:  Set to true to keep exported data in memory.
   Otherwise, it is flushed to disk periodically.
+- ``Export PV Profiles``: Set to true to export load shape profile information
+  for PV Systems.
 - ``HDF Max Chunk Bytes``: PyDSS uses the h5py library to write exported data to
   disk. Inline compression is always used, so chunking is enabled. This
   parameter will control the maximum size of dataset chunks. Refer to

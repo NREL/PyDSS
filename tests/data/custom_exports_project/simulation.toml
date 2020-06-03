@@ -45,6 +45,7 @@ post_process_infos = []
 "Export Iteration Order" = "ValuesByPropertyAcrossElements"
 "Export Elements" = true
 "Export Data Tables" = true
+"Export PV Profiles" = true
 "Export Data In Memory" = true
 "Export Event Log" = true
 "Export Format" = "h5"

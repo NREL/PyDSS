@@ -46,6 +46,7 @@ post_process_infos = []
 "Export Elements" = true
 "Export Data Tables" = false
 "Export Data In Memory" = true
+"Export PV Profiles" = true
 "Export Event Log" = true
 "Export Format" = "h5"
 "Export Compression" = true
