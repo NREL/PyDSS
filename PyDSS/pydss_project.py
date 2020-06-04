@@ -294,10 +294,8 @@ class PyDssProject:
         if self._simulation_config['Project']['DSS File'] == "":
             raise InvalidConfiguration("a valid opendss file needs to be passed")
 
-
         inst = instance()
         self._simulation_config["Logging"]["Pre-configured logging"] = logging_configured
-
         if dry_run:
             store_filename = os.path.join(tempfile.gettempdir(), STORE_FILENAME)
         else:

@@ -39,7 +39,6 @@ class OpenDSS:
         self._dssInstance = dss
 
     def init(self, params):
-        print("initializing pydss")
         self._TempResultList = []
         self._dssBuses = {}
         self._dssObjects = {}
@@ -117,15 +116,15 @@ class OpenDSS:
         self._CreateBusObjects()
         self._dssSolver.reSolve()
 
-        if params and params['Exports']['Log Results']:
-            if params['Exports']['Result Container'] == 'ResultContainer':
-                self.ResultContainer = RC(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
-                                          self._dssBuses, self._dssSolver, self._dssCommand)
-            else:
-                self.ResultContainer = ResultData(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
-                                                    self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance)
+        #if params and params['Exports']['Log Results']:
+        if params['Exports']['Result Container'] == 'ResultContainer':
+            self.ResultContainer = RC(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
+                                      self._dssBuses, self._dssSolver, self._dssCommand)
         else:
-            self.ResultContainer = None
+            self.ResultContainer = ResultData(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
+                                                self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance)
+    # else:
+    #     self.ResultContainer = None
 
         pyCtrlReader = pcr(self._dssPath['pyControllers'])
         ControllerList = pyCtrlReader.pyControllers
@@ -327,7 +326,8 @@ class OpenDSS:
             self._HI.updateHelicsPublications()
             self._increment_flag, helics_time = self._HI.request_time_increment()
 
-        return self.ResultContainer.CurrentResults
+        if self.ResultContainer:
+            return self.ResultContainer.GetCurrentData()
 
     def DryRunSimulation(self, project, scenario):
         """Run one time point for getting estimated space."""

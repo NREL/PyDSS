@@ -92,7 +92,7 @@ def restructure_dictionary(d):
         if key in pydss_settings:
             defaults[key].update(pydss_settings[key])
 
-    pydss_settings["Project"]["Scenarios"] =[
+    defaults["Project"]["Scenarios"] =[
         {
             "name" : d["Active Scenario"],
             "post_process_infos" : []

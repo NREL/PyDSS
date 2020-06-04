@@ -6,6 +6,7 @@ from queue import Empty
 from PyDSS.dssInstance import OpenDSS
 from PyDSS.valiate_settings import validate_settings
 from PyDSS.api.src.web.parser import restructure_dictionary
+from PyDSS.api.src.app.arrow_writer import ArrowWriter
 logger = logging.getLogger(__name__)
 
 class PyDSS:
@@ -75,7 +76,7 @@ class PyDSS:
 
             except (KeyboardInterrupt, SystemExit):
                 break
-        logger.info(f"{self.uuid} - finishing PyDSS simulation")
+        logger.info(f"PyDSS subprocess {self.uuid} has ended")
 
 
     def close_instance(self):
@@ -95,6 +96,7 @@ class PyDSS:
 
         try:
             self.pydss_obj.init(args)
+            self.a_writer = ArrowWriter(self.pydss_obj._dssPath['Export'])
             self.initalized = True
             return 200, "PyDSS project successfully loaded"
         except Exception as e:
@@ -105,9 +107,25 @@ class PyDSS:
             try:
                 Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
                 for i in range(Steps):
-                    update_dict = {} #TODO: will be ued to interface with websocket implemntation (helics subscriptions)
-                    results = self.pydss_obj.RunStep(i, update_dict)
+                    results = self.pydss_obj.RunStep(i)
+                    restructured_results = {}
+                    for k, val in results.items():
+                        if "." not in k:
+                            class_name = "Bus"
+                            elem_name = k
+                        else:
+                            class_name, elem_name = k.split(".")
+                        if class_name not in restructured_results:
+                            restructured_results[class_name] = {}
+                        if not isinstance(val, complex):
+                            restructured_results[class_name][elem_name] = val
+                    self.a_writer.write_asset_status(
+                        self.pydss_obj._Options["Helics"]["Federate name"],
+                        self.pydss_obj._dssSolver.GetTotalSeconds(),
+                        restructured_results
+                    )
                     #TODO: results will be ued to interface with websocket implemntation (helics publications)
+
                 self.initalized = False
                 return 200, f"Simulation complete..."
             except Exception as e:

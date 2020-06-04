@@ -243,13 +243,6 @@ class ResultContainer:
         pass
 
     def UpdateResults(self):
-        if self.__Settings['Helics']['Co-simulation Mode']:
-            r_seconds = self.__dssDolver.GetTotalSeconds()
-            print('Time: ', r_seconds)
-            c_seconds = 0
-            while c_seconds < r_seconds:
-                c_seconds = h.helicsFederateRequestTime(self.__PyDSSfederate, r_seconds)
-
         self.__DateTime.append(self.__dssDolver.GetDateTime())
         self.__Frequency.append(self.__dssDolver.getFrequency())
         self.__SimulationMode.append(self.__dssDolver.getMode())

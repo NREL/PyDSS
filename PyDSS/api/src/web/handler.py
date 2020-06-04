@@ -333,6 +333,9 @@ class Handler:
                                     Active Scenario: base_case
                                     DSS File: Master_Spohn_existing_VV.dss
                                     Co-simulation Mode: false
+                                    Result Container: ResultData
+                                    Log Results: false
+                                    Federate name : PyDSS_x
                         Example_2:
                             value:
                                 UUID : 96c21e00-cd3c-4943-a914-14451f5f7ab6

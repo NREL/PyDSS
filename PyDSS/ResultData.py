@@ -157,6 +157,13 @@ class ResultData:
         for element in self._elements:
             element.initialize_data_store(hdf_store, self._scenario, num_steps)
 
+    def GetCurrentData(self):
+        self.CurrentResults.clear()
+        for elem in self._elements:
+            data = elem.get_current_data()
+            self.CurrentResults.update(data)
+        return self.CurrentResults
+
     def UpdateResults(self):
         self.CurrentResults.clear()
         self._time_dataset.write_value(self._dss_solver.GetDateTime().timestamp())
@@ -174,7 +181,6 @@ class ResultData:
             "event_log": None,
             "element_info_files": [],
         }
-
         if self._options["Exports"]["Export Event Log"]:
             self._export_event_log(metadata)
         if self._options["Exports"]["Export Elements"]:
@@ -360,6 +366,17 @@ class ElementData:
         # Reset these for MonteCarlo simulations.
         for prop in self._data:
             self._data[prop] = None
+
+    def get_current_data(self):
+        curr_data = {}
+        for prop in self.properties:
+            value = self._obj.GetValue(prop, convert=True)
+            if len(value.make_columns()) > 1:
+                for column, val in zip(value.make_columns(), value.value):
+                    curr_data[column] = val
+            else:
+                curr_data[value.make_columns()[0]] = value.value
+        return curr_data
 
     def append_values(self):
         curr_data = {}
