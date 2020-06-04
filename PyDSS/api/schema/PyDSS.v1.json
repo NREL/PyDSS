@@ -1,381 +1,690 @@
 {
-    "openapi": "3.0.0",
     "info": {
-        "title": "PyDSS API",
-        "version": "1.0",
-        "description": "API for PyDSS",
-        "contact": {
-            "name": "Kapil Duwadi",
-            "email": "kapil.duwadi@nrel.gov"
-        },
-        "license": {
-            "name": "Apache 2.0"
-        }
+        "description": "The API enables creating PyDSS instances, running simulations and creation of new projects.",
+        "title": "PyDSS RESTful API documentation",
+        "version": "2.0.1"
     },
-    "servers": [
-        {
-            "url": "http://0.0.0.0:8080/"
-        }, {
-            "description": "",
-            "url": "ttps://api.naerm.team"
-        }
-    ],
+    "openapi": "3.0.0",
     "paths": {
         "/simulators/pydss": {
-            "parameters": [],
-            "post": {
-                "summary": "",
-                "operationId": "post-simulators-pydss",
+            "delete": {
+                "parameters": [
+                    {
+                        "explode": false,
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "example": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+                            "format": "uuid",
+                            "type": "string"
+                        },
+                        "style": "simple"
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "OK",
                         "content": {
                             "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "Status": {
-                                            "type": "string",
-                                            "description": "Status of the request: sucess or failed"
-                                        },
-                                        "Message": {
-                                            "type": "string",
-                                            "description": "description of the status of post request"
-                                        },
-                                        "UUID": {
-                                            "type": "string",
-                                            "format": "uuid",
-                                            "description": "uuid of PyDSS instance"
-                                        }
-                                    },
-                                    "required": ["Status", "Message", "UUID"]
-                                },
                                 "examples": {
-                                    "create_pydss_instance": {
+                                    "get_instance_status": {
                                         "value": {
-                                            "Status": "Success",
-                                            "Message": "Starting PyDSS",
+                                            "Message": "Successfully deleted a PyDSS instance",
+                                            "Status": 200,
                                             "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6"
                                         }
                                     }
+                                },
+                                "schema": {
+                                    "type": "object"
                                 }
                             }
-                        }
+                        },
+                        "description": "Successfully retrieved project information"
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Error closing PyDSS instance",
+                                            "Status": 403,
+                                            "UUID": "None"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Provided path does not exist"
                     }
                 },
-                "description": "Instantiate PyDSS object"
+                "summary": "Deletes an active instance of PyDSS",
+                "tags": [
+                    "Simulation"
+                ]
+            },
+            "post": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Starting a PyDSS instance",
+                                            "Status": 200,
+                                            "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Successfully retrieved project information"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Failed to create a PyDSS instance",
+                                            "Status": 500,
+                                            "UUID": "None"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Provided path does not exist"
+                    }
+                },
+                "summary": "Creates an instance of PyDSS and runs the simulation",
+                "tags": [
+                    "Simulation"
+                ]
             },
             "put": {
-                "summary": "",
-                "operationId": "put-simulators-pydss",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "Example 1": {
+                                    "value": {
+                                        "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+                                        "command": "init",
+                                        "parameters": {
+                                            "Active Project": "custom_contols",
+                                            "Active Scenario": "base_case",
+                                            "Co-simulation Mode": false,
+                                            "Control mode": "Static",
+                                            "DSS File": "Master_Spohn_existing_VV.dss",
+                                            "Date offset": 0,
+                                            "End Day": 1,
+                                            "End Time (min)": 1439,
+                                            "Error tolerance": 0.001,
+                                            "Federate name": "PyDSS_x",
+                                            "Log Results": false,
+                                            "Max Control Iterations": 50,
+                                            "Project Path": "C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples",
+                                            "Result Container": "ResultData",
+                                            "Simulation Type": "QSTS",
+                                            "Start Day": 1,
+                                            "Start Time (min)": 0,
+                                            "Start Year": 2017,
+                                            "Step resolution (sec)": 900
+                                        }
+                                    }
+                                },
+                                "Example_2": {
+                                    "value": {
+                                        "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+                                        "command": "run",
+                                        "parameters": {}
+                                    }
+                                }
+                            },
+                            "schema": {
+                                "properties": {
+                                    "command": {
+                                        "example": "initialize",
+                                        "type": "string"
+                                    },
+                                    "parameters": {
+                                        "type": "object"
+                                    },
+                                    "uuid": {
+                                        "example": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+                                        "format": "UUID",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "required": false
+                },
                 "responses": {
                     "200": {
-                        "description": "OK",
                         "content": {
                             "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "Status": {
-                                            "type": "string",
-                                            "description": "staus of the request"
-                                        },
-                                        "Message": {
-                                            "type": "string",
-                                            "description": "description of what happened after submitting put request"
-                                        },
-                                        "UUID": {
-                                            "type": "string",
-                                            "format": "uuid",
-                                            "description": "uuid of the PyDSS instance to which put request is submitted"
-                                        }
-                                    },
-                                    "required": ["Status", "Message", "UUID"]
-                                },
                                 "examples": {
-                                    "solve_powerflow": {
+                                    "get_instance_status": {
                                         "value": {
-                                            "Status": "Success",
-                                            "Message": "solve_powerflow command submitted, awaiting response ",
+                                            "Message": "Command submitted, awaiting response",
+                                            "Status": 200,
                                             "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6"
                                         }
                                     }
-                                }
-                            }
-                        }
-                    }
-                },
-                "description": "Perform operation on PyDSS instance",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "UUID": {
-                                        "type": "string",
-                                        "format": "uuid",
-                                        "description": "uuid of the PyDSS instance to execute command"
-                                    },
-                                    "command": {
-                                        "type": "string",
-                                        "description": "which command to execute"
-                                    },
-                                    "parameters": {
-                                        "type": [
-                                            "string", "object"
-                                        ],
-                                        "required": ["filename"],
-                                        "description": "inputs to execute the command",
-                                        "properties": {
-                                            "filename": {
-                                                "type": "string",
-                                                "description": "filepath for toml file "
-                                            }
-                                        }
-                                    }
                                 },
-                                "required": ["UUID", "command", "parameters"]
-                            },
-                            "examples": {
-                                "command_tosolve_powerflow": {
-                                    "value": {
-                                        "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
-                                        "command": "solve_powerflow",
-                                        "parameters": {
-                                            "filename": "C:\\Users\\KDUWADI\\Desktop\\NREL_Projects\\NAERM-DOE\\PSSEapi\\Projects\\Test\\PyDSS Scenarios\\NoController\\PyDSS_settings.toml"
-                                        }
-                                    }
+                                "schema": {
+                                    "type": "object"
                                 }
                             }
-                        }
+                        },
+                        "description": "Successfully retrieved project information"
                     },
-                    "description": "The argumnets must be a json."
-                }
-            },
-            "delete": {
-                "summary": "",
-                "operationId": "delete-simulators-pydss",
-                "responses": {
-                    "200": {
-                        "description": "OK",
+                    "401": {
                         "content": {
                             "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "Status": {
-                                            "type": "string",
-                                            "description": "status of delete request"
-                                        },
-                                        "Message": {
-                                            "type": "string",
-                                            "description": "description of status of delete request"
-                                        },
-                                        "UUID": {
-                                            "type": "string",
-                                            "format": "uuid",
-                                            "description": "uuid of pydss instance which is closed"
-                                        }
-                                    },
-                                    "required": ["Status", "Message", "UUID"]
-                                },
                                 "examples": {
-                                    "delete_response_example": {
+                                    "get_instance_status": {
                                         "value": {
-                                            "Status": "Success",
-                                            "Message": "Attempting to close PyDSS instance",
-                                            "UUID": "17a8f9d3-18d8-47ef-8d60-1e271d7e0769"
+                                            "Message": "Please provide a command and parameters",
+                                            "Status": 401,
+                                            "UUID": "None"
                                         }
                                     }
+                                },
+                                "schema": {
+                                    "type": "object"
                                 }
                             }
-                        }
-                    }
-                },
-                "description": "Delete a PyDSS instance",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "UUID": {
-                                        "type": "string",
-                                        "format": "uuid",
-                                        "description": "uuid of PyDSS instance which is requested to be closed"
+                        },
+                        "description": "Provided path does not exist"
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Provided UUID is not valid PyDSS instance id",
+                                            "Status": 403,
+                                            "UUID": "None"
+                                        }
                                     }
                                 },
-                                "required": ["UUID"]
-                            },
-                            "examples": {
-                                "delete_request_example": {
-                                    "value": {
-                                        "UUID": "17a8f9d3-18d8-47ef-8d60-1e271d7e0769"
-                                    }
+                                "schema": {
+                                    "type": "object"
                                 }
+                            }
+                        },
+                        "description": "Provided path does not exist"
+                    }
+                },
+                "summary": "Run a command on an active instance of PyDSS",
+                "tags": [
+                    "Simulation"
+                ]
+            }
+        },
+        "/simulators/pydss/create": {
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "controller_types": {
+                                        "description": "comma separated list of PyDSS controller names",
+                                        "example": "PvController,StorageController",
+                                        "type": "string"
+                                    },
+                                    "fileName": {
+                                        "format": "binary",
+                                        "type": "string"
+                                    },
+                                    "master_file": {
+                                        "example": "Master_Spohn_existing_VV.dss",
+                                        "type": "string"
+                                    },
+                                    "project": {
+                                        "example": "test_project",
+                                        "type": "string"
+                                    },
+                                    "scenarios": {
+                                        "description": "comma separated list of PyDSS scenarios to be created",
+                                        "example": "base_case,pv_scenario",
+                                        "type": "string"
+                                    },
+                                    "visualization_types": {
+                                        "description": "comma separated list of PyDSS plot names",
+                                        "example": "Histogram,TimeSeries",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
                             }
                         }
                     },
-                    "description": "delete request for PyDSS instance"
-                }
+                    "required": false
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "PyDSS project created",
+                                            "Status": 200,
+                                            "UUID": "None"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Successfully retrieved project information"
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "User does not have access to delete folders",
+                                            "Status": 403,
+                                            "UUID": "None"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Provided path does not exist"
+                    }
+                },
+                "summary": "Creates a new project for PyDSS (User uploads a zipped OpenDSS model)",
+                "tags": [
+                    "PyDSS project"
+                ]
+            }
+        },
+        "/simulators/pydss/info": {
+            "get": {
+                "parameters": [
+                    {
+                        "explode": true,
+                        "in": "query",
+                        "name": "path",
+                        "required": true,
+                        "schema": {
+                            "example": "C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples",
+                            "type": "string"
+                        },
+                        "style": "form"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Data": {
+                                                "Project1": {
+                                                    "Scenario1": null,
+                                                    "Scenario2": null
+                                                },
+                                                "Project2": {
+                                                    "Scenario1": null
+                                                }
+                                            },
+                                            "Message": "PyDSS instance with the provided UUID is currently running",
+                                            "Status": 200,
+                                            "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Successfully retrieved project information"
+                    },
+                    "406": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Provided path does not exist",
+                                            "Status": 406,
+                                            "UUID": "None"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Provided path does not exist"
+                    }
+                },
+                "summary": "Returns a dictionary of valid project and scenarios in the provided path",
+                "tags": [
+                    "PyDSS project"
+                ]
+            },
+            "head": {
+                "parameters": [
+                    {
+                        "explode": true,
+                        "in": "query",
+                        "name": "path",
+                        "required": true,
+                        "schema": {
+                            "example": "C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples",
+                            "type": "string"
+                        },
+                        "style": "form"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Data": {
+                                                "Project1": {
+                                                    "Scenario1": null,
+                                                    "Scenario2": null
+                                                },
+                                                "Project2": {
+                                                    "Scenario1": null
+                                                }
+                                            },
+                                            "Message": "PyDSS instance with the provided UUID is currently running",
+                                            "Status": 200,
+                                            "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Successfully retrieved project information"
+                    },
+                    "406": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Provided path does not exist",
+                                            "Status": 406,
+                                            "UUID": "None"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Provided path does not exist"
+                    }
+                },
+                "summary": "Returns a dictionary of valid project and scenarios in the provided path",
+                "tags": [
+                    "PyDSS project"
+                ]
             }
         },
         "/simulators/pydss/instances": {
             "get": {
-                "summary": "Your GET endpoint",
-                "tags": [],
                 "responses": {
                     "200": {
-                        "description": "OK",
                         "content": {
                             "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "Status": {
-                                            "type": "string",
-                                            "description": "status of get request for PyDSS instances"
-                                        },
-                                        "Instances": {
-                                            "type": "array",
-                                            "description": "array of uuid of all instances",
-                                            "items": {}
-                                        }
-                                    },
-                                    "required": ["Status", "Instances"]
-                                },
                                 "examples": {
-                                    "get_instances": {
+                                    "get_instance_status": {
                                         "value": {
-                                            "Status": "Success",
-                                            "Instances": ["96c21e00-cd3c-4943-a914-14451f5f7ab6"]
+                                            "Message": "2 PyDSS instances currently running",
+                                            "Status": 200,
+                                            "UUID": []
                                         }
                                     }
+                                },
+                                "schema": {
+                                    "type": "object"
                                 }
                             }
-                        }
+                        },
+                        "description": "UUIDs of all currently running PyDSS instances have been returned"
+                    },
+                    "204": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "No PyDSS instance currently running",
+                                            "Status": 204,
+                                            "UUID": [
+                                                "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+                                                "96c21e045-cd6c-8394-a914-14451f5f7ab6"
+                                            ]
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "No active PyDSS instance found"
                     }
                 },
-                "operationId": "get-simulators-pydss-instances",
-                "description": "returns uuid of all PyDSS instances"
+                "summary": "Returns UUIDs of all the instances currently running on the server",
+                "tags": [
+                    "simulation status"
+                ]
+            },
+            "head": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "2 PyDSS instances currently running",
+                                            "Status": 200,
+                                            "UUID": []
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "UUIDs of all currently running PyDSS instances have been returned"
+                    },
+                    "204": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "No PyDSS instance currently running",
+                                            "Status": 204,
+                                            "UUID": [
+                                                "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+                                                "96c21e045-cd6c-8394-a914-14451f5f7ab6"
+                                            ]
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "No active PyDSS instance found"
+                    }
+                },
+                "summary": "Returns UUIDs of all the instances currently running on the server",
+                "tags": [
+                    "simulation status"
+                ]
             }
         },
         "/simulators/pydss/status/uuid/{uuid}": {
-            "parameters": [
-                {
-                    "schema": {
-                        "type": "string",
-                        "format": "uuid"
-                    },
-                    "name": "uuid",
-                    "in": "path",
-                    "required": true
-                }
-            ],
             "get": {
-                "summary": "Your GET endpoint",
-                "tags": [],
+                "parameters": [
+                    {
+                        "explode": false,
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "example": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+                            "format": "uuid",
+                            "type": "string"
+                        },
+                        "style": "simple"
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "OK",
                         "content": {
                             "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "Status": {
-                                            "type": "string",
-                                            "description": "status of the request"
-                                        },
-                                        "Message": {
-                                            "type": "string",
-                                            "description": "description of the status of the request"
-                                        },
-                                        "UUID": {
-                                            "type": "string",
-                                            "format": "uuid",
-                                            "description": "uuid of the PyDSS instance for which status request is submitted"
-                                        }
-                                    },
-                                    "required": ["Status", "Message", "UUID"]
-                                },
                                 "examples": {
-                                    "status_return_example": {
+                                    "get_instance_status": {
                                         "value": {
-                                            "Status": "Success",
-                                            "Message": null,
-                                            "UUID": "17a8f9d3-18d8-47ef-8d60-1e271d7e0769"
+                                            "Message": "PyDSS instance with the provided UUID is currently running",
+                                            "Status": 200,
+                                            "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6"
                                         }
                                     }
+                                },
+                                "schema": {
+                                    "type": "object"
                                 }
                             }
-                        }
+                        },
+                        "description": "PyDSS instance with the provided UUID is currently running"
+                    },
+                    "204": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "PyDSS instance with the provided UUID does not exist",
+                                            "Status": 204,
+                                            "UUID": "None"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "PyDSS instance with the provided UUID does not exist"
                     }
                 },
-                "operationId": "get-simulators-pydss-status-uuid-uuid",
-                "description": "Get the status of pydss instance",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "UUID": {
-                                        "type": "string",
-                                        "format": "uuid",
-                                        "description": "uuid of the pydss instance for which status is requested"
+                "summary": "Returns states of process of with UUID matching the passed UUID",
+                "tags": [
+                    "simulation status"
+                ]
+            },
+            "head": {
+                "parameters": [
+                    {
+                        "explode": false,
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "example": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+                            "format": "uuid",
+                            "type": "string"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "PyDSS instance with the provided UUID is currently running",
+                                            "Status": 200,
+                                            "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6"
+                                        }
                                     }
                                 },
-                                "required": ["UUID"]
-                            },
-                            "examples": {
-                                "get_status_example": {
-                                    "value": {
-                                        "UUID": "17a8f9d3-18d8-47ef-8d60-1e271d7e0769"
-                                    }
+                                "schema": {
+                                    "type": "object"
                                 }
                             }
-                        }
+                        },
+                        "description": "PyDSS instance with the provided UUID is currently running"
                     },
-                    "description": "pass in the UUID to get the status"
-                }
+                    "204": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "PyDSS instance with the provided UUID does not exist",
+                                            "Status": 204,
+                                            "UUID": "None"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "PyDSS instance with the provided UUID does not exist"
+                    }
+                },
+                "summary": "Returns states of process of with UUID matching the passed UUID",
+                "tags": [
+                    "simulation status"
+                ]
             }
         }
-    },
-    "components": {
-        "schemas": {
-            "command": {
-                "title": "command",
-                "type": "object",
-                "description": "Model for capturing command being sent to PyDSS instance",
-                "x-examples": {
-                    "solve_powerflow": {
-                        "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
-                        "command": "solve_powerflow",
-                        "parameters": {
-                            "filename": "C:\\Users\\KDUWADI\\Desktop\\NREL_Projects\\NAERM-DOE\\PSSEapi\\Projects\\Test\\PyDSS Scenarios\\NoController\\PyDSS_settings.toml"
-                        }
-                    }
-                },
-                "properties": {
-                    "uuid": {
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "uuid of the PyDSS instance in which command is to be executed."
-                    },
-                    "command": {
-                        "type": "string",
-                        "description": "command to be executed"
-                    },
-                    "parameters": {
-                        "type": "object",
-                        "description": "input object for executing command "
-                    }
-                },
-                "required": ["uuid", "command", "parameters"]
-            }
-        },
-        "securitySchemes": {}
     }
 }

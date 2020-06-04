@@ -21,7 +21,7 @@ def serve(port=9090):
     """Run a PyDSS RESTful API server."""
     FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
     logging.basicConfig(level=logging.INFO, format=FORMAT)
-    pydss = pydss_server()
+    pydss = pydss_server(port)
     web.run_app(pydss.app, port=port)
 
 

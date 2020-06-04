@@ -96,7 +96,8 @@ class PyDSS:
 
         try:
             self.pydss_obj.init(args)
-            self.a_writer = ArrowWriter(self.pydss_obj._dssPath['Export'])
+            export_path = os.path.join(self.pydss_obj._dssPath['Export'], args['Project']['Active Scenario'])
+            self.a_writer = ArrowWriter(export_path)
             self.initalized = True
             return 200, "PyDSS project successfully loaded"
         except Exception as e:
@@ -133,6 +134,13 @@ class PyDSS:
                 return 500, f"Simulation crashed at at simulation time step: {self.pydss_obj._dssSolver.GetDateTime()}, {e}"
         else:
             return 500, f"No project initialized. Load a project first using the 'init' command"
+
+    def subscribe(self, params):
+        return 200, f"Subscribed to {len(params)} endpoints"
+
+    def publish(self, params):
+        return 200, f"Created publications for {len(params)} endpoints"
+
 
 if __name__ == '__main__':
     FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
