@@ -129,6 +129,26 @@ class ValueStorageBase(abc.ABC):
 
         """
 
+    @abc.abstractmethod
+    def set_element_property(self, prop):
+        """Set the element property name.
+
+        Parameters
+        ----------
+        prop : str
+
+        """
+
+    @abc.abstractmethod
+    def set_value(self, value):
+        """Set the value.
+
+        Parameters
+        ----------
+        value : list | float | complex
+
+        """
+
     @property
     @abc.abstractmethod
     def value(self):
@@ -176,15 +196,13 @@ class ValueByList(ValueStorageBase):
         self._name = name
         self._prop = prop
         self._labels = []
-        self._data = {}
         self._value_type = None
         self._value = []
 
         assert (isinstance(values, list) and len(values) == len(label_suffixes)), \
             '"values" and "label_suffixes" should be lists of equal lengths'
         for val, lab_suf in zip(values, label_suffixes):
-            label = prop + '__' + lab_suf
-            self._data[label] = [val]
+            label = prop + self.DELIMITER + lab_suf
             self._labels.append(label)
             self._value.append(val)
             if self._value_type is None:
@@ -202,7 +220,20 @@ class ValueByList(ValueStorageBase):
 
     @property
     def num_columns(self):
-        return len(self._data)
+        return len(self._labels)
+
+    def set_element_property(self, prop):
+        self._prop = prop
+
+        # Update the property inside each label.
+        for i, label in self._labels:
+            fields = label.split(self.DELIMITER)
+            assert len(fields) == 2
+            fields[0] = prop
+            self._labels[i] = self.DELIMITER.join(fields)
+
+    def set_value(self, value):
+        self._value = value
 
     @property
     def value(self):
@@ -234,6 +265,12 @@ class ValueByNumber(ValueStorageBase):
     @property
     def num_columns(self):
         return 1
+
+    def set_element_property(self, prop):
+        self._prop = prop
+
+    def set_value(self, value):
+        self._value = value
 
     def make_columns(self):
         return [ValueStorageBase.DELIMITER.join((self._name, self._prop))]
@@ -327,6 +364,12 @@ class ValueByLabel(ValueStorageBase):
     @property
     def num_columns(self):
         return len(self._labels)
+
+    def set_element_property(self, prop):
+        self._prop = prop
+
+    def set_value(self, value):
+        self._value = value
 
     def make_columns(self):
         return [

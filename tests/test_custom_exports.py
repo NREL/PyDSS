@@ -36,6 +36,10 @@ def test_custom_exports(cleanup_project):
     for i, row in df.iterrows():
         assert round(row["t9__DistanceAvg"], 3) == 0.082
 
+    transformers = scenario.list_element_names("Transformers")
+    df = scenario.get_dataframe("Transformers", "CurrentsAvg", transformers[0])
+    assert len(df) < 96
+
     # Filtered value on custom function.
     df = scenario.get_dataframe("Lines", "LoadingPercent", "Line.pvl_110")
     assert len(df) < 96
