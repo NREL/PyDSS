@@ -22,6 +22,7 @@ from PyDSS.pydss_fs_interface import PyDssDirectoryInterface, \
     PyDssArchiveFileInterfaceBase, PyDssTarFileInterface, \
     PyDssZipFileInterface, PROJECT_DIRECTORIES, \
     SCENARIOS, STORE_FILENAME
+from PyDSS.reports import REPORTS_DIR
 from PyDSS.utils.utils import dump_data, load_data
 
 from distutils.dir_util import copy_tree
@@ -33,6 +34,9 @@ DATA_FORMAT_VERSION = "1.0.1"
 
 class PyDssProject:
     """Represents the project options for a PyDSS simulation."""
+
+    _SKIP_ARCHIVE = (PROJECT_ZIP, PROJECT_TAR, STORE_FILENAME, REPORTS_DIR)
+
     def __init__(self, path, name, scenarios, simulation_config, fs_intf=None,
                  simulation_file=SIMULATION_SETTINGS_FILENAME):
         self._name = name
@@ -255,7 +259,13 @@ class PyDssProject:
             simulation_config["Project"]["DSS File"] = master_dss_file
         simulation_config["Project"]["Project Path"] = path
         simulation_config["Project"]["Active Project"] = name
-        project = cls(path, name, scenarios, simulation_config, simulation_file)
+        project = cls(
+            path=path,
+            name=name,
+            scenarios=scenarios,
+            simulation_config=simulation_config,
+            simulation_file=simulation_file,
+        )
         project.serialize(opendss_project_folder=opendss_project_folder)
         sc_names = project.list_scenario_names()
         logger.info("Created project=%s with scenarios=%s at %s", name,
@@ -294,7 +304,6 @@ class PyDssProject:
         if self._simulation_config['Project']['DSS File'] == "":
             raise InvalidConfiguration("a valid opendss file needs to be passed")
 
-
         inst = instance()
         self._simulation_config["Logging"]["Pre-configured logging"] = logging_configured
 
@@ -314,12 +323,22 @@ class PyDssProject:
                 inst.run(self._simulation_config, self, scenario, dry_run=dry_run)
                 self._estimated_space[scenario.name] = inst.get_estimated_space()
 
-        if self._simulation_config["Exports"].get("Export Data Tables", False):
-            # Hack. Have to import here. Need to re-organize to fix.
-            from PyDSS.pydss_results import PyDssResults
-            results = PyDssResults(self._project_dir)
-            for scenario in results.scenarios:
-                scenario.export_data()
+        if not dry_run:
+            results = None
+            export_tables = self._simulation_config["Exports"].get(
+                "Export Data Tables", False
+            )
+            generate_reports = self._simulation_config.get("Reports", False)
+            if export_tables or generate_reports:
+                # Hack. Have to import here. Need to re-organize to fix.
+                from PyDSS.pydss_results import PyDssResults
+                results = PyDssResults(self._project_dir)
+                if export_tables:
+                    for scenario in results.scenarios:
+                        scenario.export_data()
+
+                if generate_reports:
+                    results.generate_reports()
 
         if tar_project:
             self._tar_project_files()
@@ -351,12 +370,13 @@ class PyDssProject:
     def _tar_project_files(self, delete=True):
         orig = os.getcwd()
         os.chdir(self._project_dir)
+        skip_names = (PROJECT_ZIP, STORE_FILENAME, REPORTS_DIR)
         try:
             filename = PROJECT_TAR
             to_delete = []
             with tarfile.open(filename, "w") as tar:
                 for name in os.listdir("."):
-                    if name in (PROJECT_TAR, STORE_FILENAME):
+                    if name in self._SKIP_ARCHIVE:
                         continue
                     tar.add(name)
                     if delete:
@@ -384,7 +404,7 @@ class PyDssProject:
                     if delete and root == ".":
                         to_delete += dirs
                     for filename in files:
-                        if root == "." and filename in (PROJECT_ZIP, STORE_FILENAME):
+                        if root == "." and filename in self._SKIP_ARCHIVE:
                             continue
                         path = os.path.join(root, filename)
                         zipf.write(path)
@@ -541,10 +561,7 @@ class PyDssScenario:
             self.visualizations = visualizations
 
         if (controller_types is None and controllers is None):
-            self.controllers = {
-                x: self.load_controller_config_from_type(x)
-                for x in PyDssScenario.DEFAULT_CONTROLLER_TYPES
-            }
+            self.controllers = {}
         elif controller_types is not None:
             self.controllers = {
                 x: self.load_controller_config_from_type(x)

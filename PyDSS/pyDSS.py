@@ -122,6 +122,10 @@ class instance(object):
             'Control mode': {'type': str, 'Options': ["Static", "Time"]},
             'Disable PyDSS controllers': {'type': bool, 'Options': [True, False]},
         },
+        "Reports": {
+            'Format': {'type': str, 'Options': ["csv", "h5"]},
+            'Types': {'type': list}
+        },
     }
 
     def __init__(self):
@@ -238,6 +242,13 @@ class instance(object):
                                             'DSSfiles',
                                             dss_args['Project']['DSS File']))), \
             "Master DSS file '{}' does not exist.".format(dss_args['Project']['DSS File'])
+
+        if "Reports" in dss_args:
+            if [x for x in dss_args["Reports"]["Types"] if x["enabled"]]:
+                if not dss_args["Exports"]["Log Results"]:
+                    raise InvalidConfiguration("Reports are only supported with Log Results")
+                if dss_args["Exports"]["Result Container"] != "ResultData":
+                    raise InvalidConfiguration("Reports are only supported with ResultData container")
         return
 
 if __name__ == '__main__':

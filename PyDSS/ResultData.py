@@ -11,6 +11,7 @@ from PyDSS.unitDefinations import unit_info
 from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
 from PyDSS.export_list_reader import ExportListReader, StoreValuesType
+from PyDSS.reports import Reports
 from PyDSS.utils.dataframe_utils import write_dataframe
 from PyDSS.utils.utils import dump_data
 from PyDSS.value_storage import ValueContainer, ValueByNumber, DatasetPropertyType
@@ -88,6 +89,7 @@ class ResultData:
                 "ExportMode-byClass.toml",
             )
         self._export_list = ExportListReader(export_list_filename)
+        Reports.append_required_exports(self._export_list, options)
         self._create_exports()
 
     def _create_exports(self):
@@ -166,6 +168,7 @@ class ResultData:
     def ExportResults(self, fileprefix=""):
         self.FlushData()
         for element in self._elements:
+            element.export_change_counts()
             element.export_sums()
 
         metadata = {
@@ -280,7 +283,8 @@ class ResultData:
         profiles = set()
         for full_name, obj in pv_systems.items():
             profile_name = obj.GetParameter("yearly").lower()
-            profiles.add(profile_name)
+            if profile_name != "":
+                profiles.add(profile_name)
             pv_infos.append({
                 "irradiance": obj.GetParameter("irradiance"),
                 "name": full_name,
@@ -290,16 +294,23 @@ class ResultData:
 
         pmult_sums = {}
         dss.LoadShape.First()
+        sim_resolution = self._options["Project"]["Step resolution (sec)"]
         while True:
             name = dss.LoadShape.Name().lower()
             if name in profiles:
-                pmult_sums[name] = sum(dss.LoadShape.PMult())
+                sinterval = dss.LoadShape.SInterval()
+                assert sim_resolution >= sinterval
+                offset = int(sim_resolution / dss.LoadShape.SInterval())
+                pmult_sums[name] = sum(dss.LoadShape.PMult()[::offset])
             if dss.LoadShape.Next() == 0:
                 break
 
         for pv_info in pv_infos:
             profile = pv_info["load_shape_profile"]
-            pv_info["load_shape_pmult_sum"] = pmult_sums[profile]
+            if profile == "":
+                pv_info["load_shape_pmult_sum"] = 0
+            else:
+                pv_info["load_shape_pmult_sum"] = pmult_sums[profile]
 
         data = {"pv_systems": pv_infos}
         filename = os.path.join(self._export_dir, "pv_profiles.json")
@@ -346,6 +357,7 @@ class ElementData:
         self._data = {}  # Containers for properties per time point on disk.
         self._circular_buf = {}  # Keeps last n values in memory for averages.
         self._sums = {}  # Keeps running sums in memory.
+        self._change_counts = {}  # Keeps change counts of properties.
         self._num_steps = None
         self._scenario = scenario
         self._hdf_store = hdf_store
@@ -353,8 +365,26 @@ class ElementData:
         self._options = options
         self._step_number = 1
 
+        self._get_value_func_by_type = {
+            StoreValuesType.ALL: self._get_value,
+            StoreValuesType.CHANGE_COUNT: self._get_value_type_change_count,
+            StoreValuesType.MOVING_AVERAGE: self._get_value,
+            StoreValuesType.SUM: self._get_value,
+        }
+
+        self._should_store_by_type = {
+            StoreValuesType.ALL: self._should_store_type_all,
+            StoreValuesType.CHANGE_COUNT: lambda _, __, ___: False,
+            StoreValuesType.MOVING_AVERAGE: self._should_store_type_moving_average,
+            StoreValuesType.SUM: self._should_store_type_sum,
+        }
+
     @staticmethod
-    def _data_key(prop):
+    def _prop_key(prop):
+        return (prop.elem_class, prop.storage_name)
+
+    @staticmethod
+    def _value_key(prop):
         return (prop.elem_class, prop.name)
 
     def initialize_data_store(self, hdf_store, scenario, num_steps):
@@ -368,50 +398,40 @@ class ElementData:
 
     def append_property(self, prop):
         self._properties.append(prop)
-        key = self._data_key(prop)
+        key = self._prop_key(prop)
         self._data[key] = None
         if prop.store_values_type == StoreValuesType.SUM:
             self._sums[key] = None
         elif prop.store_values_type == StoreValuesType.MOVING_AVERAGE:
             self._circular_buf[key] = _CircularBufferHelper(prop)
+        elif prop.store_values_type == StoreValuesType.CHANGE_COUNT:
+            self._change_counts[key] = (None, 0)
 
     def append_values(self, timestamp):
         curr_data = {}
-        for prop in self.properties:
+        cached_values = {}
+        for prop in self._properties:
             if not prop.should_sample_value(self._step_number):
                 continue
-            if prop.custom_function is None:
-                value = self._obj.GetValue(prop.name, convert=True)
+            prop_key = self._prop_key(prop)
+            value_key = self._value_key(prop)
+            # Don't re-read the same value multiple times.
+            if value_key in cached_values:
+                value = cached_values[value_key]
             else:
-                value = prop.custom_function(self._obj, timestamp, self._step_number, self._options)
-            key = self._data_key(prop)
-            if prop.store_values_type == StoreValuesType.SUM:
-                if self._sums[key] is None:
-                    self._sums[key] = value
-                else:
-                    self._sums[key] += value
-                # These values are not written to disk until the end.
+                value = self._get_value_func_by_type[prop.store_values_type](prop, prop_key, timestamp)
+                if value is not None:
+                    cached_values[value_key] = value
+            if not self._should_store_by_type[prop.store_values_type](prop, prop_key, value):
                 continue
-            if not prop.should_store_value(value.value):
-                continue
-            suffix = ""
-            if prop.store_values_type == StoreValuesType.MOVING_AVERAGE:
-                buf = self._circular_buf[key]
-                buf.append(value.value)
-                if buf.should_store():
-                    suffix = "Avg"
-                    value.set_element_property(prop.name + suffix)
-                    value.set_value(buf.average())
-                else:
-                    continue
             if len(value.make_columns()) > 1:
                 for column, val in zip(value.make_columns(), value.value):
                     curr_data[column] = val
             else:
                 curr_data[value.make_columns()[0]] = value.value
-            if self._data[key] is None:
-                path = f"Exports/{self._scenario}/{prop.elem_class}/{self._name}/{prop.name}{suffix}"
-                self._data[key] = ValueContainer(
+            if self._data[prop_key] is None:
+                path = f"Exports/{self._scenario}/{prop.elem_class}/{self._name}/{prop.storage_name}"
+                self._data[prop_key] = ValueContainer(
                     value,
                     self._hdf_store,
                     path,
@@ -421,21 +441,79 @@ class ElementData:
                     store_timestamp=prop.should_store_timestamp(),
                 )
 
-            self._data[key].append(value, timestamp=timestamp)
+            self._data[prop_key].append(value, timestamp=timestamp)
         self._step_number += 1
         return curr_data
 
-    def export_sums(self):
-        """Export properties stored as sums to disk."""
-        for key, value in self._sums.items():
-            path = f"Exports/{self._scenario}/{key[0]}/{self._name}/{key[1]}Sum"
+    def _get_value(self, prop, prop_key, timestamp):
+        if prop.custom_function is None:
+            value = self._obj.GetValue(prop.name, convert=True)
+        else:
+            value = prop.custom_function(self._obj, timestamp, self._step_number, self._options)
+
+        return value
+
+    def _get_value_type_change_count(self, prop, prop_key, timestamp):
+        last_value, count = self._change_counts[prop_key]
+        assert prop.custom_function is not None
+        self._change_counts[prop_key] = prop.custom_function(
+            self._obj, timestamp, self._step_number, self._options, last_value, count
+        )
+
+        return None
+
+    def _should_store_type_all(self, prop, _, value):
+        return prop.should_store_value(value.value)
+
+    def _should_store_type_moving_average(self, prop, key, value):
+        # Store every value in the circular buffer. Apply limits to the
+        # moving average.
+        buf = self._circular_buf[key]
+        buf.append(value.value)
+        if buf.should_store():
+            suffix = "Avg"
+            value.set_element_property(prop.storage_name)
+            value.set_value(buf.average())
+            return prop.should_store_value(value.value)
+        return False
+
+    def _should_store_type_sum(self, prop, key, value):
+        if self._sums[key] is None:
+            self._sums[key] = value
+        else:
+            self._sums[key] += value
+        # These values are not written to disk until the end.
+        return False
+
+    def export_change_counts(self):
+        """Export properties stored as change counts to disk."""
+        for key, val in self._change_counts.items():
+            elem_class = key[0]
+            prop = key[1]
+            value = ValueByNumber(self._name, prop, val[1])
+            path = f"Exports/{self._scenario}/{elem_class}/{self._name}/{prop}"
             container = ValueContainer(
                 value,
                 self._hdf_store,
                 path,
                 1,
                 max_chunk_bytes=self._max_chunk_bytes,
-                dataset_property_type=DatasetPropertyType.SUM,
+                dataset_property_type=DatasetPropertyType.NUMBER,
+            )
+            container.append(value)
+            container.flush_data()
+
+    def export_sums(self):
+        """Export properties stored as sums to disk."""
+        for key, value in self._sums.items():
+            path = f"Exports/{self._scenario}/{key[0]}/{self._name}/{key[1]}"
+            container = ValueContainer(
+                value,
+                self._hdf_store,
+                path,
+                1,
+                max_chunk_bytes=self._max_chunk_bytes,
+                dataset_property_type=DatasetPropertyType.NUMBER,
             )
             container.append(value)
             container.flush_data()

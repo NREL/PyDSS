@@ -13,7 +13,7 @@ from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 class DatasetPropertyType(enum.Enum):
     ELEMENT_PROPERTY = "elem_prop"  # data is stored at every time point
     FILTERED = "filtered"  # data is stored after being filtered
-    SUM = "sum"  # Running sum is kept in memory, final value written
+    NUMBER = "number"  # Only a single value is written
     TIMESTAMP = "timestamp"  # data are timestamps, tied to FILTERED
 
 

@@ -5,7 +5,8 @@ import re
 
 from PyDSS.pyContrReader import pyExportReader
 from PyDSS.utils.simulation_utils import calculate_line_loading_percent, \
-    calculate_transformer_loading_percent
+    calculate_transformer_loading_percent, track_capacitor_state_changes, \
+    track_reg_control_tap_number_changes
 from PyDSS.utils.utils import load_data
 from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
 from PyDSS.value_storage import DatasetPropertyType
@@ -15,9 +16,14 @@ MinMax = namedtuple("MinMax", "min, max")
 
 
 CUSTOM_FUNCTIONS = {
-    # All functions must have the signature
-    # func(dssObjectBase, sim_timestamp, sim_step_number, sim_options)
+    # Functions must have the signature
+    #   func(dssObjectBase, sim_timestamp, sim_step_number, sim_options)
+    # Change-count functions must have the signature
+    #   func(dssObjectBase, sim_timestamp, sim_step_number, sim_options,
+    #        last_value, count)
+    "Capacitors.TrackStateChanges": track_capacitor_state_changes,
     "Lines.LoadingPercent": calculate_line_loading_percent,
+    "RegControls.TrackTapNumberChanges": track_reg_control_tap_number_changes,
     "Transformers.LoadingPercent": calculate_transformer_loading_percent,
 }
 
@@ -29,14 +35,15 @@ class LimitsFilter(enum.Enum):
 
 class StoreValuesType(enum.Enum):
     ALL = "all"
+    CHANGE_COUNT = "change_count"
     MOVING_AVERAGE = "moving_average"
     SUM = "sum"
 
 
 class ExportListProperty:
-    def __init__(self, elem_class, prop, data):
+    def __init__(self, elem_class, data):
         self.elem_class = elem_class
-        self.name = prop
+        self.name = data["property"]
         self.publish = data.get("publish", False)
         self._limits = self._parse_limits(data)
         self._limits_filter = LimitsFilter(data.get("limits_filter", "outside"))
@@ -45,7 +52,7 @@ class ExportListProperty:
         self._sample_interval = data.get("sample_interval", 1)
         self._ma_store_interval = data.get("moving_average_store_interval")
         self._window_size = data.get("window_size", 100)
-        custom_prop = f"{elem_class}.{prop}"
+        custom_prop = f"{elem_class}.{self.name}"
         self._custom_function = CUSTOM_FUNCTIONS.get(custom_prop)
 
         if self._store_values_type == StoreValuesType.MOVING_AVERAGE and \
@@ -103,7 +110,7 @@ class ExportListProperty:
                 self._store_values_type == StoreValuesType.MOVING_AVERAGE:
             return DatasetPropertyType.FILTERED
         if self._store_values_type == StoreValuesType.SUM:
-            return DatasetPropertyType.SUM
+            return DatasetPropertyType.NUMBER
         return DatasetPropertyType.ELEMENT_PROPERTY
 
     def get_max_size(self, num_steps):
@@ -165,6 +172,16 @@ class ExportListProperty:
             self._store_values_type == StoreValuesType.MOVING_AVERAGE
 
     @property
+    def storage_name(self):
+        if self._store_values_type in (StoreValuesType.ALL, StoreValuesType.CHANGE_COUNT):
+            return self.name
+        if self._store_values_type == StoreValuesType.MOVING_AVERAGE:
+            return self.name + "Avg"
+        if self._store_values_type == StoreValuesType.SUM:
+            return self.name + "Sum"
+        assert False
+
+    @property
     def store_values_type(self):
         return self._store_values_type
 
@@ -173,13 +190,18 @@ class ExportListProperty:
         if self._are_names_regex:
             raise InvalidConfiguration("cannot serialize when names are regex")
         data = {
-            "names": None if not self._names else names,
+            "property": self.name,
+            "sample_interval": self._sample_interval,
+            "names": self._names,
             "publish": self.publish,
             "store_values_type": self.store_values_type.value,
         }
         if self._limits is not None:
             data["limits"] = [self._limits.min, self._limits.max]
             data["limits_filter"] = self._limits_filter.value
+        if self._store_values_type == StoreValuesType.MOVING_AVERAGE:
+            data["moving_average_store_interval"] = self._ma_store_interval
+            data["window_size"] = self._window_size
 
         return data
 
@@ -197,24 +219,30 @@ class ExportListProperty:
 
 class ExportListReader:
     def __init__(self, filename):
-        self._elem_classes = defaultdict(dict)
+        self._elem_classes = defaultdict(list)
         legacy_files = ("ExportMode-byClass.toml", "ExportMode-byElement.toml")
         if os.path.basename(filename) in legacy_files:
             parser = self._parse_legacy_file
         else:
             parser = self._parse_file
 
-        for elem_class, prop, data in parser(filename):
-            self._elem_classes[elem_class][prop] = ExportListProperty(
-                elem_class, prop, data
-            )
+        for elem_class, data in parser(filename):
+            self._elem_classes[elem_class].append(ExportListProperty(
+                elem_class, data
+            ))
 
     @staticmethod
     def _parse_file(filename):
         data = load_data(filename)
-        for elem_class, props in data.items():
-            for prop, values in props.items():
-                yield elem_class, prop, values
+        for elem_class, prop_info in data.items():
+            if isinstance(prop_info, list):
+                for prop in prop_info:
+                    yield elem_class, prop
+            else:
+                assert isinstance(prop_info, dict)
+                for prop, values in prop_info.items():
+                    new_data = {"property": prop, **values}
+                    yield elem_class, new_data
 
     @staticmethod
     def _parse_legacy_file(filename):
@@ -223,14 +251,15 @@ class ExportListReader:
         for elem_class, props in reader.pyControllers.items():
             for prop in props:
                 publish = (elem_class, prop) in publications
-                yield elem_class, prop, {"publish": publish}
+                yield elem_class, {"property": prop, "publish": publish}
 
-    def get_element_property(self, elem_class, prop):
+    def append_property(self, elem_class, prop_data):
+        self._elem_classes[elem_class].append(ExportListProperty(elem_class, prop_data))
+
+    def get_element_properties(self, elem_class, prop):
         if elem_class not in self._elem_classes:
             raise InvalidParameter(f"{elem_class} is not stored")
-        if prop not in self._elem_classes[elem_class]:
-            raise InvalidParameter(f"{prop} is not stored")
-        return self._elem_classes[elem_class][prop]
+        return [x for x in self._elem_classes[elem_class] if x.name == prop]
 
     def iter_export_properties(self, elem_class=None):
         """Returns a generator over the ExportListProperty objects.
@@ -242,19 +271,24 @@ class ExportListReader:
         """
         if elem_class is None:
             for props in self._elem_classes.values():
-                for prop in props.values():
+                for prop in props:
                     yield prop
         elif elem_class not in self._elem_classes:
             raise InvalidParameter(f"{elem_class} is not stored")
         else:
-            for prop in self._elem_classes[elem_class].values():
+            for prop in self._elem_classes[elem_class]:
                 yield prop
 
     def list_element_classes(self):
         return sorted(list(self._elem_classes.keys()))
 
     def list_element_properties(self, elem_class):
-        return sorted(list(self._elem_classes[elem_class].keys()))
+        if elem_class not in self._elem_classes:
+            return []
+        return self._elem_classes[elem_class]
+
+    def list_element_property_names(self, elem_class):
+        return sorted({x.name for x in self._elem_classes[elem_class]})
 
     # This name needs to match the interface defined in pyExportReader.
     @property
@@ -274,9 +308,9 @@ class ExportListReader:
 
     def serialize(self):
         """Serialize object to a dictionary."""
-        data = defaultdict(dict)
+        data = defaultdict(list)
         for elem_class, props in self._elem_classes.items():
             for prop in props:
-                data[elem_class][prop] = self._elem_classes[elem_class][prop].serialize()
+                data[elem_class].append(prop.serialize())
 
         return data

@@ -14,8 +14,9 @@ from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.element_options import ElementOptions
 from PyDSS.exceptions import InvalidParameter
 from PyDSS.pydss_project import PyDssProject
-from PyDSS.utils.dataframe_utils import write_dataframe
-from PyDSS.utils.utils import dump_data
+from PyDSS.reports import Reports, REPORTS, REPORTS_DIR
+from PyDSS.utils.dataframe_utils import read_dataframe, write_dataframe
+from PyDSS.utils.utils import dump_data, load_data
 from PyDSS.value_storage import ValueStorageBase, DatasetPropertyType, \
     get_dataset_property_type, get_timestamp_path
 
@@ -25,12 +26,18 @@ logger = logging.getLogger(__name__)
 
 class PyDssResults:
     """Interface to perform analysis on PyDSS output data."""
-    def __init__(self, project_path, in_memory=False, frequency=False, mode=False):
+    def __init__(
+            self, project_path=None, project=None, in_memory=False,
+            frequency=False, mode=False
+        ):
         """Constructs PyDssResults object.
 
         Parameters
         ----------
-        project_path : str
+        project_path : str | None
+            Load project from files in path
+        project : PyDssProject | None
+            Existing project object
         in_memory : bool
             If true, load all exported data into memory.
         frequency : bool
@@ -40,7 +47,12 @@ class PyDssResults:
 
         """
         options = ElementOptions()
-        self._project = PyDssProject.load_project(project_path)
+        if project_path is not None:
+            self._project = PyDssProject.load_project(project_path)
+        elif project is None:
+            raise InvalidParameter("project_path or project must be set")
+        else:
+            self._project = project
         self._fs_intf = self._project.fs_interface
         self._scenarios = []
         filename = self._project.get_hdf_store_filename()
@@ -52,7 +64,7 @@ class PyDssResults:
                 metadata = self._project.read_scenario_export_metadata(name)
                 scenario_result = PyDssScenarioResults(
                     name,
-                    project_path,
+                    self.project_path,
                     self._hdf_store,
                     self._fs_intf,
                     metadata,
@@ -61,6 +73,46 @@ class PyDssResults:
                     mode=mode,
                 )
                 self._scenarios.append(scenario_result)
+
+    def generate_reports(self):
+        """Generate all reports specified in the configuration.
+
+        Returns
+        -------
+        list
+            list of report filenames
+
+        """
+        return Reports.generate_reports(self)
+
+    def read_report(self, report_name):
+        """Return the report data.
+
+        Parameters
+        ----------
+        report_name : str
+
+        Returns
+        -------
+        str
+
+        """
+        if report_name not in REPORTS:
+            raise InvalidParameter(f"invalid report name {report_name}")
+        report_cls = REPORTS[report_name]
+
+        # This bypasses self._fs_intf because reports are always extracted.
+        reports_dir = os.path.join(self._project.project_path, REPORTS_DIR)
+        for filename in os.listdir(reports_dir):
+            name, ext = os.path.splitext(filename)
+            if name == os.path.splitext(report_cls.FILENAME)[0]:
+                path = os.path.join(reports_dir, filename)
+                if ext in (".json", ".toml"):
+                    return load_data(path)
+                if ext in (".csv", ".h5"):
+                    return read_dataframe(path)
+
+        raise InvalidParameter(f"did not find report {report_name} in {reports_dir}")
 
     @property
     def scenarios(self):
@@ -99,6 +151,17 @@ class PyDssResults:
         raise InvalidParameter(f"scenario {name} does not exist")
 
     @property
+    def hdf_store(self):
+        """Return a handle to the HDF data store.
+
+        Returns
+        -------
+        h5py.File
+
+        """
+        return self._hdf_store
+
+    @property
     def project_path(self):
         """Return the path to the PyDSS project.
 
@@ -125,6 +188,17 @@ class PyDssResults:
         """
         return self._fs_intf.read_file(path)
 
+    @property
+    def simulation_config(self):
+        """Return the simulation configuration
+
+        Returns
+        -------
+        dict
+
+        """
+        return self._project.simulation_config
+
 
 class PyDssScenarioResults:
     """Contains results for one scenario."""
@@ -145,7 +219,7 @@ class PyDssScenarioResults:
         self._elems_by_class = defaultdict(dict)
         self._props_by_class = defaultdict(list)
         self._elem_props = defaultdict(list)
-        self._elem_prop_sums = defaultdict(dict)
+        self._elem_prop_nums = defaultdict(dict)
         self._indices_df = None
         self._add_frequency = frequency
         self._add_mode = mode
@@ -167,8 +241,8 @@ class PyDssScenarioResults:
                 for prop in self._group[elem_class][elem_name]:
                     dataset = self._group[elem_class][elem_name][prop]
                     dataset_property_type = get_dataset_property_type(dataset)
-                    if dataset_property_type == DatasetPropertyType.SUM:
-                        self._add_elem_prop_sum(elem_class, prop, elem_name, dataset)
+                    if dataset_property_type == DatasetPropertyType.NUMBER:
+                        self._add_elem_prop_num(elem_class, prop, elem_name, dataset)
                     elif dataset_property_type == DatasetPropertyType.TIMESTAMP:
                         continue
                     else:
@@ -191,10 +265,10 @@ class PyDssScenarioResults:
             for name in self._elems_by_class[elem_class]:
                 self._elem_props[name] = list(self._props_by_class[elem_class])
 
-    def _add_elem_prop_sum(self, elem_class, prop, elem_name, dataset):
-        if prop not in self._elem_prop_sums[elem_class]:
-            self._elem_prop_sums[elem_class][prop] = {}
-        self._elem_prop_sums[elem_class][prop][elem_name] = dataset[0]
+    def _add_elem_prop_num(self, elem_class, prop, elem_name, dataset):
+        if prop not in self._elem_prop_nums[elem_class]:
+            self._elem_prop_nums[elem_class][prop] = {}
+        self._elem_prop_nums[elem_class][prop][elem_name] = dataset[0]
 
     @property
     def name(self):
@@ -236,9 +310,9 @@ class PyDssScenarioResults:
                 filename = os.path.join(path, base + "." + fmt.replace(".", ""))
                 write_dataframe(df, filename, compress=compress)
 
-        if self._elem_prop_sums:
-            data = copy.deepcopy(self._elem_prop_sums)
-            for elem_class, prop, name, val in self.iterate_element_property_sums():
+        if self._elem_prop_nums:
+            data = copy.deepcopy(self._elem_prop_nums)
+            for elem_class, prop, name, val in self.iterate_element_property_numbers():
                 # JSON lib cannot serialize complex numbers.
                 if isinstance(val, np.ndarray):
                     new_val = []
@@ -251,7 +325,7 @@ class PyDssScenarioResults:
                 elif isinstance(val, complex):
                     data[elem_class][prop][name] = str(val)
 
-            filename = os.path.join(path, "element_property_sums.json")
+            filename = os.path.join(path, "element_property_numbers.json")
             dump_data(data, filename, indent=2)
 
         logger.info("Exported data to %s", path)
@@ -317,33 +391,35 @@ class PyDssScenarioResults:
         return df
 
     @property
-    def element_property_sums(self):
-        """Return all element property sums.
+    def element_property_numbers(self):
+        """Return all element property values stored as numbers.
 
         Returns
         -------
         dict
 
         """
-        return self._elem_prop_sums
+        return self._elem_prop_nums
 
-    def get_element_property_sum(self, element_class, prop, element_name):
-        """Return the sum stored for the element property."""
-        if element_class not in self._elem_prop_sums:
+    def get_element_property_number(self, element_class, prop, element_name):
+        """Return the number stored for the element property."""
+        if element_class not in self._elem_prop_nums:
             raise InvalidParameter(f"{element_class} is not stored")
-        if prop not in self._elem_prop_sums[element_class]:
+        if prop not in self._elem_prop_nums[element_class]:
             raise InvalidParameter(f"{prop} is not stored")
-        if element_name not in self._elem_prop_sums[element_class][prop]:
+        if element_name not in self._elem_prop_nums[element_class][prop]:
             raise InvalidParameter(f"{element_name} is not stored")
-        return self._elem_prop_sums[element_class][prop][element_name]
+        return self._elem_prop_nums[element_class][prop][element_name]
 
-    def get_full_dataframe(self, element_class, prop):
+    def get_full_dataframe(self, element_class, prop, real_only=False):
         """Return a dataframe containing all data.  The dataframe is copied.
 
         Parameters
         ----------
         element_class : str
         prop : str
+        real_only : bool
+            If dtype of any column is complex, drop the imaginary component.
 
         Returns
         -------
@@ -355,7 +431,7 @@ class PyDssScenarioResults:
 
         master_df = None
         length = None
-        for _, df in self.iterate_dataframes(element_class, prop):
+        for _, df in self.iterate_dataframes(element_class, prop, real_only=real_only):
             cur_len = len(df)
             if master_df is None:
                 master_df = df
@@ -387,13 +463,15 @@ class PyDssScenarioResults:
         df = self.get_dataframe(element_class, prop, element_name)
         return ValueStorageBase.get_option_values(df, element_name)
 
-    def iterate_dataframes(self, element_class, prop, **kwargs):
+    def iterate_dataframes(self, element_class, prop, real_only=False, **kwargs):
         """Returns a generator over the dataframes by element name.
 
         Parameters
         ----------
         element_class : str
         prop : str
+        real_only : bool
+            If dtype of any column is complex, drop the imaginary component.
         kwargs : **kwargs
             Filter on options. Option values can be strings or regular expressions.
 
@@ -405,11 +483,13 @@ class PyDssScenarioResults:
         """
         for name in self.list_element_names(element_class):
             if prop in self._elem_props[name]:
-                df = self.get_dataframe(element_class, prop, name, **kwargs)
+                df = self.get_dataframe(
+                    element_class, prop, name, real_only=real_only, **kwargs
+                )
                 yield name, df
 
-    def iterate_element_property_sums(self):
-        """Return a generator over all element property sums.
+    def iterate_element_property_numbers(self):
+        """Return a generator over all element properties stored as numbers.
 
         Yields
         ------
@@ -417,9 +497,9 @@ class PyDssScenarioResults:
             element_class, property, element_name, value
 
         """
-        for elem_class in self._elem_prop_sums:
-            for prop in self._elem_prop_sums[elem_class]:
-                for name, val in self._elem_prop_sums[elem_class][prop].items():
+        for elem_class in self._elem_prop_nums:
+            for prop in self._elem_prop_nums[elem_class]:
+                for name, val in self._elem_prop_nums[elem_class][prop].items():
                     yield elem_class, prop, name, val
 
     def list_element_classes(self):
@@ -444,16 +524,9 @@ class PyDssScenarioResults:
         -------
         list
 
-        Raises
-        ------
-        InvalidParameter
-            Raised if the property is not stored.
-
         """
         # TODO: prop is deprecated
-        if element_class not in self._elems_by_class:
-            raise InvalidParameter(f"{element_class} is not stored")
-        return self._elems_by_class[element_class]
+        return self._elems_by_class.get(element_class, [])
 
     def list_element_properties(self, element_class, element_name=None):
         """Return the properties stored in the results for a class.
@@ -480,14 +553,14 @@ class PyDssScenarioResults:
             return sorted(list(self._props_by_class[element_class]))
         return self._elem_props.get(element_name, [])
 
-    def list_element_property_sums(self, element_class, element_name):
-        sums = []
-        for elem_class in self._elem_prop_sums:
-            for prop in self._elem_prop_sums[elem_class]:
-                for name in self._elem_prop_sums[elem_class][prop]:
+    def list_element_property_numbers(self, element_class, element_name):
+        nums = []
+        for elem_class in self._elem_prop_nums:
+            for prop in self._elem_prop_nums[elem_class]:
+                for name in self._elem_prop_nums[elem_class][prop]:
                     if name == element_name:
-                        sums.append(pop)
-        return sums
+                        nums.append(prop)
+        return nums
 
     def list_element_property_options(self, element_class, prop):
         """List the possible options for the element class and property.

@@ -18,6 +18,10 @@ class dssObjectBase(abc.ABC):
         self._Enabled = True
 
     @property
+    def dss(self):
+        return self._dssInstance
+
+    @property
     def Enabled(self):
         return self._Enabled
 
