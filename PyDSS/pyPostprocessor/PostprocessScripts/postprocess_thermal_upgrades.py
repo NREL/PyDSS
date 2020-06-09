@@ -41,8 +41,11 @@ class postprocess_thermal_upgrades():
         self.get_orig_line_DT_params()
         self.process_thermal_upgrades()
         # convert pen_level_upgrades to dataframe - to compute parallel lines and transformers
-        self.processed_upgrades_df = pd.DataFrame.from_dict(self.pen_level_upgrades)
-        self.get_all_parallel()  # save csv of parallel lines and transformers
+        # self.processed_upgrades_df = pd.DataFrame.from_dict(self.pen_level_upgrades)
+        try:
+            self.get_all_parallel()  # save csv of parallel lines and transformers
+        except:
+            self.logger.info("Parallel line and transformer computation failed")
 
     # TODO make function to post process orig and new objects
 
@@ -288,12 +291,12 @@ class postprocess_thermal_upgrades():
         parallel_equip_ids = []
         parallel_equip_counts = []
 
-        for k in self.processed_upgrades_df.keys():
+        for k in self.pen_level_upgrades.keys():
             # print(k)
             equip_str = equipment_type + '.'
             if equip_str in k:
                 # count of new lines added to address overload. Often 1, but could be > 1 with severe overloads
-                parallel_count = self.processed_upgrades_df[k]['new'][0]
+                parallel_count = self.pen_level_upgrades[k]['new'][0]
 
                 if parallel_count > 1:
                     parallel_equip_ids.append(k)
