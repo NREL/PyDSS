@@ -201,6 +201,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.LTC_delay = 45  # in seconds
         self.LTC_band = 2  # deadband in volts
 
+        self.place_new_regulators = True  # flag to determine whether to place new regulators or not
+
         # Initialize dss upgrades file
         self.dss_upgrades = [
             "//This file has all the upgrades determined using the control device placement algorithm \n"]
@@ -233,12 +235,38 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.write_flag = 1
         self.feeder_parameters = {}
 
-        # TODO change made by Sherin - capability to change voltage violation limits
-        # upper and lower limit can be assigned to another value for initial checks
-        # and can be changed at a later stage
-        # self.upper_limit = self.config["Range B upper"]
-        # self.lower_limit = self.config["Range B lower"]
+        # If initial and final limits are different,
+        # check with both initial & final limits to get comparison between initial and final violation numbers
+        if (self.config["Final upper limit"] != self.config["Initial upper limit"]) or \
+           (self.config["Final lower limit"] != self.config["Initial lower limit"]):
 
+            self.logger.info(f"Initial and Final voltage limits are not the same. "
+                             f"\nInitial lower limit: {self.config['Initial lower limit']}, "
+                             f"Initial upper limit: {self.config['Initial upper limit']} "
+                             f"\nFinal lower limit: {self.config['Final lower limit']}, "
+                             f"Final upper limit: {self.config['Final upper limit']}")
+
+            self.upper_limit = self.config["Final upper limit"]
+            self.lower_limit = self.config["Final lower limit"]
+            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                    lower_limit=self.lower_limit)
+
+            self.logger.info(f"Based on Lower limit: {self.lower_limit}, Upper limit: {self.upper_limit}")
+            self.logger.info("Initial number of buses with violations are: %s", len(self.buses_with_violations))
+            self.logger.info("Initial objective function value: %s", self.severity_indices[2])
+
+            self.feeder_parameters["initial_violations_2"] = {
+                "Voltage upper threshold": self.upper_limit,
+                "Voltage lower threshold": self.lower_limit,
+                "Number of buses with violations": len(self.buses_with_violations),
+                "Buses at all tps with violations": self.severity_indices[0],
+                "Severity of bus violations": self.severity_indices[1],
+                "Objective function value": self.severity_indices[2],
+                "Maximum voltage observed": self.max_V_viol,
+                "Minimum voltage observed": self.min_V_viol
+            }
+
+        # start upgrades by checking for violations based on initial voltage limits
         self.upper_limit = self.config["Initial upper limit"]
         self.lower_limit = self.config["Initial lower limit"]
 
@@ -246,10 +274,13 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         # initial check for violations
         self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
                                                 lower_limit=self.lower_limit)
-        self.logger.info("Initial number of buses with violations are: %s", len(self.buses_with_violations))
-        self.logger.info("Initial objective function value: %s", self.severity_indices[2])
         self.logger.info("Initial maximum voltage observed on any node: %s", self.max_V_viol)
         self.logger.info("Initial minimum voltage observed on any node: %s", self.min_V_viol)
+        self.logger.info(f"Based on Lower limit: {self.lower_limit}, Upper limit: {self.upper_limit}")
+        self.logger.info("Initial number of buses with violations are: %s", len(self.buses_with_violations))
+        self.logger.info("Initial objective function value: %s", self.severity_indices[2])
+
+        self.initial_buses_with_violations = self.buses_with_violations  # save initial bus violations
 
         self.feeder_parameters["initial_violations"] ={
             "Voltage upper threshold": self.upper_limit,
@@ -283,6 +314,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     self.plot_violations()
                 # Correct cap banks settings if caps are present in the feeder
                 if dss.Capacitors.Count() > 0:
+                    self.logger.info("Cap bank settings sweep, if capacitors are present.")
                     self.get_capacitor_state()
                     self.correct_cap_bank_settings()
                     if self.config["create topology plots"]:
@@ -303,6 +335,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                                                     lower_limit=self.lower_limit)
             self.reg_sweep_viols = {}
             if dss.RegControls.Count() > 0 and len(self.buses_with_violations) > 0:
+                self.logger.info("Settings sweep for existing reg control devices (other than sub LTC).")
                 self.initial_regctrls_settings = {}
                 reg_cnt = 0
                 dss.RegControls.First()
@@ -369,6 +402,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                         self.plot_violations()
 
             # Writing out the results before adding new devices
+            self.logger.info("Write upgrades to dss file, before adding new devices.")
             self.write_upgrades_to_file()
             # postprocess_voltage_upgrades(
             #     {
@@ -393,6 +427,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             # TODO: If adding a substation LTC increases violations even after the control sweep then before then remove it
             # TODO: - this might however interfere with voltage regulator logic so may be let it be there
             if self.config["Use LTC placement"]:
+                self.logger.info("Add/Correct/Sweep settings for Substation LTC.")
                 self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
                 if len(self.buses_with_violations) > 0:
                     if self.config["create topology plots"]:
@@ -491,18 +526,50 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             # TODO: Remove regs of last iteration
             self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
                                                     lower_limit=self.lower_limit)
-            if len(self.buses_with_violations) > 1:
+
+            # if number of buses with violations is very high, the loop for adding new regulators will take very long
+            # so disable this block - current condition is if number of violations > 250
+            if (len(self.buses_with_violations) > (100 * len(self.initial_buses_with_violations))) or \
+                    (len(self.buses_with_violations) > 250):
+                self.logger.info(f"At this point, number of buses with violations is {len(self.buses_with_violations)},"
+                                 f" but initial number of buses with violations is "
+                                 f"{len(self.initial_buses_with_violations)}")
+                self.logger.info("So disable option for addition of new regulators")
+                self.place_new_regulators = False
+
+            # if option to place new regulators is disabled
+            if (len(self.buses_with_violations) > 1) and (not self.place_new_regulators):
+                self.logger.info("Ignoring block for adding new regulators")
+                # determining key with minimum objective func. at various levels
+                # (at this point includes pre-reg, sub-LTC)
+                min_cluster = ''
+                min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * self.upper_limit
+                for key, vals in self.cluster_optimal_reg_nodes.items():
+                    if vals[0] < min_severity:
+                        min_severity = vals[0]
+                        min_cluster = key
+                self.logger.info(f"Checking objective function to determine best possible upgrades.\n"
+                                 f"At stages: 1) Before addition of new devices. "
+                                 f"2) With Substation LTC.")
+                self.compare_objective_function(min_cluster)
+
+            # if option to place new regulators is enabled
+            elif (len(self.buses_with_violations) > 1) and (self.place_new_regulators):
                 if self.config["create topology plots"]:
                     self.plot_violations()
                 # for n, d in self.G.in_degree().items():
                 #     if d == 0:
                 #         self.source = n
                 # Place additional regulators if required
+                self.logger.info("Sweep by placing additional regulators")
+                self.logger.info(f"Number of buses with violations:{len(self.buses_with_violations)}")
                 self.max_regs = int(min(self.config["Max regulators"], len(self.buses_with_violations)))
                 self.get_shortest_path()
                 self.get_full_distance_dict()
                 self.cluster_square_array()
                 min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * self.upper_limit
+                #  determining key with minimum objective func. at various levels
+                # (at this point includes pre-reg, sub-LTC, and all newly added regulators)
                 min_cluster = ''
                 for key, vals in self.cluster_optimal_reg_nodes.items():
                     if vals[0] < min_severity:
@@ -511,51 +578,10 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 # Logic is if violations were less before addition of any device, revert back to that condition by removing
                 #  added LTC and not adding best determined in-line regs, else if LTC was best - pass and do not add new
                 #  in-line regs, or if some better LTC placemenr was determined apply that
-                if min_cluster == "pre_reg":
-                    # This will remove LTC controller, but if initially there was no substation transformer
-                    # (highly unlikely) the added transformer will still be there
-                    if self.sub_LTC_added_flag == 1:
-                        if self.subxfmr == '':
-                            LTC_reg_node = self.source
-                        elif self.subxfmr != '':
-                            LTC_reg_node = self.sub_LTC_bus
-                        LTC_name = "New_regctrl_" + LTC_reg_node
-                        command_string = "Edit RegControl.{ltc_nm} enabled=False".format(
-                            ltc_nm=LTC_name
-                        )
-                        dss.run_command(command_string)
-                        self.write_dss_file(command_string)
-                    else:
-                        pass
-                elif min_cluster == "sub_LTC":
-                    pass
-                else:
-                    for reg_nodes in self.cluster_optimal_reg_nodes[min_cluster][2]:
-                        self.write_flag = 1
-                        self.add_new_xfmr(reg_nodes)
-                        self.add_new_regctrl(reg_nodes)
-                        rn_name = "New_regctrl_" + reg_nodes
-                        command_string = "Edit RegControl.{rn} vreg={vsp} band={b}".format(
-                            rn=rn_name,
-                            vsp=self.cluster_optimal_reg_nodes[min_cluster][1][0],
-                            b=self.cluster_optimal_reg_nodes[min_cluster][1][1]
-                        )
-                        dss.run_command(command_string)
-                        dss.run_command("CalcVoltageBases")
-                        self.write_dss_file(command_string)
-                    # After all additional devices have been placed perform the cap bank settings sweep again-
-                    # only if new devices were accepted
-
-                    self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
-                                                            lower_limit=self.lower_limit)
-                    if dss.CapControls.Count() > 0 and len(self.buses_with_violations) > 0:
-                        self.cap_settings_sweep(upper_limit=self.upper_limit,
-                                                            lower_limit=self.lower_limit)
-                        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
-                                                                lower_limit=self.lower_limit)
-                        if self.config["create topology plots"]:
-                            self.plot_violations()
-                    self.write_dss_file("CalcVoltageBases")
+                self.logger.info(f"Checking objective function to determine best possible upgrades.\n"
+                                 f"At stages: 1) Before addition of new devices. "
+                                 f"2) With Substation LTC. 3) With newly added regulators")
+                self.compare_objective_function(min_cluster)
 
                 self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
                                                         lower_limit=self.lower_limit)
@@ -587,6 +613,30 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.new_capcontrols = {x["name"]: x for x in iter_elements(dss.CapControls, get_cap_controls_info)}
         self.new_xfmr_info = dss.Transformers.AllNames()
 
+        # If initial and final limits are different,
+        # also doing with final limits to get comparison between initial and final violation numbers
+        if (self.config["Final upper limit"] != self.config["Initial upper limit"]) or \
+                (self.config["Final lower limit"] != self.config["Initial lower limit"]):
+
+            self.upper_limit = self.config["Final upper limit"]
+            self.lower_limit = self.config["Final lower limit"]
+            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                    lower_limit=self.lower_limit)
+            self.feeder_parameters["final_violations_2"] = {
+                "Voltage upper threshold": self.upper_limit,
+                "Voltage lower threshold": self.lower_limit,
+                "Number of buses with violations": len(self.buses_with_violations),
+                "Buses at all tps with violations": self.severity_indices[0],
+                "Severity of bus violations": self.severity_indices[1],
+                "Objective function value": self.severity_indices[2],
+                "Maximum voltage observed": self.max_V_viol,
+                "Minimum voltage observed": self.min_V_viol
+            }
+
+        self.logger.info(f"Based on Lower limit: {self.lower_limit}, Upper limit: {self.upper_limit}")
+        self.logger.info("Final number of buses with violations are: %s", len(self.buses_with_violations))
+        self.logger.info("Final objective function value: %s", self.severity_indices[2])
+
         # change violation checking thresholds to initial limit - to ensure uniform comparison betn initial & final
         self.upper_limit = self.config["Initial upper limit"]
         self.lower_limit = self.config["Initial lower limit"]
@@ -595,10 +645,11 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                                                 lower_limit=self.lower_limit)
         if self.config["create topology plots"]:
             self.plot_violations()
-        self.logger.info("Final number of buses with violations are: %s", len(self.buses_with_violations))
-        self.logger.info("Final objective function value: %s", self.severity_indices[2])
         self.logger.info("Final maximum voltage observed on any node: %s %s", self.max_V_viol, self.busvmax)
         self.logger.info("Final minimum voltage observed on any node: %s", self.min_V_viol)
+        self.logger.info(f"Based on Lower limit: {self.lower_limit}, Upper limit: {self.upper_limit}")
+        self.logger.info("Final number of buses with violations are: %s", len(self.buses_with_violations))
+        self.logger.info("Final objective function value: %s", self.severity_indices[2])
 
         self.feeder_parameters["final_violations"] = {
             "Voltage upper threshold": self.upper_limit,
@@ -728,6 +779,62 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.min_max_load_kw = {}
         for key,vals in self.orig_loads.items():
             self.min_max_load_kw[key] = [min(vals),max(vals)]
+
+    def compare_objective_function(self, min_cluster):
+        # Logic is if violations were less before addition of any device, revert back to that condition by removing
+        #  added LTC and not adding best determined in-line regs, else if LTC was best - pass and do not add new
+        #  in-line regs, or if some better LTC placement was determined apply that
+        if min_cluster == "pre_reg":
+            self.logger.info("Violations were less before addition of any new regulator or substation LTC.")
+            self.logger.info("Remove substation LTC and best in-line reg.")
+            # This will remove LTC controller, but if initially there was no substation transformer
+            # (highly unlikely) the added transformer will still be there
+            if self.sub_LTC_added_flag == 1:
+                if self.subxfmr == '':
+                    LTC_reg_node = self.source
+                elif self.subxfmr != '':
+                    LTC_reg_node = self.sub_LTC_bus
+                LTC_name = "New_regctrl_" + LTC_reg_node
+                command_string = "Edit RegControl.{ltc_nm} enabled=False".format(
+                    ltc_nm=LTC_name
+                )
+                dss.run_command(command_string)
+                self.write_dss_file(command_string)
+            else:
+                pass
+        elif min_cluster == "sub_LTC":
+            self.logger.info("Setting with substation LTC is best.")
+            pass
+        else:
+            self.logger.info("Setting with new regulator placement is best.")
+            for reg_nodes in self.cluster_optimal_reg_nodes[min_cluster][2]:
+                self.write_flag = 1
+                self.add_new_xfmr(reg_nodes)
+                self.add_new_regctrl(reg_nodes)
+                rn_name = "New_regctrl_" + reg_nodes
+                command_string = "Edit RegControl.{rn} vreg={vsp} band={b}".format(
+                    rn=rn_name,
+                    vsp=self.cluster_optimal_reg_nodes[min_cluster][1][0],
+                    b=self.cluster_optimal_reg_nodes[min_cluster][1][1]
+                )
+                dss.run_command(command_string)
+                dss.run_command("CalcVoltageBases")
+                self.write_dss_file(command_string)
+            # After all additional devices have been placed perform the cap bank settings sweep again-
+            # only if new devices were accepted
+
+            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                    lower_limit=self.lower_limit)
+            if dss.CapControls.Count() > 0 and len(self.buses_with_violations) > 0:
+                self.logger.info("Violations still exist -> Sweep capacitor settings again, "
+                                 "after new devices are placed.")
+                self.cap_settings_sweep(upper_limit=self.upper_limit,
+                                        lower_limit=self.lower_limit)
+                self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                        lower_limit=self.lower_limit)
+                if self.config["create topology plots"]:
+                    self.plot_violations()
+            self.write_dss_file("CalcVoltageBases")
 
     def get_existing_controller_info(self):
         self.cap_control_info = {}
