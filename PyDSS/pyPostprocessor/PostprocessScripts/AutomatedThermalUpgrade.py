@@ -91,23 +91,12 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         # paths as the user desires - if empty the mults in the 'tps_to_test' input will be used else if non-empty
         # max and min load mults from the load.dss files will be used. Tne tps to test input should always be specified
         # irrespective of whether it gets used or not
-        #self.other_load_dss_files = []
-        self.other_load_dss_files = {
-            "date1": [
-                r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint1_files/Loads.dss",
-                r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint1_files/Loads.dss"],
-            "date2": [
-                r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint2_files/Loads.dss",
-                r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint2_files/Loads.dss"]
-        }
-        self.other_pv_dss_files = {
-            "date1": [
-                r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint1_files/PVSystems.dss",
-                r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint1_files/PVSystems.dss"],
-            "date2": [
-                r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint2_files/PVSystems.dss",
-                r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint2_files/PVSystems.dss"]
-        }
+        self.other_load_dss_files = {}
+        self.other_pv_dss_files = {}
+
+
+        self.other_pv_dss_files = self.config["project_data"]["pydss_other_pvs_dss_files"]
+        self.other_load_dss_files = self.config["project_data"]["pydss_other_loads_dss_files"]
 
         self.get_load_pv_mults_LA()
         #self.get_load_mults()
@@ -220,7 +209,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
         check_redirect(base_dss)
         upgrades_file = os.path.join(self.config["Outputs"], "thermal_upgrades.dss")
-        check_redirect(upgrades_file)
+        #check_redirect(upgrades_file)
         self.dssSolver.Solve()
 
         # Get final loadings
@@ -1107,8 +1096,10 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 per_R_list.append(dss.Properties.Value("%r"))
             per_losses.append(dss.Properties.Value("%noloadloss"))
             per_losses.append(dss.Properties.Value("%loadloss"))
-            if per_losses[0]>per_losses[1]:
-                self.logger.info("For DT %s, %noloadloss is greater than %loadloss %s, continuing...", xfmr_name, per_losses)
+            if float(per_losses[0])>float(per_losses[1]):
+                pct_nl = per_losses[0]
+                pct_l = per_losses[1]
+                self.logger.info(f"For DT {xfmr_name}, pct_noloadloss {pct_nl} is greater than %loadloss {pct_l}, continuing...")
             for i in wdg_kva_list:
                 if i!=wdg_kva_list[0]:
                     self.logger.info(" DT %s will not be considered as a upgrade option as the kVA values of its" \
@@ -1437,7 +1428,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             self.logger.debug("expected_file_name", expected_file_name)
             if expected_file_name in self.thermal_upgrades_files:
                 expected_file_path = os.path.join(self.config["Outputs"],expected_file_name)
-                check_redirect(expected_file_path)
+                ##check_redirect(expected_file_path)
                 # Also append all upgrades in the previous penetration level to the next level
                 with open(os.path.join(self.config["Outputs"], "Thermal_upgrades_pen_{}.dss".format(prev_pen_level)),"r") as datafile:
                     for line in datafile:

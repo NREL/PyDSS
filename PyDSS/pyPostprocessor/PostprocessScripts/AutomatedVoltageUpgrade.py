@@ -74,6 +74,7 @@ def get_capacitor_info():
 
 def get_cap_controls_info():
     ctrl_name = dss.CapControls.Name()
+    dss.Circuit.SetActiveElement("CapControl.{}".format(ctrl_name)) ##
     data_dict = {
             "name": ctrl_name,
             "cap_name": dss.CapControls.Capacitor(),
@@ -136,20 +137,13 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         # paths as the user desires - if empty the mults in the 'tps_to_test' input will be used else if non-empty
         # max and min load mults from the load.dss files will be used. Tne tps to test input should always be specified
         # irrespective of whether it gets used or not
-        #self.other_load_dss_files = []
-        self.other_load_dss_files = {
-                                     "date1":[r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint1_files/Loads.dss",
-                                              r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint1_files/Loads.dss"],
-                                     "date2":[r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint2_files/Loads.dss",
-                                              r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint2_files/Loads.dss"]
-                                     }
-        self.other_pv_dss_files = {
-                                    "date1":[r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint1_files/PVSystems.dss",
-                                             r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint1_files/PVSystems.dss"],
-                                    "date2":[r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint2_files/PVSystems.dss",
-                                             r"C:/Users/ajain/Desktop/PyDSS_develop_branch/pydss_projects/la_upgrades/DSSfiles/timepoint2_files/PVSystems.dss"]
-                                    }
+        #self.other_load_dss_files = {}
+        #self.other_pv_dss_files = {}
 
+        self.other_pv_dss_files = self.config["project_data"]["pydss_other_pvs_dss_files"]
+        self.other_load_dss_files = self.config["project_data"]["pydss_other_loads_dss_files"]
+
+        
         thermal_filename = "thermal_upgrades.dss"
         thermal_dss_file = os.path.join(
             project.get_post_process_directory(self.config["Thermal scenario name"]),
@@ -159,7 +153,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         if not os.path.exists(thermal_dss_file):
             raise InvalidParameter(f"AutomatedThermalUpgrade did not produce thermal_filename")
         dss = dssInstance
-        check_redirect(thermal_dss_file)
+        ##check_redirect(thermal_dss_file)
         self.dssSolver = dssSolver
         self.start = time.time()
 
@@ -603,9 +597,9 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         dss.run_command("Clear")
         base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
         check_redirect(base_dss)
-        check_redirect(thermal_dss_file)
+        ##check_redirect(thermal_dss_file)
         upgrades_file = os.path.join(self.config["Outputs"], "voltage_upgrades.dss")
-        check_redirect(upgrades_file)
+        ##check_redirect(upgrades_file)
         self.dssSolver.Solve()
 
         self.new_reg_controls = {x["name"]: x for x in iter_elements(dss.RegControls, get_reg_control_info)}
@@ -871,6 +865,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             dss.RegControls.First()
             while True:
                 reg_ctrl = dss.RegControls.Name().lower()
+                dss.Circuit.SetActiveElement("Regcontrol.{}".format(reg_ctrl)) ##
                 reg_vsp = dss.Properties.Value("vreg")
                 reg_band = dss.Properties.Value("band")
                 xfmr_name = dss.RegControls.Transformer().lower()
