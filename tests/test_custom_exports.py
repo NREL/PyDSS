@@ -40,9 +40,12 @@ def test_custom_exports(cleanup_project):
     df = scenario.get_dataframe("Transformers", "CurrentsAvg", transformers[0])
     assert len(df) < 96
 
+    df = scenario.get_dataframe("Lines", "LoadingPercentAvg", "Line.sl_22")
+    assert len(df) == 2
+
     # Filtered value on custom function.
-    df = scenario.get_dataframe("Lines", "LoadingPercent", "Line.pvl_110")
-    assert len(df) < 96
+    df = scenario.get_dataframe("Lines", "LoadingPercent", "Line.sl_22")
+    assert len(df) == 17
 
     # Subset of names. VoltagesMagAng has specific names, CurrentsMagAng has regex
     for name in ("Line.pvl_110", "Line.pvl_111", "Line.pvl_112", "Line.pvl_113"):
@@ -55,16 +58,16 @@ def test_custom_exports(cleanup_project):
     assert "CurrentsMagAng" not in properties
 
     # Two types of sums are stored.
-    normal_amps_sum = scenario.get_element_property_sum("Lines", "NormalAmpsSum", "Line.pvl_110")
+    normal_amps_sum = scenario.get_element_property_number("Lines", "NormalAmpsSum", "Line.pvl_110")
     assert normal_amps_sum == 96 * 65.0
-    scenario.get_element_property_sum("Lines", "CurrentsSum", "Line.pvl_110")
-    scenario.get_element_property_sum("Circuits", "LossesSum", "Circuit.heco19021")
+    scenario.get_element_property_number("Lines", "CurrentsSum", "Line.pvl_110")
+    scenario.get_element_property_number("Circuits", "LossesSum", "Circuit.heco19021")
 
     sums_json = os.path.join(
         CUSTOM_EXPORTS_PROJECT_PATH,
         "Exports",
         "scenario1",
-        "element_property_sums.json"
+        "element_property_numbers.json"
     )
     assert os.path.exists(sums_json)
     data = load_data(sums_json)

@@ -390,7 +390,11 @@ class PyDssZipFileInterface(PyDssArchiveFileInterfaceBase):
         self._zip.close()
 
     def read_file(self, path):
-        return self._zip.read(path).decode("utf-8")
+        data = self._zip.read(path)
+        ext = os.path.splitext(path)[1]
+        if ext not in (".h5", ".feather"):
+            data = data.decode("utf-8")
+        return data
 
     def read_csv(self, path):
         return pd.read_csv(io.BytesIO(self._zip.read(path)))

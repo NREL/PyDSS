@@ -7,7 +7,7 @@ def getLogger(name, path, LoggerOptions):
 
     if LoggerOptions['Clear old log file']:
         if os.path.exists(log_filename):
-            os.remove(item)
+            os.remove(log_filename)
 
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(module)s - %(message)s')
 
