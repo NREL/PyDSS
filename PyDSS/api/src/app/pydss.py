@@ -125,7 +125,6 @@ class PyDSS:
                         self.pydss_obj._dssSolver.GetTotalSeconds(),
                         restructured_results
                     )
-                    #TODO: results will be ued to interface with websocket implemntation (helics publications)
 
                 self.initalized = False
                 return 200, f"Simulation complete..."
@@ -135,11 +134,13 @@ class PyDSS:
         else:
             return 500, f"No project initialized. Load a project first using the 'init' command"
 
-    def subscribe(self, params):
-        return 200, f"Subscribed to {len(params)} endpoints"
+    def registerPubSubs(self, params):
+        subs = params["Subscriptions"]
+        pubs = params["Publications"]
+        self.pydss_obj._HI.registerPubSubTags(pubs, subs)
+        return 200, f"Publications and subscriptions have been registered; Federate has entered execution mode"
 
-    def publish(self, params):
-        return 200, f"Created publications for {len(params)} endpoints"
+
 
 
 if __name__ == '__main__':

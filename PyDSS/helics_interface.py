@@ -40,7 +40,7 @@ class helics_interface:
         'Distance': 'double'
     }
 
-    def __init__(self, dss_solver, objects_by_name, objects_by_class, options, system_paths):
+    def __init__(self, dss_solver, objects_by_name, objects_by_class, options, system_paths, default=True):
 
         if options["Logging"]["Pre-configured logging"]:
             LoggerTag = __name__
@@ -61,8 +61,15 @@ class helics_interface:
         self._objects_by_class = objects_by_class
         self._create_helics_federate()
         self._dss_solver = dss_solver
-        self._registerFederateSubscriptions()
-        self._registerFederatePublications()
+        if default:
+            self.registerPubSubTags()
+
+
+    def registerPubSubTags(self, pubs=None, subs=None):
+
+        self._registerFederateSubscriptions(subs)
+        self._registerFederatePublications(pubs)
+
         helics.helicsFederateEnterExecutingModeIterative(
             self._PyDSSfederate,
             helics.helics_iteration_request_iterate_if_needed
@@ -90,16 +97,26 @@ class helics_interface:
         return
 
 
-    def _registerFederateSubscriptions(self):
-        self._sub_file_reader = pySubscriptionReader(
-            os.path.join(
-                self._system_paths["ExportLists"],
-                "Subscriptions.toml",
-            ),
-        )
+    def _registerFederateSubscriptions(self, subs):
+        """
+
+        :param subs:
+        :return:
+        """
+
+        if subs is not None:
+            SubscriptionList = subs
+        else:
+            self._sub_file_reader = pySubscriptionReader(
+                os.path.join(
+                    self._system_paths["ExportLists"],
+                    "Subscriptions.toml",
+                ),
+            )
+            SubscriptionList = self._sub_file_reader.SubscriptionList
         self._subscriptions = {}
         self._subscription_dState = {}
-        for element, subscription in self._sub_file_reader.SubscriptionList.items():
+        for element, subscription in SubscriptionList.items():
             assert element in self._objects_by_element, '"{}" listed in the subscription file not '.format(element) +\
                                                      "available in PyDSS's master object dictionary."
 
@@ -155,15 +172,20 @@ class helics_interface:
                         #print(self._subscription_dState[element_name])
         self.c_seconds_old = self.c_seconds
 
-    def _registerFederatePublications(self):
-        self._file_reader = pyExportReader(
-            os.path.join(
-                self._system_paths ["ExportLists"],
-                "ExportMode-byClass.toml",
-            ),
-        )
+    def _registerFederatePublications(self, pubs):
+        if pubs is not None:
+            publicationList= pubs
+        else:
+
+            self._file_reader = pyExportReader(
+                os.path.join(
+                    self._system_paths ["ExportLists"],
+                    "ExportMode-byClass.toml",
+                ),
+            )
+            publicationList = self._file_reader.publicationList
         self._publications = {}
-        for valid_publication in self._file_reader.publicationList:
+        for valid_publication in publicationList:
             obj_class, obj_property = valid_publication.split(' ')
             objects = self._objects_by_class[obj_class]
             for obj_X, obj in objects.items():

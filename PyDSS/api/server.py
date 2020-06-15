@@ -24,8 +24,6 @@ def getJSONschema(port):
         json.dump(response.json(), outfile, indent=4, sort_keys=True)
     logger.info(f"Export the schema file to {path}")
 
-
-
 class pydss_server():
     def __init__(self, port):
         self.handler = Handler()
