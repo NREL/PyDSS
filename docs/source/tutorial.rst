@@ -111,8 +111,6 @@ set in ``Exports.toml`` on a per-property basis.
   running sum of values at each time point and only record the total to disk.
 - Set ``window_size`` to an integer to control the moving average window size.
   Defaults to ``100``.
-- Set ``moving_average_store_interval`` to control how often the moving average
-  is recorded. Defaults to ``window_size``.
 - Set ``sample_interval`` to control how often PyDSS reads new values. Defaults
   to ``1``.
 - If the export key is not ``ElementType.Property`` but instead a value mapped

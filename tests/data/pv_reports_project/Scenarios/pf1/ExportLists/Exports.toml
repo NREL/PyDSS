@@ -1,6 +1,23 @@
-[[Circuits]]
-property = "Losses"
-sample_interval = 1
-publish = false
-store_values_type = "sum"
-
+#[[Circuits]]
+#property = "Losses"
+#sample_interval = 1
+#store_values_type = "sum"
+#
+#[[Circuits]]
+#property = "LineLosses"
+#sample_interval = 1
+#store_values_type = "sum"
+#
+#[[Transformers]]
+#property = "LoadingPercent"
+#sample_interval = 1
+#store_values_type = "moving_average_max"
+#limits = [0, 150]
+#window_size = 10
+#
+#[[Transformers]]
+#property = "LoadingPercent"
+#sample_interval = 1
+#store_values_type = "moving_average"
+#limits = [0, 150]
+#window_size = 10

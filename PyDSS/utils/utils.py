@@ -1,15 +1,18 @@
 """Utility functions for the jade package."""
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import gzip
 import logging
 import json
 import os
 import shutil
 import sys
+import time
 import yaml
 
+import numpy as np
 import opendssdirect as dss
+import pandas as pd
 import toml
 
 from PyDSS.exceptions import InvalidParameter
@@ -135,6 +138,38 @@ def decompress_file(filename):
     return new_filename
 
 
+def create_time_range_from_settings(settings):
+    """Return the start time, step time, and end time from the settings.
+
+    Parameters
+    ----------
+    settings : dict
+        settings from project simulation.toml
+
+    Returns
+    -------
+    tuple
+        (start, end, step)
+
+    """
+    resolution = settings['Project']['Step resolution (sec)']
+
+    year = settings['Project']['Start Year']
+    start_day = settings['Project']['Start Day'] + settings['Project']['Date offset']
+    start_minutes = settings['Project']["Start Time (min)"]
+    end_day = settings['Project']['End Day']
+    end_minutes = settings['Project']["End Time (min)"]
+    step_secs = settings["Project"]["Step resolution (sec)"]
+
+    start_time = datetime(year=year, month=1, day=1) + \
+        timedelta(days=start_day - 1, minutes=start_minutes)
+    end_time = datetime(year=year, month=1, day=1) + \
+        timedelta(days=end_day - 1, minutes=end_minutes)
+    step_time = timedelta(seconds=step_secs)
+
+    return start_time, end_time, step_time
+
+
 def interpret_datetime(timestamp):
     """Return a datetime object from a timestamp string.
 
@@ -216,3 +251,26 @@ def make_human_readable_size(size, decimals=2):
             break
         size /= 1024.0
     return f"{size:.{decimals}f} {unit}"
+
+
+def make_json_serializable(obj):
+    if isinstance(obj, np.int64):
+        obj = int(obj)
+    elif isinstance(obj, complex):
+        obj = str(obj)
+    elif isinstance(obj, np.ndarray):
+        if len(obj) > 0 and isinstance(obj[0], complex):
+            obj = [str(x) for x in obj]
+        else:
+            obj = [x for x in obj]
+    return obj
+
+
+def local_timezone_name():
+    zone = time.altzone if time.daylight else time.timezone
+    return f"Etc/GMT+{int(zone / 3600)}"
+
+
+def make_timestamps(data):
+    local = local_timezone_name()
+    return pd.to_datetime(data, unit="s").tz_localize("UTC").tz_convert(local)

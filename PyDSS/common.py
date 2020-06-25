@@ -13,6 +13,8 @@ OPENDSS_MASTER_FILENAME = "Master.dss"
 SUBSCRIPTIONS_FILENAME = "Subscriptions.toml"
 PROJECT_TAR = "project.tar"
 PROJECT_ZIP = "project.zip"
+PV_LOAD_SHAPE_FILENAME = "pv_load_shape_data.h5"
+INTEGER_NAN = -9999
 
 
 class VisualizationType(enum.Enum):
@@ -122,3 +124,33 @@ DEFAULT_MONTE_CARLO_SETTINGS_FILE = os.path.join(
     "Monte_Carlo",
     MONTE_CARLO_SETTINGS_FILENAME,
 )
+
+
+class DataConversion(enum.Enum):
+    NONE = "none"
+    ABS = "abs"
+    ABS_SUM = "abs_sum"
+    SUM = "sum"
+
+
+class DatasetPropertyType(enum.Enum):
+    ELEMENT_PROPERTY = "elem_prop"  # data is stored at every time point
+    FILTERED = "filtered"  # data is stored after being filtered
+    METADATA = "metadata"  # metadata for another dataset
+    NUMBER = "number"  # Only a single value is written
+    TIME_STEP = "time_step"  # data are time indices, tied to FILTERED
+
+
+class LimitsFilter(enum.Enum):
+    INSIDE = "inside"
+    OUTSIDE = "outside"
+
+
+class StoreValuesType(enum.Enum):
+    ALL = "all"
+    CHANGE_COUNT = "change_count"
+    MAX = "max"
+    MIN = "min"
+    MOVING_AVERAGE = "moving_average"
+    MOVING_AVERAGE_MAX = "moving_average_max"
+    SUM = "sum"

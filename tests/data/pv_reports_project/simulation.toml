@@ -1,13 +1,16 @@
 [Project]
 "Start Year" = 2017
-"Start Day" = 1
+"Start Day" = 251
 "Start Time (min)" = 0.0
-"End Day" = 1
+"End Day" = 258
 "End Time (min)" = 1439.0
 "Date offset" = 0
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 15
-"Error tolerance" = 0.001
+"Error tolerance" = 0.0001
+"Max error tolerance" = 0.0
+"Convergence error percent threshold" = 0
+"Skip export on convergence error" = false
 "Control mode" = "Time"
 "Disable PyDSS controllers" = false
 "Project Path" = "./tests/data"
@@ -83,9 +86,9 @@ post_process_infos = []
 # Display on screen- [Bool] - Boolean variable
 # Clear old log file- [Bool] - Boolean variable
 [Logging]
-"Logging Level" = "DEBUG"
+"Logging Level" = "INFO"
 "Log to external file" = true
-"Display on screen" = true
+"Display on screen" = false
 "Clear old log file" = false
 
 [MonteCarlo]
@@ -93,9 +96,19 @@ post_process_infos = []
 
 [Reports]
 Format = "h5"
+#Granularity = "per_element_per_time_point"
+Granularity = "per_element_total"
+#Granularity = "all_elements_per_time_point"
+#Granularity = "all_elements_total"
+
 [[Reports.Types]]
 name = "Capacitor State Change Counts"
 enabled = true
+
+[[Reports.Types]]
+name = "Feeder Losses"
+enabled = true
+scenarios = ["control_mode"]
 
 [[Reports.Types]]
 name = "PV Clipping"
@@ -109,3 +122,20 @@ enabled = true
 name = "RegControl Tap Number Change Counts"
 enabled = true
 
+[[Reports.Types]]
+name = "Thermal Metrics"
+enabled = true
+transformer_loading_percent_threshold = 110
+transformer_window_size_hours = 2
+transformer_loading_percent_moving_average_threshold = 100
+line_window_size_hours = 1
+line_loading_percent_threshold = 107
+line_loading_percent_moving_average_threshold = 100
+force_moving_average = true
+
+[[Reports.Types]]
+name = "Voltage Metrics"
+enabled = true
+window_size_minutes = 60
+range_a_limits = [0.95, 1.05]
+range_b_limits = [0.90, 1.0583]

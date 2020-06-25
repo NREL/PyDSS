@@ -6,7 +6,7 @@ import zipfile
 
 import pytest
 
-from PyDSS.common import PROJECT_TAR, PROJECT_ZIP
+from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, SIMULATION_SETTINGS_FILENAME
 from PyDSS.pydss_fs_interface import STORE_FILENAME
 from PyDSS.pydss_project import PyDssProject
 from PyDSS.utils.utils import dump_data

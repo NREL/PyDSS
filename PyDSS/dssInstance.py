@@ -5,6 +5,8 @@ from PyDSS.pyContrReader import read_controller_settings_from_registry
 from PyDSS.pyPlotReader import pyPlotReader as ppr
 from PyDSS.dssElementFactory import create_dss_element
 from PyDSS.dssCircuit import dssCircuit
+from PyDSS.exceptions import PyDssConvergenceError, PyDssConvergenceErrorCountExceeded, \
+    PyDssConvergenceMaxError
 from PyDSS.NetworkModifier import Modifier
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
@@ -45,6 +47,8 @@ class OpenDSS:
         self._pyPlotObjects = {}
         self.BokehSessionID = None
         self._Options = params
+        self._convergenceErrors = 0
+        self._maxConvergenceErrorCount = 0
 
         rootPath = params['Project']['Project Path']
         self._ActiveProject = params['Project']['Active Project']
@@ -232,13 +236,13 @@ class OpenDSS:
         return
 
     def _UpdateControllers(self, Priority, Time, UpdateResults):
-        error = 0
+        maxError = 0.0
 
         for controller in self._pyControls.values():
-            error += controller.Update(Priority, Time, UpdateResults)
-            if Priority == 0:
-                pass
-        return abs(error) < self._Options['Project']['Error tolerance'], error
+            error = controller.Update(Priority, Time, UpdateResults)
+            if error > maxError:
+                maxError = error
+        return abs(maxError) < self._Options['Project']['Error tolerance'], maxError
 
     def _CreateBusObjects(self):
         BusNames = self._dssCircuit.AllBusNames()
@@ -303,19 +307,40 @@ class OpenDSS:
 
 
         # run simulation time step and get results
+        time_step_has_converged = True
+        convergence_max_error = self._Options['Project']['Max error tolerance']
+        max_count = self._Options['Project']['Convergence error percent threshold']
         if not self._Options['Project']['Disable PyDSS controllers']:
             for priority in range(CONTROLLER_PRIORITIES):
+                has_converged = False
                 for i in range(self._Options['Project']['Max Control Iterations']):
-                    has_converged, error = self._UpdateControllers(priority, step, UpdateResults=False)
-                    self._Logger.debug('Control Loop {} convergence error: {}'.format(priority, error))
-                    if has_converged or i == self._Options['Project']['Max Control Iterations'] - 1:
-                        if not has_converged:
-                            self._Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
+                    _has_converged, error = self._UpdateControllers(priority, step, UpdateResults=False)
+                    if _has_converged:
+                        has_converged = True
                         break
-                    self._dssSolver.reSolve()
+                    else:
+                        self._Logger.debug('Control Loop {} convergence error: {}'.format(priority, error))
+                        self._dssSolver.reSolve()
+                if not has_converged:
+                    self._Logger.warning('Completed control Loop with no convergence priority=%s @ %s',
+                                         priority, step)
+                    self._convergenceErrors += 1
+                    time_step_has_converged = False
+                    self._Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
+                    if convergence_max_error != 0.0 and error > convergence_max_error:
+                        self._Logger.error("Convergence error %s exceeded max value %s", error, convergence_max_error)
+                        raise PyDssConvergenceMaxError(f"Exceeded max convergence error {error}")
+                    if max_count != 0 and self._convergenceErrors > max_count:
+                        self._Logger.error('Exceeded convergence error count threshold')
+                        raise PyDssConvergenceErrorCountExceeded(f"{self._convergenceErrors} errors occurred")
+
             self._UpdatePlots()
             if self._Options['Exports']['Log Results']:
-                self.ResultContainer.UpdateResults()
+                if not time_step_has_converged and self._Options['Project']['Skip export on convergence error']:
+                    store_nan = True
+                else:
+                    store_nan = False
+                self.ResultContainer.UpdateResults(store_nan=store_nan)
 
         if self._Options['Frequency']['Enable frequency sweep'] and \
                 self._Options['Project']['Simulation Type'].lower() != 'dynamic':
@@ -351,15 +376,17 @@ class OpenDSS:
         try:
             self.RunStep(0)
         finally:
-            self.ResultContainer.FlushData()
+            self.ResultContainer.Close()
 
         return self.ResultContainer.max_num_bytes()
 
     def RunSimulation(self, project, scenario, MC_scenario_number=None):
         startTime = time.time()
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
+        self._maxConvergenceErrorCount = round(self._Options['Project']['Convergence error percent threshold'] * .01 * Steps)
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
         self._Logger.info('Simulation time step {}.'.format(Steps))
+        self._Logger.info('Max convergence error count {}.'.format(self._maxConvergenceErrorCount))
         if self._Options['Exports']['Result Container'] == 'ResultData' and self.ResultContainer is not None:
             self.ResultContainer.InitializeDataStore(project.hdf_store, Steps, MC_scenario_number)
 
@@ -397,7 +424,7 @@ class OpenDSS:
             if self._Options and self._Options['Exports']['Log Results']:
                 # This is here to guarantee that DatasetBuffers aren't left
                 # with any data in memory.
-                self.ResultContainer.FlushData()
+                self.ResultContainer.Close()
 
         if self._Options and self._Options['Exports']['Log Results']:
             self.ResultContainer.ExportResults(

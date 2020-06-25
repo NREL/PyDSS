@@ -22,14 +22,15 @@ from PyDSS.pydss_fs_interface import PyDssDirectoryInterface, \
     PyDssArchiveFileInterfaceBase, PyDssTarFileInterface, \
     PyDssZipFileInterface, PROJECT_DIRECTORIES, \
     SCENARIOS, STORE_FILENAME
-from PyDSS.reports import REPORTS_DIR
+from PyDSS.reports.reports import REPORTS_DIR
 from PyDSS.utils.utils import dump_data, load_data
 
 from distutils.dir_util import copy_tree
 logger = logging.getLogger(__name__)
 
 
-DATA_FORMAT_VERSION = "1.0.1"
+DATA_FORMAT_VERSION = "1.0.2"
+RUN_SIMULATION_FILENAME = "simulation-run.toml"
 
 
 class PyDssProject:
@@ -311,14 +312,21 @@ class PyDssProject:
             store_filename = os.path.join(tempfile.gettempdir(), STORE_FILENAME)
         else:
             store_filename = os.path.join(self._project_dir, STORE_FILENAME)
+            self._dump_simulation_settings()
 
         driver = None
         if self._simulation_config["Exports"].get("Export Data In Memory", True):
             driver = "core"
-        with h5py.File(store_filename, mode="w", driver=driver) as hdf_store:
-            self._hdf_store = hdf_store
-            self._hdf_store.attrs["version"] = DATA_FORMAT_VERSION
-            for scenario in self._scenarios:
+        if os.path.exists(store_filename):
+            os.remove(store_filename)
+
+        # This ensures that all datasets are flushed and closed after each
+        # scenario. If there is an unexpected crash in a later scenario then
+        # the file will still be valid for completed scenarios.
+        for scenario in self._scenarios:
+            with h5py.File(store_filename, mode="a", driver=driver) as hdf_store:
+                self._hdf_store = hdf_store
+                self._hdf_store.attrs["version"] = DATA_FORMAT_VERSION
                 self._simulation_config["Project"]["Active Scenario"] = scenario.name
                 inst.run(self._simulation_config, self, scenario, dry_run=dry_run)
                 self._estimated_space[scenario.name] = inst.get_estimated_space()
@@ -347,6 +355,11 @@ class PyDssProject:
 
         if dry_run and os.path.exists(store_filename):
             os.remove(store_filename)
+
+    def _dump_simulation_settings(self):
+        # Various settings may have been updated. Write the actual settings to a file.
+        filename = os.path.join( self._project_dir, RUN_SIMULATION_FILENAME)
+        dump_data(self._simulation_config, filename)
 
     def _serialize_scenarios(self):
         self._simulation_config["Project"]["Scenarios"] = []

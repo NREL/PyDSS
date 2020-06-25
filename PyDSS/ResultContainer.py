@@ -242,7 +242,7 @@ class ResultContainer:
     def InitializeDataStore(self, _, __):
         pass
 
-    def UpdateResults(self):
+    def UpdateResults(self, store_nan=False):
         if self.__Settings['Helics']['Co-simulation Mode']:
             r_seconds = self.__dssDolver.GetTotalSeconds()
             print('Time: ', r_seconds)
@@ -286,7 +286,7 @@ class ResultContainer:
             self.__ExportResultsByClass(fileprefix)
         self.__ExportEventLog()
 
-    def FlushData(self):
+    def Close(self):
         pass
 
     def max_num_bytes(self):

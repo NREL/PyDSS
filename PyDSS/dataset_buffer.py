@@ -5,6 +5,9 @@ import logging
 import numpy as np
 import pandas as pd
 
+from PyDSS.common import DatasetPropertyType
+from PyDSS.utils.utils import make_timestamps
+
 
 KiB = 1024
 MiB = KiB * KiB
@@ -12,12 +15,11 @@ GiB = MiB * MiB
 
 # The optimal number of chunks to store in memory will vary widely.
 # The h5py docs recommend keeping chunk byte sizes between 10 KiB - 1 MiB.
-# This attempts to support a higher-end PyDSS case. Might need to provide
-# customization capabilities.
-# Each element property will have one "chunk" of data in memory.
-# Storing 50,000 element properties with a 32 KiB buffer in each of 36
-# parallel processes would require 54 GiB of RAM.
-DEFAULT_MAX_CHUNK_BYTES = 32 * KiB
+# It needs to be larger than the biggest possible row.
+# To store voltages for 10,000 nodes we would need 10,0000 * 8 = 80 KB
+# Note that the downside to making this larger is that any read causes the
+# entire chunk to be read.
+DEFAULT_MAX_CHUNK_BYTES = 128 * KiB
 
 logger = logging.getLogger(__name__)
 
@@ -31,10 +33,10 @@ class DatasetBuffer:
     # TODO add support for context manager, though PyDSS wouldn't be able to
     # take advantage in its current implementation.
 
-
     def __init__(
             self, hdf_store, path, max_size, dtype, columns, scaleoffset=None,
-            max_chunk_bytes=None, attributes=None
+            max_chunk_bytes=None, attributes=None, names=None,
+            column_ranges_per_name=None
         ):
         if max_chunk_bytes is None:
             max_chunk_bytes = DEFAULT_MAX_CHUNK_BYTES
@@ -48,12 +50,8 @@ class DatasetBuffer:
             dtype,
             max_chunk_bytes,
         )
-        if num_columns == 1:
-            shape = (self._max_size,)
-            chunks = (self._chunk_size,)
-        else:
-            shape = (self._max_size, num_columns)
-            chunks = (self._chunk_size, num_columns)
+        shape = (self._max_size, num_columns)
+        chunks = (self._chunk_size, num_columns)
 
         self._dataset = self._hdf_store.create_dataset(
             name=path,
@@ -65,18 +63,50 @@ class DatasetBuffer:
             shuffle=True,
             scaleoffset=scaleoffset,
         )
-        self._dataset.attrs["columns"] = columns
+
+        # Columns, names, and column_ranges_per_name can't be stored as
+        # attributes because they can exceed the size limit. Store as datasets
+        # instead.
+        column_dataset_path = path + "Columns"
+        column_dataset = self._hdf_store.create_dataset(
+            name=column_dataset_path,
+            data=np.array(columns, dtype="S"),
+        )
+        column_dataset.attrs["type"] = DatasetPropertyType.METADATA.value
+        self._dataset.attrs["column_dataset_path"] = column_dataset_path
+
+        if names is not None:
+            name_dataset_path = path + "Names"
+            name_dataset = self._hdf_store.create_dataset(
+                name = name_dataset_path,
+                data = np.array(names, dtype="S"),
+            )
+            name_dataset.attrs["type"] = DatasetPropertyType.METADATA.value
+            self._dataset.attrs["name_dataset_path"] = name_dataset_path
+
+        if column_ranges_per_name is not None:
+            column_ranges_dataset_path = path + "ColumnRanges"
+            column_ranges_dataset = self._hdf_store.create_dataset(
+                name=column_ranges_dataset_path,
+                data=column_ranges_per_name,
+            )
+            column_ranges_dataset.attrs["type"] = DatasetPropertyType.METADATA.value
+            self._dataset.attrs["column_ranges_dataset_path"] = column_ranges_dataset_path
+
+        self._dataset.attrs["length"] = 0
         self._dataset_index = 0
-        self._path = path
         self._buf = np.empty(chunks, dtype=dtype)
 
         if attributes is not None:
             for attr, val in attributes.items():
                 self._dataset.attrs[attr] = val
 
+        logger.debug("Created DatasetBuffer path=%s shape=%s chnunks=%s",
+                     path, shape, chunks)
+
     def __del__(self):
         assert self._buf_index == 0, \
-            f"DatasetBuffer destructed with data in memory: {self._path}"
+            f"DatasetBuffer destructed with data in memory: {self._dataset.name}"
 
     def flush_data(self):
         """Flush the data in the temporary buffer to storage."""
@@ -116,14 +146,20 @@ class DatasetBuffer:
             max_chunk_bytes=DEFAULT_MAX_CHUNK_BYTES
         ):
         tmp = np.empty((1, num_columns), dtype=dtype)
-        size_one_row = tmp.size * tmp.itemsize
-        chunk_count = min(int(max_chunk_bytes / size_one_row), max_size)
-        logger.debug("chunk_count=%s", chunk_count)
+        size_row = tmp.size * tmp.itemsize
+        chunk_count = min(int(max_chunk_bytes / size_row), max_size)
+        if chunk_count == 0:
+            raise InvalidConfiguration(
+                f"HDF Max Chunk Bytes is smaller than the size of a row. Please increase it. " \
+                f"max_chunk_bytes={max_chunk_bytes} num_columns={num_columns} " \
+                f"size_row={size_row}"
+            )
+
         return chunk_count
 
     @staticmethod
-    def to_dataframe(dataset):
-        """Create a pandas DataFrame from a dataset created with this class.
+    def get_column_ranges(dataset):
+        """Return the column ranges per name for the dataset.
 
         Parameters
         ----------
@@ -131,16 +167,70 @@ class DatasetBuffer:
 
         Returns
         -------
+        list
+
+        """
+        column_ranges_dataset = dataset.file[dataset.attrs["column_ranges_dataset_path"]]
+        return column_ranges_dataset[:]
+
+    @staticmethod
+    def get_columns(dataset):
+        """Return the columns for the dataset.
+
+        Parameters
+        ----------
+        dataset : h5py.Dataset
+
+        Returns
+        -------
+        list
+
+        """
+        col_dataset = dataset.file[dataset.attrs["column_dataset_path"]]
+        return [x.decode("utf8") for x in col_dataset[:]]
+
+    @staticmethod
+    def get_names(dataset):
+        """Return the names for the dataset.
+
+        Parameters
+        ----------
+        dataset : h5py.Dataset
+
+        Returns
+        -------
+        list
+
+        """
+        name_dataset = dataset.file[dataset.attrs["name_dataset_path"]]
+        return [x.decode("utf8") for x in name_dataset[:]]
+
+    @staticmethod
+    def to_dataframe(dataset, column_range=None):
+        """Create a pandas DataFrame from a dataset created with this class.
+
+        Parameters
+        ----------
+        dataset : h5py.Dataset
+        column_range : None | list
+            first element is column start, second element is length
+
+        Returns
+        -------
         pd.DataFrame
 
         """
-        if "length" in dataset.attrs.keys():
-            length = dataset.attrs["length"]
-        else:
-            # This can be removed once projects with the older format aren't
-            # supported.
-            length = len(dataset)
-        return pd.DataFrame(dataset[:length], columns=dataset.attrs["columns"])
+        length = dataset.attrs["length"]
+        columns = DatasetBuffer.get_columns(dataset)
+        if column_range is None:
+            return pd.DataFrame(dataset[:length], columns=columns)
+
+        start = column_range[0]
+        end = start + column_range[1]
+        return pd.DataFrame(
+            dataset[:length, start:end],
+            columns=columns[start:end],
+        )
 
     @staticmethod
     def to_datetime(dataset):
@@ -156,4 +246,4 @@ class DatasetBuffer:
 
         """
         length = dataset.attrs["length"]
-        return pd.to_datetime(dataset[:length], unit="s")
+        return make_timestamps(dataset[:length])

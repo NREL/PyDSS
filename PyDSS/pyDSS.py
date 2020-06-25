@@ -7,6 +7,7 @@ import logging
 
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS import dssInstance
+from PyDSS.reports.reports import ReportGranularity
 from PyDSS.utils.utils import dump_data, load_data
 
 __author__ = "Aadil Latif"
@@ -112,6 +113,9 @@ class instance(object):
             'Step resolution (sec)' : {'type': float},
             'Max Control Iterations' : {'type': int},
             'Error tolerance': {'type': float},
+            'Max error tolerance': {'type': float},
+            'Convergence error percent threshold': {'type': float},
+            'Skip export on convergence error': {'type': float},
             'Simulation Type': {'type': str, 'Options': ["QSTS", "Dynamic", "Snapshot", "Monte Carlo"]},
             'Active Project': {'type': str},
             'Scenarios': {'type': list},
@@ -125,6 +129,7 @@ class instance(object):
         },
         "Reports": {
             'Format': {'type': str, 'Options': ["csv", "h5"]},
+            'Granularity': {'type': str, 'Options': [x.value for x in ReportGranularity]},
             'Types': {'type': list}
         },
     }

@@ -23,6 +23,9 @@
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
+"Max error tolerance" = 0.0
+"Convergence error percent threshold" = 0.0
+"Skip export on convergence error" = true
 "Control mode" = "Static"
 "Disable PyDSS controllers" = false
 "Simulation Type" = "QSTS"
@@ -51,7 +54,7 @@
 "Export Data Tables" = false
 "Export Data In Memory" = false
 "Export PV Profiles" = false
-"HDF Max Chunk Bytes" = 32768
+"HDF Max Chunk Bytes" = 131072
 "Export Event Log" = true
 "Log Results" = true
 "Result Container" = "ResultContainer"
@@ -112,6 +115,8 @@
 
 [Reports]
 Format = "h5"
+Granularity = "per_element_per_time_point"
+
 [[Reports.Types]]
 name = "Capacitor State Change Counts"
 enabled = false
@@ -128,3 +133,19 @@ enabled = false
 name = "RegControl Tap Number Change Counts"
 enabled = false
 
+[[Reports.Types]]
+name = "Thermal Metrics"
+enabled = false
+transformer_loading_percent_threshold = 150
+transformer_window_size_hours = 2
+transformer_loading_percent_moving_average_threshold = 120
+line_window_size_hours = 1
+line_loading_percent_threshold = 120
+line_loading_percent_moving_average_threshold = 100
+
+[[Reports.Types]]
+name = "Voltage Metrics"
+enabled = false
+window_size_minutes = 60
+range_a_limits = [0.95, 1.05]
+range_b_limits = [0.90, 1.0583]
