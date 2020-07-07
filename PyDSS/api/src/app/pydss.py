@@ -120,7 +120,7 @@ class PyDSS:
                             restructured_results[class_name] = {}
                         if not isinstance(val, complex):
                             restructured_results[class_name][elem_name] = val
-                    self.a_writer.write_asset_status(
+                    self.a_writer.write(
                         self.pydss_obj._Options["Helics"]["Federate name"],
                         self.pydss_obj._dssSolver.GetTotalSeconds(),
                         restructured_results

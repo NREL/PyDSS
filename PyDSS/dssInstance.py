@@ -86,6 +86,7 @@ class OpenDSS:
 
         self._dssInstance.Basic.ClearAll()
         self._dssInstance.utils.run_command('Log=NO')
+
         run_command('Clear')
         self._Logger.info('Loading OpenDSS model')
         try:
@@ -94,6 +95,9 @@ class OpenDSS:
         finally:
             os.chdir(orig_dir)
         self._Logger.info('OpenDSS:  ' + reply)
+
+        data2 = self._dssInstance.YMatrix.GetPCInjCurr()
+        print(data2)
 
         assert ('error ' not in reply.lower()), 'Error compiling OpenDSS model.\n{}'.format(reply)
         run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
@@ -120,11 +124,9 @@ class OpenDSS:
         if params['Exports']['Result Container'] == 'ResultContainer':
             self.ResultContainer = RC(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
                                       self._dssBuses, self._dssSolver, self._dssCommand)
-        else:
+        elif params['Exports']['Result Container'] == 'ResultData':
             self.ResultContainer = ResultData(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
                                                 self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance)
-    # else:
-    #     self.ResultContainer = None
 
         pyCtrlReader = pcr(self._dssPath['pyControllers'])
         ControllerList = pyCtrlReader.pyControllers
@@ -261,6 +263,7 @@ class OpenDSS:
         self._dssObjectsByClass['Circuits'] = {
             'Circuit.' + self._dssCircuit.Name(): self._dssObjects['Circuit.' + self._dssCircuit.Name()]
         }
+        self._dssObjectsByClass['Buses'] = self._dssBuses
         return
 
     def _GetRelaventObjectDict(self, key):
@@ -350,7 +353,8 @@ class OpenDSS:
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
         self._Logger.info('Simulation time step {}.'.format(Steps))
-        if self._Options['Exports']['Result Container'] == 'ResultData' and self.ResultContainer is not None:
+        if self._Options['Exports']['Result Container'] == 'ResultData':
+            print("initializing store")
             self.ResultContainer.InitializeDataStore(project.hdf_store, Steps, MC_scenario_number)
 
         postprocessors = [

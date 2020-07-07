@@ -2,9 +2,6 @@ from datetime import datetime, timedelta
 from PyDSS.modes.abstract_solver import abstact_solver
 import math
 
-
-
-
 class QSTS(abstact_solver):
     def __init__(self, dssInstance, SimulationSettings, Logger):
         super().__init__(dssInstance, SimulationSettings, Logger)

@@ -172,7 +172,6 @@ class ValueByList(ValueStorageBase):
         self._data = {}
         self._value_type = None
         self._value = []
-
         assert (isinstance(values, list) and len(values) == len(label_suffixes)), \
             '"values" and "label_suffixes" should be lists of equal lengths'
         for val, lab_suf in zip(values , label_suffixes):

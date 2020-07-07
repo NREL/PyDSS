@@ -65,3 +65,7 @@ class abstact_solver(abc.ABC):
     @abc.abstractmethod
     def setMode(self, mode):
         return
+
+    def reset(self):
+
+        return

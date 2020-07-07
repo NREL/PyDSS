@@ -136,7 +136,7 @@
                                             "Log Results": false,
                                             "Max Control Iterations": 50,
                                             "Project Path": "C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples",
-                                            "Result Container": "ResultData",
+                                            "Result Container": "ResultContainer",
                                             "Simulation Type": "QSTS",
                                             "Start Day": 1,
                                             "Start Time (min)": 0,

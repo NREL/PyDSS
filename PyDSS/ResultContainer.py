@@ -8,7 +8,6 @@ from PyDSS.exceptions import InvalidParameter
 from PyDSS.utils.dataframe_utils import write_dataframe
 import pandas as pd
 import numpy as np
-#import helics as h
 import pathlib
 import gzip
 import logging
@@ -51,96 +50,26 @@ class ResultContainer:
         if self.__Settings['Exports']['Export Mode'] == 'byElement':
             self.FileReader = pyER(os.path.join(SystemPaths['ExportLists'], 'ExportMode-byElement.toml'))
             self.ExportList = self.FileReader.pyControllers
-            self.PublicationList = self.FileReader.publicationList
             self.CreateListByElement()
         elif self.__Settings['Exports']['Export Mode'] == 'byClass':
             self.FileReader = pyER(os.path.join(SystemPaths['ExportLists'], 'ExportMode-byClass.toml'))
             self.ExportList = self.FileReader.pyControllers
-            self.PublicationList = self.FileReader.publicationList
             self.CreateListByClass()
-        if self.__Settings['Helics']['Co-simulation Mode']:
-            self.__createPyDSSfederate()
-            self.__registerFederatePublications()
-            self.__registerFederateSubscriptions()
-            h.helicsFederateEnterExecutingMode(self.__PyDSSfederate)
-            self.pyLogger.debug('Entered HELICS execution mode')
-        return
-
-    def __createPyDSSfederate(self):
-        fedinfo = h.helicsCreateFederateInfo()
-        h.helicsFederateInfoSetCoreName(fedinfo, self.__Settings['Helics']['Federate name'])
-        h.helicsFederateInfoSetCoreTypeFromString(fedinfo, self.__Settings['Helics']['Core type'])
-        h.helicsFederateInfoSetCoreInitString(fedinfo, "--federates=1")
-        h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_delta, self.__Settings['Helics']['Time delta'])
-        h.helicsFederateInfoSetIntegerProperty(fedinfo, h.helics_property_int_log_level,
-                                                self.__Settings['Helics']['Helics logging level'])
-
-        h.helicsFederateInfoSetFlagOption(fedinfo, h.helics_flag_uninterruptible, True)
-        self.__PyDSSfederate = h.helicsCreateValueFederate(self.__Settings['Helics']['Federate name'], fedinfo)
-        return
-
-    def __registerFederateSubscriptions(self):
-        self.FileReader = pySR(os.path.join(self.SystemPaths['ExportLists'], 'Helics-Subcriptions.xlsx'))
-        self.__subscriptions = self.FileReader.SubscriptionDict
-
-        for element, subscription in self.__subscriptions.items():
-            assert element in self.ObjectsByElement, '"{}" listed in the subscription file not '.format(element) +\
-                                                     "available in PyDSS's master object dictionary."
-            if subscription["Subscribe"] == True:
-                sub = h.helicsFederateRegisterSubscription(self.__PyDSSfederate, subscription["Subscription ID"],
-                                                           subscription["Unit"])
-                self.pyLogger.debug('PyDSS subscribing to "{}" of  with units "{}"'.format(
-                    subscription["Subscription ID"],
-                    subscription["Unit"])
-                )
-                subscription['Subscription'] = sub
-            self.__subscriptions[element] = subscription
-        return
-
-    def updateSubscriptions(self):
-        for element, subscriptionData in self.__subscriptions.items():
-            if 'Subscription' in subscriptionData:
-                if subscriptionData['Data type'].lower() == 'double':
-                    value = h.helicsInputGetDouble(subscriptionData['Subscription'])
-                elif subscriptionData['Data type'].lower() == 'vector':
-                    value = h.helicsInputGetVector(subscriptionData['Subscription'])
-                elif subscriptionData['Data type'].lower() == 'string':
-                    value = h.helicsInputGetString(subscriptionData['Subscription'])
-                elif subscriptionData['Data type'].lower() == 'boolean':
-                    value = h.helicsInputGetBoolean(subscriptionData['Subscription'])
-                elif subscriptionData['Data type'].lower() == 'integer':
-                    value = h.helicsInputGetInteger(subscriptionData['Subscription'])
-                dssElement = self.ObjectsByElement[element]
-                dssElement.SetParameter(subscriptionData['Property'], value)
-                self.pyLogger.debug('Value for "{}.{}" changed to "{}"'.format(
-                    element,
-                    subscriptionData['Property'],
-                    value
-                ))
 
         return
 
-    def __registerFederatePublications(self):
-        self.__publications = {}
-        for object, property_dict in self.CurrentResults.items():
-            objClass = None
-            for Class in self.ObjectsByClass:
-                if object in self.ObjectsByClass[Class]:
-                    objClass = Class
-                    break
-            for property, type_dict in property_dict.items():
-                if '{} {}'.format(objClass, property) in self.PublicationList:
-                    for typeID, type in type_dict.items():
-                        name = '{}.{}.{}'.format(object, property, typeID)
 
-                        self.__publications[name] = h.helicsFederateRegisterGlobalTypePublication(
-                            self.__PyDSSfederate,
-                            name,
-                            type['type'],
-                            type['unit']
-                        )
-
-        return
+    def GetCurrentData(self):
+        for Class in self.Results.keys():
+            for Property in self.Results[Class].keys():
+                for Element in self.Results[Class][Property].keys():
+                    if Class == 'Buses':
+                        value = self.Buses[Element].GetVariable(Property)
+                        self.__parse_current_values(Element, Property, value)
+                    else:
+                        value = self.ObjectsByClass[Class][Element].GetValue(Property)
+                        self.__parse_current_values(Element, Property, value)
+        return self.CurrentResults
 
     def __initCurrentResults(self, PptyName):
         data = {}
@@ -214,7 +143,6 @@ class ResultContainer:
         return
 
     def __parse_current_values(self, Element, Property, Values):
-
         ans = self.CurrentResults[Element][Property]
         for filter, data in ans.items():
             if filter == 'A':
@@ -223,19 +151,6 @@ class ResultContainer:
                 ans[filter]['value'] = Values[0::2]
             elif filter == '0':
                 ans[filter]['value'] = Values[1::2]
-            if self.__Settings['Helics']['Co-simulation Mode']:
-                name = '{}.{}.{}'.format(Element, Property, filter)
-                if isinstance(ans[filter]['value'], list) and name in self.__publications:
-                    h.helicsPublicationPublishVector(self.__publications[name], ans[filter]['value'])
-                elif isinstance(Values, float) and name in self.__publications:
-                    h.helicsPublicationPublishDouble(self.__publications[name], ans[filter]['value'])
-                elif isinstance(Values, str) and name in self.__publications:
-                    h.helicsPublicationPublishString(self.__publications[name], ans[filter]['value'])
-                elif isinstance(Values, bool) and name in self.__publications:
-                    h.helicsPublicationPublishBoolean(self.__publications[name], ans[filter]['value'])
-                elif isinstance(Values, int) and name in self.__publications:
-                    h.helicsPublicationPublishInteger(self.__publications[name], ans[filter]['value'])
-
             self.CurrentResults[Element][Property] = ans
         return
 

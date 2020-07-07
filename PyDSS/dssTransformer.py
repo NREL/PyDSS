@@ -3,7 +3,7 @@ from PyDSS.dssElement import dssElement
 from PyDSS.value_storage import ValueByNumber
 from PyDSS.value_storage import ValueByList
 import ast
-
+from PyDSS.exceptions import InvalidParameter
 
 class dssTransformer(dssElement):
 
@@ -53,9 +53,13 @@ class dssTransformer(dssElement):
     def __init__(self, dssInstance):
         super(dssTransformer, self).__init__(dssInstance)
         self._NumWindings = dssInstance.Transformers.NumWindings()
+        self._dssInstance = dssInstance
 
     @property
     def NumWindings(self):
+        # print(self.dss.Transformers.Name())
+        # print(self.dss.Properties.Value("taps"))
+        # print(self.GetValue('taps'))
         return self._NumWindings
 
     @staticmethod
@@ -63,6 +67,7 @@ class dssTransformer(dssElement):
         return [values[i * nLists:(i + 1) * nLists] for i in range((len(values) + nLists - 1) // nLists)]
 
     def GetValue(self, VarName, convert=False):
+        self.SetActiveObject()
         if VarName in self._Variables:
             VarValue = self.GetVariable(VarName, convert=convert)
         elif VarName in self._Parameters:
@@ -70,6 +75,7 @@ class dssTransformer(dssElement):
             if convert:
                 if VarName in self.VARIABLE_OUTPUTS_BY_LIST:
                     VarValue = ast.literal_eval(VarValue)
+                    VarValue = VarValue[:self.NumWindings]
                     VarValue = ValueByList(
                         self._FullName, VarName, VarValue, ['wdg{}'.format(i+1) for i in range(self.NumWindings)]
                     )
@@ -79,3 +85,8 @@ class dssTransformer(dssElement):
         else:
             return None
         return VarValue
+
+    def SetActiveObject(self):
+        self._dssInstance.Circuit.SetActiveElement(self._FullName)
+        if self._dssInstance.CktElement.Name() != self._dssInstance.Element.Name():
+            raise InvalidParameter('Object is not a circuit element')

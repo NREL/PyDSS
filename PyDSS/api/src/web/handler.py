@@ -333,7 +333,7 @@ class Handler:
                                     Active Scenario: base_case
                                     DSS File: Master_Spohn_existing_VV.dss
                                     Co-simulation Mode: false
-                                    Result Container: ResultData
+                                    Result Container: ResultContainer
                                     Log Results: false
                                     Federate name : PyDSS_x
                         Example_2:

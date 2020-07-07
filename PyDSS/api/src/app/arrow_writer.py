@@ -12,14 +12,18 @@ class ArrowWriter:
         files.
     """
 
-    def __init__(self, log_dir):
+    def __init__(self, log_dir, columnLength):
         """ Constructor """
         self.log_dir = log_dir
 
         # Create arrow writer for each object type
         self.arrow_writers = {}
+        self.columnLength = columnLength
+        self.chunkRows = 96
+        self.step = 0
+        self.dfs = {}
 
-    def write_asset_status(self, fed_name, currenttime, powerflow_output):
+    def write(self, fed_name, currenttime, powerflow_output, index):
         """
         Writes the status of BES assets at a particular timestep to an
             arrow file.
@@ -41,18 +45,28 @@ class ArrowWriter:
             df["TimeStep"] = float(currenttime)
             df["Interconnect"] = fed_name
 
-            try:
-                # Create a record batch
-                record_batch = pa.RecordBatch.from_pandas(df=df)
-                arrow_file = os.path.join(self.log_dir,
-                                          f"{obj_type.lower()}.arrow")
 
-                # Create new writer object if one does not already exist for
-                #   the powerflow object type
-                if obj_type not in self.arrow_writers:
-                    self.arrow_writers[obj_type] = pa.RecordBatchStreamWriter(
-                        arrow_file, record_batch.schema)
-                self.arrow_writers[obj_type].write_batch(record_batch)
+            if obj_type not in self.dfs:
+                self.dfs[obj_type] = df
+            else:
+                if self.dfs[obj_type] is None:
+                    self.dfs[obj_type] = df
+                else:
+                    self.dfs[obj_type] = self.dfs[obj_type].append(df, ignore_index=True)
 
-            except Exception as ex:
-                print(f"\n\tError writing to arrow file: {obj_type} > {ex}")
+            if self.step % self.chunkRows == self.chunkRows - 1:
+                try:
+                    # Create a record batch
+                    record_batch = pa.RecordBatch.from_pandas(df=self.dfs[obj_type])
+                    arrow_file = os.path.join(self.log_dir,
+                                              f"{obj_type.lower()}.arrow")
+
+                    # Create new writer object if one does not already exist for
+                    #   the powerflow object type
+                    if obj_type not in self.arrow_writers:
+                        self.arrow_writers[obj_type] = pa.RecordBatchStreamWriter(
+                            arrow_file, record_batch.schema)
+                    self.arrow_writers[obj_type].write_batch(record_batch)
+                    self.dfs[obj_type] = None
+                except Exception as ex:
+                    print(f"\n\tError writing to arrow file: {obj_type} > {ex}")

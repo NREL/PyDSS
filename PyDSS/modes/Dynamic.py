@@ -13,6 +13,7 @@ class Dynamic(abstact_solver):
         EndTimeMin = SimulationSettings['Project']['End Time (min)']
         sStepResolution = SimulationSettings['Project']['Step resolution (sec)']
 
+        self._MaxItrs = SimulationSettings['Project']['Max Control Iterations']
         self._Time = datetime.strptime('{} {}'.format(SimulationSettings['Project']['Start Year'],
                                                        SimulationSettings['Project']['Start Day'] + SimulationSettings['Project'][
                                                            'Date offset']
@@ -35,7 +36,7 @@ class Dynamic(abstact_solver):
         self._dssSolution.Seconds(StartTimeMin * 60)
         self._dssSolution.Number(1)
         self._dssSolution.StepSize(self._sStepRes)
-        self._dssSolution.MaxControlIterations(SimulationSettings['Project']['Max Control Iterations'])
+        self._dssSolution.MaxControlIterations(self._MaxItrs)
         return
 
     def setFrequency(self, frequency):
@@ -49,6 +50,15 @@ class Dynamic(abstact_solver):
         Seconds = (self._EndTime - self._StartTime).total_seconds()
         Steps = math.ceil(Seconds / self._sStepRes)
         return Steps, self._StartTime, self._EndTime
+
+    def reset(self):
+        self.setMode('Dynamic')
+        self._dssSolution.Hour(self._Hour)
+        self._dssSolution.Seconds(self._Second)
+        self._dssSolution.Number(1)
+        self._dssSolution.StepSize(self._sStepRes)
+        self._dssSolution.MaxControlIterations(self._MaxItrs)
+        return
 
     def SolveFor(self, mStartTime, mTimeStep):
         Hour = int(mStartTime/60)
@@ -93,3 +103,5 @@ class Dynamic(abstact_solver):
 
     def setMode(self, mode):
         self._dssIntance.utils.run_command('Set Mode={}'.format(mode))
+
+
