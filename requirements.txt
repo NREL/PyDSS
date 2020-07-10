@@ -18,3 +18,4 @@ tables
 h5py
 helics
 pytest
+terminaltables

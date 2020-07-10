@@ -27,7 +27,7 @@ def getLogger(name, path, LoggerOptions):
 
 
 def getReportLogger(LoggerTag, path, LoggerOptions):
-    log_filename = os.path.join(path, "{}_reports.log".format(LoggerTag))
+    log_filename = os.path.join(path, "{}__reports.log".format(LoggerTag))
     if os.path.exists(log_filename):
         os.remove(log_filename)
 
@@ -47,4 +47,4 @@ def getReportLogger(LoggerTag, path, LoggerOptions):
 
 
 def getLoggerTag(options):
-    return options["Project"]["Active Project"] + "_" + options["Project"]["Active Scenario"]
+    return options["Project"]["Active Project"] + "__" + options["Project"]["Active Scenario"]
