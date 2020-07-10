@@ -94,7 +94,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.other_load_dss_files = {}
         self.other_pv_dss_files = {}
 
-
         self.other_pv_dss_files = self.config["project_data"]["pydss_other_pvs_dss_files"]
         self.other_load_dss_files = self.config["project_data"]["pydss_other_loads_dss_files"]
 
@@ -202,6 +201,9 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         end = time.time()
 
         # upgrading process is over
+        self.logger.debug("Writing upgrades to DSS file")
+        self.write_dat_file()
+
         # so clear and redirect dss file - to compute final violations, and get new elements
         # TODO: Test impact of applied settings - can't compile the feeder again in PyDSS
         # self.compile_feeder_initialize()
@@ -209,7 +211,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
         check_redirect(base_dss)
         upgrades_file = os.path.join(self.config["Outputs"], "thermal_upgrades.dss")
-        #check_redirect(upgrades_file)
+        check_redirect(upgrades_file)
         self.dssSolver.Solve()
 
         # Get final loadings
@@ -245,8 +247,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             plt.plot(self.final_xfmr_ldg_lst, "o", label="Ending Transformer Loadings")
             plt.legend()
             plt.savefig(os.path.join(self.config["Outputs"], "Loading_comparisons.pdf"))
-        self.logger.debug("Writing Results to output file")
-        self.write_dat_file()
+        # self.logger.debug("Writing Results to output file")
+        # self.write_dat_file()
         self.logger.debug("Processing upgrade results")
         self.logger.info("Total time = %s", end - start)
 
@@ -310,26 +312,33 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.orig_loads = {}
         self.orig_pvs = {}
         self.dssSolver.Solve()
-        dss.Loads.First()
-        while True:
-            load_name = dss.Loads.Name().split(".")[0].lower()
-            kW = dss.Loads.kW()
-            self.orig_loads[load_name] = [kW]
-            if not dss.Loads.Next() > 0:
-                break
-        dss.PVsystems.First()
-        while True:
-            pv_name = dss.PVsystems.Name().split(".")[0].lower()
-            pmpp = float(dss.Properties.Value("irradiance"))
-            self.orig_pvs[pv_name] = [pmpp]
-            if not dss.PVsystems.Next() > 0:
-                break
-        for key,dss_paths in self.other_load_dss_files.items():
-            self.read_load_files_LA(key,dss_paths)
-        for key,vals in self.orig_pvs.items():
-            print(key,vals)
+        if dss.Loads.Count() > 0:
+            dss.Loads.First()
+            while True:
+                load_name = dss.Loads.Name().split(".")[0].lower()
+                kW = dss.Loads.kW()
+                self.orig_loads[load_name] = [kW]
+                if not dss.Loads.Next() > 0:
+                    break
+            for key, dss_paths in self.other_load_dss_files.items():
+                self.read_load_files_LA(key, dss_paths)
+
+        if dss.PVsystems.Count() > 0:
+            dss.PVsystems.First()
+            while True:
+                pv_name = dss.PVsystems.Name().split(".")[0].lower()
+                pmpp = float(dss.Properties.Value("irradiance"))
+                self.orig_pvs[pv_name] = [pmpp]
+                if not dss.PVsystems.Next() > 0:
+                    break
+
+            for key,vals in self.orig_pvs.items():
+                print(key,vals)
+            for key, dss_paths in self.other_pv_dss_files.items():
+                self.read_pv_files_LA(key, dss_paths)
 
     def read_load_files_LA(self,key_paths,dss_path):
+
         # Add all load kW values
         temp_dict = {}
         for path_f in dss_path:
@@ -347,6 +356,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 self.orig_loads[key].append(temp_dict[key])
             elif key not in temp_dict:
                 self.orig_loads[key].append(self.orig_loads[key][0])
+
+    def read_pv_files_LA(self, key_paths, dss_path):
         # Add all PV pmpp values
         temp_dict = {}
         for path_f in self.other_pv_dss_files[key_paths]:
@@ -430,30 +441,33 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.cust_viol      = []
         for tp_cnt in range(len(self.other_load_dss_files)):
             # Apply correct pmpp values to all PV systems
-            dss.PVsystems.First()
-            while True:
-                pv_name = dss.PVsystems.Name().split(".")[0].lower()
-                if pv_name not in self.orig_pvs:
-                    print("PV system not found, quitting...")
-                    quit()
-                new_pmpp = self.orig_pvs[pv_name][tp_cnt]
-                dss.run_command(f"Edit PVsystem.{pv_name} irradiance={new_pmpp}")
-                if not dss.PVsystems.Next()>0:
-                    break
+            if dss.PVsystems.Count() > 0:
+                dss.PVsystems.First()
+                while True:
+                    pv_name = dss.PVsystems.Name().split(".")[0].lower()
+                    if pv_name not in self.orig_pvs:
+                        print("PV system not found, quitting...")
+                        quit()
+                    new_pmpp = self.orig_pvs[pv_name][tp_cnt]
+                    dss.run_command(f"Edit PVsystem.{pv_name} irradiance={new_pmpp}")
+                    if not dss.PVsystems.Next()>0:
+                        break
             # Apply correct kW value to all loads
-            dss.Loads.First()
-            while True:
-                load_name = dss.Loads.Name().split(".")[0].lower()
-                if load_name not in self.orig_loads:
-                    print("Load not found, quitting...")
-                    quit()
-                new_kw = self.orig_loads[load_name][tp_cnt]
-                dss.Loads.kW(new_kw)
-                if not dss.Loads.Next() > 0:
-                    break
+            if dss.Loads.Count() > 0:
+                dss.Loads.First()
+                while True:
+                    load_name = dss.Loads.Name().split(".")[0].lower()
+                    if load_name not in self.orig_loads:
+                        print("Load not found, quitting...")
+                        quit()
+                    new_kw = self.orig_loads[load_name][tp_cnt]
+                    dss.Loads.kW(new_kw)
+                    if not dss.Loads.Next() > 0:
+                        break
             self.dssSolver.Solve()
             if not dss.Solution.Converged():
-                raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                raise OpenDssConvergenceError(f"OpenDSS solution did not converge for timepoint "
+                                              f"{list(self.other_load_dss_files.keys())[tp_cnt]}")
             for b in self.buses:
                 dss.Circuit.SetActiveBus(b)
                 bus_v = dss.Bus.puVmagAngle()[::2]
@@ -838,30 +852,33 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.all_line_ldgs_alltps = {}
         for tp_cnt in range(len(self.other_load_dss_files)):
             # Apply correct pmpp values to all PV systems
-            dss.PVsystems.First()
-            while True:
-                pv_name = dss.PVsystems.Name().split(".")[0].lower()
-                if pv_name not in self.orig_pvs:
-                    print("PV system not found, quitting...")
-                    quit()
-                new_pmpp = self.orig_pvs[pv_name][tp_cnt]
-                dss.run_command(f"Edit PVsystem.{pv_name} irradiance={new_pmpp}")
-                if not dss.PVsystems.Next()>0:
-                    break
+            if dss.PVsystems.Count() > 0:
+                dss.PVsystems.First()
+                while True:
+                    pv_name = dss.PVsystems.Name().split(".")[0].lower()
+                    if pv_name not in self.orig_pvs:
+                        print("PV system not found, quitting...")
+                        quit()
+                    new_pmpp = self.orig_pvs[pv_name][tp_cnt]
+                    dss.run_command(f"Edit PVsystem.{pv_name} irradiance={new_pmpp}")
+                    if not dss.PVsystems.Next()>0:
+                        break
             # Apply correct kW value to all loads
-            dss.Loads.First()
-            while True:
-                load_name = dss.Loads.Name().split(".")[0].lower()
-                if load_name not in self.orig_loads:
-                    print("Load not found, quitting...")
-                    quit()
-                new_kw = self.orig_loads[load_name][tp_cnt]
-                dss.Loads.kW(new_kw)
-                if not dss.Loads.Next() > 0:
-                    break
+            if dss.Loads.Count() > 0:
+                dss.Loads.First()
+                while True:
+                    load_name = dss.Loads.Name().split(".")[0].lower()
+                    if load_name not in self.orig_loads:
+                        print("Load not found, quitting...")
+                        quit()
+                    new_kw = self.orig_loads[load_name][tp_cnt]
+                    dss.Loads.kW(new_kw)
+                    if not dss.Loads.Next() > 0:
+                        break
             self.dssSolver.Solve()
             if not dss.Solution.Converged():
-                raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                raise OpenDssConvergenceError(f"OpenDSS solution did not converge for timepoint "
+                                              f"{list(self.other_load_dss_files.keys())[tp_cnt]}")
             dss.Circuit.SetActiveClass("Line")
             dss.ActiveClass.First()
             while True:
@@ -1139,27 +1156,29 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.all_xfmr_ldgs_alltps = {}
         for tp_cnt in range(len(self.other_load_dss_files)):
             # Apply correct pmpp values to all PV systems
-            dss.PVsystems.First()
-            while True:
-                pv_name = dss.PVsystems.Name().split(".")[0].lower()
-                if pv_name not in self.orig_pvs:
-                    print("PV system not found, quitting...")
-                    quit()
-                new_pmpp = self.orig_pvs[pv_name][tp_cnt]
-                dss.run_command(f"Edit PVsystem.{pv_name} irradiance={new_pmpp}")
-                if not dss.PVsystems.Next()>0:
-                    break
+            if dss.PVsystems.Count() > 0:
+                dss.PVsystems.First()
+                while True:
+                    pv_name = dss.PVsystems.Name().split(".")[0].lower()
+                    if pv_name not in self.orig_pvs:
+                        print("PV system not found, quitting...")
+                        quit()
+                    new_pmpp = self.orig_pvs[pv_name][tp_cnt]
+                    dss.run_command(f"Edit PVsystem.{pv_name} irradiance={new_pmpp}")
+                    if not dss.PVsystems.Next()>0:
+                        break
             # Apply correct kW value to all loads
-            dss.Loads.First()
-            while True:
-                load_name = dss.Loads.Name().split(".")[0].lower()
-                if load_name not in self.orig_loads:
-                    print("Load not found, quitting...")
-                    quit()
-                new_kw = self.orig_loads[load_name][tp_cnt]
-                dss.Loads.kW(new_kw)
-                if not dss.Loads.Next() > 0:
-                    break
+            if dss.Loads.Count() > 0:
+                dss.Loads.First()
+                while True:
+                    load_name = dss.Loads.Name().split(".")[0].lower()
+                    if load_name not in self.orig_loads:
+                        print("Load not found, quitting...")
+                        quit()
+                    new_kw = self.orig_loads[load_name][tp_cnt]
+                    dss.Loads.kW(new_kw)
+                    if not dss.Loads.Next() > 0:
+                        break
             self.dssSolver.Solve()
             if not dss.Solution.Converged():
                 raise OpenDssConvergenceError("OpenDSS solution did not converge")

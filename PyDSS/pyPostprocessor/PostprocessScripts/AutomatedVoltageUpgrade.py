@@ -143,7 +143,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.other_pv_dss_files = self.config["project_data"]["pydss_other_pvs_dss_files"]
         self.other_load_dss_files = self.config["project_data"]["pydss_other_loads_dss_files"]
 
-        
         thermal_filename = "thermal_upgrades.dss"
         thermal_dss_file = os.path.join(
             project.get_post_process_directory(self.config["Thermal scenario name"]),
@@ -153,10 +152,9 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         if not os.path.exists(thermal_dss_file):
             raise InvalidParameter(f"AutomatedThermalUpgrade did not produce thermal_filename")
         dss = dssInstance
-        ##check_redirect(thermal_dss_file)
+        check_redirect(thermal_dss_file)
         self.dssSolver = dssSolver
         self.start = time.time()
-
 
         self.get_load_pv_mults_LA()
         #self.get_load_mults()
@@ -521,10 +519,12 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
                                                     lower_limit=self.lower_limit)
 
+            self.logger.info(f"Total number of buses in circuit: {len(dss.Circuit.AllBusNames())}")
             # if number of buses with violations is very high, the loop for adding new regulators will take very long
             # so disable this block - current condition is if number of violations > 250
-            if (len(self.buses_with_violations) > (100 * len(self.initial_buses_with_violations))) or \
-                    (len(self.buses_with_violations) > 250):
+            if len(self.buses_with_violations) >= min((100 * len(self.initial_buses_with_violations)), 500,
+                                                     len(dss.Circuit.AllBusNames())
+                                                     ):
                 self.logger.info(f"At this point, number of buses with violations is {len(self.buses_with_violations)},"
                                  f" but initial number of buses with violations is "
                                  f"{len(self.initial_buses_with_violations)}")
@@ -589,6 +589,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         #                                         lower_limit=self.lower_limit)
         # if self.config["create topology plots"]:
         #     self.plot_violations()
+        self.logger.debug("Writing upgrades to DSS file")
         self.write_upgrades_to_file()
         self.logger.info("total_time = %s", end_t - start_t)
 
@@ -597,9 +598,9 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         dss.run_command("Clear")
         base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
         check_redirect(base_dss)
-        ##check_redirect(thermal_dss_file)
+        check_redirect(thermal_dss_file)
         upgrades_file = os.path.join(self.config["Outputs"], "voltage_upgrades.dss")
-        ##check_redirect(upgrades_file)
+        check_redirect(upgrades_file)
         self.dssSolver.Solve()
 
         self.new_reg_controls = {x["name"]: x for x in iter_elements(dss.RegControls, get_reg_control_info)}
@@ -690,22 +691,28 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.orig_loads = {}
         self.orig_pvs = {}
         self.dssSolver.Solve()
-        dss.Loads.First()
-        while True:
-            load_name = dss.Loads.Name().split(".")[0].lower()
-            kW = dss.Loads.kW()
-            self.orig_loads[load_name] = [kW]
-            if not dss.Loads.Next() > 0:
-                break
-        dss.PVsystems.First()
-        while True:
-            pv_name = dss.PVsystems.Name().split(".")[0].lower()
-            pmpp = float(dss.Properties.Value("irradiance"))
-            self.orig_pvs[pv_name] = [pmpp]
-            if not dss.PVsystems.Next() > 0:
-                break
-        for key,dss_paths in self.other_load_dss_files.items():
-            self.read_load_files_LA(key,dss_paths)
+        if dss.Loads.Count() > 0:
+            dss.Loads.First()
+            while True:
+                load_name = dss.Loads.Name().split(".")[0].lower()
+                kW = dss.Loads.kW()
+                self.orig_loads[load_name] = [kW]
+                if not dss.Loads.Next() > 0:
+                    break
+            for key, dss_paths in self.other_load_dss_files.items():
+                self.read_load_files_LA(key, dss_paths)
+
+        if dss.PVsystems.Count() > 0:
+            dss.PVsystems.First()
+            while True:
+                pv_name = dss.PVsystems.Name().split(".")[0].lower()
+                pmpp = float(dss.Properties.Value("irradiance"))
+                self.orig_pvs[pv_name] = [pmpp]
+                if not dss.PVsystems.Next() > 0:
+                    break
+            for key, dss_paths in self.other_pv_dss_files.items():
+                self.read_pv_files_LA(key, dss_paths)
+
 
     def read_load_files_LA(self,key_paths,dss_path):
         # Add all load kW values
@@ -725,6 +732,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 self.orig_loads[key].append(temp_dict[key])
             elif key not in temp_dict:
                 self.orig_loads[key].append(self.orig_loads[key][0])
+
+    def read_pv_files_LA(self, key_paths, dss_path):
         # Add all PV pmpp values
         temp_dict = {}
         for path_f in self.other_pv_dss_files[key_paths]:
@@ -1066,27 +1075,29 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         # used use the 'tps to test' input
         for tp_cnt in range(len(self.other_load_dss_files)):
             # Apply correct pmpp values to all PV systems
-            dss.PVsystems.First()
-            while True:
-                pv_name = dss.PVsystems.Name().split(".")[0].lower()
-                if pv_name not in self.orig_pvs:
-                    print("PV system not found, quitting...")
-                    quit()
-                new_pmpp = self.orig_pvs[pv_name][tp_cnt]
-                dss.run_command(f"Edit PVsystem.{pv_name} irradiance={new_pmpp}")
-                if not dss.PVsystems.Next()>0:
-                    break
+            if dss.PVsystems.Count() > 0:
+                dss.PVsystems.First()
+                while True:
+                    pv_name = dss.PVsystems.Name().split(".")[0].lower()
+                    if pv_name not in self.orig_pvs:
+                        print("PV system not found, quitting...")
+                        quit()
+                    new_pmpp = self.orig_pvs[pv_name][tp_cnt]
+                    dss.run_command(f"Edit PVsystem.{pv_name} irradiance={new_pmpp}")
+                    if not dss.PVsystems.Next()>0:
+                        break
             # Apply correct kW value to all loads
-            dss.Loads.First()
-            while True:
-                load_name = dss.Loads.Name().split(".")[0].lower()
-                if load_name not in self.orig_loads:
-                    print("Load not found, quitting...")
-                    quit()
-                new_kw = self.orig_loads[load_name][tp_cnt]
-                dss.Loads.kW(new_kw)
-                if not dss.Loads.Next() > 0:
-                    break
+            if dss.Loads.Count() > 0:
+                dss.Loads.First()
+                while True:
+                    load_name = dss.Loads.Name().split(".")[0].lower()
+                    if load_name not in self.orig_loads:
+                        print("Load not found, quitting...")
+                        quit()
+                    new_kw = self.orig_loads[load_name][tp_cnt]
+                    dss.Loads.kW(new_kw)
+                    if not dss.Loads.Next() > 0:
+                        break
             self.dssSolver.Solve()
             if not dss.Solution.Converged():
                 raise OpenDssConvergenceError("OpenDSS solution did not converge")
@@ -1928,7 +1939,10 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         best_setting = ''
         # Start with assumption that each node has a violation at all time points and each violation if outside bounds
         #  by upper voltage limit - basically the maximum possible severity
-        min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * upper_limit
+        min_severity = 10000000000000
+        # min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * upper_limit
+        print("Severity: ", pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * upper_limit)
+        print(self.subLTC_sweep_viols)
         for key, val in self.subLTC_sweep_viols.items():
             if val < min_severity:
                 min_severity = val
@@ -1936,6 +1950,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         if best_setting == "original":
             self.apply_orig_LTC_setting()
         else:
+            print("\n\nbest_setting")
+            print(best_setting)
             v_sp = best_setting.split("_")[0]
             reg_band = best_setting.split("_")[1]
             dss.RegControls.First()
@@ -2193,7 +2209,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     self.disable_added_xfmr(node)
                     self.write_flag = 1
             # For a given cluster identify the node which leads to minimum number of buses with violations
-            min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * upper_limit
+            min_severity = 1000000000
+            # min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * upper_limit
             min_node = ''
             for key, value in self.vdev_cluster_nodes.items():
                 if value <= min_severity:
