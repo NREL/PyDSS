@@ -28,7 +28,7 @@ class MotorStall(ControllerAbstract):
 
 
     def __init__(self, MotorObj, Settings, dssInstance, ElmObjectList, dssSolver):
-        super(MotorStall).__init__()
+        super(MotorStall).__init__(MotorObj, Settings, dssInstance, ElmObjectList, dssSolver)
         _class, _name = MotorObj.GetInfo()
         self.name = "Controller-{}-{}".format(_class, _name)
         self.__ControlledElm = MotorObj

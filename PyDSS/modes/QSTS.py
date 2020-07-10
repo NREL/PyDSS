@@ -45,7 +45,7 @@ class QSTS(abstact_solver):
         return
 
     def getFrequency(self):
-        return  self._dssSolution.Frequency()
+        return self._dssSolution.Frequency()
 
     def SimulationSteps(self):
         Seconds = (self._EndTime - self._StartTime).total_seconds()

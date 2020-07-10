@@ -7,7 +7,7 @@ def getLogger(name, path, LoggerOptions):
 
     if LoggerOptions['Clear old log file']:
         if os.path.exists(log_filename):
-            os.remove(item)
+            os.remove(log_filename)
 
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(module)s - %(message)s')
 
@@ -23,6 +23,26 @@ def getLogger(name, path, LoggerOptions):
         handler2 = logging.FileHandler(filename=log_filename)
         handler2.setFormatter(formatter)
         logger.addHandler(handler2)
+    return logger
+
+
+def getReportLogger(LoggerTag, path, LoggerOptions):
+    log_filename = os.path.join(path, "{}_reports.log".format(LoggerTag))
+    if os.path.exists(log_filename):
+        os.remove(log_filename)
+
+    logger = logging.getLogger("Reports")
+    logger.handlers = []
+
+    handler = logging.FileHandler(filename=log_filename)
+    handler.setLevel(logging.INFO)
+    formatter = logging.Formatter("%(message)s")
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    if LoggerOptions['Display on screen']:
+        handler1 = logging.StreamHandler()
+        handler1.setFormatter(formatter)
+        logger.addHandler(handler1)
     return logger
 
 

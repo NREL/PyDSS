@@ -24,7 +24,7 @@ class PvVoltageRideThru(ControllerAbstract):
     """
 
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
-        super(PvVoltageRideThru).__init__()
+        super(PvVoltageRideThru).__init__( PvObj, Settings, dssInstance, ElmObjectList, dssSolver)
 
         self.TimeChange = False
         self.Time = (-1, 0)

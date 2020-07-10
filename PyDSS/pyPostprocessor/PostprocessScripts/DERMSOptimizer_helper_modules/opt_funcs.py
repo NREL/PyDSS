@@ -23,10 +23,15 @@ def linear_powerflow_model(Y00,Y01,Y10,Y11_inv,I_coeff,V1,slack_no):
     coeff_Vmag_P = (np.multiply(A.real.transpose(),coeff_Vmag_k)).transpose()
     coeff_Vmag_Q = (np.multiply((-1j*A).real.transpose(),coeff_Vmag_k)).transpose()
 
-    # current linearization   
-    coeff_I_P = np.dot(I_coeff[:,slack_no:],coeff_V_P)
-    coeff_I_Q = np.dot(I_coeff[:,slack_no:],coeff_V_Q)
-    coeff_I_const = np.dot(I_coeff[:,slack_no:],coeff_Vm) + np.dot(I_coeff[:,:slack_no],V1[:slack_no])
+    # current linearization
+    if len(I_coeff):
+        coeff_I_P = np.dot(I_coeff[:,slack_no:],coeff_V_P)
+        coeff_I_Q = np.dot(I_coeff[:,slack_no:],coeff_V_Q)
+        coeff_I_const = np.dot(I_coeff[:,slack_no:],coeff_Vm) + np.dot(I_coeff[:,:slack_no],V1[:slack_no])
+    else:
+        coeff_I_P = []
+        coeff_I_Q = []
+        coeff_I_const = []
 
     #=========================================Yiyun's Notes===========================================#
     # Output relations: Vmag = coeff_Vmag_P * Pnode + coeff_Vmag_Q * Qnode + coeff_Vm
@@ -281,7 +286,7 @@ def projection(x,xmax,xmin):
     return x
 
 class DERMS:
-    def __init__(self, PV_name,PV_location,PV_size,inverter_size,controlbus,controlelem,controlelem_limit,sub_node_names,sub_elem_names):
+    def __init__(self, pvData,controlbus,controlelem,controlelem_limit,sub_node_names,sub_elem_names):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # PV_name: names of all PVs in the zone
         # PV_size: sizes of all PVs in the zone
@@ -290,16 +295,17 @@ class DERMS:
         # sub_node_names: names of all nodes in the zone
         # sub_node_names "include" controlbus
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        self.PV_name = PV_name
-        self.PV_location = PV_location
-        self.PV_size = PV_size # kW DC panel size
-        self.inverter_size = inverter_size # kVA inverter size
+
+        self.PV_name = pvData["pvName"]
+        self.PV_location = pvData["pvLocation"]
+        self.PV_size = pvData["pvSize"]
+        self.inverter_size = pvData["inverterSize"]
         self.control_bus = controlbus
         sub_node_names = [ii.upper() for ii in sub_node_names]
         self.controlbus_index = [sub_node_names.index(ii.upper()) for ii in controlbus] # control bus index in the sub system (number)
         # here
         PVbus_index = []
-        for bus in PV_location:
+        for bus in self.PV_location:
             temp = bus.split('.')
             if len(temp) == 1:
                 temp = temp + ['1','2','3']
@@ -314,44 +320,39 @@ class DERMS:
         self.controlelem_index = [sub_elem_names.index(ii) for ii in controlelem] # control branches index in the sub system (number)
 
 
-    def monitor(self, dss):
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # monitor PV power
-        # monitor Power, Voltage and Current at measurement nodes
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        circuit = dss.Circuit
-        PVname = self.PV_name
-        PVlocation = self.PV_location
-        type_name = PVname[0].split('.')[0]
-        PVpower = dss_function.getPowers(circuit, dss, type_name, PVname)[0]
-        for ii in range(len(PVname)):
-            circuit.SetActiveElement(PVname[ii])
-            numP = dss.CktElement.NumPhases()
-            PVpower[ii][0] =  PVpower[ii][0]/numP
-            PVpower[ii][1] = PVpower[ii][1] / numP
-            # =========================================Yiyun's Notes===========================================#
-            # evenly distributed to different phases
-            # =================================================================================================#
-        controlbus = self.control_bus
+    def monitor(self, dss, dssObjects):
+        PVpowers = []
+        for pv in self.PV_name:
+            nPhases = dssObjects["Generators"][pv].GetValue("phases")
+            power = dssObjects["Generators"][pv].GetValue("Powers")
+            PVpowers.append([sum(power[::2])/nPhases, sum(power[1::2])/nPhases])
+        PVpowers = np.asarray(PVpowers)
+
         Vmes = []
-        for node in controlbus:
-            Vmes.append(dss_function.get_Vnode(dss,circuit,node))
-        controlelem = self.control_elem
+        for bus in self.control_bus:
+            busName = bus.split('.')[0].lower()
+            Vmag = dssObjects["Buses"][busName].GetValue("puVmagAngle")[::2]
+            allbusnode = dss.Bus.Nodes()
+            phase = bus.split('.')[1]
+            index = allbusnode.index(int(phase))
+            Vnode = Vmag[index]
+            Vmes.append(Vnode)
+
         Imes = []
-        for elem in controlelem:
-            current = dss_function.getElemCurrents(circuit, dss, elem.split('.')[0], elem.split('.')[1])
-            Imes.append(current)
+        for elem in self.control_elem:
+            className = elem.split('.')[0] + "s"
+            I = dssObjects[className][elem].GetValue("CurrentsMagAng")[::2][:3] #TODO: Why is there a hardcoded [:3] ?
+            Imes.append(I)
 
-        # =========================================Yiyun's Notes===========================================#
-        # Measurement sensitivity study: here we may need to work on the Vmes and Imes vectors...
-        # ... may change "control_bus", add error to "Vmes" and "Imes"
-        # =================================================================================================#
-
-        return [PVlocation,PVpower,Vmes,Imes]
+        return [self.PV_location,PVpowers,Vmes,Imes]
 
 
 
-    def control(self,linear_PF_coeff,coeff_p,coeff_q,stepsize,mu0,Vlimit,PVpower,Imes,Vmes,PV_Pmax_forecast):
+    def control(self, linear_PF_coeff, Options,stepsize,mu0,Vlimit,PVpower,Imes,Vmes,PV_Pmax_forecast):
+
+        coeff_p = Options["coeff_p"]
+        coeff_q = Options["coeff_q"]
+
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # linear_PF_coeff is the linear power flow model coefficients for the zone, and linear power flow model
         #                coefficients are the result vector from function "linear_powerflow_model"

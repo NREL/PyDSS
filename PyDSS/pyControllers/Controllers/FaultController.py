@@ -20,7 +20,7 @@ class FaultController(ControllerAbstract):
         """Constructor method
         """
 
-        super(FaultController).__init__()    
+        super(FaultController).__init__(FaultObj, Settings, dssInstance, ElmObjectList, dssSolver)
         self.P_old = 0
         self.Time = -1
         self.__Locked = False

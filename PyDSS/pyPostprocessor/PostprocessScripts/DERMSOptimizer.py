@@ -4,6 +4,7 @@ from scipy.sparse import lil_matrix
 import scipy.sparse.linalg as sp
 import scipy.sparse as sparse
 from scipy import stats
+import PyDSS.dssInstance as dI
 import pandas as pd
 from math import *
 import numpy as np
@@ -23,14 +24,21 @@ class DERMSOptimizer(AbstractPostprocess):
         "stepsize_mu": 10,
         "opf_iteration": 60,
         "max_iterations": 50,
-        "measurements_noises_flag": False,
-        "implementation_mode_flag": True,
+        'time_trigger_sec': 900,
+        "measurements_noises_flag": True,
+        "implementation_mode": "Voltage triggered",
         "pv_profile": "PVGen1min.csv",
         "p_mult_profile": "Pmult_Ppeak.csv",
         "q_mult_profile": "Qmult_Qpeak.csv",
         "load_shape" : "Load_shape_1sec_1day.csv",
-        "load_multipliers" : "HPC_allocation_factors.csv"
+        "load_multipliers" : "HPC_allocation_factors.csv",
+        'Distributions' : {
+            "Vmes": ["norm", [0.0, 0.01]],
+            "Imes": ["norm", [0.0, 0.01]],
+        },
     }
+
+    IMPLEMENTATION_MODES = ["Continuous", "Voltage triggered", "Time triggered", "Off"]
 
     def __init__(self, project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger):
         """Constructor method
@@ -65,8 +73,17 @@ class DERMSOptimizer(AbstractPostprocess):
         self.DERMS_trigger_count = 0
         self.DERMS_trigger_success_count = 0
 
+        PVdata = self.getDERdata()
+
+        assert self.Options["implementation_mode"] in self.IMPLEMENTATION_MODES, 'valid inplementation modes are ()'.fomrmat(
+            self.IMPLEMENTATION_MODES
+        )
+        self.dermsController = DERMS(
+            PVdata, self.controlbus, self.controlelem, self.BEcapacity, self.Nodes[self.nSlack:], self.BEname
+        )
+
     def initialize_optimizer(self):
-        self.dss.utils.run_command('solve')
+        self.dss.utils.run_command('calcV')
         self.Nodes = self.dss.Circuit.YNodeOrder()
         self.nNodes = len(self.Nodes)
 
@@ -84,34 +101,33 @@ class DERMSOptimizer(AbstractPostprocess):
             if bName not in self.Buses:
                 self.Buses.append(bName)
         self.nBus = len(self.Buses)
-        #self.dss.utils.run_command('solve mode=fault') Is this even needed?
-        self.getBranchInfo()
-        Y00, Y01, Y10, Y11, Y11_sparse, Y11_inv, Ybus = self.ExtractImpednceMatrix()
-        V_vector_noLoad, V_vector_noLoad_pu = self.get_voltage_Yorder()
-        current_coeff_matrix, branch_node_incidence, current_coeff_matrix = self.get_incidence_matrix()
 
+        Y00, Y01, Y10, Y11, Y11_sparse, Y11_inv, Ybus = self.ExtractImpednceMatrix()
+        self.getBranchInfo()
+
+        self.dssSolver.Solve()
         V1, V1_pu = self.get_voltage_Yorder()
 
         capNames = self.dss.Capacitors.AllNames()
         hCapNames = ",".join(capNames)
-        print(hCapNames)
 
         loadData = self.get_elem_data(
             "Loads",
-            ["name", "kV", "kW", "pf", "IsDelta", "XfkVA", "phases", "bus", "NumPhases", "phases", "VoltagesMagAng",
-             "power"]
+            ["Name", "kV", "kW", "pf", "phase", "bus", "phases", "VoltagesMagAng", "Powers", "conn"]
         )
+        #print(pd.DataFrame(loadData))
         total_load = sum([L["kW"] for L in loadData])
         #Do we want profile implementation here or a dedicatied profile manager?
-        PVSystem =  self.get_elem_data("Generators", ["name", "bus", "phases", "kVar", "phases", "NumPhases", "conn"])
-        PVSystem_1phase = self.convert_3phasePV_to_1phasePV(PVSystem)
+
+        self.PVSystem = self.get_elem_data("Generators", ["Name", "bus", "phase", "kVA", "kW", "phases", "conn"])
+        self.PVSystem_1phase = self.convert_3phasePV_to_1phasePV(self.PVSystem)
 
         if self.Options["control_flag"]:
             PVlocation = []
-            NPV = len(PVSystem_1phase)
+            NPV = len(self.PVSystem_1phase)
             nodeIndex_withPV = []
             PV_inverter_size = []
-            for pv in PVSystem_1phase:
+            for pv in self.PVSystem_1phase:
                 allpvbus = pv["bus"].split('.')
                 PVlocation.append(allpvbus[0])
                 if len(allpvbus) == 1:
@@ -121,13 +137,14 @@ class DERMSOptimizer(AbstractPostprocess):
                     nodeIndex_withPV.append(self.Nodes.index(pvbus.upper()))
                 PV_inverter_size.append(float(pv['kVA']) / (len(allpvbus) - 1))
 
-                capacitors = self.get_elem_data("Capacitors", ["name", "bus", "kW", "pf", "kV", "kVA"])
-                PQ_load, PQ_PV, PQ_node, Qcap = self.calc_node_PQ()
+            capacitors = self.get_elem_data("Capacitors", ["Name", "bus", "phase", "phases", "kV", "kvar"])
+            PQ_load, PQ_PV, PQ_node, Qcap = self.calc_node_PQ()
+
 
             if self.Options["control_all_flag"]:
                 self.controlbus = self.Nodes[self.nSlack:]
             else:
-                self.controlbus = self.getContolBuses(["PVSystems", "Capacitors"])
+                self.controlbus = self.getContolBuses(["Generators", "Capacitors"])
             self.controlelem = []
             self.mu0 = [
                 np.zeros(len(self.controlbus)),
@@ -135,34 +152,34 @@ class DERMSOptimizer(AbstractPostprocess):
                 np.zeros(len(self.controlelem))
             ]
 
-            self.power_flow_data = linear_powerflow_model(Y00, Y01, Y10, Y11_inv, current_coeff_matrix, V1, self.nSlack)
+            self.power_flow_data = linear_powerflow_model(Y00, Y01, Y10, Y11_inv, [], V1, self.nSlack)
+
             self.stepsize_control = [self.Options["stepsize_xp"], self.Options["stepsize_xq"],
                                      self.Options["stepsize_mu"]]
             self.Vlimit = [self.Options["Vupper"], self.Options["Vlower"]]
         return
 
-
-
     def calc_node_PQ(self):
         PQ_load = self.get_PQ_by_class("Loads")
-        PQ_PV = self.get_PQ_by_class("PVSystems")
+        PQ_PV = self.get_PQ_by_class("Generators")
         PQ_CAP = self.get_PQ_by_class("Capacitors")
         Qcap = PQ_CAP.imag
         PQ_node = - PQ_load + PQ_PV - 1j * np.array(Qcap)  # power injection
         return PQ_load, PQ_PV, PQ_node, Qcap
 
     def get_PQ_by_class(self, className):
-        P = [0] * len(self.Objects[className])
-        Q = [0] * len(self.Objects[className])
+        P = [0] * len(self.Nodes)
+        Q = [0] * len(self.Nodes)
         for name, obj in self.Objects[className].items():
             power = obj.GetValue("Powers")
             bus = obj.GetValue("BusNames")[0]
-            nodes = bus.split(".")[1:]
-            for ii in nodes:
+            nodes = bus.split(".")[1:] if len(bus.split(".")[1:]) else [1, 2, 3]
+
+            for i, ii in enumerate(nodes):
                 nodeName = "{}.{}".format(bus.split(".")[0], ii)
-                index = self.Nodes.index(nodeName)
-                P[index] = power[2 * int(ii)]
-                Q[index] = power[2 * int(ii) + 1]
+                index = self.Nodes.index(nodeName.upper())
+                P[index] = power[2 * i]
+                Q[index] = power[2 * i + 1]
         PQ = np.array(P) + 1j * np.array(Q)
         return PQ
 
@@ -172,11 +189,14 @@ class DERMSOptimizer(AbstractPostprocess):
             datum = {}
             for ppty in Properties:
                 if ppty == "bus":
-                    datum[ppty] = obj.GetValue("BusNames")[0].split(".")[0],
-                elif ppty == "phases":
-                    datum[ppty] = obj.GetValue("BusNames")[0].split(".")[1:],
+                    datum[ppty] = obj.GetValue("BusNames")[0].split(".")[0]
+                elif ppty == "phase":
+                    phases = obj.GetValue("BusNames")[0].split(".")[1:]
+                    datum[ppty] = phases if len(phases) else [1, 2, 3]
+                elif ppty == "busFull":
+                    datum[ppty] = obj.GetValue("BusNames")[0]
                 else:
-                    datum[ppty] = obj.GetValue("ppty")
+                    datum[ppty] = obj.GetValue(ppty)
             data.append(datum)
         return data
 
@@ -184,15 +204,12 @@ class DERMSOptimizer(AbstractPostprocess):
         # convert multi-phase PV into multiple 1-phase PVs for control implementation purpose
         PVSystem_1phase = []
         for pv in PVSystems:
-            bus = pv["bus"].split('.')
-            if len(bus) == 1:
-                bus = bus + ['1', '2', '3']
-            for ii in range(pv["numPhase"]):
+            for i, ii in enumerate(pv["phase"]):
                 pv_perphase = {}
-                pv_perphase["name"] = pv["name"]  # +'_node'+bus[ii+1]
-                pv_perphase["bus"] = bus[0] + '.' + bus[ii + 1]
-                pv_perphase["kW"] = str(float(pv["kW"]) / pv["numPhase"])
-                pv_perphase["kVA"] = str(float(pv["kVA"]) / pv["numPhase"])
+                pv_perphase["Name"] = pv["Name"]  # +'_node'+bus[ii+1]
+                pv_perphase["bus"] = pv["bus"] + '.' + ii
+                pv_perphase["kW"] = pv["kW"] / pv["phases"]
+                pv_perphase["kVA"] = pv["kVA"] / pv["phases"]
                 PVSystem_1phase.append(pv_perphase)
         return PVSystem_1phase
 
@@ -250,7 +267,6 @@ class DERMSOptimizer(AbstractPostprocess):
             nodes = elmObj.GetValue('NodeOrder')
             nPhases = int(len(nodes) / 2)
             nNeutral += nodes.count(0)
-
             for ii in range(nPhases):
                 from_node = buses[0] + '.' + str(nodes[ii])
                 to_node = buses[1] + '.' + str(nodes[ii + nPhases])
@@ -298,27 +314,29 @@ class DERMSOptimizer(AbstractPostprocess):
                 self.BEcapacity.append(elmObj.GetValue("NormalAmps"))
                 self.BEname.append("{}.{}".format(elmName, Nodes[ii]))
 
+    def getDERdata(self):
+        PVdata = {}
+        for pv in self.get_elem_data("Generators", ["Name", "busFull", "phase", "kVA", "kW", "phases", "conn"]):
+            PVdata["pvName"] = [pv['Name']] if "pvName" not in PVdata else PVdata["pvName"] + [pv['Name']]
+            PVdata["pvLocation"] = [pv['busFull']] if "pvLocation" not in PVdata else PVdata["pvLocation"] + [
+                pv['busFull']]
+            PVdata["pvSize"] = [pv['kW']] if "pvSize" not in PVdata else PVdata["pvSize"] + [pv['kW']]
+            PVdata["inverterSize"] = [pv['kVA']] if "inverterSize" not in PVdata else PVdata["inverterSize"] + [
+                pv['kVA']]
+        return PVdata
+
     def run(self, step, stepMax):
         """Induces and removes a fault as the simulation runs as per user defined settings.
         """
         self.logger.info('Running DERMS optimization module')
-
-        PVdata = {}
-        for pv in self.get_elem_data("PVSystems", ["name", "bus", "kW", "kVA"]):
-            PVdata["PVname"] = [pv['name']] if "PVname" not in PVdata else PVdata["PVname"] + [pv['name']]
-            PVdata["PVlocation"] = [pv['bus']] if "bus" not in PVdata else PVdata["bus"] + [pv['bus']]
-            PVdata["PVsize"] = [pv['kW']] if "kW" not in PVdata else PVdata["kW"] + [pv['kW']]
-            PVdata["invertersize"] = [pv['kVA']] if "kVA" not in PVdata else PVdata["kVA"] + [pv['kVA']]
-
-
-        derms1 = DERMS(PVdata, self.controlbus, self.controlelem, self.BEcapacity, self.Nodes[self.nSlack:],
-                       self.BEname)
-
         opt_iter = 0
+        mu0 = [0] * (2 * len(self.controlbus) + len(self.controlelem))
+        PVmax = [pv["kW"] if pv["kW"] < pv["kVA"] else pv["kVA"] for pv in self.PVSystem_1phase]
+
         while opt_iter < self.Options["max_iterations"]:
             self.dssSolver.reSolve()
-            [PVlocation, PVpower, Vmes, Imes] = derms1.monitor(self._dssInstance)
-            self.Logger.info('Maximum voltage: {}' + str(max(Vmes)))
+            PVlocation, PVpower, Vmes, Imes = self.dermsController.monitor(self._dssInstance, self.Objects)
+            self.Logger.info('Maximum voltage: {}'.format(max(Vmes)))
 
             if self.Options["measurements_noises_flag"]:
                 distName, distParams = self.Options['Distributions']["Vmes"]
@@ -326,59 +344,73 @@ class DERMSOptimizer(AbstractPostprocess):
                 Vmes = Vmes + dist.rvs(*distParams, size=len(Vmes))
                 distName, distParams = self.Options['Distributions']["Imes"]
                 dist = getattr(stats, distName)
-                Imes = Imes + dist.rvs(*distParams, size=len(Vmes))
-            if self.Options["implementation_mode_flag"] == 0:
+                Imes = Imes + dist.rvs(*distParams, size=len(Imes))
+
+            if self.Options["implementation_mode"] == "Continuous":
                 DERMS_trigger = 1
-            elif self.Options["implementation_mode_flag"] == 1:
-                if max(Vmes) > 1.045 or min(Vmes) < 0.95:
+            elif self.Options["implementation_mode"] == "Voltage triggered":
+                if max(Vmes) > self.Options["Vupper"] or min(Vmes) < self.Options["Vlower"]:
                     DERMS_trigger = 1
-                elif max(Vmes) <= 1.045 and min(Vmes) >= 0.95 and opt_iter >= 1:
+                    #TODO: Should DERMS trigger count be in this if statement?
+                elif max(Vmes) <= self.Options["Vupper"] and min(Vmes) >= self.Options["Vlower"] and opt_iter >= 1:
                     DERMS_trigger = 0
                     self.DERMS_trigger_count += 1
                     self.DERMS_trigger_success_count += 1
-                    print('DERMS OPF successfully triggered, maxV: ' + str(max(Vmes)))
+                    self.Logger.info('DERMS OPF successfully triggered, maxV: {}'.fotmat(max(Vmes)))
                     break
                 else:
                     DERMS_trigger = 0
+            elif self.Options["implementation_mode"] == "Time triggered":
+                #TODO: Is step * stepsize_sim >= time_mode_resolution required? Is the idea to ensure that the controller does not run on the first iteration?
+                if step > 0 and self.dssSolver.GetTotalSeconds() % self.Options["time_trigger_sec"] == 0:
+                    DERMS_trigger = 1
+                else:
+                    DERMS_trigger = 0
+            elif self.Options["implementation_mode"] == "Off":
+                DERMS_trigger = 0
 
-            # elif self.Options["implementation_mode_flag"] == 2:
-            #     if present_step * stepsize_sim >= time_mode_resolution and (present_step * stepsize_sim) % time_mode_resolution == 0:
-            #         DERMS_trigger = 1
-            #     else:
-            #         DERMS_trigger = 0
-            # elif self.Options["implementation_mode_flag"] == 3:
-            #     DERMS_trigger = 1
-            #
-            # if DERMS_trigger == 1:
-            #     [x1, mu1] = derms1.control(coeff_PF, coeff_p, coeff_q, stepsize_control, mu0, Vlimit, PVpower, Imes,
-            #                                Vmes, PVmax)
-            #     # ------ apply the setpoint ------
-            #     for pv in PVSystem:
-            #         idx = [i for i, x in enumerate(PVname) if x == pv["name"]]
-            #         dss.run_command(
-            #             'edit ' + str(pv["name"]) + ' kW=' + str(sum([x1[ii] for ii in idx])) + ' kvar=' + str(
-            #                 sum([x1[ii + NPV] for ii in idx])))
-            #     mu0 = mu1
-            #     # resV_record.append(max(Vmes))
-            #     opt_iter = opt_iter + 1
-            #     if max(Vmes) <= 1.045 and min(Vmes) >= 0.95:
-            #         self.DERMS_trigger_count += 1
-            #         self.DERMS_trigger_success_count += 1
-            #         self.Logger.info('DERMS OPF successfully triggered')
-            #         break
-            # elif DERMS_trigger == 0:
-            #     for pv in PVSystem:
-            #         PVgen = float(pv['kW']) * PVshape[
-            #             int((present_step - 1) * stepsize_sim / data_resolution + 3600 / data_resolution * startH)]
-            #         if PVgen > float(pv["kVA"]):
-            #             PVgen = float(pv["kVA"])
-            #         dss.run_command('edit ' + str(pv["name"]) + ' kW=' + str(PVgen) + ' pf=' + str(pf_auto))
-            #     break
-            # if opt_iter == self.Options["max_iterations"]:
-            #     self.DERMS_trigger_count += 1
-            #     if max(Vmes) > 1.045 or min(Vmes) < 0.95:
-            #         self.DERMS_trigger_fail_count += 1
-            #         self.Logger.warning('DERMS OPF triggered and failed')
+            if DERMS_trigger == 1:
+
+                [x1, mu1] = self.dermsController.control(
+                    self.power_flow_data,
+                    self.Options,
+                    self.stepsize_control,
+                    mu0,
+                    self.Vlimit,
+                    PVpower,
+                    Imes,
+                    Vmes,
+                    PVmax
+                )
+                # ------ apply the setpoint ------
+                nPV_1_phs = len(self.PVSystem_1phase)
+                for pv in self.PVSystem:
+                    idx = [i for i, x in enumerate(self.PVSystem_1phase["Name"]) if x == pv["name"]]
+                    self.Objects["Generators"][pv["Name"]].SetParameter("kW", sum([x1[ii] for ii in idx]))
+                    self.Objects["Generators"][pv["Name"]].SetParameter("kvar",  sum([x1[ii + nPV_1_phs] for ii in idx]))
+
+                mu0 = mu1
+                # resV_record.append(max(Vmes))
+                opt_iter = opt_iter + 1
+                if max(Vmes) <= self.Options["Vupper"] and min(Vmes) >= self.Options["Vlower"]:
+                    self.DERMS_trigger_count += 1
+                    self.DERMS_trigger_success_count += 1
+                    self.Logger.info('DERMS OPF successfully triggered')
+                    break
+            elif DERMS_trigger == 0:
+                # TODO: Is this piece of code required?
+                # for pv in self.PVSystem:
+                #     PVgen = float(pv['kW']) * PVshape[
+                #         int((present_step - 1) * stepsize_sim / data_resolution + 3600 / data_resolution * startH)]
+                #     if PVgen > float(pv["kVA"]):
+                #         PVgen = float(pv["kVA"])
+                #     dss.run_command('edit ' + str(pv["name"]) + ' kW=' + str(PVgen) + ' pf=' + str(pf_auto))
+                break
+            if opt_iter == self.Options["max_iterations"]:
+                self.DERMS_trigger_count += 1
+                if max(Vmes) > self.Options["Vupper"] or min(Vmes) < self.Options["Vlower"]:
+                    self.DERMS_trigger_fail_count += 1
+                    self.Logger.warning('DERMS OPF triggered and failed')
 
 
             opt_iter += 1

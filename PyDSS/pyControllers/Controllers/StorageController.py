@@ -21,12 +21,12 @@ class StorageController(ControllerAbstract):
     """
     def __init__(self, StorageObj, Settings, dssInstance, ElmObjectList, dssSolver):
         self.Time = -1
-        super(StorageController).__init__()
+        super(StorageController, self).__init__(StorageObj, Settings, dssInstance, ElmObjectList, dssSolver)
 
         self.__ControlledElm = StorageObj
-        Class, Name = self.__ControlledElm.GetInfo()
-        assert (Class.lower() == 'storage'), 'StorageController works only with an OpenDSS Storage element'
-        self.__Name = 'pyCont_' + Class + '_' + Name
+        self.ceClass, self.ceName = self.__ControlledElm.GetInfo()
+        assert (self.ceClass.lower() == 'storage'), 'StorageController works only with an OpenDSS Storage element'
+        self.__Name = 'pyCont_' + self.ceClass + '_' + self.ceName
 
         self.Time = (-1, 0)
         self.__Pin = 0
@@ -64,10 +64,16 @@ class StorageController(ControllerAbstract):
         self.__Pbatt = float(StorageObj.GetParameter('kW'))
         self.__dampCoef = Settings['DampCoef']
         self.update = [self.ControlDict[Settings['Control' + str(i)]] for i in [1, 2, 3]]
-        #Class, Name = self.__ControlledElm.GetInfo()
-        #self.__Name = 'pyCont_' + Class + '_' + Name
-        #self.__Convergance = np.zeros((1440,10))
         return
+
+    def Name(self):
+        return self.__Name
+
+    def ControlledElement(self):
+        return "{}.{}".format(self.ceClass, self.ceName)
+
+    def debugInfo(self):
+        return [self.__Settings['Control{}'.format(i+1)] for i in range(3)]
 
     def Update(self, Priority, Time, Update):
         self.TimeChange = self.Time != (Time, Priority)

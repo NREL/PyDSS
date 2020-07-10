@@ -1,5 +1,6 @@
 from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
 import math
+import abc
 
 class PvController(ControllerAbstract):
     """Implementation of smart control modes of modern inverter systems. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
@@ -21,7 +22,7 @@ class PvController(ControllerAbstract):
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
         """Constructor method
         """
-        super(PvController).__init__()
+        super(PvController, self).__init__(PvObj, Settings, dssInstance, ElmObjectList, dssSolver)
         self.TimeChange = False
         self.Time = (-1, 0)
 
@@ -43,11 +44,12 @@ class PvController(ControllerAbstract):
         }
 
         self.__ControlledElm = PvObj
-        Class, Name = self.__ControlledElm.GetInfo()
-        assert (Class.lower()=='pvsystem'), 'PvController works only with an OpenDSS PVSystem element'
-        self.__Name = 'pyCont_' + Class + '_' + Name
-        if '_' in Name:
-            self.Phase = Name.split('_')[1]
+        self.ceClass, self.ceName = self.__ControlledElm.GetInfo()
+
+        assert (self.ceClass.lower()=='pvsystem'), 'PvController works only with an OpenDSS PVSystem element'
+        self.__Name = 'pyCont_' + self.ceClass + '_' +  self.ceName
+        if '_' in  self.ceName:
+            self.Phase =  self.ceName.split('_')[1]
         else:
             self.Phase = None
         self.__ElmObjectList = ElmObjectList
@@ -73,6 +75,16 @@ class PvController(ControllerAbstract):
         #self.QlimPU = self.__Qrated / self.__Srated if self.__Qrated < self.__Srated else 1
         self.QlimPU = min(self.__Qrated / self.__Srated, Settings['QlimPU'], 1.0)
         return
+
+
+    def Name(self):
+        return self.__Name
+
+    def ControlledElement(self):
+        return "{}.{}".format(self.ceClass, self.ceName)
+
+    def debugInfo(self):
+        return [self.__Settings['Control{}'.format(i+1)] for i in range(3)]
 
     def Update(self, Priority, Time, Update):
         self.TimeChange = self.Time != (Priority, Time)

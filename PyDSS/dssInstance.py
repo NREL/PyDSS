@@ -21,6 +21,7 @@ import PyDSS.pyPlots as pyPlots
 import numpy as np
 import pandas as pd
 import logging
+import json
 import time
 import os
 
@@ -73,12 +74,13 @@ class OpenDSS:
                 'DSSfiles',
                 params['Project']['DSS File']
             )
-
+        LoggerTag = pyLogger.getLoggerTag(params)
         if params["Logging"]["Pre-configured logging"]:
             self._Logger = logging.getLogger(__name__)
         else:
-            LoggerTag = pyLogger.getLoggerTag(params)
             self._Logger = pyLogger.getLogger(LoggerTag, self._dssPath['Log'], LoggerOptions=params["Logging"])
+        self._reportsLogger = pyLogger.getReportLogger(LoggerTag, self._dssPath['Log'], LoggerOptions=params["Logging"])
+
         self._Logger.info('An instance of OpenDSS version ' + self._dssInstance.__version__ + ' has been created.')
 
         for key, path in self._dssPath.items():
@@ -97,7 +99,6 @@ class OpenDSS:
         self._Logger.info('OpenDSS:  ' + reply)
 
         data2 = self._dssInstance.YMatrix.GetPCInjCurr()
-        print(data2)
 
         assert ('error ' not in reply.lower()), 'Error compiling OpenDSS model.\n{}'.format(reply)
         run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
@@ -222,14 +223,27 @@ class OpenDSS:
         self.session.show()
         return
 
-    def _UpdateControllers(self, Priority, Time, UpdateResults):
-        error = 0
-
+    def _UpdateControllers(self, Priority, Time, Iteration, UpdateResults):
+        errors = []
+        maxError = 0
         for controller in self._pyControls.values():
-            error += controller.Update(Priority, Time, UpdateResults)
+            error = controller.Update(Priority, Time, UpdateResults)
+            maxError = error if error > maxError else maxError
+            if Iteration == self._Options['Project']['Max Control Iterations'] - 1:
+                if error > self._Options['Project']['Error tolerance']:
+                    errorTag = {
+                            "Report": "Convergence",
+                            "Time": self._dssSolver.GetTotalSeconds(),
+                            "Controller": controller.Name(),
+                            "Controlled element": controller.ControlledElement(),
+                            "Error": error,
+                            "Control algorithm": controller.debugInfo()[Priority],
+                    }
+                    json_object = json.dumps(errorTag)
+                    self._reportsLogger.warning(json_object)
             if Priority == 0:
                 pass
-        return abs(error) < self._Options['Project']['Error tolerance'], error
+        return maxError < self._Options['Project']['Error tolerance'], maxError
 
     def _CreateBusObjects(self):
         BusNames = self._dssCircuit.AllBusNames()
@@ -298,7 +312,7 @@ class OpenDSS:
         if not self._Options['Project']['Disable PyDSS controllers']:
             for priority in range(CONTROLLER_PRIORITIES):
                 for i in range(self._Options['Project']['Max Control Iterations']):
-                    has_converged, error = self._UpdateControllers(priority, step, UpdateResults=False)
+                    has_converged, error = self._UpdateControllers(priority, step, i, UpdateResults=False)
                     self._Logger.debug('Control Loop {} convergence error: {}'.format(priority, error))
                     if has_converged or i == self._Options['Project']['Max Control Iterations'] - 1:
                         if not has_converged:
@@ -416,10 +430,12 @@ class OpenDSS:
 
     def __del__(self):
         self._Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')
+        loggers = [self._Logger, self._reportsLogger]
         if self._Options["Logging"]["Log to external file"]:
-            handlers = list(self._Logger.handlers)
-            for filehandler in handlers:
-                filehandler.flush()
-                filehandler.close()
-                self._Logger.removeHandler(filehandler)
+            for L in loggers:
+                handlers = list(L.handlers)
+                for filehandler in handlers:
+                    filehandler.flush()
+                    filehandler.close()
+                    L.removeHandler(filehandler)
         return
