@@ -74,6 +74,11 @@ settings_dict = {
             'Control mode': {'type': str, 'Options': ["Static", "Time"]},
             'Disable PyDSS controllers': {'type': bool, 'Options': [True, False]},
         },
+        "Profiles": {
+            "Use profile manager":  {'type': bool, 'Options': [True, False]},
+            "Profile store path": {'type': str},
+            "Profile mapping": {'type': str},
+        }
     }
 
 

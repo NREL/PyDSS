@@ -11,13 +11,13 @@ from PyDSS import pyLogger
 from PyDSS import helics_interface as HI
 from PyDSS.utils.dataframe_utils import write_dataframe
 from PyDSS.utils.utils import make_human_readable_size
-
+from PyDSS.ProfileManager.ProfileStore import ProfileManager
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 
 from PyDSS.pyPostprocessor import pyPostprocess
 import PyDSS.pyControllers as pyControllers
 import PyDSS.pyPlots as pyPlots
-
+import datetime
 import numpy as np
 import pandas as pd
 import logging
@@ -120,6 +120,15 @@ class OpenDSS:
         self._UpdateDictionary()
         self._CreateBusObjects()
         self._dssSolver.reSolve()
+
+        if params['Profiles']["Use profile manager"]:
+            #TODO: disable internal profiles
+            self._Logger.info('Disabling internal yearly and duty-cycle profiles.')
+            for m in ["Loads", "PVSystem", "Generator", "Storage"]:
+                run_command(f'BatchEdit {m}..* yearly=NONE duty=None')
+            self.profileStore = ProfileManager(self._dssObjects, self._dssSolver, params)
+            self.profileStore.setup_profiles()
+
 
         #if params and params['Exports']['Log Results']:
         if params['Exports']['Result Container'] == 'ResultContainer':
@@ -293,6 +302,9 @@ class OpenDSS:
 
     def RunStep(self, step, updateObjects=None):
         # updating parameters bebore simulation run
+
+        if self._Options['Profiles']["Use profile manager"]:
+            self.profileStore.update()
 
         if self._Options['Helics']['Co-simulation Mode']:
             if self._increment_flag:

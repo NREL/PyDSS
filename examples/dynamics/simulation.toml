@@ -25,16 +25,16 @@ post_process_infos = []
 [Exports]
 "Export Mode" = "byClass"
 "Export Style" = "Single file"
-"Export Format" = "csv"
-"Export Compression" = false
+"Export Format" = "h5"
+"Export Compression" = true
 "Export Iteration Order" = "ValuesByPropertyAcrossElements"
 "Export Elements" = true
-"Export Data Tables" = false
+"Export Data Tables" = true
 "Export Data In Memory" = false
 "HDF Max Chunk Bytes" = 32768
 "Export Event Log" = true
 "Log Results" = true
-"Result Container" = "ResultContainer"
+"Result Container" = "ResultData"
 
 [Frequency]
 "Enable frequency sweep" = false
