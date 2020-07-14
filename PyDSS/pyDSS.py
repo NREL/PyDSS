@@ -121,6 +121,7 @@ class instance(object):
             'Return Results': {'type': bool, 'Options': [True, False]},
             'Control mode': {'type': str, 'Options': ["Static", "Time"]},
             'Disable PyDSS controllers': {'type': bool, 'Options': [True, False]},
+            'Use Controller Registry': {'type': bool, 'Options': [True, False]},
         },
         "Reports": {
             'Format': {'type': str, 'Options': ["csv", "h5"]},

@@ -1,6 +1,7 @@
 from PyDSS.ResultContainer import ResultContainer as RC
 from PyDSS.ResultData import ResultData
 from PyDSS.pyContrReader import pyContrReader as pcr
+from PyDSS.pyContrReader import read_controller_settings_from_registry
 from PyDSS.pyPlotReader import pyPlotReader as ppr
 from PyDSS.dssElementFactory import create_dss_element
 from PyDSS.dssCircuit import dssCircuit
@@ -123,8 +124,11 @@ class OpenDSS:
         else:
             self.ResultContainer = None
 
-        pyCtrlReader = pcr(self._dssPath['pyControllers'])
-        ControllerList = pyCtrlReader.pyControllers
+        if params['Project']['Use Controller Registry']:
+            ControllerList = read_controller_settings_from_registry(self._dssPath['pyControllers'])
+        else:
+            pyCtrlReader = pcr(self._dssPath['pyControllers'])
+            ControllerList = pyCtrlReader.pyControllers
 
         if ControllerList is not None:
             self._CreateControllers(ControllerList)
@@ -143,6 +147,16 @@ class OpenDSS:
             self._HI = HI.helics_interface(self._dssSolver, self._dssObjects, self._dssObjectsByClass, params,
                                            self._dssPath)
         return
+
+    def _ReadControllerDefinitions(self):
+        controllers = None
+        mappings = os.path.join(os.path.dirname(self._dssPath['pyControllers']), "ControllerMappings")
+        if os.path.exists(mappings):
+            ctrl_mapping_files = os.listdir(self._dssPath["ControllerMappings"])
+            for filename in ctrl_mapping_files: 
+                data = load_data(os.path.join(self._dssPath["ControllerMappings"], filename))
+
+        return controllers
 
     def _ModifyNetwork(self):
         # self._Modifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
