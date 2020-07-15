@@ -90,6 +90,17 @@ def update_controllers(ctx, controller_type=None, controller=None, dss_file=None
         data[controller] = element_names
         num_added = len(element_names)
 
+    # Remove element_names from any other controllers.
+    set_names = set(element_names)
+    for _controller, values in data.items():
+        if _controller != controller:
+            final = set(values).difference_update(set_names)
+            if final is None:
+                final_list = None
+            else:
+                final_list = list(final)
+            data[_controller] = final_list
+
     dump_data(data, filename)
     print(f"Added {num_added} names to {filename}")
 
