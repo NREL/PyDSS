@@ -209,6 +209,39 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         # self.compile_feeder_initialize()
         dss.run_command("Clear")
         base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
+
+        # # appending redirect to Territory wide line codes and line geometry file LA specific
+        # territory_linecode = os.path.join(self.config["upgrade_library_path"], "Territory_LineCodes.dss")
+        # territory_linegeometry = os.path.join(self.config["upgrade_library_path"], "Territory_LineGeometry.dss")
+        # redirect_list = [f'Redirect {territory_linecode}\n', f'Redirect {territory_linegeometry}\n', 'Solve\n']
+        # p = re.compile('^Redirect\s(\S*)')  # captures master dss path"
+        # # read deployment.dss file to get master dss path
+        # with open(base_dss, "r") as file_object:
+        #     for line in file_object:
+        #         if 'master' in line.lower():
+        #             m = re.search(p, line)
+        #             if m:
+        #                 master_file = m[0]
+        # file_object.close()
+        #
+        # # open master file (comment existing line code and line geometry redirect, and add new redirect)
+        # f_content = f.read()
+        # f_content = re.sub(r'Redirect LineCodes.dss', r'!Redirect LineCodes.dss', f_content)
+        # f_content = re.sub(r'Redirect LineGeometry.dss', r'!Redirect LineGeometry.dss', f_content)
+        # # return pointer to top of file so we can re-write the content with replaced string
+        # f.seek(0)
+        # # clear file content
+        # f.truncate()
+        # # re-write the content with the updated content
+        # f.write(f_content)
+        # # close file
+        # f.close()
+        #     # for line in file_object:
+        #     #     # Append redirects at the end of file
+        #     #     for line in redirect_list:
+        #     #         file_object.write(line)
+        # breakpoint()
+
         check_redirect(base_dss)
         upgrades_file = os.path.join(self.config["Outputs"], "thermal_upgrades.dss")
         check_redirect(upgrades_file)
