@@ -242,7 +242,10 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         #     #         file_object.write(line)
         # breakpoint()
 
-        check_redirect(base_dss)
+        # check_redirect(base_dss)
+        result = dss.run_command(f"Redirect {base_dss}")
+        if result != "":
+            print(f"Redirect failed for {base_dss}, message: {result}")
         upgrades_file = os.path.join(self.config["Outputs"], "thermal_upgrades.dss")
         check_redirect(upgrades_file)
         self.dssSolver.Solve()

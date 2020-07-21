@@ -597,7 +597,10 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.logger.info("Checking impact of redirected upgrades file")
         dss.run_command("Clear")
         base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
-        check_redirect(base_dss)
+        # check_redirect(base_dss)
+        result = dss.run_command(f"Redirect {base_dss}")
+        if result != "":
+            print(f"Redirect failed for {base_dss}, message: {result}")
         check_redirect(thermal_dss_file)
         upgrades_file = os.path.join(self.config["Outputs"], "voltage_upgrades.dss")
         check_redirect(upgrades_file)
