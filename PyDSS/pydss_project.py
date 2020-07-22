@@ -222,7 +222,7 @@ class PyDssProject:
 
     @classmethod
     def create_project(cls, path, name, scenarios, simulation_config=None,
-                       options=None):
+                       options=None, master_dss_file=None):
         """Create a new PyDssProject on the filesystem.
 
         Parameters
