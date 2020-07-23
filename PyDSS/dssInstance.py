@@ -448,7 +448,6 @@ class OpenDSS:
         return
 
     def __del__(self):
-        self._Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')
         if self._Options["Logging"]["Log to external file"]:
             handlers = list(self._Logger.handlers)
             for filehandler in handlers:
