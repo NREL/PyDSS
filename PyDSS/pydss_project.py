@@ -39,7 +39,6 @@ READ_CONTROLLER_FUNCTIONS = {
 }
 
 
-
 class PyDssProject:
     """Represents the project options for a PyDSS simulation."""
 
