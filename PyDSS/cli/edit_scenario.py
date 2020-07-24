@@ -5,16 +5,8 @@ import sys
 
 import click
 
-from PyDSS.common import ControllerType, CONTROLLER_TYPES, SIMULATION_SETTINGS_FILENAME
-from PyDSS.pydss_project import ControllerType
-from PyDSS.utils.dss_utils import read_pv_systems_from_dss_file
-from PyDSS.registry import Registry
-from PyDSS.utils.utils import dump_data, load_data
-
-
-READ_CONTROLLER_FUNCTIONS = {
-    ControllerType.PV_CONTROLLER.value: read_pv_systems_from_dss_file,
-}
+from PyDSS.common import CONTROLLER_TYPES
+from PyDSS.pydss_project import update_pydss_controllers
 
 
 @click.option(
@@ -54,55 +46,13 @@ def update_controllers(ctx, controller_type=None, controller=None, dss_file=None
     """Update a scenario's controllers from an OpenDSS file."""
     project_path = ctx.parent.params["project_path"]
     scenario = ctx.parent.params["scenario"]
-    if controller_type not in READ_CONTROLLER_FUNCTIONS:
-        supported_types = list(READ_CONTROLLER_FUNCTIONS.keys())
-        print(f"Currently only {supported_types} types are supported")
-        sys.exit(1)
-
-    sim_file = os.path.join(project_path, SIMULATION_SETTINGS_FILENAME)
-    config = load_data(sim_file)
-    if not config["Project"].get("Use Controller Registry", False):
-        print(f"'Use Controller Registry' must be set to true in {sim_file}")
-        sys.exit(1)
-
-    registry = Registry()
-    if not registry.is_controller_registered(controller_type, controller):
-        print(f"{controller_type} / {controller} is not registered")
-        sys.exit(1)
-
-    data = {}
-    filename = f"{project_path}/Scenarios/{scenario}/pyControllerList/{controller_type}.toml"
-    if os.path.exists(filename):
-        data = load_data(filename)
-        for val in data.values():
-            if not isinstance(val, list):
-                print(f"{filename} has an invalid format")
-                sys.exit(1)
-
-    element_names = READ_CONTROLLER_FUNCTIONS[controller_type](dss_file)
-    num_added = 0
-    if controller in data:
-        existing = set(data[controller])
-        final = list(existing.union(set(element_names)))
-        data[controller] = final
-        num_added = len(final) - len(existing)
-    else:
-        data[controller] = element_names
-        num_added = len(element_names)
-
-    # Remove element_names from any other controllers.
-    set_names = set(element_names)
-    for _controller, values in data.items():
-        if _controller != controller:
-            final = set(values).difference_update(set_names)
-            if final is None:
-                final_list = None
-            else:
-                final_list = list(final)
-            data[_controller] = final_list
-
-    dump_data(data, filename)
-    print(f"Added {num_added} names to {filename}")
+    update_pydss_controllers(
+        project_path=project_path,
+        scenario=scenario,
+        controller_type=controller_type,
+        controller=controller,
+        dss_file=dss_file
+    )
 
 
 edit_scenario.add_command(update_controllers)
