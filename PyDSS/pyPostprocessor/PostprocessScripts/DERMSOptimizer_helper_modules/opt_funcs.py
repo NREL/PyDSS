@@ -301,6 +301,7 @@ class DERMS:
         self.PV_size = pvData["pvSize"]
         self.inverter_size = pvData["inverterSize"]
         self.control_bus = controlbus
+
         sub_node_names = [ii.upper() for ii in sub_node_names]
         self.controlbus_index = [sub_node_names.index(ii.upper()) for ii in controlbus] # control bus index in the sub system (number)
         # here
@@ -308,9 +309,10 @@ class DERMS:
         for bus in self.PV_location:
             temp = bus.split('.')
             if len(temp) == 1:
-                temp = temp + ['1','2','3']
-            for ii in range(len(temp)-1):
-                PVbus_index.append(sub_node_names.index((temp[0]+'.'+temp[ii+1]).upper()))
+                temp = temp + ['1', '2', '3']
+            for ii in range(len(temp) - 1):
+                PVbus_index.append(sub_node_names.index((temp[0] + '.' + temp[ii + 1]).upper()))
+
         # =========================================Yiyun's Notes===========================================#
         # adding .1 .2 .3 following the number to recognize the three phases.
         # =================================================================================================#
@@ -319,10 +321,9 @@ class DERMS:
         self.controlelem_limit = controlelem_limit
         self.controlelem_index = [sub_elem_names.index(ii) for ii in controlelem] # control branches index in the sub system (number)
 
-
-    def monitor(self, dss, dssObjects):
+    def monitor(self, dss, dssObjects, PVSystem_1phase):
         PVpowers = []
-        for pv in self.PV_name:
+        for pv in PVSystem_1phase["Name"].tolist():
             nPhases = dssObjects["Generators"][pv].GetValue("phases")
             power = dssObjects["Generators"][pv].GetValue("Powers")
             PVpowers.append([sum(power[::2])/nPhases, sum(power[1::2])/nPhases])
@@ -349,7 +350,6 @@ class DERMS:
 
 
     def control(self, linear_PF_coeff, Options,stepsize,mu0,Vlimit,PVpower,Imes,Vmes,PV_Pmax_forecast):
-
         coeff_p = Options["coeff_p"]
         coeff_q = Options["coeff_q"]
 
@@ -392,14 +392,17 @@ class DERMS:
         mu_Vmag_upper0 = mu0[0]
         mu_Vmag_lower0 = mu0[1]
         mu_I0 = mu0[2]
+
         #print([max(mu_Vmag_upper0),max(mu_Vmag_lower0)])
         # compute gradient
+
         PVcost_fun_gradient = PV_costFun_gradient(x0, coeff_p, coeff_q, PV_Pmax_forecast)
 
         Vmag_upper_gradient = np.concatenate((np.dot(coeff_Vmag_P[np.ix_([ii for ii in controlbus_index],[ii for ii in PVbus_index])].transpose(), mu_Vmag_upper0),
                                               np.dot(coeff_Vmag_Q[np.ix_([ii for ii in controlbus_index], [ii for ii in PVbus_index])].transpose(), mu_Vmag_upper0)),axis=0)
         Vmag_lower_gradient = np.concatenate((np.dot(coeff_Vmag_P[np.ix_([ii for ii in controlbus_index],[ii for ii in PVbus_index])].transpose(), mu_Vmag_lower0),
                                               np.dot(coeff_Vmag_Q[np.ix_([ii for ii in controlbus_index],[ii for ii in PVbus_index])].transpose(), mu_Vmag_lower0)),axis=0)
+
         Vmag_gradient = Vmag_upper_gradient - Vmag_lower_gradient
         if len(mu_I0)>0 :
             temp_real = mu_I0 * np.array(Imes.real)
@@ -418,8 +421,8 @@ class DERMS:
             I_gradient = 2 * I_gradient_real + 2 * I_gradient_imag
         else:
             I_gradient = 0
-        gradient = PVcost_fun_gradient + \
-                   Vmag_gradient + I_gradient / 1000
+
+        gradient = PVcost_fun_gradient + Vmag_gradient + I_gradient / 1000
 
         # compute x1, mu1
         x1 = np.concatenate([x0[:NPV] - stepsize_xp * gradient[:NPV], x0[NPV:] - stepsize_xq * gradient[NPV:]])

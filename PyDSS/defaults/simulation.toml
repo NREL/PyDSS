@@ -43,7 +43,7 @@
 [Exports]
 "Export Mode" = "byClass"
 "Export Style" = "Single file"
-"Export Format" = "csv"
+"Export Format" = "h5"
 "Export Compression" = false
 "Export Iteration Order" = "ValuesByPropertyAcrossElements"
 "Export Elements" = true
@@ -52,7 +52,7 @@
 "HDF Max Chunk Bytes" = 32768
 "Export Event Log" = true
 "Log Results" = true
-"Result Container" = "ResultContainer"
+"Result Container" = "ResultData"
 
 # Enable frequency sweep- [Bool] - Enable harmonic sweep. works with only 'Static' and 'QSTS' simulation modes
 # Fundamental frequency- [Float] - Fundamental system frequeny in Hertz
