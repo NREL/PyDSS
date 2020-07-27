@@ -33,6 +33,7 @@
 "DSS File" = ""
 "DSS File Absolute Path" = false
 "Return Results" = false
+"Use Controller Registry" = false
 
 # Log Results- [Bool] - Set true if results need to be exported
 # Return Results- [Bool] - Set true if running PyDSS in Cosimulation environment, RunStep function will return current system states

@@ -3,6 +3,7 @@
 import logging
 import os
 import shutil
+import sys
 import tarfile
 import tempfile
 import zipfile
@@ -11,7 +12,7 @@ import h5py
 import pandas as pd
 
 import PyDSS
-from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, \
+from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, CONTROLLER_TYPES, \
     SIMULATION_SETTINGS_FILENAME, DEFAULT_SIMULATION_SETTINGS_FILE, \
     ControllerType, ExportMode, MONTE_CARLO_SETTINGS_FILENAME,\
     filename_from_enum, VisualizationType, DEFAULT_MONTE_CARLO_SETTINGS_FILE,\
@@ -23,6 +24,8 @@ from PyDSS.pydss_fs_interface import PyDssDirectoryInterface, \
     PyDssZipFileInterface, PROJECT_DIRECTORIES, \
     SCENARIOS, STORE_FILENAME
 from PyDSS.reports import REPORTS_DIR
+from PyDSS.registry import Registry
+from PyDSS.utils.dss_utils import read_pv_systems_from_dss_file
 from PyDSS.utils.utils import dump_data, load_data
 
 from distutils.dir_util import copy_tree
@@ -30,6 +33,10 @@ logger = logging.getLogger(__name__)
 
 
 DATA_FORMAT_VERSION = "1.0.1"
+
+READ_CONTROLLER_FUNCTIONS = {
+    ControllerType.PV_CONTROLLER.value: read_pv_systems_from_dss_file,
+}
 
 
 class PyDssProject:
@@ -777,3 +784,71 @@ def load_config(path):
              if os.path.splitext(x)[1] == ".toml"]
     assert len(files) == 1, "only 1 .toml file is currently supported"
     return load_data(files[0])
+
+
+def update_pydss_controllers(project_path, scenario, controller_type, 
+                             controller, dss_file):
+    """Update a scenario's controllers from an OpenDSS file.
+
+    Parameters
+    ----------
+    project_path : str
+        PyDSS project path.
+    scenario : str
+        PyDSS scenario name in project.
+    controller_type : str
+        A type of PyDSS controler
+    controller : str
+        The controller name
+    dss_file : str
+        A DSS file path
+    """
+    if controller_type not in READ_CONTROLLER_FUNCTIONS:
+        supported_types = list(READ_CONTROLLER_FUNCTIONS.keys())
+        print(f"Currently only {supported_types} types are supported")
+        sys.exit(1)
+
+    sim_file = os.path.join(project_path, SIMULATION_SETTINGS_FILENAME)
+    config = load_data(sim_file)
+    if not config["Project"].get("Use Controller Registry", False):
+        print(f"'Use Controller Registry' must be set to true in {sim_file}")
+        sys.exit(1)
+
+    registry = Registry()
+    if not registry.is_controller_registered(controller_type, controller):
+        print(f"{controller_type} / {controller} is not registered")
+        sys.exit(1)
+
+    data = {}
+    filename = f"{project_path}/Scenarios/{scenario}/pyControllerList/{controller_type}.toml"
+    if os.path.exists(filename):
+        data = load_data(filename)
+        for val in data.values():
+            if not isinstance(val, list):
+                print(f"{filename} has an invalid format")
+                sys.exit(1)
+
+    element_names = READ_CONTROLLER_FUNCTIONS[controller_type](dss_file)
+    num_added = 0
+    if controller in data:
+        existing = set(data[controller])
+        final = list(existing.union(set(element_names)))
+        data[controller] = final
+        num_added = len(final) - len(existing)
+    else:
+        data[controller] = element_names
+        num_added = len(element_names)
+
+    # Remove element_names from any other controllers.
+    set_names = set(element_names)
+    for _controller, values in data.items():
+        if _controller != controller:
+            final = set(values).difference_update(set_names)
+            if final is None:
+                final_list = None
+            else:
+                final_list = list(final)
+            data[_controller] = final_list
+
+    dump_data(data, filename)
+    print(f"Added {num_added} names to {filename}")

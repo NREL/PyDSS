@@ -43,11 +43,13 @@ Next, configure the project.
 - Customize the simulation settings in <project-name>/simulation.toml.
   In particular, set the value for "DSS File" to the master file in the
   DSSfiles directory.
-- Customize the PyDSS controllers in
-  <project-name>/Scenarios/<scenario-name>/pyControllerList.
-  There needs to be one controller section for each PVSystem defined in the
-  OpenDSS configuration. The name of each section must be the PVSystem
-  identifier (replace "PVSystem.pv1234" with your names).
+- Set "Use Controller Registry" = true in <project-name>/simulation.toml in
+  order to use the new, simplified controller management feature.
+- Add controllers to your local registry as needed.  Refer to
+  ``pydss controllers --help``. 
+- Assign element names to controllers. This example will add all PVSystems
+  defined in an OpenDSS input file to the default Volt-Var PvController.
+  ``pydss edit-scenario -p ./project -s scenario1 update-controllers -t PvController -f ./project/DSSfiles/PVGenerators_existing_VV.dss -c volt-var``
 - Customize the the plots to be generated in
   <project-name>/Scenarios/<scenario-name>/pyPlotList
 - Customize data to be exported for each scenario in
