@@ -116,14 +116,16 @@ Additional Documentation
 .. toctree::
    :maxdepth: 1
 
-   Simulation modes
+   tutorial
    Project management
    Result management
    Dynamic visualization capabilities
    Extended controls library
    External interfaces for cosimulation
    Automated comparison of scenarios
-   
+   reports
+   hdf-data-format
+   PyDSS
    
 License
 =======
@@ -150,7 +152,7 @@ Questions? Please send an email to aadil.latif@nrel.gov or aadil.latif@gmail.com
    
 
 Indices and tables
-^^^^^^^^^^^^^^^^^^
+==================
 
 * :ref:`genindex`
 * :ref:`modindex`

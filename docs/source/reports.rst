@@ -1,5 +1,3 @@
-.. _reports-label:
-
 Reports
 #######
 This page describes how to generate PyDSS reports from exported simulation data.
@@ -80,4 +78,10 @@ Here's how to create a new report in PyDSS.
    - ``generate``:  Generates the report files. This should create the files in
      ``<project-path>/Reports``.
    - ``get_required_exports``:  Defines the export parameters at runtime. Refer
-     to :ref:`export-pre-filtering-parameters`.
+     to :ref:`tutorial:Pre-filtering Export Data`.
+
+Examples
+********
+Refer to this `simulation settings file
+<https://github.com/daniel-thom/PyDSS/blob/opendss-export-metrics/tests/data/pv_reports_project/simulation.toml#L97>`_
+for an example configuration that enables these reports.

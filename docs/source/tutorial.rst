@@ -2,8 +2,8 @@ Tutorial
 ########
 This page describes how to run simulations with PyDSS.
 
-Installation
-************
+PyDSS Installation
+******************
 There are two ways to install PyDSS.
 
 1. Install via pip.
@@ -42,14 +42,20 @@ Next, configure the project.
 - Copy OpenDSS files to <project-name>/DSSfiles
 - Customize the simulation settings in <project-name>/simulation.toml.
   In particular, set the value for "DSS File" to the master file in the
-  DSSfiles directory.
+  ``DSSfiles`` directory.
 - Set "Use Controller Registry" = true in <project-name>/simulation.toml in
   order to use the new, simplified controller management feature.
-- Add controllers to your local registry as needed.  Refer to
-  ``pydss controllers --help``. 
+- Add controllers to your local registry as needed.  Refer to ``pydss
+  controllers --help``. Note that references to controllers are stored in
+  ``~/.pydss-registry.json``.
 - Assign element names to controllers. This example will add all PVSystems
-  defined in an OpenDSS input file to the default Volt-Var PvController.
-  ``pydss edit-scenario -p ./project -s scenario1 update-controllers -t PvController -f ./project/DSSfiles/PVGenerators_existing_VV.dss -c volt-var``
+  defined in an OpenDSS input file to the default Volt-Var PvController::
+
+    pydss edit-scenario -p ./project -s scenario1 update-controllers \
+        -t PvController \
+        -f ./project/DSSfiles/PVGenerators_existing_VV.dss \
+        -c volt-var
+
 - Customize the the plots to be generated in
   <project-name>/Scenarios/<scenario-name>/pyPlotList
 - Customize data to be exported for each scenario in
@@ -60,14 +66,13 @@ Exporting Data
 The default behavior of PyDSS is to export raw, unstructured data received from
 opendssdirect into CSV files. It is left to the user to interpret this data.
 
-There is a new method of exporting data under development that adds structure
-for easier analysis. It currently supports a limited set of element properties.
-To enable this behavior set the following in ``simulation.toml``::
+There is a new method of exporting data that adds structure for easier
+analysis. To enable this behavior set the following in ``simulation.toml``::
 
     "Result Container" = "ResultData"
 
-Data Format
------------
+Export Options
+--------------
 These configuration customizations exist for data exported using the new
 "ResultData" container:
 
@@ -105,22 +110,29 @@ set in ``Exports.toml`` on a per-property basis.
   ``limits_filter``.
 - Set ``limits_filter`` to ``outside`` (default) or ``inside``. Applies to
   filtering action on the ``limits`` parameter.
-- Set ``store_values_type`` to ``"all"`` (default), ``"moving_average"``, or
-  ``"sum"``. If ``moving_average`` then PyDSS will store the average of the
-  last ``window_size`` values. If ``sum`` then PyDSS will keep a
-  running sum of values at each time point and only record the total to disk.
+- Set ``store_values_type`` to ``all`` (default), ``moving_average``, ``max``,
+  ``min``, or ``sum``. If ``moving_average`` then PyDSS will store the average
+  of the last ``window_size`` values. If ``sum`` then PyDSS will keep a running
+  sum of values at each time point and only record the total to disk.
 - Set ``window_size`` to an integer to control the moving average window size.
   Defaults to ``100``.
 - Set ``sample_interval`` to control how often PyDSS reads new values. Defaults
   to ``1``.
 - If the export key is not ``ElementType.Property`` but instead a value mapped
-  to a custom function then PyDSS will run that function at each time point.
-  ``Line.LoadingPercent`` is an example.  In this case PyDSS will read multiple
-  values for a line, compute a loading percentage, and store that. The
-  ``limits`` field can be applied to these values. Refer to
-  ``CUSTOM_FUNCTIONS`` in ``PyDSS/export_list_reader.py`` to see the options
-  available.
+  to a custom metrics class then PyDSS will run that code at each time point.
+  ``Lines.LoadingPercent`` is an example.  In this case PyDSS will compute a
+  loading percentage for each line and store that. The ``limits`` field can be
+  applied to these values. Refer to ``CUSTOM_FUNCTIONS`` in
+  ``PyDSS/export_list_reader.py`` to see the options available.
 
+Refer to this `Exports.toml file
+<https://github.com/daniel-thom/PyDSS/blob/master/tests/data/custom_exports_project/Scenarios/scenario1/ExportLists/Exports.toml>`_
+for examples of these parameters.
+
+PyDSS Reports
+-------------
+PyDSS can generate reports from exported data. Specific reports can be enabled
+in the project's ``simulation.toml`` file.  Refer to :ref:`reports:reports`.
 
 Run a project
 *************
@@ -132,12 +144,12 @@ Run this command to run all scenarios in the project.  ::
 Analyze results
 ***************
 If the default export behavior is used then the raw output is written to CSV
-files in <project-path>/<project-name>/Export/<scenario-name>. These can be
+files in ``<project-path>/<project-name>/Export/<scenario-name>``. These can be
 converted to pandas DataFrames. It is up to the user to interpret what each
 column represents.  This can very by element.
 
-If the "ResultData" export method is configured then data can be loaded as
-shown by this example code::
+If the ``ResultData`` export method is configured then data can be loaded as
+shown by the following example code.
 
 Load element classes and properties
 ===================================
@@ -199,6 +211,13 @@ Here is how you can get the data for a single phase/terminal::
     2017-01-01 01:00:00                  6.384335
     2017-01-01 01:15:00                  6.347553
 
+Convert the complex numbers in the dataframe
+============================================
+::
+
+    df = scenario.get_dataframe("Lines", "Currents", "Line.pvl_112", phase_terminal="A1", real_only=True)
+    df = scenario.get_dataframe("Lines", "Currents", "Line.pvl_112", phase_terminal="A1", abs_val=True)
+
 Read a dataframe for one element with an option matching a regular expression
 =============================================================================
 
@@ -217,6 +236,7 @@ Read a dataframe for one element with an option matching a regular expression
     2017-01-01 00:45:00   (3.381501301191747e-08+1.3786106705993006e-05j)
     2017-01-01 01:00:00  (3.4120603231713176e-08+1.3804576042275585e-05j)
     2017-01-01 01:15:00   (3.356035449542105e-08+1.3810414088766265e-05j)
+
 
 Read the total value for a property stored with ``store_values_type = "sum"``
 =============================================================================
@@ -250,12 +270,30 @@ Find out what option values are present for a property
 
 Read a dataframe for all elements
 =================================
-You may want to get data for all elements at once.
+You may want to get data for all elements at once. Since data for all elements
+are stored in the same dataset it is more efficient to read them all at once.
 
 .. code-block:: python
 
+    # Data stored at every time point
     df = scenario.get_full_dataframe("Lines", "Currents")
 
+    # Data pre-filtered with limits
+    dfs = scenario.get_filtered_dataframes("Nodes", "VoltageMetric")
+
+Read a dataframe where all elements of a type have been summed at each time point
+=================================================================================
+
+.. code-block:: python
+
+    df = scenario.get_summed_element_dataframe("CktElement", "ExportPowersMetric")
+
+Read a dictionary of values where all elements of a type have been summed
+=========================================================================
+
+.. code-block:: python
+
+    data = scenario.get_summed_element_total("CktElement", "ExportPowersMetricSum")
 
 Performance Considerations
 **************************

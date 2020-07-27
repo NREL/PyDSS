@@ -3,10 +3,11 @@
 
 # You can set these variables from the command line, and also
 # from the environment for the first two.
-SPHINXOPTS    ?=
-SPHINXBUILD   ?= sphinx-build
+SPHINXOPTS    =
+SPHINXBUILD   = sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = build
+BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -20,11 +21,11 @@ help:
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 github: html
-	#rm -rf source
-	sphinx-apidoc -o source ../PyDSS
+	rm -rf source/PyDSS
+	sphinx-apidoc -o source/PyDSS ../PyDSS
 	-git branch -D gh-pages
-	-git push origin --delete gh-pages
+	-git push dthom --delete gh-pages
 	ghp-import -n -b gh-pages -m "Update documentation" ./build/html
 	git checkout gh-pages
-	git push --set-upstream origin gh-pages
+	git push --set-upstream dthom gh-pages
 	git checkout ${BRANCH}
