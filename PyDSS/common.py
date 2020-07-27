@@ -134,11 +134,11 @@ class DataConversion(enum.Enum):
 
 
 class DatasetPropertyType(enum.Enum):
-    ELEMENT_PROPERTY = "elem_prop"  # data is stored at every time point
+    PER_TIME_POINT = "per_time_point"  # data is stored at every time point
     FILTERED = "filtered"  # data is stored after being filtered
     METADATA = "metadata"  # metadata for another dataset
-    NUMBER = "number"  # Only a single value is written
     TIME_STEP = "time_step"  # data are time indices, tied to FILTERED
+    VALUE = "value"  # Only a single value is written for each element
 
 
 class LimitsFilter(enum.Enum):

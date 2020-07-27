@@ -67,7 +67,7 @@ def test_export_overloads(mocked_func):
 
         dataset1 = hdf_store["CktElement/ElementProperties/ExportOverloadsMetric"]
         assert dataset1.attrs["length"] == num_time_steps
-        assert dataset1.attrs["type"] == "elem_prop"
+        assert dataset1.attrs["type"] == "per_time_point"
         df = DatasetBuffer.to_dataframe(dataset1)
         assert isinstance(df, pd.DataFrame)
         assert [x for x in df["Line.one__Overloads"].values] == LINE_1_VALUES
@@ -77,7 +77,7 @@ def test_export_overloads(mocked_func):
 
         dataset2 = hdf_store["CktElement/ElementProperties/ExportOverloadsMetricMax"]
         assert dataset2.attrs["length"] == 1
-        assert dataset2.attrs["type"] == "number"
+        assert dataset2.attrs["type"] == "value"
         assert dataset2[0][0] == max(LINE_1_VALUES)
         assert dataset2[0][1] == max(LINE_2_VALUES)
         assert dataset2[0][2] == max(TRANSFORMER_1_VALUES)

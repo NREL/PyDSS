@@ -150,8 +150,8 @@ class ExportListProperty:
                  StoreValuesType.MIN,
                  StoreValuesType.MOVING_AVERAGE_MAX,
                  StoreValuesType.CHANGE_COUNT):
-            return DatasetPropertyType.NUMBER
-        return DatasetPropertyType.ELEMENT_PROPERTY
+            return DatasetPropertyType.VALUE
+        return DatasetPropertyType.PER_TIME_POINT
 
     def get_max_size(self, num_steps):
         """Return the max number of items that could be stored."""

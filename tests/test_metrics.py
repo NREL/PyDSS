@@ -91,7 +91,7 @@ def test_metrics_store_all(cleanup):
 
         dataset = hdf_store["Fake/ElementProperties/Property"]
         assert dataset.attrs["length"] == len(values)
-        assert dataset.attrs["type"] == "elem_prop"
+        assert dataset.attrs["type"] == "per_time_point"
         df = DatasetBuffer.to_dataframe(dataset)
         assert isinstance(df, pd.DataFrame)
         assert len(df) == len(values)
@@ -118,7 +118,7 @@ def test_metrics_store_all_complex_abs(cleanup):
 
         dataset = hdf_store["Fake/ElementProperties/Property"]
         assert dataset.attrs["length"] == len(values)
-        assert dataset.attrs["type"] == "elem_prop"
+        assert dataset.attrs["type"] == "per_time_point"
         df = DatasetBuffer.to_dataframe(dataset)
         assert len(df) == len(values)
         for column in df.columns:
@@ -144,7 +144,7 @@ def test_metrics_store_all_complex_sum(cleanup):
 
         dataset = hdf_store["Fake/ElementProperties/Property"]
         assert dataset.attrs["length"] == len(values)
-        assert dataset.attrs["type"] == "elem_prop"
+        assert dataset.attrs["type"] == "per_time_point"
         df = DatasetBuffer.to_dataframe(dataset)
         assert len(df) == len(values)
         for column in df.columns:
@@ -170,7 +170,7 @@ def test_metrics_store_all_complex_abs_sum(cleanup):
 
         dataset = hdf_store["Fake/ElementProperties/Property"]
         assert dataset.attrs["length"] == len(values)
-        assert dataset.attrs["type"] == "elem_prop"
+        assert dataset.attrs["type"] == "per_time_point"
         df = DatasetBuffer.to_dataframe(dataset)
         assert len(df) == len(values)
         for column in df.columns:
@@ -237,13 +237,13 @@ def test_metrics_store_moving_average_and_max(cleanup):
 
         dataset1 = hdf_store["Fake/ElementProperties/PropertyMax"]
         assert dataset1.attrs["length"] == 1
-        assert dataset1.attrs["type"] == "number"
+        assert dataset1.attrs["type"] == "value"
         assert dataset1[0][0] == 49
         assert dataset1[0][1] == 49
 
         dataset2 = hdf_store["Fake/ElementProperties/PropertyAvg"]
         assert dataset2.attrs["length"] == len(values)
-        assert dataset2.attrs["type"] == "elem_prop"
+        assert dataset2.attrs["type"] == "per_time_point"
         df = DatasetBuffer.to_dataframe(dataset2)
         assert len(df) == len(values)
         for column in df.columns:
@@ -310,7 +310,7 @@ def test_metrics_store_moving_average_max(cleanup):
 
         dataset = hdf_store["Fake/ElementProperties/PropertyAvgMax"]
         assert dataset.attrs["length"] == 1
-        assert dataset.attrs["type"] == "number"
+        assert dataset.attrs["type"] == "value"
         assert dataset[0][0] == base_rm.max()
         assert dataset[0][1] == dataset[0][0]
         assert metric.max_num_bytes() == 8 * len(OBJS)
@@ -332,7 +332,7 @@ def test_metrics_store_sum(cleanup):
 
         dataset = hdf_store["Fake/ElementProperties/PropertySum"]
         assert dataset.attrs["length"] == 1
-        assert dataset.attrs["type"] == "number"
+        assert dataset.attrs["type"] == "value"
         assert len(dataset[0]) == 2
         assert dataset[0][0] == sum(values)
         assert dataset[0][1] == sum(values)
@@ -355,7 +355,7 @@ def test_metrics_store_max(cleanup):
 
         dataset = hdf_store["Fake/ElementProperties/PropertyMax"]
         assert dataset.attrs["length"] == 1
-        assert dataset.attrs["type"] == "number"
+        assert dataset.attrs["type"] == "value"
         assert len(dataset[0]) == 2
         assert dataset[0][0] == max(values)
         assert dataset[0][1] == max(values)
@@ -378,7 +378,7 @@ def test_metrics_store_min(cleanup):
 
         dataset = hdf_store["Fake/ElementProperties/PropertyMin"]
         assert dataset.attrs["length"] == 1
-        assert dataset.attrs["type"] == "number"
+        assert dataset.attrs["type"] == "value"
         assert len(dataset[0]) == 2
         assert dataset[0][0] == min(values)
         assert dataset[0][1] == min(values)

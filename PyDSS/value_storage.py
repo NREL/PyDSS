@@ -30,8 +30,8 @@ class ValueStorageBase(abc.ABC):
         ----------
         df : pd.DataFrame
         name : str
-        kwargs : **kwargs
-            Filter on options. Option values can be strings or regular expressions.
+        kwargs : dict
+            Filter on options; values can be strings or regular expressions.
 
         Returns
         -------

@@ -226,12 +226,11 @@ class PyDssScenarioResults:
         ]
         self._elems_by_class = defaultdict(set)
         self._elem_data_by_prop = defaultdict(dict)
-        self._elem_nums_by_prop = defaultdict(dict)
+        self._elem_values_by_prop = defaultdict(dict)
         self._elem_indices_by_prop = defaultdict(dict)
         self._props_by_class = defaultdict(list)
         self._elem_props = defaultdict(list)
         self._column_ranges_per_elem = defaultdict(dict)
-        #self._elem_prop_nums = defaultdict(dict)
         self._summed_elem_props = defaultdict(dict)
         self._summed_elem_timeseries_props = defaultdict(list)
         self._indices_df = None
@@ -250,11 +249,11 @@ class PyDssScenarioResults:
                     dataset_property_type = get_dataset_property_type(dataset)
                     if dataset_property_type == DatasetPropertyType.TIME_STEP:
                         continue
-                    if dataset_property_type == DatasetPropertyType.NUMBER:
-                        self._elem_nums_by_prop[elem_class][prop] = []
-                        prop_names = self._elem_nums_by_prop
+                    if dataset_property_type == DatasetPropertyType.VALUE:
+                        self._elem_values_by_prop[elem_class][prop] = []
+                        prop_names = self._elem_values_by_prop
                     elif dataset_property_type in (
-                            DatasetPropertyType.ELEMENT_PROPERTY,
+                            DatasetPropertyType.PER_TIME_POINT,
                             DatasetPropertyType.FILTERED,
                     ):
                         self._elem_data_by_prop[elem_class][prop] = []
@@ -279,7 +278,7 @@ class PyDssScenarioResults:
             for prop in summed_elem_props:
                 dataset = self._group[elem_class]["SummedElementProperties"][prop]
                 dataset_property_type = get_dataset_property_type(dataset)
-                if dataset_property_type == DatasetPropertyType.NUMBER:
+                if dataset_property_type == DatasetPropertyType.VALUE:
                     df = DatasetBuffer.to_dataframe(dataset)
                     assert len(df) == 1
                     self._summed_elem_props[elem_class][prop] = {
@@ -335,10 +334,10 @@ class PyDssScenarioResults:
 
     def _export_element_values(self, path, fmt, compress):
         elem_prop_nums = defaultdict(dict)
-        for elem_class in self._elem_nums_by_prop:
-            for prop in self._elem_nums_by_prop[elem_class]:
+        for elem_class in self._elem_values_by_prop:
+            for prop in self._elem_values_by_prop[elem_class]:
                 dataset = self._group[f"{elem_class}/ElementProperties/{prop}"]
-                for name in self._elem_nums_by_prop[elem_class][prop]:
+                for name in self._elem_values_by_prop[elem_class][prop]:
                     col_range = self._get_element_column_range(elem_class, prop, name)
                     start = col_range[0]
                     length = col_range[1]
@@ -369,7 +368,7 @@ class PyDssScenarioResults:
             for prop in self._summed_elem_timeseries_props[elem_class]:
                 dataset = self._group[elem_class]["SummedElementProperties"][prop]
                 prop_type = get_dataset_property_type(dataset)
-                if prop_type == DatasetPropertyType.ELEMENT_PROPERTY:
+                if prop_type == DatasetPropertyType.PER_TIME_POINT:
                     df = DatasetBuffer.to_dataframe(dataset)
                     self._finalize_dataframe(df, dataset)
                     base = "__".join([elem_class, prop])
@@ -392,8 +391,8 @@ class PyDssScenarioResults:
             If dtype of any column is complex, drop the imaginary component.
         abs_val : bool
             If dtype of any column is complex, compute its absolute value.
-        kwargs : **kwargs
-            Filter on options. Option values can be strings or regular expressions.
+        kwargs : dict
+            Filter on options; values can be strings or regular expressions.
 
         Returns
         -------
@@ -410,7 +409,7 @@ class PyDssScenarioResults:
 
         dataset = self._group[f"{element_class}/ElementProperties/{prop}"]
         prop_type = get_dataset_property_type(dataset)
-        if prop_type == DatasetPropertyType.ELEMENT_PROPERTY:
+        if prop_type == DatasetPropertyType.PER_TIME_POINT:
             return self._get_elem_prop_dataframe(
                 element_class, prop, element_name, dataset, real_only=real_only,
                 abs_val=abs_val, **kwargs
@@ -542,11 +541,11 @@ class PyDssScenarioResults:
 
     def get_element_property_value(self, element_class, prop, element_name):
         """Return the number stored for the element property."""
-        if element_class not in self._elem_nums_by_prop:
+        if element_class not in self._elem_values_by_prop:
             raise InvalidParameter(f"{element_class} is not stored")
-        if prop not in self._elem_nums_by_prop[element_class]:
+        if prop not in self._elem_values_by_prop[element_class]:
             raise InvalidParameter(f"{prop} is not stored")
-        if element_name not in self._elem_nums_by_prop[element_class][prop]:
+        if element_name not in self._elem_values_by_prop[element_class][prop]:
             raise InvalidParameter(f"{element_name} is not stored")
         dataset = self._group[f"{element_class}/ElementProperties/{prop}"]
         col_range = self._get_element_column_range(element_class, prop, element_name)
@@ -625,8 +624,8 @@ class PyDssScenarioResults:
             If dtype of any column is complex, drop the imaginary component.
         abs_val : bool
             If dtype of any column is complex, compute its absolute value.
-        kwargs : **kwargs
-            Filter on options. Option values can be strings or regular expressions.
+        kwargs : dict
+            Filter on options; values can be strings or regular expressions.
 
         Returns
         -------
@@ -642,7 +641,7 @@ class PyDssScenarioResults:
                 yield name, df
 
     def iterate_element_property_values(self):
-        """Return a generator over all element properties stored as numbers.
+        """Return a generator over all element properties stored as values.
 
         Yields
         ------
@@ -650,9 +649,10 @@ class PyDssScenarioResults:
             element_class, property, element_name, value
 
         """
-        for elem_class in self._elem_prop_nums:
-            for prop in self._elem_prop_nums[elem_class]:
-                for name, val in self._elem_prop_nums[elem_class][prop].items():
+        for elem_class in self._elem_values_by_prop:
+            for prop in self._elem_values_by_prop[elem_class]:
+                for name in self._elem_values_by_prop[elem_class][prop]:
+                    val = self.get_element_property_value(elem_class, prop, name)
                     yield elem_class, prop, name, val
 
     def list_element_classes(self):
@@ -679,7 +679,7 @@ class PyDssScenarioResults:
 
         """
         # TODO: prop is deprecated
-        return self._elems_by_class.get(element_class, [])
+        return sorted(list(self._elems_by_class.get(element_class, [])))
 
     def list_element_properties(self, element_class, element_name=None):
         """Return the properties stored in the results for a class.
@@ -701,13 +701,12 @@ class PyDssScenarioResults:
             return sorted(list(self._props_by_class[element_class]))
         return self._elem_props.get(element_name, [])
 
-    # TODO: better name
     def list_element_value_names(self, element_class, prop):
-        if element_class not in self._elem_nums_by_prop:
+        if element_class not in self._elem_values_by_prop:
             raise InvalidParameter(f"{element_class} is not stored")
-        if prop not in self._elem_nums_by_prop[element_class]:
+        if prop not in self._elem_values_by_prop[element_class]:
             raise InvalidParameter(f"{element_class} / {prop} is not stored")
-        return sorted(self._elem_nums_by_prop[element_class][prop])
+        return sorted(self._elem_values_by_prop[element_class][prop])
 
     def list_element_property_values(self, element_name):
         nums = []
