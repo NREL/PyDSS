@@ -239,10 +239,10 @@ class OpenDSS:
         maxError = 0.0
 
         for controller in self._pyControls.values():
-            error = controller.Update(Priority, Time, UpdateResults)
+            error = abs(controller.Update(Priority, Time, UpdateResults))
             if error > maxError:
                 maxError = error
-        return abs(maxError) < self._Options['Project']['Error tolerance'], maxError
+        return maxError < self._Options['Project']['Error tolerance'], maxError
 
     def _CreateBusObjects(self):
         BusNames = self._dssCircuit.AllBusNames()
