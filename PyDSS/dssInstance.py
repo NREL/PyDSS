@@ -322,11 +322,9 @@ class OpenDSS:
                         self._Logger.debug('Control Loop {} convergence error: {}'.format(priority, error))
                         self._dssSolver.reSolve()
                 if not has_converged:
-                    self._Logger.warning('Completed control Loop with no convergence priority=%s @ %s',
-                                         priority, step)
                     self._convergenceErrors += 1
                     time_step_has_converged = False
-                    self._Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
+                    self._Logger.warning('Control Loop %s no convergence @ %s error=%s', priority, step, error)
                     if convergence_max_error != 0.0 and error > convergence_max_error:
                         self._Logger.error("Convergence error %s exceeded max value %s", error, convergence_max_error)
                         raise PyDssConvergenceMaxError(f"Exceeded max convergence error {error}")
