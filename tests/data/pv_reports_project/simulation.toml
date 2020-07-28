@@ -19,6 +19,7 @@
 "Active Scenario" = ""
 "DSS File" = "Master_Spohn_existing_VV.dss"
 "Return Results" = false
+"Use Controller Registry" = true
 [[Project.Scenarios]]
 name = "pf1"
 post_process_infos = []
