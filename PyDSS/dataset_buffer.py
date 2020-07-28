@@ -15,11 +15,12 @@ GiB = MiB * MiB
 
 # The optimal number of chunks to store in memory will vary widely.
 # The h5py docs recommend keeping chunk byte sizes between 10 KiB - 1 MiB.
-# It needs to be larger than the biggest possible row.
-# To store voltages for 10,000 nodes we would need 10,0000 * 8 = 80 KB
+# It needs to be larger than the biggest possible row and also cover enough of
+# column to compress duplicate values. Since we might store thousands of
+# elements in one dataset, make it the max by default.
 # Note that the downside to making this larger is that any read causes the
 # entire chunk to be read.
-DEFAULT_MAX_CHUNK_BYTES = 128 * KiB
+DEFAULT_MAX_CHUNK_BYTES = 1 * MiB
 
 logger = logging.getLogger(__name__)
 
@@ -101,7 +102,7 @@ class DatasetBuffer:
             for attr, val in attributes.items():
                 self._dataset.attrs[attr] = val
 
-        logger.debug("Created DatasetBuffer path=%s shape=%s chnunks=%s",
+        logger.info("Created DatasetBuffer path=%s shape=%s chunks=%s",
                      path, shape, chunks)
 
     def __del__(self):
