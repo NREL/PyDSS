@@ -45,8 +45,6 @@ class VoltageMetrics(ReportBase):
         self._node_names = node_names1
 
     def generate(self, output_dir):
-        # TODO: list all node names?
-        # TODO: associate nodes with buses?
         data = {
             "num_nodes": len(self._node_names),
             "metric_1": {},
@@ -92,6 +90,7 @@ class VoltageMetrics(ReportBase):
         results["time_points"] = [
             str(ts) for ts, val in total_a.iteritems() if val > 0 and total_b.loc[ts] == 0
         ]
+        results["duration"] = str(len(results["time_points"]) * self._resolution)
         return results
 
     def _gen_metric_4(self, scenario_name, dfs, output_dir):
@@ -101,11 +100,6 @@ class VoltageMetrics(ReportBase):
 
         # Also create a dictionary of node name to range A violation count for
         # use in Metric 2.
-
-        # TODO DT: Jira says "the percentage of nodes experiencing voltages
-        # outside ANSI Range A limits were determined and multiplied with the
-        # simulation time step."
-        # Why "multiplied?"
 
         node_violations = {}
         total = None
@@ -151,6 +145,7 @@ class VoltageMetrics(ReportBase):
         return self._gen_metric_5_min_max(scenario)
 
     def _gen_metric_5_all(self, dfs):
+        # Check the max and min voltages against the ANSI ranges.
         node_voltages = defaultdict(dict)
         num_outside_range_b = 0
         num_between_ranges = 0
@@ -222,7 +217,6 @@ class VoltageMetrics(ReportBase):
         return {
             "num_time_points_violations_pf1": len(pf1_time_points),
             "num_time_points_violations_control_mode": len(cm_time_points),
-            "pass": len(cm_time_points) <= len(pf1_time_points),
         }
 
     def _gen_metric_6_violation_time_points(self, dfs, scenario):

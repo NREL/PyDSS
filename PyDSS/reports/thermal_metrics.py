@@ -57,7 +57,6 @@ class ThermalMetrics(ReportBase):
                 continue
 
     def generate(self, output_dir):
-        # TODO: list all line and tranformer names?
         data = {
             "num_lines": self._num_lines,
             "num_transformers": self._num_transformers,
