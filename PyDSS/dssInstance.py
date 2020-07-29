@@ -360,6 +360,7 @@ class OpenDSS:
             self._HI.updateHelicsPublications()
             self._increment_flag, helics_time = self._HI.request_time_increment()
 
+        self._dssSolver.IncrementTimeStep()
         return self.ResultContainer.CurrentResults
 
     def DryRunSimulation(self, project, scenario):

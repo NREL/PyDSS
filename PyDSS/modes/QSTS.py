@@ -68,6 +68,8 @@ class QSTS(abstact_solver):
         #self.__sStepRes = 1/240
         self._dssSolution.StepSize(self._sStepRes)
         self._dssSolution.Solve()
+
+    def IncrementTimeStep(self):
         self._Time = self._Time + timedelta(seconds=self._sStepRes)
         self._Hour = int(self._dssSolution.DblHour() // 1)
         self._Second = (self._dssSolution.DblHour() % 1) * 60 * 60

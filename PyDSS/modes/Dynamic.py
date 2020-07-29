@@ -62,6 +62,8 @@ class Dynamic(abstact_solver):
     def IncStep(self):
         self._dssSolution.StepSize(self._sStepRes)
         self._dssSolution.Solve()
+
+    def IncrementTimeStep(self):
         self._Time = self._Time + timedelta(seconds=self._sStepRes)
         self._Hour = int(self._dssSolution.DblHour() // 1)
         self._Second = (self._dssSolution.DblHour() % 1) * 60 * 60
