@@ -89,7 +89,7 @@ post_process_infos = []
 [Logging]
 "Logging Level" = "INFO"
 "Log to external file" = true
-"Display on screen" = false
+"Display on screen" = true
 "Clear old log file" = false
 
 [MonteCarlo]
@@ -98,9 +98,9 @@ post_process_infos = []
 [Reports]
 Format = "h5"
 #Granularity = "per_element_per_time_point"
-Granularity = "per_element_total"
+#Granularity = "per_element_total"
 #Granularity = "all_elements_per_time_point"
-#Granularity = "all_elements_total"
+Granularity = "all_elements_total"
 
 [[Reports.Types]]
 name = "Capacitor State Change Counts"

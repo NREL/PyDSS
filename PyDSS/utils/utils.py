@@ -138,38 +138,6 @@ def decompress_file(filename):
     return new_filename
 
 
-def create_time_range_from_settings(settings):
-    """Return the start time, step time, and end time from the settings.
-
-    Parameters
-    ----------
-    settings : dict
-        settings from project simulation.toml
-
-    Returns
-    -------
-    tuple
-        (start, end, step)
-
-    """
-    resolution = settings['Project']['Step resolution (sec)']
-
-    year = settings['Project']['Start Year']
-    start_day = settings['Project']['Start Day'] + settings['Project']['Date offset']
-    start_minutes = settings['Project']["Start Time (min)"]
-    end_day = settings['Project']['End Day']
-    end_minutes = settings['Project']["End Time (min)"]
-    step_secs = settings["Project"]["Step resolution (sec)"]
-
-    start_time = datetime(year=year, month=1, day=1) + \
-        timedelta(days=start_day - 1, minutes=start_minutes)
-    end_time = datetime(year=year, month=1, day=1) + \
-        timedelta(days=end_day - 1, minutes=end_minutes)
-    step_time = timedelta(seconds=step_secs)
-
-    return start_time, end_time, step_time
-
-
 def interpret_datetime(timestamp):
     """Return a datetime object from a timestamp string.
 
@@ -273,4 +241,4 @@ def local_timezone_name():
 
 def make_timestamps(data):
     local = local_timezone_name()
-    return pd.to_datetime(data, unit="s").tz_localize("UTC").tz_convert(local)
+    return pd.to_datetime(data, unit="s").tz_localize("UTC").tz_convert(local).tz_localize(None)

@@ -18,7 +18,8 @@ from PyDSS.export_list_reader import ExportListReader, StoreValuesType
 from PyDSS.reports.reports import Reports, ReportGranularity
 from PyDSS.utils.dataframe_utils import write_dataframe
 from PyDSS.utils.utils import dump_data
-from PyDSS.utils.simulation_utils import CircularBufferHelper, TimerStats
+from PyDSS.utils.simulation_utils import CircularBufferHelper, TimerStats, \
+    create_datetime_index_from_settings, create_loadshape_pmult_dataframe_for_simulation
 from PyDSS.value_storage import ValueContainer, ValueByNumber
 from PyDSS.metrics import OpenDssPropertyMetric, SummedElementsOpenDssPropertyMetric
 
@@ -386,18 +387,20 @@ class ResultData:
             if name in profiles:
                 sinterval = dss.LoadShape.SInterval()
                 assert sim_resolution >= sinterval, f"{sim_resolution} >= {sinterval}"
-                offset = int(sim_resolution / dss.LoadShape.SInterval())
+                df = create_loadshape_pmult_dataframe_for_simulation(self._options)
+                sum_values = df.iloc[:, 0].sum()
                 if granularity in per_time_point:
-                    load_shape_data[name] = dss.LoadShape.PMult()[::offset]
-                    pmult_sums[name] = sum(load_shape_data[name])
+                    load_shape_data[name] = df.iloc[:, 0].values
+                    pmult_sums[name] = sum_values
                 else:
-                    pmult_sums[name] = sum(dss.LoadShape.PMult()[::offset])
+                    pmult_sums[name] = sum_values
             if dss.LoadShape.Next() == 0:
                 break
 
         if load_shape_data and granularity in per_time_point:
             filename = os.path.join(self._export_dir, PV_LOAD_SHAPE_FILENAME)
-            df = pd.DataFrame(load_shape_data)
+            index = create_datetime_index_from_settings(self._options)
+            df = pd.DataFrame(load_shape_data, index=index)
             write_dataframe(df, filename, compress=True)
 
         for pv_info in pv_infos:

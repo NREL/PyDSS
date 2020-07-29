@@ -1,8 +1,10 @@
 
 from collections import deque
+from datetime import datetime, timedelta
 import logging
 
 import numpy as np
+import opendssdirect as dss
 import pandas as pd
 
 
@@ -76,3 +78,111 @@ class TimerStats:
             self._max = duration
         if self._min is None or duration < self._min:
             self._min = duration
+
+
+def create_time_range_from_settings(settings):
+    """Return the start time, step time, and end time from the settings.
+
+    Parameters
+    ----------
+    settings : dict
+        settings from project simulation.toml
+
+    Returns
+    -------
+    tuple
+        (start, end, step)
+
+    """
+    resolution = settings['Project']['Step resolution (sec)']
+
+    year = settings['Project']['Start Year']
+    start_day = settings['Project']['Start Day']
+    start_minutes = settings['Project']["Start Time (min)"]
+    end_day = settings['Project']['End Day']
+    end_minutes = settings['Project']["End Time (min)"]
+    step_secs = settings["Project"]["Step resolution (sec)"]
+    # TODO: Date offset?
+
+    start_time = datetime(year=year, month=1, day=1) + \
+        timedelta(days=start_day - 1, minutes=start_minutes)
+    end_time = datetime(year=year, month=1, day=1) + \
+        timedelta(days=end_day - 1, minutes=end_minutes)
+    step_time = timedelta(seconds=step_secs)
+
+    return start_time, end_time, step_time
+
+
+def create_datetime_index_from_settings(settings):
+    """Return time indices created from the simulation settings.
+
+    Parameters
+    ----------
+    settings : dict
+        settings from project simulation.toml
+
+    Returns
+    -------
+    pd.DatetimeIndex
+
+    """
+    start_time, end_time, step_time = create_time_range_from_settings(settings)
+    data = []
+    cur_time = start_time
+    while cur_time <= end_time:
+        data.append(cur_time)
+        cur_time += step_time
+
+    return pd.DatetimeIndex(data)
+
+
+def create_loadshape_pmult_dataframe(settings):
+    """Return a loadshape dataframe representing all available data.
+    This assumes that a loadshape has been selected in OpenDSS.
+
+    Parameters
+    ----------
+    settings : dict
+        settings from project simulation.toml
+
+    Returns
+    -------
+    pd.DatetimeIndex
+
+    """
+    start_time, _, _ = create_time_range_from_settings(settings)
+    # TODO: Date offset?
+
+    data = dss.LoadShape.PMult()
+    interval = timedelta(seconds=dss.LoadShape.SInterval())
+    npts = dss.LoadShape.Npts()
+
+    indices = []
+    cur_time = start_time
+    for _ in range(npts):
+        indices.append(cur_time)
+        cur_time += interval
+
+    return pd.DataFrame(data, index=pd.DatetimeIndex(indices))
+
+
+def create_loadshape_pmult_dataframe_for_simulation(settings):
+    """Return a loadshape pmult dataframe that only contains time points used
+    by the simulation.
+    This assumes that a loadshape has been selected in OpenDSS.
+
+    Parameters
+    ----------
+    settings : dict
+        settings from project simulation.toml
+
+    Returns
+    -------
+    pd.DataFrame
+
+    """
+    df = create_loadshape_pmult_dataframe(settings)
+    simulation_index = create_datetime_index_from_settings(settings)
+    return df.loc[simulation_index]
+
+
