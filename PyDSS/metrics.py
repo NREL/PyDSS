@@ -443,13 +443,16 @@ class OpenDssExportMetric(MetricBase):
             self._append_func = self._append_values
         self._check_output()
 
-        # The OpenDSS file output upper-cases the name.
+        # Some OpenDSS files upper-case the name.
         # Make a mapping for fast matching and lookup.
         self._names = {}
         self._values =  []
         for i, dss_obj in enumerate(dss_objs):
             elem_type, name = dss_obj.FullName.split(".")
-            self._names[f"{elem_type}.{name.upper()}"] = i
+            if self.requires_upper_case():
+                self._names[f"{elem_type}.{name.upper()}"] = i
+            else:
+                self._names[f"{elem_type}.{name}"] = i
             if self._sum_elements and not self._values:
                 self._values.append(ValueByNumber("Total", self.label(), 0.0))
                 break
@@ -606,6 +609,11 @@ class OpenDssExportMetric(MetricBase):
 
         """
 
+    @staticmethod
+    @abc.abstractmethod
+    def requires_upper_case():
+        """Return True if the names are upper case."""
+
 
 class ExportOverloadsMetric(OpenDssExportMetric):
 
@@ -641,6 +649,10 @@ class ExportOverloadsMetric(OpenDssExportMetric):
 
         return found_data
 
+    @staticmethod
+    def requires_upper_case():
+        return True
+
 
 class ExportPowersMetric(OpenDssExportMetric):
 
@@ -661,7 +673,7 @@ class ExportPowersMetric(OpenDssExportMetric):
         return "Powers"
 
     def parse_file(self, filename):
-        data = defaultdict(list)
+        data = {}
         with open(filename) as f_in:
             # Skip the header.
             next(f_in)
@@ -669,18 +681,22 @@ class ExportPowersMetric(OpenDssExportMetric):
                 fields = line.split(",")
                 name = self._get_name_from_line(fields)
                 if name in self._names:
-                    #terminal = fields[1]
-                    val = abs(float(fields[2].strip()))
-                    data[name].append(val)
+                    terminal = int(fields[1])
+                    if terminal == 1:
+                        val = abs(float(fields[2].strip()))
+                        data[name] = val
 
         if not data:
             return False
 
-        for name, vals in data.items():
+        for name, val in data.items():
             index = self._names[name]
-            # TODO DT: is sum correct?
-            self._values[index].set_value_from_raw(sum(vals))
+            self._values[index].set_value_from_raw(val)
 
+        return True
+
+    @staticmethod
+    def requires_upper_case():
         return True
 
 

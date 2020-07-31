@@ -3,6 +3,7 @@ import abc
 import logging
 import math
 import os
+import time
 
 import pandas as pd
 
@@ -68,12 +69,10 @@ class PvClippingReport(PvReportBase):
         return (total_dc_power - pf1_real_power) * 100 / pf1_real_power
 
     @staticmethod
-    def _calculate_clipping_df(dc_power, pf1_real_power):
-        return pd.DataFrame(
-            (dc_power - pf1_real_power.iloc[:, 0]) * 100 / pf1_real_power.iloc[:, 0],
-            index=dc_power.index,
-            columns=["Clipping"],
-        )
+    def _calculate_clipping_array(dc_power, pf1_real_power):
+        dcp = dc_power.values
+        rp = pf1_real_power.values
+        return (dcp - rp) * 100 / rp
 
     def _get_total_dc_power_across_pv_systems(self):
         total_dc_power = 0.0
@@ -90,21 +89,22 @@ class PvClippingReport(PvReportBase):
 
     def _generate_per_pv_system_per_time_point(self, output_dir):
         data = {}
-        index = None
         pv_load_shapes = self._read_pv_load_shapes()
+        pf1_real_power_full = self._pf1_scenario.get_full_dataframe(
+            "CktElement", "ExportPowersMetric"
+        )
         for name in self._pv_system_names:
             cm_info = self._get_pv_system_info(name, "control_mode")
-            pf1_real_power = self._pf1_scenario.get_dataframe("CktElement", "ExportPowersMetric", name)
-            if index is None:
-                index = pf1_real_power.index
+            # TODO: consider not storing "Powers" here
+            pf1_real_power = pf1_real_power_full[name + "__Powers"]
             dc_power = pv_load_shapes[cm_info["load_shape_profile"]] * \
                 cm_info["pmpp"] * \
                 cm_info["irradiance"]
             assert len(dc_power) == len(pf1_real_power)
-            clipping = self._calculate_clipping_df(dc_power, pf1_real_power)
-            data[name] = clipping.iloc[:, 0].values
+            clipping = self._calculate_clipping_array(dc_power, pf1_real_power)
+            data[name] = clipping
 
-        df = pd.DataFrame(data, index=index)
+        df = pd.DataFrame(data, index=pf1_real_power_full.index)
         self._export_dataframe_report(df, output_dir, "pv_clipping")
 
     def _generate_per_pv_system_total(self, output_dir):
@@ -140,7 +140,11 @@ class PvClippingReport(PvReportBase):
         df = pd.DataFrame(dc_powers, index=pf1_real_power.index)
         total_dc_power = df.sum(axis=1)
 
-        clipping = self._calculate_clipping_df(total_dc_power, pf1_real_power)
+        clipping = pd.DataFrame(
+            self._calculate_clipping_array(total_dc_power, pf1_real_power.iloc[:, 0]),
+            index=pf1_real_power.index,
+            columns=["TotalClipping"],
+        )
         self._export_dataframe_report(clipping, output_dir, "pv_clipping")
 
     def _generate_all_pv_systems_total(self, output_dir):
@@ -194,8 +198,8 @@ class PvCurtailmentReport(PvReportBase):
             "CktElement", "ExportPowersMetric"
         )
         df = (pf1_power - control_mode_power) / pf1_power * 100
-        filename = os.path.join(output_dir, self.PER_TIME_POINT_FILENAME)
-        write_dataframe(df, filename, compress=True)
+        df.columns = [x.replace("Powers", "Curtailment") for x in df.columns]
+        self._export_dataframe_report(df, output_dir, "pv_curtailment")
 
     def _generate_per_pv_system_total(self, output_dir):
         data = {"pv_systems": []}
@@ -213,9 +217,7 @@ class PvCurtailmentReport(PvReportBase):
                     "curtailment": curtailment,
                 }
             )
-
-        filename = os.path.join(output_dir, self.TOTAL_FILENAME)
-        dump_data(data, filename, indent=2)
+        self._export_json_report(data, output_dir, self.TOTAL_FILENAME)
 
     def _generate_all_pv_systems_per_time_point(self, output_dir):
         pf1_power = self._pf1_scenario.get_summed_element_dataframe("CktElement", "ExportPowersMetric")
@@ -223,8 +225,7 @@ class PvCurtailmentReport(PvReportBase):
             "CktElement", "ExportPowersMetric"
         )
         df = (pf1_power - control_mode_power) / pf1_power * 100
-        filename = os.path.join(output_dir, self.PER_TIME_POINT_FILENAME)
-        write_dataframe(df, filename, compress=True)
+        self._export_dataframe_report(df, output_dir, "pv_curtailment")
 
     def _generate_all_pv_systems_total(self, output_dir):
         pf1_power = next(iter(
@@ -236,8 +237,7 @@ class PvCurtailmentReport(PvReportBase):
 
         curtailment = (pf1_power - control_mode_power) / pf1_power * 100
         data = {"curtailment": curtailment}
-        filename = os.path.join(output_dir, self.TOTAL_FILENAME)
-        dump_data(data, filename, indent=2)
+        self._export_json_report(data, output_dir, self.TOTAL_FILENAME)
 
     def generate(self, output_dir):
         granularity = ReportGranularity(self._simulation_config["Reports"]["Granularity"])

@@ -6,6 +6,7 @@ import copy
 import enum
 import logging
 import os
+import time
 
 from PyDSS.common import DataConversion
 from PyDSS.exceptions import InvalidConfiguration
@@ -124,7 +125,10 @@ class Reports:
         all_reports = self.get_all_reports()
         for name in self._report_names:
             report = all_reports[name](name, self._results, self._simulation_config)
+            start = time.time()
             filename = report.generate(self._output_dir)
+            duration = round(time.time() - start, 3)
+            logger.info("Time to create %s report: %s seconds", name, duration)
             filenames.append(filename)
 
         return filenames
@@ -184,7 +188,8 @@ class ReportBase(abc.ABC):
         """Export report to a dataframe."""
         fmt = self._report_global_options["Format"]
         filename = os.path.join(output_dir, basename + "." + fmt)
-        write_dataframe(df, filename)
+        compress = True if fmt == "h5" else False
+        write_dataframe(df, filename, compress=compress)
         logger.info("Generated %s", filename)
 
     def _export_json_report(self, data, output_dir, filename):
