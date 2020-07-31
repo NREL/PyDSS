@@ -69,7 +69,7 @@ class Reports:
                     for prop in exports.list_element_properties(elem_class):
                         if prop.name == req_prop["property"] and \
                                 prop.store_values_type.value == store_type:
-                            if prop.opendss_classes or req_prop["opendss_classes"]:
+                            if prop.opendss_classes or req_prop.get("opendss_classes"):
                                 assert prop.sum_elements == req_prop["sum_elements"]
                                 assert prop.data_conversion == \
                                     req_prop.get("data_conversion", DataConversion.NONE)

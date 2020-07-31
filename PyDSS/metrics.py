@@ -711,6 +711,8 @@ def convert_data(name, prop_name, value, conversion):
         converted = ValueByNumber(name, prop_name, sum(value.value))
     elif conversion == DataConversion.ABS_SUM:
         converted = ValueByNumber(name, prop_name, abs(sum(value.value)))
+    elif conversion == DataConversion.SUM_ABS_REAL:
+        converted = ValueByNumber(name, prop_name, sum((abs(x.real) for x in value.value)))
     else:
         converted = value
 

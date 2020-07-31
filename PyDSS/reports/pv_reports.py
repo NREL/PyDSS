@@ -5,6 +5,7 @@ import math
 import os
 import time
 
+import numpy as np
 import pandas as pd
 
 from PyDSS.common import PV_LOAD_SHAPE_FILENAME
@@ -23,7 +24,7 @@ class PvReportBase(ReportBase, abc.ABC):
         assert len(results.scenarios) == 2
         self._pf1_scenario = results.scenarios[0]
         self._control_mode_scenario = results.scenarios[1]
-        names = self._control_mode_scenario.list_element_names("ExportPowersMetric")
+        names = self._control_mode_scenario.list_element_names("Powers")
         cm_profiles = self._control_mode_scenario.read_pv_profiles()["pv_systems"]
         self._pv_system_names = [x["name"] for x in cm_profiles]
         self._pf1_pv_systems = {
@@ -46,12 +47,12 @@ class PvReportBase(ReportBase, abc.ABC):
         granularity = ReportGranularity(simulation_config["Reports"]["Granularity"])
         _type, sum_elements = ReportBase._params_from_granularity(granularity)
         return {
-            "CktElement": [
+            "PVSystems": [
                 {
-                    "property": "ExportPowersMetric",
+                    "property": "Powers",
                     "store_values_type": _type,
-                    "opendss_classes": ["PVSystems"],
                     "sum_elements": sum_elements,
+                    "data_conversion": "sum_abs_real",
                 },
             ],
         }
@@ -91,11 +92,13 @@ class PvClippingReport(PvReportBase):
         data = {}
         pv_load_shapes = self._read_pv_load_shapes()
         pf1_real_power_full = self._pf1_scenario.get_full_dataframe(
-            "CktElement", "ExportPowersMetric"
+            "PVSystems", "Powers"
         )
+
+        # This can divide by 0.
+        old_settings = np.seterr(divide='ignore', invalid='ignore')
         for name in self._pv_system_names:
             cm_info = self._get_pv_system_info(name, "control_mode")
-            # TODO: consider not storing "Powers" here
             pf1_real_power = pf1_real_power_full[name + "__Powers"]
             dc_power = pv_load_shapes[cm_info["load_shape_profile"]] * \
                 cm_info["pmpp"] * \
@@ -106,12 +109,13 @@ class PvClippingReport(PvReportBase):
 
         df = pd.DataFrame(data, index=pf1_real_power_full.index)
         self._export_dataframe_report(df, output_dir, "pv_clipping")
+        np.seterr(**old_settings)
 
     def _generate_per_pv_system_total(self, output_dir):
         data = {"pv_systems": []}
         for name in self._pv_system_names:
             pf1_real_power = self._pf1_scenario.get_element_property_value(
-                "CktElement", "ExportPowersMetricSum", name
+                "PVSystems", "PowersSum", name
             )
             dc_power = self._get_total_dc_power(name)
             clipping = self._calculate_clipping(dc_power, pf1_real_power)
@@ -125,7 +129,7 @@ class PvClippingReport(PvReportBase):
 
     def _generate_all_pv_systems_per_time_point(self, output_dir):
         pf1_real_power = self._pf1_scenario.get_summed_element_dataframe(
-            "CktElement", "ExportPowersMetric"
+            "PVSystems", "Powers"
         )
         pv_load_shapes = self._read_pv_load_shapes()
         dc_powers = {}
@@ -151,7 +155,7 @@ class PvClippingReport(PvReportBase):
         total_dc_power = self._get_total_dc_power_across_pv_systems()
 
         pf1_real_power = next(iter(
-            self._pf1_scenario.get_summed_element_total("CktElement", "ExportPowersMetricSum").values()
+            self._pf1_scenario.get_summed_element_total("PVSystems", "PowersSum").values()
         ))
         clipping = self._calculate_clipping(total_dc_power, pf1_real_power)
         data = {"clipping": clipping}
@@ -193,9 +197,9 @@ class PvCurtailmentReport(PvReportBase):
     NAME = "PV Curtailment"
 
     def _generate_per_pv_system_per_time_point(self, output_dir):
-        pf1_power = self._pf1_scenario.get_full_dataframe("CktElement", "ExportPowersMetric")
+        pf1_power = self._pf1_scenario.get_full_dataframe("PVSystems", "Powers")
         control_mode_power = self._control_mode_scenario.get_full_dataframe(
-            "CktElement", "ExportPowersMetric"
+            "PVSystems", "Powers"
         )
         df = (pf1_power - control_mode_power) / pf1_power * 100
         df.columns = [x.replace("Powers", "Curtailment") for x in df.columns]
@@ -205,10 +209,10 @@ class PvCurtailmentReport(PvReportBase):
         data = {"pv_systems": []}
         for name in self._pv_system_names:
             pf1_power = self._pf1_scenario.get_element_property_value(
-                "CktElement", "ExportPowersMetricSum", name
+                "PVSystems", "PowersSum", name
             )
             control_mode_power = self._control_mode_scenario.get_element_property_value(
-                "CktElement", "ExportPowersMetricSum", name
+                "PVSystems", "PowersSum", name
             )
             curtailment = (pf1_power - control_mode_power) / pf1_power * 100
             data["pv_systems"].append(
@@ -220,19 +224,19 @@ class PvCurtailmentReport(PvReportBase):
         self._export_json_report(data, output_dir, self.TOTAL_FILENAME)
 
     def _generate_all_pv_systems_per_time_point(self, output_dir):
-        pf1_power = self._pf1_scenario.get_summed_element_dataframe("CktElement", "ExportPowersMetric")
+        pf1_power = self._pf1_scenario.get_summed_element_dataframe("PVSystems", "Powers")
         control_mode_power = self._control_mode_scenario.get_summed_element_dataframe(
-            "CktElement", "ExportPowersMetric"
+            "PVSystems", "Powers"
         )
         df = (pf1_power - control_mode_power) / pf1_power * 100
         self._export_dataframe_report(df, output_dir, "pv_curtailment")
 
     def _generate_all_pv_systems_total(self, output_dir):
         pf1_power = next(iter(
-            self._pf1_scenario.get_summed_element_total("CktElement", "ExportPowersMetricSum").values()
+            self._pf1_scenario.get_summed_element_total("PVSystems", "PowersSum").values()
         ))
         control_mode_power = next(iter(
-            self._control_mode_scenario.get_summed_element_total("CktElement", "ExportPowersMetricSum").values()
+            self._control_mode_scenario.get_summed_element_total("PVSystems", "PowersSum").values()
         ))
 
         curtailment = (pf1_power - control_mode_power) / pf1_power * 100
@@ -261,9 +265,9 @@ class PvCurtailmentReport(PvReportBase):
 
         """
         pf1_power = self._pf1_scenario.get_full_dataframe(
-            "CktElement", "ExportPowersMetric", real_only=True
+            "PVSystems", "Powers", real_only=True
         )
         control_mode_power = self._control_mode_scenario.get_full_dataframe(
-            "CktElement", "ExportPowersMetric", real_only=True
+            "PVSystems", "Powers", real_only=True
         )
         return (pf1_power - control_mode_power) / pf1_power * 100
