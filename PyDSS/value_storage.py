@@ -277,7 +277,7 @@ class ValueByList(ValueStorageBase):
         self._name = name
 
     def set_nan(self):
-        for i in self._value:
+        for i in range(len(self._value)):
             self._value[i] = np.NaN
 
     def set_value(self, value):
@@ -470,7 +470,7 @@ class ValueByLabel(ValueStorageBase):
         self._name = name
 
     def set_nan(self):
-        for i in self._value:
+        for i in range(len(self._value)):
             self._value[i] = np.NaN
 
     def set_value(self, value):
@@ -488,11 +488,6 @@ class ValueByLabel(ValueStorageBase):
                     self._value += [complex(x[0], x[1])]
                 else:
                     self._value += [x[0], x[1]]
-
-    def set_nan(self):
-        if np.issubdtype(self._value_type, np.int64):
-            return self._value[0] == INTEGER_NAN
-        return np.isnan(self._value[0])
 
     @property
     def value_type(self):

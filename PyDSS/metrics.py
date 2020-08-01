@@ -203,7 +203,7 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
 
         for value_type, container in self._containers.items():
             prop = self._properties[value_type]
-            if prop.data_conversion != DataConversion.NONE and not store_nan:
+            if prop.data_conversion != DataConversion.NONE:
                 vals = [
                     convert_data(x.FullName, prop.name, y, prop.data_conversion)
                     for x, y in zip(self._dss_objs, values)
