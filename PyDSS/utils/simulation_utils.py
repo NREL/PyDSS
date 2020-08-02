@@ -97,12 +97,11 @@ def create_time_range_from_settings(settings):
     resolution = settings['Project']['Step resolution (sec)']
 
     year = settings['Project']['Start Year']
-    start_day = settings['Project']['Start Day']
+    start_day = settings['Project']['Start Day'] + settings['Project']['Date offset']
     start_minutes = settings['Project']["Start Time (min)"]
-    end_day = settings['Project']['End Day']
+    end_day = settings['Project']['End Day'] + settings['Project']['Date offset']
     end_minutes = settings['Project']["End Time (min)"]
     step_secs = settings["Project"]["Step resolution (sec)"]
-    # TODO: Date offset?
 
     start_time = datetime(year=year, month=1, day=1) + \
         timedelta(days=start_day - 1, minutes=start_minutes)
@@ -150,8 +149,8 @@ def create_loadshape_pmult_dataframe(settings):
     pd.DatetimeIndex
 
     """
-    start_time, _, _ = create_time_range_from_settings(settings)
-    # TODO: Date offset?
+    year = settings['Project']['Start Year']
+    start_time = datetime(year=year, month=1, day=1) + timedelta(settings['Project']['Date offset'])
 
     data = dss.LoadShape.PMult()
     interval = timedelta(seconds=dss.LoadShape.SInterval())
@@ -184,5 +183,3 @@ def create_loadshape_pmult_dataframe_for_simulation(settings):
     df = create_loadshape_pmult_dataframe(settings)
     simulation_index = create_datetime_index_from_settings(settings)
     return df.loc[simulation_index]
-
-

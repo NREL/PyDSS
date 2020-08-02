@@ -234,11 +234,7 @@ def make_json_serializable(obj):
     return obj
 
 
-def local_timezone_name():
-    zone = time.altzone if time.daylight else time.timezone
-    return f"Etc/GMT+{int(zone / 3600)}"
-
-
 def make_timestamps(data):
-    local = local_timezone_name()
-    return pd.to_datetime(data, unit="s").tz_localize("UTC").tz_convert(local).tz_localize(None)
+    # Something like pd.to_datetime(data, unit="s") would be faster but it
+    # does time zone conversions.
+    return pd.to_datetime([datetime.fromtimestamp(x) for x in data])

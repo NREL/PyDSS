@@ -134,6 +134,10 @@ name = "RegControl Tap Number Change Counts"
 enabled = false
 
 [[Reports.Types]]
+name = "Feeder Losses"
+enabled = false
+
+[[Reports.Types]]
 name = "Thermal Metrics"
 enabled = false
 transformer_loading_percent_threshold = 150

@@ -102,7 +102,7 @@ class DatasetBuffer:
             for attr, val in attributes.items():
                 self._dataset.attrs[attr] = val
 
-        logger.info("Created DatasetBuffer path=%s shape=%s chunks=%s",
+        logger.debug("Created DatasetBuffer path=%s shape=%s chunks=%s",
                      path, shape, chunks)
 
     def __del__(self):

@@ -66,15 +66,15 @@ class QSTS(abstact_solver):
 
     def IncStep(self):
         #self.__sStepRes = 1/240
-        self._dssSolution.StepSize(self._sStepRes)
         self._dssSolution.Solve()
+        self.pyLogger.info('OpenDSS time [h] - ' + str(self._dssSolution.DblHour()))
+        self.pyLogger.info('PyDSS datetime - ' + str(self._Time))
 
     def IncrementTimeStep(self):
+        self._dssSolution.StepSize(self._sStepRes)
         self._Time = self._Time + timedelta(seconds=self._sStepRes)
         self._Hour = int(self._dssSolution.DblHour() // 1)
         self._Second = (self._dssSolution.DblHour() % 1) * 60 * 60
-        self.pyLogger.info('OpenDSS time [h] - ' + str(self._dssSolution.DblHour()))
-        self.pyLogger.info('PyDSS datetime - ' + str(self._Time))
 
     def GetTotalSeconds(self):
         return (self._Time - self._StartTime).total_seconds()

@@ -103,7 +103,8 @@ class PvClippingReport(PvReportBase):
             dc_power = pv_load_shapes[cm_info["load_shape_profile"]] * \
                 cm_info["pmpp"] * \
                 cm_info["irradiance"]
-            assert len(dc_power) == len(pf1_real_power)
+            assert len(dc_power) == len(pf1_real_power), \
+                f"{len(dc_power)} {len(pf1_real_power)}"
             clipping = self._calculate_clipping_array(dc_power, pf1_real_power)
             data[name] = clipping
 
