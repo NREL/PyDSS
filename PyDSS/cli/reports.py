@@ -57,7 +57,7 @@ logger = logging.getLogger(__name__)
 
 def reports(project_path, list=False, project=None, scenario=None, report=None, index=0):
     """Explore and print PyDSS reports."""
-    assert not (list and index), "Both 'list' and 'index' options can not be set to tre at teh same time"
+    assert not (list and index), "Both 'list' and 'index' options cannot be set to true at the same time"
     assert os.path.exists(project_path), "The provided project path {} does not exist".format(project_path)
     logsPath = os.path.join(project_path, "Logs")
     assert os.path.exists(logsPath), "No Logs folder in the provided project path.".format(project_path)
@@ -138,4 +138,3 @@ def getReportTypes(logsPath, reportFile):
             if data["Report"] not in reportTypes:
                 reportTypes.append(data["Report"])
     return reportTypes
-
