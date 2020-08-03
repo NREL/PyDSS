@@ -731,7 +731,6 @@ class PyDssScenario:
             Must define all fields in PyDssScenario.REQUIRED_POST_PROCESS_FIELDS
 
         """
-        print(type(post_process_info))
         for field in self.REQUIRED_POST_PROCESS_FIELDS:
             if field not in post_process_info:
                 raise InvalidParameter(

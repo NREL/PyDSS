@@ -97,7 +97,8 @@ class PyDSS:
         try:
             self.pydss_obj.init(args)
             export_path = os.path.join(self.pydss_obj._dssPath['Export'], args['Project']['Active Scenario'])
-            self.a_writer = ArrowWriter(export_path)
+            Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
+            self.a_writer = ArrowWriter(export_path, Steps)
             self.initalized = True
             return 200, "PyDSS project successfully loaded"
         except Exception as e:
@@ -123,7 +124,8 @@ class PyDSS:
                     self.a_writer.write(
                         self.pydss_obj._Options["Helics"]["Federate name"],
                         self.pydss_obj._dssSolver.GetTotalSeconds(),
-                        restructured_results
+                        restructured_results,
+                        i
                     )
 
                 self.initalized = False

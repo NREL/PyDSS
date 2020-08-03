@@ -83,7 +83,6 @@ settings_dict = {
 
 
 def validate_settings(dss_args):
-    global settings_dict
     for category, params in dss_args.items():
         valid_settings = settings_dict[category]
         for key, ctype in params.items():

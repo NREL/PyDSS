@@ -32,7 +32,6 @@ class Handler:
         self.pool = ThreadPoolExecutor(max_workers=cpu_count()-1)
         self.loop = asyncio.get_event_loop()
 
-
     async def get_pydss_project_info(self, request, path):
         """
 

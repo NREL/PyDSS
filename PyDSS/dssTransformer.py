@@ -57,9 +57,6 @@ class dssTransformer(dssElement):
 
     @property
     def NumWindings(self):
-        # print(self.dss.Transformers.Name())
-        # print(self.dss.Properties.Value("taps"))
-        # print(self.GetValue('taps'))
         return self._NumWindings
 
     @staticmethod

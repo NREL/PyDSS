@@ -17,9 +17,7 @@ from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 from PyDSS.pyPostprocessor import pyPostprocess
 import PyDSS.pyControllers as pyControllers
 import PyDSS.pyPlots as pyPlots
-import datetime
 import numpy as np
-import pandas as pd
 import logging
 import json
 import time
@@ -29,8 +27,6 @@ from bokeh.plotting import curdoc
 from bokeh.layouts import row
 from bokeh.client import push_session
 from opendssdirect.utils import run_command
-#import opendssdirect as dss
-
 
 CONTROLLER_PRIORITIES = 3
 
@@ -97,8 +93,6 @@ class OpenDSS:
         finally:
             os.chdir(orig_dir)
         self._Logger.info('OpenDSS:  ' + reply)
-
-        data2 = self._dssInstance.YMatrix.GetPCInjCurr()
 
         assert ('error ' not in reply.lower()), 'Error compiling OpenDSS model.\n{}'.format(reply)
         run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))

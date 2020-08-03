@@ -26,8 +26,6 @@ class ProfileManager:
         "WindProfile",
     ]
 
-    OBJECT_PROFILE_MAPPING = {}
-
     def __init__(self,  dssObjects, dssSolver, options, mode="r+"):
         if options["Logging"]["Pre-configured logging"]:
             logger_tag = __name__
@@ -78,13 +76,15 @@ class ProfileManager:
                 maxshape=(None,),
                 chunks=True,
                 compression="gzip",
-                compression_opts=4
+                compression_opts=4,
+                shuffle=True
             )
             self.createMetadata(
                 dset, startTime, resolution, data, units, info
             )
         else:
-            self._logger.warning('Dataset "{}" already exists in group "{}".'.format(dname, pType))
+            self._logger.error('Dataset "{}" already exists in group "{}".'.format(dname, pType))
+            raise Exception('Dataset "{}" already exists in group "{}".'.format(dname, pType))
 
     def add_from_arrays(self, data, name, pType, startTime, resolution, units="", info=""):
         data = np.array(data)

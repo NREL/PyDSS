@@ -12,7 +12,7 @@ class ArrowWriter:
         files.
     """
 
-    def __init__(self, log_dir, columnLength):
+    def __init__(self, log_dir, columnLength=10):
         """ Constructor """
         self.log_dir = log_dir
 
