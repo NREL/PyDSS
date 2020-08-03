@@ -114,7 +114,7 @@ class ProfileManager:
             raise InvalidParameter("startTime should be a python datetime object")
         if pType not in self.PROFILE_TYPES:
             raise InvalidParameter("Valid values for pType are {}".format(self.PROFILE_TYPES))
-        if len(data):
+        if data:
             self.add_from_arrays(data, name, pType, startTime, resolution_sec, units=units, info=info)
         return
 
