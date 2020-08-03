@@ -82,7 +82,8 @@ def printReport(logsPath, project, scenario, report):
     assert os.path.exists(filePath), "Report {} for project: {} / scenario: {} does not exist".format(
         report, project, scenario
     )
-    f = open(os.path.join(logsPath, fileName), "r")
+    with open(os.path.join(logsPath, fileName), "r") as f:
+        for line in f:
     lines = f.readlines()
     tableData = []
     Keys = {}
