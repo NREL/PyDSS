@@ -62,7 +62,8 @@ class DatasetBuffer:
             compression="gzip",
             compression_opts=4,
             shuffle=True,
-            scaleoffset=scaleoffset,
+            # Does not preserve NaN, so don't use it.
+            #scaleoffset=scaleoffset,
         )
 
         # Columns, names, and column_ranges_per_name can't be stored as
