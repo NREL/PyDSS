@@ -241,6 +241,7 @@ class ResultData:
                 # Something is only returned for OpenDSS properties
                 self.CurrentResults.update(data)
 
+        end = time.time()
         self._stats["Total"].update(end - update_start)
         self._num_updates += 1
         if self._num_updates % FLUSH_INTERVAL == 0:
