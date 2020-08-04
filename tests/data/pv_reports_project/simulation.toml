@@ -4,7 +4,7 @@
 "Start Time (min)" = 0.0
 "End Day" = 8
 "End Time (min)" = 1439.0
-"Date offset" = 250
+"Date offset" = 0
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 15
 "Error tolerance" = 0.0001
@@ -97,10 +97,10 @@ post_process_infos = []
 
 [Reports]
 Format = "h5"
-#Granularity = "per_element_per_time_point"
+Granularity = "per_element_per_time_point"
 #Granularity = "per_element_total"
 #Granularity = "all_elements_per_time_point"
-Granularity = "all_elements_total"
+#Granularity = "all_elements_total"
 
 [[Reports.Types]]
 name = "Capacitor State Change Counts"
