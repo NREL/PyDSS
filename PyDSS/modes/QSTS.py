@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 from PyDSS.modes.abstract_solver import abstact_solver
 import math
 
-
+from PyDSS.exceptions import InvalidConfiguration
+from PyDSS.utils.dss_utils import get_load_shape_resolution_secs
 
 
 class QSTS(abstact_solver):
@@ -34,14 +35,22 @@ class QSTS(abstact_solver):
         self._dssIntance = dssInstance
         self._dssSolution = dssInstance.Solution
         self._dssSolution.Mode(2)
-        self._dssSolution.Hour((StartDay - 1) * 24)
-        self._dssSolution.Seconds(StartTimeMin * 60)
+        self._sStepResHours = self._sStepRes / 60.0 / 60.0
+        self._dssSolution.StepSize(0.0)
+
+        if (StartTimeMin * 60) % self._sStepRes != 0:
+            raise InvalidConfiguration(f"Start Time (min) is not a multiple of Step resolution (sec)")
+
+        load_shape_resolutions_secs = get_load_shape_resolution_secs()
+        if load_shape_resolutions_secs == self._sStepRes:
+            # I don't know why this is needed in this case.
+            # The first data point gets skipped without it.
+            # FIXME
+            StartTimeMin += self._sStepRes / 60.0
+
+        self._dssSolution.DblHour((StartDay - 1) * 24 + StartTimeMin / 60.0)
         self._dssSolution.Number(1)
-        self._dssSolution.StepSize(self._sStepRes)
         self._dssSolution.MaxControlIterations(SimulationSettings['Project']['Max Control Iterations'])
-
-        return
-
 
     def setFrequency(self, frequency):
         self._dssSolution.Frequency(frequency)
@@ -65,11 +74,10 @@ class QSTS(abstact_solver):
         return
 
     def IncStep(self):
-        #self.__sStepRes = 1/240
-        self._dssSolution.StepSize(self._sStepRes)
-        self._dssSolution.Solve()
         self.pyLogger.info('OpenDSS time [h] - ' + str(self._dssSolution.DblHour()))
         self.pyLogger.info('PyDSS datetime - ' + str(self._Time))
+        self._dssSolution.Solve()
+        self._dssSolution.DblHour(self._dssSolution.DblHour() + self._sStepResHours)
 
     def IncrementTimeStep(self):
         self._Time = self._Time + timedelta(seconds=self._sStepRes)
@@ -93,7 +101,6 @@ class QSTS(abstact_solver):
         self._dssSolution.SolveNoControl()
 
     def Solve(self):
-        self._dssSolution.StepSize(0)
         self._dssSolution.Solve()
 
     def getMode(self):
@@ -106,5 +113,5 @@ class QSTS(abstact_solver):
             self._dssSolution.Hour(self._Hour)
             self._dssSolution.Seconds(self._Second)
             self._dssSolution.Number(1)
-            self._dssSolution.StepSize(self._sStepRes)
+            self._dssSolution.StepSize(0)
             self._dssSolution.MaxControlIterations(self.Settings['Project']['Max Control Iterations'])

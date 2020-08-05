@@ -4,7 +4,7 @@
 "Start Time (min)" = 0.0
 "End Day" = 8
 "End Time (min)" = 1439.0
-"Date offset" = 0
+"Date offset" = 250
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 15
 "Error tolerance" = 0.0001
