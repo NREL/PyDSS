@@ -109,10 +109,10 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
 
     REQUIRED_INPUT_FIELDS = (
         "target_v",
-        "initial_upper_limit",
-        "initial_lower_limit",
-        "final_upper_limit",
-        "final_lower_limit",
+        "initial_voltage_upper_limit",
+        "initial_voltage_lower_limit",
+        "final_voltage_upper_limit",
+        "final_voltage_lower_limit",
         "nominal_voltage",
         "nominal_pu_voltage",
         "tps_to_test",
@@ -231,17 +231,17 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
 
         # If initial and final limits are different,
         # check with both initial & final limits to get comparison between initial and final violation numbers
-        if (self.config["final_upper_limit"] != self.config["initial_upper_limit"]) or \
-           (self.config["final_lower_limit"] != self.config["initial_lower_limit"]):
+        if (self.config["final_voltage_upper_limit"] != self.config["initial_voltage_upper_limit"]) or \
+           (self.config["final_voltage_lower_limit"] != self.config["initial_voltage_lower_limit"]):
 
             self.logger.info(f"Initial and Final voltage limits are not the same. "
-                             f"\ninitial_lower_limit: {self.config['initial_lower_limit']}, "
-                             f"initial_upper_limit: {self.config['initial_upper_limit']} "
-                             f"\nfinal_lower_limit: {self.config['final_lower_limit']}, "
-                             f"final_upper_limit: {self.config['final_upper_limit']}")
+                             f"\ninitial_voltage_lower_limit: {self.config['initial_voltage_lower_limit']}, "
+                             f"initial_voltage_upper_limit: {self.config['initial_voltage_upper_limit']} "
+                             f"\nfinal_voltage_lower_limit: {self.config['final_voltage_lower_limit']}, "
+                             f"final_voltage_upper_limit: {self.config['final_voltage_upper_limit']}")
 
-            self.upper_limit = self.config["final_upper_limit"]
-            self.lower_limit = self.config["final_lower_limit"]
+            self.upper_limit = self.config["final_voltage_upper_limit"]
+            self.lower_limit = self.config["final_voltage_lower_limit"]
             self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
                                                     lower_limit=self.lower_limit)
 
@@ -261,8 +261,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             }
 
         # start upgrades by checking for violations based on initial voltage limits
-        self.upper_limit = self.config["initial_upper_limit"]
-        self.lower_limit = self.config["initial_lower_limit"]
+        self.upper_limit = self.config["initial_voltage_upper_limit"]
+        self.lower_limit = self.config["initial_voltage_lower_limit"]
 
         # Use this block for capacitor settings
         # initial check for violations
@@ -297,8 +297,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         # else, if there are bus violations based on initial check, start voltage upgrades process
         else:
             # change voltage checking thresholds
-            self.upper_limit = self.config["final_upper_limit"]
-            self.lower_limit = self.config["final_lower_limit"]
+            self.upper_limit = self.config["final_voltage_upper_limit"]
+            self.lower_limit = self.config["final_voltage_lower_limit"]
 
             self.upgrade_status = 'Voltage Upgrades were needed'  # status - whether voltage upgrades done or not
             self.logger.info("Voltage Upgrades Required.")
@@ -615,11 +615,11 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
 
         # If initial and final limits are different,
         # also doing with final limits to get comparison between initial and final violation numbers
-        if (self.config["final_upper_limit"] != self.config["initial_upper_limit"]) or \
-                (self.config["final_lower_limit"] != self.config["initial_lower_limit"]):
+        if (self.config["final_voltage_upper_limit"] != self.config["initial_voltage_upper_limit"]) or \
+                (self.config["final_voltage_lower_limit"] != self.config["initial_voltage_lower_limit"]):
 
-            self.upper_limit = self.config["final_upper_limit"]
-            self.lower_limit = self.config["final_lower_limit"]
+            self.upper_limit = self.config["final_voltage_upper_limit"]
+            self.lower_limit = self.config["final_voltage_lower_limit"]
             self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
                                                     lower_limit=self.lower_limit)
             self.feeder_parameters["final_violations_2"] = {
@@ -638,8 +638,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.logger.info("Final objective function value: %s", self.severity_indices[2])
 
         # change violation checking thresholds to initial limit - to ensure uniform comparison betn initial & final
-        self.upper_limit = self.config["initial_upper_limit"]
-        self.lower_limit = self.config["initial_lower_limit"]
+        self.upper_limit = self.config["initial_voltage_upper_limit"]
+        self.lower_limit = self.config["initial_voltage_lower_limit"]
 
         self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
                                                 lower_limit=self.lower_limit)

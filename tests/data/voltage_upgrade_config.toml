@@ -1,8 +1,8 @@
 target_v = 1
-initial_upper_limit = 1.05
-initial_lower_limit = 0.95
-final_upper_limit = 1.04
-final_lower_limit = 0.96
+initial_voltage_upper_limit = 1.05
+initial_voltage_lower_limit = 0.95
+final_voltage_upper_limit = 1.04
+final_voltage_lower_limit = 0.96
 nominal_voltage = 120
 nominal_pu_voltage = 1
 tps_to_test = [ 0.2, 1.9, 0.1, 0.9,]
