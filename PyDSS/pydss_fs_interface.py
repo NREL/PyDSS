@@ -12,7 +12,7 @@ import pandas as pd
 import toml
 
 from PyDSS.common import PLOTS_FILENAME, PROJECT_TAR, PROJECT_ZIP, \
-    ControllerType, ExportMode, SIMULATION_SETTINGS_FILENAME
+    ControllerType, ExportMode, SIMULATION_SETTINGS_FILENAME,VisualizationType
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.utils.utils import load_data
 
@@ -113,6 +113,34 @@ class PyDssFileSystemInterface(abc.ABC):
 
         """
 
+    @abc.abstractmethod
+    def read_scenario_pv_profiles(self, scenario_name):
+        """Return the PV profiles for a scenario.
+
+        Parameters
+        ----------
+        scenario_name : str
+
+        Returns
+        -------
+        dict
+
+        """
+
+    @abc.abstractmethod
+    def read_visualization_config(self, scenario):
+        """Read visualization config for a scenario.
+
+        Parameters
+        ----------
+        scenario : str
+
+        Returns
+        -------
+        dict
+
+        """
+
     @property
     def scenario_names(self):
         """Return the scenario names in the project.
@@ -137,15 +165,18 @@ class PyDssFileSystemInterface(abc.ABC):
 
     def _check_scenarios(self):
         scenarios = self._list_scenario_names()
+
         if scenarios is None:
             return
 
         exp_scenarios = self.scenario_names
         exp_scenarios.sort()
-        if scenarios != exp_scenarios:
-            raise InvalidConfiguration(
-                f"internal scenarios {scenarios} do not match {exp_scenarios}"
-            )
+
+        for scenario in exp_scenarios:
+            if scenario not in scenarios:
+                raise InvalidConfiguration(
+                    f"{scenario} is not a valid scenario. Valid scenarios: {scenarios}"
+                )
 
     @abc.abstractmethod
     def _list_scenario_names(self):
@@ -160,13 +191,13 @@ class PyDssFileSystemInterface(abc.ABC):
 
 class PyDssDirectoryInterface(PyDssFileSystemInterface):
     """Reads PyDSS files when the project is expanded into directories."""
-    def __init__(self, project_dir):
+    def __init__(self, project_dir, simulation_file):
         self._project_dir = project_dir
         self._scenarios_dir = os.path.join(self._project_dir, SCENARIOS)
         self._dss_dir = os.path.join(self._project_dir, "DSSfiles")
 
         self._simulation_config = load_data(
-            os.path.join(self._project_dir, SIMULATION_SETTINGS_FILENAME)
+            os.path.join(self._project_dir, simulation_file)
         )
 
         self._check_scenarios()
@@ -188,6 +219,18 @@ class PyDssDirectoryInterface(PyDssFileSystemInterface):
         ]
         scenarios.sort()
         return scenarios
+
+    def read_visualization_config(self, scenario):
+        visuals = {}
+
+        path = os.path.join(self._project_dir, SCENARIOS, scenario, "pyPlotList")
+        for filename in os.listdir(path):
+            base, ext = os.path.splitext(filename)
+            if ext == ".toml":
+                visual_type = VisualizationType(base)
+                visuals[visual_type] = load_data(os.path.join(path, filename))
+
+        return visuals
 
     def read_controller_config(self, scenario):
         controllers = {}
@@ -221,6 +264,15 @@ class PyDssDirectoryInterface(PyDssFileSystemInterface):
             "Exports",
             scenario_name,
             "metadata.json",
+        )
+        return load_data(filename)
+
+    def read_scenario_pv_profiles(self, scenario_name):
+        filename = os.path.join(
+            self._project_dir,
+            "Exports",
+            scenario_name,
+            "pv_profiles.json",
         )
         return load_data(filename)
 
@@ -276,6 +328,10 @@ class PyDssArchiveFileInterfaceBase(PyDssFileSystemInterface):
         # Not currently needed for reading projects.
         pass
 
+    def read_visualization_config(self, scenario):
+        # Not currently needed for reading projects.
+        pass
+
     def read_csv(self, path):
         assert False, "Not implemented"
 
@@ -295,6 +351,14 @@ class PyDssArchiveFileInterfaceBase(PyDssFileSystemInterface):
             "Exports",
             scenario_name,
             "metadata.json",
+        )
+        return self._load_data(filename)
+
+    def read_scenario_pv_profiles(self, scenario_name):
+        filename = os.path.join(
+            "Exports",
+            scenario_name,
+            "pv_profiles.json",
         )
         return self._load_data(filename)
 
@@ -326,7 +390,11 @@ class PyDssZipFileInterface(PyDssArchiveFileInterfaceBase):
         self._zip.close()
 
     def read_file(self, path):
-        return self._zip.read(path).decode("utf-8")
+        data = self._zip.read(path)
+        ext = os.path.splitext(path)[1]
+        if ext not in (".h5", ".feather"):
+            data = data.decode("utf-8")
+        return data
 
     def read_csv(self, path):
         return pd.read_csv(io.BytesIO(self._zip.read(path)))

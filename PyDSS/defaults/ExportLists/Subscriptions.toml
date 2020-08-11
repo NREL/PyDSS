@@ -1,0 +1,16 @@
+["Load.mpx000635970"]
+Property = "kw"
+"Subscription ID" = "test.load1.power"
+Unit = "kW"
+Subscribe = true
+"Data type" = "double"
+Multiplier = 1 
+
+["Vsource.source"]
+Property = "pu"
+"Subscription ID" = "test.feederhead.voltage"
+Unit = "kW"
+Subscribe = true
+"Data type" = "double"
+Multiplier = 1 
+

@@ -14,6 +14,7 @@ from PyDSS.pydss_fs_interface import PROJECT_DIRECTORIES, SCENARIOS, STORE_FILEN
 from PyDSS.pydss_project import PyDssProject, PyDssScenario, DATA_FORMAT_VERSION
 from PyDSS.pydss_results import PyDssResults, PyDssScenarioResults
 from tests.common import RUN_PROJECT_PATH, SCENARIO_NAME, cleanup_project
+from PyDSS.common import SIMULATION_SETTINGS_FILENAME
 
 
 PATH = os.path.join(tempfile.gettempdir(), "pydss-projects")
@@ -70,10 +71,7 @@ def test_create_project(pydss_project):
     for i in range(len(project.scenarios)):
         assert scenarios1[i].name == scenarios2[i].name
         assert scenarios1[i].controllers == scenarios2[i].controllers
-        assert scenarios1[i].plots == scenarios2[i].plots
         assert scenarios1[i].post_process_infos == scenarios2[i].post_process_infos
-
-
 
 
 EXPECTED_ELEM_CLASSES_PROPERTIES = {
@@ -115,7 +113,8 @@ def run_test_project_by_property(tar_project, zip_project):
     PyDssProject.run_project(
         RUN_PROJECT_PATH,
         tar_project=tar_project,
-        zip_project=zip_project
+        zip_project=zip_project,
+        simulation_file=SIMULATION_SETTINGS_FILENAME,
     )
     results = PyDssResults(RUN_PROJECT_PATH)
     assert len(results.scenarios) == 1

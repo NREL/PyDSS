@@ -43,11 +43,13 @@ Next, configure the project.
 - Customize the simulation settings in <project-name>/simulation.toml.
   In particular, set the value for "DSS File" to the master file in the
   DSSfiles directory.
-- Customize the PyDSS controllers in
-  <project-name>/Scenarios/<scenario-name>/pyControllerList.
-  There needs to be one controller section for each PVSystem defined in the
-  OpenDSS configuration. The name of each section must be the PVSystem
-  identifier (replace "PVSystem.pv1234" with your names).
+- Set "Use Controller Registry" = true in <project-name>/simulation.toml in
+  order to use the new, simplified controller management feature.
+- Add controllers to your local registry as needed.  Refer to
+  ``pydss controllers --help``. 
+- Assign element names to controllers. This example will add all PVSystems
+  defined in an OpenDSS input file to the default Volt-Var PvController.
+  ``pydss edit-scenario -p ./project -s scenario1 update-controllers -t PvController -f ./project/DSSfiles/PVGenerators_existing_VV.dss -c volt-var``
 - Customize the the plots to be generated in
   <project-name>/Scenarios/<scenario-name>/pyPlotList
 - Customize data to be exported for each scenario in
@@ -79,12 +81,47 @@ These configuration customizations exist for data exported using the new
   ``Export Data Tables`` is set to true.
 - ``Export Data In Memory``:  Set to true to keep exported data in memory.
   Otherwise, it is flushed to disk periodically.
+- ``Export PV Profiles``: Set to true to export load shape profile information
+  for PV Systems.
 - ``HDF Max Chunk Bytes``: PyDSS uses the h5py library to write exported data to
   disk. Inline compression is always used, so chunking is enabled. This
   parameter will control the maximum size of dataset chunks. Refer to
   http://docs.h5py.org/en/stable/high/dataset.html#chunked-storage for more
   information.
 - ``Export Event Log``:  Set to true to export the OpenDSS event log.
+
+Pre-filtering Export Data
+-------------------------
+There are several options to limit the amount of data exported. These can be
+set in ``Exports.toml`` on a per-property basis.
+
+- Set ``names = ["name1", "name2", "name3"]`` to only export data for these
+  element names. By default PyDSS exports data for all elements.
+- Set ``name_regexes = ["foo.*", "bar\\d+"]`` to only export data for elements
+  with names that match one of the listed Python regular expressions. Note
+  that backslashes must be escaped.
+- Set ``limits = [min, max]`` to pre-filter values that are inside or outside
+  this range. ``min`` and ``max`` must be the same type. Refer to
+  ``limits_filter``.
+- Set ``limits_filter`` to ``outside`` (default) or ``inside``. Applies to
+  filtering action on the ``limits`` parameter.
+- Set ``store_values_type`` to ``"all"`` (default), ``"moving_average"``, or
+  ``"sum"``. If ``moving_average`` then PyDSS will store the average of the
+  last ``window_size`` values. If ``sum`` then PyDSS will keep a
+  running sum of values at each time point and only record the total to disk.
+- Set ``window_size`` to an integer to control the moving average window size.
+  Defaults to ``100``.
+- Set ``moving_average_store_interval`` to control how often the moving average
+  is recorded. Defaults to ``window_size``.
+- Set ``sample_interval`` to control how often PyDSS reads new values. Defaults
+  to ``1``.
+- If the export key is not ``ElementType.Property`` but instead a value mapped
+  to a custom function then PyDSS will run that function at each time point.
+  ``Line.LoadingPercent`` is an example.  In this case PyDSS will read multiple
+  values for a line, compute a loading percentage, and store that. The
+  ``limits`` field can be applied to these values. Refer to
+  ``CUSTOM_FUNCTIONS`` in ``PyDSS/export_list_reader.py`` to see the options
+  available.
 
 
 Run a project
@@ -182,6 +219,14 @@ Read a dataframe for one element with an option matching a regular expression
     2017-01-01 00:45:00   (3.381501301191747e-08+1.3786106705993006e-05j)
     2017-01-01 01:00:00  (3.4120603231713176e-08+1.3804576042275585e-05j)
     2017-01-01 01:15:00   (3.356035449542105e-08+1.3810414088766265e-05j)
+
+Read the total value for a property stored with ``store_values_type = "sum"``
+=============================================================================
+
+::
+
+    scenario.get_element_property_sum("Circuit", "LossesSum", "Circuit.heco19021")
+    (48337.88149479975+14128.296734762534j)
 
 Find out all options available for a property
 =============================================

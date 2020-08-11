@@ -1,6 +1,7 @@
 from PyDSS.ResultContainer import ResultContainer as RC
 from PyDSS.ResultData import ResultData
 from PyDSS.pyContrReader import pyContrReader as pcr
+from PyDSS.pyContrReader import read_controller_settings_from_registry
 from PyDSS.pyPlotReader import pyPlotReader as ppr
 from PyDSS.dssElementFactory import create_dss_element
 from PyDSS.dssCircuit import dssCircuit
@@ -8,16 +9,15 @@ from PyDSS.NetworkModifier import Modifier
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
+from PyDSS import helics_interface as HI
 from PyDSS.utils.dataframe_utils import write_dataframe
 from PyDSS.utils.utils import make_human_readable_size
+
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 
 from PyDSS.pyPostprocessor import pyPostprocess
 import PyDSS.pyControllers as pyControllers
 import PyDSS.pyPlots as pyPlots
-
-
-from PyDSS.Extensions.NetworkGraph import CreateGraph
 
 import numpy as np
 import pandas as pd
@@ -49,6 +49,7 @@ class OpenDSS:
         rootPath = params['Project']['Project Path']
         self._ActiveProject = params['Project']['Active Project']
         importPath = os.path.join(rootPath, params['Project']['Active Project'], 'Scenarios')
+
         self._dssPath = {
             'root': rootPath,
             'Import': importPath,
@@ -123,8 +124,12 @@ class OpenDSS:
         else:
             self.ResultContainer = None
 
-        pyCtrlReader = pcr(self._dssPath['pyControllers'])
-        ControllerList = pyCtrlReader.pyControllers
+        if params['Project']['Use Controller Registry']:
+            ControllerList = read_controller_settings_from_registry(self._dssPath['pyControllers'])
+        else:
+            pyCtrlReader = pcr(self._dssPath['pyControllers'])
+            ControllerList = pyCtrlReader.pyControllers
+
         if ControllerList is not None:
             self._CreateControllers(ControllerList)
 
@@ -134,10 +139,24 @@ class OpenDSS:
             self._CreatePlots(PlotList)
             for Plot in self._pyPlotObjects:
                 self.BokehSessionID = self._pyPlotObjects[Plot].GetSessionID()
-                if kwargs['Plots']['Open plots in browser']:
+                if params['Plots']['Open plots in browser']:
                     self._pyPlotObjects[Plot].session.show()
                 break
+        self._increment_flag = True
+        if params['Helics']["Co-simulation Mode"]:
+            self._HI = HI.helics_interface(self._dssSolver, self._dssObjects, self._dssObjectsByClass, params,
+                                           self._dssPath)
         return
+
+    def _ReadControllerDefinitions(self):
+        controllers = None
+        mappings = os.path.join(os.path.dirname(self._dssPath['pyControllers']), "ControllerMappings")
+        if os.path.exists(mappings):
+            ctrl_mapping_files = os.listdir(self._dssPath["ControllerMappings"])
+            for filename in ctrl_mapping_files: 
+                data = load_data(os.path.join(self._dssPath["ControllerMappings"], filename))
+
+        return controllers
 
     def _ModifyNetwork(self):
         # self._Modifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
@@ -164,9 +183,9 @@ class OpenDSS:
         Figures = []
         for PlotType, PlotNames in PlotsDict.items():
             newPlotNames = list(PlotNames)
-            PlotType1= ['Topology', 'GISplot']
+            PlotType1= ['Topology', 'GISplot', 'NetworkGraph']
             PlotType2 = ['SagPlot', 'Histogram']
-            PlotType3 = ['XYPlot', 'TimeSeries', 'FrequencySweep']
+            PlotType3 = ['XY', 'TimeSeries', 'FrequencySweep']
 
             for Name in newPlotNames:
                 PlotSettings = PlotNames[Name]
@@ -267,18 +286,24 @@ class OpenDSS:
         return ObjectList
 
     def RunStep(self, step, updateObjects=None):
+        # updating paramters bebore simulation run
 
-        if updateObjects:
-            for object, params in updateObjects.items():
-                cl, name = object.split('.')
-                self._Modifier.Edit_Element(cl, name, params)
-            pass
-
-        self._dssSolver.IncStep()
         if self._Options['Helics']['Co-simulation Mode']:
-            self.ResultContainer.updateSubscriptions()
+            if self._increment_flag:
+                self._dssSolver.IncStep()
+            else:
+                self._dssSolver.reSolve()
+            self._HI.updateHelicsSubscriptions()
+        else:
+            self._dssSolver.IncStep()
+            if updateObjects:
+                for object, params in updateObjects.items():
+                    cl, name = object.split('.')
+                    self._Modifier.Edit_Element(cl, name, params)
 
-        if self._Options['Project']['Disable PyDSS controllers'] is False:
+
+        # run simulation time step and get results
+        if not self._Options['Project']['Disable PyDSS controllers']:
             for priority in range(CONTROLLER_PRIORITIES):
                 for i in range(self._Options['Project']['Max Control Iterations']):
                     has_converged, error = self._UpdateControllers(priority, step, UpdateResults=False)
@@ -288,16 +313,15 @@ class OpenDSS:
                             self._Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
                         break
                     self._dssSolver.reSolve()
-
             self._UpdatePlots()
             if self._Options['Exports']['Log Results']:
                 self.ResultContainer.UpdateResults()
-            if self._Options['Project']['Return Results']:
-                return self.ResultContainer.CurrentResults
 
-        if self._Options['Frequency']['Enable frequency sweep'] and self._Options['Project']['Simulation Type'].lower() != 'dynamic':
+        if self._Options['Frequency']['Enable frequency sweep'] and \
+                self._Options['Project']['Simulation Type'].lower() != 'dynamic':
             self._dssSolver.setMode('Harmonic')
-            for freqency in np.arange(self._Options['Frequency']['Start frequency'], self._Options['Frequency']['End frequency'] + 1,
+            for freqency in np.arange(self._Options['Frequency']['Start frequency'],
+                                      self._Options['Frequency']['End frequency'] + 1,
                                       self._Options['Frequency']['frequency increment']):
                 self._dssSolver.setFrequency(freqency * self._Options['Frequency']['Fundamental frequency'])
                 self._dssSolver.reSolve()
@@ -308,7 +332,12 @@ class OpenDSS:
                 self._dssSolver.setMode('Snapshot')
             else:
                 self._dssSolver.setMode('Yearly')
-        return
+
+        if self._Options['Helics']['Co-simulation Mode']:
+            self._HI.updateHelicsPublications()
+            self._increment_flag, helics_time = self._HI.request_time_increment()
+
+        return self.ResultContainer.CurrentResults
 
     def DryRunSimulation(self, project, scenario):
         """Run one time point for getting estimated space."""
@@ -326,13 +355,13 @@ class OpenDSS:
 
         return self.ResultContainer.max_num_bytes()
 
-    def RunSimulation(self, project, scenario, file_prefix=''):
+    def RunSimulation(self, project, scenario, MC_scenario_number=None):
         startTime = time.time()
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
         self._Logger.info('Simulation time step {}.'.format(Steps))
-        if self.ResultContainer is not None:
-            self.ResultContainer.InitializeDataStore(project.hdf_store, Steps)
+        if self._Options['Exports']['Result Container'] == 'ResultData' and self.ResultContainer is not None:
+            self.ResultContainer.InitializeDataStore(project.hdf_store, Steps, MC_scenario_number)
 
         postprocessors = [
             pyPostprocess.Create(
@@ -355,13 +384,14 @@ class OpenDSS:
             while step < Steps:
                 self.RunStep(step)
 
-                if self._Options['Exports']['Log Results'] and step == 0:
+                if step == 0 and self.ResultContainer is not None:
                     size = make_human_readable_size(self.ResultContainer.max_num_bytes())
                     self._Logger.info('Storage requirement estimation: %s, estimated based on first time step run.', size)
 
                 for postprocessor in postprocessors:
                     step = postprocessor.run(step, Steps)
-                step+=1
+                if self._increment_flag:
+                    step+=1
 
         finally:
             if self._Options and self._Options['Exports']['Log Results']:
@@ -371,7 +401,7 @@ class OpenDSS:
 
         if self._Options and self._Options['Exports']['Log Results']:
             self.ResultContainer.ExportResults(
-                fileprefix=file_prefix,
+                fileprefix="",
             )
 
         self._Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
@@ -382,36 +412,13 @@ class OpenDSS:
         MC = MonteCarloSim(self._Options, self._dssPath, self._dssObjects, self._dssObjectsByClass)
         for i in range(samples):
             MC.Create_Scenario()
-            self.RunSimulation(project, scenario, 'MC{}'.format(i))
+            self.RunSimulation(project, scenario, i)
         return
 
     def _UpdatePlots(self):
         for Plot in self._pyPlotObjects:
             self._pyPlotObjects[Plot].UpdatePlot()
         return
-
-    def CreateGraph(self, Visualize=False):
-        self._Logger.info('Creating graph representation')
-        defaultGraphPlotSettings = {
-                'Layout'                 : 'Circular', # Shell, Circular, Fruchterman
-                'Iterations'             : 100,
-                'ShowRefNode'            : False,
-                'NodeSize'               : None, #None for auto fit
-                'LineColorProperty'      : 'Class',
-                'NodeColorProperty'      : 'ConnectedPCs',
-                'Open plots in browser'  : True,
-                'OutputPath'             : self._dssPath['Export'],
-                'OutputFile'             : None
-        }
-        defaultGraphPlotSettings['OutputFile'] = self._ActiveProject + \
-                                                  '_' + defaultGraphPlotSettings['LineColorProperty'] + \
-                                                  '_' + defaultGraphPlotSettings['NodeColorProperty'] + \
-                                                  '_' + defaultGraphPlotSettings['Layout'] + '.html'
-
-        Graph = CreateGraph(self._dssInstance)
-        if Visualize:
-            Graph.CreateGraphVisualization(defaultGraphPlotSettings)
-        return Graph.Get()
 
     def __del__(self):
         self._Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')

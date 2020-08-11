@@ -14,7 +14,7 @@ import math
 
 
 class Histogram(PlotAbstract):
-	def __init__(self,PlotProperties, dssBuses, dssObjectsbyClass, dssCircuit, dssSolver):
+	def __init__(self, PlotProperties, dssBuses, dssObjectsbyClass, dssCircuit, dssSolver):
 		super(Histogram).__init__()
 		Data = []
 		self.__dssBuses = dssBuses

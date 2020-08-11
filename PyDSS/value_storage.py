@@ -1,13 +1,20 @@
 
 import abc
+import enum
+import os
 import re
 
-import h5py
 import numpy as np
-import pandas as pd
 
 from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
+
+
+class DatasetPropertyType(enum.Enum):
+    ELEMENT_PROPERTY = "elem_prop"  # data is stored at every time point
+    FILTERED = "filtered"  # data is stored after being filtered
+    NUMBER = "number"  # Only a single value is written
+    TIMESTAMP = "timestamp"  # data are timestamps, tied to FILTERED
 
 
 class ValueStorageBase(abc.ABC):
@@ -122,6 +129,26 @@ class ValueStorageBase(abc.ABC):
 
         """
 
+    @abc.abstractmethod
+    def set_element_property(self, prop):
+        """Set the element property name.
+
+        Parameters
+        ----------
+        prop : str
+
+        """
+
+    @abc.abstractmethod
+    def set_value(self, value):
+        """Set the value.
+
+        Parameters
+        ----------
+        value : list | float | complex
+
+        """
+
     @property
     @abc.abstractmethod
     def value(self):
@@ -169,19 +196,22 @@ class ValueByList(ValueStorageBase):
         self._name = name
         self._prop = prop
         self._labels = []
-        self._data = {}
         self._value_type = None
         self._value = []
 
         assert (isinstance(values, list) and len(values) == len(label_suffixes)), \
             '"values" and "label_suffixes" should be lists of equal lengths'
-        for val, lab_suf in zip(values , label_suffixes):
-            label = prop + '__' + lab_suf
-            self._data[label] = [val]
+        for val, lab_suf in zip(values, label_suffixes):
+            label = prop + self.DELIMITER + lab_suf
             self._labels.append(label)
             self._value.append(val)
             if self._value_type is None:
                 self._value_type = type(val)
+
+    def __iadd__(self, other):
+        for i in range(len(self._value)):
+            self._value[i] += other.value[i]
+        return self
 
     def make_columns(self):
         return [
@@ -190,7 +220,20 @@ class ValueByList(ValueStorageBase):
 
     @property
     def num_columns(self):
-        return len(self._data)
+        return len(self._labels)
+
+    def set_element_property(self, prop):
+        self._prop = prop
+
+        # Update the property inside each label.
+        for i, label in self._labels:
+            fields = label.split(self.DELIMITER)
+            assert len(fields) == 2
+            fields[0] = prop
+            self._labels[i] = self.DELIMITER.join(fields)
+
+    def set_value(self, value):
+        self._value = value
 
     @property
     def value(self):
@@ -215,9 +258,19 @@ class ValueByNumber(ValueStorageBase):
             )
         self._value = value
 
+    def __iadd__(self, other):
+        self._value += other.value
+        return self
+
     @property
     def num_columns(self):
         return 1
+
+    def set_element_property(self, prop):
+        self._prop = prop
+
+    def set_value(self, value):
+        self._value = value
 
     def make_columns(self):
         return [ValueStorageBase.DELIMITER.join((self._name, self._prop))]
@@ -281,7 +334,7 @@ class ValueByLabel(ValueStorageBase):
 
         for i, node_val in enumerate(zip(Nodes, value)):
             node, val = node_val
-            for v , x in zip(node, val):
+            for v, x in zip(node, val):
                 label = '{}{}'.format(phs[v], str(i+1))
                 if is_complex:
                     label += " " + units[0]
@@ -295,6 +348,11 @@ class ValueByLabel(ValueStorageBase):
                     self._labels.extend([label_mag, label_ang])
                     self._value += [x[0], x[1]]
 
+    def __iadd__(self, other):
+        for i in range(len(self._value)):
+            self._value[i] += other.value[i]
+        return self
+
     @property
     def value(self):
         return self._value
@@ -306,6 +364,12 @@ class ValueByLabel(ValueStorageBase):
     @property
     def num_columns(self):
         return len(self._labels)
+
+    def set_element_property(self, prop):
+        self._prop = prop
+
+    def set_value(self, value):
+        self._value = value
 
     def make_columns(self):
         return [
@@ -325,10 +389,20 @@ class ValueContainer:
     _TYPE_MAPPING = {
         float: np.float,
         int: np.int,
-        complex: np.complex
+        complex: np.complex,
     }
 
-    def __init__(self, value, hdf_store, path, max_size, max_chunk_bytes=None):
+    def __init__(self, value, hdf_store, path, max_size, dataset_property_type, max_chunk_bytes=None,
+                 store_timestamp=False):
+        group_name = os.path.dirname(path)
+        basename = os.path.basename(path)
+        try:
+            if basename in hdf_store[group_name].keys():
+                raise InvalidParameter(f"duplicate dataset name {basename}")
+        except KeyError:
+            # Don't bother checking each sub path.
+            pass
+
         dtype = self._TYPE_MAPPING.get(value.value_type)
         assert dtype is not None
         scaleoffset = None
@@ -336,6 +410,25 @@ class ValueContainer:
             scaleoffset = 4
         elif dtype == np.int:
             scaleoffset = 0
+        attributes = {"type": dataset_property_type.value}
+        timestamp_path = None
+
+        if store_timestamp:
+            timestamp_path = self.timestamp_path(path)
+            self._timestamps = DatasetBuffer(
+                hdf_store,
+                timestamp_path,
+                max_size,
+                np.float,
+                ["Timestamp"],
+                scaleoffset=scaleoffset,
+                max_chunk_bytes=max_chunk_bytes,
+                attributes={"type": DatasetPropertyType.TIMESTAMP.value},
+            )
+            attributes["timestamp_path"] = timestamp_path
+        else:
+            self._timestamps = None
+
         self._dataset = DatasetBuffer(
             hdf_store,
             path,
@@ -344,21 +437,32 @@ class ValueContainer:
             value.make_columns(),
             scaleoffset=scaleoffset,
             max_chunk_bytes=max_chunk_bytes,
+            attributes=attributes,
         )
 
-    def append(self, value):
+    @staticmethod
+    def timestamp_path(path):
+        return path + "Timestamp"
+
+    def append(self, value, timestamp=None):
         """Append a value to the container.
 
         Parameters
         ----------
         value : ValueStorageBase
+        timestamp : float | None
 
         """
         self._dataset.write_value(value.value)
+        if self._timestamps is not None:
+            assert timestamp is not None
+            self._timestamps.write_value(timestamp)
 
     def flush_data(self):
         """Flush any outstanding data to disk."""
         self._dataset.flush_data()
+        if self._timestamps is not None:
+            self._timestamps.flush_data()
 
     def max_num_bytes(self):
         """Return the maximum number of bytes the container could hold.
@@ -369,3 +473,25 @@ class ValueContainer:
 
         """
         return self._dataset.max_num_bytes()
+
+
+def get_dataset_property_type(dataset):
+    """Return the property type of this dataset.
+
+    Returns
+    -------
+    DatasetPropertyType
+
+    """
+    return DatasetPropertyType(dataset.attrs["type"])
+
+
+def get_timestamp_path(dataset):
+    """Return the path to the timestamps for this dataset.
+
+    Returns
+    -------
+    pd.DatetimeIndex
+
+    """
+    return dataset.attrs["timestamp_path"]

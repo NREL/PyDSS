@@ -56,7 +56,7 @@ def extract(project_path, file_path, output_dir=None, verbose=False):
     logger.info("CLI: [%s]", get_cli_string())
 
     project = PyDssProject.load_project(project_path)
-    text = project.fs_interface.read_file(file_path)
+    data = project.fs_interface.read_file(file_path)
 
     if output_dir is None:
         path = os.path.join(project_path, file_path)
@@ -64,8 +64,10 @@ def extract(project_path, file_path, output_dir=None, verbose=False):
         path = os.path.join(output_dir, file_path)
 
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w") as f_out:
-        f_out.write(text)
+    ext = os.path.splitext(file_path)[1]
+    mode = "wb" if ext in (".h5", ".feather") else "w"
+    with open(path, mode) as f_out:
+        f_out.write(data)
 
     print(f"Extracted {file_path} to {path}")
 

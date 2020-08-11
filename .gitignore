@@ -12,3 +12,6 @@ tests/data/project/Exports/*
 tests/data/project/Scenarios/scenario1/simulation.toml
 .idea/*
 .vscode/*
+store.h5
+simulation-run.toml
+*.log

@@ -1,8 +1,0 @@
-
-"Project Path" = "C:\\Users\\ajain\\Desktop\\PyDSS_develop_branch\\PyDSS\\examples\\External_interfacing_example"
-"Simulation Type" = "QSTS"
-"Active Project" = "pyDSS_project"
-"Active Scenario" = "helics_interface"
-"DSS File" = "Master_Spohn_existing_VV.dss"
-"Co-simulation Mode" = true
-"Federate name" = "PyDSS"

@@ -1,0 +1,11 @@
+["timeseries1.html"]
+yObjName = "Storage.ess110"
+yObjectType	= "Element"
+yScaler	= "[1]"
+Properties = "['v.Powers']"
+index = "['SumEven']"
+Width = 1400	
+Height = 350	 
+Dynamic = false	
+nSamples = 96
+

@@ -32,6 +32,7 @@
 "Active Scenario" = ""
 "DSS File" = "Master_Spohn_existing_VV.dss"
 "Return Results" = false
+"Use Controller Registry" = true
 [[Project.Scenarios]]
 name = "scenario1"
 post_process_infos = []
@@ -46,6 +47,7 @@ post_process_infos = []
 "Export Elements" = true
 "Export Data Tables" = false
 "Export Data In Memory" = true
+"Export PV Profiles" = true
 "Export Event Log" = true
 "Export Format" = "h5"
 "Export Compression" = true

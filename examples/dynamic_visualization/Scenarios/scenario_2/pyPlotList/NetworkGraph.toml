@@ -1,0 +1,11 @@
+["xy1.html"]
+NodeColorProperty = "kVBase"
+LineColorProperty = "Class"
+Iterations = 50
+#Layout options = [Circular, Spring, Fruchterman, Spectral, Random, Shell]
+Layout = "Spring" 
+ShowRefNode = false
+NodeSize = 10
+"Open plots in browser" = true
+OutputPath	= "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS\\examples\\dynamic_visualization\\Exports"
+OutputFile = "graph.html"
