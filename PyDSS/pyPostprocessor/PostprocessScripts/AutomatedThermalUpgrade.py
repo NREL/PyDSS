@@ -65,19 +65,15 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
     """
 
     REQUIRED_INPUT_FIELDS = (
-        "DPV_penetration_HClimit",
-        "DPV_penetration_target",
-        "DPV_penetration_step",
-        "line loading limit",
-        "DT loading limit",
+        "line_loading_limit",
+        "dt_loading_limit",
         "line_safety_margin",
         "xfmr_safety_margin",
         "nominal_voltage",
-        "Max iterations",
-        "Create_upgrade_plots",
+        "max_iterations",
+        "create_upgrade_plots",
         "tps_to_test",
-        "units key",
-        "Create_upgrades_library",
+        "create_upgrades_library",
 		"upgrade_library_path",
     )
 
@@ -102,6 +98,12 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.orig_xfmrs = {x["name"]: x for x in iter_elements(dss.Transformers, get_transformer_info)}
         self.orig_lines = {x["name"]: x for x in iter_elements(dss.Lines, self.get_line_info)}
 
+        # TODO: attributes that have been dropped
+        self.config["DPV_penetration_HClimit"] = None
+        self.config["DPV_penetration_target"] = None
+        self.config["DPV_penetration_step"] = None
+        self.config["units key"] = ["mi", "kft", "km", "m", "Ft", "in", "cm"]  # Units key for lines taken from OpenDSS
+
         # TODO: To be modified
         self.plot_violations_counter=0
         start_pen = self.config["DPV_penetration_HClimit"]
@@ -121,7 +123,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
         # Determine available upgrades - either by looping over the existing feeder or by reading an
         #  externally created library
-        if self.config["Create_upgrades_library"]:
+        if self.config["create_upgrades_library"]:
             self.logger.debug("Creating upgrades library from the feeder")
             self.determine_available_line_upgrades()
             self.determine_available_xfmr_upgrades()
@@ -169,7 +171,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             "Number of buses outside ANSI A limits":len(self.cust_viol),
         }
 
-        if self.config["Create_upgrade_plots"]:
+        if self.config["create_upgrade_plots"]:
             self.create_op_plots()
 
         self.upgrade_status = ''  # parameter stating status of thermal upgrades - needed or not
@@ -193,7 +195,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             self.logger.info("Iteration Count: %s", self.Line_trial_counter)
             self.logger.info("Number of devices with violations: %s", num_elms_violated_curr_itr)
             self.Line_trial_counter += 1
-            if self.Line_trial_counter > self.config["Max iterations"]:
+            if self.Line_trial_counter > self.config["max_iterations"]:
                 self.logger.info("Max iterations limit reached, quitting")
                 break
         # self.determine_xfmr_ldgs()
@@ -266,7 +268,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.final_line_ldg_lst.sort(reverse=True)
         self.orig_xfmr_ldg_lst.sort(reverse=True)
         self.final_xfmr_ldg_lst.sort(reverse=True)
-        if self.config["Create_upgrade_plots"]:
+        if self.config["create_upgrade_plots"]:
             self.create_op_plots()
 
         # Store final results
@@ -274,7 +276,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.logger.info("After upgrades the solution converged: %s", dss.Solution.Converged())
         self.logger.info("Voltages after upgrades max=%s min=%s", max(dss.Circuit.AllBusMagPu()), min(dss.Circuit.AllBusMagPu()))
         self.logger.info("Substation power after upgrades: %s", dss.Circuit.TotalPower())
-        if self.config["Create_upgrade_plots"]:
+        if self.config["create_upgrade_plots"]:
             plt.figure(figsize=(40, 40), dpi=10)
             plt.clf()
             plt.plot(self.orig_line_ldg_lst, "o", label="Starting Line Loadings")
@@ -294,7 +296,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
         self.determine_line_ldgs()
         self.determine_xfmr_ldgs()
-        # if self.config["Create_upgrade_plots"]:
+        # if self.config["create_upgrade_plots"]:
         #     self.create_op_plots()
 
         feeder_head_name = dss.Circuit.Name()
@@ -329,7 +331,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             "DPV_penetration_target"        : self.config["DPV_penetration_target"],
             "DPV_penetration_step"          : self.config["DPV_penetration_step"],
             "Outputs"                       : self.config["Outputs"],
-            "Create_plots"                  : self.config["Create_upgrade_plots"],
+            "Create_plots"                  : self.config["create_upgrade_plots"],
             "feederhead_name"               : feeder_head_name,
             "feederhead_basekV"             : feeder_head_basekv,
             "new_xfmrs": self.new_xfmrs,
@@ -601,7 +603,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.generate_nodes()
         self.generate_edges()
         self.pos_dict = nx.get_node_attributes(self.G, 'pos')
-        if self.config["Create_upgrade_plots"]:
+        if self.config["create_upgrade_plots"]:
             self.correct_node_coords()
         self.logger.debug("Length: %s", len(self.pos_dict))
         self.create_edge_node_dicts()
@@ -696,7 +698,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.DT_size_list = []
         self.DT_sec_coords = {}
         for key,vals in self.equip_ldgs.items():
-            if key.lower().startswith("line") and round(vals,2)>self.config["line loading limit"]*100:
+            if key.lower().startswith("line") and round(vals,2)>self.config["line_loading_limit"]*100:
                 key = key.split("Line_")[1]
                 key = "Line."+key
                 dss.Circuit.SetActiveElement("{}".format(key))
@@ -706,7 +708,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 self.edge_pos_plt_dict[from_bus] = self.pos_dict[from_bus]
                 self.edge_pos_plt_dict[to_bus] = self.pos_dict[to_bus]
                 self.edge_size_list.append(vals)
-            if key.lower().startswith("xfmr") and round(vals,2)>self.config["DT loading limit"]*100:
+            if key.lower().startswith("xfmr") and round(vals,2)>self.config["dt_loading_limit"]*100:
                 key = key.split("Xfmr_")[1]
                 key = "Transformer." + key
                 dss.Circuit.SetActiveElement("{}".format(key))
@@ -930,7 +932,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         self.all_line_ldgs_alltps[line_name] = [[max(line_current)], line_limit]
                     elif line_name in self.all_line_ldgs_alltps:
                         self.all_line_ldgs_alltps[line_name][0].append(max(line_current))
-                if ldg > self.config["line loading limit"] and switch == "False":  # and switch==False:
+                if ldg > self.config["line_loading_limit"] and switch == "False":  # and switch==False:
                     if line_name not in self.line_violations_alltps:
                         self.line_violations_alltps[line_name] = [[max(line_current)], line_limit]
                     elif line_name in self.line_violations_alltps:
@@ -993,7 +995,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                             self.all_line_ldgs_alltps[line_name] = [[max(line_current)], line_limit]
                         elif line_name in self.all_line_ldgs_alltps:
                             self.all_line_ldgs_alltps[line_name][0].append(max(line_current))
-                    if ldg > self.config["line loading limit"] and switch == "False":  # and switch==False:
+                    if ldg > self.config["line_loading_limit"] and switch == "False":  # and switch==False:
                         if line_name not in self.line_violations_alltps:
                             self.line_violations_alltps[line_name] = [[max(line_current)], line_limit]
                         elif line_name in self.line_violations_alltps:
@@ -1031,7 +1033,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                             self.all_line_ldgs_alltps[line_name] = [[max(line_current)], line_limit]
                         elif line_name in self.all_line_ldgs_alltps:
                             self.all_line_ldgs_alltps[line_name][0].append(max(line_current))
-                    if ldg > self.config["line loading limit"] and switch == "False":  # and switch==False:
+                    if ldg > self.config["line_loading_limit"] and switch == "False":  # and switch==False:
                         if line_name not in self.line_violations_alltps:
                             self.line_violations_alltps[line_name] = [[max(line_current)], line_limit]
                         elif line_name in self.line_violations_alltps:
@@ -1065,7 +1067,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 kv_to_bus = dss.Bus.kVBase()
                 dss.Circuit.SetActiveElement("Line.{}".format(key))
                 norm_amps = dss.CktElement.NormalAmps()
-                num_par_lns = int((vals[0]*self.config["line_safety_margin"])/(vals[1]*self.config["line loading limit"]))+1
+                num_par_lns = int((vals[0]*self.config["line_safety_margin"])/(vals[1]*self.config["line_loading_limit"]))+1
                 if kv_from_bus != kv_to_bus:
                     raise InvalidParameter("For line {} the from and to bus kV ({} {}) do not match, quitting...".format(key,
                                                                                                         kv_from_bus,
@@ -1079,7 +1081,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if lc_key in self.avail_line_upgrades:
                     for lcs,lcs_vals in self.avail_line_upgrades[lc_key].items():
                         if lcs!=line_code:
-                            if lcs_vals[0]>((vals[0]*self.config["line_safety_margin"])/(self.config["line loading limit"])) and lcs_vals[0]<num_par_lns*norm_amps:
+                            if lcs_vals[0]>((vals[0]*self.config["line_safety_margin"])/(self.config["line_loading_limit"])) and lcs_vals[0]<num_par_lns*norm_amps:
                                 command_string = "Edit Line.{lnm} {cnfig}={lnc}".format(lnm=key, cnfig=ln_config, lnc=lcs)
                                 dss.run_command(command_string)
                                 self.dssSolver.Solve()
@@ -1237,7 +1239,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     self.all_xfmr_ldgs_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
                 elif xfmr_name in self.all_xfmr_ldgs_alltps:
                     self.all_xfmr_ldgs_alltps[xfmr_name][0].append(max(xfmr_current))
-                if ldg > self.config["DT loading limit"]:
+                if ldg > self.config["dt_loading_limit"]:
                     if xfmr_name not in self.xfmr_violations_alltps:
                         self.xfmr_violations_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
                     elif xfmr_name in self.xfmr_violations_alltps:
@@ -1302,7 +1304,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         self.all_xfmr_ldgs_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
                     elif xfmr_name in self.all_xfmr_ldgs_alltps:
                         self.all_xfmr_ldgs_alltps[xfmr_name][0].append(max(xfmr_current))
-                    if ldg > self.config["DT loading limit"]:
+                    if ldg > self.config["dt_loading_limit"]:
                         if xfmr_name not in self.xfmr_violations_alltps:
                             self.xfmr_violations_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
                         elif xfmr_name in self.xfmr_violations_alltps:
@@ -1343,7 +1345,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         self.all_xfmr_ldgs_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
                     elif xfmr_name in self.all_xfmr_ldgs_alltps:
                         self.all_xfmr_ldgs_alltps[xfmr_name][0].append(max(xfmr_current))
-                    if ldg > self.config["DT loading limit"]:
+                    if ldg > self.config["dt_loading_limit"]:
                         if xfmr_name not in self.xfmr_violations_alltps:
                             self.xfmr_violations_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
                         elif xfmr_name in self.xfmr_violations_alltps:
@@ -1399,7 +1401,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     raise InvalidParameter("For DT {} the rated current values ({} {}) do not match, quitting...".format(key,
                                                                                                           norm_amps,
                                                                                                           vals[1]))
-                num_par_dts = int((vals[0] * self.config["xfmr_safety_margin"]) / (vals[1]*self.config["DT loading limit"])) + 1
+                num_par_dts = int((vals[0] * self.config["xfmr_safety_margin"]) / (vals[1]*self.config["dt_loading_limit"])) + 1
                 dt_key = "type_" + "{}_".format(phases) + "{}_".format(num_wdgs)
                 for kv_cnt in range(len(wdg_kv_list)):
                     dt_key = dt_key + "{}_".format(wdg_kv_list[kv_cnt])
@@ -1410,7 +1412,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if dt_key in self.avail_xfmr_upgrades:
                     for dt,dt_vals in self.avail_xfmr_upgrades[dt_key].items():
                         if dt!=key:
-                            if dt_vals[1][0]>((vals[0]*self.config["xfmr_safety_margin"])/(self.config["line loading limit"])) and dt_vals[1][0]<num_par_dts*norm_amps:
+                            if dt_vals[1][0]>((vals[0]*self.config["xfmr_safety_margin"])/(self.config["line_loading_limit"])) and dt_vals[1][0]<num_par_dts*norm_amps:
                                 command_string = "Edit Transformer.{xf} %noloadloss={nll} ".format(xf=key,
                                                                                                   nll=dt_vals[3][0])
                                 for wdgs_cnt in range(num_wdgs):

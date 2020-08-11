@@ -1,17 +1,13 @@
-DPV_penetration_HClimit = 0
-DPV_penetration_target = 0
-DPV_penetration_step = 10
-"line loading limit" = 1.0  # 1=100%
-"DT loading limit" = 1.0  # 1=100%
+line loading limit = 1.0  # 1=100%
+dt_loading_limit = 1.0  # 1=100%
 line_safety_margin = 1.5
 # 1.1=110%: implies new line added should be rated at least 10% above the DTs actual overloading
 xfmr_safety_margin = 1.5
 # 1.1=110%: implies new DT added should be rated at least 10% above DT's actual overloading
 nominal_voltage = 120
-"Max iterations" = 20
-Create_upgrade_plots = true
+max_iterations = 20
+create_upgrade_plots = true
 tps_to_test = [0.2, 1.8, 0.1, 0.9]
 # [min load multiplier without PV, max load multiplier without PV, min load multiplier with PV, max load multiplier with PV]
-"units key" = ["mi", "kft", "km", "m", "Ft", "in", "cm"]  # Units key for lines taken from OpenDSS
-Create_upgrades_library = true # Can be set to False if we use an externally generated library
+create_upgrades_library = true # Can be set to False if we use an externally generated library
 upgrade_library_path = "C:/Documents_NREL/Grid_Cost_DER_PhaseII/Control_device_placement/Outputs"
