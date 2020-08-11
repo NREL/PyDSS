@@ -83,9 +83,9 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         super(AutomatedThermalUpgrade, self).__init__(project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger)
         
         # TODO: attributes that have been dropped
-        self.config["DPV_penetration_HClimit"] = None
-        self.config["DPV_penetration_target"] = None
-        self.config["DPV_penetration_step"] = None
+        self.config["DPV_penetration_HClimit"] = 0
+        self.config["DPV_penetration_target"] = 0
+        self.config["DPV_penetration_step"] = 10
         self.config["units key"] = ["mi", "kft", "km", "m", "Ft", "in", "cm"]  # Units key for lines taken from OpenDSS
         
         dss = dssInstance

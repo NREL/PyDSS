@@ -139,8 +139,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         #self.other_pv_dss_files = {}
         
         # TODO: The attributes were dropped, need to refactor according code
-        self.config["DPV_penetration_HClimit"] = None
-        self.config["DPV_penetration_target"] = None
+        self.config["DPV_penetration_HClimit"] = 0
+        self.config["DPV_penetration_target"] = 200
 
         self.other_pv_dss_files = self.config["project_data"]["pydss_other_pvs_dss_files"]
         self.other_load_dss_files = self.config["project_data"]["pydss_other_loads_dss_files"]
