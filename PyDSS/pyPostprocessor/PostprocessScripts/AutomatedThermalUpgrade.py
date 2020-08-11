@@ -81,6 +81,13 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         """Constructor method
         """
         super(AutomatedThermalUpgrade, self).__init__(project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger)
+        
+        # TODO: attributes that have been dropped
+        self.config["DPV_penetration_HClimit"] = None
+        self.config["DPV_penetration_target"] = None
+        self.config["DPV_penetration_step"] = None
+        self.config["units key"] = ["mi", "kft", "km", "m", "Ft", "in", "cm"]  # Units key for lines taken from OpenDSS
+        
         dss = dssInstance
         self.dssSolver = dssSolver
         # Just send this list as input to the upgrades code via DISCO -  this list may be empty or have as many
@@ -97,12 +104,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         #self.get_load_mults()
         self.orig_xfmrs = {x["name"]: x for x in iter_elements(dss.Transformers, get_transformer_info)}
         self.orig_lines = {x["name"]: x for x in iter_elements(dss.Lines, self.get_line_info)}
-
-        # TODO: attributes that have been dropped
-        self.config["DPV_penetration_HClimit"] = None
-        self.config["DPV_penetration_target"] = None
-        self.config["DPV_penetration_step"] = None
-        self.config["units key"] = ["mi", "kft", "km", "m", "Ft", "in", "cm"]  # Units key for lines taken from OpenDSS
 
         # TODO: To be modified
         self.plot_violations_counter=0
