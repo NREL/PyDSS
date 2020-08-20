@@ -82,25 +82,23 @@ def printReport(logsPath, project, scenario, report):
     assert os.path.exists(filePath), "Report {} for project: {} / scenario: {} does not exist".format(
         report, project, scenario
     )
-    with open(os.path.join(logsPath, fileName), "r") as f:
-        for line in f:
-    lines = f.readlines()
+
     tableData = []
     Keys = {}
-
-    for l in lines:
-        data = json.loads(l[:-1])
-        if "Report" not in data:
-            print("Skipping {}. Not a valid PyDSS report.".format(fileName))
-            return None
-        elif data["Report"] == report:
-            if report not in Keys:
-                Keys[report] = list(data.keys())
-                Keys[report] = [x for x in Keys[report] if x != "Report"]
-            values = []
-            for k in Keys[report]:
-                values.append(data[k])
-            tableData.append(values)
+    with open(os.path.join(logsPath, fileName), "r") as f:
+        for l in f:
+            data = json.loads(l[:-1])
+            if "Report" not in data:
+                print("Skipping {}. Not a valid PyDSS report.".format(fileName))
+                return None
+            elif data["Report"] == report:
+                if report not in Keys:
+                    Keys[report] = list(data.keys())
+                    Keys[report] = [x for x in Keys[report] if x != "Report"]
+                values = []
+                for k in Keys[report]:
+                    values.append(data[k])
+                tableData.append(values)
     tableData.insert(0, Keys[report])
     Table = SingleTable(tableData, title="{} report (Project: {}, Scenario: {})".format(
         report, project, scenario

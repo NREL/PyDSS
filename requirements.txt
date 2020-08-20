@@ -4,11 +4,11 @@ setuptools
 scipy
 bokeh
 networkx
-toml==0.10.0
+toml
 pyproj
 descartes
 OpenDSSDirect.py==0.3.7
-Shapely
+Shapely==1.6.4
 matplotlib
 Click
 numpy
@@ -19,3 +19,6 @@ h5py
 helics
 pytest
 terminaltables
+aiohttp
+aiohttp_swagger3
+requests

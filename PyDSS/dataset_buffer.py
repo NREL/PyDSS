@@ -62,7 +62,7 @@ class DatasetBuffer:
             chunks=chunks,
             dtype=dtype,
             compression="gzip",
-            compression_opts=4,
+            compression_opts=4,az
             shuffle=True,
             scaleoffset=scaleoffset,
         )

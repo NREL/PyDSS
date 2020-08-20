@@ -1,4 +1,5 @@
 from PyDSS.ProfileManager.Profile import Profile as TSP
+from PyDSS.ProfileManager.common import PROFILE_TYPES
 from PyDSS.exceptions import InvalidParameter
 from PyDSS.pyLogger import getLoggerTag
 from PyDSS.utils.utils import load_data
@@ -12,19 +13,8 @@ import h5py
 import os
 
 
-class ProfileManager:
 
-    PROFILE_TYPES = [
-        "Load",
-        "Generation",
-        "Irradiance",
-        "Temperature",
-        "Voltage",
-        "Current",
-        "EM_Price",
-        "AS_Price",
-        "WindProfile",
-    ]
+class ProfileManager:
 
     def __init__(self,  dssObjects, dssSolver, options, mode="r+"):
         if options["Logging"]["Pre-configured logging"]:
@@ -44,7 +34,7 @@ class ProfileManager:
         else:
             self._logger.info("Creating new h5 store")
             self.store = h5py.File(filePath, "w")
-            for profileGroup in self.PROFILE_TYPES:
+            for profileGroup in PROFILE_TYPES.names():
                 self.store.create_group(profileGroup)
         return
 
@@ -112,8 +102,8 @@ class ProfileManager:
     def add_profiles(self, data, name, pType, startTime, resolution_sec=900, units="", info=""):
         if type(startTime) is not datetime.datetime:
             raise InvalidParameter("startTime should be a python datetime object")
-        if pType not in self.PROFILE_TYPES:
-            raise InvalidParameter("Valid values for pType are {}".format(self.PROFILE_TYPES))
+        if pType not in PROFILE_TYPES.names():
+            raise InvalidParameter("Valid values for pType are {}".format(PROFILE_TYPES.names()))
         if data:
             self.add_from_arrays(data, name, pType, startTime, resolution_sec, units=units, info=info)
         return

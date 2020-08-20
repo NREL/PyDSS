@@ -12,7 +12,7 @@ class Profile:
 
     def __init__(self, profileObj, objects, dssSolver, mappingDict,  bufferSize=10, neglectYear=True):
 
-        self.valueSettings = {x['object'] : {**self.DEFAULT_SETTINGS, **x} for x in mappingDict}
+        self.valueSettings = {x['object']: {**self.DEFAULT_SETTINGS, **x} for x in mappingDict}
         self.mappingDict = mappingDict
         self.bufferSize = bufferSize
         self.buffer = np.zeros(bufferSize)
@@ -45,10 +45,10 @@ class Profile:
                     value = value1
                 mult = self.valueSettings[objName]['multiplier']
                 if self.valueSettings[objName]['normalize']:
-                    value = value / self.attrs["max"] * mult
+                    valueF = value / self.attrs["max"] * mult
                 else:
-                    value = value * mult
-                obj.SetParameter(self.attrs["units"].decode(), value)
+                    valueF = value * mult
+                obj.SetParameter(self.attrs["units"].decode(), valueF)
         return value
 
 

@@ -9,7 +9,6 @@ from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
 from PyDSS import helics_interface as HI
-from PyDSS.utils.dataframe_utils import write_dataframe
 from PyDSS.utils.utils import make_human_readable_size
 from PyDSS.ProfileManager.ProfileStore import ProfileManager
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
@@ -58,7 +57,9 @@ class OpenDSS:
             'Export': os.path.join(rootPath, params['Project']['Active Project'], 'Exports'),
             'Log': os.path.join(rootPath, params['Project']['Active Project'], 'Logs'),
             'dssFiles': os.path.join(rootPath, params['Project']['Active Project'], 'DSSfiles'),
-            'dssFilePath': os.path.join(rootPath, params['Project']['Active Project'], 'DSSfiles', params['Project']['DSS File']),
+            'dssFilePath': os.path.join(
+                rootPath, params['Project']['Active Project'], 'DSSfiles', params['Project']['DSS File']
+            ),
         }
 
         if params['Project']['DSS File Absolute Path']:

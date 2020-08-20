@@ -167,7 +167,7 @@ class helics_interface:
                         if self.c_seconds != self.c_seconds_old:
                             self._subscription_dState[element_name] = [self.init_state] * self.n_states
                         else:
-                            self._subscription_dState[element_name].insert(0,self._subscription_dState[element_name].pop())
+                            self._subscription_dState[element_name].insert(0, self._subscription_dState[element_name].pop())
                         self._subscription_dState[element_name][0] = value
                         #print(self._subscription_dState[element_name])
         self.c_seconds_old = self.c_seconds
