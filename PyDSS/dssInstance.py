@@ -297,23 +297,18 @@ class OpenDSS:
 
     def RunStep(self, step, updateObjects=None):
         # updating parameters bebore simulation run
-
+        self._Logger.info(f'PyDSS datetime - {self._dssSolver.GetDateTime()}')
+        self._Logger.info(f'OpenDSS time [h] - {self._dssSolver.GetOpenDSSTime()}')
         if self._Options['Profiles']["Use profile manager"]:
             self.profileStore.update()
 
         if self._Options['Helics']['Co-simulation Mode']:
-            if self._increment_flag:
-                self._dssSolver.IncStep()
-            else:
-                self._dssSolver.reSolve()
             self._HI.updateHelicsSubscriptions()
         else:
-            self._dssSolver.IncStep()
             if updateObjects:
                 for object, params in updateObjects.items():
                     cl, name = object.split('.')
                     self._Modifier.Edit_Element(cl, name, params)
-
 
         # run simulation time step and get results
         if not self._Options['Project']['Disable PyDSS controllers']:
@@ -345,6 +340,14 @@ class OpenDSS:
                 self._dssSolver.setMode('Snapshot')
             else:
                 self._dssSolver.setMode('Yearly')
+
+        if self._Options['Helics']['Co-simulation Mode']:
+            if self._increment_flag:
+                self._dssSolver.IncStep()
+            else:
+                self._dssSolver.reSolve()
+        else:
+            self._dssSolver.IncStep()
 
         if self._Options['Helics']['Co-simulation Mode']:
             self._HI.updateHelicsPublications()
@@ -406,7 +409,7 @@ class OpenDSS:
                 for postprocessor in postprocessors:
                     step = postprocessor.run(step, Steps)
                 if self._increment_flag:
-                    step+=1
+                    step += 1
 
         finally:
             if self._Options and self._Options['Exports']['Log Results']:

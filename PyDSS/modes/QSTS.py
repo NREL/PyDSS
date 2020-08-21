@@ -32,7 +32,7 @@ class QSTS(abstact_solver):
         self._dssSolution = dssInstance.Solution
         self._dssSolution.Mode(2)
         self._dssSolution.Hour((StartDay - 1) * 24)
-        self._dssSolution.Seconds(StartTimeMin * 60)
+        self._dssSolution.Seconds((StartTimeMin+1) * 60)
         self._dssSolution.Number(1)
         self._dssSolution.StepSize(self._sStepRes)
         self._dssSolution.MaxControlIterations(SimulationSettings['Project']['Max Control Iterations'])
@@ -68,8 +68,11 @@ class QSTS(abstact_solver):
         self._Time = self._Time + timedelta(seconds=self._sStepRes)
         self._Hour = int(self._dssSolution.DblHour() // 1)
         self._Second = (self._dssSolution.DblHour() % 1) * 60 * 60
-        self.pyLogger.info('OpenDSS time [h] - ' + str(self._dssSolution.DblHour()))
-        self.pyLogger.info('PyDSS datetime - ' + str(self._Time))
+        #self.pyLogger.info('OpenDSS time [h] - ' + str(self._dssSolution.DblHour()))
+        #self.pyLogger.info('PyDSS datetime - ' + str(self._Time))
+
+    def GetOpenDSSTime(self):
+        return self._dssSolution.DblHour()
 
     def GetTotalSeconds(self):
         return (self._Time - self._StartTime).total_seconds()

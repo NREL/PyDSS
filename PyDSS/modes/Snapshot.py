@@ -27,6 +27,9 @@ class Snapshot(abstact_solver):
     def SimulationSteps(self):
         return 1, self._StartTime, self._EndTime
 
+    def GetOpenDSSTime(self):
+        return self._dssSolution.DblHour()
+
     def GetDateTime(self):
         return self._Time
 

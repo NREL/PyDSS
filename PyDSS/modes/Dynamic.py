@@ -51,6 +51,9 @@ class Dynamic(abstact_solver):
         Steps = math.ceil(Seconds / self._sStepRes)
         return Steps, self._StartTime, self._EndTime
 
+    def GetOpenDSSTime(self):
+        return self._dssSolution.DblHour()
+
     def reset(self):
         self.setMode('Dynamic')
         self._dssSolution.Hour(self._Hour)
