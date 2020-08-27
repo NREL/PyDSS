@@ -124,10 +124,14 @@ enabled = false
 [[Reports.Types]]
 name = "PV Clipping"
 enabled = false
+diff_tolerance_percent_pmpp = 1.0
+denominator_tolerance_percent_pmpp = 1.0
 
 [[Reports.Types]]
 name = "PV Curtailment"
 enabled = false
+diff_tolerance_percent_pmpp = 1.0
+denominator_tolerance_percent_pmpp = 1.0
 
 [[Reports.Types]]
 name = "RegControl Tap Number Change Counts"

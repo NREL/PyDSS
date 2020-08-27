@@ -40,7 +40,7 @@ post_process_infos = []
 "Export PV Profiles" = true
 "Export Data In Memory" = true
 "Export Event Log" = true
-"Export Format" = "h5"
+"Export Format" = "csv"
 "Export Compression" = true
 "HDF Max Chunk Bytes" = 32768
 "Result Container" = "ResultData"
@@ -89,7 +89,7 @@ post_process_infos = []
 [Logging]
 "Logging Level" = "INFO"
 "Log to external file" = true
-"Display on screen" = true
+"Display on screen" = false
 "Clear old log file" = false
 
 [MonteCarlo]
@@ -114,10 +114,14 @@ scenarios = ["control_mode"]
 [[Reports.Types]]
 name = "PV Clipping"
 enabled = true
+diff_tolerance_percent_pmpp = 1.0
+denominator_tolerance_percent_pmpp = 1.0
 
 [[Reports.Types]]
 name = "PV Curtailment"
 enabled = true
+diff_tolerance_percent_pmpp = 1.0
+denominator_tolerance_percent_pmpp = 1.0
 
 [[Reports.Types]]
 name = "RegControl Tap Number Change Counts"
