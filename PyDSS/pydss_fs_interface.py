@@ -320,6 +320,10 @@ class PyDssArchiveFileInterfaceBase(PyDssFileSystemInterface):
             scenarios.sort()
         return scenarios
 
+    @staticmethod
+    def normalize_path(path):
+        return os.path.normpath(path).replace("\\", "/")
+
     @property
     def simulation_config(self):
         return self._simulation_config
@@ -374,10 +378,12 @@ class PyDssTarFileInterface(PyDssArchiveFileInterfaceBase):
             self._tar.close()
 
     def read_file(self, path):
-        return self._tar.extractfile(path).read().decode("utf-8")
+        if sys.platform == "win32":
+            path = self.normalize_path(path)
+        return self._tar.extractfile().read(path).decode("utf-8")
 
     def read_csv(self, path):
-        return pd.read_csv(self._tar.extractfile(path))
+        return pd.read_csv(self._tar.extractfile(os.path.normpath(path).replace("\\", "/")))
 
 
 class PyDssZipFileInterface(PyDssArchiveFileInterfaceBase):
@@ -390,6 +396,8 @@ class PyDssZipFileInterface(PyDssArchiveFileInterfaceBase):
         self._zip.close()
 
     def read_file(self, path):
+        if sys.platform == "win32":
+            path = self.normalize_path(path)
         data = self._zip.read(path)
         ext = os.path.splitext(path)[1]
         if ext not in (".h5", ".feather"):
@@ -397,4 +405,6 @@ class PyDssZipFileInterface(PyDssArchiveFileInterfaceBase):
         return data
 
     def read_csv(self, path):
+        if sys.platform == "win32":
+            path = self.normalize_path(path)
         return pd.read_csv(io.BytesIO(self._zip.read(path)))
