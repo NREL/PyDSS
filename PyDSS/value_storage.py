@@ -519,7 +519,8 @@ class ValueContainer:
         dtype = self._TYPE_MAPPING.get(values[0].value_type)
         assert dtype is not None
         scaleoffset = None
-        if dtype in (np.float, np.float32, np.float64, np.float128):
+        # There is no np.float128 on Windows.
+        if dtype in (np.float, np.float32, np.float64, np.longdouble):
             scaleoffset = 4
         time_step_path = None
         max_size = max_size * len(values) if store_time_step else max_size
