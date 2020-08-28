@@ -101,7 +101,9 @@ class OpenDSS:
         run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
         self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(params['Frequency']['Fundamental frequency']) + ' Hz')
 
-        run_command('Set %SeriesRL={}'.format(params['Frequency']['Percentage load in series']))
+        # TODO: This command doesn't work on any version. Starting in opendssdirect.py v0.5.0 it causes
+        # a fatal exception.
+        #run_command('Set %SeriesRL={}'.format(params['Frequency']['Percentage load in series']))
         if params['Frequency']['Neglect shunt admittance']:
             run_command('Set NeglectLoadY=Yes')
 
