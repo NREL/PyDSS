@@ -24,7 +24,12 @@ SCENARIO_NAME = "scenario1"
 
 @pytest.fixture
 def cleanup_project():
-    for project_path in (RUN_PROJECT_PATH, CUSTOM_EXPORTS_PROJECT_PATH):
+    projects = (
+        RUN_PROJECT_PATH,
+        CUSTOM_EXPORTS_PROJECT_PATH,
+        PV_REPORTS_PROJECT_PATH,
+    )
+    for project_path in projects:
         export_path = os.path.join(project_path, "Exports", "scenario1")
         logs_path = os.path.join(project_path, "Logs")
         for path in (logs_path, export_path):
