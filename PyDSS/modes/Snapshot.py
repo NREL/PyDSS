@@ -48,6 +48,9 @@ class Snapshot(abstact_solver):
     def IncStep(self):
         return self._dssSolution.Solve()
 
+    def IncrementTimeStep(self):
+        pass
+
     def setFrequency(self, frequency):
         self._dssSolution.Frequency(frequency)
         return
