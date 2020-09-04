@@ -79,6 +79,8 @@ class Reports:
                         exports.append_property(elem_class, req_prop)
                         logger.debug("Add required property: %s %s", elem_class, req_prop)
 
+            all_reports[name].set_required_project_settings(options)
+
     @staticmethod
     def get_all_reports():
         reports = {}
@@ -183,6 +185,18 @@ class ReportBase(abc.ABC):
             inputs[key] = val
 
         return inputs
+
+    @staticmethod
+    def set_required_project_settings(simulation_config):
+        """Make report-required changes to the simulation config.
+
+        Parameters
+        ----------
+        simulation_config : dict
+            Settings to be modified.
+
+        """
+        # Default behavior is no change.
 
     def _export_dataframe_report(self, df, output_dir, basename):
         """Export report to a dataframe."""

@@ -57,6 +57,12 @@ class PvReportBase(ReportBase, abc.ABC):
             ],
         }
 
+    @staticmethod
+    def set_required_project_settings(simulation_config):
+        if not simulation_config["Exports"]["Export PV Profiles"]:
+            simulation_config["Exports"]["Export PV Profiles"] = True
+            logger.info("Enabled Export PV Profiles")
+
 
 class PvClippingReport(PvReportBase):
     """Reports PV Clipping for the simulation."""
