@@ -55,8 +55,6 @@ class instance(object):
             # Feather is not supported because its underlying libraries do not support complex numbers
             'Export Format': {'type': str, 'Options': ["csv", "h5"]},
             'Export Compression': {'type': bool, 'Options': [True, False]},
-            'Export Iteration Order': {'type': str, 'Options': ["ElementValuesPerProperty",
-                                                                "ValuesByPropertyAcrossElements"]},
             'Export Elements': {'type': bool, 'Options': [True, False]},
             'Export Event Log': {'type': bool, 'Options': [True, False]},
             'Export Data Tables': {'type': bool, 'Options': [True, False]},

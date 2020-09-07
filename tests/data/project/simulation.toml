@@ -43,7 +43,6 @@ post_process_infos = []
 [Exports]
 "Export Mode" = "byClass"
 "Export Style" = "Single file"
-"Export Iteration Order" = "ValuesByPropertyAcrossElements"
 "Export Elements" = true
 "Export Data Tables" = false
 "Export Data In Memory" = true

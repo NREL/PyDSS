@@ -34,7 +34,6 @@ post_process_infos = []
 [Exports]
 "Export Mode" = "byClass"
 "Export Style" = "Single file"
-"Export Iteration Order" = "ValuesByPropertyAcrossElements"
 "Export Elements" = true
 "Export Data Tables" = true
 "Export PV Profiles" = true
