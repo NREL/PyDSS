@@ -13,6 +13,9 @@ from PyDSS.reports.reports import ReportBase, ReportGranularity
 from PyDSS.utils.dataframe_utils import read_dataframe, write_dataframe
 from PyDSS.utils.utils import dump_data
 
+PF1_SCENARIO = "pf1"
+CONTROL_MODE_SCENARIO = "control_mode"
+
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +38,7 @@ class PvReportBase(ReportBase, abc.ABC):
         }
 
     def _get_pv_system_info(self, pv_system, scenario):
-        if scenario == "pf1":
+        if scenario == PF1_SCENARIO:
             pv_systems = self._pf1_pv_systems
         else:
             pv_systems = self._control_mode_pv_systems
@@ -99,7 +102,7 @@ class PvClippingReport(PvReportBase):
         return total_dc_power
 
     def _get_total_dc_power(self, pv_system):
-        cm_info = self._get_pv_system_info(pv_system, "control_mode")
+        cm_info = self._get_pv_system_info(pv_system, CONTROL_MODE_SCENARIO)
         pmpp = cm_info["pmpp"]
         irradiance = cm_info["irradiance"]
         total_irradiance = cm_info["load_shape_pmult_sum"]
@@ -125,7 +128,7 @@ class PvClippingReport(PvReportBase):
 
         for _name in self._pv_system_names:
             name = _name
-            cm_info = self._get_pv_system_info(name, "control_mode")
+            cm_info = self._get_pv_system_info(name, CONTROL_MODE_SCENARIO)
             pf1_real_power = pf1_real_power_full[name + "__Powers"]
             dc_power = pv_load_shapes[cm_info["load_shape_profile"]] * \
                 cm_info["pmpp"] * \
@@ -159,7 +162,7 @@ class PvClippingReport(PvReportBase):
         pv_load_shapes = self._read_pv_load_shapes()
         dc_powers = {}
         for name in self._pv_system_names:
-            cm_info = self._get_pv_system_info(name, "control_mode")
+            cm_info = self._get_pv_system_info(name, CONTROL_MODE_SCENARIO)
             series = pv_load_shapes[cm_info["load_shape_profile"]]
             dc_power = series * cm_info["pmpp"] * cm_info["irradiance"]
             assert len(dc_power) == len(pf1_real_power)
@@ -191,7 +194,7 @@ class PvClippingReport(PvReportBase):
             self._simulation_config["Project"]["Project Path"],
             self._simulation_config["Project"]["Active Project"],
             "Exports",
-            "control_mode",
+            CONTROL_MODE_SCENARIO,
             PV_LOAD_SHAPE_FILENAME,
         )
         return read_dataframe(path)
