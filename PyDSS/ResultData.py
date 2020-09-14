@@ -69,7 +69,6 @@ class ResultData:
         self._base_scenario = options["Project"]["Active Scenario"]
         self._export_format = options["Exports"]["Export Format"]
         self._export_compression = options["Exports"]["Export Compression"]
-        self._export_iteration_order = options["Exports"]["Export Iteration Order"]
         self._max_chunk_bytes = options["Exports"]["HDF Max Chunk Bytes"]
         self._export_dir = os.path.join(
             self.system_paths["Export"],
