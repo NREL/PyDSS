@@ -130,20 +130,18 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         """
         super(AutomatedVoltageUpgrade, self).__init__(project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger)
 
-        # TODO Akshay: this seems prone to error. Do we need a programmatic way of getting the filename?
         # Just send this list as input to the upgrades code via DISCO -  this list may be empty or have as many
         # paths as the user desires - if empty the mults in the 'tps_to_test' input will be used else if non-empty
         # max and min load mults from the load.dss files will be used. Tne tps to test input should always be specified
         # irrespective of whether it gets used or not
-        #self.other_load_dss_files = {}
-        #self.other_pv_dss_files = {}
-        
-        # TODO: The attributes were dropped, need to refactor according code
-        self.config["DPV_penetration_HClimit"] = 0
-        self.config["DPV_penetration_target"] = 200
 
-        self.other_pv_dss_files = self.config["project_data"]["pydss_other_pvs_dss_files"]
-        self.other_load_dss_files = self.config["project_data"]["pydss_other_loads_dss_files"]
+        # these parameters are used only if multiple load and pv files are present
+        # TODO: only fixed_tps (using tps_to_test list from config) works in this version
+        #  associated function to compute violations need to be changed to make the multiple dss files option work
+        use_fixed_tps = True
+        if ~ use_fixed_tps:
+            self.other_pv_dss_files = self.config["project_data"]["pydss_other_pvs_dss_files"]
+            self.other_load_dss_files = self.config["project_data"]["pydss_other_loads_dss_files"]
 
         thermal_filename = "thermal_upgrades.dss"
         thermal_dss_file = os.path.join(
@@ -158,8 +156,10 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.dssSolver = dssSolver
         self.start = time.time()
 
-        self.get_load_pv_mults_LA()
-        #self.get_load_mults()
+        if ~ use_fixed_tps:
+            self.get_load_pv_mults_individual_object()  # multipliers are computed for individual load and pv
+            # self.get_load_mults()  # max and min are taken
+
         # reading original objects (before upgrades)
         self.orig_ckt_info = get_ckt_info()
         self.orig_reg_controls = {x["name"]: x for x in iter_elements(dss.RegControls, get_reg_control_info)}
@@ -692,7 +692,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
     def _get_required_input_fields():
         return AutomatedVoltageUpgrade.REQUIRED_INPUT_FIELDS
 
-    def get_load_pv_mults_LA(self):
+    def get_load_pv_mults_individual_object(self):
         self.orig_loads = {}
         self.orig_pvs = {}
         self.dssSolver.Solve()
@@ -705,7 +705,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 if not dss.Loads.Next() > 0:
                     break
             for key, dss_paths in self.other_load_dss_files.items():
-                self.read_load_files_LA(key, dss_paths)
+                self.read_load_files_individual_object(key, dss_paths)
 
         if dss.PVsystems.Count() > 0:
             dss.PVsystems.First()
@@ -716,10 +716,10 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 if not dss.PVsystems.Next() > 0:
                     break
             for key, dss_paths in self.other_pv_dss_files.items():
-                self.read_pv_files_LA(key, dss_paths)
+                self.read_pv_files_individual_object(key, dss_paths)
 
 
-    def read_load_files_LA(self,key_paths,dss_path):
+    def read_load_files_individual_object(self,key_paths,dss_path):
         # Add all load kW values
         temp_dict = {}
         for path_f in dss_path:
@@ -738,7 +738,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             elif key not in temp_dict:
                 self.orig_loads[key].append(self.orig_loads[key][0])
 
-    def read_pv_files_LA(self, key_paths, dss_path):
+    def read_pv_files_individual_object(self, key_paths, dss_path):
         # Add all PV pmpp values
         temp_dict = {}
         for path_f in self.other_pv_dss_files[key_paths]:
@@ -1065,9 +1065,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         plt.axis("off")
         plt.show()
 
-
-    # This function is only for LA
-    def check_voltage_violations_multi_tps(self, upper_limit, lower_limit):
+    # This function is only for LA - checks voltage violations when we have multipliers for individual load and PV
+    def check_voltage_violations_multi_tps_individual_object(self, upper_limit, lower_limit):
         # TODO: This objective currently gives more weightage if same node has violations at more than 1 time point
         num_nodes_counter = 0
         severity_counter = 0
@@ -1148,7 +1147,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         return
 
     # this function checks for voltage violations based on upper and lower limit passed
-    def check_voltage_violations_multi_tps_orig(self, upper_limit, lower_limit):
+    def check_voltage_violations_multi_tps(self, upper_limit, lower_limit):
         # TODO: This objective currently gives more weightage if same node has violations at more than 1 time point
         num_nodes_counter = 0
         severity_counter = 0

@@ -83,9 +83,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         super(AutomatedThermalUpgrade, self).__init__(project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger)
         
         # TODO: attributes that have been dropped
-        self.config["DPV_penetration_HClimit"] = 0
-        self.config["DPV_penetration_target"] = 0
-        self.config["DPV_penetration_step"] = 10
         self.config["units key"] = ["mi", "kft", "km", "m", "Ft", "in", "cm"]  # Units key for lines taken from OpenDSS
         
         dss = dssInstance
@@ -94,27 +91,30 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         # paths as the user desires - if empty the mults in the 'tps_to_test' input will be used else if non-empty
         # max and min load mults from the load.dss files will be used. Tne tps to test input should always be specified
         # irrespective of whether it gets used or not
-        self.other_load_dss_files = {}
-        self.other_pv_dss_files = {}
 
-        self.other_pv_dss_files = self.config["project_data"]["pydss_other_pvs_dss_files"]
-        self.other_load_dss_files = self.config["project_data"]["pydss_other_loads_dss_files"]
+        # these parameters are used only if multiple load and pv files are present
+        # TODO: only fixed_tps (using tps_to_test list from config) works in this version
+        #  associated function to compute violations need to be changed to make the multiple dss files option work
+        use_fixed_tps = True
+        if ~ use_fixed_tps:
+            self.other_load_dss_files = {}
+            self.other_pv_dss_files = {}
 
-        self.get_load_pv_mults_LA()
-        #self.get_load_mults()
+            self.other_pv_dss_files = self.config["project_data"]["pydss_other_pvs_dss_files"]
+            self.other_load_dss_files = self.config["project_data"]["pydss_other_loads_dss_files"]
+
+            self.get_load_pv_mults_individual_object()
+            # self.get_load_mults()
+
         self.orig_xfmrs = {x["name"]: x for x in iter_elements(dss.Transformers, get_transformer_info)}
         self.orig_lines = {x["name"]: x for x in iter_elements(dss.Lines, self.get_line_info)}
 
         # TODO: To be modified
         self.plot_violations_counter=0
-        start_pen = self.config["DPV_penetration_HClimit"]
-        target_pen = self.config["DPV_penetration_target"]
-        pen_step = self.config["DPV_penetration_step"]
-        self.pen_level = start_pen
-        #self.compile_feeder_initialize()
+        # self.compile_feeder_initialize()
         self.export_line_DT_parameters()
         start= time.time()
-        self.logger.info("Determining thermal upgrades for PV penetration level: %s", self.pen_level)
+        self.logger.info("Determining thermal upgrades")
         dss.Vsources.First()
         self.source = dss.CktElement.BusNames()[0].split(".")[0]
         self.feeder_parameters = {}
@@ -155,7 +155,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         for key, vals in self.temp_xfmr_viols.items():
             self.orig_xfmr_ldg_lst.append(vals[0] * 100 / vals[1])
             self.equip_ldgs["Xfmr_" + key] = (vals[0] * 100 / vals[1])
-        self.write_to_json(self.equip_ldgs, "Initial_equipment_loadings_pen_{}".format(self.pen_level))
+        self.write_to_json(self.equip_ldgs, "Initial_equipment_loadings")
 
         # Store voltage violations before any upgrades - max, min and number
         self.V_upper_thresh = 1.05
@@ -213,38 +213,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         dss.run_command("Clear")
         base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
 
-        # # appending redirect to Territory wide line codes and line geometry file LA specific
-        # territory_linecode = os.path.join(self.config["upgrade_library_path"], "Territory_LineCodes.dss")
-        # territory_linegeometry = os.path.join(self.config["upgrade_library_path"], "Territory_LineGeometry.dss")
-        # redirect_list = [f'Redirect {territory_linecode}\n', f'Redirect {territory_linegeometry}\n', 'Solve\n']
-        # p = re.compile('^Redirect\s(\S*)')  # captures master dss path"
-        # # read deployment.dss file to get master dss path
-        # with open(base_dss, "r") as file_object:
-        #     for line in file_object:
-        #         if 'master' in line.lower():
-        #             m = re.search(p, line)
-        #             if m:
-        #                 master_file = m[0]
-        # file_object.close()
-        #
-        # # open master file (comment existing line code and line geometry redirect, and add new redirect)
-        # f_content = f.read()
-        # f_content = re.sub(r'Redirect LineCodes.dss', r'!Redirect LineCodes.dss', f_content)
-        # f_content = re.sub(r'Redirect LineGeometry.dss', r'!Redirect LineGeometry.dss', f_content)
-        # # return pointer to top of file so we can re-write the content with replaced string
-        # f.seek(0)
-        # # clear file content
-        # f.truncate()
-        # # re-write the content with the updated content
-        # f.write(f_content)
-        # # close file
-        # f.close()
-        #     # for line in file_object:
-        #     #     # Append redirects at the end of file
-        #     #     for line in redirect_list:
-        #     #         file_object.write(line)
-        # breakpoint()
-
         # check_redirect(base_dss)
         result = dss.run_command(f"Redirect {base_dss}")
         if result != "":
@@ -264,7 +232,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         for key, vals in self.all_xfmr_ldgs.items():
             self.final_xfmr_ldg_lst.append(vals[0] * 100 / vals[1])
             self.equip_ldgs["Xfmr_" + key] = (vals[0] * 100 / vals[1])
-        self.write_to_json(self.equip_ldgs, "Final_equipment_loadings_pen_{}".format(self.pen_level))
+        self.write_to_json(self.equip_ldgs, "Final_equipment_loadings")
         self.orig_line_ldg_lst.sort(reverse=True)
         self.final_line_ldg_lst.sort(reverse=True)
         self.orig_xfmr_ldg_lst.sort(reverse=True)
@@ -328,9 +296,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
         # Process outputs
         input_dict = {
-            "DPV_penetration_HClimit"       : self.config["DPV_penetration_HClimit"],
-            "DPV_penetration_target"        : self.config["DPV_penetration_target"],
-            "DPV_penetration_step"          : self.config["DPV_penetration_step"],
             "Outputs"                       : self.config["Outputs"],
             "Create_plots"                  : self.config["create_upgrade_plots"],
             "feederhead_name"               : feeder_head_name,
@@ -347,7 +312,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
     def _get_required_input_fields():
         return AutomatedThermalUpgrade.REQUIRED_INPUT_FIELDS
 
-    def get_load_pv_mults_LA(self):
+    def get_load_pv_mults_individual_object(self):
         self.orig_loads = {}
         self.orig_pvs = {}
         self.dssSolver.Solve()
@@ -360,7 +325,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if not dss.Loads.Next() > 0:
                     break
             for key, dss_paths in self.other_load_dss_files.items():
-                self.read_load_files_LA(key, dss_paths)
+                self.read_load_files_get_load_pv_mults_individual_object(key, dss_paths)
 
         if dss.PVsystems.Count() > 0:
             dss.PVsystems.First()
@@ -374,9 +339,9 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             for key,vals in self.orig_pvs.items():
                 print(key,vals)
             for key, dss_paths in self.other_pv_dss_files.items():
-                self.read_pv_files_LA(key, dss_paths)
+                self.read_pv_files_get_load_pv_mults_individual_object(key, dss_paths)
 
-    def read_load_files_LA(self,key_paths,dss_path):
+    def read_load_files_get_load_pv_mults_individual_object(self,key_paths,dss_path):
 
         # Add all load kW values
         temp_dict = {}
@@ -396,7 +361,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             elif key not in temp_dict:
                 self.orig_loads[key].append(self.orig_loads[key][0])
 
-    def read_pv_files_LA(self, key_paths, dss_path):
+    def read_pv_files_get_load_pv_mults_individual_object(self, key_paths, dss_path):
         # Add all PV pmpp values
         temp_dict = {}
         for path_f in self.other_pv_dss_files[key_paths]:
@@ -471,8 +436,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         data = json.load(f)
         return data
 
-    # Use only for LA
-    def get_nodal_violations(self):
+    # Use only for LA - this computes nodal violations when we have multipliers for individual Load and PV objects
+    def get_nodal_violations_individual_object(self):
         # Get the maximum and minimum voltages and number of buses with violations
         self.buses          = dss.Circuit.AllBusNames()
         self.max_V_viol     = 0
@@ -520,7 +485,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     self.cust_viol.append(b)
         return
 
-    def get_nodal_violations_orig(self):
+    def get_nodal_violations(self):
         # Get the maximum and minimum voltages and number of buses with violations
         self.buses          = dss.Circuit.AllBusNames()
         self.max_V_viol     = 0
@@ -883,8 +848,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         for key, vals in self.all_line_ldgs_alltps.items():
             self.all_line_ldgs[key] = [max(vals[0]), vals[1]]
 
-    # Use only for LA
-    def solve_diff_tps_lines(self):
+    # Use only for LA - this solves when we have multipliers for individual Load and PV objects
+    def solve_diff_tps_lines_individual_object(self):
         # Uses Kwami's LA100 logic
         self.logger.info("PVsystems: %s",dss.PVsystems.Count())
         self.line_violations_alltps = {}
@@ -942,7 +907,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     break
         return
 
-    def solve_diff_tps_lines_orig(self):
+    # this function solves using list of tps_to_test
+    def solve_diff_tps_lines(self):
         # Uses Kwami's LA100 logic
         self.logger.info("PVsystems: %s",dss.PVsystems.Count())
         self.line_violations_alltps = {}
@@ -1189,8 +1155,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         for key,vals in self.all_xfmr_ldgs_alltps.items():
             self.all_xfmr_ldgs[key] = [max(vals[0]),vals[1]]
 
-    # Use only for LA
-    def determine_xfmr_ldgs_alltps(self):
+    # Use only for LA - this computes violations when we have multipliers for individual Load and PV objects
+    def determine_xfmr_ldgs_alltps_individual_object(self):
         self.xfmr_violations_alltps = {}
         self.all_xfmr_ldgs_alltps = {}
         for tp_cnt in range(len(self.other_load_dss_files)):
@@ -1249,8 +1215,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     break
         return
 
-
-    def determine_xfmr_ldgs_alltps_orig(self):
+    # this function is used to determine loadings - using a list of tps provided in config
+    def determine_xfmr_ldgs_alltps(self):
         self.xfmr_violations_alltps = {}
         self.all_xfmr_ldgs_alltps = {}
         if len(self.other_load_dss_files)>0:
@@ -1476,23 +1442,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.dss_upgrades.append(device_command+"\n")
         return
 
-    def redirect_dss_upgrades(self):
-        # TODO: Probably not useful here
-        # Get all available dss upgrades files
-        self.thermal_upgrades_files = [f for f in os.listdir(self.config["Outputs"]) if f.startswith("Thermal_upgrades_pen")]
-        if int(self.pen_level) > int(self.config["DPV_penetration_HClimit"]):
-            prev_pen_level = self.pen_level - self.config["DPV_penetration_step"]
-            expected_file_name = "Thermal_upgrades_pen_{}.dss".format(prev_pen_level)
-            self.logger.debug("expected_file_name", expected_file_name)
-            if expected_file_name in self.thermal_upgrades_files:
-                expected_file_path = os.path.join(self.config["Outputs"],expected_file_name)
-                ##check_redirect(expected_file_path)
-                # Also append all upgrades in the previous penetration level to the next level
-                with open(os.path.join(self.config["Outputs"], "Thermal_upgrades_pen_{}.dss".format(prev_pen_level)),"r") as datafile:
-                    for line in datafile:
-                        self.dss_upgrades.append(line)
-            elif expected_file_name not in self.thermal_upgrades_files:
-                raise InvalidParameter("Previous upgrades file does not exist, some error is code execution")
 
     def run(self, step, stepMax):
         """Induces and removes a fault as the simulation runs as per user defined settings. 
