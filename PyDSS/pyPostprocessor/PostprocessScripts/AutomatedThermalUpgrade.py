@@ -213,10 +213,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         dss.run_command("Clear")
         base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
 
-        # check_redirect(base_dss)
-        result = dss.run_command(f"Redirect {base_dss}")
-        if result != "":
-            print(f"Redirect failed for {base_dss}, message: {result}")
+        check_redirect(base_dss)
         upgrades_file = os.path.join(self.config["Outputs"], "thermal_upgrades.dss")
         check_redirect(upgrades_file)
         self.dssSolver.Solve()
@@ -336,8 +333,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if not dss.PVsystems.Next() > 0:
                     break
 
-            for key,vals in self.orig_pvs.items():
-                print(key,vals)
             for key, dss_paths in self.other_pv_dss_files.items():
                 self.read_pv_files_get_load_pv_mults_individual_object(key, dss_paths)
 
@@ -436,7 +431,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         data = json.load(f)
         return data
 
-    # Use only for LA - this computes nodal violations when we have multipliers for individual Load and PV objects
+    # (not used) computes nodal violations when we have multipliers for individual Load and PV objects
     def get_nodal_violations_individual_object(self):
         # Get the maximum and minimum voltages and number of buses with violations
         self.buses          = dss.Circuit.AllBusNames()
@@ -450,8 +445,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 while True:
                     pv_name = dss.PVsystems.Name().split(".")[0].lower()
                     if pv_name not in self.orig_pvs:
-                        print("PV system not found, quitting...")
-                        quit()
+                        raise Exception("PV system not found, quitting...")
                     new_pmpp = self.orig_pvs[pv_name][tp_cnt]
                     dss.run_command(f"Edit PVsystem.{pv_name} irradiance={new_pmpp}")
                     if not dss.PVsystems.Next()>0:
@@ -462,8 +456,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 while True:
                     load_name = dss.Loads.Name().split(".")[0].lower()
                     if load_name not in self.orig_loads:
-                        print("Load not found, quitting...")
-                        quit()
+                        raise Exception("Load not found, quitting...")
                     new_kw = self.orig_loads[load_name][tp_cnt]
                     dss.Loads.kW(new_kw)
                     if not dss.Loads.Next() > 0:
@@ -500,8 +493,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     while True:
                         load_name = dss.Loads.Name().split(".")[0].lower()
                         if load_name not in self.min_max_load_kw:
-                            print("Load not found, quitting...")
-                            quit()
+                            raise Exception("Load not found, quitting...")
                         new_kw = self.min_max_load_kw[load_name][tp_cnt]
                         dss.Loads.kW(new_kw)
                         if not dss.Loads.Next() > 0:
@@ -515,8 +507,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     while True:
                         load_name = dss.Loads.Name().split(".")[0].lower()
                         if load_name not in self.min_max_load_kw:
-                            print("Load not found, quitting...")
-                            quit()
+                            raise Exception("Load not found, quitting...")
                         new_kw = self.min_max_load_kw[load_name][tp_cnt - 2]
                         dss.Loads.kW(new_kw)
                         if not dss.Loads.Next() > 0:
@@ -848,9 +839,9 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         for key, vals in self.all_line_ldgs_alltps.items():
             self.all_line_ldgs[key] = [max(vals[0]), vals[1]]
 
-    # Use only for LA - this solves when we have multipliers for individual Load and PV objects
+    # (not used) solves when we have multipliers for individual Load and PV objects
     def solve_diff_tps_lines_individual_object(self):
-        # Uses Kwami's LA100 logic
+        # Uses Kwami's logic
         self.logger.info("PVsystems: %s",dss.PVsystems.Count())
         self.line_violations_alltps = {}
         self.all_line_ldgs_alltps = {}
@@ -861,8 +852,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 while True:
                     pv_name = dss.PVsystems.Name().split(".")[0].lower()
                     if pv_name not in self.orig_pvs:
-                        print("PV system not found, quitting...")
-                        quit()
+                        raise Exception("PV system not found, quitting...")
                     new_pmpp = self.orig_pvs[pv_name][tp_cnt]
                     dss.run_command(f"Edit PVsystem.{pv_name} irradiance={new_pmpp}")
                     if not dss.PVsystems.Next()>0:
@@ -873,8 +863,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 while True:
                     load_name = dss.Loads.Name().split(".")[0].lower()
                     if load_name not in self.orig_loads:
-                        print("Load not found, quitting...")
-                        quit()
+                        raise Exception("Load not found, quitting...")
                     new_kw = self.orig_loads[load_name][tp_cnt]
                     dss.Loads.kW(new_kw)
                     if not dss.Loads.Next() > 0:
@@ -909,7 +898,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
     # this function solves using list of tps_to_test
     def solve_diff_tps_lines(self):
-        # Uses Kwami's LA100 logic
+        # Uses Kwami's logic
         self.logger.info("PVsystems: %s",dss.PVsystems.Count())
         self.line_violations_alltps = {}
         self.all_line_ldgs_alltps = {}
@@ -922,8 +911,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     while True:
                         load_name = dss.Loads.Name().split(".")[0].lower()
                         if load_name not in self.min_max_load_kw:
-                            print("Load not found, quitting...")
-                            quit()
+                            raise Exception("Load not found, quitting...")
                         new_kw = self.min_max_load_kw[load_name][tp_cnt]
                         dss.Loads.kW(new_kw)
                         if not dss.Loads.Next() > 0:
@@ -937,8 +925,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     while True:
                         load_name = dss.Loads.Name().split(".")[0].lower()
                         if load_name not in self.min_max_load_kw:
-                            print("Load not found, quitting...")
-                            quit()
+                            raise Exception("Load not found, quitting...")
                         new_kw = self.min_max_load_kw[load_name][tp_cnt - 2]
                         dss.Loads.kW(new_kw)
                         if not dss.Loads.Next() > 0:
@@ -1145,7 +1132,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         return
 
     def determine_xfmr_ldgs(self):
-        # TODO: LA100 team please correct the logic used for determining DT loadings. This is the same logic Nicolas
+        # TODO: team please correct the logic used for determining DT loadings. This is the same logic Nicolas
         # TODO: used for the SETO project. This may break down for some DT configurations such as 3 wdg transformers
         self.xfmr_violations = {}
         self.all_xfmr_ldgs = {}
@@ -1155,7 +1142,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         for key,vals in self.all_xfmr_ldgs_alltps.items():
             self.all_xfmr_ldgs[key] = [max(vals[0]),vals[1]]
 
-    # Use only for LA - this computes violations when we have multipliers for individual Load and PV objects
+    # (not used) computes violations when we have multipliers for individual Load and PV objects
     def determine_xfmr_ldgs_alltps_individual_object(self):
         self.xfmr_violations_alltps = {}
         self.all_xfmr_ldgs_alltps = {}
@@ -1166,8 +1153,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 while True:
                     pv_name = dss.PVsystems.Name().split(".")[0].lower()
                     if pv_name not in self.orig_pvs:
-                        print("PV system not found, quitting...")
-                        quit()
+                        raise Exception("PV system not found, quitting...")
                     new_pmpp = self.orig_pvs[pv_name][tp_cnt]
                     dss.run_command(f"Edit PVsystem.{pv_name} irradiance={new_pmpp}")
                     if not dss.PVsystems.Next()>0:
@@ -1178,8 +1164,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 while True:
                     load_name = dss.Loads.Name().split(".")[0].lower()
                     if load_name not in self.orig_loads:
-                        print("Load not found, quitting...")
-                        quit()
+                        raise Exception("Load not found, quitting...")
                     new_kw = self.orig_loads[load_name][tp_cnt]
                     dss.Loads.kW(new_kw)
                     if not dss.Loads.Next() > 0:
@@ -1228,8 +1213,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     while True:
                         load_name = dss.Loads.Name().split(".")[0].lower()
                         if load_name not in self.min_max_load_kw:
-                            print("Load not found, quitting...")
-                            quit()
+                            raise Exception("Load not found, quitting...")
                         new_kw = self.min_max_load_kw[load_name][tp_cnt]
                         dss.Loads.kW(new_kw)
                         if not dss.Loads.Next() > 0:
@@ -1243,8 +1227,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     while True:
                         load_name = dss.Loads.Name().split(".")[0].lower()
                         if load_name not in self.min_max_load_kw:
-                            print("Load not found, quitting...")
-                            quit()
+                            raise Exception("Load not found, quitting...")
                         new_kw = self.min_max_load_kw[load_name][tp_cnt - 2]
                         dss.Loads.kW(new_kw)
                         if not dss.Loads.Next() > 0:

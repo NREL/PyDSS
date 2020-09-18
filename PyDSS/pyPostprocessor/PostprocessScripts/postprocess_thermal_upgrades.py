@@ -288,7 +288,6 @@ class postprocess_thermal_upgrades():
         parallel_equip_counts = []
 
         for k in self.pen_level_upgrades.keys():
-            # print(k)
             equip_str = equipment_type + '.'
             if equip_str in k:
                 # count of new lines added to address overload. Often 1, but could be > 1 with severe overloads
@@ -310,8 +309,8 @@ class postprocess_thermal_upgrades():
         xfmr_parallel_df = self.parallel_upgrades('Transformer')
         line_parallel_df = self.parallel_upgrades('Line')
 
-        xfmr_parallel_df.to_csv(os.path.join(self.Settings["Outputs"] + 'summary_of_parallel_transformer_upgrades.csv'))
-        line_parallel_df.to_csv(os.path.join(self.Settings["Outputs"] + 'summary_of_parallel_line_upgrades.csv'))
+        xfmr_parallel_df.to_csv(os.path.join(self.Settings["Outputs"], 'summary_of_parallel_transformer_upgrades.csv'))
+        line_parallel_df.to_csv(os.path.join(self.Settings["Outputs"], 'summary_of_parallel_line_upgrades.csv'))
         return
 
 

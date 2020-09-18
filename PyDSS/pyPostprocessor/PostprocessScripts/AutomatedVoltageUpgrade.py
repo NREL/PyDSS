@@ -599,10 +599,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.logger.info("Checking impact of redirected upgrades file")
         dss.run_command("Clear")
         base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
-        # check_redirect(base_dss)
-        result = dss.run_command(f"Redirect {base_dss}")
-        if result != "":
-            print(f"Redirect failed for {base_dss}, message: {result}")
+        check_redirect(base_dss)
         check_redirect(thermal_dss_file)
         upgrades_file = os.path.join(self.config["Outputs"], "voltage_upgrades.dss")
         check_redirect(upgrades_file)
@@ -1065,7 +1062,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         plt.axis("off")
         plt.show()
 
-    # This function is only for LA - checks voltage violations when we have multipliers for individual load and PV
+    # (not used) check voltage violations when we have multipliers for individual load and PV
     def check_voltage_violations_multi_tps_individual_object(self, upper_limit, lower_limit):
         # TODO: This objective currently gives more weightage if same node has violations at more than 1 time point
         num_nodes_counter = 0
@@ -1084,8 +1081,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 while True:
                     pv_name = dss.PVsystems.Name().split(".")[0].lower()
                     if pv_name not in self.orig_pvs:
-                        print("PV system not found, quitting...")
-                        quit()
+                        raise Exception("PV system not found, quitting...")
                     new_pmpp = self.orig_pvs[pv_name][tp_cnt]
                     dss.run_command(f"Edit PVsystem.{pv_name} irradiance={new_pmpp}")
                     if not dss.PVsystems.Next()>0:
@@ -1096,8 +1092,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 while True:
                     load_name = dss.Loads.Name().split(".")[0].lower()
                     if load_name not in self.orig_loads:
-                        print("Load not found, quitting...")
-                        quit()
+                        raise Exception("Load not found, quitting...")
                     new_kw = self.orig_loads[load_name][tp_cnt]
                     dss.Loads.kW(new_kw)
                     if not dss.Loads.Next() > 0:
@@ -1167,8 +1162,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     while True:
                         load_name = dss.Loads.Name().split(".")[0].lower()
                         if load_name not in self.min_max_load_kw:
-                            print("Load not found, quitting...")
-                            quit()
+                            raise Exception("Load not found, quitting...")
                         new_kw = self.min_max_load_kw[load_name][tp_cnt]
                         dss.Loads.kW(new_kw)
                         if not dss.Loads.Next()>0:
@@ -1182,8 +1176,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     while True:
                         load_name = dss.Loads.Name().split(".")[0].lower()
                         if load_name not in self.min_max_load_kw:
-                            print("Load not found, quitting...")
-                            quit()
+                            raise Exception("Load not found, quitting...")
                         new_kw = self.min_max_load_kw[load_name][tp_cnt-2]
                         dss.Loads.kW(new_kw)
                         if not dss.Loads.Next() > 0:
@@ -1577,7 +1570,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.apply_best_regsetting(upper_limit=self.upper_limit)
 
     def apply_best_regsetting(self, upper_limit):
-        print(self.reg_sweep_viols)
         # TODO: Remove substation LTC from the settings sweep
         best_setting = ''
         # Start with assumption that each node has a violation at all time points and each violation if outside bounds
@@ -1587,7 +1579,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             if val < min_severity:
                 min_severity = val
                 best_setting = key
-        print(best_setting, min_severity)
         if best_setting == "original":
             self.apply_orig_reg_setting()
         else:
@@ -1625,7 +1616,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     break
 
     def apply_orig_reg_setting(self):
-        print(self.initial_regctrls_settings)
         for key, vals in self.initial_regctrls_settings.items():
             self.v_sp = vals[0]
             self.reg_band = vals[1]
@@ -1945,8 +1935,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         #  by upper voltage limit - basically the maximum possible severity
         min_severity = 10000000000000
         # min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * upper_limit
-        print("Severity: ", pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * upper_limit)
-        print(self.subLTC_sweep_viols)
+        self.logger.info(f"Severity: {pow(len(self.all_bus_names), 2) * len(self.config['tps_to_test']) * upper_limit}")
+        self.logger.debug(self.subLTC_sweep_viols)
         for key, val in self.subLTC_sweep_viols.items():
             if val < min_severity:
                 min_severity = val
@@ -1954,8 +1944,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         if best_setting == "original":
             self.apply_orig_LTC_setting()
         else:
-            print("\n\nbest_setting")
-            print(best_setting)
+            self.logger.debug(f"\n\nBest_setting: {best_setting}")
             v_sp = best_setting.split("_")[0]
             reg_band = best_setting.split("_")[1]
             dss.RegControls.First()
