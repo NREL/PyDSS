@@ -1,19 +1,15 @@
-DPV_penetration_HClimit = 0
-DPV_penetration_target = 200
-Target_V = 1
-"Range B upper" = 1.05
-"Range B lower" = 0.95
+target_v = 1
+initial_voltage_upper_limit = 1.05
+initial_voltage_lower_limit = 0.95
+final_voltage_upper_limit = 1.04
+final_voltage_lower_limit = 0.96
 nominal_voltage = 120
-"nominal pu voltage" = 1
-tps_to_test = [0.2, 1.4, 0.1, 0.9]
-# [min load multiplier without PV, max load multiplier without PV, min load multiplier with PV, max load multiplier with PV]
-"create topology plots" = true
-# Set this to true only if coordinates for all buses in the network are available
-"Cap sweep voltage gap" = 1
-# This value determines difference increase between cap ON and OFF voltage setting, example (119.5, 120.5), (119,121) and so on
-"reg control bands" = [1, 2]  # Reg control voltage bands within which taps will not change
-"reg v delta" = 0.5  # Reg control voltage set point is varied in this range
-"Max regulators" = 4
-# This number gives the maximum number of regulators placed in the feeder apart from substation LTC
-"Use LTC placement" = true
-"Thermal scenario name" = "sc-thermal"
+nominal_pu_voltage = 1
+tps_to_test = [ 0.2, 1.9, 0.1, 0.9,]
+create_topology_plots = true
+cap_sweep_voltage_gap = 1
+reg_control_bands = [ 1, 2,]
+reg_v_delta = 0.5
+max_regulators = 4
+use_ltc_placement = true
+thermal_scenario_name = "sc-thermal"

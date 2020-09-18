@@ -86,14 +86,10 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
         file_level = logging.DEBUG
     if config["Logging"]["Log to external file"]:
         logs_path = os.path.join(project_path, "Logs")
-        filename = os.path.join(
-            logs_path,
-            os.path.basename(project_path) + ".log",
-        )
-
-    if not os.path.exists(logs_path):
-        print("Logs path does not exist. 'run' is not supported on a tarred project.")
-        sys.exit(1)
+        if not os.path.exists(logs_path):
+            print("Logs path does not exist. If you are trying to run an archived project, that is not supported.")
+            sys.exit(1)
+        filename = os.path.join(logs_path, "pydss.log")
 
     setup_logging(
         "PyDSS",

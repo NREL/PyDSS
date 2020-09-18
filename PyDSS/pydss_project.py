@@ -241,6 +241,7 @@ class PyDssProject:
         logger.info("Initialized directories in %s", self._project_dir)
 
     @classmethod
+
     def create_project(cls, path, name, scenarios, simulation_config=None, options=None,
                        simulation_file=SIMULATION_SETTINGS_FILENAME, opendss_project_folder=None,
                        master_dss_file=OPENDSS_MASTER_FILENAME):

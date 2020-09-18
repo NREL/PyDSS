@@ -363,7 +363,8 @@ class OpenDSS:
             self._increment_flag, helics_time = self._HI.request_time_increment()
 
         self._dssSolver.IncrementTimeStep()
-        return self.ResultContainer.CurrentResults
+        if self.ResultContainer:
+            return self.ResultContainer.CurrentResults
 
     def DryRunSimulation(self, project, scenario):
         """Run one time point for getting estimated space."""
