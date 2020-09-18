@@ -1944,7 +1944,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         if best_setting == "original":
             self.apply_orig_LTC_setting()
         else:
-            self.logger.debug(f"\n\nBest_setting: {best_setting}")
+            self.logger.debug("Best_setting: %s", best_setting)
             v_sp = best_setting.split("_")[0]
             reg_band = best_setting.split("_")[1]
             dss.RegControls.First()
