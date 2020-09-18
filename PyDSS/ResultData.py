@@ -5,6 +5,7 @@ import os
 import pathlib
 
 import pandas as pd
+import opendssdirect as dss
 
 from PyDSS.pyLogger import getLoggerTag
 from PyDSS.unitDefinations import unit_info
@@ -180,6 +181,7 @@ class ResultData:
             self._export_event_log(metadata)
         if self._options["Exports"]["Export Elements"]:
             self._export_elements(metadata)
+            self._export_feeder_head_info(metadata)
         if self._options["Exports"]["Export PV Profiles"]:
             self._export_pv_profiles()
 
@@ -212,6 +214,96 @@ class ResultData:
             metadata["event_log"] = self._export_relative_dir + f"/{event_log}"
         finally:
             os.chdir(orig)
+
+    def _export_dataframe(self, df, basename):
+        filename = basename + "." + self._export_format
+        write_dataframe(df, filename, compress=self._export_compression)
+        self._logger.info("Exported %s", filename)
+        
+    
+
+    def _find_feeder_head_line(self):
+        dss = self._dss_instance
+        feeder_head_line = None
+    
+        flag = dss.Topology.First()
+      
+        while flag > 0:
+        
+            if 'line' in dss.Topology.BranchName().lower():
+                feeder_head_line = dss.Topology.BranchName()
+                break
+                
+            else:
+                flag = dss.Topology.Next()
+                
+        return feeder_head_line
+        
+        
+    def _get_feeder_head_loading(self):
+        dss = self._dss_instance
+        head_line = self._find_feeder_head_line()
+        if head_line is not None:
+            flag = dss.Circuit.SetActiveElement(head_line)
+            
+            if flag>0:
+                n_phases = dss.CktElement.NumPhases()
+                max_amp = dss.CktElement.NormalAmps()
+                Currents = dss.CktElement.CurrentsMagAng()[:2*n_phases]
+                Current_magnitude = Currents[::2]
+        
+                max_flow = max(max(Current_magnitude), 1e-10)
+                loading = max_flow/max_amp
+                
+                return loading
+                
+            else:
+                return None
+        else:
+            return None
+    
+
+    
+        
+    def _reverse_powerflow(self):
+        dss = self._dss_instance
+
+        reverse_pf = max(dss.Circuit.TotalPower()) > 0 # total substation power is an injection(-) or a consumption(+)
+        
+        return reverse_pf
+
+    
+    def _export_feeder_head_info(self, metadata):
+        """
+        Gets feeder head information comprising:
+        1- The name of the feeder head line
+        2- The feeder head loading in per unit
+        3- The feeder head load in (kW, kVar). Negative in case of power injection
+        4- The reverse power flow flag. True if power is flowing back to the feeder head, False otherwise
+        """
+    
+    
+        dss = self._dss_instance
+        if not "feeder_head_info_files" in metadata.keys():
+            metadata["feeder_head_info_files"] = []
+        
+        df_dict = {"FeederHeadLine": self._find_feeder_head_line(),
+                   "FeederHeadLoading": self._get_feeder_head_loading(),
+                   "FeederHeadLoad": dss.Circuit.TotalPower(),
+                   "ReversePowerFlow": self._reverse_powerflow()
+                    }
+        
+        #df = pd.DataFrame.from_dict(df_dict)
+        
+        filename = "FeederHeadInfo"
+        fname = filename + ".json"
+        
+        relpath = os.path.join(self._export_relative_dir, fname)
+        filepath = os.path.join(self._export_dir, fname)
+        #write_dataframe(df, filepath)
+        dump_data(df_dict, filepath)
+        metadata["feeder_head_info_files"].append(relpath)
+        self._logger.info("Exported %s information to %s.", filename, filepath)
 
     def _export_elements(self, metadata):
         dss = self._dss_instance
