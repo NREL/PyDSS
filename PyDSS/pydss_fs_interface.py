@@ -381,7 +381,7 @@ class PyDssTarFileInterface(PyDssArchiveFileInterfaceBase):
     def read_file(self, path):
         if sys.platform == "win32":
             path = self.normalize_path(path)
-        return self._tar.extractfile().read(path).decode("utf-8")
+        return self._tar.extractfile(path).read().decode("utf-8")
 
     def read_csv(self, path):
         return pd.read_csv(self._tar.extractfile(os.path.normpath(path).replace("\\", "/")))
