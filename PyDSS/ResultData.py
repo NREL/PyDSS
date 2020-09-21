@@ -307,7 +307,6 @@ class ResultData:
     
 
     def _find_feeder_head_line(self):
-        dss = self._dss_instance
         feeder_head_line = None
     
         flag = dss.Topology.First()
@@ -325,7 +324,6 @@ class ResultData:
         
         
     def _get_feeder_head_loading(self):
-        dss = self._dss_instance
         head_line = self._find_feeder_head_line()
         if head_line is not None:
             flag = dss.Circuit.SetActiveElement(head_line)
@@ -350,8 +348,6 @@ class ResultData:
     
         
     def _reverse_powerflow(self):
-        dss = self._dss_instance
-
         reverse_pf = max(dss.Circuit.TotalPower()) > 0 # total substation power is an injection(-) or a consumption(+)
         
         return reverse_pf
@@ -365,9 +361,6 @@ class ResultData:
         3- The feeder head load in (kW, kVar). Negative in case of power injection
         4- The reverse power flow flag. True if power is flowing back to the feeder head, False otherwise
         """
-    
-    
-        dss = self._dss_instance
         if not "feeder_head_info_files" in metadata.keys():
             metadata["feeder_head_info_files"] = []
         
@@ -375,7 +368,7 @@ class ResultData:
                    "FeederHeadLoading": self._get_feeder_head_loading(),
                    "FeederHeadLoad": dss.Circuit.TotalPower(),
                    "ReversePowerFlow": self._reverse_powerflow()
-                    }
+                  }
         
         #df = pd.DataFrame.from_dict(df_dict)
         
