@@ -30,11 +30,9 @@ from opendssdirect.utils import run_command
 CONTROLLER_PRIORITIES = 3
 
 class OpenDSS:
-    def __init__(self):
+    def __init__(self, params):
         import opendssdirect as dss
         self._dssInstance = dss
-
-    def init(self, params):
         self._TempResultList = []
         self._dssBuses = {}
         self._dssObjects = {}

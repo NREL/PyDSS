@@ -15,7 +15,7 @@ class PyDSS:
         "run" : None
     }
 
-    def __init__(self, event=None, queue=None):
+    def __init__(self, event=None, queue=None, parameters=None):
 
         self.initalized = False
         self.uuid = current_process().name
@@ -28,7 +28,12 @@ class PyDSS:
         self.queue = queue
 
         try:
-            self.pydss_obj = OpenDSS()
+            params = restructure_dictionary(parameters['parameters'])
+            self.pydss_obj = OpenDSS(params)
+            export_path = os.path.join(self.pydss_obj._dssPath['Export'], params['Project']['Active Scenario'])
+            Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
+            self.a_writer = ArrowWriter(export_path, Steps)
+            self.initalized = True
         except:
             result = {"Status": 500, "Message": f"Failed to create a PyDSS instance"}
             self.queue.put(result)
@@ -83,27 +88,6 @@ class PyDSS:
         del self.pydss_obj
         logger.info(f'PyDSS case {self.uuid} closed.')
 
-    def init(self, params):
-        logger.info(f'Reading pydss project')
-
-        args = restructure_dictionary(params)
-
-        try:
-            validate_settings(args)
-            logger.info(f'Parameter validation a success')
-        except Exception as e:
-            return 500, f"Invalid simulation settings passed, {e}"
-
-        try:
-            self.pydss_obj.init(args)
-            export_path = os.path.join(self.pydss_obj._dssPath['Export'], args['Project']['Active Scenario'])
-            Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
-            self.a_writer = ArrowWriter(export_path, Steps)
-            self.initalized = True
-            return 200, "PyDSS project successfully loaded"
-        except Exception as e:
-            return 500, f"Failed to load a PyDSS project, {e}"
-
     def run(self, params):
         if self.initalized:
             try:
@@ -141,9 +125,6 @@ class PyDSS:
         pubs = params["Publications"]
         self.pydss_obj._HI.registerPubSubTags(pubs, subs)
         return 200, f"Publications and subscriptions have been registered; Federate has entered execution mode"
-
-
-
 
 if __name__ == '__main__':
     FORMAT = '%(asctime)s - %(levelname)s - %(message)s'

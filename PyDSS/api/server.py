@@ -10,10 +10,10 @@ import time
 import os
 logger = logging.getLogger(__name__)
 
-def getJSONschema(port):
+def getJSONschema(host, port):
     base_path = schema.__path__._path[0]
     path = os.path.join(base_path, 'PyDSS.v1.json')
-    base_url = f"http://127.0.0.1:{port}"
+    base_url = f"http://{host}:{port}"
     url = base_url + "/docs/swagger.json"
     isValid = False
     while not isValid:
@@ -25,7 +25,7 @@ def getJSONschema(port):
     logger.info(f"Export the schema file to {path}")
 
 class pydss_server():
-    def __init__(self, port):
+    def __init__(self, host, port):
         self.handler = Handler()
         self.app = web.Application()
         self.swagger = SwaggerDocs(
@@ -38,7 +38,7 @@ class pydss_server():
         )
         self.register_media_handlers()
         self.add_routes()
-        t = threading.Thread(name='child procs', target=getJSONschema, args=(port,))
+        t = threading.Thread(name='child procs', target=getJSONschema, args=(host, port,))
         t.start()
 
     def register_media_handlers(self):

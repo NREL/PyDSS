@@ -235,6 +235,37 @@ class Handler:
                 summary: Creates an instance of PyDSS and runs the simulation
                 tags:
                  - Simulation
+                requestBody:
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    parameters:
+                                      type: object
+                            examples:
+                                    Example 1:
+                                        value:
+                                            parameters:
+                                                Start Year: 2017
+                                                Start Day: 1
+                                                Start Time (min): 0
+                                                End Day: 1
+                                                End Time (min): 1439
+                                                Date offset: 0
+                                                Step resolution (sec): 900
+                                                Max Control Iterations: 50
+                                                Error tolerance: 0.001
+                                                Control mode: Static
+                                                Simulation Type: QSTS
+                                                Project Path: "C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples"
+                                                Active Project: custom_contols
+                                                Active Scenario: base_case
+                                                DSS File: Master_Spohn_existing_VV.dss
+                                                Co-simulation Mode: false
+                                                Result Container: ResultContainer
+                                                Log Results: false
+                                                Federate name : PyDSS_x
 
                 responses:
                  '200':
@@ -249,6 +280,7 @@ class Handler:
                                     Status: 200
                                     Message: Starting a PyDSS instance
                                     UUID: 96c21e00-cd3c-4943-a914-14451f5f7ab6
+
                  '500':
                    description: Provided path does not exist
                    content:
@@ -263,14 +295,14 @@ class Handler:
                                     UUID: None
 
                 """
-        #args = variable_decode(request.query)
-        #print(args)
+        data = await request.json()
+        logger.info(f"Running command :{data}")
 
         pydss_uuid = str(uuid4())
         q = Queue()
 
         # Create a process for PyDSS instance
-        p = Process(target=PyDSS, name=pydss_uuid, args=(self.event, q))
+        p = Process(target=PyDSS, name=pydss_uuid, args=(self.event, q, data))
         # Store queue and process
         self.pydss_instances[pydss_uuid] = {"queue": q, "process": p}
         # Catching data coming from PyDSS
@@ -311,31 +343,7 @@ class Handler:
                         parameters:
                           type: object
                     examples:
-                        Example 1:
-                            value:
-                                UUID : 96c21e00-cd3c-4943-a914-14451f5f7ab6
-                                command: init
-                                parameters:
-                                    Start Year: 2017
-                                    Start Day: 1
-                                    Start Time (min): 0
-                                    End Day: 1
-                                    End Time (min): 1439
-                                    Date offset: 0
-                                    Step resolution (sec): 900
-                                    Max Control Iterations: 50
-                                    Error tolerance: 0.001
-                                    Control mode: Static
-                                    Simulation Type: QSTS
-                                    Project Path: "C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples"
-                                    Active Project: custom_contols
-                                    Active Scenario: base_case
-                                    DSS File: Master_Spohn_existing_VV.dss
-                                    Co-simulation Mode: false
-                                    Result Container: ResultContainer
-                                    Log Results: false
-                                    Federate name : PyDSS_x
-                        Example_2:
+                        Example_1:
                             value:
                                 UUID : 96c21e00-cd3c-4943-a914-14451f5f7ab6
                                 command: run

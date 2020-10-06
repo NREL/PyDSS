@@ -68,6 +68,48 @@
                 ]
             },
             "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "Example 1": {
+                                    "value": {
+                                        "parameters": {
+                                            "Active Project": "custom_contols",
+                                            "Active Scenario": "base_case",
+                                            "Co-simulation Mode": false,
+                                            "Control mode": "Static",
+                                            "DSS File": "Master_Spohn_existing_VV.dss",
+                                            "Date offset": 0,
+                                            "End Day": 1,
+                                            "End Time (min)": 1439,
+                                            "Error tolerance": 0.001,
+                                            "Federate name": "PyDSS_x",
+                                            "Log Results": false,
+                                            "Max Control Iterations": 50,
+                                            "Project Path": "C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples",
+                                            "Result Container": "ResultContainer",
+                                            "Simulation Type": "QSTS",
+                                            "Start Day": 1,
+                                            "Start Time (min)": 0,
+                                            "Start Year": 2017,
+                                            "Step resolution (sec)": 900
+                                        }
+                                    }
+                                }
+                            },
+                            "schema": {
+                                "properties": {
+                                    "parameters": {
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "required": false
+                },
                 "responses": {
                     "200": {
                         "content": {
@@ -118,34 +160,7 @@
                     "content": {
                         "application/json": {
                             "examples": {
-                                "Example 1": {
-                                    "value": {
-                                        "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
-                                        "command": "init",
-                                        "parameters": {
-                                            "Active Project": "custom_contols",
-                                            "Active Scenario": "base_case",
-                                            "Co-simulation Mode": false,
-                                            "Control mode": "Static",
-                                            "DSS File": "Master_Spohn_existing_VV.dss",
-                                            "Date offset": 0,
-                                            "End Day": 1,
-                                            "End Time (min)": 1439,
-                                            "Error tolerance": 0.001,
-                                            "Federate name": "PyDSS_x",
-                                            "Log Results": false,
-                                            "Max Control Iterations": 50,
-                                            "Project Path": "C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples",
-                                            "Result Container": "ResultContainer",
-                                            "Simulation Type": "QSTS",
-                                            "Start Day": 1,
-                                            "Start Time (min)": 0,
-                                            "Start Year": 2017,
-                                            "Step resolution (sec)": 900
-                                        }
-                                    }
-                                },
-                                "Example_2": {
+                                "Example_1": {
                                     "value": {
                                         "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
                                         "command": "run",

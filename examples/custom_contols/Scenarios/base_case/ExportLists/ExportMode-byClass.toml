@@ -12,7 +12,7 @@ NoPublish = [ "Powers", "VoltagesMagAng", "%stored",]
 
 [Buses]
 Publish = []
-NoPublish = [ "puVmagAngle", "Distance", "kVBase", "Name", "Nodes"]
+NoPublish = [ "puVmagAngle", "Distance", "kVBase"]
 
 [Circuits]
 Publish = [ "TotalPower", "LineLosses", "Losses", "SubstationLosses",]
@@ -20,12 +20,8 @@ NoPublish = []
 
 [Lines]
 Publish = []
-NoPublish = [ "CurrentsMagAng", "normamps", "bus1", "bus2", "enabled", "nodeorder"]
+NoPublish = [ "CurrentsMagAng", "normamps"]
 
 [Transformers]
 Publish = []
-NoPublish = [ "CurrentsMagAng", "normamps", "taps", "bus1", "bus2", "enabled","nodeorder"]
-
-[Faults]
-Publish = []
-NoPublish = [ "bus1", "bus2", "enabled"]
+NoPublish = [ "CurrentsMagAng", "normamps", "taps"]
