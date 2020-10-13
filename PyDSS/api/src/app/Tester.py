@@ -10,7 +10,6 @@ def run_test(tomlpath):
     pydss_obj = OpenDSS()
     with open(tomlpath) as f_in:
         args = toml.load(f_in)
-
     try:
         validate_settings(args)
         print(f'Parameter validation a success')
@@ -21,7 +20,7 @@ def run_test(tomlpath):
     pydss_obj.init(args)
     export_path = os.path.join(pydss_obj._dssPath['Export'], args['Project']['Active Scenario'])
     Steps, sTime, eTime = pydss_obj._dssSolver.SimulationSteps()
-    writer = DataWriter(export_path, format="arrow", columnLength=Steps)
+    writer = DataWriter(export_path, format="json", columnLength=Steps)
 
     st = time.time()
     for i in range(Steps):
@@ -33,6 +32,7 @@ def run_test(tomlpath):
                 elem_name = k
             else:
                 class_name, elem_name = k.split(".")
+
             if class_name not in restructured_results:
                 restructured_results[class_name] = {}
             if not isinstance(val, complex):

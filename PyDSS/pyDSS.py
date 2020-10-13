@@ -76,8 +76,8 @@ class instance(object):
         return dss_args
 
     def create_dss_instance(self, dss_args):
-        dss = dssInstance.OpenDSS()
-        dss.init(dss_args)
+        dss = dssInstance.OpenDSS(dss_args)
+        #dss.init(dss_args)
         return dss
 
     def run_scenario(self, project, scenario, simulation_config, dry_run=False):
@@ -85,8 +85,8 @@ class instance(object):
         self._dump_scenario_simulation_settings(dss_args)
 
         if dry_run:
-            dss = dssInstance.OpenDSS()
-            dss.init(dss_args)
+            dss = dssInstance.OpenDSS(dss_args)
+            #dss.init(dss_args)
             logger.info('Dry run scenario: %s', dss_args["Project"]["Active Scenario"])
             if dss_args["MonteCarlo"]["Number of Monte Carlo scenarios"] > 0:
                 raise InvalidConfiguration("Dry run does not support MonteCarlo simulation.")
@@ -94,8 +94,8 @@ class instance(object):
                 self._estimated_space = dss.DryRunSimulation(project, scenario)
             return None, None
 
-        dss = dssInstance.OpenDSS()
-        dss.init(dss_args)
+        dss = dssInstance.OpenDSS(dss_args)
+        #dss.init(dss_args)
         logger.info('Running scenario: %s', dss_args["Project"]["Active Scenario"])
         if dss_args["MonteCarlo"]["Number of Monte Carlo scenarios"] > 0:
             dss.RunMCsimulation(project, scenario, samples=dss_args["MonteCarlo"]['Number of Monte Carlo scenarios'])

@@ -1,11 +1,12 @@
 from PyDSS.api.src.app.arrow_writer import ArrowWriter
 from PyDSS.api.src.app.HDF5 import hdf5Writer
+from PyDSS.api.src.app.JSON_writer import JSONwriter
 
 class DataWriter:
     modes = {
         'arrow': ArrowWriter,
         'h5': hdf5Writer,
-        # 'feather': featherWriter,
+        'json': JSONwriter,
         # 'parquet': parquetWriter,
         # "pickle": pickleWriter,
     }

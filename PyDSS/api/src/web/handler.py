@@ -228,6 +228,12 @@ class Handler:
 
         return web.json_response(result)
 
+    async def post_pydss_project(self, request):
+        return
+
+    async def get_pydss_project(self, request):
+        return
+
     async def post_pydss(self, request):
         """
 
@@ -263,9 +269,11 @@ class Handler:
                                                 Active Scenario: base_case
                                                 DSS File: Master_Spohn_existing_VV.dss
                                                 Co-simulation Mode: false
-                                                Result Container: ResultContainer
+                                                Result Container: ResultData
                                                 Log Results: false
-                                                Federate name : PyDSS_x
+                                                Export Data Tables: true
+                                                Export Data In Memory: true
+                                                Federate name: PyDSS_x
 
                 responses:
                  '200':

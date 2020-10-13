@@ -8,7 +8,7 @@ toml
 pyproj
 descartes
 OpenDSSDirect.py==0.3.7
-Shapely==1.6.4
+Shapely
 matplotlib
 Click
 numpy

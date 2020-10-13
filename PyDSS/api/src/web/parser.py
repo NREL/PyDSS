@@ -94,8 +94,8 @@ def restructure_dictionary(d):
 
     defaults["Project"]["Scenarios"] =[
         {
-            "name" : d["Active Scenario"],
-            "post_process_infos" : []
+            "name": d["Active Scenario"],
+            "post_process_infos": []
         }
     ]
 

@@ -6,13 +6,14 @@ from queue import Empty
 from PyDSS.dssInstance import OpenDSS
 from PyDSS.valiate_settings import validate_settings
 from PyDSS.api.src.web.parser import restructure_dictionary
-from PyDSS.api.src.app.arrow_writer import ArrowWriter
+#from PyDSS.api.src.app.arrow_writer import ArrowWriter
+from PyDSS.api.src.app.JSON_writer import JSONwriter
 logger = logging.getLogger(__name__)
 
 class PyDSS:
 
     commands = {
-        "run" : None
+        "run": None
     }
 
     def __init__(self, event=None, queue=None, parameters=None):
@@ -22,7 +23,7 @@ class PyDSS:
 
         ''' TODO: work on logging.yaml file'''
         
-        logging.info("{} - initiallized ".format({self.uuid}))
+        logging.info("{} - initialized ".format({self.uuid}))
 
         self.shutdownevent = event
         self.queue = queue
@@ -32,7 +33,7 @@ class PyDSS:
             self.pydss_obj = OpenDSS(params)
             export_path = os.path.join(self.pydss_obj._dssPath['Export'], params['Project']['Active Scenario'])
             Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
-            self.a_writer = ArrowWriter(export_path, Steps)
+            self.a_writer = JSONwriter(export_path, Steps)
             self.initalized = True
         except:
             result = {"Status": 500, "Message": f"Failed to create a PyDSS instance"}
@@ -45,7 +46,7 @@ class PyDSS:
         result = {
             "Status": 200,
             "Message": "PyDSS {} successfully initialized.".format(self.uuid),
-            "UUID":self.uuid
+            "UUID": self.uuid
         }
 
         if self.queue != None: self.queue.put(result)
