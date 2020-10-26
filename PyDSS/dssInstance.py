@@ -6,7 +6,7 @@ from PyDSS.pyPlotReader import pyPlotReader as ppr
 from PyDSS.dssElementFactory import create_dss_element
 from PyDSS.dssCircuit import dssCircuit
 from PyDSS.exceptions import PyDssConvergenceError, PyDssConvergenceErrorCountExceeded, \
-    PyDssConvergenceMaxError
+    PyDssConvergenceMaxError, OpenDssModelError
 from PyDSS.NetworkModifier import Modifier
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
@@ -97,7 +97,9 @@ class OpenDSS:
             os.chdir(orig_dir)
         self._Logger.info('OpenDSS:  ' + reply)
 
-        assert ('error ' not in reply.lower()), 'Error compiling OpenDSS model.\n{}'.format(reply)
+        if reply != "":
+            raise OpenDssModelError(f"Error compiling OpenDSS model: {reply}")
+
         run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
         self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(params['Frequency']['Fundamental frequency']) + ' Hz')
 
