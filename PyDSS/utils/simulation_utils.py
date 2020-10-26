@@ -128,7 +128,7 @@ def create_datetime_index_from_settings(settings):
     start_time, end_time, step_time = create_time_range_from_settings(settings)
     data = []
     cur_time = start_time
-    while cur_time <= end_time:
+    while cur_time < end_time:
         data.append(cur_time)
         cur_time += step_time
 
