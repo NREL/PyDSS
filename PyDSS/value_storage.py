@@ -46,7 +46,7 @@ class ValueStorageBase(abc.ABC):
             if index != -1:
                 col = column[:index]
             # [name, option1, option2, ...]
-            fields = col.split(ValueStorageBase.DELIMITER)
+            fields = ValueStorageBase.get_fields(col, name)
             if options and kwargs:
                 assert len(fields) == 1 + len(options), f"fields={fields} options={options}"
             _name = fields[0]
@@ -95,7 +95,7 @@ class ValueStorageBase(abc.ABC):
             if index != -1:
                 col = column[:index]
             # [name, option1, option2, ...]
-            fields = col.split(ValueStorageBase.DELIMITER)
+            fields = ValueStorageBase.get_fields(col, name)
             _name = fields[0]
             if _name != name:
                 continue
@@ -105,6 +105,14 @@ class ValueStorageBase(abc.ABC):
             raise InvalidParameter(f"{name} does not exist in DataFrame")
 
         return values
+
+    @staticmethod
+    def get_fields(col, name):
+        # Handle case where the name ends with part of the DELIMITER.
+        col_tmp = col.replace(name, "", 1)
+        fields = col_tmp.split(ValueStorageBase.DELIMITER)[1:]
+        fields.insert(0, name)
+        return fields
 
     @abc.abstractmethod
     def is_nan(self):
