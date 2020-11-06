@@ -8,6 +8,7 @@ import networkx as nx
 import time
 import numpy as np
 import seaborn as sns
+import re
 from sklearn.cluster import AgglomerativeClustering
 import json
 import math
@@ -195,7 +196,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.LTC_delay = 45  # in seconds
         self.LTC_band = 2  # deadband in volts
 
-        self.place_new_regulators = True  # flag to determine whether to place new regulators or not
+        self.place_new_regulators = False  # flag to determine whether to place new regulators or not
 
         # Initialize dss upgrades file
         self.dss_upgrades = [
@@ -253,6 +254,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 "Voltage upper threshold": self.upper_limit,
                 "Voltage lower threshold": self.lower_limit,
                 "Number of buses with violations": len(self.buses_with_violations),
+                "Number of buses with overvoltage violations": len(self.buses_with_overvoltage_violations),
+                "Number of buses with undervoltage violations": len(self.buses_with_undervoltage_violations),
                 "Buses at all tps with violations": self.severity_indices[0],
                 "Severity of bus violations": self.severity_indices[1],
                 "Objective function value": self.severity_indices[2],
@@ -276,15 +279,17 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
 
         self.initial_buses_with_violations = self.buses_with_violations  # save initial bus violations
 
-        self.feeder_parameters["initial_violations"] ={
+        self.feeder_parameters["initial_violations"] = {
             "Voltage upper threshold": self.upper_limit,
             "Voltage lower threshold": self.lower_limit,
-            "Number of buses with violations"       :len(self.buses_with_violations),
-            "Buses at all tps with violations"      :self.severity_indices[0],
-            "Severity of bus violations"            : self.severity_indices[1],
-            "Objective function value"              :self.severity_indices[2],
-            "Maximum voltage observed"              : self.max_V_viol,
-            "Minimum voltage observed"              : self.min_V_viol
+            "Number of buses with violations": len(self.buses_with_violations),
+            "Number of buses with overvoltage violations": len(self.buses_with_overvoltage_violations),
+            "Number of buses with undervoltage violations": len(self.buses_with_undervoltage_violations),
+            "Buses at all tps with violations": self.severity_indices[0],
+            "Severity of bus violations": self.severity_indices[1],
+            "Objective function value": self.severity_indices[2],
+            "Maximum voltage observed": self.max_V_viol,
+            "Minimum voltage observed": self.min_V_viol
         }
 
         self.upgrade_status = ''  # status - whether voltage upgrades done or not
@@ -314,10 +319,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     if self.config["create_topology_plots"]:
                         self.plot_violations()
                     if len(self.buses_with_violations) > 0:
-                        self.cap_settings_sweep(upper_limit=self.upper_limit,
-                                                            lower_limit=self.lower_limit)
-                    self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
-                                                            lower_limit=self.lower_limit)
+                        self.cap_settings_sweep(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
+                    self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
                     if self.config["create_topology_plots"]:
                         self.plot_violations()
                 else:
@@ -325,8 +328,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
 
             # Do a settings sweep of existing reg control devices (other than sub LTC) after correcting their other
             #  parameters such as ratios etc
-            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
-                                                    lower_limit=self.lower_limit)
+            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
             self.reg_sweep_viols = {}
             if dss.RegControls.Count() > 0 and len(self.buses_with_violations) > 0:
                 self.logger.info("Settings sweep for existing reg control devices (other than sub LTC).")
@@ -387,7 +389,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     if not dss.RegControls.Next() > 0:
                         break
                 self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
-                if reg_cnt>1:
+                if reg_cnt > 1:
                     self.reg_sweep_viols["original"] = self.severity_indices[2]
                 if len(self.buses_with_violations) > 0:
                     self.reg_controls_sweep(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
@@ -487,8 +489,14 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                             self.subLTC_sweep_viols["original"] = self.severity_indices[2]
                             if len(self.buses_with_violations) > 0:
                                 self.LTC_controls_sweep(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
-                                self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
-                                                                        lower_limit=self.lower_limit)
+
+                                pass_flag = True
+                                self.create_final_comparison(project_path=project.dss_files_path,
+                                                             thermal_dss_file=thermal_dss_file)
+                                pass_flag = self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                                                    lower_limit=self.lower_limit,
+                                                                                    raise_exception=False)  # TODO
+                                # TODO if pass_flag is false, then just go to create comparison file
                                 if self.config["create_topology_plots"]:
                                     self.plot_violations()
                         elif self.LTC_exists_flag == 0:
@@ -499,8 +507,11 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                             self.sub_LTC_added_flag = 1
                             if len(self.buses_with_violations) > 0:
                                 self.LTC_controls_sweep(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
-                                self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
-                                                                        lower_limit=self.lower_limit)
+                                pass_flag = True
+                                pass_flag = self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                                                    lower_limit=self.lower_limit,
+                                                                                    raise_exception=False)  # TODO
+                                # TODO if pass_flag is false, then just go to create comparison file
                                 if self.config["create_topology_plots"]:
                                     self.plot_violations()
                     elif dss.RegControls.Count() == 0 and len(self.buses_with_violations) > 0:
@@ -518,8 +529,11 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
 
             # Correct regulator settings if regs are present in the feeder other than the sub station LTC
             # TODO: Remove regs of last iteration
-            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
-                                                    lower_limit=self.lower_limit)
+            pass_flag = True
+            pass_flag = self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                                lower_limit=self.lower_limit,
+                                                                raise_exception=False)  # TODO
+            # TODO if pass_flag is false, then just go to create comparison file
 
             self.logger.info(f"Total number of buses in circuit: {len(dss.Circuit.AllBusNames())}")
             # if number of buses with violations is very high, the loop for adding new regulators will take very long
@@ -539,7 +553,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 # determining key with minimum objective func. at various levels
                 # (at this point includes pre-reg, sub-LTC)
                 min_cluster = ''
-                min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * self.upper_limit
+                min_severity = 1000000000
+                # min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * self.upper_limit
                 for key, vals in self.cluster_optimal_reg_nodes.items():
                     if vals[0] < min_severity:
                         min_severity = vals[0]
@@ -563,7 +578,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 self.get_shortest_path()
                 self.get_full_distance_dict()
                 self.cluster_square_array()
-                min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * self.upper_limit
+                min_severity = 1000000000
+                # min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * self.upper_limit
                 #  determining key with minimum objective func. at various levels
                 # (at this point includes pre-reg, sub-LTC, and all newly added regulators)
                 min_cluster = ''
@@ -595,7 +611,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.write_upgrades_to_file()
         self.logger.info("total_time = %s", end_t - start_t)
 
-        # TODO: Check impact of upgrades - Cannot recompile feeder in PyDSS
         self.logger.info("Checking impact of redirected upgrades file")
         dss.run_command("Clear")
         base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
@@ -623,6 +638,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 "Voltage upper threshold": self.upper_limit,
                 "Voltage lower threshold": self.lower_limit,
                 "Number of buses with violations": len(self.buses_with_violations),
+                "Number of buses with overvoltage violations": len(self.buses_with_overvoltage_violations),
+                "Number of buses with undervoltage violations": len(self.buses_with_undervoltage_violations),
                 "Buses at all tps with violations": self.severity_indices[0],
                 "Severity of bus violations": self.severity_indices[1],
                 "Objective function value": self.severity_indices[2],
@@ -652,6 +669,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             "Voltage upper threshold": self.upper_limit,
             "Voltage lower threshold": self.lower_limit,
             "Number of buses with violations": len(self.buses_with_violations),
+            "Number of buses with overvoltage violations": len(self.buses_with_overvoltage_violations),
+            "Number of buses with undervoltage violations": len(self.buses_with_undervoltage_violations),
             "Buses at all tps with violations": self.severity_indices[0],
             "Severity of bus violations": self.severity_indices[1],
             "Objective function value": self.severity_indices[2],
@@ -664,7 +683,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.feeder_parameters["feederhead_name"] = feeder_head_name
         self.feeder_parameters["feederhead_basekV"] = feeder_head_basekv
 
-        self.write_to_json(self.feeder_parameters,"Voltage_violations_comparison")
+        self.write_to_json(self.feeder_parameters, "Voltage_violations_comparison")
 
         # go to voltage upgrades post processing script
         postprocess_voltage_upgrades(
@@ -688,6 +707,92 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
     @staticmethod
     def _get_required_input_fields():
         return AutomatedVoltageUpgrade.REQUIRED_INPUT_FIELDS
+
+    def create_final_comparison(self, project_path=None, thermal_dss_file=None):
+        # project_path = project.dss_files_path
+        end_t = time.time()
+        # self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+        #                                         lower_limit=self.lower_limit)
+        # if self.config["create_topology_plots"]:
+        #     self.plot_violations()
+        self.logger.debug("Writing upgrades to DSS file")
+        self.write_upgrades_to_file()
+        # self.logger.info("total_time = %s", end_t - start_t)
+
+        self.logger.info("Checking impact of redirected upgrades file")
+        dss.run_command("Clear")
+        base_dss = os.path.join(project_path, self.Settings["Project"]["DSS File"])
+        check_redirect(base_dss)
+        check_redirect(thermal_dss_file)
+        upgrades_file = os.path.join(self.config["Outputs"], "voltage_upgrades.dss")
+        check_redirect(upgrades_file)
+        self.dssSolver.Solve()
+
+        self.new_reg_controls = {x["name"]: x for x in iter_elements(dss.RegControls, get_reg_control_info)}
+        self.new_capacitors = {x["name"]: x for x in iter_elements(dss.Capacitors, get_capacitor_info)}
+        self.new_capcontrols = {x["name"]: x for x in iter_elements(dss.CapControls, get_cap_controls_info)}
+        self.new_xfmr_info = dss.Transformers.AllNames()
+
+        # If initial and final limits are different,
+        # also doing with final limits to get comparison between initial and final violation numbers
+        if (self.config["final_voltage_upper_limit"] != self.config["initial_voltage_upper_limit"]) or \
+                (self.config["final_voltage_lower_limit"] != self.config["initial_voltage_lower_limit"]):
+
+            self.upper_limit = self.config["final_voltage_upper_limit"]
+            self.lower_limit = self.config["final_voltage_lower_limit"]
+            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                    lower_limit=self.lower_limit)
+            self.feeder_parameters["final_violations_2"] = {
+                "Voltage upper threshold": self.upper_limit,
+                "Voltage lower threshold": self.lower_limit,
+                "Number of buses with violations": len(self.buses_with_violations),
+                "Number of buses with overvoltage violations": len(self.buses_with_overvoltage_violations),
+                "Number of buses with undervoltage violations": len(self.buses_with_undervoltage_violations),
+                "Buses at all tps with violations": self.severity_indices[0],
+                "Severity of bus violations": self.severity_indices[1],
+                "Objective function value": self.severity_indices[2],
+                "Maximum voltage observed": self.max_V_viol,
+                "Minimum voltage observed": self.min_V_viol
+            }
+
+        self.logger.info(f"Based on Lower limit: {self.lower_limit}, Upper limit: {self.upper_limit}")
+        self.logger.info("Final number of buses with violations are: %s", len(self.buses_with_violations))
+        self.logger.info("Final objective function value: %s", self.severity_indices[2])
+
+        # change violation checking thresholds to initial limit - to ensure uniform comparison betn initial & final
+        self.upper_limit = self.config["initial_voltage_upper_limit"]
+        self.lower_limit = self.config["initial_voltage_lower_limit"]
+
+        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                lower_limit=self.lower_limit)
+        if self.config["create_topology_plots"]:
+            self.plot_violations()
+        self.logger.info("Final maximum voltage observed on any node: %s %s", self.max_V_viol, self.busvmax)
+        self.logger.info("Final minimum voltage observed on any node: %s", self.min_V_viol)
+        self.logger.info(f"Based on Lower limit: {self.lower_limit}, Upper limit: {self.upper_limit}")
+        self.logger.info("Final number of buses with violations are: %s", len(self.buses_with_violations))
+        self.logger.info("Final objective function value: %s", self.severity_indices[2])
+
+        self.feeder_parameters["final_violations"] = {
+            "Voltage upper threshold": self.upper_limit,
+            "Voltage lower threshold": self.lower_limit,
+            "Number of buses with violations": len(self.buses_with_violations),
+            "Number of buses with overvoltage violations": len(self.buses_with_overvoltage_violations),
+            "Number of buses with undervoltage violations": len(self.buses_with_undervoltage_violations),
+            "Buses at all tps with violations": self.severity_indices[0],
+            "Severity of bus violations": self.severity_indices[1],
+            "Objective function value": self.severity_indices[2],
+            "Maximum voltage observed": self.max_V_viol,
+            "Minimum voltage observed": self.min_V_viol
+        }
+
+        # self.feeder_parameters["Simulation time (seconds)"] = end_t-start_t
+        # self.feeder_parameters["Upgrade status"] = self.upgrade_status
+        # self.feeder_parameters["feederhead_name"] = feeder_head_name
+        # self.feeder_parameters["feederhead_basekV"] = feeder_head_basekv
+
+        self.write_to_json(self.feeder_parameters, "Voltage_violations_comparison")
+
 
     def get_load_pv_mults_individual_object(self):
         self.orig_loads = {}
@@ -714,7 +819,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     break
             for key, dss_paths in self.other_pv_dss_files.items():
                 self.read_pv_files_individual_object(key, dss_paths)
-
 
     def read_load_files_individual_object(self,key_paths,dss_path):
         # Add all load kW values
@@ -1099,6 +1203,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                         break
             self.dssSolver.Solve()
             if not dss.Solution.Converged():
+                self.logger.info("Write upgrades till this step in debug_upgrades.dss")
+                self.write_upgrades_to_file(output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
                 raise OpenDssConvergenceError("OpenDSS solution did not converge")
             for b in self.all_bus_names:
                 dss.Circuit.SetActiveBus(b)
@@ -1142,13 +1248,15 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         return
 
     # this function checks for voltage violations based on upper and lower limit passed
-    def check_voltage_violations_multi_tps(self, upper_limit, lower_limit):
+    def check_voltage_violations_multi_tps(self, upper_limit, lower_limit, raise_exception=True):
         # TODO: This objective currently gives more weightage if same node has violations at more than 1 time point
         num_nodes_counter = 0
         severity_counter = 0
         self.max_V_viol = 0
         self.min_V_viol = 2
         self.buses_with_violations = []
+        self.buses_with_undervoltage_violations = []
+        self.buses_with_overvoltage_violations = []
         self.buses_with_violations_pos = {}
         self.nodal_violations_dict = {}
         # If multiple load files are being used, the 'tps_to_test property is not used, else if a single load file is
@@ -1169,7 +1277,14 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                             break
                     self.dssSolver.Solve()
                     if not dss.Solution.Converged():
-                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                        self.logger.info("Write upgrades before Convergence Error in debug_upgrades.dss")
+                        self.write_upgrades_to_file(
+                            output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
+                        if raise_exception:
+                            raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                            return False
+                        else:
+                            return False
                 if tp_cnt == 2 or tp_cnt == 3:
                     dss.run_command("BatchEdit PVSystem..* Enabled=True")
                     dss.Loads.First()
@@ -1183,7 +1298,14 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                             break
                     self.dssSolver.Solve()
                     if not dss.Solution.Converged():
-                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                        self.logger.info("Write upgrades before Convergence Error in debug_upgrades.dss")
+                        self.write_upgrades_to_file(
+                            output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
+                        if raise_exception:
+                            raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                            return False
+                        else:
+                            return False
                 for b in self.all_bus_names:
                     dss.Circuit.SetActiveBus(b)
                     bus_v = dss.Bus.puVmagAngle()[::2]
@@ -1199,6 +1321,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     if max(bus_v) > upper_limit:
                         maxv = max(bus_v)
                         maxv_dev = maxv - upper_limit
+                        if b.lower() not in self.buses_with_overvoltage_violations:
+                            self.buses_with_overvoltage_violations.append(b.lower())
                     if min(bus_v) < lower_limit:
                         minv = min(bus_v)
                         minv_dev = upper_limit - minv
@@ -1209,6 +1333,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                         if b.lower() not in self.buses_with_violations:
                             self.buses_with_violations.append(b.lower())
                             self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
+                        if b.lower() not in self.buses_with_overvoltage_violations:
+                            self.buses_with_overvoltage_violations.append(b.lower())
                     elif minv_dev > maxv_dev:
                         v_used = minv
                         num_nodes_counter += 1
@@ -1216,6 +1342,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                         if b.lower() not in self.buses_with_violations:
                             self.buses_with_violations.append(b.lower())
                             self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
+                        if b.lower() not in self.buses_with_undervoltage_violations:
+                            self.buses_with_undervoltage_violations.append(b.lower())
                     else:
                         v_used = self.config["nominal_pu_voltage"]
                     if b not in self.nodal_violations_dict:
@@ -1230,13 +1358,27 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
                     self.dssSolver.Solve()
                     if not dss.Solution.Converged():
-                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                        self.logger.info("Write upgrades before Convergence Error in debug_upgrades.dss")
+                        self.write_upgrades_to_file(
+                            output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
+                        if raise_exception:
+                            raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                            return False
+                        else:
+                            return False
                 if tp_cnt == 2 or tp_cnt == 3:
                     dss.run_command("BatchEdit PVSystem..* Enabled=True")
                     dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
                     self.dssSolver.Solve()
                     if not dss.Solution.Converged():
-                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                        self.logger.info("Write upgrades before Convergence Error in debug_upgrades.dss")
+                        self.write_upgrades_to_file(
+                            output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
+                        if raise_exception:
+                            raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                            return False
+                        else:
+                            return False
                 for b in self.all_bus_names:
                     dss.Circuit.SetActiveBus(b)
                     bus_v = dss.Bus.puVmagAngle()[::2]
@@ -1252,6 +1394,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     if max(bus_v) > upper_limit:
                         maxv = max(bus_v)
                         maxv_dev = maxv - upper_limit
+                        if b.lower() not in self.buses_with_overvoltage_violations:
+                            self.buses_with_overvoltage_violations.append(b.lower())
                     if min(bus_v) < lower_limit:
                         minv = min(bus_v)
                         minv_dev = upper_limit - minv
@@ -1262,6 +1406,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                         if b.lower() not in self.buses_with_violations:
                             self.buses_with_violations.append(b.lower())
                             self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
+                        if b.lower() not in self.buses_with_overvoltage_violations:
+                            self.buses_with_overvoltage_violations.append(b.lower())
                     elif minv_dev > maxv_dev:
                         v_used = minv
                         num_nodes_counter += 1
@@ -1269,6 +1415,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                         if b.lower() not in self.buses_with_violations:
                             self.buses_with_violations.append(b.lower())
                             self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
+                        if b.lower() not in self.buses_with_undervoltage_violations:
+                            self.buses_with_undervoltage_violations.append(b.lower())
                     else:
                         v_used = self.config["nominal_pu_voltage"]
                     if b not in self.nodal_violations_dict:
@@ -1351,6 +1499,21 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 cap_on_settings_check[cap_name] = self.capON
                 dss.run_command(control_command)
                 self.dssSolver.Solve()
+
+                pass_flag = True
+                pass_flag = self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                                    lower_limit=self.lower_limit, raise_exception=False)
+                # If pass_flag returned false, means it had convergence error
+                if not pass_flag:
+                    # change command
+                    new_control_command = self.edit_capacitor_settings_for_convergence(control_command)
+                    print(new_control_command)
+                    dss.run_command(new_control_command)
+                    self.dssSolver.Solve()
+                    self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit, lower_limit=self.lower_limit,
+                                                            raise_exception=True)
+                    control_command = new_control_command
+
                 self.write_dss_file(control_command)
                 if not dss.CapControls.Next() > 0:
                     break
@@ -1391,6 +1554,23 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     dss.run_command(control_command)
                     cap_on_settings_check[cap_name] = self.capON
                     self.dssSolver.Solve()
+
+                    pass_flag = True
+                    pass_flag = self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                                        lower_limit=self.lower_limit,
+                                                                        raise_exception=False)
+                    # If pass_flag returned false, means it had convergence error
+                    if not pass_flag:
+                        # change command
+                        new_control_command = self.edit_capacitor_settings_for_convergence(control_command)
+                        print(new_control_command)
+                        dss.run_command(new_control_command)
+                        self.dssSolver.Solve()
+                        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                                lower_limit=self.lower_limit,
+                                                                raise_exception=True)
+                        control_command = new_control_command
+
                     self.write_dss_file(control_command)
                 dss.Circuit.SetActiveElement("Capacitor." + cap_name)
                 if not dss.Capacitors.Next() > 0:
@@ -1410,8 +1590,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     break
 
         # self.get_nodal_violations()
-        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
-                                                lower_limit=self.lower_limit)
+        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
 
     def get_viols_with_initial_cap_settings(self):
         if len(self.cap_initial_settings) > 0:
@@ -1517,12 +1696,37 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
                                                 lower_limit=self.lower_limit)
 
+    def edit_capacitor_settings_for_convergence(self, control_command):
+        new_deadtime = 50
+        new_delay = 50
+        self.capON = round((self.config["nominal_voltage"] - (self.config["cap_sweep_voltage_gap"]+1) / 2), 1)
+        self.capOFF = round((self.config["nominal_voltage"] + (self.config["cap_sweep_voltage_gap"]+1) / 2), 1)
+        self.logger.info("Changed Initial On and Off Cap settings to avoid convergence issues ")
+
+        new_capON = self.capON
+        new_capOFF = self.capOFF
+
+        new_control_command = control_command
+        # self.remove_line_from_dss_file(control_command)  # remove command that caused convergence issue
+        control_command = control_command.replace('New', 'Edit')
+        control_command = re.sub("enabled=True", "enabled=False", control_command)
+        dss.run_command(control_command)  # disable and run previous control command
+
+        new_control_command = re.sub("DeadTime=\d+", 'DeadTime=' + str(new_deadtime), new_control_command)
+        new_control_command = re.sub("Delay=\d+", 'Delay=' + str(new_delay), new_control_command)
+        new_control_command = re.sub("ONsetting=\d+\.\d+", 'ONsetting=' + str(new_capON), new_control_command)
+        new_control_command = re.sub("OFFsetting=\d+\.\d+", 'OFFsetting=' + str(new_capOFF), new_control_command)
+        return new_control_command
+
+
     def write_dss_file(self, device_command):
         self.dss_upgrades.append(device_command + "\n")
         return
 
-    def write_upgrades_to_file(self):
-        with open(os.path.join(self.config["Outputs"], "voltage_upgrades.dss"), "w") as datafile:
+    def write_upgrades_to_file(self, output_path=None):
+        if output_path is None:
+            output_path = os.path.join(self.config["Outputs"], "voltage_upgrades.dss")
+        with open(output_path, "w") as datafile:
             for line in self.dss_upgrades:
                 datafile.write(line)
         return
@@ -1920,11 +2124,16 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                         )
                         dss.run_command(command_string)
                         self.dssSolver.Solve()
+                        pass_flag = True
+                        pass_flag = self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                                            lower_limit=self.lower_limit,
+                                                                            raise_exception=False)
+
                     dss.Circuit.SetActiveElement("Regcontrol.{}".format(regctrl_name))
                     if not dss.RegControls.Next() > 0:
                         break
-                self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
-                                                        lower_limit=self.lower_limit)
+                # self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                #                                         lower_limit=self.lower_limit)  # TODO uncomment
                 self.subLTC_sweep_viols["{}_{}".format(str(reg_sp), str(bandw))] = self.severity_indices[2]
         self.apply_best_LTCsetting(upper_limit=self.upper_limit)
 
@@ -1970,12 +2179,21 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     )
                     dss.run_command(command_string)
                     self.dssSolver.Solve()
-                    self.write_dss_file(command_string)
+                    pass_flag = True
+                    pass_flag = self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                                        lower_limit=self.lower_limit,
+                                                                        raise_exception=False)
+                    # TODO : add code to change settings if there is a convergence error
+                    if pass_flag:
+                        self.write_dss_file(command_string)
+                    else:
+                        self.apply_orig_LTC_setting()
+
                 dss.Circuit.SetActiveElement("Regcontrol.{}".format(reg_ctrl_nm))
                 if not dss.RegControls.Next() > 0:
                     break
-        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
-                                                lower_limit=self.lower_limit)
+        # self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+        #                                         lower_limit=self.lower_limit)  # TODO uncomment
 
     def apply_orig_LTC_setting(self):
         for key, vals in self.initial_subLTC_settings.items():

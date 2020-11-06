@@ -110,10 +110,10 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.orig_lines = {x["name"]: x for x in iter_elements(dss.Lines, self.get_line_info)}
 
         # TODO: To be modified
-        self.plot_violations_counter=0
+        self.plot_violations_counter = 0
         # self.compile_feeder_initialize()
         self.export_line_DT_parameters()
-        start= time.time()
+        start = time.time()
         self.logger.info("Determining thermal upgrades")
         dss.Vsources.First()
         self.source = dss.CktElement.BusNames()[0].split(".")[0]
@@ -134,46 +134,43 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             self.avail_line_upgrades = self.read_available_upgrades("Line_upgrades_library")
             self.avail_xfmr_upgrades = self.read_available_upgrades("Transformer_upgrades_library")
             self.logger.debug("Upgrades library created")
-        # Determine initial loadings
-        self.determine_line_ldgs()
-        self.determine_xfmr_ldgs()
+
+        self.V_upper_thresh = 1.0583
+        self.V_lower_thresh = 0.9167
+        voltage_threshold_type = 'B'
+
+        # use function to determine values to be placed in comparison file
+        self.orig_line_ldg_lst, self.orig_xfmr_ldg_lst, self.equip_ldgs = self.create_result_comparison(
+            upper_limit=self.V_upper_thresh, lower_limit=self.V_lower_thresh)
+        self.equip_ldgs["Equipment_name"] = "Initial_loading"
 
         self.logger.info("Voltages before upgrades max=%s min=%s", max(dss.Circuit.AllBusMagPu()), min(dss.Circuit.AllBusMagPu()))
         self.logger.info("Substation power before upgrades: %s", dss.Circuit.TotalPower())
         num_elms_violated_curr_itr = len(self.xfmr_violations) + len(self.line_violations)
         self.logger.info("num_elms_violated_curr_itr=%s", num_elms_violated_curr_itr)
-        # Store all initial violations to compare at the end of solution
-        self.temp_line_viols = self.all_line_ldgs
-        self.temp_xfmr_viols = self.all_xfmr_ldgs
-        self.orig_line_ldg_lst = []
-        self.orig_xfmr_ldg_lst = []
-        self.equip_ldgs = {}
-        self.equip_ldgs["Equipment_name"] = "Initial_loading"
-        for key, vals in self.temp_line_viols.items():
-            self.orig_line_ldg_lst.append(vals[0] * 100 / vals[1])
-            self.equip_ldgs["Line_" + key] = (vals[0] * 100 / vals[1])
-        for key, vals in self.temp_xfmr_viols.items():
-            self.orig_xfmr_ldg_lst.append(vals[0] * 100 / vals[1])
-            self.equip_ldgs["Xfmr_" + key] = (vals[0] * 100 / vals[1])
+
         self.write_to_json(self.equip_ldgs, "Initial_equipment_loadings")
 
-        # Store voltage violations before any upgrades - max, min and number
-        self.V_upper_thresh = 1.05
-        self.V_lower_thresh = 0.95
-        self.get_nodal_violations()
-
         self.feeder_parameters["initial_violations"] = {
-            "Number of lines with violations": len(self.line_violations),
-            "Number of xfmrs with violations": len(self.xfmr_violations),
+            "Maximum voltage on any bus": self.max_V_viol,
+            "Minimum voltage on any bus": self.min_V_viol,
+            "Number of buses outside Range {} limits".format(voltage_threshold_type): len(self.buses_with_violations),
+            "Number of overvoltage violations buses outside Range {} limits".format(voltage_threshold_type): len(
+                self.buses_with_overvoltage_violations),  # new
+            "Number of undervoltage violations buses outside Range {} limits".format(voltage_threshold_type): len(
+                self.buses_with_undervoltage_violations),  # new
             "Max line loading observed": max(self.orig_line_ldg_lst),
             "Max xfmr loading observed": max(self.orig_xfmr_ldg_lst),
-            "Maximum voltage on any bus": self.max_V_viol,
-            "Minimum voltage on any bus":self.min_V_viol,
-            "Number of buses outside ANSI A limits":len(self.cust_viol),
+            "Number of lines with violations": len(self.line_violations),
+            "Number of xfmrs with violations": len(self.xfmr_violations),
         }
 
         if self.config["create_upgrade_plots"]:
             self.create_op_plots()
+
+        # if minimum voltage is close to 0, that indicates a problem in the feeder model connectivity
+        if self.min_V_viol <= 0.001:
+            raise Exception("Minimum voltage for this feeder is close to 0 p.u. Check feeder connectivity!")
 
         self.upgrade_status = ''  # parameter stating status of thermal upgrades - needed or not
 
@@ -186,12 +183,54 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
         # Mitigate thermal violations
         self.Line_trial_counter = 0
-        while len(self.xfmr_violations) > 0 or len(self.line_violations) > 0:
+        # TODO change to 20
+        self.max_upgrade_iteration = min(5, len(self.xfmr_violations) + len(self.line_violations))
+        while (len(self.xfmr_violations) > 0 or len(self.line_violations) > 0) \
+                and (self.Line_trial_counter < self.max_upgrade_iteration):
+            prev_xfmr = len(self.xfmr_violations)
+            prev_line = len(self.line_violations)
             self.dssSolver.Solve()
+            print(f"Solution Converged: {dss.Solution.Converged()}")
+            if not dss.Solution.Converged():
+                raise OpenDssConvergenceError("OpenDSS solution did not converge")
+
             self.determine_line_ldgs()
-            self.correct_line_violations()
+            self.logger.info("Determined line loadings.")
+            print(f"\n\nNumber of line violations: {len(self.line_violations)}")
+
+            if len(self.line_violations) > prev_line:
+                print(self.line_violations)
+                self.logger.info("Write upgrades till this step in debug_upgrades.dss")
+                self.write_dat_file(output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
+                raise Exception(f"Line violations increased from {prev_line} to {len(self.line_violations)} "
+                                f"during upgrade process")
+
+            if len(self.line_violations) > 0:
+                self.correct_line_violations()
+                self.logger.info("Corrected line violations.")
+                print("\nCorrected line violations")
+
+            self.dssSolver.Solve()
+            print(f"Solution Converged: {dss.Solution.Converged()}")
+            if not dss.Solution.Converged():
+                raise OpenDssConvergenceError("OpenDSS solution did not converge")
+
             self.determine_xfmr_ldgs()
-            self.correct_xfmr_violations()
+            self.logger.info("Determined xfmr loadings.")
+            print(f"Number of xfmr violations: {len(self.xfmr_violations)}")
+
+            if len(self.xfmr_violations) > prev_xfmr:
+                print(self.xfmr_violations)
+                self.logger.info("Write upgrades till this step in debug_upgrades.dss")
+                self.write_dat_file(output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
+                raise Exception(f"Xfmr violations increased from {prev_xfmr} to {len(self.xfmr_violations)} "
+                                f"during upgrade process")
+
+            if len(self.xfmr_violations) > 0:
+                self.correct_xfmr_violations()
+                self.logger.info("Corrected xfmr violations.")
+                print("\nCorrected xfmr violations")
+
             num_elms_violated_curr_itr = len(self.xfmr_violations) + len(self.line_violations)
             self.logger.info("Iteration Count: %s", self.Line_trial_counter)
             self.logger.info("Number of devices with violations: %s", num_elms_violated_curr_itr)
@@ -199,8 +238,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             if self.Line_trial_counter > self.config["max_iterations"]:
                 self.logger.info("Max iterations limit reached, quitting")
                 break
-        # self.determine_xfmr_ldgs()
-        # self.determine_line_ldgs()
         end = time.time()
 
         # upgrading process is over
@@ -210,30 +247,58 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         # so clear and redirect dss file - to compute final violations, and get new elements
         # TODO: Test impact of applied settings - can't compile the feeder again in PyDSS
         # self.compile_feeder_initialize()
+
         dss.run_command("Clear")
         base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
-
         check_redirect(base_dss)
         upgrades_file = os.path.join(self.config["Outputs"], "thermal_upgrades.dss")
         check_redirect(upgrades_file)
         self.dssSolver.Solve()
 
-        # Get final loadings
-        self.final_line_ldg_lst = []
-        self.final_xfmr_ldg_lst = []
-        self.equip_ldgs = {}
+        # get final loadings - using function # TODO
+        self.final_line_ldg_lst, self.final_xfmr_ldg_lst, self.equip_ldgs = self.create_result_comparison(
+            upper_limit=self.V_upper_thresh, lower_limit=self.V_lower_thresh)
         self.equip_ldgs["Equipment_name"] = "Final_loading"
-        for key, vals in self.all_line_ldgs.items():
-            self.final_line_ldg_lst.append(vals[0] * 100 / vals[1])
-            self.equip_ldgs["Line_" + key] = (vals[0] * 100 / vals[1])
-        for key, vals in self.all_xfmr_ldgs.items():
-            self.final_xfmr_ldg_lst.append(vals[0] * 100 / vals[1])
-            self.equip_ldgs["Xfmr_" + key] = (vals[0] * 100 / vals[1])
+
+        # Get final loadings based on limit mentioned in config
+        self.determine_xfmr_ldgs()
+        self.determine_line_ldgs()
+
         self.write_to_json(self.equip_ldgs, "Final_equipment_loadings")
         self.orig_line_ldg_lst.sort(reverse=True)
         self.final_line_ldg_lst.sort(reverse=True)
         self.orig_xfmr_ldg_lst.sort(reverse=True)
         self.final_xfmr_ldg_lst.sort(reverse=True)
+
+        feeder_head_name = dss.Circuit.Name()
+        feeder_head_bus = dss.CktElement.BusNames()[0].split(".")[0]
+        dss.Circuit.SetActiveBus(feeder_head_bus)
+        feeder_head_basekv = dss.Bus.kVBase()
+        num_nodes = dss.Bus.NumNodes()
+        if num_nodes > 1:
+            feeder_head_basekv = round(feeder_head_basekv*math.sqrt(3),1)
+
+        self.feeder_parameters["final_violations"] = {
+            "Maximum voltage on any bus": self.max_V_viol,
+            "Minimum voltage on any bus": self.min_V_viol,
+            "Number of buses outside Range {} limits".format(voltage_threshold_type): len(self.buses_with_violations),
+            "Number of overvoltage violations buses outside Range {} limits".format(voltage_threshold_type):
+                len(self.buses_with_overvoltage_violations),  # new
+            "Number of undervoltage violations buses outside Range {} limits".format(voltage_threshold_type):
+                len(self.buses_with_undervoltage_violations),  # new
+
+            "Max line loading observed": max(self.final_line_ldg_lst),
+            "Max xfmr loading observed": max(self.final_xfmr_ldg_lst),
+            "Number of lines with violations": len(self.line_violations),  # new
+            "Number of xfmrs with violations": len(self.xfmr_violations),  # new
+        }
+        self.feeder_parameters["Simulation time (seconds)"] = end - start
+        self.feeder_parameters["Upgrade status"] = self.upgrade_status
+        self.feeder_parameters["feederhead_name"] = feeder_head_name
+        self.feeder_parameters["feederhead_basekV"] = feeder_head_basekv
+
+        self.write_to_json(self.feeder_parameters, "Thermal_violations_comparison")
+
         if self.config["create_upgrade_plots"]:
             self.create_op_plots()
 
@@ -251,8 +316,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             plt.plot(self.final_xfmr_ldg_lst, "o", label="Ending Transformer Loadings")
             plt.legend()
             plt.savefig(os.path.join(self.config["Outputs"], "Loading_comparisons.pdf"))
-        # self.logger.debug("Writing Results to output file")
-        # self.write_dat_file()
+
         self.logger.debug("Processing upgrade results")
         self.logger.info("Total time = %s", end - start)
 
@@ -260,47 +324,25 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.new_xfmrs = {x["name"]: x for x in iter_elements(dss.Transformers, get_transformer_info)}
         self.new_lines = {x["name"]: x for x in iter_elements(dss.Lines, self.get_line_info)}
 
-        self.determine_line_ldgs()
-        self.determine_xfmr_ldgs()
-        # if self.config["create_upgrade_plots"]:
-        #     self.create_op_plots()
+        # reformat upgrades dictionary in the format needed by post process code
+        self.linecode_lib_reformat()
 
-        feeder_head_name = dss.Circuit.Name()
-        feeder_head_bus = dss.CktElement.BusNames()[0].split(".")[0]
-        dss.Circuit.SetActiveBus(feeder_head_bus)
-        feeder_head_basekv = dss.Bus.kVBase()
-        num_nodes = dss.Bus.NumNodes()
-        if num_nodes>1:
-            feeder_head_basekv = round(feeder_head_basekv*math.sqrt(3),1)
-
-        # final computation of violations
-        self.get_nodal_violations()
-        self.feeder_parameters["final_violations"] = {
-            "Number of lines with violations": len(self.line_violations),
-            "Number of xfmrs with violations": len(self.xfmr_violations),
-            "Max line loading observed": max(self.final_line_ldg_lst),
-            "Max xfmr loading observed": max(self.final_xfmr_ldg_lst),
-            "Maximum voltage on any bus": self.max_V_viol,
-            "Minimum voltage on any bus": self.min_V_viol,
-            "Number of buses outside ANSI A limits": len(self.cust_viol),
-        }
-        self.feeder_parameters["Simulation time (seconds)"] = end - start
-        self.feeder_parameters["Upgrade status"] = self.upgrade_status
-        self.feeder_parameters["feederhead_name"] = feeder_head_name
-        self.feeder_parameters["feederhead_basekV"] = feeder_head_basekv
-
-        self.write_to_json(self.feeder_parameters, "Thermal_violations_comparison")
+        # # reformat upgrades dictionary in the format needed by post process code
+        # self.xfmr_lib_reformat()  #TODO for transformer
 
         # Process outputs
         input_dict = {
-            "Outputs"                       : self.config["Outputs"],
-            "Create_plots"                  : self.config["create_upgrade_plots"],
-            "feederhead_name"               : feeder_head_name,
-            "feederhead_basekV"             : feeder_head_basekv,
+            "Outputs": self.config["Outputs"],
+            "Create_plots": self.config["create_upgrade_plots"],
+            "feederhead_name": feeder_head_name,
+            "feederhead_basekV": feeder_head_basekv,
             "new_xfmrs": self.new_xfmrs,
             "orig_xfmrs": self.orig_xfmrs,
             "new_lines": self.new_lines,
             "orig_lines": self.orig_lines,
+            "orig_lc_parameters": self.orig_lc_parameters,
+            # "orig_line_parameters": self.orig_line_parameters,  #TODO - reformat and pass to postprocess
+            # "orig_DT_parameters": self.orig_DT_parameters,  # TODO - reformat and pass to postprocess
         }
 
         postprocess_thermal_upgrades(input_dict, dss, self.logger)
@@ -308,6 +350,28 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
     @staticmethod
     def _get_required_input_fields():
         return AutomatedThermalUpgrade.REQUIRED_INPUT_FIELDS
+
+    # function to determine loading and voltage files to be written out to comparison json file
+    def create_result_comparison(self, upper_limit=None, lower_limit=None):
+        # Get thermal loadings based on limit mentioned in config
+        self.determine_xfmr_ldgs()
+        self.determine_line_ldgs()
+
+        # Get final loadings
+        line_ldg_lst = []
+        xfmr_ldg_lst = []
+        equip_ldgs = {}
+        for key, vals in self.all_line_ldgs.items():
+            line_ldg_lst.append(vals[0] * 100 / vals[1])
+            equip_ldgs["Line_" + key] = (vals[0] * 100 / vals[1])
+        for key, vals in self.all_xfmr_ldgs.items():
+            xfmr_ldg_lst.append(vals[0] * 100 / vals[1])
+            equip_ldgs["Xfmr_" + key] = (vals[0] * 100 / vals[1])
+
+        # final computation of violations
+        self.get_nodal_violations()
+        self.check_voltage_violations_multi_tps(upper_limit=upper_limit, lower_limit=lower_limit)
+        return line_ldg_lst, xfmr_ldg_lst, equip_ldgs
 
     def get_load_pv_mults_individual_object(self):
         self.orig_loads = {}
@@ -420,9 +484,10 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         dss.Circuit.SetActiveBus(data_dict["ln_b2"])
         kv_b2 = dss.Bus.kVBase()
         dss.Circuit.SetActiveElement("Line.{}".format(ln_name))
-        if kv_b1 != kv_b2:
+        if round(kv_b1) != round(kv_b2):
             raise InvalidParameter("To and from bus voltages ({} {}) do not match for line {}".
                                    format(kv_b2, kv_b1, ln_name))
+
         data_dict["line_kV"] = kv_b1
         return data_dict
 
@@ -430,6 +495,188 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         f = open(os.path.join(self.config["upgrade_library_path"], "{}.json".format(file)), 'r')
         data = json.load(f)
         return data
+
+    # copied from voltage upgrades code (with some modifications) - used to determine voltage violations
+    # this function checks for voltage violations based on upper and lower limit passed
+    def check_voltage_violations_multi_tps(self, upper_limit, lower_limit, raise_exception=True):
+        self.all_bus_names = dss.Circuit.AllBusNames()
+        # TODO: This objective currently gives more weightage if same node has violations at more than 1 time point
+        num_nodes_counter = 0
+        severity_counter = 0
+        self.max_V_viol = 0
+        self.min_V_viol = 2
+        self.buses_with_violations = []
+        self.buses_with_undervoltage_violations = []
+        self.buses_with_overvoltage_violations = []
+        self.buses_with_violations_pos = {}
+        self.nodal_violations_dict = {}
+        # If multiple load files are being used, the 'tps_to_test property is not used, else if a single load file is
+        # used use the 'tps to test' input
+        if len(self.other_load_dss_files)>0:
+            for tp_cnt in range(len(self.config["tps_to_test"])):
+                # First two tps are for disabled PV case
+                if tp_cnt == 0 or tp_cnt == 1:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=False")
+                    dss.Loads.First()
+                    while True:
+                        load_name = dss.Loads.Name().split(".")[0].lower()
+                        if load_name not in self.min_max_load_kw:
+                            raise Exception("Load not found, quitting...")
+                        new_kw = self.min_max_load_kw[load_name][tp_cnt]
+                        dss.Loads.kW(new_kw)
+                        if not dss.Loads.Next()>0:
+                            break
+                    self.dssSolver.Solve()
+                    if not dss.Solution.Converged():
+                        self.logger.info("Write upgrades before Convergence Error in debug_upgrades.dss")
+                        self.write_upgrades_to_file(
+                            output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
+                        if raise_exception:
+                            raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                            return False
+                        else:
+                            return False
+                if tp_cnt == 2 or tp_cnt == 3:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=True")
+                    dss.Loads.First()
+                    while True:
+                        load_name = dss.Loads.Name().split(".")[0].lower()
+                        if load_name not in self.min_max_load_kw:
+                            raise Exception("Load not found, quitting...")
+                        new_kw = self.min_max_load_kw[load_name][tp_cnt-2]
+                        dss.Loads.kW(new_kw)
+                        if not dss.Loads.Next() > 0:
+                            break
+                    self.dssSolver.Solve()
+                    if not dss.Solution.Converged():
+                        self.logger.info("Write upgrades before Convergence Error in debug_upgrades.dss")
+                        self.write_upgrades_to_file(
+                            output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
+                        if raise_exception:
+                            raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                            return False
+                        else:
+                            return False
+                for b in self.all_bus_names:
+                    dss.Circuit.SetActiveBus(b)
+                    bus_v = dss.Bus.puVmagAngle()[::2]
+                    # Select that bus voltage of the three phases which is outside bounds the most,
+                    #  else if everything is within bounds use nominal pu voltage.
+                    maxv_dev = 0
+                    minv_dev = 0
+                    if max(bus_v) > self.max_V_viol:
+                        self.max_V_viol = max(bus_v)
+                        self.busvmax = b
+                    if min(bus_v) < self.min_V_viol:
+                        self.min_V_viol = min(bus_v)
+                    if max(bus_v) > upper_limit:
+                        maxv = max(bus_v)
+                        maxv_dev = maxv - upper_limit
+                        if b.lower() not in self.buses_with_overvoltage_violations:
+                            self.buses_with_overvoltage_violations.append(b.lower())
+                    if min(bus_v) < lower_limit:
+                        minv = min(bus_v)
+                        minv_dev = upper_limit - minv
+                    if maxv_dev > minv_dev:
+                        v_used = maxv
+                        num_nodes_counter += 1
+                        severity_counter += maxv_dev
+                        if b.lower() not in self.buses_with_violations:
+                            self.buses_with_violations.append(b.lower())
+                            self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
+                        if b.lower() not in self.buses_with_overvoltage_violations:
+                            self.buses_with_overvoltage_violations.append(b.lower())
+                    elif minv_dev > maxv_dev:
+                        v_used = minv
+                        num_nodes_counter += 1
+                        severity_counter += minv_dev
+                        if b.lower() not in self.buses_with_violations:
+                            self.buses_with_violations.append(b.lower())
+                            self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
+                        if b.lower() not in self.buses_with_undervoltage_violations:
+                            self.buses_with_undervoltage_violations.append(b.lower())
+                    else:
+                        v_used = self.config["nominal_pu_voltage"]
+                    if b not in self.nodal_violations_dict:
+                        self.nodal_violations_dict[b.lower()] = [v_used]
+                    elif b in self.nodal_violations_dict:
+                        self.nodal_violations_dict[b.lower()].append(v_used)
+        elif len(self.other_load_dss_files)==0:
+            for tp_cnt in range(len(self.config["tps_to_test"])):
+                # First two tps are for disabled PV case
+                if tp_cnt == 0 or tp_cnt == 1:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=False")
+                    dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
+                    self.dssSolver.Solve()
+                    if not dss.Solution.Converged():
+                        self.logger.info("Write upgrades before Convergence Error in debug_upgrades.dss")
+                        self.write_upgrades_to_file(
+                            output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
+                        if raise_exception:
+                            raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                            return False
+                        else:
+                            return False
+                if tp_cnt == 2 or tp_cnt == 3:
+                    dss.run_command("BatchEdit PVSystem..* Enabled=True")
+                    dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
+                    self.dssSolver.Solve()
+                    if not dss.Solution.Converged():
+                        self.logger.info("Write upgrades before Convergence Error in debug_upgrades.dss")
+                        self.write_upgrades_to_file(
+                            output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
+                        if raise_exception:
+                            raise OpenDssConvergenceError("OpenDSS solution did not converge")
+                            return False
+                        else:
+                            return False
+                for b in self.all_bus_names:
+                    dss.Circuit.SetActiveBus(b)
+                    bus_v = dss.Bus.puVmagAngle()[::2]
+                    # Select that bus voltage of the three phases which is outside bounds the most,
+                    #  else if everything is within bounds use nominal pu voltage.
+                    maxv_dev = 0
+                    minv_dev = 0
+                    if max(bus_v) > self.max_V_viol:
+                        self.max_V_viol = max(bus_v)
+                        self.busvmax = b
+                    if min(bus_v) < self.min_V_viol:
+                        self.min_V_viol = min(bus_v)
+                    if max(bus_v) > upper_limit:
+                        maxv = max(bus_v)
+                        maxv_dev = maxv - upper_limit
+                        if b.lower() not in self.buses_with_overvoltage_violations:
+                            self.buses_with_overvoltage_violations.append(b.lower())
+                    if min(bus_v) < lower_limit:
+                        minv = min(bus_v)
+                        minv_dev = upper_limit - minv
+                    if maxv_dev > minv_dev:
+                        v_used = maxv
+                        num_nodes_counter += 1
+                        severity_counter += maxv_dev
+                        if b.lower() not in self.buses_with_violations:
+                            self.buses_with_violations.append(b.lower())
+                            # self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
+                        if b.lower() not in self.buses_with_overvoltage_violations:
+                            self.buses_with_overvoltage_violations.append(b.lower())
+                    elif minv_dev > maxv_dev:
+                        v_used = minv
+                        num_nodes_counter += 1
+                        severity_counter += minv_dev
+                        if b.lower() not in self.buses_with_violations:
+                            self.buses_with_violations.append(b.lower())
+                            self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
+                        if b.lower() not in self.buses_with_undervoltage_violations:
+                            self.buses_with_undervoltage_violations.append(b.lower())
+                    else:
+                        # v_used = self.config["nominal_pu_voltage"]
+                        v_used = 1
+                    if b not in self.nodal_violations_dict:
+                        self.nodal_violations_dict[b.lower()] = [v_used]
+                    elif b in self.nodal_violations_dict:
+                        self.nodal_violations_dict[b.lower()].append(v_used)
+        self.severity_indices = [num_nodes_counter, severity_counter, num_nodes_counter * severity_counter]
+        return
 
     # (not used) computes nodal violations when we have multipliers for individual Load and PV objects
     def get_nodal_violations_individual_object(self):
@@ -692,143 +939,190 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.plot_violations_counter+=1
 
     def export_line_DT_parameters(self):
-        self.originial_line_parameters = {}
-        self.originial_xfmr_parameters = {}
-        dss.Lines.First()
-        while True:
-            ln_name = dss.Lines.Name()
-            ln_lc = dss.Lines.LineCode()
-            if ln_lc == '':
-                ln_geo = dss.Lines.Geometry()
-                ln_lc = ln_geo
-            ln_len = dss.Lines.Length()
-            len_units = self.config["units key"][dss.Lines.Units()-1]
-            #len_units_alt = dss.Properties.Value("Units")
-            ln_phases = dss.Lines.Phases()
-            ln_b1 = dss.Lines.Bus1()
-            ln_b2 = dss.Lines.Bus2()
-            dss.Circuit.SetActiveBus(ln_b1)
-            kv_b1 = dss.Bus.kVBase()
-            dss.Circuit.SetActiveBus(ln_b2)
-            kv_b2 = dss.Bus.kVBase()
-            dss.Circuit.SetActiveElement("Line.{}".format(ln_name))
-            if kv_b1!=kv_b2:
-                raise InvalidParameter("To and from bus voltages ({} {}) do not match for line {}".format(kv_b2, kv_b1, ln_name))
-            self.originial_line_parameters[ln_name] = {"linecode":ln_lc,"length": ln_len,
-                                                       "num_phases": ln_phases,"line_kV": kv_b1,
-                                                       "length_unit":len_units}
-            if not dss.Lines.Next()>0:
-                break
-        self.write_to_json(self.originial_line_parameters, "Original_line_parameters")
-
+        self.original_line_parameters = {}
         self.Linecodes_params = {}
-        dss.LineCodes.First()
-        while True:
-            lc_name = dss.LineCodes.Name()
-            ampacity = dss.LineCodes.NormAmps()
-            self.Linecodes_params[lc_name] = {"Ampacity":ampacity}
-            if not dss.LineCodes.Next()>0:
-                break
+        self.originial_xfmr_parameters = {}
+
+        # creating dictionary with line parameters
+        if dss.Lines.First() == 1:  # first check if lines exist, to avoid segmentation fault
+            while True:
+                ln_name = dss.Lines.Name()
+                ln_lc = dss.Lines.LineCode()
+                ln_geo = dss.Lines.Geometry()
+                if (ln_lc == '') & (ln_geo != ''):
+                    ln_lc = ln_geo
+
+                # if there are no line codes and geometries defined, create line code with line name
+                elif (ln_lc == '') & (ln_geo == ''):
+                    # print('No Line Codes and Line Geometries defined.')
+                    ln_lc = ln_name
+                    ampacity = dss.Properties.Value("normamps")
+                    self.Linecodes_params[ln_lc] = {"Ampacity": ampacity}
+
+                ln_len = dss.Lines.Length()
+                len_units = self.config["units key"][dss.Lines.Units()-1]
+                #len_units_alt = dss.Properties.Value("Units")
+                ln_phases = dss.Lines.Phases()
+                ln_b1 = dss.Lines.Bus1()
+                ln_b2 = dss.Lines.Bus2()
+                dss.Circuit.SetActiveBus(ln_b1)
+                kv_b1 = dss.Bus.kVBase()
+                dss.Circuit.SetActiveBus(ln_b2)
+                kv_b2 = dss.Bus.kVBase()
+                dss.Circuit.SetActiveElement("Line.{}".format(ln_name))
+                if round(kv_b1, 2) != round(kv_b2, 2):
+                    raise InvalidParameter("To and from bus voltages ({} {}) do not match for line {}".format(kv_b2, kv_b1, ln_name))
+                self.original_line_parameters[ln_name] = {"linecode":ln_lc,"length": ln_len,
+                                                           "num_phases": ln_phases,"line_kV": kv_b1,
+                                                           "length_unit":len_units}
+                if not dss.Lines.Next()>0:
+                    break
+        self.write_to_json(self.original_line_parameters, "Original_line_parameters")
+
+        # creating a dictionary with line code and geometries parameters
+        if dss.LineCodes.First() == 1:  # first check if linecodes exist - to avoid segmentation fault
+            while True:
+                lc_name = dss.LineCodes.Name()
+                ampacity = dss.LineCodes.NormAmps()
+                self.Linecodes_params[lc_name] = {"Ampacity":ampacity}
+                if not dss.LineCodes.Next()>0:
+                    break
 
         # Add geometries to this linecodes dict as well
-        dss.Lines.First()
-        while True:
-            ln_name = dss.Lines.Name()
-            lc_name = dss.Lines.LineCode()
-            if lc_name == '':
+        if dss.Lines.First() == 1:  # first check if Lines exist - to avoid segmentation fault
+            while True:
+                ln_name = dss.Lines.Name()
+                lc_name = dss.Lines.LineCode()
                 ln_geo = dss.Lines.Geometry()
-                lc_name = ln_geo
-                dss.Circuit.SetActiveClass("linegeometry")
-                flag = dss.ActiveClass.First()
-                while flag > 0:
-                    geo = dss.CktElement.Name()
-                    if geo == lc_name:
-                        ampacity = dss.Properties.Value("normamps")
-                    flag = dss.ActiveClass.Next()
-                self.Linecodes_params[lc_name] = {"Ampacity": ampacity}
-            dss.Lines.Name(ln_name)
-            if not dss.Lines.Next() > 0:
-                break
+
+                if (lc_name == '') & (ln_geo != ''):  # if line geometry exists for this line
+                    lc_name = ln_geo
+                    dss.Circuit.SetActiveClass("linegeometry")
+                    flag = dss.ActiveClass.First()
+                    while flag > 0:
+                        geo = dss.CktElement.Name()
+                        if geo == lc_name:
+                            ampacity = dss.Properties.Value("normamps")
+                        flag = dss.ActiveClass.Next()
+                    self.Linecodes_params[lc_name] = {"Ampacity": ampacity}
+                # else if line codes and line geometries do not exist, nothing to be done. Move to next line
+                dss.Lines.Name(ln_name)
+                if not dss.Lines.Next() > 0:
+                    break
 
         self.write_to_json(self.Linecodes_params, "Original_linecodes_parameters")
 
-        dss.Transformers.First()
-        while True:
-            dt_name = dss.Transformers.Name()
-            dt_phases = dss.Properties.Value("Phases")
-            dt_numwdgs = dss.Transformers.NumWindings()
-            dt_kva = []
-            dt_conn = []
-            dt_kv = []
-            for wdgs in range(dt_numwdgs):
-                dss.Transformers.Wdg(wdgs+1)
-                dt_kva.append(float(dss.Properties.Value("kva")))
-                dt_kv.append(float(dss.Properties.Value("kv")))
-                dt_conn.append(dss.Properties.Value("conn"))
-            self.originial_xfmr_parameters[dt_name] = {"num_phases":dt_phases,"num_windings": dt_numwdgs,
-                                                       "wdg_kvas": dt_kva,"wdg_kvs": dt_kv,"wdg_conns": dt_conn}
-            if not dss.Transformers.Next()>0:
-                break
+        if dss.Transformers.First() == 1:
+            while True:
+                dt_name = dss.Transformers.Name()
+                dt_phases = dss.Properties.Value("Phases")
+                dt_numwdgs = dss.Transformers.NumWindings()
+                dt_kva = []
+                dt_conn = []
+                dt_kv = []
+                for wdgs in range(dt_numwdgs):
+                    dss.Transformers.Wdg(wdgs+1)
+                    dt_kva.append(float(dss.Properties.Value("kva")))
+                    dt_kv.append(float(dss.Properties.Value("kv")))
+                    dt_conn.append(dss.Properties.Value("conn"))
+                self.originial_xfmr_parameters[dt_name] = {"num_phases":dt_phases,"num_windings": dt_numwdgs,
+                                                           "wdg_kvas": dt_kva,"wdg_kvs": dt_kv,"wdg_conns": dt_conn}
+                if not dss.Transformers.Next()>0:
+                    break
         self.write_to_json(self.originial_xfmr_parameters, "Original_xfmr_parameters")
 
     def write_to_json(self, dict, file_name):
-        with open(os.path.join(self.config["Outputs"],"{}.json".format(file_name)), "w") as fp:
+        with open(os.path.join(self.config["Outputs"], "{}.json".format(file_name)), "w") as fp:
             json.dump(dict, fp, indent=4)
 
-
-    def write_dat_file(self):
-        with open(os.path.join(self.config["Outputs"],"thermal_upgrades.dss"), "w") as datafile:
+    def write_dat_file(self, output_path=None):
+        if output_path is None:
+            output_path = os.path.join(self.config["Outputs"], "thermal_upgrades.dss")
+        with open(output_path, "w") as datafile:
             for line in self.dss_upgrades:
                 datafile.write(line)
 
+    # this function reformats linecode library in the format needed by postprocess_thermal_upgrades code
+    def linecode_lib_reformat(self):
+        # flatten upgrades library dictionary - to convert to same dictionary structure as that needed for postprocess
+        modified_lib_linecode = {}
+        length = 0
+        for key, value in self.avail_line_upgrades.items():
+            length = length + len(value.keys())
+            modified_lib_linecode.update(value)
+
+        # converting dictionary value format to same as that needed for postprocess
+        self.orig_lc_parameters = {}
+        for key, value in modified_lib_linecode.items():
+            new_value = {'Ampacity': value[0]}
+            self.orig_lc_parameters[key] = new_value
+        return
+
     def determine_available_line_upgrades(self):
         self.avail_line_upgrades = {}
-        dss.Lines.First()
-        while True:
-            line_name = dss.Lines.Name()
-            line_code = dss.Lines.LineCode()
-            ln_geo = ''
-            ln_config = "linecode"
-            if line_code=='':
-                ln_geo      = dss.Lines.Geometry()
-                ln_config = "geometry"
-                # TODO: Distinguish between overhead and underground cables, currently there is no way to distinguish using opendssdirect/pydss etc
-                # dss.Circuit.SetActiveClass("linegeometry")
-                # flag = dss.ActiveClass.First()
-                # while flag>0:
-                #     self.logger.info("%s %s %s %s", dss.ActiveClass.Name(),dss.Properties.Value("wire"),dss.Properties.Value("cncable"),dss.Properties.Value("tscable"))
-                #     flag = dss.ActiveClass.Next()
-            phases = dss.Lines.Phases()
-            norm_amps = dss.CktElement.NormalAmps()
-            # TODO change this to properties
-            from_bus = dss.CktElement.BusNames()[0].split(".")[0]
-            to_bus = dss.CktElement.BusNames()[1].split(".")[0]
-            dss.Circuit.SetActiveBus(from_bus)
-            kv_from_bus = dss.Bus.kVBase()
-            dss.Circuit.SetActiveBus(to_bus)
-            kv_to_bus = dss.Bus.kVBase()
-            dss.Circuit.SetActiveElement("Line.{}".format(line_name))
-            if kv_from_bus!=kv_to_bus:
-                raise InvalidParameter("For line {} the from and to bus kV ({} {}) do not match, quitting...".format(line_name,
-                                                                                                    kv_from_bus,
-                                                                                                    kv_to_bus))
-            key = "type_"+"{}_".format(ln_config)+"{}_".format(phases)+"{}".format(round(kv_from_bus,3))
-            # Add linecodes
-            if key not in self.avail_line_upgrades and ln_config=="linecode":
-                self.avail_line_upgrades[key] = {"{}".format(line_code):[norm_amps]}
-            elif key in self.avail_line_upgrades and ln_config=="linecode":
-                for lc_key,lc_dict in self.avail_line_upgrades.items():
-                    if line_code not in lc_dict:
-                        self.avail_line_upgrades[key]["{}".format(line_code)]=[norm_amps]
-            # Add line geometries
-            if key not in self.avail_line_upgrades and ln_config == "geometry":
-                self.avail_line_upgrades[key] = {"{}".format(ln_geo): [norm_amps]}
-            elif key in self.avail_line_upgrades and ln_config == "geometry":
-                for lc_key, lc_dict in self.avail_line_upgrades.items():
-                    if ln_geo not in lc_dict:
-                        self.avail_line_upgrades[key]["{}".format(ln_geo)] = [norm_amps]
-            if not dss.Lines.Next()>0:
-                break
+        if dss.Lines.First() == 1:
+            while True:
+                line_name = dss.Lines.Name()
+                if line_name == 'em_line':
+                    # breakpoint()
+                    print(line_name)
+                line_code = dss.Lines.LineCode()
+                ln_geo = dss.Lines.Geometry()
+                param_name = line_code
+                ln_config = "linecode"
+                if (line_code == '') & (ln_geo != ''):
+                    ln_config = "geometry"
+                    param_name = ln_geo
+                    # TODO: Distinguish between overhead and underground cables, currently there is no way to distinguish using opendssdirect/pydss etc
+                    # dss.Circuit.SetActiveClass("linegeometry")
+                    # flag = dss.ActiveClass.First()
+                    # while flag>0:
+                    #     self.logger.info("%s %s %s %s", dss.ActiveClass.Name(),dss.Properties.Value("wire"),dss.Properties.Value("cncable"),dss.Properties.Value("tscable"))
+                    #     flag = dss.ActiveClass.Next()
+                elif (line_code == '') & (ln_geo == ''):
+                    ln_config = "line_definition"
+                    param_name = line_name
+                phases = dss.Lines.Phases()
+                norm_amps = dss.CktElement.NormalAmps()
+                # TODO change this to properties
+                from_bus = dss.CktElement.BusNames()[0].split(".")[0]
+                to_bus = dss.CktElement.BusNames()[1].split(".")[0]
+                dss.Circuit.SetActiveBus(from_bus)
+                kv_from_bus = dss.Bus.kVBase()
+                dss.Circuit.SetActiveBus(to_bus)
+                kv_to_bus = dss.Bus.kVBase()
+                dss.Circuit.SetActiveElement("Line.{}".format(line_name))
+                if round(kv_from_bus, 2) != round(kv_to_bus, 2):
+                    raise InvalidParameter("For line {} the from and to bus kV ({} {}) do not match, quitting...".format(line_name,
+                                                                                                        kv_from_bus,
+                                                                                                        kv_to_bus))
+                key = "type_"+"{}_".format(ln_config)+"{}_".format(phases)+"{}".format(round(kv_from_bus,3))
+
+                # add parameters, from line code, geometry or line definition
+                if key not in self.avail_line_upgrades:
+                    self.avail_line_upgrades[key] = {"{}".format(param_name): [norm_amps]}
+                elif key in self.avail_line_upgrades:
+                    for lc_key, lc_dict in self.avail_line_upgrades.items():
+                        if param_name not in lc_dict:
+                            self.avail_line_upgrades[key]["{}".format(param_name)] = [norm_amps]
+
+                # Check and remove commented lines - replacement added above
+                # # Add linecodes
+                # if key not in self.avail_line_upgrades and ln_config=="linecode":
+                #     self.avail_line_upgrades[key] = {"{}".format(line_code):[norm_amps]}
+                # elif key in self.avail_line_upgrades and ln_config=="linecode":
+                #     for lc_key,lc_dict in self.avail_line_upgrades.items():
+                #         if line_code not in lc_dict:
+                #             self.avail_line_upgrades[key]["{}".format(line_code)]=[norm_amps]
+                # # Add line geometries
+                # if key not in self.avail_line_upgrades and ln_config == "geometry":
+                #     self.avail_line_upgrades[key] = {"{}".format(ln_geo): [norm_amps]}
+                # elif key in self.avail_line_upgrades and ln_config == "geometry":
+                #     for lc_key, lc_dict in self.avail_line_upgrades.items():
+                #         if ln_geo not in lc_dict:
+                #             self.avail_line_upgrades[key]["{}".format(ln_geo)] = [norm_amps]
+                if not dss.Lines.Next() > 0:
+                    break
 
     def determine_line_ldgs(self):
         self.line_violations = {}
@@ -1004,15 +1298,21 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         if len(self.line_violations)>0:
             for key,vals in self.line_violations.items():
                 dss.Lines.Name("{}".format(key))
+                # breakpoint()
                 phases = dss.Lines.Phases()
                 length = dss.Lines.Length()
                 units = self.config["units key"][dss.Lines.Units()-1]
-                ln_geo = ''
                 line_code = dss.Lines.LineCode()
+                ln_geo = dss.Lines.Geometry()
                 ln_config = "linecode"
-                if line_code=='':
-                    line_code = dss.Lines.Geometry()
+                if (line_code == '') & (ln_geo != ''):
+                    line_code = ln_geo
                     ln_config = "geometry"
+                # if there are no line codes and geometries defined, create line code with line name
+                elif (line_code == '') & (ln_geo == ''):
+                    # print('No Line Codes and Line Geometries defined.')
+                    ln_config = "line_definition"
+                    line_code = key
                 from_bus = dss.CktElement.BusNames()[0]
                 to_bus = dss.CktElement.BusNames()[1]
                 dss.Circuit.SetActiveBus(from_bus)
@@ -1022,7 +1322,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 dss.Circuit.SetActiveElement("Line.{}".format(key))
                 norm_amps = dss.CktElement.NormalAmps()
                 num_par_lns = int((vals[0]*self.config["line_safety_margin"])/(vals[1]*self.config["line_loading_limit"]))+1
-                if kv_from_bus != kv_to_bus:
+                if round(kv_from_bus, 2) != round(kv_to_bus, 2):
                     raise InvalidParameter("For line {} the from and to bus kV ({} {}) do not match, quitting...".format(key,
                                                                                                         kv_from_bus,
                                                                                                         kv_to_bus))
@@ -1036,7 +1336,13 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     for lcs,lcs_vals in self.avail_line_upgrades[lc_key].items():
                         if lcs!=line_code:
                             if lcs_vals[0]>((vals[0]*self.config["line_safety_margin"])/(self.config["line_loading_limit"])) and lcs_vals[0]<num_par_lns*norm_amps:
-                                command_string = "Edit Line.{lnm} {cnfig}={lnc}".format(lnm=key, cnfig=ln_config, lnc=lcs)
+                                if ln_config == 'line_definition':
+                                    # breakpoint()
+                                    command_string = "Edit Line.{lnm} normamps={ampacity}".format(lnm=key,
+                                                                                                  ampacity=lcs_vals[0])
+                                else:  # if line code and line geometry is available
+                                    command_string = "Edit Line.{lnm} {cnfig}={lnc}".format(lnm=key, cnfig=ln_config,
+                                                                                            lnc=lcs)
                                 dss.run_command(command_string)
                                 self.dssSolver.Solve()
                                 self.write_dss_file(command_string)
@@ -1049,20 +1355,19 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     for ln_cnt in range(num_par_lns-1):
                         curr_time = str(time.time())
                         time_stamp = curr_time.split(".")[0] + "_" + curr_time.split(".")[1]
-                        command_string = "New Line.{lnm}_upgrade_{tr_cnt}_{cnt}_{tm} bus1={b1} bus2={b2} length={lt} units={u}" \
-                                         " {cnfig}={lc} phases={ph} enabled=True".format(
-                            lnm=key,
-                            tr_cnt = self.Line_trial_counter,
-                            cnt=ln_cnt,
-                            tm = time_stamp,
-                            b1=from_bus,
-                            b2=to_bus,
-                            lt=length,
-                            u=units,
-                            cnfig = ln_config,
-                            lc=line_code,
-                            ph=phases
-                        )
+                        if ln_config == 'line_definition':
+                            command_string = "New Line.{lnm}_upgrade_{tr_cnt}_{cnt}_{tm} bus1={b1} bus2={b2} length={lt} units={u}" \
+                                             " phases={ph} enabled=True".format(
+                                lnm=key, tr_cnt=self.Line_trial_counter, cnt=ln_cnt, tm=time_stamp,
+                                b1=from_bus, b2=to_bus, lt=length, u=units, ph=phases
+                            )
+                        else:  # if line code and line geometry is available
+                            command_string = "New Line.{lnm}_upgrade_{tr_cnt}_{cnt}_{tm} bus1={b1} bus2={b2} length={lt} units={u}" \
+                                             " {cnfig}={lc} phases={ph} enabled=True".format(
+                                lnm=key, tr_cnt=self.Line_trial_counter, cnt=ln_cnt, tm=time_stamp,
+                                b1=from_bus, b2=to_bus, lt=length, u=units, cnfig=ln_config, lc=line_code, ph=phases
+                            )
+
                         dss.run_command(command_string)
                         self.dssSolver.Solve()
                         self.write_dss_file(command_string)

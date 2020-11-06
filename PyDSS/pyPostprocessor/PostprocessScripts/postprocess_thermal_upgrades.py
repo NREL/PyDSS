@@ -31,6 +31,10 @@ class postprocess_thermal_upgrades():
         self.orig_lines = self.Settings["orig_lines"]
         self.new_xfmrs = self.Settings["new_xfmrs"]
         self.orig_xfmrs = self.Settings["orig_xfmrs"]
+        self.orig_lc_parameters = self.Settings["orig_lc_parameters"]
+        # breakpoint()
+        # self.orig_line_parameters = self.Settings["orig_line_parameters"]
+        # self.orig_DT_parameters = self.Settings["orig_DT_parameters"]  # TODO
         dss.Vsources.First()
         self.source = dss.CktElement.BusNames()[0].split(".")[0]
         if self.Settings["Create_plots"]:
@@ -49,21 +53,22 @@ class postprocess_thermal_upgrades():
     def get_orig_line_DT_params(self):
         self.orig_line_parameters = {}
         self.orig_DT_parameters = {}
-        self.orig_lc_parameters = {}
-        f = open(os.path.join(self.Settings["Outputs"], "Original_linecodes_parameters.json"), "r")
+        # self.orig_lc_parameters = {}
+        # f = open(os.path.join(self.Settings["Outputs"], "Original_linecodes_parameters.json"), "r")
+        # data = json.load(f)
+        # for lc, params in data.items():
+        #     self.orig_lc_parameters[lc.lower()] = params
+        f = open(os.path.join(self.Settings["Outputs"], "Original_line_parameters.json"), "r")
         data = json.load(f)
-        for lc, params in data.items():
-            self.orig_lc_parameters[lc.lower()] = params
-        f = open(os.path.join(self.Settings["Outputs"],"Original_line_parameters.json"),"r")
-        data = json.load(f)
-        for line,params in data.items():
+        for line, params in data.items():
             try:
-                for ln_par,ln_par_val in params.items():
+                for ln_par, ln_par_val in params.items():
                     if ln_par.lower()=="linecode":
                         ln_ampacity = self.orig_lc_parameters[ln_par_val]["Ampacity"]
                 params["Ampacity"] = ln_ampacity
             except:
-                self.logger.info("No linecode for line: ",line)
+                # breakpoint()
+                self.logger.info("No linecode for line: {} ".format(line))
                 pass
             self.orig_line_parameters["line."+line.lower()] = params
         f = open(os.path.join(self.Settings["Outputs"], "Original_xfmr_parameters.json"), "r")
@@ -124,11 +129,17 @@ class postprocess_thermal_upgrades():
             json.dump(dict, fp, indent=4)
 
     def get_line_upgrade_params(self, new_line):
+        lc_name = ''
+        # breakpoint()
+        line_name = [string for string in new_line if 'Line.' in string][0]
+        line_name = line_name.split(".")[1]
         for parameters in new_line:
             if parameters.lower().startswith("linecode"):
                 lc_name = parameters.split("=")[1]
             elif parameters.lower().startswith("geometry"):
                 lc_name = parameters.split("=")[1]
+            else:
+                lc_name = line_name  # i.e. if the line parameters are defined in line definition itself
         return lc_name
 
     def get_xfmr_upgrade_params(self, new_line):
