@@ -583,7 +583,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         severity_counter += maxv_dev
                         if b.lower() not in self.buses_with_violations:
                             self.buses_with_violations.append(b.lower())
-                            self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
+                            # self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
                         if b.lower() not in self.buses_with_overvoltage_violations:
                             self.buses_with_overvoltage_violations.append(b.lower())
                     elif minv_dev > maxv_dev:
@@ -592,7 +592,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         severity_counter += minv_dev
                         if b.lower() not in self.buses_with_violations:
                             self.buses_with_violations.append(b.lower())
-                            self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
+                            # self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
                         if b.lower() not in self.buses_with_undervoltage_violations:
                             self.buses_with_undervoltage_violations.append(b.lower())
                     else:
@@ -665,7 +665,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         severity_counter += minv_dev
                         if b.lower() not in self.buses_with_violations:
                             self.buses_with_violations.append(b.lower())
-                            self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
+                            # self.buses_with_violations_pos[b.lower()] = self.pos_dict[b.lower()]
                         if b.lower() not in self.buses_with_undervoltage_violations:
                             self.buses_with_undervoltage_violations.append(b.lower())
                     else:
