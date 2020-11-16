@@ -11,7 +11,7 @@
 "Control mode" = "Static"
 "Disable PyDSS controllers" = false
 "Simulation Type" = "QSTS"
-"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS\\examples"
+"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS_src\\examples"
 "Active Project" = "dynamic_visualization"
 "Active Scenario" = "scenario_1"
 "DSS File" = "Master_Spohn_existing_VV.dss"

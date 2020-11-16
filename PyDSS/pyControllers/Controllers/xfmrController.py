@@ -17,7 +17,6 @@ class xfmrController(ControllerAbstract):
 
         """
 
-
     def __init__(self, RegulatorObj, Settings, dssInstance, ElmObjectList, dssSolver):
         super(xfmrController).__init__(RegulatorObj, Settings, dssInstance, ElmObjectList, dssSolver)
         self.P_old = 0
@@ -42,7 +41,7 @@ class xfmrController(ControllerAbstract):
         return "{}.{}".format(self.Class, self.Name)
 
     def Update(self, Priority, Time, UpdateResults):
-        Powers = self.__ConnTransformer.GetVariable('Powers')
+        Powers = self.__ConnTransformer.GetVariable('CurrentsMagAng')
         Powers = Powers[:int(len(Powers)/2)][::2]
         P_new = sum((float(x)) for x in Powers)
         if self.__RPFlocking and self.P_old < 0:

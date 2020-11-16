@@ -14,7 +14,6 @@ SUBSCRIPTIONS_FILENAME = "Subscriptions.toml"
 PROJECT_TAR = "project.tar"
 PROJECT_ZIP = "project.zip"
 
-
 class VisualizationType(enum.Enum):
     FREQUENCY_PLOT = "FrequencySweep"
     HISTOGRAM_PLOT = "Histogram"
@@ -34,6 +33,8 @@ class ControllerType(enum.Enum):
     MOTOR_STALL = "MotorStall"
     PV_VOLTAGE_RIDETHROUGH = "PvVoltageRideThru"
     FAULT_CONTROLLER = "FaultController"
+    THERMOSTATIC_LOAD_CONTROLLER = "ThermostaticLoad"
+    THERMOSTATIC_LOAD = "ThermostaticLoad2"
 
 
 CONTROLLER_TYPES = tuple(x.value for x in ControllerType)

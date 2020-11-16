@@ -11,7 +11,7 @@
 "Control mode" = "Static"
 "Disable PyDSS controllers" = false
 "Simulation Type" = "QSTS"
-"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS\\examples\\external_interfaces"
+"Project Path" = "./examples/external_interfaces"
 "Active Project" = "pydss_project"
 "Active Scenario" = ""
 "DSS File" = "Master_Spohn_existing_VV.dss"
