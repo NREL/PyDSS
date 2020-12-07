@@ -249,7 +249,7 @@ class VoltageMetrics(ReportBase):
                 {
                     "property": "VoltageMetric",
                     "store_values_type": "all",
-                    "limits": inputs["range_b_limits"],
+                    "limits": inputs["range_a_limits"],
                 },
             ]
         }
