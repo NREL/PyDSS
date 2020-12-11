@@ -14,7 +14,14 @@ logger = logging.getLogger(__name__)
 
 
 class ThermalMetrics(ReportBase):
-    """Reports thermal metrics."""
+    """Reports thermal metrics.
+
+    The metrics are defined in this paper:
+    https://www.sciencedirect.com/science/article/pii/S0306261920311351
+
+    The report generates the output file Reports/thermal_metrics.json.
+
+    """
 
     DEFAULTS = {
         "line_window_size_hours": 1,

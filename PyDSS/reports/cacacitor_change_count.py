@@ -11,7 +11,11 @@ logger = logging.getLogger(__name__)
 
 
 class CapacitorStateChangeReport(ReportBase):
-    """Reports the state changes per Capacitor."""
+    """Reports the state changes per Capacitor.
+
+    The report generates a capacitor_state_changes.json output file.
+
+    """
 
     FILENAME = "capacitor_state_changes.json"
     NAME = "Capacitor State Change Counts"

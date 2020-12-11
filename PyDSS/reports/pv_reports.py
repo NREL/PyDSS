@@ -68,7 +68,14 @@ class PvReportBase(ReportBase, abc.ABC):
 
 
 class PvClippingReport(PvReportBase):
-    """Reports PV Clipping for the simulation."""
+    """Reports PV Clipping for the simulation.
+
+    The report generates a pv_clipping output file. The file extension depends
+    on the input parameters. If the data was collected at every time point then
+    the output file will be .csv or .h5, depending on 'Export Format.'
+    Otherwise, the output file will be .json.
+
+    """
 
     PER_TIME_POINT_FILENAME = "pv_clipping.h5"
     TOTAL_FILENAME = "pv_clipping.json"
@@ -218,7 +225,14 @@ class PvClippingReport(PvReportBase):
 
 
 class PvCurtailmentReport(PvReportBase):
-    """Reports PV Curtailment at every time point in the simulation."""
+    """Reports PV Curtailment at every time point in the simulation.
+
+    The report generates a pv_curtailment output file. The file extension
+    depends on the input parameters. If the data was collected at every time
+    point then the output file will be .csv or .h5, depending on 'Export
+    Format.' Otherwise, the output file will be .json.
+
+    """
 
     PER_TIME_POINT_FILENAME = "pv_curtailment.h5"
     TOTAL_FILENAME = "pv_curtailment.json"

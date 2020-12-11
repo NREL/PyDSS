@@ -10,7 +10,11 @@ logger = logging.getLogger(__name__)
 
 
 class FeederLossesReport(ReportBase):
-    """Reports the feeder losses."""
+    """Reports the feeder losses.
+
+    The report generates a feeder_losses.json output file.
+
+    """
 
     FILENAME = "feeder_losses.json"
     NAME = "Feeder Losses"
