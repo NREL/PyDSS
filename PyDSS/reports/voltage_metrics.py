@@ -17,8 +17,36 @@ logger = logging.getLogger(__name__)
 
 
 class VoltageMetrics(ReportBase):
-    """Reports voltage metrics."""
+    """Reports voltage metrics.
 
+    The metrics are defined in this paper:
+    https://www.sciencedirect.com/science/article/pii/S0306261920311351
+
+    The report generates the output file Reports/voltage_metrics.json.
+    Metrics 1, 2, 5, and 6 are included within that file.
+
+    Metric 3 must be read from the raw data as in this example.
+
+    ..code-block:: python
+
+        from PyDSS.
+
+    The report generates a pandas.DataFrame for metric 4 for each scenario and
+    then serializes that DataFrame to disk as either a CSV file or HDF5
+    depending on the 'Export Format' simulation setting. Those filenames are
+    stored within Reports/voltage_metrics.json. Here is one way to read the
+    data back into a DataFrame.
+
+    ..code-block:: python
+
+        from PyDSS.utils.utils import load_data
+        from PyDSS.utils.dataframe_utils import read_dataframe
+
+        metrics = load_data("Reports/voltage_metrics.json")
+        filenames = metrics["metric_4"]
+        dfs = [read_dataframe(x) for x in filenames]
+
+    """
     DEFAULTS = {
         "range_a_limits": [0.95, 1.05],
         "range_b_limits": [0.90, 1.0583],
@@ -46,10 +74,11 @@ class VoltageMetrics(ReportBase):
 
     def generate(self, output_dir):
         data = {
+            "scenarios": [x.name for x in self._results.scenarios],
             "num_nodes": len(self._node_names),
             "metric_1": {},
             "metric_2": {},
-            "metric_4": {},
+            "metric_4": [],
             "metric_5": {},
             "metric_6": {},
         }
@@ -60,9 +89,13 @@ class VoltageMetrics(ReportBase):
         for scenario in self._results.scenarios:
             name = scenario.name
             data["metric_1"][name] = self._gen_metric_1(name, dfs[name])
-            data["metric_2"][name] = self._gen_metric_4(name, dfs[name], output_dir)
+            data["metric_2"][name], output = self._gen_metric_4(name, dfs[name], output_dir)
+            data["metric_4"].append(output)
             data["metric_5"][name] = self._gen_metric_5(scenario, dfs[name])
         data["metric_6"] = self._gen_metric_6(dfs)
+
+        # Note: metric 3 has to be read from the raw data. It is not duplicated
+        # in the Reports directory.
         self._export_json_report(data, output_dir, self.FILENAME)
 
     def _gen_metric_1(self, name, dfs):
@@ -91,6 +124,8 @@ class VoltageMetrics(ReportBase):
             str(ts) for ts, val in total_a.iteritems() if val > 0 and total_b.loc[ts] == 0
         ]
         results["duration"] = str(len(results["time_points"]) * self._resolution)
+        dur = len(results["time_points"]) * self._resolution
+        results["duration"] = f"days={dur.days} seconds={dur.seconds}"
         return results
 
     def _gen_metric_4(self, scenario_name, dfs, output_dir):
@@ -101,11 +136,18 @@ class VoltageMetrics(ReportBase):
         # Also create a dictionary of node name to range A violation count for
         # use in Metric 2.
 
+        # FUTURE: need to have a metric showing consecutive periods of violations.
+        # Perhaps this could be the longest continuous range of violations for each node.
         node_violations = {}
         total = None
+        num_steps = self._get_num_steps()
         for node_name, df in dfs.items():
             series = df.applymap(self._one_if_violates_range_a).iloc[:, 0]
-            node_violations[node_name] = series.sum()
+            count = series.sum()
+            dur = count * self._resolution
+            node_violations[node_name] = {"duration": {}, "percentage": {}}
+            node_violations[node_name]["duration"] = f"days={dur.days} seconds={dur.seconds}"
+            node_violations[node_name]["percentage"] = float(count / num_steps) * 100
             if total is None:
                 total = series
             else:
@@ -119,8 +161,8 @@ class VoltageMetrics(ReportBase):
             df = pd.DataFrame(total)
 
         basename = f"voltage_metric_4__{scenario_name}"
-        self._export_dataframe_report(df, output_dir, basename)
-        return node_violations
+        filename = self._export_dataframe_report(df, output_dir, basename)
+        return node_violations, filename
 
     def _one_if_violates_range_a(self, val):
         return self._one_if_violates_limits(val, self._range_a_limits)
