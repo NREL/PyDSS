@@ -25,26 +25,31 @@ class VoltageMetrics(ReportBase):
     The report generates the output file Reports/voltage_metrics.json.
     Metrics 1, 2, 5, and 6 are included within that file.
 
-    Metric 3 must be read from the raw data as in this example.
+    Metric 3 must be read from the raw data as in the example below.
+    Metric 4 must be read from the dataframe-as-binary-file.
 
-    ..code-block:: python
+    This example assumes that data is stored on a per-time-point basis.
 
-        from PyDSS.
+    .. code-block:: python
 
-    The report generates a pandas.DataFrame for metric 4 for each scenario and
-    then serializes that DataFrame to disk as either a CSV file or HDF5
-    depending on the 'Export Format' simulation setting. Those filenames are
-    stored within Reports/voltage_metrics.json. Here is one way to read the
-    data back into a DataFrame.
-
-    ..code-block:: python
-
-        from PyDSS.utils.utils import load_data
         from PyDSS.utils.dataframe_utils import read_dataframe
+        from PyDSS.pydss_results import PyDssResults
 
-        metrics = load_data("Reports/voltage_metrics.json")
-        filenames = metrics["metric_4"]
+        results = PyDssResults("path_to_project")
+        control_mode_scenario = results.scenarios[1]
+
+        # Read metrics 1, 2, 5, and 6 directly from JSON.
+        voltage_metrics = results.read_report("Voltage Metrics")
+        metric_4_filenames = voltage_metrics["metric_4"]
         dfs = [read_dataframe(x) for x in filenames]
+
+        # Read all metric 3 dataframes from raw data into memory in one call.
+        dfs = control_mode_scenario.get_filtered_dataframes("Nodes", "VoltageMetric")
+
+        # Read metric 3 dataframes into memory one at a time.
+        for node_name in control_mode_scenario.list_element_names("Nodes", "VoltageMetric"):
+            df = control_mode_scenario.get_dataframe("Nodes", "VoltageMetric", node_name)
+            # If necessary, convert to a moving average with pandas.
 
     """
     DEFAULTS = {
