@@ -29,7 +29,7 @@ class PyDSS:
         self.queue = queue
 
         try:
-            params = restructure_dictionary(parameters['parameters'])
+            params = restructure_dictionary(parameters)
             self.pydss_obj = OpenDSS(params)
             export_path = os.path.join(self.pydss_obj._dssPath['Export'], params['Project']['Active Scenario'])
             Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()

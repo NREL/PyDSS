@@ -27,6 +27,7 @@ settings_dict = {
             'Percentage load in series': {'type': float, 'Options': range(0, 100)},
         },
         "Helics": {
+            'Co-simulation UUID': {'type': str},
             'Co-simulation Mode': {'type': bool, 'Options': [True, False]},
             'Iterative Mode': {'type': bool, 'Options': [True, False]},
             'Max co-iterations': {'type': int, 'Options': range(1, 1000)},

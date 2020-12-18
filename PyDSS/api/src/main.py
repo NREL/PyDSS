@@ -28,7 +28,6 @@ def getJSONschema(host,port):
 
 class pydss_server(ApiServer):
     def __init__(self, debug=False, **kwargs):
-        print(kwargs)
         super().__init__(**kwargs)
         print(self.config.endpoints)
         self.handler = Handler(self.config.endpoints, loop=self.loop, debug=debug)

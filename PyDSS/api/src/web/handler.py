@@ -256,28 +256,28 @@ class Handler:
                             examples:
                                     Example 1:
                                         value:
-                                            parameters:
-                                                Start Year: 2017
-                                                Start Day: 1
-                                                Start Time (min): 0
-                                                End Day: 1
-                                                End Time (min): 1439
-                                                Date offset: 0
-                                                Step resolution (sec): 900
-                                                Max Control Iterations: 50
-                                                Error tolerance: 0.001
-                                                Control mode: Static
-                                                Simulation Type: QSTS
-                                                Project Path: "C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples"
-                                                Active Project: custom_contols
-                                                Active Scenario: base_case
-                                                DSS File: Master_Spohn_existing_VV.dss
-                                                Co-simulation Mode: false
-                                                Result Container: ResultData
-                                                Log Results: false
-                                                Export Data Tables: true
-                                                Export Data In Memory: true
-                                                Federate name: PyDSS_x
+                                            Co-simulation UUID: "96c21e00-cd3c-4943-a914-14451f5f7ab6"
+                                            Start Year: 2017
+                                            Start Day: 1
+                                            Start Time (min): 0
+                                            End Day: 1
+                                            End Time (min): 1439
+                                            Date offset: 0
+                                            Step resolution (sec): 900
+                                            Max Control Iterations: 50
+                                            Error tolerance: 0.001
+                                            Control mode: Static
+                                            Simulation Type: QSTS
+                                            Project Path: "C:/Users/alatif/Desktop/naerm-pydss/PyDSS/examples"
+                                            Active Project: custom_contols
+                                            Active Scenario: base_case
+                                            DSS File: Master_Spohn_existing_VV.dss
+                                            Co-simulation Mode: false
+                                            Result Container: ResultData
+                                            Log Results: false
+                                            Export Data Tables: true
+                                            Export Data In Memory: true
+                                            Federate name: PyDSS_x
 
                 responses:
                  '200':
