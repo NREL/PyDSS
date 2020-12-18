@@ -10,7 +10,8 @@ from multiprocessing import Queue, Process, Event, cpu_count
 from concurrent.futures import ThreadPoolExecutor
 from PyDSS.api.src.web.parser import variable_decode, bytestream_decode
 from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, VisualizationType
-
+from naerm_core.web import error_responses as error
+from naerm_core.config_reader.config import EndpointsConfig
 
 logger = logging.getLogger(__name__)
 
@@ -18,19 +19,23 @@ class Handler:
 
     """ Handlers for web server. """
 
-    def __init__(self):
+    def __init__(self, services: EndpointsConfig, loop=None, debug=False):
         """ Constructor for PyDSS handler. """
         
         logger.info("Initializing Handler ....")
+        self.services = {}
+        for key in services.endpoints:
+            self.services.update({key: services.__getattr__(key)})
 
         # Initializing pydss_instances dict
         self.pydss_instances = dict()
 
         # Event flag to control shutdown of background tasks
-        self.event = Event()
+        self.shutdown_event = Event()
         logger.info(f"Maximum parallel processes: {cpu_count()-1}")
         self.pool = ThreadPoolExecutor(max_workers=cpu_count()-1)
-        self.loop = asyncio.get_event_loop()
+        self.loop = loop
+
 
     async def get_pydss_project_info(self, request, path):
         """
@@ -76,7 +81,6 @@ class Handler:
                             UUID: None
 
         """
-        print(path)
         logger.info(f"Exploring {path} for valid projects")
 
         if not os.path.exists(path):
@@ -310,7 +314,7 @@ class Handler:
         q = Queue()
 
         # Create a process for PyDSS instance
-        p = Process(target=PyDSS, name=pydss_uuid, args=(self.event, q, data))
+        p = Process(target=PyDSS, name=pydss_uuid, args=(self.shutdown_event, q, data))
         # Store queue and process
         self.pydss_instances[pydss_uuid] = {"queue": q, "process": p}
         # Catching data coming from PyDSS

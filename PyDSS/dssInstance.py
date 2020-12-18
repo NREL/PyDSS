@@ -29,6 +29,7 @@ from opendssdirect.utils import run_command
 
 CONTROLLER_PRIORITIES = 3
 
+
 class OpenDSS:
     def __init__(self, params):
         import opendssdirect as dss
@@ -70,20 +71,14 @@ class OpenDSS:
                 params['Project']['DSS File']
             )
         LoggerTag = pyLogger.getLoggerTag(params)
-        if params["Logging"]["Pre-configured logging"]:
-            self._Logger = logging.getLogger(__name__)
-        else:
-            self._Logger = pyLogger.getLogger(LoggerTag, self._dssPath['Log'], LoggerOptions=params["Logging"])
-        self._reportsLogger = pyLogger.getReportLogger(LoggerTag, self._dssPath['Log'], LoggerOptions=params["Logging"])
-
+        self._Logger = logging.getLogger(__name__)
+        self._reportsLogger = logging.getLogger("PyDSS-reports")
         self._Logger.info('An instance of OpenDSS version ' + self._dssInstance.__version__ + ' has been created.')
 
         for key, path in self._dssPath.items():
             assert (os.path.exists(path)), '{} path: {} does not exist!'.format(key, path)
-
         self._dssInstance.Basic.ClearAll()
         self._dssInstance.utils.run_command('Log=NO')
-
         run_command('Clear')
         self._Logger.info('Loading OpenDSS model')
         try:
@@ -92,7 +87,6 @@ class OpenDSS:
         finally:
             os.chdir(orig_dir)
         self._Logger.info('OpenDSS:  ' + reply)
-
         assert ('error ' not in reply.lower()), 'Error compiling OpenDSS model.\n{}'.format(reply)
         run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
         self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(params['Frequency']['Fundamental frequency']) + ' Hz')
@@ -122,7 +116,6 @@ class OpenDSS:
             self.profileStore = ProfileManager(self._dssObjects, self._dssSolver, params)
             self.profileStore.setup_profiles()
 
-
         #if params and params['Exports']['Log Results']:
         if params['Exports']['Result Container'] == 'ResultContainer':
             self.ResultContainer = RC(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
@@ -150,6 +143,7 @@ class OpenDSS:
         if params['Helics']["Co-simulation Mode"]:
             self._HI = HI.helics_interface(self._dssSolver, self._dssObjects, self._dssObjectsByClass, params,
                                            self._dssPath)
+        print("Setup complete")
         return
 
     def _ModifyNetwork(self):

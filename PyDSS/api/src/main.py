@@ -1,6 +1,8 @@
+from naerm_core.web.api_server import ApiServer
 from PyDSS.api.src.web.handler import Handler
 import PyDSS.api.schema as schema
 from aiohttp_swagger3 import *
+from http import HTTPStatus
 from aiohttp import web
 import threading
 import requests
@@ -10,7 +12,7 @@ import time
 import os
 logger = logging.getLogger(__name__)
 
-def getJSONschema(host, port):
+def getJSONschema(host,port):
     base_path = schema.__path__._path[0]
     path = os.path.join(base_path, 'PyDSS.v1.json')
     base_url = f"http://{host}:{port}"
@@ -19,14 +21,17 @@ def getJSONschema(host, port):
     while not isValid:
         time.sleep(3)
         response = requests.get(url)
-        isValid = response.status_code == 200
+        isValid = response.status_code == HTTPStatus.OK
     with open(path, 'w') as outfile:
         json.dump(response.json(), outfile, indent=4, sort_keys=True)
     logger.info(f"Export the schema file to {path}")
 
-class pydss_server():
-    def __init__(self, host, port):
-        self.handler = Handler()
+class pydss_server(ApiServer):
+    def __init__(self, debug=False, **kwargs):
+        print(kwargs)
+        super().__init__(**kwargs)
+        print(self.config.endpoints)
+        self.handler = Handler(self.config.endpoints, loop=self.loop, debug=debug)
         self.app = web.Application()
         self.swagger = SwaggerDocs(
             self.app,
@@ -38,8 +43,9 @@ class pydss_server():
         )
         self.register_media_handlers()
         self.add_routes()
-        t = threading.Thread(name='child procs', target=getJSONschema, args=(host, port,))
-        t.start()
+        self.t = threading.Thread(name='pydss thread', target=getJSONschema, args=(self.host,self.port))
+        self.t.start()
+        self.run_app(on_cleanup_task=self.cleanup_background_tasks)
 
     def register_media_handlers(self):
         self.swagger.register_media_type_handler("multipart/form-data", self.handler.post_pydss_create)
@@ -58,6 +64,13 @@ class pydss_server():
 
             web.delete('/simulators/pydss', self.handler.delete_pydss)
         ])
-    async def clean_background_tasks(self, app):
+    async def cleanup_background_tasks(self, app):
         logger.info("cleanup_background_tasks")
-        self.handler.event.set()
+        self.t.join()
+        self.handler.shutdown_event.set()
+
+if __name__ == "__main__":
+    FORMAT = '%(asctime)s -  %(levelname)s - %(message)s'
+    logging.basicConfig(level=logging.INFO,format=FORMAT)
+    #endpoints_file='app/endpoints.yaml'
+    instance = pydss_server()
