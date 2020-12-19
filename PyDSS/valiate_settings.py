@@ -34,6 +34,7 @@ settings_dict = {
             'Error tolerance': {'type': float},
             'Federate name': {'type': str},
             'Broker': {'type': str},
+            'Broker host': {'type': str},
             'Broker port': {'type': int},
             'Time delta': {'type': float},
             'Core type': {'type': str},
@@ -56,13 +57,9 @@ settings_dict = {
         },
         "Project": {
             'Project Path': {'type': str},
-            'Start Year': {'type': int, 'Options': range(1970, 2099)},
-            'Start Day': {'type': int, 'Options': range(0, 365)},
-            'Start Time (min)': {'type': float, 'Options': range(0, 1440)},
-            'End Day': {'type': int, 'Options': range(0, 365)},
-            'End Time (min)': {'type': float, 'Options': range(0, 1440)},
-            'Date offset': {'type': int, 'Options': range(0, 365)},
-            'Step resolution (sec)' : {'type': float},
+            'Start time': {'type': str},
+            'Simulation duration (min)': {'type': float},
+            'Step resolution (sec)': {'type': float},
             'Max Control Iterations' : {'type': int},
             'Error tolerance': {'type': float},
             'Simulation Type': {'type': str, 'Options': ["QSTS", "Dynamic", "Snapshot", "Monte Carlo"]},
@@ -116,8 +113,6 @@ def validate_settings(dss_args):
 
     assert (dss_args['Frequency']['End frequency'] >= dss_args['Frequency']['Start frequency']), \
         "'End frequency' can not be smaller than 'Start frequency'"
-    assert (dss_args['Project']['End Day'] >= dss_args['Project']['Start Day']), \
-        "'End day' can not be smaller than 'Start day'"
     assert (os.path.exists(dss_args['Project']['Project Path'])), \
         "Project path {} does not exist.".format(dss_args['Project']['Project Path'])
     assert (os.path.exists(os.path.join(dss_args['Project']['Project Path'], dss_args['Project']["Active Project"]))), \

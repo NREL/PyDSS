@@ -35,7 +35,8 @@ class PyDSS:
             Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
             self.a_writer = JSONwriter(export_path, Steps)
             self.initalized = True
-        except:
+        except Exception as e:
+            print(e)
             result = {"Status": 500, "Message": f"Failed to create a PyDSS instance"}
             self.queue.put(result)
             return
@@ -93,6 +94,7 @@ class PyDSS:
         if self.initalized:
             try:
                 Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
+                print("Steps:", Steps)
                 for i in range(Steps):
                     results = self.pydss_obj.RunStep(i)
                     restructured_results = {}
@@ -106,6 +108,7 @@ class PyDSS:
                             restructured_results[class_name] = {}
                         if not isinstance(val, complex):
                             restructured_results[class_name][elem_name] = val
+
                     self.a_writer.write(
                         self.pydss_obj._Options["Helics"]["Federate name"],
                         self.pydss_obj._dssSolver.GetTotalSeconds(),
@@ -116,6 +119,7 @@ class PyDSS:
                 self.initalized = False
                 return 200, f"Simulation complete..."
             except Exception as e:
+                print(e)
                 self.initalized = False
                 return 500, f"Simulation crashed at at simulation time step: {self.pydss_obj._dssSolver.GetDateTime()}, {e}"
         else:

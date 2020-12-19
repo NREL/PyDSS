@@ -8,38 +8,31 @@ class QSTS(abstact_solver):
         print("Entered QSTS mode")
         self.Settings = SimulationSettings
         self.pyLogger = Logger
-        StartDay = SimulationSettings['Project']['Start Day']
-        StartTimeMin = SimulationSettings['Project']['Start Time (min)']
-        EndTimeMin = SimulationSettings['Project']['End Time (min)']
+
+
+        self._Time = datetime.strptime(SimulationSettings['Project']["Start time"], "%d/%m/%Y %H:%M:%S")
+        self._StartTime = self._Time
+        self._EndTime = self._Time + timedelta(minutes=SimulationSettings['Project']["Simulation duration (min)"])
+        StartDay = (self._StartTime - datetime(self._StartTime.year, 1, 1)).days + 1
+        StartTimeMin = self._StartTime.minute
         sStepResolution = SimulationSettings['Project']['Step resolution (sec)']
 
-        self._Time = datetime.strptime('{} {}'.format(SimulationSettings['Project']['Start Year'],
-                                                       SimulationSettings['Project']['Start Day'] +
-                                                       SimulationSettings['Project'][
-                                                           'Date offset']
-                                                       ), '%Y %j')
-        self._Time = self._Time + timedelta(minutes=StartTimeMin)
-        self._StartTime = self._Time
-        self._EndTime = datetime.strptime('{} {}'.format(SimulationSettings['Project']['Start Year'],
-                                                          SimulationSettings['Project']['End Day'] +
-                                                          SimulationSettings['Project'][
-                                                              'Date offset']
-                                                          ), '%Y %j')
+        self.StartDay = (self._StartTime - datetime(self._StartTime.year, 1, 1)).days + 1
+        self.EndDay = (self._EndTime - datetime(self._EndTime.year, 1, 1)).days + 1
 
-        self._EndTime = self._EndTime + timedelta(minutes=EndTimeMin)
         self._sStepRes = sStepResolution
         self._dssIntance = dssInstance
         self._dssSolution = dssInstance.Solution
         self._dssSolution.Mode(2)
 
         self._dssSolution.Hour((StartDay - 1) * 24)
-        self._dssSolution.Seconds((StartTimeMin + 0.50000001) * 60.0)
+        self._dssSolution.Seconds(StartTimeMin * 60.0)
         self.reSolve()
 
         self._dssSolution.Number(1)
         self._dssSolution.StepSize(self._sStepRes)
         self._dssSolution.MaxControlIterations(SimulationSettings['Project']['Max Control Iterations'])
-
+        print("Solver setup complete")
         return
 
 

@@ -32,6 +32,7 @@ CONTROLLER_PRIORITIES = 3
 
 class OpenDSS:
     def __init__(self, params):
+
         import opendssdirect as dss
         self._dssInstance = dss
         self._TempResultList = []
@@ -77,6 +78,7 @@ class OpenDSS:
 
         for key, path in self._dssPath.items():
             assert (os.path.exists(path)), '{} path: {} does not exist!'.format(key, path)
+
         self._dssInstance.Basic.ClearAll()
         self._dssInstance.utils.run_command('Log=NO')
         run_command('Clear')
@@ -87,11 +89,13 @@ class OpenDSS:
         finally:
             os.chdir(orig_dir)
         self._Logger.info('OpenDSS:  ' + reply)
+
         assert ('error ' not in reply.lower()), 'Error compiling OpenDSS model.\n{}'.format(reply)
-        run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
+
+        #run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
         self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(params['Frequency']['Fundamental frequency']) + ' Hz')
 
-        run_command('Set %SeriesRL={}'.format(params['Frequency']['Percentage load in series']))
+        #run_command('Set %SeriesRL={}'.format(params['Frequency']['Percentage load in series']))
         if params['Frequency']['Neglect shunt admittance']:
             run_command('Set NeglectLoadY=Yes')
 
@@ -102,7 +106,6 @@ class OpenDSS:
         self._dssCommand = run_command
         self._dssSolution = self._dssInstance.Solution
         self._dssSolver = SolveMode.GetSolver(SimulationSettings=params, dssInstance=self._dssInstance)
-
         self._Modifier = Modifier(self._dssInstance, run_command, params)
         self._UpdateDictionary()
         self._CreateBusObjects()
@@ -364,6 +367,11 @@ class OpenDSS:
 
         return self.ResultContainer.max_num_bytes()
 
+    def initStore(self, hdf_store, Steps, MC_scenario_number=None):
+        if self._Options['Exports']['Result Container'] == 'ResultData':
+            print("initializing store")
+            self.ResultContainer.InitializeDataStore(hdf_store, Steps, MC_scenario_number)
+
     def RunSimulation(self, project, scenario, MC_scenario_number=None):
         startTime = time.time()
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
@@ -430,14 +438,14 @@ class OpenDSS:
             self._pyPlotObjects[Plot].UpdatePlot()
         return
 
-    def __del__(self):
-        self._Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')
-        loggers = [self._Logger, self._reportsLogger]
-        if self._Options["Logging"]["Log to external file"]:
-            for L in loggers:
-                handlers = list(L.handlers)
-                for filehandler in handlers:
-                    filehandler.flush()
-                    filehandler.close()
-                    L.removeHandler(filehandler)
-        return
+    # def __del__(self):
+    #     self._Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')
+    #     loggers = [self._Logger, self._reportsLogger]
+    #     if self._Options["Logging"]["Log to external file"]:
+    #         for L in loggers:
+    #             handlers = list(L.handlers)
+    #             for filehandler in handlers:
+    #                 filehandler.flush()
+    #                 filehandler.close()
+    #                 L.removeHandler(filehandler)
+    #     return

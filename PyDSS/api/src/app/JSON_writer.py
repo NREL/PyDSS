@@ -69,19 +69,23 @@ class JSONwriter:
         return
 
     def write(self, fed_name, currenttime, LFresults, index=None, circuit=None, fed_uuid=None, cosim_uuid=None):
-        jFile = open(os.path.join(self.log_dir, f"Results_{int(currenttime)}.json"), "w")
-        pFile = open(os.path.join(self.log_dir, f"payload.json"), "w")
-        if not self.metadata:
-            mFile = open(os.path.join(self.log_dir, f"metadata.json"), "w")
-            self.metadata = self.create_meta_data(LFresults, fed_name, fed_uuid, cosim_uuid, circuit, currenttime)
-            json.dump(self.metadata, mFile, indent=4, sort_keys=True)
-            mFile.close()
-        results = self.remap(LFresults, fed_name, fed_uuid, cosim_uuid, circuit, currenttime)
-        self.update_payload(currenttime, fed_uuid, cosim_uuid)
-        json.dump(results, jFile, indent=4, sort_keys=True)
-        json.dump(self.payload, pFile, indent=4, sort_keys=True)
-        jFile.close()
-        pFile.close()
+        print(fed_name, currenttime)
+        try:
+            jFile = open(os.path.join(self.log_dir, f"Results_{int(currenttime)}.json"), "w")
+            pFile = open(os.path.join(self.log_dir, f"payload.json"), "w")
+            if not self.metadata:
+                mFile = open(os.path.join(self.log_dir, f"metadata.json"), "w")
+                self.metadata = self.create_meta_data(LFresults, fed_name, fed_uuid, cosim_uuid, circuit, currenttime)
+                json.dump(self.metadata, mFile, indent=4, sort_keys=True)
+                mFile.close()
+            results = self.remap(LFresults, fed_name, fed_uuid, cosim_uuid, circuit, currenttime)
+            self.update_payload(currenttime, fed_uuid, cosim_uuid)
+            json.dump(results, jFile, indent=4, sort_keys=True)
+            json.dump(self.payload, pFile, indent=4, sort_keys=True)
+            jFile.close()
+            pFile.close()
+        except Exception as e:
+            print(e)
         return
 
     def __del__(self):

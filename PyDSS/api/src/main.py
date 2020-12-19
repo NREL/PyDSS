@@ -27,9 +27,8 @@ def getJSONschema(host,port):
     logger.info(f"Export the schema file to {path}")
 
 class pydss_server(ApiServer):
-    def __init__(self, debug=False, **kwargs):
+    def __init__(self, debug=True, **kwargs):
         super().__init__(**kwargs)
-        print(self.config.endpoints)
         self.handler = Handler(self.config.endpoints, loop=self.loop, debug=debug)
         self.app = web.Application()
         self.swagger = SwaggerDocs(
