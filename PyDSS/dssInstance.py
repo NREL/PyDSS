@@ -404,6 +404,7 @@ class OpenDSS:
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
         self._maxConvergenceErrorCount = round(self._Options['Project']['Convergence error percent threshold'] * .01 * Steps)
         self._maxConvergenceError = self._Options['Project']['Max error tolerance']
+        dss.Solution.Convergence(self._Options['Project']['Error tolerance'])
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
         self._Logger.info('Simulation time step {}.'.format(Steps))
         self._Logger.info('Max convergence error count {}.'.format(self._maxConvergenceErrorCount))
@@ -429,7 +430,12 @@ class OpenDSS:
         try:
             step = 0
             while step < Steps:
-                has_converged = self.RunStep(step)
+                pydss_has_converged = self.RunStep(step)
+                opendss_has_converged = dss.Solution.Converged()
+                if not opendss_has_converged:
+                    self._Logger.info("OpenDSS did not converge at step=%s pydss_converged=%s",
+                                      step, pydss_has_converged)
+                has_converged = pydss_has_converged and opendss_has_converged
                 step = self._ProcessStepResults(step, has_converged, postprocessors)
                 if self._increment_flag:
                     step += 1
