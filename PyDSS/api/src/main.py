@@ -30,6 +30,7 @@ class pydss_server(ApiServer):
     def __init__(self, debug=True, **kwargs):
         super().__init__(**kwargs)
         self.handler = Handler(self.config.endpoints, loop=self.loop, debug=debug)
+        print(self.config.endpoints)
         self.app = web.Application()
         self.swagger = SwaggerDocs(
             self.app,

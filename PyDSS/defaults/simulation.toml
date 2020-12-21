@@ -79,8 +79,7 @@
 "Error tolerance" = 0.0001
 "Max co-iterations" = 15
 "Broker" = "mainbroker"
-"Broker host" = "127.0.0.1"
-"Broker port" = 50001
+"Broker port" = 0
 "Federate name" = "PyDSS"
 "Time delta" = 0.01
 "Core type" = "zmq"

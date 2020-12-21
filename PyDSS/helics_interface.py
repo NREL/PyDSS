@@ -81,8 +81,16 @@ class helics_interface:
         helics.helicsFederateInfoSetCoreName(self.fedinfo, self._options['Helics']['Federate name'])
         helics.helicsFederateInfoSetCoreTypeFromString(self.fedinfo, self._options['Helics']['Core type'])
         helics.helicsFederateInfoSetCoreInitString(self.fedinfo, f"--federates=1")
-        #helics.helicsFederateInfoSetBroker(self.fedinfo, self._options['Helics']['Broker'])
-        #helics.helicsFederateInfoSetBrokerPort(self.fedinfo, self._options['Helics']['Broker port'])
+        bLoc = self._options['Helics']['Broker']
+        Port = self._options['Helics']['Broker port']
+        print("Connecting to broker @ {}".format(f"{bLoc}:{Port}" if Port else bLoc))
+
+        if self._options['Helics']['Broker']:
+            helics.helicsFederateInfoSetBroker(self.fedinfo, self._options['Helics']['Broker'])
+        if self._options['Helics']['Broker port']:
+            helics.helicsFederateInfoSetBrokerPort(self.fedinfo, self._options['Helics']['Broker port'])
+        else:
+            print("asdas")
         helics.helicsFederateInfoSetTimeProperty(self.fedinfo, helics.helics_property_time_delta,
                                                  self._options['Helics']['Time delta'])
         helics.helicsFederateInfoSetIntegerProperty(self.fedinfo, helics.helics_property_int_log_level,

@@ -261,14 +261,14 @@ class Handler:
                                             Simulation duration (min): 1440.0
                                             Step resolution (sec): 900
                                             Max Control Iterations: 50
-                                            Project Path: "C:/Users/alatif/Desktop/naerm-pydss/PyDSS/examples"
-                                            Active Project: custom_contols
-                                            Active Scenario: base_case
+                                            Project Path: "C:/Users/alatif/Desktop/naerm-pydss/PyDSS/examples/external_interfaces"
+                                            Active Project: pydss_project
+                                            Active Scenario: helics
                                             DSS File: Master_Spohn_existing_VV.dss
-                                            Co-simulation Mode: false
+                                            Co-simulation Mode: true
                                             Federate name: PyDSS_x
-                                            Broker host: "127.0.0.1"
-                                            Broker port: 50001
+                                            Broker: "127.0.0.1"
+                                            Broker port: 23404
 
 
                 responses:

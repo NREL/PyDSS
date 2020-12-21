@@ -34,7 +34,6 @@ settings_dict = {
             'Error tolerance': {'type': float},
             'Federate name': {'type': str},
             'Broker': {'type': str},
-            'Broker host': {'type': str},
             'Broker port': {'type': int},
             'Time delta': {'type': float},
             'Core type': {'type': str},

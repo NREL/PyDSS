@@ -15,8 +15,8 @@ print("PI SENDER: Helics version = {}".format(helicsversion))
 # Create broker #
 print("Creating Broker")
 broker = h.helicsCreateBroker("zmq", "", initstring)
-print("Created Broker")
-
+print(broker.address)
+print("Created Broker: ", broker)
 print("Checking if Broker is connected")
 isconnected = h.helicsBrokerIsConnected(broker)
 print("Checked if Broker is connected")
@@ -59,6 +59,7 @@ sub1 = h.helicsFederateRegisterSubscription(vfed, "PyDSS.PVSystem.pvgnem_mpx0006
 
 # Enter execution mode #
 h.helicsFederateEnterExecutingMode(vfed)
+
 
 
 for t in range(1, 5):
