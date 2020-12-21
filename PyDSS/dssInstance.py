@@ -248,7 +248,7 @@ class OpenDSS:
             if not has_converged:
                 name = postprocessor.__class__.__name__
                 self._Logger.warn("postprocessor %s reported a convergence error at step %s", name, step)
-                self._handleConvergenceErrorChecks(step, error)
+                self._HandleConvergenceErrorChecks(step, error)
 
         return step, has_converged
 
@@ -256,22 +256,21 @@ class OpenDSS:
         time_step_has_converged = True
         for priority in range(CONTROLLER_PRIORITIES):
             priority_has_converged = False
-            for i in range(self._Options["Project"]["Max Control Iterations"]):
+            for _ in range(self._Options["Project"]["Max Control Iterations"]):
                 has_converged, error = self._UpdateControllers(priority, step, UpdateResults=False)
                 if has_converged:
                     priority_has_converged = True
                     break
-                else:
-                    self._Logger.debug("Control Loop {} convergence error: {}".format(priority, error))
-                    self._dssSolver.reSolve()
+                self._Logger.debug("Control Loop {} convergence error: {}".format(priority, error))
+                self._dssSolver.reSolve()
             if not priority_has_converged:
                 time_step_has_converged = False
                 self._Logger.warning("Control Loop %s no convergence @ %s error=%s", priority, step, error)
-                self._handleConvergenceErrorChecks(step, error)
+                self._HandleConvergenceErrorChecks(step, error)
 
         return time_step_has_converged
 
-    def _handleConvergenceErrorChecks(self, step, error):
+    def _HandleConvergenceErrorChecks(self, step, error):
         self._convergenceErrors += 1
 
         if self._maxConvergenceError != 0.0 and error > self._maxConvergenceError:
@@ -379,7 +378,6 @@ class OpenDSS:
             self._HI.updateHelicsPublications()
             self._increment_flag, helics_time = self._HI.request_time_increment()
 
-        self._dssSolver.IncrementTimeStep()
         return has_converged
 
     def DryRunSimulation(self, project, scenario):
@@ -439,6 +437,7 @@ class OpenDSS:
                 step = self._ProcessStepResults(step, has_converged, postprocessors)
                 if self._increment_flag:
                     step += 1
+                self._dssSolver.IncrementTimeStep()
         finally:
             if self._Options and self._Options['Exports']['Log Results']:
                 # This is here to guarantee that DatasetBuffers aren't left
