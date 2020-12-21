@@ -315,7 +315,7 @@ class VoltageMetrics(ReportBase):
                 {
                     "property": "VoltageMetric",
                     "store_values_type": "moving_average",
-                    "limits": inputs["range_b_limits"],
+                    "limits": inputs["range_a_limits"],
                     "window_size": window_size,
                 },
                 {
