@@ -120,8 +120,6 @@ class PvClippingReport(PvReportBase):
         pf1_real_power_full = self._pf1_scenario.get_full_dataframe(
             "PVSystems", "Powers"
         )
-
-        df = pd.DataFrame().reindex_like(pf1_real_power_full)
         name = None
 
         # TODO: Apply tolerances to other granularity options.
@@ -133,6 +131,7 @@ class PvClippingReport(PvReportBase):
                 return 0
             return (dcp - rp) / rp * 100
 
+        data = {}
         for _name in self._pv_system_names:
             name = _name
             cm_info = self._get_pv_system_info(name, CONTROL_MODE_SCENARIO)
@@ -142,8 +141,10 @@ class PvClippingReport(PvReportBase):
                 cm_info["irradiance"]
             assert len(dc_power) == len(pf1_real_power), \
                 f"{len(dc_power)} {len(pf1_real_power)}"
-            df[name] = dc_power.combine(pf1_real_power, calc_clipping)
+            col = name + "__Clipping"
+            data[col] = dc_power.combine(pf1_real_power, calc_clipping).values
 
+        df = pd.DataFrame(data, index=pf1_real_power_full.index)
         self._export_dataframe_report(df, output_dir, "pv_clipping")
 
     def _generate_per_pv_system_total(self, output_dir):
@@ -263,14 +264,15 @@ class PvCurtailmentReport(PvReportBase):
                 return 0
             return (pf1 - cm) / pf1 * 100
 
-        df = pd.DataFrame().reindex_like(pf1_power)
-        for col in df.columns:
+        data = {}
+        for col in pf1_power.columns:
             name = col.split("__")[0]
             s_pf1 = pf1_power[col]
             s_cm = control_mode_power[col]
-            df[col] = s_pf1.combine(s_cm, calc_curtailment).values
+            new_name = col.replace("Powers", "Curtailment")
+            data[new_name] = s_pf1.combine(s_cm, calc_curtailment).values
 
-        df.columns = [x.replace("Powers", "Curtailment") for x in df.columns]
+        df = pd.DataFrame(data, index=pf1_power.index)
         self._export_dataframe_report(df, output_dir, "pv_curtailment")
 
     def _generate_per_pv_system_total(self, output_dir):
