@@ -309,7 +309,8 @@ class EdLiFoControl(AbstractPostprocess):
         self.export_path = os.path.join(self.config["Outputs"])
         self.monitored_lines = get_monitored_line_dataframe("all")
         self.pctpmpp_step = 5
-        self.poa_curtail()
+        self.curtail_option = 'pctpmpp' # can be 'kva' or 'pctpmpp', default='pctpmpp'
+        
         
         
         
@@ -456,7 +457,7 @@ class EdLiFoControl(AbstractPostprocess):
                     if self.curtail_option=='pctpmpp':
                         
                         self.logger.info(f"Old pctpmpp: {self.oldpctpmpp}")
-                        self.newpctpmpp = max(self.oldpctpmpp-self.pctmpp_step,0)
+                        self.newpctpmpp = max(self.oldpctpmpp-self.pctpmpp_step,0)
                         
                         
                         dss.run_command(f"Edit PVSystem.{pv_sys} pctPmpp={self.newpctpmpp}")
@@ -555,6 +556,7 @@ class EdLiFoControl(AbstractPostprocess):
     def run(self, step, stepMax):
         
         self.logger.info('Running edLiFo control')
+        self.poa_curtail()
 
 
         #step-=1 # uncomment the line if the post process needs to rerun for the same point in time
