@@ -1,5 +1,5 @@
 #**Authors:**
-# Akshay Kumar Jain; Akshay.Jain@nrel.gov
+
 
 from PyDSS.pyPostprocessor.pyPostprocessAbstract import AbstractPostprocess
 from PyDSS.exceptions import InvalidParameter, OpenDssConvergenceError
@@ -75,36 +75,38 @@ plt.rcParams.update({'font.size': 14})
 # to get xfmr information
 def get_transformer_info():
     xfmr_name = dss.Transformers.Name()
-    data_dict = {"name": xfmr_name, "num_phases": dss.Properties.Value("Phases"),
+    xfmr_data_dict = {"name": xfmr_name, "num_phases": dss.Properties.Value("Phases"),
                  "num_wdgs": dss.Transformers.NumWindings(), "kva": [], "conn": [], "kv": []}
-    for wdgs in range(data_dict["num_wdgs"]):
+    for wdgs in range(xfmr_data_dict["num_wdgs"]):
         dss.Transformers.Wdg(wdgs + 1)
-        data_dict["kva"].append(float(dss.Properties.Value("kva")))
-        data_dict["kv"].append(float(dss.Properties.Value("kv")))
-        data_dict["conn"].append(dss.Properties.Value("conn"))
-    return data_dict
+        xfmr_data_dict["kva"].append(float(dss.Properties.Value("kva")))
+        xfmr_data_dict["kv"].append(float(dss.Properties.Value("kv")))
+        xfmr_data_dict["conn"].append(dss.Properties.Value("conn"))
+    return xfmr_data_dict
     
 def get_g(x):
     return float(str(x[0]).split('|')[0])**(-1)
 
-def compute_electric_distance():
+def compute_electric_distance(dss, bus_phases=None):
     
     lines = dss.utils.lines_to_dataframe()
+    #breakpoint()
     
     column_list = [c.strip().lower() for c in lines.columns]
     
     lines.columns = column_list
     
     lines['phases'] = pd.to_numeric(lines['phases'])
-    lines3=lines.loc[lines['phases']==3,['bus1','bus2','rmatrix']].copy()
+    if bus_phases != None:
+        lines=lines.loc[lines['phases']==bus_phases,['bus1','bus2','rmatrix']].copy()
     
-    lines3['g']=lines3['rmatrix'].apply(get_g)
-    busall = np.unique((list(lines3['bus1']) + list(lines3['bus2'])))
+    lines['g']=lines['rmatrix'].apply(get_g)
+    busall = np.unique((list(lines['bus1']) + list(lines['bus2'])))
     disGmat_df = pd.DataFrame(0, index=busall, columns=busall)
     
-    for l in lines3.index:
-        disGmat_df.loc[lines3.loc[l,'bus1'],lines3.loc[l,'bus2']] = -lines3.loc[l,'g']
-        disGmat_df.loc[lines3.loc[l,'bus2'],lines3.loc[l,'bus1']] = -lines3.loc[l,'g']
+    for l in lines.index:
+        disGmat_df.loc[lines.loc[l,'bus1'],lines.loc[l,'bus2']] = -lines.loc[l,'g']
+        disGmat_df.loc[lines.loc[l,'bus2'],lines.loc[l,'bus1']] = -lines.loc[l,'g']
         
     for b in busall:
         disGmat_df.loc[b,b]=-sum(disGmat_df.loc[b,:])
@@ -121,130 +123,124 @@ def compute_electric_distance():
     
     return dismat_df
     
-    def choose_zone_radius(dismat_df):
-        avg_distance = np.mean(np.array(dismat_df))
-        std_distance = np.std(np.array(dismat_df))
-        dispersion_factor = std_distance/avg_distance
-        k=-0.8 # zone_radius calibration factor bounded by the inverse of the dispersion factor
-        if abs(k)>1/dispersion_factor:
-            k=-0.8/dispersion_factor # to avoid negative zone radius
-        zone_thr=round(avg_distance+k*std_distance,4)
-        return avg_distance, std_distance, dispersion_factor, zone_thr
-        
-    def parse_pv_scenario(file_path, min_lifo_pv_size):
-        """
-        Extract from a PV deployment scenario, parameter information into a dataframe.
-        Sample syntax:
-            PV_dict, PV_dataframe = parse_pv_scenario(deployment_path + deployment_name)
-        """
-        
-        PVsys_dict = dict() 
-        attribute_list = ['phases','bus1','kV','irradiance','Pmpp','pf','conn','kVA','%cutin','%cutout','Vmaxpu']
-        
-        if os.path.exists(file_path):
-        
-            with open(file_path,"r") as depfile:
-                for line in depfile.readlines():
-                    pvname = line.split('PVSystem.')[1].split()[0].lower()
-                    PVsys_dict[pvname]=dict()
-                    PVsys_dict[pvname]['pvname']=pvname
-                    for att in attribute_list:
-                        PVsys_dict[pvname][att] = string_attribute_parser(att,line)
-        else:
-            flag = dss.PVSystems.First()
-            
-            while flag > 0:
-                pvname = dss.PVSystems.Name.lower()
-                PVsys_dict[pvname]=dict()
-                PVsys_dict[pvname]['pvname']=pvname
-                
-                for att in attribute_list:
-                
-                    if att in ['kV','irradiance','Pmpp','pf','kVA','%cutin','%cutout','Vmaxpu']:
-                        PVsys_dict[pvname][att] = float(dss.Properties.Value(att))
-                    else:
-                        PVsys_dict[pvname][att] = dss.Properties.Value(att)
-                        
-                flag = dss.PVSystems.Next()
-                
-        return  PVsys_dict, pd.DataFrame.from_dict(PVsys_dict, 'index')   
-        
-    
-    def get_monitored_line_dataframe(phase_info=3):
-        """
-        Sample syntax:
-        monitored_lines = get_monitored_line_dataframe()
-        """
-        lines = dss.utils.lines_to_dataframe()
-        column_list = [c.strip().lower() for c in lines.columns]
-        lines.columns = column_list
-        lines['phases'] = pd.to_numeric(lines['phases'])
-        if phase_info !=3:
-            monitored_lines = lines
-        else:
-            monitored_lines = lines.loc[lines['phases']==3,['bus1','bus2','rmatrix']].copy()
-            
-        return monitored_lines
-        
-    def check_line_overloads(monitored_lines):
-        #monitored_lines = get_monitored_line_dataframe()
-        ovrl = None
-        
-        overloaded_line_dict = dict()
-        affected_buses = []
-        dss.Circuit.SetActiveClass("Line")
-        flag = dss.ActiveClass.First()
-        while flag>0:
-            line_name = dss.CktElement.Name()
-            line_limit = dss.CktElement.NormalAmps()
-            raw_current = dss.CktElement.Currents() 
-            line_current = [math.sqrt(i**2+j**2) for i,j in zip(raw_current[::2], raw_current[1::2])]
-            ldg = max(line_current)/float(line_limit)
-            #if ldg > 1.0 and dss.CktElement.NumPhases==3:
-            if ldg > 1.0:
-                #print('Checking Line: ', line_name)
-                #if line_name in monitored_lines.index:
-                overloaded_line_dict[line_name]= ldg*100
-                affected_buses.append(dss.CktElement.BusNames()[0])
-                affected_buses.append(dss.CktElement.BusNames()[1])
-                #affected_buses.append(monitored_lines.loc[line_name,'bus1'])
-                #affected_buses.append(monitored_lines.loc[line_name,'bus2'])
-            flag = dss.ActiveClass.Next()
-        
-        affected_buses = np.unique(list(affected_buses))
-        
-        if len(affected_buses)>0:
-            ovrl = pd.DataFrame.from_dict(overloaded_line_dict, 'index')
-            ovrl.columns = ['%normal']
-        
-        return ovrl, affected_buses
-    
-    def form_pvzones(affected_buses, dismat_df, zone_thr):
-        #print('Affected buses:', affected_buses)
-        ohmy = dismat_df.loc[affected_buses,:].copy()
-        zone=list()
-        for col in ohmy.columns:
-            if min(ohmy.loc[:,col])<=zone_thr:
-                zone.append(col)
-        
-        return zone
+def choose_zone_radius(dismat_df):
+	avg_distance = np.mean(np.array(dismat_df))
+	std_distance = np.std(np.array(dismat_df))
+	dispersion_factor = std_distance/avg_distance
+	k=-0.8 # zone_radius calibration factor bounded by the inverse of the dispersion factor
+	if abs(k)>1/dispersion_factor:
+		k=-0.8/dispersion_factor # to avoid negative zone radius
+	zone_thr=round(avg_distance+k*std_distance,4)
+	return avg_distance, std_distance, dispersion_factor, zone_thr
+
+def string_attribute_parser(att,line):
+    if att.lower() in line.lower():
+        return line.lower().split(att.lower()+'=')[1].split()[0]
+    else:
+        return None
+	
+def parse_pv_scenario(file_path, min_lifo_pv_size):
+	"""
+	Extract from a PV deployment scenario, parameter information into a dataframe.
+	Sample syntax:
+		PV_dict, PV_dataframe = parse_pv_scenario(deployment_path + deployment_name)
+	"""
+	
+	PVsys_dict = dict() 
+	attribute_list = ['phases','bus1','kV','irradiance','Pmpp','pf','conn','kVA','%cutin','%cutout','Vmaxpu']
+	
+	if os.path.exists(file_path):
+	
+		with open(file_path,"r") as depfile:
+			for line in depfile.readlines():
+				pvname = line.split('PVSystem.')[1].split()[0].lower()
+				PVsys_dict[pvname]=dict()
+				PVsys_dict[pvname]['pvname']=pvname
+				for att in attribute_list:
+					PVsys_dict[pvname][att] = string_attribute_parser(att,line)
+	else:
+		flag = dss.PVsystems.First()
+		
+		while flag > 0:
+			pvname = dss.PVsystems.Name().lower()
+			PVsys_dict[pvname]=dict()
+			PVsys_dict[pvname]['pvname']=pvname
+			
+			for att in attribute_list:
+			
+				if att in ['kV','irradiance','Pmpp','pf','kVA','%cutin','%cutout','Vmaxpu']:
+					PVsys_dict[pvname][att] = float(dss.Properties.Value(att))
+				else:
+					PVsys_dict[pvname][att] = dss.Properties.Value(att)
+					
+			flag = dss.PVsystems.Next()
+			
+	return  PVsys_dict, pd.DataFrame.from_dict(PVsys_dict, 'index')   
+	
+
+def get_monitored_line_dataframe(phase_info=3):
+	"""
+	Sample syntax:
+	monitored_lines = get_monitored_line_dataframe()
+	"""
+	lines = dss.utils.lines_to_dataframe()
+	column_list = [c.strip().lower() for c in lines.columns]
+	lines.columns = column_list
+	lines['phases'] = pd.to_numeric(lines['phases'])
+	if phase_info !=3:
+		monitored_lines = lines
+	else:
+		monitored_lines = lines.loc[lines['phases']==3,['bus1','bus2','rmatrix']].copy()
+		
+	return monitored_lines
+	
+def check_line_overloads(monitored_lines):
+	#monitored_lines = get_monitored_line_dataframe()
+	ovrl = None
+	
+	overloaded_line_dict = dict()
+	affected_buses = []
+	dss.Circuit.SetActiveClass("Line")
+	flag = dss.ActiveClass.First()
+	while flag>0:
+		line_name = dss.CktElement.Name()
+		line_limit = dss.CktElement.NormalAmps()
+		raw_current = dss.CktElement.Currents() 
+		line_current = [math.sqrt(i**2+j**2) for i,j in zip(raw_current[::2], raw_current[1::2])]
+		ldg = max(line_current)/float(line_limit)
+		#if ldg > 1.0 and dss.CktElement.NumPhases==3:
+		if ldg > 1.0:
+			#print('Checking Line: ', line_name)
+			#if line_name in monitored_lines.index:
+			overloaded_line_dict[line_name]= ldg*100
+			affected_buses.append(dss.CktElement.BusNames()[0])
+			affected_buses.append(dss.CktElement.BusNames()[1])
+			#affected_buses.append(monitored_lines.loc[line_name,'bus1'])
+			#affected_buses.append(monitored_lines.loc[line_name,'bus2'])
+		flag = dss.ActiveClass.Next()
+	
+	affected_buses = np.unique(list(affected_buses))
+	
+	if len(affected_buses)>0:
+		ovrl = pd.DataFrame.from_dict(overloaded_line_dict, 'index')
+		ovrl.columns = ['%normal']
+	
+	return ovrl, affected_buses
+
+def form_pvzones(affected_buses, dismat_df, zone_thr):
+	#print('Affected buses:', affected_buses)
+	ohmy = dismat_df.loc[affected_buses,:].copy()
+	zone=list()
+	for col in ohmy.columns:
+		if min(ohmy.loc[:,col])<=zone_thr:
+			zone.append(col)
+	
+	return zone
     
 
 
 class EdLiFoControl(AbstractPostprocess):
-    """The class is used to induce faults on bus for dynamic simulation studies. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class. 
-
-    :param FaultObj: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS 'Fault' element
-    :type FaultObj: class:`PyDSS.dssElement.dssElement`
-    :param Settings: A dictionary that defines the settings for the faul controller.
-    :type Settings: dict
-    :param dssInstance: An :class:`opendssdirect` instance
-    :type dssInstance: :class:`opendssdirect` instance
-    :param ElmObjectList: Dictionary of all dssElement, dssBus and dssCircuit ojects
-    :type ElmObjectList: dict
-    :param dssSolver: An instance of one of the classes defined in :mod:`PyDSS.SolveMode`.
-    :type dssSolver: :mod:`PyDSS.SolveMode`
-    :raises: AssertionError  if 'FaultObj' is not a wrapped OpenDSS Fault element
+    """
 
     """
     REQUIRED_INPUT_FIELDS = ["curtailment_size",
@@ -273,7 +269,7 @@ class EdLiFoControl(AbstractPostprocess):
 		Constructor method
         """
         super(EdLiFoControl, self).__init__(project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger)
-        
+        dss = dssInstance
         if isinstance(self.config["curtailment_size"], numbers.Number):
             self.curtailment_size = self.config["curtailment_size"]
         else:
@@ -283,7 +279,7 @@ class EdLiFoControl(AbstractPostprocess):
         
         if not os.path.exists(self.electrical_distance_file_path):
             self.electrical_distance_file_path = os.path.join(self.config["Inputs"], "edistance.csv")
-            self.dismat_df = compute_electric_distance()
+            self.dismat_df = compute_electric_distance(dss)
             self.dismat_df.to_csv(self.electrical_distance_file_path)
             
         else:
@@ -299,12 +295,12 @@ class EdLiFoControl(AbstractPostprocess):
         if os.path.exists(self.config["fixed_pv_path"]):
             self.fixed_pv_path = self.config["fixed_pv_path"]
         else:
-            self.fixed_pv_path = None
+            self.fixed_pv_path = ""
             
         if os.path.exists(self.config["lifo_pv_path"]):
             self.lifo_pv_path = self.config["lifo_pv_path"]
         else:
-            self.lifo_pv_path = None
+            self.lifo_pv_path = ""
             
         self.lifo_min_pv_size = self.config["lifo_min_pv_size"]
         self.user_lifo_pv_list = self.config["user_lifo_pv_list"]
@@ -312,6 +308,8 @@ class EdLiFoControl(AbstractPostprocess):
         self.pvdf3 = self.pvdf[self.pvdf['phases']=='3'].copy()
         self.export_path = os.path.join(self.config["Outputs"])
         self.monitored_lines = get_monitored_line_dataframe("all")
+        self.pctpmpp_step = 5
+        self.poa_curtail()
         
         
         
@@ -319,6 +317,7 @@ class EdLiFoControl(AbstractPostprocess):
         
     
     def poa_curtail(self):
+        #breakpoint()
         #curtail_option can be 'kva' or 'pctpmpp'
         dss.run_command("set stepsize=0")
         dss.run_command("BatchEdit PVSystem.* VarFollowInverter=True") 
@@ -328,9 +327,10 @@ class EdLiFoControl(AbstractPostprocess):
         #orded_pv_df = pvs_df.sort_values(['Idx'])
         self.orded_pv_df = self.pvs_df.sort_values(['Idx'], ascending=False)
         
-        if self.user_lifo_pv_list is None:
+        if len(self.user_lifo_pv_list) == 0:
             self.poa_lifo_ordered_pv_list=list(self.orded_pv_df.index)
-            self.poa_lifo_ordered_pv_list = [p for p in self.poa_lifo_ordered_pv_list if p in list(self.pvdf3.index)]
+            if len(self.pvdf3.phases)>0 :
+                self.poa_lifo_ordered_pv_list = [p for p in self.poa_lifo_ordered_pv_list if p in list(self.pvdf3.index)]
         else:
             self.poa_lifo_ordered_pv_list = self.user_lifo_pv_list
             
@@ -366,7 +366,7 @@ class EdLiFoControl(AbstractPostprocess):
         #PV_available = dict()
         #overloads_df,affected_buses = check_overloads(export_path)
         self.overloads_df, self.affected_buses = check_line_overloads(self.monitored_lines)
-        print('Number of buses affected:', len(self.affected_buses))
+        self.logger.info(f'Number of buses affected: {len(self.affected_buses)}')
         
         self.zone=[]
         
@@ -376,7 +376,7 @@ class EdLiFoControl(AbstractPostprocess):
             #print('zone length:',len(zone))
             
         else:
-            print('No monitored line affected')
+            self.logger.info('No monitored line affected')
         
         self.lifo_pv_list=[]
         for pv in self.poa_lifo_ordered_pv_list:
@@ -406,18 +406,19 @@ class EdLiFoControl(AbstractPostprocess):
         #while not list(overloads_df.index)==[]:
         self.solution_status = 0
         #print(pvs_df)
+        #breakpoint()
         if max(self.pvs_df.loc[self.poa_lifo_ordered_pv_list,'kVARated'])==0:
             self.comment='No PV system found!'
-            print(self.comment)
+            self.logger.info(self.comment)
             try:
-                self.ov = self.overloads_df
-                #print('Here are the persisting overloads:')
+                self.number_ol = len(self.overloads_df)
+                self.logger.info(f'There are {self.number_ol} the persisting overloads')
                 #print(list(ov.index))
             except:
                 pass
                     
             
-        #break
+        
         elif len(self.my_lifo_list)>0:
             
             #for pv_sys in poa_lifo_ordered_pv_list:
@@ -432,20 +433,20 @@ class EdLiFoControl(AbstractPostprocess):
                 dss.Circuit.SetActiveClass("PVsystems")
                 
                 if not dss.Circuit.SetActiveElement(f"PVSystem.{pv_sys}")>0:
-                    print(f"Cannot find the PV system {pv_sys}")
-                    print("Active element index:", dss.Circuit.SetActiveElement(f"PVSystem.{pv_sys}"))
-                    break
+                    self.logger.info(f"Cannot find the PV system {pv_sys}")
+                    self.logger.info(f"Active element index: {dss.Circuit.SetActiveElement(f'PVSystem.{pv_sys}')}")
+                    #break
                 else:
                     dss.Circuit.SetActiveElement(f"PVSystem.{pv_sys}")
                     self.init_power_PV = dss.CktElement.Powers()
-                    self.init_net_power_PV = sum(init_power_PV[::2])
+                    self.init_net_power_PV = sum(self.init_power_PV[::2])
                     if dss.Properties.Value('pctPmpp')=='':
                         self.init_pctpmpp[pv_sys] = 100
                         self.oldpctpmpp = 100
                         dss.run_command(f"Edit PVSystem.{pv_sys} pctPmpp=100")
                     else:
-                        self.init_pctpmpp[pv_sys] = int(dss.Properties.Value('pctPmpp'))
-                        self.init_kVA[pv_sys] = int(dss.Properties.Value('kVA'))
+                        self.init_pctpmpp[pv_sys] = float(dss.Properties.Value('pctPmpp'))
+                        self.init_kVA[pv_sys] = float(dss.Properties.Value('kVA'))
                         self.oldpctpmpp = self.init_pctpmpp[pv_sys]
                 
                 
@@ -454,16 +455,16 @@ class EdLiFoControl(AbstractPostprocess):
                     
                     if self.curtail_option=='pctpmpp':
                         
-                        print(f"Old pctpmpp: {self.oldpctpmpp}")
-                        self.newpctpmpp = max(self.oldpctpmpp-5,0)
+                        self.logger.info(f"Old pctpmpp: {self.oldpctpmpp}")
+                        self.newpctpmpp = max(self.oldpctpmpp-self.pctmpp_step,0)
                         
                         
                         dss.run_command(f"Edit PVSystem.{pv_sys} pctPmpp={self.newpctpmpp}")
                         if self.newpctpmpp==0:
                             self.kvarlimit = 0
                             dss.run_command(f"Edit PVSystem.{pv_sys} kvarLimit={self.kvarlimit}")
-                        self.npc = int(dss.Properties.Value('pctPmpp'))
-                        print(f"New pctpmpp: {self.npc}")
+                        self.npc = float(dss.Properties.Value('pctPmpp'))
+                        self.logger.info(f"New pctpmpp: {self.npc}")
                         self.PV_kW_curtailed[pv_sys+'PctPmpp'] = self.newpctpmpp
                     else:
                         self.PV_curtailed[pv_sys] += min(self.curtailment_size, self.pvs_df.loc[pv_sys,'kVARated'])
@@ -476,7 +477,7 @@ class EdLiFoControl(AbstractPostprocess):
                     self.pvs_df = dss.utils.pvsystems_to_dataframe()
                     
                     if self.curtail_option == 'pctpmpp':
-                        self.oldpctpmpp = newpctpmpp
+                        self.oldpctpmpp = self.newpctpmpp
                         if len(self.affected_buses)>0 and self.oldpctpmpp==0:
                             self.comment=f"{pv_sys} is fully curtailed but overloads still exist!"
                         else:
@@ -490,12 +491,13 @@ class EdLiFoControl(AbstractPostprocess):
                     if len(self.affected_buses)==0:
                         self.solution_status = 1
                         self.comment = "Overload Solved!"
-                        print(self.comment)
+                        self.logger.info(self.comment)
                         
                         break
                         
                 dss.Circuit.SetActiveElement(f"PVSystem.{pv_sys}")
-                self.avail_power = [x['Pmpp']*dss.Properties.Value('mult') for k, x in self.pvdict.items() if pv_sys == k][0]
+                #breakpoint()
+                self.avail_power = [float(x['Pmpp'])*float(dss.Properties.Value('irradiance')) for k, x in self.pvdict.items() if pv_sys == k][0]
                 self.power_PV = dss.CktElement.Powers()
                 self.net_power_PV = sum(self.power_PV[::2])
                 self.net_kvar_PV = sum(self.power_PV[1::2])
@@ -509,12 +511,12 @@ class EdLiFoControl(AbstractPostprocess):
                 self.total_kW_curtailed += self.PV_kW_curtailed[pv_sys+'NetCurt']
                 self.total_init_kW_deployed += self.PV_kW_curtailed[pv_sys+'Ref']
                 self.total_kW_output += self.net_power_PV
-                #print(total_kVA_curtailed)
+                self.logger.info(f"Total curtailment for PVSystem.{pv_sys}: {self.total_kVA_curtailed}")
                
                 which_bus = dss.Properties.Value("bus1")
                 dss.Circuit.SetActiveBus(which_bus)
-                volt = dss.Bus.puVmagAngle()[::2]
-                self.pvbus_voltage[pv_sys]=volt
+                
+                self.pvbus_voltage[pv_sys] = dss.Bus.puVmagAngle()[::2]
                 
             # Setting pmpps back to their original values    
             if self.init_kVA!={}:
@@ -539,29 +541,24 @@ class EdLiFoControl(AbstractPostprocess):
         self.PV_kW_curtailed['Total_PV_kW_deployed'] = self.total_init_kW_deployed
         self.PV_kW_curtailed['Total_PV_kW_curtailed'] = self.total_kW_curtailed
         self.PV_kW_curtailed['Total_PV_kW_output'] = self.total_kW_output
+        
         self.PV_kW_curtailed['Comment'] = self.comment
         #print("Done with 1 poa loop:", Pct_curtailment)
+        #breakpoint()
+        self.logger.info(f'kW Curtailed: {self.PV_kW_curtailed}')
         
         return
         
         # return self.solution_status, self.PV_curtailed, self.PV_kW_curtailed, self.pvbus_voltage
         
-        
-            
-            
-            
-            
-        
-        
-        
-        
-        # edLiFo
-        ##deployment_name,pvdf3,dismat_df, curtailment_size, export_path,zone_thr,zone_option,monitored_lines,curtail_option,user_lifo_pv_list
-        print("edLiFo invoked!!!")
-        #breakpoint()
 
-    def run(self):
-        pass
+    def run(self, step, stepMax):
+        
+        self.logger.info('Running edLiFo control')
+
+
+        #step-=1 # uncomment the line if the post process needs to rerun for the same point in time
+        return step
 
     def _get_required_input_fields(self):
         return self.REQUIRED_INPUT_FIELDS
