@@ -29,8 +29,7 @@ def getJSONschema(host,port):
 class pydss_server(ApiServer):
     def __init__(self, debug=True, **kwargs):
         super().__init__(**kwargs)
-        self.handler = Handler(self.config.endpoints, loop=self.loop, debug=debug)
-        print(self.config.endpoints)
+        self.handler = Handler(self.config.helics, self.config.endpoints, loop=self.loop, debug=debug)
         self.app = web.Application()
         self.swagger = SwaggerDocs(
             self.app,

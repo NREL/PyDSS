@@ -74,16 +74,9 @@
                             "examples": {
                                 "Example 1": {
                                     "value": {
-                                        "Active Project": "pydss_project",
-                                        "Active Scenario": "helics",
-                                        "Broker": "127.0.0.1",
-                                        "Broker port": 23404,
-                                        "Co-simulation Mode": true,
                                         "Co-simulation UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
-                                        "DSS File": "Master_Spohn_existing_VV.dss",
                                         "Federate name": "PyDSS_x",
-                                        "Max Control Iterations": 50,
-                                        "Project Path": "C:/Users/alatif/Desktop/naerm-pydss/PyDSS/examples/external_interfaces",
+                                        "Project Path": "6fec60b1-f0cb-42aa-b06d-33d9d28bc36b",
                                         "Simulation duration (min)": 1440.0,
                                         "Start time": "1/1/2020 00:00:00",
                                         "Step resolution (sec)": 900

@@ -8,6 +8,13 @@ from PyDSS.valiate_settings import validate_settings
 from PyDSS.api.src.web.parser import restructure_dictionary
 #from PyDSS.api.src.app.arrow_writer import ArrowWriter
 from PyDSS.api.src.app.JSON_writer import JSONwriter
+from naerm_core.web.client_requests import send_sync_request
+import json
+from http import HTTPStatus
+from zipfile import ZipFile
+import re
+import shutil
+
 logger = logging.getLogger(__name__)
 
 class PyDSS:
@@ -16,7 +23,7 @@ class PyDSS:
         "run": None
     }
 
-    def __init__(self, event=None, queue=None, parameters=None):
+    def __init__(self, helics_, services, event=None, queue=None, parameters=None):
 
         self.initalized = False
         self.uuid = current_process().name
@@ -27,8 +34,23 @@ class PyDSS:
 
         self.shutdownevent = event
         self.queue = queue
+        self.data_service_url = services['bes_data']
 
         try:
+            parameters['Broker'] = helics_['broker']['host']
+            parameters['Broker port'] = helics_['broker']['port']
+            parameters['Co-simulation Mode'] = True
+            
+            """ If the project path is uuid, grab content from AWS S3"""
+            if not os.path.exists(parameters["Project Path"]):
+                parameters = self.update_project_params(parameters)
+                if parameters is None:
+                    self.queue({
+                        "Status": 500,
+                        "Message": "Error creating project",
+                        "UUID": self.uuid
+                    })
+                    return
             params = restructure_dictionary(parameters)
             self.pydss_obj = OpenDSS(params)
             export_path = os.path.join(self.pydss_obj._dssPath['Export'], params['Project']['Active Scenario'])
@@ -53,6 +75,76 @@ class PyDSS:
         if self.queue != None: self.queue.put(result)
 
         self.run_process()
+
+    def update_project_params(self,params):
+
+        """ Grab file and metadata info of case file """
+        self.tmp_folder = os.path.join(os.path.dirname(__name__), '..', 'tmp')
+        file_uuid = params['Project Path']
+
+        """ If folder does not exist, create a temporary folder"""
+        if not os.path.exists(self.tmp_folder):
+            os.mkdir(self.tmp_folder)
+
+        folder_name = f"{params['Co-simulation UUID']}_{params['Federate name']}"
+        case_file_url = f'{self.data_service_url}/case_files/uuid/{file_uuid}'
+
+        """ Creating a project folder and removing if already exists"""
+        self.project_folder = os.path.join(self.tmp_folder, folder_name)
+        if not os.path.exists(self.project_folder):
+            os.mkdir(self.project_folder)
+        else:
+            shutil.rmtree(self.project_folder)
+            os.mkdir(self.project_folder)
+        
+        """ Retrieve the file url from the BES Data API """
+        file_response = send_sync_request(case_file_url, 'GET', body=None)
+        file_data = json.loads(file_response.data.decode('utf-8'))
+
+        if file_response.status == HTTPStatus.OK:
+            file_url = file_data['file_url']
+            file_format = file_data['format']
+
+            """ Retrieve the file from AWS and store in the tmp directory """
+            data_response = send_sync_request(file_url, 'GET')
+            if data_response.status == HTTPStatus.OK:
+                file = os.path.join(self.project_folder, f'{file_uuid}.{file_format}')
+                with open(file, 'wb') as f:
+                    f.write(data_response.data)
+
+                """ Unzip the files """
+                zip_path = os.path.join(self.project_folder, f'{file_uuid}.{file_format}')
+                if zip_path.endswith('.zip'):
+                    with ZipFile(zip_path, 'r') as zipObj:
+                        zipObj.extractall(path=self.project_folder)
+                    
+                    os.remove(zip_path)
+                
+                    params.update({
+                        'Project Path' : self.project_folder,
+                        'Active Project' : file_data['case']['active_project'],
+                        'Active Scenario' : file_data['case']['active_scenario'],
+                        'DSS File' : file_data['case']['dss_file']
+                    })
+                    print(params)
+                    #TODO: validate pydss project skeleton
+                    
+                    """ create log folder if not present """
+                    log_folder  = os.path.join(self.project_folder, file_data['case']['active_project'], 'Logs')
+                    if not os.path.exists(log_folder):
+                        os.mkdir(log_folder)
+
+                    return params
+                else:
+                    logger.error(f'PyDSS case file is not a zip file')
+                    return None
+            else:
+                logger.error(f'Error fetching data from AWS S3')
+                return None
+
+        else:
+            logger.error(f'Error fetching PyDSS project!')
+            return None
     
     def run_process(self):
         logger.info("PyDSS simulation starting")
