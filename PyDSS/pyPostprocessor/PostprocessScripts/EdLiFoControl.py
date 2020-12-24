@@ -270,6 +270,8 @@ class EdLiFoControl(AbstractPostprocess):
         """
         super(EdLiFoControl, self).__init__(project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger)
         dss = dssInstance
+        #sol = dss.Solution
+        #self._export_path = self._dssPath['Export']
         if isinstance(self.config["curtailment_size"], numbers.Number):
             self.curtailment_size = self.config["curtailment_size"]
         else:
@@ -311,13 +313,18 @@ class EdLiFoControl(AbstractPostprocess):
         self.pctpmpp_step = 5
         self.curtail_option = 'pctpmpp' # can be 'kva' or 'pctpmpp', default='pctpmpp'
         
+        self.curtailment_record = {}
+        self.pvbus_voltage_record = {}
+        
         
         
         
         
         
     
-    def poa_curtail(self):
+    def poa_curtail(self, dss):
+        
+        sol = dss.Solution
         #breakpoint()
         #curtail_option can be 'kva' or 'pctpmpp'
         dss.run_command("set stepsize=0")
@@ -547,6 +554,8 @@ class EdLiFoControl(AbstractPostprocess):
         #print("Done with 1 poa loop:", Pct_curtailment)
         #breakpoint()
         self.logger.info(f'kW Curtailed: {self.PV_kW_curtailed}')
+        self.has_converged = sol.Converged()
+        self.error = sol.Convergence() # This is fake for now, find how to get this from Opendssdirect
         
         return
         
@@ -556,12 +565,31 @@ class EdLiFoControl(AbstractPostprocess):
     def run(self, step, stepMax):
         
         self.logger.info('Running edLiFo control')
-        self.poa_curtail()
-
+        self.poa_curtail(dss)
+        
+        self.curtailment_record[step] = self.PV_kW_curtailed
+        self.pvbus_voltage_record[step] = self.pvbus_voltage
+        
+        has_converged = self.has_converged
+        error = self.error # This is fake for now, find how to get this from Opendssdirect
 
         #step-=1 # uncomment the line if the post process needs to rerun for the same point in time
-        return step
+        return step, has_converged, error
 
     def _get_required_input_fields(self):
         return self.REQUIRED_INPUT_FIELDS
+    
+    def finalize(self):
+        
+        df1= pd.DataFrame.from_dict(self.curtailment_record, 'index')
+        curtailment_report = os.path.join(self.export_path, 
+                                          f'curtailment_report_{str(self.zone_threshold)}_{self.zone_option}_{self.curtail_option}.csv')
+        df1.to_csv(curtailment_report)
+        
+        df2 = pd.DataFrame.from_dict(self.pvbus_voltage_record, 'index')
+        voltage_report = os.path.join(self.export_path,
+                                      f'pvbus_voltage_report_{str(self.zone_threshold)}_{self.zone_option}_{self.curtail_option}.csv')
+        df2.to_csv(voltage_report)
+            
+        
         

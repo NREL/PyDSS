@@ -684,6 +684,9 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             },
             self.logger,
         )
+        
+        self.has_converged = dss.Solution.Converged()
+        self.error = dss.Solution.Convergence() # This is fake for now, find how to get this from Opendssdirect
 
     @staticmethod
     def _get_required_input_fields():
@@ -2303,5 +2306,11 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         """Induces and removes a fault as the simulation runs as per user defined settings. 
         """
         self.logger.info('Running voltage upgrade post process')
+        has_converged = self.has_converged
+        error = self.error
 
-        return step
+        return step, has_converged, error
+    
+    def finalize(self):
+        """Method used to combine post processing results from all steps.
+        """

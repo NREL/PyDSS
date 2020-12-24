@@ -55,6 +55,11 @@ class AbstractPostprocess(abc.ABC):
     def _get_required_input_fields(self):
         """Return the required input fields."""
 
+    @abc.abstractmethod
+    def finalize(self):
+        """Method used to combine post processing results from all steps.
+        """
+        
     def _check_input_fields(self):
         required_fields = self._get_required_input_fields()
         fields = set(self.config.keys())
