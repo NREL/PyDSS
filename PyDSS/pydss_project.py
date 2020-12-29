@@ -339,7 +339,7 @@ class PyDssProject:
                 inst.run(self._simulation_config, self, scenario, dry_run=dry_run)
                 self._estimated_space[scenario.name] = inst.get_estimated_space()
 
-        if not dry_run:
+        if not dry_run and self._simulation_config["Exports"]["Result Container"] == "ResultData":
             results = None
             export_tables = self._simulation_config["Exports"].get(
                 "Export Data Tables", False
