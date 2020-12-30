@@ -9,6 +9,7 @@ from PyDSS.api.src.web.parser import restructure_dictionary
 #from PyDSS.api.src.app.arrow_writer import ArrowWriter
 from PyDSS.api.src.app.JSON_writer import JSONwriter
 from naerm_core.web.client_requests import send_sync_request
+from naerm_core.notification.notifier import Notifier
 import json
 from http import HTTPStatus
 from zipfile import ZipFile
@@ -35,11 +36,14 @@ class PyDSS:
         self.shutdownevent = event
         self.queue = queue
         self.data_service_url = services['bes_data']
+        notifications_uri = services['notifications_data']
+        self.notifier = Notifier(notifications_uri)
+        
 
         try:
             parameters['Broker'] = helics_['broker']['host']
             parameters['Broker port'] = helics_['broker']['port']
-            parameters['Co-simulation Mode'] = True
+            parameters['Co-simulation Mode'] = False
             
             """ If the project path is uuid, grab content from AWS S3"""
             if not os.path.exists(parameters["Project Path"]):
@@ -52,10 +56,11 @@ class PyDSS:
                     })
                     return
             params = restructure_dictionary(parameters)
+            self.parameters = parameters
             self.pydss_obj = OpenDSS(params)
             export_path = os.path.join(self.pydss_obj._dssPath['Export'], params['Project']['Active Scenario'])
             Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
-            self.a_writer = JSONwriter(export_path, Steps)
+            self.a_writer = JSONwriter(export_path, self.data_service_url, Steps, self.notify)
             self.initalized = True
         except Exception as e:
             print(e)
@@ -76,6 +81,12 @@ class PyDSS:
 
         self.run_process()
 
+    def notify(self, msg: str, timestep: float=None, log_level:
+                                                    int=logging.INFO):
+        """ Send notification to the notification client. """
+        self.notifier.notify(self.cosim_uuid, self.federate_service, msg, 
+                             timestep, log_level)
+
     def update_project_params(self,params):
 
         """ Grab file and metadata info of case file """
@@ -87,6 +98,7 @@ class PyDSS:
             os.mkdir(self.tmp_folder)
 
         folder_name = f"{params['Co-simulation UUID']}_{params['Federate name']}"
+        self.folder_name = folder_name
         case_file_url = f'{self.data_service_url}/case_files/uuid/{file_uuid}'
 
         """ Creating a project folder and removing if already exists"""
@@ -182,31 +194,48 @@ class PyDSS:
         del self.pydss_obj
         logger.info(f'PyDSS case {self.uuid} closed.')
 
+    def restructure_results(self, results):
+        restructured_results = {}
+        for k, val in results.items():
+            if "." not in k:
+                class_name = "Bus"
+                elem_name = k
+            else:
+                class_name, elem_name = k.split(".")
+            if class_name not in restructured_results:
+                restructured_results[class_name] = {}
+            if not isinstance(val, complex):
+                restructured_results[class_name][elem_name] = val
+
+        return restructured_results
+
+
     def run(self, params):
         if self.initalized:
             try:
                 Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
                 print("Steps:", Steps)
+
                 for i in range(Steps):
                     results = self.pydss_obj.RunStep(i)
-                    restructured_results = {}
-                    for k, val in results.items():
-                        if "." not in k:
-                            class_name = "Bus"
-                            elem_name = k
-                        else:
-                            class_name, elem_name = k.split(".")
-                        if class_name not in restructured_results:
-                            restructured_results[class_name] = {}
-                        if not isinstance(val, complex):
-                            restructured_results[class_name][elem_name] = val
-
+                    restructured_results = self.restructure_results(results)
+                    
+                    # Timestep data payload and metadata only in an inital timestep
                     self.a_writer.write(
-                        self.pydss_obj._Options["Helics"]["Federate name"],
+                        self.parameters['Federate name'],
                         self.pydss_obj._dssSolver.GetTotalSeconds(),
                         restructured_results,
-                        i
+                        i,
+                        fed_uuid=self.parameters['fed_uuid'],
+                        cosim_uuid=self.parameters['Co-simulation UUID']
                     )
+
+                # closing federate
+                self.a_writer.send_timesteps()
+                
+                # Remove the project data
+                if os.path.exists(os.path.join(self.tmp_folder, self.folder_name)):
+                    shutil.rmtree(os.path.join(self.tmp_folder, self.folder_name))
 
                 self.initalized = False
                 return 200, f"Simulation complete..."
