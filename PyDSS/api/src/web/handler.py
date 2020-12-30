@@ -298,6 +298,8 @@ class Handler:
         pydss_uuid = str(uuid4())
         q = Queue()
 
+        data.update({'fed_uuid': pydss_uuid})
+
         # Create a process for PyDSS instance
         p = Process(target=PyDSS, name=pydss_uuid, args=(self.helics_, self.services, self.shutdown_event, q, data))
         # Store queue and process
