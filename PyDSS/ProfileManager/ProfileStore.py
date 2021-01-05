@@ -77,7 +77,6 @@ class ProfileManager:
             raise Exception('Dataset "{}" already exists in group "{}".'.format(dname, pType))
 
     def add_from_arrays(self, data, name, pType, startTime, resolution, units="", info=""):
-        data = np.array(data)
         r, c = data.shape
         if r > c:
             for i in range(c):
@@ -106,6 +105,7 @@ class ProfileManager:
             raise InvalidParameter("Valid values for pType are {}".format(PROFILE_TYPES.names()))
         if data:
             self.add_from_arrays(data, name, pType, startTime, resolution_sec, units=units, info=info)
+        self.store.flush()
         return
 
     def createMetadata(self, dSet, startTime, resolution, data, units, info):
@@ -135,6 +135,3 @@ class ProfileManager:
             result = profileObj.update()
             results[profileaName] = result
         return results
-
-    def __del__(self):
-        self.store.flush()

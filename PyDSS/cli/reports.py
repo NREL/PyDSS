@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 )
 
 @click.option(
-    "-l", "--list",
+    "-l", "--list-reports",
     help="List all reports for a given project path",
     is_flag=True,
     default=False,
@@ -55,14 +55,14 @@ logger = logging.getLogger(__name__)
 )
 @click.command()
 
-def reports(project_path, list=False, project=None, scenario=None, report=None, index=0):
+def reports(project_path, list_reports=False, project=None, scenario=None, report=None, index=0):
     """Explore and print PyDSS reports."""
-    assert not (list and index), "Both 'list' and 'index' options cannot be set to true at the same time"
+    assert not (list_reports and index), "Both 'list' and 'index' options cannot be set to true at the same time"
     assert os.path.exists(project_path), "The provided project path {} does not exist".format(project_path)
     logsPath = os.path.join(project_path, "Logs")
     assert os.path.exists(logsPath), "No Logs folder in the provided project path.".format(project_path)
     reportList = getAvailableReports(logsPath)
-    if list:
+    if list_reports:
         Table = SingleTable(reportList, title="Available PyDSS reports")
         print("")
         print(Table.table)

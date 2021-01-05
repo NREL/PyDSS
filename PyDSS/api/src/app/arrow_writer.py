@@ -5,8 +5,9 @@ import os
 # Third party libraries
 import pandas as pd
 import pyarrow as pa
+import logging
 
-
+logger = logging.getLogger(__name__)
 class ArrowWriter:
     """ Class that handles writing simulation results to arrow
         files.
@@ -34,7 +35,7 @@ class ArrowWriter:
         :param powerflow_output: Powerflow solver timestep output as a dict
         """
 
-        print("Writing to arrow file")
+        logger.info("Writing to arrow file")
 
         # Iterate through each object type
         for obj_type in powerflow_output:
@@ -69,4 +70,4 @@ class ArrowWriter:
                     self.arrow_writers[obj_type].write_batch(record_batch)
                     self.dfs[obj_type] = None
                 except Exception as ex:
-                    print(f"\n\tError writing to arrow file: {obj_type} > {ex}")
+                    logger.exception(f"\n\tError writing to arrow file: {obj_type}")

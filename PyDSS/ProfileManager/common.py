@@ -18,5 +18,3 @@ class PROFILE_TYPES(IntEnum):
     @staticmethod
     def values():
         return list(map(lambda c: c.value, PROFILE_TYPES))
-
-print(PROFILE_TYPES.values())
