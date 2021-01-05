@@ -29,13 +29,13 @@ defaultSettings.__file__
 __all__ = ['variable_decode']
 
 master_dict = {
-    "Project" : ["Start Year", "Start Day", "Start Time (min)", "End Day", "End Time (min)", "Date offset",
+    "Project" : ["Start time", "Simulation duration (min)", "Date offset",
                  "Step resolution (sec)", "Max Control Iterations", "Error tolerance", "Control mode",
                  "Disable PyDSS controllers", "Simulation Type", "Project Path", "Active Project", "Active Scenario",
                  "DSS File", "DSS File Absolute Path", "Return Results"],
     "Exports" : ["Export Mode", "Export Style", "Export Format", "Export Compression", "Export Iteration Order",
                  "Export Elements", "Export Data Tables", "Export Data In Memory", "HDF Max Chunk Bytes",
-                 "Export Event Log", "Log Results", "Result Container"],
+                 "Export Event Log", "Log Results", "Result Container."],
     "Frequency" : ["Enable frequency sweep", "Fundamental frequency", "Start frequency", "End frequency",
                    "frequency increment", "Neglect shunt admittance", "Percentage load in series"],
     "Helics" : ["Co-simulation Mode", "Federate name", "Time delta", "Core type", "Uninterruptible",
@@ -74,18 +74,18 @@ def restructure_dictionary(d):
             if k in valid_entries:
                 if key not in pydss_settings:
                     pydss_settings[key] = {}
-                if i == "False" or i == "false" or i == False:
+                if i == "False" or i == "false":
                     i = False
-                elif i == "True" or i == "true" or i == True:
+                elif i == "True" or i == "true":
                     i = True
-                else:
-                    try:
-                        i = int(i)
-                    except:
-                        try:
-                            i = float(i)
-                        except:
-                            pass
+                # else
+                #     try:
+                #         i = int(i)
+                #     except:
+                #         try:
+                #             i = float(i)
+                #         except:
+                #             pass
                 pydss_settings[key][k] = i
 
     for key, valid_entries in master_dict.items():

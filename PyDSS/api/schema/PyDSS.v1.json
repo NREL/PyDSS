@@ -81,6 +81,19 @@
                                         "Start time": "1/1/2020 00:00:00",
                                         "Step resolution (sec)": 900
                                     }
+                                },
+                                "Example 2": {
+                                    "value": {
+                                        "Active Project": "custom_contols",
+                                        "Active Scenario": "base_case",
+                                        "Co-simulation UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+                                        "DSS File": "Master_Spohn_existing_VV.dss",
+                                        "Federate name": "der_fed",
+                                        "Project Path": "C:/Users/KDUWADI/Box/NAERM_project/PyDSSexamples/examples",
+                                        "Simulation duration (min)": 0.00166,
+                                        "Start time": "1/1/2020 00:00:00",
+                                        "Step resolution (sec)": 0.0041664
+                                    }
                                 }
                             },
                             "schema": {

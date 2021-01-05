@@ -43,7 +43,7 @@ class PyDSS:
         try:
             parameters['Broker'] = helics_['broker']['host']
             parameters['Broker port'] = helics_['broker']['port']
-            parameters['Co-simulation Mode'] = False
+            parameters['Co-simulation Mode'] = True
             
             """ If the project path is uuid, grab content from AWS S3"""
             if not os.path.exists(parameters["Project Path"]):
@@ -56,12 +56,14 @@ class PyDSS:
                     })
                     return
             params = restructure_dictionary(parameters)
+            params['Helics']['Time delta'] = 0.1*params['Project']['Step resolution (sec)']
             self.parameters = parameters
             self.pydss_obj = OpenDSS(params)
             export_path = os.path.join(self.pydss_obj._dssPath['Export'], params['Project']['Active Scenario'])
             Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
             self.a_writer = JSONwriter(export_path, self.data_service_url, Steps, self.notify)
             self.initalized = True
+            self.run(params={})
         except Exception as e:
             print(e)
             result = {"Status": 500, "Message": f"Failed to create a PyDSS instance"}
@@ -206,6 +208,9 @@ class PyDSS:
                 restructured_results[class_name] = {}
             if not isinstance(val, complex):
                 restructured_results[class_name][elem_name] = val
+            else:
+                restructured_results[class_name][elem_name+'@real'] = val.real
+                restructured_results[class_name][elem_name+'@imag'] = val.imag
 
         return restructured_results
 
@@ -234,8 +239,9 @@ class PyDSS:
                 self.a_writer.send_timesteps()
                 
                 # Remove the project data
-                if os.path.exists(os.path.join(self.tmp_folder, self.folder_name)):
-                    shutil.rmtree(os.path.join(self.tmp_folder, self.folder_name))
+                if hasattr(self, 'tmp_folder'):
+                    if os.path.exists(os.path.join(self.tmp_folder, self.folder_name)):
+                        shutil.rmtree(os.path.join(self.tmp_folder, self.folder_name))
 
                 self.initalized = False
                 return 200, f"Simulation complete..."
