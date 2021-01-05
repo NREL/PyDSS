@@ -19,10 +19,11 @@ class Handler:
 
     """ Handlers for web server. """
 
-    def __init__(self, services: EndpointsConfig, loop=None, debug=False):
+    def __init__(self, helics_: dict,   services: EndpointsConfig, loop=None, debug=False):
         """ Constructor for PyDSS handler. """
         
         logger.info("Initializing Handler ....")
+        self.helics_ = helics_
         self.services = {}
         for key in services.endpoints:
             self.services.update({key: services.__getattr__(key)})
@@ -260,16 +261,8 @@ class Handler:
                                             Start time: "1/1/2020 00:00:00"
                                             Simulation duration (min): 1440.0
                                             Step resolution (sec): 900
-                                            Max Control Iterations: 50
-                                            Project Path: "C:/Users/alatif/Desktop/naerm-pydss/PyDSS/examples/external_interfaces"
-                                            Active Project: pydss_project
-                                            Active Scenario: helics
-                                            DSS File: Master_Spohn_existing_VV.dss
-                                            Co-simulation Mode: true
+                                            Project Path: "6fec60b1-f0cb-42aa-b06d-33d9d28bc36b"
                                             Federate name: PyDSS_x
-                                            Broker: "127.0.0.1"
-                                            Broker port: 23404
-
 
                 responses:
                  '200':
@@ -305,8 +298,10 @@ class Handler:
         pydss_uuid = str(uuid4())
         q = Queue()
 
+        data.update({'fed_uuid': pydss_uuid})
+
         # Create a process for PyDSS instance
-        p = Process(target=PyDSS, name=pydss_uuid, args=(self.shutdown_event, q, data))
+        p = Process(target=PyDSS, name=pydss_uuid, args=(self.helics_, self.services, self.shutdown_event, q, data))
         # Store queue and process
         self.pydss_instances[pydss_uuid] = {"queue": q, "process": p}
         # Catching data coming from PyDSS
@@ -315,7 +310,7 @@ class Handler:
 
         # Start process for pydss
         p.start()
-        # Return a message to webclient
+        # Return a message to webclient        
         result = {'Status': 200,
                   'Message': 'Starting a PyDSS instance',
                   'UUID': pydss_uuid}
