@@ -41,7 +41,7 @@ class JSONwriter:
                 }
                 results["asset_data"].append(asset)
             else:
-                if name not in asset["key_values"]:
+                if name not in asset["key_values"][0]:
                     asset["key_values"][0].append(name)
                 colExists = False
                 for cols in asset["measurement_columns"]:
@@ -86,8 +86,6 @@ class JSONwriter:
             fed_uuid=None, 
             cosim_uuid=None):
 
-        
-        print(fed_name, currenttime)
         if not self.metadata:
             self.metadata = self.create_meta_data(LFresults, fed_name, fed_uuid, cosim_uuid, circuit, currenttime)
             response = send_sync_request(self.asset_metadata_url, 'POST', body=self.metadata)

@@ -263,6 +263,17 @@ class Handler:
                                             Step resolution (sec): 900
                                             Project Path: "6fec60b1-f0cb-42aa-b06d-33d9d28bc36b"
                                             Federate name: PyDSS_x
+                                    Example 2:
+                                        value:
+                                            Co-simulation UUID: "96c21e00-cd3c-4943-a914-14451f5f7ab6"
+                                            Start time: "1/1/2020 00:00:00"
+                                            Simulation duration (min): 0.00166
+                                            Step resolution (sec): 0.0041664
+                                            Project Path: "C:/Users/KDUWADI/Box/NAERM_project/PyDSSexamples/examples"
+                                            Federate name: der_fed
+                                            Active Project: custom_contols
+                                            Active Scenario: base_case
+                                            DSS File: "Master_Spohn_existing_VV.dss"
 
                 responses:
                  '200':
