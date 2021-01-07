@@ -7,15 +7,13 @@ class Snapshot(abstact_solver):
         super().__init__(dssInstance, SimulationSettings, Logger)
         self.Settings = SimulationSettings
         self.pyLogger = Logger
-        StartTimeMin = SimulationSettings['Project']['Start Time (min)']
-        self._Time = datetime.strptime(
-            '{} {}'.format(SimulationSettings['Project']['Start Year'], SimulationSettings['Project']['Start Day'] +
-                           SimulationSettings['Project']['Date offset']), '%Y %j'
-        )
-
-        self._Time = self._Time + timedelta(minutes=StartTimeMin)
+        self._Time = datetime.strptime(SimulationSettings['Project']["Start time"], "%d/%m/%Y %H:%M:%S")
         self._StartTime = self._Time
-        self._EndTime = self._Time
+        self._EndTime = self._Time + timedelta(minutes=SimulationSettings['Project']["Simulation duration (min)"])
+
+        self.StartDay = (self._StartTime - datetime(self._StartTime.year, 1, 1)).days + 1
+        self.EndDay = (self._EndTime - datetime(self._EndTime.year, 1, 1)).days + 1
+
         self._sStepRes = 1
         self._dssInstance = dssInstance
         self._dssSolution = dssInstance.Solution

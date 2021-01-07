@@ -15,8 +15,8 @@ print("PI SENDER: Helics version = {}".format(helicsversion))
 # Create broker #
 print("Creating Broker")
 broker = h.helicsCreateBroker("zmq", "", initstring)
-print("Created Broker")
-
+print(broker.address)
+print("Created Broker: ", broker)
 print("Checking if Broker is connected")
 isconnected = h.helicsBrokerIsConnected(broker)
 print("Checked if Broker is connected")
@@ -63,6 +63,7 @@ h.helicsFederateEnterExecutingMode(vfed)
 
 for t in range(1, 30):
     time_requested = t * 60
+
     #while time_requested < r_seconds:
     currenttime = h.helicsFederateRequestTime(vfed, time_requested)
     iteration_state = h.helics_iteration_result_iterating

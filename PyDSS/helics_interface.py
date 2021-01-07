@@ -3,6 +3,9 @@ from PyDSS.pyLogger import getLoggerTag
 import logging
 import helics
 import os
+from PyDSS.naerm import *
+
+NAERM_STANDARD = True
 
 class helics_interface:
 
@@ -81,8 +84,16 @@ class helics_interface:
         helics.helicsFederateInfoSetCoreName(self.fedinfo, self._options['Helics']['Federate name'])
         helics.helicsFederateInfoSetCoreTypeFromString(self.fedinfo, self._options['Helics']['Core type'])
         helics.helicsFederateInfoSetCoreInitString(self.fedinfo, f"--federates=1")
-        #helics.helicsFederateInfoSetBroker(self.fedinfo, self._options['Helics']['Broker'])
-        #helics.helicsFederateInfoSetBrokerPort(self.fedinfo, self._options['Helics']['Broker port'])
+        bLoc = self._options['Helics']['Broker']
+        Port = self._options['Helics']['Broker port']
+        print("Connecting to broker @ {}".format(f"{bLoc}:{Port}" if Port else bLoc))
+
+        if self._options['Helics']['Broker']:
+            helics.helicsFederateInfoSetBroker(self.fedinfo, self._options['Helics']['Broker'])
+        if self._options['Helics']['Broker port']:
+            helics.helicsFederateInfoSetBrokerPort(self.fedinfo, self._options['Helics']['Broker port'])
+        else:
+            print("asdas")
         helics.helicsFederateInfoSetTimeProperty(self.fedinfo, helics.helics_property_time_delta,
                                                  self._options['Helics']['Time delta'])
         helics.helicsFederateInfoSetIntegerProperty(self.fedinfo, helics.helics_property_int_log_level,
@@ -150,7 +161,6 @@ class helics_interface:
                     value = helics.helicsInputGetBoolean(sub_info['Subscription'])
                 elif sub_info['Data type'].lower() == 'integer':
                     value = helics.helicsInputGetInteger(sub_info['Subscription'])
-
                 if value:
                     value = value * sub_info['Multiplier']
 
@@ -190,21 +200,57 @@ class helics_interface:
             objects = self._objects_by_class[obj_class]
             for obj_X, obj in objects.items():
                 name = '{}.{}.{}'.format(self._options['Helics']['Federate name'], obj_X, obj_property)
-                self._publications[name] = helics.helicsFederateRegisterGlobalTypePublication(
-                    self._PyDSSfederate,
-                    name,
-                    self.type_info[obj_property],
-                    ''
-                )
-                self._logger.info(f'Publication registered: {name}')
+
+                if NAERM_STANDARD:
+                    self._logger.info(f'{name}')
+                    message = pydss_to_naerm(name)
+                    self._logger.info(f'Being converted {name} to {message}')
+                    if message != 'Failed':
+                        name = message
+                    
+                        if not isinstance(name, list):
+                            name = [name]
+                        for n in name:
+                            self._publications[n] = helics.helicsFederateRegisterGlobalTypePublication(
+                                self._PyDSSfederate,
+                                n,
+                                n.split('/')[-1],
+                                ''
+                                )
+                            self._logger.info(f'Publication registered: {n}')
+
+
+                else:
+                    self._publications[name] = helics.helicsFederateRegisterGlobalTypePublication(
+                        self._PyDSSfederate,
+                        name,
+                        self.type_info[obj_property],
+                        ''
+                    )
+                    self._logger.info(f'Publication registered: {name}')
         return
 
     def updateHelicsPublications(self):
         for element, pub in self._publications.items():
+            
+            naerm_name = None
+            self._logger.info(f'Trying to publish for {element}')
+            if isnaerm(element):
+                naerm_name = element
+                element = naerm_to_pydss(element)
+            
             fed_name, class_name, object_name, ppty_name = element.split('.')
             obj_name = '{}.{}'.format(class_name, object_name)
             obj = self._objects_by_element[obj_name]
             value = obj.GetValue(ppty_name)
+
+            if naerm_name is not None:
+                message = get_naerm_value(value, naerm_name)
+                if message == 'Failed':
+                    self._logger.error(f'Could not get values for {naerm_name}')
+                else:
+                    value = message
+
             if isinstance(value, list):
                 helics.helicsPublicationPublishVector(pub, value)
             elif isinstance(value, float):
