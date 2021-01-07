@@ -1,0 +1,6 @@
+,Irradiance,Name,pf,RegisterNames,RegisterValues,Idx,kVARated,kW,kvar
+pvgnem_mpx000635970,1.0,pvgnem_mpx000635970,1.0,"['kWh', 'kvarh', 'Max kW', 'Max kVA', 'Hours', 'Price($)']","[0.0, 0.0, 19.831578, 19.831578, 0.0, 0.0]",1,20.0,0.0,0.0
+pvgnem_mpx000460267,1.0,pvgnem_mpx000460267,1.0,"['kWh', 'kvarh', 'Max kW', 'Max kVA', 'Hours', 'Price($)']","[0.0, 0.0, 8.5, 8.5, 0.0, 0.0]",2,8.5,0.0,0.0
+pvgnem_mpx000594341,1.0,pvgnem_mpx000594341,1.0,"['kWh', 'kvarh', 'Max kW', 'Max kVA', 'Hours', 'Price($)']","[0.0, 0.0, 4.56126294, 4.56126294, 0.0, 0.0]",3,4.6,0.0,0.0
+pvgui_mpx000637601,1.01069592198581,pvgui_mpx000637601,1.0,"['kWh', 'kvarh', 'Max kW', 'Max kVA', 'Hours', 'Price($)']","[0.0, 0.0, 5.5, 5.5, 0.0, 0.0]",4,5.5,0.0,0.0
+pvgui_mpx000460267,0.925303188892118,pvgui_mpx000460267,1.0,"['kWh', 'kvarh', 'Max kW', 'Max kVA', 'Hours', 'Price($)']","[0.0, 0.0, 3.6086824366792603, 3.6086824366792603, 0.0, 0.0]",5,3.9,0.0,0.0

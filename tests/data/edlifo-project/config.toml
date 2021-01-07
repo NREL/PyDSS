@@ -1,0 +1,9 @@
+curtailment_size = 5
+electrical_distance_file_path = "./tests/data/edlifo-project/edistance.csv"
+zone_option = "Yes"
+zone_threshold = "None"
+fixed_pv_path = ""
+lifo_pv_path = ""
+lifo_min_pv_size = 100
+user_lifo_pv_list = [] 
+Inputs = "./tests/data/edlifo-project"

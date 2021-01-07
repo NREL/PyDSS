@@ -1,0 +1,123 @@
+[Project]
+"Start Year" = 2017
+"Start Day" = 1
+"Start Time (min)" = 0.0
+"End Day" = 1
+"End Time (min)" = 1439.0
+"Date offset" = 0
+"Step resolution (sec)" = 900.0
+"Max Control Iterations" = 50
+"Error tolerance" = 0.001
+"Max error tolerance" = 0.0
+"Convergence error percent threshold" = 0.0
+"Skip export on convergence error" = true
+"Control mode" = "Static"
+"Disable PyDSS controllers" = false
+"Simulation Type" = "QSTS"
+"Project Path" = "./tests/data"
+"Active Project" = "edlifo-project"
+"Active Scenario" = ""
+"DSS File" = "Master_Spohn_existing_VV.dss"
+"DSS File Absolute Path" = false
+"Return Results" = false
+"Use Controller Registry" = false
+[[Project.Scenarios]]
+name = "s0"
+[[Project.Scenarios.post_process_infos]]
+script = "EdLiFoControl"
+config_file = "./tests/data/edlifo-project/config.toml"
+
+[Exports]
+"Export Mode" = "byClass"
+"Export Style" = "Single file"
+"Export Format" = "csv"
+"Export Compression" = false
+"Export Elements" = true
+"Export Data Tables" = false
+"Export Data In Memory" = false
+"Export PV Profiles" = false
+"HDF Max Chunk Bytes" = 131072
+"Export Event Log" = true
+"Log Results" = true
+"Result Container" = "ResultData"
+
+[Frequency]
+"Enable frequency sweep" = false
+"Fundamental frequency" = 60
+"Start frequency" = 1.0
+"End frequency" = 15.0
+"frequency increment" = 2.0
+"Neglect shunt admittance" = false
+"Percentage load in series" = 50.0
+
+[Helics]
+"Co-simulation Mode" = false
+"Iterative Mode" = false
+"Error tolerance" = 0.0001
+"Max co-iterations" = 15
+Broker = "mainbroker"
+"Broker port" = 50001
+"Federate name" = "PyDSS"
+"Time delta" = 0.01
+"Core type" = "zmq"
+Uninterruptible = true
+"Helics logging level" = 5
+
+[Logging]
+"Logging Level" = "INFO"
+"Log to external file" = true
+"Display on screen" = true
+"Clear old log file" = false
+"Pre-configured logging" = false
+
+[MonteCarlo]
+"Number of Monte Carlo scenarios" = -1
+
+[Plots]
+"Create dynamic plots" = false
+"Open plots in browser" = true
+
+[Reports]
+Format = "h5"
+Granularity = "per_element_per_time_point"
+[[Reports.Types]]
+name = "Capacitor State Change Counts"
+enabled = false
+
+[[Reports.Types]]
+name = "PV Clipping"
+enabled = false
+diff_tolerance_percent_pmpp = 1.0
+denominator_tolerance_percent_pmpp = 1.0
+
+[[Reports.Types]]
+name = "PV Curtailment"
+enabled = false
+diff_tolerance_percent_pmpp = 1.0
+denominator_tolerance_percent_pmpp = 1.0
+
+[[Reports.Types]]
+name = "RegControl Tap Number Change Counts"
+enabled = false
+
+[[Reports.Types]]
+name = "Feeder Losses"
+enabled = false
+
+[[Reports.Types]]
+name = "Thermal Metrics"
+enabled = false
+transformer_loading_percent_threshold = 150
+transformer_window_size_hours = 2
+transformer_loading_percent_moving_average_threshold = 120
+line_window_size_hours = 1
+line_loading_percent_threshold = 120
+line_loading_percent_moving_average_threshold = 100
+
+[[Reports.Types]]
+name = "Voltage Metrics"
+enabled = false
+window_size_minutes = 60
+range_a_limits = [ 0.95, 1.05,]
+range_b_limits = [ 0.9, 1.0583,]
+

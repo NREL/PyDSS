@@ -1,0 +1,15 @@
+{
+    "event_log": "Exports/s0/event_log.csv",
+    "element_info_files": [
+        "Exports/s0\\LinesInfo.csv",
+        "Exports/s0\\LoadsInfo.csv",
+        "Exports/s0\\MetersInfo.csv",
+        "Exports/s0\\PVSystemsInfo.csv",
+        "Exports/s0\\TransformersInfo.csv",
+        "Exports/s0\\VsourcesInfo.csv",
+        "Exports/s0\\TransformersPhaseInfo.csv"
+    ],
+    "feeder_head_info_files": [
+        "Exports/s0\\FeederHeadInfo.json"
+    ]
+}
