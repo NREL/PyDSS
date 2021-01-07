@@ -70,3 +70,8 @@ Uninterruptible = true
 [Plots]
 "Create dynamic plots" = false
 "Open plots in browser" = true
+
+[Profiles]
+"Use profile manager" = false
+"Profile store path" = ""
+"Profile mapping" = ""

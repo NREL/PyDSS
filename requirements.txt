@@ -5,6 +5,7 @@ scipy
 bokeh
 networkx
 toml
+xlrd==1.2.0
 pyproj
 descartes
 OpenDSSDirect.py==0.3.7

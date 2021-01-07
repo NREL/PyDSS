@@ -16,6 +16,7 @@ from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 from PyDSS.pyPostprocessor import pyPostprocess
 import PyDSS.pyControllers as pyControllers
 import PyDSS.pyPlots as pyPlots
+import opendssdirect as dss
 import numpy as np
 import logging
 import json
@@ -32,8 +33,6 @@ CONTROLLER_PRIORITIES = 3
 
 class OpenDSS:
     def __init__(self, params):
-
-        import opendssdirect as dss
         self._dssInstance = dss
         self._TempResultList = []
         self._dssBuses = {}
@@ -240,8 +239,6 @@ class OpenDSS:
                     }
                     json_object = json.dumps(errorTag)
                     self._reportsLogger.warning(json_object)
-            if Priority == 0:
-                pass
         return maxError < self._Options['Project']['Error tolerance'], maxError
 
     def _CreateBusObjects(self):
@@ -378,7 +375,7 @@ class OpenDSS:
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
         self._Logger.info('Simulation time step {}.'.format(Steps))
         if self._Options['Exports']['Result Container'] == 'ResultData':
-            print("initializing store")
+            self._Logger.info("initializing store")
             self.ResultContainer.InitializeDataStore(project.hdf_store, Steps, MC_scenario_number)
 
         postprocessors = [
