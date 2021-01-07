@@ -70,6 +70,11 @@ def _convert_storage_controller(filename):
 def _convert_xfmr_controller(filename):
     return _convert_controller(filename, "Controlled XFMR")
 
+def _convert_motorstall(filename):
+    return _convert_controller(filename, "Controlled Motor")
+
+def _convert_PvVoltageRideThru(filename):
+    return _convert_controller(filename, "Controlled PV")
 
 def _convert_exports(filename, name_field):
     df = pd.read_excel(filename, skiprows=[0,])
@@ -126,6 +131,12 @@ _CONFIG_TYPES = {
     },
     "StorageController": {
         "convert": _convert_storage_controller,
+    },
+    "MotorStall": {
+        "convert": _convert_motorstall,
+    },
+    "PvVoltageRideThru": {
+        "convert": _convert_PvVoltageRideThru,
     },
     "xfmrController": {
         "convert": _convert_xfmr_controller,
