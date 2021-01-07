@@ -87,6 +87,11 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         
         dss = dssInstance
         self.dssSolver = dssSolver
+        
+        if simulationSettings["Project"]["Simulation Type"] != "Snapshot":
+            raise InvalidParameter("Upgrade post-processors are only supported on Snapshot simulations")
+
+        
         # Just send this list as input to the upgrades code via DISCO -  this list may be empty or have as many
         # paths as the user desires - if empty the mults in the 'tps_to_test' input will be used else if non-empty
         # max and min load mults from the load.dss files will be used. Tne tps to test input should always be specified

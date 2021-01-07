@@ -1,12 +1,9 @@
-#**Authors:**
+#**Authors: ksedzro@ieee.org**
 
 
-from PyDSS.pyPostprocessor.pyPostprocessAbstract import AbstractPostprocess
-from PyDSS.exceptions import InvalidParameter, OpenDssConvergenceError
 # Additional packages
 import os
 import matplotlib.pyplot as plt
-import csv
 import pandas as pd
 import math
 import opendssdirect as dss
@@ -22,19 +19,11 @@ from sklearn.cluster import AgglomerativeClustering
 import matplotlib.image as mpimg
 from PyDSS.pyPostprocessor.PostprocessScripts.postprocess_thermal_upgrades import postprocess_thermal_upgrades
 from PyDSS.utils.utils import iter_elements, check_redirect
+from PyDSS.pyPostprocessor.pyPostprocessAbstract import AbstractPostprocess
+from PyDSS.exceptions import InvalidParameter, OpenDssConvergenceError
+
 plt.rcParams.update({'font.size': 14})
 
-# For an overloaded line if a sensible close enough line code is available then simply change the line code
-#  else add a new line in parallel
-# Does not correct switch thermal violations if any - will only work on line objects which are not marked as switches
-# In this part of the code since lines and DTs
-# The available upgrades options can be read from an external library as well, currently being created by reading
-#  through the DTs and lines available in the feeder itself.
-# TODO: Add xhl, xht, xlt and buses functionality for DTs
-# TODO: Units of the line and transformers
-# TODO: Correct line and xfmr violations safety margin issue
-
-#
 #--------------- Setting POA Parameters -------------
     # curtail_option = 'pctpmpp' # can be 'kva' or 'pctpmpp', default='pctpmpp'
     # deployment_path = PV_Scenario_DSS_Filename
@@ -55,7 +44,7 @@ plt.rcParams.update({'font.size': 14})
     # else:
         # dismat_df = pd.read_csv(electrical_distance_file_path, index_col=0)
     # avg_distance, std_distance, dispersion_factor, zone_thr = choose_zone_radius(dismat_df)
-    # if len(dismat_df.iloc[:,0])==0:
+    # if not dismat_df.iloc[:,0]:
         # zone_thr = 0.0012 # Hack!!!
         # print('\x1b[6;30;42m' +'ELECTRICAL DISTANCE MATRIX NOT COMPUTED !!!'+ '\x1b[0m')
     # zone_option = 'Yes'
@@ -87,10 +76,9 @@ def get_transformer_info():
 def get_g(x):
     return float(str(x[0]).split('|')[0])**(-1)
 
-def compute_electric_distance(dss, bus_phases=None):
+def compute_electric_distance(bus_phases=None):
     
     lines = dss.utils.lines_to_dataframe()
-    #breakpoint()
     
     column_list = [c.strip().lower() for c in lines.columns]
     
@@ -208,20 +196,18 @@ def check_line_overloads(monitored_lines):
 		raw_current = dss.CktElement.Currents() 
 		line_current = [math.sqrt(i**2+j**2) for i,j in zip(raw_current[::2], raw_current[1::2])]
 		ldg = max(line_current)/float(line_limit)
-		#if ldg > 1.0 and dss.CktElement.NumPhases==3:
+		
 		if ldg > 1.0:
-			#print('Checking Line: ', line_name)
-			#if line_name in monitored_lines.index:
+			
 			overloaded_line_dict[line_name]= ldg*100
 			affected_buses.append(dss.CktElement.BusNames()[0])
 			affected_buses.append(dss.CktElement.BusNames()[1])
-			#affected_buses.append(monitored_lines.loc[line_name,'bus1'])
-			#affected_buses.append(monitored_lines.loc[line_name,'bus2'])
+			
 		flag = dss.ActiveClass.Next()
 	
-	affected_buses = np.unique(list(affected_buses))
+	affected_buses = list(np.unique(list(affected_buses)))
 	
-	if len(affected_buses)>0:
+	if affected_buses:
 		ovrl = pd.DataFrame.from_dict(overloaded_line_dict, 'index')
 		ovrl.columns = ['%normal']
 	
@@ -251,18 +237,7 @@ class EdLiFoControl(AbstractPostprocess):
                              "lifo_pv_path",
                              "lifo_min_pv_size",
                              "user_lifo_pv_list" ]
-    # REQUIRED_INPUT_FIELDS = (
-        # "line_loading_limit",
-        # "dt_loading_limit",
-        # "line_safety_margin",
-        # "xfmr_safety_margin",
-        # "nominal_voltage",
-        # "max_iterations",
-        # "create_upgrade_plots",
-        # "tps_to_test",
-        # "create_upgrades_library",
-		# "upgrade_library_path",
-    # )
+    
 
     def __init__(self, project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger):
         """
@@ -270,12 +245,11 @@ class EdLiFoControl(AbstractPostprocess):
         """
         super(EdLiFoControl, self).__init__(project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger)
         dss = dssInstance
-        #sol = dss.Solution
-        #self._export_path = self._dssPath['Export']
+        
         if isinstance(self.config["curtailment_size"], numbers.Number):
             self.curtailment_size = self.config["curtailment_size"]
         else:
-            self.curtailment_size = 20
+            self.curtailment_size = 5
         
         self.electrical_distance_file_path = self.config["electrical_distance_file_path"]
         
@@ -318,36 +292,154 @@ class EdLiFoControl(AbstractPostprocess):
         
         
         
-        
-        
-        
-    
-    def poa_curtail(self, dss):
-        
-        sol = dss.Solution
-        #breakpoint()
-        #curtail_option can be 'kva' or 'pctpmpp'
-        dss.run_command("set stepsize=0")
-        dss.run_command("BatchEdit PVSystem.* VarFollowInverter=True") 
+    def get_lifo_ordered_list(self):
         self.pvs_df = dss.utils.pvsystems_to_dataframe()
         
-        #print("PV columns:",pvs_df.columns)
-        #orded_pv_df = pvs_df.sort_values(['Idx'])
+       
         self.orded_pv_df = self.pvs_df.sort_values(['Idx'], ascending=False)
         
-        if len(self.user_lifo_pv_list) == 0:
+        if not self.user_lifo_pv_list:
             self.poa_lifo_ordered_pv_list=list(self.orded_pv_df.index)
-            if len(self.pvdf3.phases)>0 :
+            if list(self.pvdf3.phases) :
                 self.poa_lifo_ordered_pv_list = [p for p in self.poa_lifo_ordered_pv_list if p in list(self.pvdf3.index)]
         else:
             self.poa_lifo_ordered_pv_list = self.user_lifo_pv_list
+        
+    def record_curtailment(self, pv_sys):
+        dss.Circuit.SetActiveElement(f"PVSystem.{pv_sys}")
             
+        self.avail_power = [float(x['Pmpp'])*float(dss.Properties.Value('irradiance')) for k, x in self.pvdict.items() if pv_sys == k][0]
+        self.power_PV = dss.CktElement.Powers()
+        self.net_power_PV = sum(self.power_PV[::2])
+        self.net_kvar_PV = sum(self.power_PV[1::2])
+        self.PV_kW_curtailed[pv_sys+'Ref'] = self.init_net_power_PV
+        self.PV_kW_curtailed[pv_sys+'Actual'] = self.net_power_PV
+        self.PV_kW_curtailed[pv_sys+'NetCurt'] = self.init_net_power_PV - self.net_power_PV
+        self.PV_kW_curtailed[pv_sys+'PctCurt'] = 100*abs(self.init_net_power_PV - self.net_power_PV)/max(1,abs(self.avail_power))
+        self.PV_kW_curtailed[pv_sys+'kVarActual'] = self.net_kvar_PV            
+
+        self.total_kVA_curtailed += self.PV_curtailed[pv_sys]
+        self.total_kW_curtailed += self.PV_kW_curtailed[pv_sys+'NetCurt']
+        self.total_init_kW_deployed += self.PV_kW_curtailed[pv_sys+'Ref']
+        self.total_kW_output += self.net_power_PV
+        self.logger.info(f"Total curtailment for PVSystem.{pv_sys}: {self.total_kVA_curtailed}")
+       
+        which_bus = dss.Properties.Value("bus1")
+        dss.Circuit.SetActiveBus(which_bus)
+        
+        self.pvbus_voltage[pv_sys] = dss.Bus.puVmagAngle()[::2]
+            
+    
+    def solve_overloads(self):
+        for pv_sys in self.my_lifo_list:
+                
+            dss.Circuit.SetActiveClass("PVsystems")
+            
+            if not dss.Circuit.SetActiveElement(f"PVSystem.{pv_sys}")>0:
+                self.logger.info(f"Cannot find the PV system {pv_sys}")
+                self.logger.info(f"Active element index: {dss.Circuit.SetActiveElement(f'PVSystem.{pv_sys}')}")
+                #break
+            else:
+                dss.Circuit.SetActiveElement(f"PVSystem.{pv_sys}")
+                self.init_power_PV = dss.CktElement.Powers()
+                self.init_net_power_PV = sum(self.init_power_PV[::2])
+                if dss.Properties.Value('pctPmpp')=='':
+                    self.init_pctpmpp[pv_sys] = 100
+                    self.oldpctpmpp = 100
+                    dss.run_command(f"Edit PVSystem.{pv_sys} pctPmpp=100")
+                else:
+                    self.init_pctpmpp[pv_sys] = float(dss.Properties.Value('pctPmpp'))
+                    self.init_kVA[pv_sys] = float(dss.Properties.Value('kVA'))
+                    self.oldpctpmpp = self.init_pctpmpp[pv_sys]
+            
+            
+            while len(self.affected_buses)>0 and self.pvs_df.loc[pv_sys,'kVARated']>0 and self.oldpctpmpp>0:
+                dss.Circuit.SetActiveElement(f"PVSystem.{pv_sys}")
+                
+                if self.curtail_option=='pctpmpp':
+                    
+                    self.logger.info(f"Old pctpmpp: {self.oldpctpmpp}")
+                    self.newpctpmpp = max(self.oldpctpmpp-self.pctpmpp_step,0)
+                    
+                    
+                    dss.run_command(f"Edit PVSystem.{pv_sys} pctPmpp={self.newpctpmpp}")
+                    if self.newpctpmpp==0:
+                        self.kvarlimit = 0
+                        dss.run_command(f"Edit PVSystem.{pv_sys} kvarLimit={self.kvarlimit}")
+                    self.npc = float(dss.Properties.Value('pctPmpp'))
+                    self.logger.info(f"New pctpmpp: {self.npc}")
+                    self.PV_kW_curtailed[pv_sys+'PctPmpp'] = self.newpctpmpp
+                else:
+                    self.PV_curtailed[pv_sys] += min(self.curtailment_size, self.pvs_df.loc[pv_sys,'kVARated'])
+                    self.new_kVA = max(self.pvs_df.loc[pv_sys,'kVARated'] - self.curtailment_size,0)
+                    dss.run_command(f"Edit PVSystem.{pv_sys} kVA={self.new_kVA}")
+                
+                dss.run_command("_SolvePFlow")
+                
+                self.overloads_df, self.affected_buses = check_line_overloads(self.monitored_lines)
+                self.pvs_df = dss.utils.pvsystems_to_dataframe()
+                
+                if self.curtail_option == 'pctpmpp':
+                    self.oldpctpmpp = self.newpctpmpp
+                    if self.affected_buses and self.oldpctpmpp==0:
+                        self.comment=f"{pv_sys} is fully curtailed but overloads still exist!"
+                    else:
+                        pass
+                        
+                elif self.curtail_option=='kva':
+                    if self.affected_buses and max(self.pvs_df.loc[self.poa_lifo_ordered_pv_list,'kVARated'])==0:
+                        self.comment='All PV systems have been curtailed, but overloads still exist!'
+                    
+                
+                if not self.affected_buses:
+                    self.solution_status = 1
+                    self.comment = "Overload Solved!"
+                    self.logger.info(self.comment)
+                    
+                    break
+                
+            self.record_curtailment(pv_sys)        
+            
+        # Setting pmpps back to their original values    
+        if self.init_kVA!={}:
+            for pv_sys in self.my_lifo_list:
+                inipctpmpp = self.init_pctpmpp[pv_sys]
+                inikva = self.init_kVA[pv_sys]
+                dss.run_command(f"Edit PVSystem.{pv_sys} pctPmpp={inipctpmpp} kVA={inikva}")
         
         
-        #dss.Circuit.SetActiveClass("PVsystems")
-        #print(f"PV names found: {dss.ActiveClass.AllNames()}")
+    def get_curtailment_candidates(self):
+        self.lifo_pv_list=[]
+        for pv in self.poa_lifo_ordered_pv_list:
+            if (self.user_lifo_pv_list is None) :
+                if self.pvdf3.loc[pv,'bus1'] in self.zone:
+                    self.lifo_pv_list.append(pv)
+            else:
+                dss.Circuit.SetActiveElement('PVSystem.'+str(pv))
+                bus1 = dss.Properties.Value("bus1")
+                if bus1 in self.zone:
+                    self.lifo_pv_list.append(pv)
+            
+            
+        self.lifo_pv_list = list(self.lifo_pv_list)
+        if self.zone and not self.lifo_pv_list:
+            self.comment = f'No PV system found in the vicinity (radius={self.zone_threshold}) of the thermal overload'
+            #print(comment)
         
+        if self.zone_option=='Yes' and self.lifo_pv_list:
+            self.my_lifo_list = self.lifo_pv_list + [x for x in self.poa_lifo_ordered_pv_list if not x in self.lifo_pv_list]
+            
+        else:
+            self.my_lifo_list = self.poa_lifo_ordered_pv_list
         
+    
+    def poa_curtail(self):
+        
+        sol = dss.Solution
+        dss.run_command("set stepsize=0")
+        dss.run_command("BatchEdit PVSystem.* VarFollowInverter=True") 
+        self.get_lifo_ordered_list()
+            
         self.PV_curtailed = dict()
         self.PV_kW_curtailed = dict()
         self.pvbus_voltage = dict()
@@ -371,14 +463,13 @@ class EdLiFoControl(AbstractPostprocess):
             self.PV_kW_curtailed[pv_sys+'PctCurt'] = 0
             self.PV_kW_curtailed[pv_sys+'PctPmpp'] = 100
         
-        #PV_available = dict()
-        #overloads_df,affected_buses = check_overloads(export_path)
+        
         self.overloads_df, self.affected_buses = check_line_overloads(self.monitored_lines)
         self.logger.info(f'Number of buses affected: {len(self.affected_buses)}')
         
         self.zone=[]
         
-        if len(self.affected_buses)>0:
+        if self.affected_buses:
             
             self.zone = form_pvzones(self.affected_buses, self.dismat_df, self.zone_threshold)
             #print('zone length:',len(zone))
@@ -386,152 +477,32 @@ class EdLiFoControl(AbstractPostprocess):
         else:
             self.logger.info('No monitored line affected')
         
-        self.lifo_pv_list=[]
-        for pv in self.poa_lifo_ordered_pv_list:
-            if (self.user_lifo_pv_list is None) :
-                if self.pvdf3.loc[pv,'bus1'] in self.zone:
-                    self.lifo_pv_list.append(pv)
-            else:
-                dss.Circuit.SetActiveElement('PVSystem.'+str(pv))
-                bus1 = dss.Properties.Value("bus1")
-                if bus1 in self.zone:
-                    self.lifo_pv_list.append(pv)
-            
-            
-        self.lifo_pv_list = list(self.lifo_pv_list)
-        if len(self.lifo_pv_list)==0 and len(self.zone)>0:
-            self.comment = f'No PV system found in the vicinity (radius={self.zone_threshold}) of the thermal overload'
-            #print(comment)
-        
-        if self.zone_option=='Yes' and len(self.lifo_pv_list)>0:
-            self.my_lifo_list = self.lifo_pv_list + [x for x in self.poa_lifo_ordered_pv_list if not x in self.lifo_pv_list]
-            #print('In-zone PV plants:', my_lifo_list)
-            #print('zone_radius', zone_thr)
-        else:
-            self.my_lifo_list = self.poa_lifo_ordered_pv_list
+        self.get_curtailment_candidates()
         
         
-        #while not list(overloads_df.index)==[]:
         self.solution_status = 0
-        #print(pvs_df)
-        #breakpoint()
+        
+
         if max(self.pvs_df.loc[self.poa_lifo_ordered_pv_list,'kVARated'])==0:
             self.comment='No PV system found!'
             self.logger.info(self.comment)
             try:
                 self.number_ol = len(self.overloads_df)
-                self.logger.info(f'There are {self.number_ol} the persisting overloads')
-                #print(list(ov.index))
+                self.logger.info(f'There are {self.number_ol} persisting overloads')
+                
             except:
                 pass
-                    
-            
+                        
         
-        elif len(self.my_lifo_list)>0:
+        elif self.my_lifo_list:
             
-            #for pv_sys in poa_lifo_ordered_pv_list:
             self.init_pctpmpp={}
             self.init_kVA={}
             self.init_net_power_PV = 0
             self.init_power_PV=[]
             
+            self.solve_overloads()
             
-            for pv_sys in self.my_lifo_list:
-                
-                dss.Circuit.SetActiveClass("PVsystems")
-                
-                if not dss.Circuit.SetActiveElement(f"PVSystem.{pv_sys}")>0:
-                    self.logger.info(f"Cannot find the PV system {pv_sys}")
-                    self.logger.info(f"Active element index: {dss.Circuit.SetActiveElement(f'PVSystem.{pv_sys}')}")
-                    #break
-                else:
-                    dss.Circuit.SetActiveElement(f"PVSystem.{pv_sys}")
-                    self.init_power_PV = dss.CktElement.Powers()
-                    self.init_net_power_PV = sum(self.init_power_PV[::2])
-                    if dss.Properties.Value('pctPmpp')=='':
-                        self.init_pctpmpp[pv_sys] = 100
-                        self.oldpctpmpp = 100
-                        dss.run_command(f"Edit PVSystem.{pv_sys} pctPmpp=100")
-                    else:
-                        self.init_pctpmpp[pv_sys] = float(dss.Properties.Value('pctPmpp'))
-                        self.init_kVA[pv_sys] = float(dss.Properties.Value('kVA'))
-                        self.oldpctpmpp = self.init_pctpmpp[pv_sys]
-                
-                
-                while len(self.affected_buses)>0 and self.pvs_df.loc[pv_sys,'kVARated']>0 and self.oldpctpmpp>0:
-                    dss.Circuit.SetActiveElement(f"PVSystem.{pv_sys}")
-                    
-                    if self.curtail_option=='pctpmpp':
-                        
-                        self.logger.info(f"Old pctpmpp: {self.oldpctpmpp}")
-                        self.newpctpmpp = max(self.oldpctpmpp-self.pctpmpp_step,0)
-                        
-                        
-                        dss.run_command(f"Edit PVSystem.{pv_sys} pctPmpp={self.newpctpmpp}")
-                        if self.newpctpmpp==0:
-                            self.kvarlimit = 0
-                            dss.run_command(f"Edit PVSystem.{pv_sys} kvarLimit={self.kvarlimit}")
-                        self.npc = float(dss.Properties.Value('pctPmpp'))
-                        self.logger.info(f"New pctpmpp: {self.npc}")
-                        self.PV_kW_curtailed[pv_sys+'PctPmpp'] = self.newpctpmpp
-                    else:
-                        self.PV_curtailed[pv_sys] += min(self.curtailment_size, self.pvs_df.loc[pv_sys,'kVARated'])
-                        self.new_kVA = max(self.pvs_df.loc[pv_sys,'kVARated'] - self.curtailment_size,0)
-                        dss.run_command(f"Edit PVSystem.{pv_sys} kVA={self.new_kVA}")
-                    
-                    dss.run_command("_SolvePFlow")
-                    
-                    self.overloads_df, self.affected_buses = check_line_overloads(self.monitored_lines)
-                    self.pvs_df = dss.utils.pvsystems_to_dataframe()
-                    
-                    if self.curtail_option == 'pctpmpp':
-                        self.oldpctpmpp = self.newpctpmpp
-                        if len(self.affected_buses)>0 and self.oldpctpmpp==0:
-                            self.comment=f"{pv_sys} is fully curtailed but overloads still exist!"
-                        else:
-                            pass
-                            
-                    elif self.curtail_option=='kva':
-                        if len(self.affected_buses)>0 and max(self.pvs_df.loc[self.poa_lifo_ordered_pv_list,'kVARated'])==0:
-                            self.comment='All PV systems have been curtailed, but overloads still exist!'
-                        
-                    
-                    if len(self.affected_buses)==0:
-                        self.solution_status = 1
-                        self.comment = "Overload Solved!"
-                        self.logger.info(self.comment)
-                        
-                        break
-                        
-                dss.Circuit.SetActiveElement(f"PVSystem.{pv_sys}")
-                #breakpoint()
-                self.avail_power = [float(x['Pmpp'])*float(dss.Properties.Value('irradiance')) for k, x in self.pvdict.items() if pv_sys == k][0]
-                self.power_PV = dss.CktElement.Powers()
-                self.net_power_PV = sum(self.power_PV[::2])
-                self.net_kvar_PV = sum(self.power_PV[1::2])
-                self.PV_kW_curtailed[pv_sys+'Ref'] = self.init_net_power_PV
-                self.PV_kW_curtailed[pv_sys+'Actual'] = self.net_power_PV
-                self.PV_kW_curtailed[pv_sys+'NetCurt'] = self.init_net_power_PV - self.net_power_PV
-                self.PV_kW_curtailed[pv_sys+'PctCurt'] = 100*abs(self.init_net_power_PV - self.net_power_PV)/max(1,abs(self.avail_power))
-                self.PV_kW_curtailed[pv_sys+'kVarActual'] = self.net_kvar_PV            
-
-                self.total_kVA_curtailed += self.PV_curtailed[pv_sys]
-                self.total_kW_curtailed += self.PV_kW_curtailed[pv_sys+'NetCurt']
-                self.total_init_kW_deployed += self.PV_kW_curtailed[pv_sys+'Ref']
-                self.total_kW_output += self.net_power_PV
-                self.logger.info(f"Total curtailment for PVSystem.{pv_sys}: {self.total_kVA_curtailed}")
-               
-                which_bus = dss.Properties.Value("bus1")
-                dss.Circuit.SetActiveBus(which_bus)
-                
-                self.pvbus_voltage[pv_sys] = dss.Bus.puVmagAngle()[::2]
-                
-            # Setting pmpps back to their original values    
-            if self.init_kVA!={}:
-                for pv_sys in self.my_lifo_list:
-                    inipctpmpp = self.init_pctpmpp[pv_sys]
-                    inikva = self.init_kVA[pv_sys]
-                    dss.run_command(f"Edit PVSystem.{pv_sys} pctPmpp={inipctpmpp} kVA={inikva}")
                     
         if self.solution_status == -1:
             self.comment = "No need to curtail!"
@@ -540,6 +511,7 @@ class EdLiFoControl(AbstractPostprocess):
             self.comment = 'Deployment passed without curtailment!'
             #print(comment)
             self.solution_status == 0
+            
         self.PV_curtailed['Comment'] = self.comment
         self.Pct_curtailment = self.total_kVA_curtailed*100/max(1, self.total_kVA_deployed)
         self.PV_curtailed['Pct_curtailment'] = self.Pct_curtailment 
@@ -552,7 +524,7 @@ class EdLiFoControl(AbstractPostprocess):
         
         self.PV_kW_curtailed['Comment'] = self.comment
         #print("Done with 1 poa loop:", Pct_curtailment)
-        #breakpoint()
+        
         self.logger.info(f'kW Curtailed: {self.PV_kW_curtailed}')
         self.has_converged = sol.Converged()
         self.error = sol.Convergence() # This is fake for now, find how to get this from Opendssdirect
@@ -565,7 +537,7 @@ class EdLiFoControl(AbstractPostprocess):
     def run(self, step, stepMax):
         
         self.logger.info('Running edLiFo control')
-        self.poa_curtail(dss)
+        self.poa_curtail()
         
         self.curtailment_record[step] = self.PV_kW_curtailed
         self.pvbus_voltage_record[step] = self.pvbus_voltage

@@ -129,6 +129,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         """Constructor method
         """
         super(AutomatedVoltageUpgrade, self).__init__(project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger)
+        if simulationSettings["Project"]["Simulation Type"] != "Snapshot":
+            raise InvalidParameter("Upgrade post-processors are only supported on Snapshot simulations")
 
         # Just send this list as input to the upgrades code via DISCO -  this list may be empty or have as many
         # paths as the user desires - if empty the mults in the 'tps_to_test' input will be used else if non-empty
@@ -2312,5 +2314,4 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         return step, has_converged, error
     
     def finalize(self):
-        """Method used to combine post processing results from all steps.
-        """
+        pass
