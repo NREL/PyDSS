@@ -21,6 +21,8 @@ from PyDSS.pyPostprocessor.PostprocessScripts.postprocess_thermal_upgrades impor
 from PyDSS.utils.utils import iter_elements, check_redirect
 from PyDSS.pyPostprocessor.pyPostprocessAbstract import AbstractPostprocess
 from PyDSS.exceptions import InvalidParameter, OpenDssConvergenceError
+from PyDSS.utils.timing_utils import timed_info
+
 
 plt.rcParams.update({'font.size': 14})
 
@@ -76,6 +78,7 @@ def get_transformer_info():
 def get_g(x):
     return float(str(x[0]).split('|')[0])**(-1)
 
+@timed_info
 def compute_electric_distance(bus_phases=None):
     
     lines = dss.utils.lines_to_dataframe()
@@ -181,7 +184,8 @@ def get_monitored_line_dataframe(phase_info=3):
 		monitored_lines = lines.loc[lines['phases']==3,['bus1','bus2','rmatrix']].copy()
 		
 	return monitored_lines
-	
+
+@timed_info	
 def check_line_overloads(monitored_lines):
 	#monitored_lines = get_monitored_line_dataframe()
 	ovrl = None
@@ -255,7 +259,7 @@ class EdLiFoControl(AbstractPostprocess):
         
         if not os.path.exists(self.electrical_distance_file_path):
             self.electrical_distance_file_path = os.path.join(self.config["Inputs"], "edistance.csv")
-            self.dismat_df = compute_electric_distance(dss)
+            self.dismat_df = compute_electric_distance()
             self.dismat_df.to_csv(self.electrical_distance_file_path)
             
         else:
@@ -329,7 +333,7 @@ class EdLiFoControl(AbstractPostprocess):
         
         self.pvbus_voltage[pv_sys] = dss.Bus.puVmagAngle()[::2]
             
-    
+    @timed_info
     def solve_overloads(self):
         for pv_sys in self.my_lifo_list:
                 
@@ -352,8 +356,13 @@ class EdLiFoControl(AbstractPostprocess):
                     self.init_kVA[pv_sys] = float(dss.Properties.Value('kVA'))
                     self.oldpctpmpp = self.init_pctpmpp[pv_sys]
             
-            
-            while len(self.affected_buses)>0 and self.pvs_df.loc[pv_sys,'kVARated']>0 and self.oldpctpmpp>0:
+        
+            while self.affected_buses and self.pvs_df.loc[pv_sys,'kVARated']>0 and self.oldpctpmpp>0:
+                """
+                This while loop breaks the above conditions or when all PVs are curtailed,
+                i.e., self.oldpctpmpp==0
+                """
+                
                 dss.Circuit.SetActiveElement(f"PVSystem.{pv_sys}")
                 
                 if self.curtail_option=='pctpmpp':
@@ -397,6 +406,8 @@ class EdLiFoControl(AbstractPostprocess):
                     self.logger.info(self.comment)
                     
                     break
+                
+               
                 
             self.record_curtailment(pv_sys)        
             
@@ -551,6 +562,7 @@ class EdLiFoControl(AbstractPostprocess):
     def _get_required_input_fields(self):
         return self.REQUIRED_INPUT_FIELDS
     
+    @timed_info
     def finalize(self):
         
         df1= pd.DataFrame.from_dict(self.curtailment_record, 'index')
