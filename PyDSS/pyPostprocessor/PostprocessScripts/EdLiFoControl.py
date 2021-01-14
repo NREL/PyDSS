@@ -210,7 +210,6 @@ def check_line_overloads(monitored_lines):
 			
 		flag = dss.ActiveClass.Next()
 	
-	affected_buses = list(np.unique(list(affected_buses)))
 	
 	if affected_buses:
 		ovrl = pd.DataFrame.from_dict(overloaded_line_dict, 'index')
