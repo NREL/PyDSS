@@ -1,0 +1,134 @@
+{
+  "title": "launch",
+  "type": "object",
+  "description": "Parameters required to launch a PyDSS federate",
+  "x-examples": {
+    "PyDSS for dynamic simulation": {
+      "cosim_uuid": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+      "start_datetime": "01/01/2020 00:00:00",
+      "simulation_duration": 0.00166,
+      "simulator_time_resolution": 0.0041664,
+      "powerflow_options": {
+        "pydss_project": "C:/Users/KDUWADI/Box/NAERM_project/PyDSSexamples/examples",
+        "active_project": "custom_contols",
+        "active_scenario": "base_case",
+        "master_dss_file": "Master_Spohn_existing_VV.dss"
+      },
+      "name": "der_fed"
+    }
+  },
+  "properties": {
+    "cosim_uuid": {
+      "type": "string",
+      "description": "Cosimulation uuid",
+      "format": "uuid",
+      "default": "1234"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the federate (must be unique within the cosimulation)",
+      "example": "der_fed",
+      "default": "der_fed"
+    },
+    "simulator_time_resolution": {
+      "type": "number",
+      "description": "The native timestep of this federate (i.e., with what granularity should the federate step through time?). Must be specified in the the time units given in the global_options object. If this number is set to be larger than the cosimulation period, this will mean that the federate will only be invoked when an event occurs. ",
+      "example": 0.0041664,
+      "exclusiveMinimum": true,
+      "minimum": 0,
+      "default": 0.0041664
+    },
+    "simulation_duration": {
+      "type": "number",
+      "description": "The number of time steps that the cosimulation should run for",
+      "example": 0.00166,
+      "minimum": 0,
+      "exclusiveMinimum": true
+    },
+    "time_unit": {
+      "type": "string",
+      "enum": [
+        "m"
+      ],
+      "description": "The unit of time that constitutes a time step (currently only minutes [\"m\"] is supported)",
+      "example": "m",
+      "default": "m"
+    },
+    "core_type": {
+      "type": "string",
+      "enum": [
+        "zmq",
+        "test",
+        "udp",
+        "ipc",
+        "interprocess",
+        "tcp",
+        "default",
+        "mpi"
+      ],
+      "description": "The message bus type used in HELICS (zeromq [\"zmq\"] is recommended)",
+      "default": "zmq",
+      "example": "zmq"
+    },
+    "start_datetime": {
+      "type": "string",
+      "description": "Start datetime for the simulation",
+      "format": "date-time",
+      "pattern": "\\d{2}\\/\\d{2}\\/\\d{4} \\d{2}:\\d{2}:\\d{2}",
+      "default": "1/1/2021 00:00:00"
+    },
+    "powerflow_options": {
+      "oneOf": [
+        {
+          "properties": {
+            "pydss_project": {
+              "type": "string",
+              "description": "Power flow case uuid (to retrieve case from the Data API) or filename with full path (for local access)"
+            },
+            "active_project": {
+              "type": "string",
+              "description": "Desired power flow output file format (PWB or PTI)",
+              "example": "base_case"
+            },
+            "active_scenario": {
+              "type": "string",
+              "description": "Array of helper file uuids or filenames with full paths to be used by the powerflow software (.aux). These could include files specifiying area control mechanism, reactive capability curves, and generator cost curves.",
+              "example": "custom_controls"
+            },
+            "master_dss_file": {
+              "type": "string",
+              "description": "Array of filenames for spreadsheets with load and renewable generation time series data",
+              "example": "Master.dss",
+              "pattern": ".*(.dss)"
+            }
+          },
+          "required": [
+            "pydss_project",
+            "active_project",
+            "active_scenario",
+            "master_dss_file"
+          ]
+        },
+        {
+          "properties": {
+            "pydss_project": {
+              "type": "string",
+              "format": "uuid",
+              "example": "1e861ce4-b8bb-4745-9e04-f76ed6795d52"
+            }
+          },
+          "required": [
+            "pydss_project"
+          ]
+        }
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "cosim_uuid",
+    "name",
+    "simulation_duration",
+    "powerflow_options"
+  ]
+}
