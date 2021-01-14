@@ -204,7 +204,8 @@ def check_line_overloads(monitored_lines):
 		if ldg > 1.0:
 			
 			overloaded_line_dict[line_name]= ldg*100
-			affected_buses.append(dss.CktElement.BusNames()[0])
+			affected_buses.add(dss.CktElement.BusNames()[0])
+                          affected_buses.add(dss.CktElement.BusNames()[1])
 			affected_buses.append(dss.CktElement.BusNames()[1])
 			
 		flag = dss.ActiveClass.Next()
