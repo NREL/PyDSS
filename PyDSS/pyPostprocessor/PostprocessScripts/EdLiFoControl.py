@@ -191,7 +191,7 @@ def check_line_overloads(monitored_lines):
 	ovrl = None
 	
 	overloaded_line_dict = dict()
-	affected_buses = []
+	affected_buses = set()
 	dss.Circuit.SetActiveClass("Line")
 	flag = dss.ActiveClass.First()
 	while flag>0:
