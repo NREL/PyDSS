@@ -69,6 +69,16 @@ def restructure_dictionary(d):
     complete_path = os.path.join(path, "simulation.toml")
     defaults = load_data(complete_path)
 
+    # rename some keys
+    d['Start time'] = d['start_datetime']
+    d['Simulation duration (min)'] = d['simulation_duration']
+    d['Step resolution (sec)'] = d['simulator_time_resolution']*60 if d['time_unit'] == 'm' else d['simulator_time_resolution']
+    d['Core type'] = d['core_type']
+    d['DSS File'] = d['powerflow_options']['master_dss_file']
+    d['Active Project'] = d['powerflow_options']['active_project']
+    d['Active Scenario'] = d['powerflow_options']['active_scenario']
+    d['Project Path'] = d['powerflow_options']['pydss_project']
+
     for k, i in d.items():
         for key, valid_entries in master_dict.items():
             if k in valid_entries:
@@ -78,14 +88,6 @@ def restructure_dictionary(d):
                     i = False
                 elif i == "True" or i == "true":
                     i = True
-                # else
-                #     try:
-                #         i = int(i)
-                #     except:
-                #         try:
-                #             i = float(i)
-                #         except:
-                #             pass
                 pydss_settings[key][k] = i
 
     for key, valid_entries in master_dict.items():
@@ -94,7 +96,7 @@ def restructure_dictionary(d):
 
     defaults["Project"]["Scenarios"] =[
         {
-            "name": d["Active Scenario"],
+            "name": d["powerflow_options"]["active_scenario"],
             "post_process_infos": []
         }
     ]

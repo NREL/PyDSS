@@ -46,7 +46,7 @@ class PyDSS:
             parameters['Co-simulation Mode'] = True
             
             """ If the project path is uuid, grab content from AWS S3"""
-            if not os.path.exists(parameters["Project Path"]):
+            if not os.path.exists(parameters["powerflow_options"]["pydss_project"]):
                 parameters = self.update_project_params(parameters)
                 if parameters is None:
                     self.queue({
@@ -93,13 +93,13 @@ class PyDSS:
 
         """ Grab file and metadata info of case file """
         self.tmp_folder = os.path.join(os.path.dirname(__name__), '..', 'tmp')
-        file_uuid = params['Project Path']
+        file_uuid = params["powerflow_options"]["pydss_project"]
 
         """ If folder does not exist, create a temporary folder"""
         if not os.path.exists(self.tmp_folder):
             os.mkdir(self.tmp_folder)
 
-        folder_name = f"{params['Co-simulation UUID']}_{params['Federate name']}"
+        folder_name = f"{params['cosim_uuid']}_{params['name']}"
         self.folder_name = folder_name
         case_file_url = f'{self.data_service_url}/case_files/uuid/{file_uuid}'
 
@@ -134,11 +134,11 @@ class PyDSS:
                     
                     os.remove(zip_path)
                 
-                    params.update({
-                        'Project Path' : self.project_folder,
-                        'Active Project' : file_data['case']['active_project'],
-                        'Active Scenario' : file_data['case']['active_scenario'],
-                        'DSS File' : file_data['case']['dss_file']
+                    params['powerflow_options'].update({
+                        'pydss_project' : self.project_folder,
+                        'active_project' : file_data['case']['active_project'],
+                        'active_scenario' : file_data['case']['active_scenario'],
+                        'master_dss_file' : file_data['case']['dss_file']
                     })
                     print(params)
                     #TODO: validate pydss project skeleton
@@ -227,12 +227,12 @@ class PyDSS:
                     
                     # Timestep data payload and metadata only in an inital timestep
                     self.a_writer.write(
-                        self.parameters['Federate name'],
+                        self.parameters['name'],
                         self.pydss_obj._dssSolver.GetTotalSeconds(),
                         restructured_results,
                         i,
                         fed_uuid=self.parameters['fed_uuid'],
-                        cosim_uuid=self.parameters['Co-simulation UUID']
+                        cosim_uuid=self.parameters['cosim_uuid']
                     )
 
                 # closing federate
