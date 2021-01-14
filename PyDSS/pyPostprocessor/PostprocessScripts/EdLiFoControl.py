@@ -205,7 +205,7 @@ def check_line_overloads(monitored_lines):
 			
 			overloaded_line_dict[line_name]= ldg*100
 			affected_buses.add(dss.CktElement.BusNames()[0])
-                          affected_buses.add(dss.CktElement.BusNames()[1])
+
 			affected_buses.add(dss.CktElement.BusNames()[1])
 
 			
@@ -215,6 +215,9 @@ def check_line_overloads(monitored_lines):
 	if affected_buses:
 		ovrl = pd.DataFrame.from_dict(overloaded_line_dict, 'index')
 		ovrl.columns = ['%normal']
+        
+	affected_buses = list(affected_buses)
+    
 	
 	return ovrl, affected_buses
 
@@ -343,7 +346,7 @@ class EdLiFoControl(AbstractPostprocess):
             if not dss.Circuit.SetActiveElement(f"PVSystem.{pv_sys}")>0:
                 self.logger.info(f"Cannot find the PV system {pv_sys}")
                 self.logger.info(f"Active element index: {dss.Circuit.SetActiveElement(f'PVSystem.{pv_sys}')}")
-                #break
+                
             else:
                 dss.Circuit.SetActiveElement(f"PVSystem.{pv_sys}")
                 self.init_power_PV = dss.CktElement.Powers()
@@ -393,8 +396,7 @@ class EdLiFoControl(AbstractPostprocess):
                     self.oldpctpmpp = self.newpctpmpp
                     if self.affected_buses and self.oldpctpmpp==0:
                         self.comment=f"{pv_sys} is fully curtailed but overloads still exist!"
-                    else:
-                        pass
+                    
                         
                 elif self.curtail_option=='kva':
                     if self.affected_buses and max(self.pvs_df.loc[self.poa_lifo_ordered_pv_list,'kVARated'])==0:
@@ -457,7 +459,7 @@ class EdLiFoControl(AbstractPostprocess):
         self.pvbus_voltage = dict()
         self.solution_status = -1
         self.comment = 'RAS'
-        self.total_kVA_deployed = sum(self.pvs_df['kVARated'])
+        self.total_kVA_deployed = self.pvs_df['kVARated'].sum()
         self.total_init_kW_deployed = 0
         #print("Total PV KVA deployed: ",total_kVA_deployed)
         self.total_kVA_curtailed = 0
@@ -495,7 +497,7 @@ class EdLiFoControl(AbstractPostprocess):
         self.solution_status = 0
         
 
-        if max(self.pvs_df.loc[self.poa_lifo_ordered_pv_list,'kVARated'])==0:
+        if self.pvs_df.loc[self.poa_lifo_ordered_pv_list,'kVARated'].max()==0:
             self.comment='No PV system found!'
             self.logger.info(self.comment)
             try:
