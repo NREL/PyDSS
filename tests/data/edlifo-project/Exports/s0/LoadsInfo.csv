@@ -1,5 +1,0 @@
-,AllocationFactor,CVRCurve,CVRvars,CVRwatts,CFactor,Class,Growth,IsDelta,Model,Name,NumCust,PF,PctMean,PctStdDev,RelWeighting,Rneut,Spectrum,Status,Vmaxpu,VminEmerg,VminNorm,Vminpu,Xneut,Yearly,ZipV,Daily,Duty,Idx,kV,kW,kVABase,kvar,kWh,kWhDays,puSeriesRL,XfkVA
-mpx000635970,0.5,,2.0,1.0,4.0,1,,False,1,mpx000635970,1,0.9872788872059944,50.0,10.0,1.0,-1.0,defaultload,0,1.05,0.0,0.0,0.95,0.0,lp_MPX000635970,[],,,1,0.24,5.961,6.037807631914087,0.96,0.0,30.0,50.0,0.0
-mpx000460267,0.5,,2.0,1.0,4.0,1,,False,1,mpx000460267,1,0.9856681771579452,50.0,10.0,1.0,-1.0,defaultload,0,1.05,0.0,0.0,0.95,0.0,lp_MPX000460267,[],,,2,0.24,13.164,13.35540733186375,2.253,0.0,30.0,50.0,0.0
-mpx000637601,0.5,,2.0,1.0,4.0,1,,False,1,mpx000637601,1,0.8913502490238666,50.0,10.0,1.0,-1.0,defaultload,0,1.05,0.0,0.0,0.95,0.0,lp_MPX000637601,[],,,3,0.24,1.575,1.7669821730849464,0.801,0.0,30.0,50.0,0.0
-mpx000594341,0.5,,2.0,1.0,4.0,1,,False,1,mpx000594341,1,0.9880835816781641,50.0,10.0,1.0,-1.0,defaultload,0,1.05,0.0,0.0,0.95,0.0,lp_MPX000594341,[],,,4,0.24,5.784,5.8537558029012455,0.901,0.0,30.0,50.0,0.0
