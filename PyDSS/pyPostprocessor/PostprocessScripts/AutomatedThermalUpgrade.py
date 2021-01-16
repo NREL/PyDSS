@@ -87,6 +87,11 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         
         dss = dssInstance
         self.dssSolver = dssSolver
+        
+        if simulationSettings["Project"]["Simulation Type"] != "Snapshot":
+            raise InvalidParameter("Upgrade post-processors are only supported on Snapshot simulations")
+
+        
         # Just send this list as input to the upgrades code via DISCO -  this list may be empty or have as many
         # paths as the user desires - if empty the mults in the 'tps_to_test' input will be used else if non-empty
         # max and min load mults from the load.dss files will be used. Tne tps to test input should always be specified
@@ -304,6 +309,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         }
 
         postprocess_thermal_upgrades(input_dict, dss, self.logger)
+        self.has_converged = dss.Solution.Converged()
+        self.error = dss.Solution.Convergence() # This is fake for now, find how to get this from Opendssdirect
 
     @staticmethod
     def _get_required_input_fields():
@@ -1430,7 +1437,13 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         """Induces and removes a fault as the simulation runs as per user defined settings. 
         """
         self.logger.info('Running thermal upgrade post process')
+        has_converged = self.has_converged
+        error = self.error
 
 
         #step-=1 # uncomment the line if the post process needs to rerun for the same point in time
-        return step
+        return step, has_converged, error
+    
+    def finalize(self):
+        """Method used to combine post processing results from all steps.
+        """

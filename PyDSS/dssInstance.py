@@ -240,10 +240,10 @@ class OpenDSS:
         self.session.show()
         return
 
-    def _RunPostProcessors(self, step, postprocessors):
+    def _RunPostProcessors(self, step, Steps, postprocessors):
         for postprocessor in postprocessors:
             orig_step = step
-            has_converged, error, step = postprocessor.run(step, Steps)
+            step, has_converged, error = postprocessor.run(step, Steps)
             assert step <= orig_step, "step cannot increment in postprocessor"
             if not has_converged:
                 name = postprocessor.__class__.__name__
@@ -434,16 +434,20 @@ class OpenDSS:
                     self._Logger.info("OpenDSS did not converge at step=%s pydss_converged=%s",
                                       step, pydss_has_converged)
                 has_converged = pydss_has_converged and opendss_has_converged
-                step = self._ProcessStepResults(step, has_converged, postprocessors)
+                step = self._ProcessStepResults(step, Steps, has_converged, postprocessors)
                 if self._increment_flag:
                     step += 1
                 self._dssSolver.IncrementTimeStep()
         finally:
+		    
             if self._Options and self._Options['Exports']['Log Results']:
                 # This is here to guarantee that DatasetBuffers aren't left
                 # with any data in memory.
                 self.ResultContainer.Close()
-
+				
+            for postprocessor in postprocessors: 
+                postprocessor.finalize()
+				
         if self._Options and self._Options['Exports']['Log Results']:
             self.ResultContainer.ExportResults(
                 fileprefix="",
@@ -452,13 +456,13 @@ class OpenDSS:
         self._Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
         self._Logger.info('End of simulation')
 
-    def _ProcessStepResults(self, step, has_converged, postprocessors):
+    def _ProcessStepResults(self, step, Steps, has_converged, postprocessors):
         if self.ResultContainer is not None and step == 0:
             size = make_human_readable_size(self.ResultContainer.max_num_bytes())
             self._Logger.info('Storage requirement estimation: %s, estimated based on first time step run.', size)
 
         if postprocessors:
-            step, converged = self._RunPostProcessors(step)
+            step, converged = self._RunPostProcessors(step, Steps, postprocessors)
             if not converged:
                 has_converged = False
 

@@ -1,0 +1,59 @@
+[Loads.Powers]
+publish = true
+store_values_type = "all"
+
+[PVSystems.Pmpp]
+publish = false
+store_values_type = "all"
+
+[Storages.Powers]
+publish = true
+store_values_type = "all"
+
+[Buses.puVmagAngle]
+publish = false
+store_values_type = "all"
+
+[Buses.Distance]
+publish = false
+store_values_type = "all"
+
+[Circuits.TotalPower]
+publish = true
+store_values_type = "all"
+
+[Circuits.LineLosses]
+publish = true
+store_values_type = "all"
+
+[Circuits.Losses]
+publish = true
+store_values_type = "all"
+
+[Circuits.SubstationLosses]
+publish = true
+store_values_type = "all"
+
+[Lines.Currents]
+publish = false
+store_values_type = "all"
+
+[Lines.NormalAmps]
+publish = false
+store_values_type = "all"
+
+[Lines.VoltagesMagAng]
+publish = false
+store_values_type = "all"
+
+[Lines.CurrentsMagAng]
+publish = false
+store_values_type = "all"
+
+[Transformers.Currents]
+publish = false
+store_values_type = "all"
+
+[Transformers.NormalAmps]
+publish = false
+store_values_type = "all"
