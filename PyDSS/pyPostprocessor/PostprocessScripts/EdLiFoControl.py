@@ -611,12 +611,9 @@ class EdLiFoControl(AbstractPostprocess):
         if self.pvs_df.loc[self.poa_lifo_ordered_pv_list, "kVARated"].max() == 0:
             self.comment = "No PV system found!"
             self.logger.info(self.comment)
-            try:
-                number_ol = len(self.overloads_df)
-                self.logger.info(f"There are {number_ol} persisting overloads")
+            number_ol = len(self.overloads_df)
+            self.logger.info(f"There are {number_ol} persisting overloads")
 
-            except:
-                pass
 
         elif self.my_lifo_list:
 
