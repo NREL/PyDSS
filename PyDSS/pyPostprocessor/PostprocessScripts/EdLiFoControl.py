@@ -63,12 +63,12 @@ def compute_electric_distance(bus_phases=None):
     busall = np.unique((list(lines["bus1"]) + list(lines["bus2"])))
     disGmat_df = pd.DataFrame(0, index=busall, columns=busall)
 
-    for l in lines.index:
-        disGmat_df.loc[lines.loc[l, "bus1"], lines.loc[l, "bus2"]] = -lines.loc[l, "g"]
-        disGmat_df.loc[lines.loc[l, "bus2"], lines.loc[l, "bus1"]] = -lines.loc[l, "g"]
+    for line in lines.index:
+        disGmat_df.loc[lines.loc[line, "bus1"], lines.loc[line, "bus2"]] = -lines.loc[line, "g"]
+        disGmat_df.loc[lines.loc[line, "bus2"], lines.loc[line, "bus1"]] = -lines.loc[line, "g"]
 
-    for b in busall:
-        disGmat_df.loc[b, b] = -sum(disGmat_df.loc[b, :])
+    for bus in busall:
+        disGmat_df.loc[bus, bus] = -sum(disGmat_df.loc[bus, :])
 
     disRmat_df = pd.DataFrame(
         np.linalg.pinv(np.array(disGmat_df)),
@@ -77,13 +77,13 @@ def compute_electric_distance(bus_phases=None):
     )
 
     dismat_df = pd.DataFrame(0, index=busall, columns=busall)
-    for i in disGmat_df.index:
-        for j in disGmat_df.columns:
-            dismat_df.loc[i, j] = (
-                disRmat_df.loc[i, i]
-                + disRmat_df.loc[j, j]
-                - disRmat_df.loc[i, j]
-                - disRmat_df.loc[j, i]
+    for bus_i in disGmat_df.index:
+        for bus_j in disGmat_df.columns:
+            dismat_df.loc[bus_i, bus_j] = (
+                disRmat_df.loc[bus_i, bus_i]
+                + disRmat_df.loc[bus_j, bus_j]
+                - disRmat_df.loc[bus_i, bus_j]
+                - disRmat_df.loc[bus_j, bus_i]
             )
 
     return dismat_df
@@ -297,9 +297,7 @@ class EdLiFoControl(AbstractPostprocess):
         else:
             self.curtailment_size = 5
 
-        self.electrical_distance_file_path = self.config[
-            "electrical_distance_file_path"
-        ]
+        self.electrical_distance_file_path = self.config["electrical_distance_file_path"]
 
         if not os.path.exists(self.electrical_distance_file_path):
             self.electrical_distance_file_path = os.path.join(
@@ -310,9 +308,7 @@ class EdLiFoControl(AbstractPostprocess):
 
         else:
 
-            self.dismat_df = pd.read_csv(
-                self.electrical_distance_file_path, index_col=0
-            )
+            self.dismat_df = pd.read_csv(self.electrical_distance_file_path, index_col=0)
 
         (
             self.avg_distance,
@@ -614,7 +610,6 @@ class EdLiFoControl(AbstractPostprocess):
             number_ol = len(self.overloads_df)
             self.logger.info(f"There are {number_ol} persisting overloads")
 
-
         elif self.my_lifo_list:
 
             self.init_pctpmpp = {}
@@ -637,9 +632,7 @@ class EdLiFoControl(AbstractPostprocess):
         self.PV_curtailed["Pct_curtailment"] = Pct_curtailment
 
         Pct_kW_curtailment = (
-            abs(self.total_kW_curtailed)
-            * 100
-            / max(1, abs(self.total_init_kW_deployed))
+            abs(self.total_kW_curtailed) * 100 / max(1, abs(self.total_init_kW_deployed))
         )
         self.PV_kW_curtailed["Pct_kW_curtailment"] = Pct_kW_curtailment
         self.PV_kW_curtailed["Total_PV_kW_deployed"] = self.total_init_kW_deployed
