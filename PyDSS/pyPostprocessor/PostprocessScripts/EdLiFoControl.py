@@ -654,9 +654,8 @@ class EdLiFoControl(AbstractPostprocess):
 
         self.logger.info(f"kW Curtailed: {self.PV_kW_curtailed}")
         self.has_converged = sol.Converged()
-        self.error = (
-            sol.Convergence()
-        )  # This is fake for now, find how to get this from Opendssdirect
+        self.error = sol.Convergence()
+        # This error is fake for now, find how to get this from Opendssdirect
 
     def run(self, step, stepMax):
         """
@@ -670,9 +669,8 @@ class EdLiFoControl(AbstractPostprocess):
         self.pvbus_voltage_record[step] = self.pvbus_voltage
 
         has_converged = self.has_converged
-        error = (
-            self.error
-        )  # This is fake for now, find how to get this from Opendssdirect
+        error = self.error
+        # This error is fake for now, find how to get this from Opendssdirect
 
         # step-=1 # uncomment the line if the post process needs to rerun for the same point in time
         return step, has_converged, error
