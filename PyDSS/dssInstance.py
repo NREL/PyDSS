@@ -391,7 +391,7 @@ class OpenDSS:
 
         try:
             self.RunStep(0)
-            self._ProcessStepResults(0, True, [])
+            self._ProcessStepResults(0, 1, True, [])
         finally:
             self.ResultContainer.Close()
 
