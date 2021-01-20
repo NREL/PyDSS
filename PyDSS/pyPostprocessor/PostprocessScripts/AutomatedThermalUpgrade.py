@@ -96,15 +96,17 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         # TODO: only fixed_tps (using tps_to_test list from config) works in this version
         #  associated function to compute violations need to be changed to make the multiple dss files option work
         use_fixed_tps = True
-        if ~ use_fixed_tps:
+        if not use_fixed_tps:
             self.other_load_dss_files = {}
             self.other_pv_dss_files = {}
-
             self.other_pv_dss_files = self.config["project_data"]["pydss_other_pvs_dss_files"]
             self.other_load_dss_files = self.config["project_data"]["pydss_other_loads_dss_files"]
 
             self.get_load_pv_mults_individual_object()
             # self.get_load_mults()
+        else:
+            self.other_load_dss_files = []
+            self.other_pv_dss_files = []
 
         self.orig_xfmrs = {x["name"]: x for x in iter_elements(dss.Transformers, get_transformer_info)}
         self.orig_lines = {x["name"]: x for x in iter_elements(dss.Lines, self.get_line_info)}
@@ -1509,7 +1511,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
     def determine_xfmr_ldgs_alltps(self):
         self.xfmr_violations_alltps = {}
         self.all_xfmr_ldgs_alltps = {}
-        if len(self.other_load_dss_files)>0:
+        # apply common multipliers to all load dss files - unsure what happens here
+        if len(self.other_load_dss_files) > 0:
             for tp_cnt in range(len(self.config["tps_to_test"])):
                 # First two tps are for disabled PV case
                 if tp_cnt == 0 or tp_cnt == 1:
@@ -1566,6 +1569,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                             self.xfmr_violations_alltps[xfmr_name][0].append(max(xfmr_current))
                     if not dss.Transformers.Next() > 0:
                         break
+        # if other load dss files are not present, apply these multipliers to the current load and pv case
         elif len(self.other_load_dss_files) == 0:
             for tp_cnt in range(len(self.config["tps_to_test"])):
                 # First two tps are for disabled PV case

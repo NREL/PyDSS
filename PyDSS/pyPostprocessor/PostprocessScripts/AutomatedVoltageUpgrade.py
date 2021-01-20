@@ -140,9 +140,14 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         # TODO: only fixed_tps (using tps_to_test list from config) works in this version
         #  associated function to compute violations need to be changed to make the multiple dss files option work
         use_fixed_tps = True
-        if ~ use_fixed_tps:
+        if not use_fixed_tps:
             self.other_pv_dss_files = self.config["project_data"]["pydss_other_pvs_dss_files"]
             self.other_load_dss_files = self.config["project_data"]["pydss_other_loads_dss_files"]
+            self.get_load_pv_mults_individual_object()  # multipliers are computed for individual load and pv
+            # self.get_load_mults()  # max and min are taken
+        else:
+            self.other_load_dss_files = []
+            self.other_pv_dss_files = []
 
         thermal_filename = "thermal_upgrades.dss"
         thermal_dss_file = os.path.join(
@@ -156,10 +161,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         check_redirect(thermal_dss_file)
         self.dssSolver = dssSolver
         self.start = time.time()
-
-        if ~ use_fixed_tps:
-            self.get_load_pv_mults_individual_object()  # multipliers are computed for individual load and pv
-            # self.get_load_mults()  # max and min are taken
 
         # reading original objects (before upgrades)
         self.orig_ckt_info = get_ckt_info()
@@ -624,6 +625,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.new_capacitors = {x["name"]: x for x in iter_elements(dss.Capacitors, get_capacitor_info)}
         self.new_capcontrols = {x["name"]: x for x in iter_elements(dss.CapControls, get_cap_controls_info)}
         self.new_xfmr_info = dss.Transformers.AllNames()
+        self.new_ckt_info = get_ckt_info()
 
         # If initial and final limits are different,
         # also doing with final limits to get comparison between initial and final violation numbers
@@ -700,6 +702,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 "orig_capcontrols": self.orig_capcontrols,
                 "orig_xfmr_info": self.orig_xfmr_info,
                 "new_xfmr_info": self.new_xfmr_info,
+                "new_ckt_info": self.new_ckt_info,
             },
             self.logger,
         )
@@ -1282,7 +1285,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                             output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
                         if raise_exception:
                             raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                            return False
                         else:
                             return False
                 if tp_cnt == 2 or tp_cnt == 3:
@@ -1303,7 +1305,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                             output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
                         if raise_exception:
                             raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                            return False
                         else:
                             return False
                 for b in self.all_bus_names:
@@ -1350,6 +1351,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                         self.nodal_violations_dict[b.lower()] = [v_used]
                     elif b in self.nodal_violations_dict:
                         self.nodal_violations_dict[b.lower()].append(v_used)
+
         elif len(self.other_load_dss_files)==0:
             for tp_cnt in range(len(self.config["tps_to_test"])):
                 # First two tps are for disabled PV case
@@ -1363,7 +1365,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                             output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
                         if raise_exception:
                             raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                            return False
                         else:
                             return False
                 if tp_cnt == 2 or tp_cnt == 3:
@@ -1376,7 +1377,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                             output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
                         if raise_exception:
                             raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                            return False
                         else:
                             return False
                 for b in self.all_bus_names:
@@ -1424,7 +1424,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     elif b in self.nodal_violations_dict:
                         self.nodal_violations_dict[b.lower()].append(v_used)
         self.severity_indices = [num_nodes_counter, severity_counter, num_nodes_counter * severity_counter]
-        return
+        return True
 
     def plot_violations(self):
         #plt.figure(figsize=(8, 7))
@@ -1859,11 +1859,12 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 break
 
         if self.subxfmr == '':
-            # Add new transformer if no transformer is connected to source bus
+            # Add new transformer if no transformer is connected to source bus, then add LTC
             self.add_new_xfmr(self.source)
             self.write_flag = 1
             self.add_new_regctrl(self.source)
         elif self.subxfmr != '':
+            # add LTC onto existing substation transformer
             self.write_flag = 1
             self.add_new_regctrl(self.sub_LTC_bus)
         self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,

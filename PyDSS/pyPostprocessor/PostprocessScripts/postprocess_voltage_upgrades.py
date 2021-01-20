@@ -45,11 +45,15 @@ class postprocess_voltage_upgrades():
         self.orig_capacitors = self.Settings["orig_capacitors"]
         self.new_capcontrols = self.Settings["new_capcontrols"]
         self.orig_capcontrols = self.Settings["orig_capcontrols"]
-        self.orig_ckt_info = self.Settings["orig_ckt_info"]
+        self.new_ckt_info = self.Settings["new_ckt_info"]
+        # not used anywhere - new is used. This gave error when substation transformer was added in voltage upgrades
+        # so didnt exist in original ckt info
+        self.orig_ckt_info = self.Settings["orig_ckt_info"]  # not used
         self.orig_xfmr_info = self.Settings["orig_xfmr_info"]
         self.final_cap_upgrades = {}
         self.final_reg_upgrades = {}
         self.processed_outputs = {}
+        # TODO check - if new substation transformer is added in voltage upgrades code, is that cost considered here
 
         if self.new_capcontrols:
             self.get_capacitor_upgrades()
@@ -105,11 +109,11 @@ class postprocess_voltage_upgrades():
 
     # function to assign settings if regulator upgrades are on substation transformer
     def check_substation_LTC(self):
-        if self.orig_ckt_info["substation_xfmr"]["xfmr_name"].lower() == \
+        if self.new_ckt_info["substation_xfmr"]["xfmr_name"].lower() == \
                 self.final_reg_upgrades["xfmr_name"]:
             self.final_reg_upgrades["sub_xfmr"] = 1
-            self.final_reg_upgrades["xfmr_kva"] = self.orig_ckt_info["substation_xfmr"]["xfmr_kva"]
-            self.final_reg_upgrades["xfmr_kv"] = self.orig_ckt_info["substation_xfmr"]["xfmr_kv"]
+            self.final_reg_upgrades["xfmr_kva"] = self.new_ckt_info["substation_xfmr"]["xfmr_kva"]
+            self.final_reg_upgrades["xfmr_kv"] = self.new_ckt_info["substation_xfmr"]["xfmr_kv"]
 
     # function to check for regulator upgrades
     def get_regulator_upgrades(self):
