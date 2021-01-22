@@ -1,0 +1,118 @@
+New Line.l(r:p1udt2569lv-p1ulv2723) Units=km Length=0.0592285 bus1=p1udt2569lv.1.2 bus2=p1ulv2723.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt2569lv-p1ulv62436) Units=km Length=0.0896316 bus1=p1udt2569lv.1.2 bus2=p1ulv62436.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt4186lv-p1ulv4595) Units=km Length=0.001 bus1=p1udt4186lv.1.2 bus2=p1ulv4595.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4_Periwinkle_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt4688lv-p1ulv5237) Units=km Length=0.05955 bus1=p1udt4688lv.1.2 bus2=p1ulv5237.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt4688lv-p1ulv64358) Units=km Length=0.0822948 bus1=p1udt4688lv.1.2 bus2=p1ulv64358.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udm16432-p1ulv61814) Units=km Length=0.0643863 bus1=p1udm16432.1.2 bus2=p1ulv61814.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udm16432-p1udt4688lv) Units=km Length=0.0127133 bus1=p1udt4688lv.1.2 bus2=p1udm16432.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_2/0_Rucina_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt5257lv-p1ulv5951) Units=km Length=0.0495724 bus1=p1udt5257lv.1.2 bus2=p1ulv5951.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt8738lv-p1ulv10887) Units=km Length=0.0339478 bus1=p1udt8738lv.1.2 bus2=p1ulv10887.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt9514lv-p1ulv12152) Units=km Length=0.0615159 bus1=p1udt9514lv.1.2 bus2=p1ulv12152.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt9514lv-p1ulv24237) Units=km Length=0.0631614 bus1=p1udt9514lv.1.2 bus2=p1ulv24237.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udm31921-p1ulv53232) Units=km Length=0.0411191 bus1=p1udm31921.1.2 bus2=p1ulv53232.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udm31921-p1udt9514lv) Units=km Length=0.0197298 bus1=p1udt9514lv.1.2 bus2=p1udm31921.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_2/0_Rucina_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt9880lv-p1ulv12765) Units=km Length=0.0529993 bus1=p1udt9880lv.1.2 bus2=p1ulv12765.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt9880lv-p1ulv19767) Units=km Length=0.0432225 bus1=p1udt9880lv.1.2 bus2=p1ulv19767.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt11629lv-p1ulv15856) Units=km Length=0.0490592 bus1=p1udt11629lv.1.2 bus2=p1ulv15856.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt12324lv-p1ulv17169) Units=km Length=0.11543100000000002 bus1=p1udt12324lv.1.2 bus2=p1ulv17169.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt12324lv-p1ulv36321) Units=km Length=0.051076 bus1=p1udt12324lv.1.2 bus2=p1ulv36321.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt12324lv-p1ulv64357) Units=km Length=0.0857224 bus1=p1udt12324lv.1.2 bus2=p1ulv64357.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udm40050-p1ulv29261) Units=km Length=0.117343 bus1=p1udm40050.1.2 bus2=p1ulv29261.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udm40050-p1udt12324lv) Units=km Length=0.0174065 bus1=p1udt12324lv.1.2 bus2=p1udm40050.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_2/0_Rucina_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt14166lv-p1ulv21045) Units=km Length=0.0107562 bus1=p1udt14166lv.1.2 bus2=p1ulv21045.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_2/0_Rucina_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt17537lv-p1ulv29904) Units=km Length=0.0300779 bus1=p1udt17537lv.1.2 bus2=p1ulv29904.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt18129lv-p1ulv31790) Units=km Length=0.0925765 bus1=p1udt18129lv.1.2 bus2=p1ulv31790.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt19673lv-p1ulv37000) Units=km Length=0.001 bus1=p1udt19673lv.1.2 bus2=p1ulv37000.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4_Periwinkle_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt21477lv-p1ulv44471) Units=km Length=0.0436962 bus1=p1udt21477lv.1.2 bus2=p1ulv44471.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt21744lv-p1ulv45758) Units=km Length=0.052307000000000006 bus1=p1udt21744lv.1.2 bus2=p1ulv45758.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt24034lv-p1ulv57547) Units=km Length=0.0348037 bus1=p1udt24034lv.1.2 bus2=p1ulv57547.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt24034lv-p1ulv63094) Units=km Length=0.0348037 bus1=p1udt24034lv.1.2 bus2=p1ulv63094.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4/0_Zuzara_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt24356lv-p1ulv59420) Units=km Length=0.001 bus1=p1udt24356lv.1.2 bus2=p1ulv59420.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4_Periwinkle_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt24768lv-p1ulv61813) Units=km Length=0.001 bus1=p1udt24768lv.1.2 bus2=p1ulv61813.1.2 switch=n enabled=y phases=2 Linecode=1P_OH_AL_4_Periwinkle_0_416_0_2_2_2_2_2
+
+New Line.l(r:p1udt24044-p1udt4186) Units=km Length=0.138652 bus1=p1udt24044-p1udt4186x.1 bus2=p1udt4186.1 switch=n enabled=y phases=1 Linecode=1P_OH_AL_ACSR_#2_Sparrow_12_47_0_1_1_1_1_1
+
+New Line.l(r:p1udt24034-p1udt24768) Units=km Length=0.08972820000000001 bus1=p1udt24768.3 bus2=p1udt24034.3 switch=n enabled=y phases=1 Linecode=1P_OH_AL_ACSR_#2_Sparrow_12_47_0_1_1_1_1_1
+
+New Line.l(r:p1udt19673-p1udt24768) Units=km Length=0.0603056 bus1=p1udt19673.3 bus2=p1udt24768.3 switch=n enabled=y phases=1 Linecode=1P_OH_AL_ACSR_#2_Sparrow_12_47_0_1_1_1_1_1
+
+New Line.l(r:p1udt19673-p1udt24044) Units=km Length=0.152945 bus1=p1udt19673-p1udt24044x.3 bus2=p1udt19673.3 switch=n enabled=y phases=1 Linecode=1P_OH_AL_ACSR_#2_Sparrow_12_47_0_1_1_1_1_1
+
+New Line.l(r:p1udt11629-p1udt9880) Units=km Length=0.170085 bus1=p1udt11629.2 bus2=p1udt9880.2 switch=n enabled=y phases=1 Linecode=1P_OH_AL_ACSR_#2_Sparrow_12_47_0_1_1_1_1_1
+
+New Line.l(r:p1udt11629-p1udt14166) Units=km Length=0.0176972 bus1=p1udt14166.2 bus2=p1udt11629.2 switch=n enabled=y phases=1 Linecode=1P_OH_AL_ACSR_#2_Sparrow_12_47_0_1_1_1_1_1
+
+New Line.l(r:p1udt14166-p1udt17537) Units=km Length=0.035384500000000006 bus1=p1udt17537.2 bus2=p1udt14166.2 switch=n enabled=y phases=1 Linecode=1P_OH_AL_ACSR_#2_Sparrow_12_47_0_1_1_1_1_1
+
+New Line.l(r:p1udt17537-p1udt4688) Units=km Length=0.0431254 bus1=p1udt4688.2 bus2=p1udt17537.2 switch=n enabled=y phases=1 Linecode=1P_OH_AL_ACSR_#2_Sparrow_12_47_0_1_1_1_1_1
+
+New Line.l(r:p1udt4688-p1udt9514) Units=km Length=0.0319947 bus1=p1udt9514.2 bus2=p1udt4688.2 switch=n enabled=y phases=1 Linecode=1P_OH_AL_ACSR_#2_Sparrow_12_47_0_1_1_1_1_1
+
+New Line.l(r:p1udt12324-p1udt9514) Units=km Length=0.0371363 bus1=p1udt12324.2 bus2=p1udt9514.2 switch=n enabled=y phases=1 Linecode=1P_OH_AL_ACSR_#2_Sparrow_12_47_0_1_1_1_1_1
+
+New Line.l(r:p1udt12324-p1udt8738) Units=km Length=0.019177400000000004 bus1=p1udt8738.2 bus2=p1udt12324.2 switch=n enabled=y phases=1 Linecode=1P_OH_AL_ACSR_#2_Sparrow_12_47_0_1_1_1_1_1
+
+New Line.l(r:p1udt2569-p1udt8738) Units=km Length=0.117916 bus1=p1udt2569.2 bus2=p1udt8738.2 switch=n enabled=y phases=1 Linecode=1P_OH_AL_ACSR_#2_Sparrow_12_47_0_1_1_1_1_1
+
+New Line.l(r:p1udt21477-p1udt2569) Units=km Length=0.001 bus1=p1udt2569.2 bus2=p1udt21477.2 switch=n enabled=y phases=1 Linecode=1P_OH_AL_ACSR_#2_Sparrow_12_47_0_1_1_1_1_1
+
+New Line.l(r:p1udt18129-p1udt2569) Units=km Length=0.0786206 bus1=p1udt18129.2 bus2=p1udt2569.2 switch=n enabled=y phases=1 Linecode=1P_OH_AL_ACSR_#2_Sparrow_12_47_0_1_1_1_1_1
+
+New Line.l(r:p1udt18129-p1udt21744) Units=km Length=0.0393053 bus1=p1udt21744.2 bus2=p1udt18129.2 switch=n enabled=y phases=1 Linecode=1P_OH_AL_ACSR_#2_Sparrow_12_47_0_1_1_1_1_1
+
+New Line.l(r:p1udt21744-p1udt24044) Units=km Length=0.0982633 bus1=p1udt21744-p1udt24044x.2 bus2=p1udt21744.2 switch=n enabled=y phases=1 Linecode=1P_OH_AL_ACSR_#2_Sparrow_12_47_0_1_1_1_1_1
+
+New Line.l(r:p1udt24356-p1udt5257) Units=km Length=0.147973 bus1=p1udt24356-p1udt5257x.1 bus2=p1udt24356.1 switch=n enabled=y phases=1 Linecode=1P_OH_AL_ACSR_#2_Sparrow_12_47_0_1_1_1_1_1
+
+New Line.l(r:p1udt24044lv-p1ulv57596) Units=km Length=0.0868307 bus1=p1udt24044lv.1.2.3 bus2=p1ulv57596.1.2.3 switch=n enabled=y phases=3 Linecode=3P_UG_AL_350kcmil_15_0_416_0_3_3_3_3_3
+
+New Line.l(r:p1udt24044-p1udt5257) Units=km Length=0.03930380000000001 bus1=p1udt5257.1.2.3 bus2=p1udt24044.1.2.3 switch=n enabled=y phases=3 Linecode=3P_OH_AL_ACSR_4/0_Penguin_12_47_0_3_3_3_3_3
+
+New Line.l(r:p1udt5257-p1uhs21_1247) Units=km Length=0.0982732 bus1=p1udt5257-p1uhs21_1247x.1.2.3 bus2=p1udt5257.1.2.3 switch=n enabled=y phases=3 Linecode=3P_OH_AL_ACSR_4/0_Penguin_12_47_0_3_3_3_3_3
+
+New Line.fuse(r:p1udt24356-p1udt5257)p1u_266507 Units=km Length=0.001 bus1=p1udt5257.1 bus2=p1udt24356-p1udt5257x.1 switch=n enabled=y phases=1 Linecode=fuse_1_1_1_1_1
+
+New Fuse.Fuse_fuse(r:p1udt24356-p1udt5257)p1u_266507 monitoredobj=Line.fuse(r:p1udt24356-p1udt5257)p1u_266507 enabled=y ratedcurrent=100.0
+
+New Line.fuse(r:p1udt24044-p1udt4186)p1u_268367 Units=km Length=0.001 bus1=p1udt24044.1 bus2=p1udt24044-p1udt4186x.1 switch=n enabled=y phases=1 Linecode=fuse_1_6_1_1_1_1
+
+New Fuse.Fuse_fuse(r:p1udt24044-p1udt4186)p1u_268367 monitoredobj=Line.fuse(r:p1udt24044-p1udt4186)p1u_268367 enabled=y ratedcurrent=100.0
+
+New Line.fuse(r:p1udt19673-p1udt24044)p1u_268368 Units=km Length=0.001 bus1=p1udt24044.3 bus2=p1udt19673-p1udt24044x.3 switch=n enabled=y phases=1 Linecode=fuse_1_6_1_1_1_1
+
+New Fuse.Fuse_fuse(r:p1udt19673-p1udt24044)p1u_268368 monitoredobj=Line.fuse(r:p1udt19673-p1udt24044)p1u_268368 enabled=y ratedcurrent=100.0
+
+New Line.fuse(r:p1udt21744-p1udt24044)p1u_268369 Units=km Length=0.001 bus1=p1udt24044.2 bus2=p1udt21744-p1udt24044x.2 switch=n enabled=y phases=1 Linecode=fuse_1_6_1_4_1_1_1
+
+New Fuse.Fuse_fuse(r:p1udt21744-p1udt24044)p1u_268369 monitoredobj=Line.fuse(r:p1udt21744-p1udt24044)p1u_268369 enabled=y ratedcurrent=100.0
+

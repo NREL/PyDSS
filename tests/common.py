@@ -19,6 +19,9 @@ CUSTOM_EXPORTS_PROJECT_PATH = os.path.join(
 PV_REPORTS_PROJECT_PATH = os.path.join(
     "tests", "data", "pv_reports_project"
 )
+AUTOMATED_UPGRADES_PROJECT_PATH = os.path.join(
+    "tests", "data", "automated_upgrades_project"
+)
 SCENARIO_NAME = "scenario1"
 
 
