@@ -15,6 +15,7 @@ from http import HTTPStatus
 from zipfile import ZipFile
 import re
 import shutil
+import toml
 
 logger = logging.getLogger(__name__)
 
@@ -142,6 +143,32 @@ class PyDSS:
                     })
                     print(params)
                     #TODO: validate pydss project skeleton
+
+                    # Update subscriptions.toml file with sub id if sub_id exists
+                    if 'sub_id' in params['powerflow_options']:
+                        sub_id = params['powerflow_options'].pop('sub_id')
+                        path_to_sub_file = os.path.join(self.project_folder, file_data['case']['active_project'], 
+                                'Scenarios', file_data['case']['active_scenario'], 'ExportLists')
+
+                        if os.path.exists(path_to_sub_file):
+                            if 'Subscriptions.toml' in os.listdir(path_to_sub_file):
+                                os.remove(os.path.join(path_to_sub_file, 'Subscriptions.toml'))
+                            
+                        sub_dict = {
+                                "Vsource.source": {
+                                    "Property" : "pu",
+                                    "Subscription ID": sub_id,
+                                    "Unit" : "",
+                                    "Subscribe" : True,
+                                    "Data type" : "double",
+                                    "Multiplier" : 1 
+                                }
+                            }
+
+                        with open(os.path.join(path_to_sub_file, 'Subscriptions.toml'), "w") as f:
+                            toml.dump(sub_dict, f)
+
+                        logger.info('Subscriptions.toml file changed')
                     
                     """ create log folder if not present """
                     log_folder  = os.path.join(self.project_folder, file_data['case']['active_project'], 'Logs')

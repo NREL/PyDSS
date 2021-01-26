@@ -115,6 +115,9 @@
               "type": "string",
               "format": "uuid",
               "example": "1e861ce4-b8bb-4745-9e04-f76ed6795d52"
+            },
+            "sub_id": {
+              "type": "string"
             }
           },
           "required": [

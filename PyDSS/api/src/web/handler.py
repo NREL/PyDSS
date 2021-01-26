@@ -69,6 +69,7 @@ class Handler:
                                             simulator_time_resolution: 15
                                             powerflow_options: 
                                                 pydss_project: "6fec60b1-f0cb-42aa-b06d-33d9d28bc36b"
+                                                sub_id : "sample_federate/bus/152/voltage/pu"
                                             name: PyDSS_x
                                     Example 2:
                                         value:
