@@ -10,8 +10,8 @@ COPY . /PyDSS
 # Change directory to the src folder
 WORKDIR /PyDSS
 
-RUN pip install --upgrade pip
-RUN pip install --upgrade setuptools
+# RUN pip install --upgrade pip
+# RUN pip install --upgrade setuptools
 
 #RUN pip install --index-url https://pypi.naerm.team/simple/ naerm_core
 
