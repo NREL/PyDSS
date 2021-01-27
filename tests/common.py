@@ -19,9 +19,13 @@ CUSTOM_EXPORTS_PROJECT_PATH = os.path.join(
 PV_REPORTS_PROJECT_PATH = os.path.join(
     "tests", "data", "pv_reports_project"
 )
+
 AUTOMATED_UPGRADES_PROJECT_PATH = os.path.join(
-    "tests", "data", "automated_upgrades_project"
-)
+    "tests", "data", "automated_upgrades_project")
+
+EDLIFO_PROJECT_PATH = os.path.join(
+    "tests", "data", "edlifo-project")
+
 SCENARIO_NAME = "scenario1"
 
 
@@ -31,6 +35,7 @@ def cleanup_project():
         RUN_PROJECT_PATH,
         CUSTOM_EXPORTS_PROJECT_PATH,
         PV_REPORTS_PROJECT_PATH,
+        EDLIFO_PROJECT_PATH,
     )
     for project_path in projects:
         export_path = os.path.join(project_path, "Exports", "scenario1")

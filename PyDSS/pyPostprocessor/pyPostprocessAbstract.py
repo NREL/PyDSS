@@ -31,8 +31,8 @@ class AbstractPostprocess(abc.ABC):
     def __init__(self, project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, logger):
         """This is the constructor class.
         """
-        if simulationSettings["Project"]["Simulation Type"] != "Snapshot":
-            raise InvalidParameter("Upgrade post-processors are only supported on Snapshot simulations")
+        # if simulationSettings["Project"]["Simulation Type"] != "Snapshot":
+            # raise InvalidParameter("Upgrade post-processors are only supported on Snapshot simulations")
 
         self.project = project
         self.scenario = scenario
@@ -54,6 +54,11 @@ class AbstractPostprocess(abc.ABC):
     def _get_required_input_fields(self):
         """Return the required input fields."""
 
+    @abc.abstractmethod
+    def finalize(self):
+        """Method used to combine post processing results from all steps.
+        """
+        
     def _check_input_fields(self):
         required_fields = self._get_required_input_fields()
         fields = set(self.config.keys())

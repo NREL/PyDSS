@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 
 from PyDSS.common import DatasetPropertyType
+from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.utils.utils import make_timestamps
 
 

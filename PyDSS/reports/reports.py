@@ -5,12 +5,14 @@ import abc
 import copy
 import enum
 import logging
+import math
 import os
 import time
 
 from PyDSS.common import DataConversion
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.utils.dataframe_utils import write_dataframe
+from PyDSS.utils.simulation_utils import create_time_range_from_settings
 from PyDSS.utils.utils import dump_data, make_json_serializable
 
 
@@ -205,6 +207,7 @@ class ReportBase(abc.ABC):
         compress = True if fmt == "h5" else False
         write_dataframe(df, filename, compress=compress)
         logger.info("Generated %s", filename)
+        return filename
 
     def _export_json_report(self, data, output_dir, filename):
         """Export report to a JSON file."""
@@ -215,6 +218,10 @@ class ReportBase(abc.ABC):
     def _get_simulation_resolution(self):
         res = self._simulation_config["Project"]["Step resolution (sec)"]
         return timedelta(seconds=res)
+
+    def _get_num_steps(self):
+        start, end, step = create_time_range_from_settings(self._simulation_config)
+        return math.ceil((end - start) / step)
 
     @staticmethod
     def _params_from_granularity(granularity):

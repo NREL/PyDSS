@@ -339,7 +339,7 @@ class PyDssProject:
                 inst.run(self._simulation_config, self, scenario, dry_run=dry_run)
                 self._estimated_space[scenario.name] = inst.get_estimated_space()
 
-        if not dry_run:
+        if not dry_run and self._simulation_config["Exports"]["Result Container"] == "ResultData":
             results = None
             export_tables = self._simulation_config["Exports"].get(
                 "Export Data Tables", False
@@ -819,7 +819,7 @@ def update_pydss_controllers(project_path, scenario, controller_type,
     """
     if controller_type not in READ_CONTROLLER_FUNCTIONS:
         supported_types = list(READ_CONTROLLER_FUNCTIONS.keys())
-        print(f"Currently only {supported_types} types are supported")
+        print(f"Invalid controller_type={controller_type}, supported: {supported_types}")
         sys.exit(1)
 
     sim_file = os.path.join(project_path, SIMULATION_SETTINGS_FILENAME)

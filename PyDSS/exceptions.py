@@ -13,6 +13,10 @@ class OpenDssConvergenceError(Exception):
     """Raised when OpenDSS fails to converge on a solution."""
 
 
+class OpenDssModelError(Exception):
+    """Raised when OpenDSS fails to compile a model."""
+
+
 class PyDssConvergenceError(Exception):
     """Raised when PyDSS fails to converge on a solution."""
 

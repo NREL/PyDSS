@@ -12,7 +12,7 @@ import opendssdirect as dss
 
 from PyDSS.pyLogger import getLoggerTag
 from PyDSS.unitDefinations import unit_info
-from PyDSS.common import PV_LOAD_SHAPE_FILENAME, DatasetPropertyType
+from PyDSS.common import PV_LOAD_SHAPE_FILENAME, PV_PROFILES_FILENAME, DatasetPropertyType
 from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
 from PyDSS.export_list_reader import ExportListReader, StoreValuesType
@@ -460,7 +460,10 @@ class ResultData:
             })
 
         pmult_sums = {}
-        dss.LoadShape.First()
+        if dss.LoadShape.First() == 0:
+            self._logger.warning("There are no load shapes.")
+            return
+
         sim_resolution = self._options["Project"]["Step resolution (sec)"]
         per_time_point = (
             ReportGranularity.PER_ELEMENT_PER_TIME_POINT,
@@ -496,7 +499,7 @@ class ResultData:
                 pv_info["load_shape_pmult_sum"] = pmult_sums[profile]
 
         data = {"pv_systems": pv_infos}
-        filename = os.path.join(self._export_dir, "pv_profiles.json")
+        filename = os.path.join(self._export_dir, PV_PROFILES_FILENAME)
         dump_data(data, filename, indent=2)
         self._logger.info("Exported PV profile information to %s", filename)
 
