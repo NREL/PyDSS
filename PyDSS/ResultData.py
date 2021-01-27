@@ -444,7 +444,8 @@ class ResultData:
         granularity = ReportGranularity(self._options["Reports"]["Granularity"])
         pv_systems = self._objects_by_class.get("PVSystems")
         if pv_systems is None:
-            raise InvalidConfiguration("PVSystems are not exported")
+            logger.info("No PVSystems are present")
+            return
 
         pv_infos = []
         profiles = set()

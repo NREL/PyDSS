@@ -27,14 +27,18 @@ class PvReportBase(ReportBase, abc.ABC):
         assert len(results.scenarios) == 2
         self._pf1_scenario = results.scenarios[0]
         self._control_mode_scenario = results.scenarios[1]
-        names = self._control_mode_scenario.list_element_names("Powers")
-        cm_profiles = self._control_mode_scenario.read_pv_profiles()["pv_systems"]
-        self._pv_system_names = [x["name"] for x in cm_profiles]
+        cm_profiles = self._control_mode_scenario.read_pv_profiles()
+        if not cm_profiles:
+            self._pv_system_names = []
+            return
+
+        self._pv_system_names = [x["name"] for x in cm_profiles["pv_systems"]]
+
         self._pf1_pv_systems = {
             x["name"]: x for x in self._pf1_scenario.read_pv_profiles()["pv_systems"]
         }
         self._control_mode_pv_systems = {
-            x["name"]: x for x in cm_profiles
+            x["name"]: x for x in cm_profiles["pv_systems"]
         }
 
     def _get_pv_system_info(self, pv_system, scenario):
@@ -44,6 +48,9 @@ class PvReportBase(ReportBase, abc.ABC):
             pv_systems = self._control_mode_pv_systems
 
         return pv_systems[pv_system]
+
+    def _has_pv_systems(self):
+        return len(self._pv_system_names) > 0
 
     @staticmethod
     def get_required_exports(simulation_config):
@@ -83,6 +90,9 @@ class PvClippingReport(PvReportBase):
 
     def __init__(self, name, results, simulation_config):
         super().__init__(name, results, simulation_config)
+        if not self._has_pv_systems():
+            return
+
         diff_tolerance = self._report_options["diff_tolerance_percent_pmpp"] * .01
         denominator_tolerance = self._report_options["denominator_tolerance_percent_pmpp"] * .01
         logger.debug("tolerances: diff=%s denominator=%s", diff_tolerance, denominator_tolerance)
@@ -208,6 +218,9 @@ class PvClippingReport(PvReportBase):
         return read_dataframe(path)
 
     def generate(self, output_dir):
+        if not self._has_pv_systems():
+            return
+
         granularity = ReportGranularity(self._simulation_config["Reports"]["Granularity"])
         per_time_point = (
             ReportGranularity.PER_ELEMENT_PER_TIME_POINT,
@@ -241,6 +254,9 @@ class PvCurtailmentReport(PvReportBase):
 
     def __init__(self, name, results, simulation_config):
         super().__init__(name, results, simulation_config)
+        if not self._has_pv_systems():
+            return
+
         diff_tolerance = self._report_options["diff_tolerance_percent_pmpp"] * .01
         denominator_tolerance = self._report_options["denominator_tolerance_percent_pmpp"] * .01
         logger.debug("tolerances: diff=%s denominator=%s", diff_tolerance, denominator_tolerance)
@@ -314,6 +330,9 @@ class PvCurtailmentReport(PvReportBase):
         self._export_json_report(data, output_dir, self.TOTAL_FILENAME)
 
     def generate(self, output_dir):
+        if not self._has_pv_systems():
+            return
+
         granularity = ReportGranularity(self._simulation_config["Reports"]["Granularity"])
         if granularity == ReportGranularity.PER_ELEMENT_PER_TIME_POINT:
             self._generate_per_pv_system_per_time_point(output_dir)

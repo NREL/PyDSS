@@ -275,6 +275,8 @@ class PyDssDirectoryInterface(PyDssFileSystemInterface):
             scenario_name,
             "pv_profiles.json",
         )
+        if not os.path.exists(filename):
+            return {}
         return load_data(filename)
 
     @property
@@ -365,7 +367,11 @@ class PyDssArchiveFileInterfaceBase(PyDssFileSystemInterface):
             scenario_name,
             "pv_profiles.json",
         )
-        return self._load_data(filename)
+        try:
+            return self._load_data(filename)
+        except KeyError:
+            # The file isn't stored in the archive.
+            return {}
 
 
 class PyDssTarFileInterface(PyDssArchiveFileInterfaceBase):
