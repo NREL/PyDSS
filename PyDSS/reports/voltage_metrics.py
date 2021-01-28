@@ -68,6 +68,11 @@ class VoltageMetrics(ReportBase):
         self._range_b_limits = self._report_options["range_b_limits"]
         self._resolution = self._get_simulation_resolution()
         inputs = self.get_inputs_from_defaults(self._simulation_config, self.NAME)
+        
+        self._window_size = int(
+            timedelta(minutes=inputs["window_size_minutes"])/self._resolution
+        )
+        
         self._store_type = self._get_store_type(inputs, self._resolution)
         self._prop_name = "VoltageMetric"
         if self._store_type == StoreValuesType.MOVING_AVERAGE:
@@ -83,6 +88,7 @@ class VoltageMetrics(ReportBase):
             "num_nodes": len(self._node_names),
             "metric_1": {},
             "metric_2": {},
+            "metric_3": {},
             "metric_4": [],
             "metric_5": {},
             "metric_6": {},
@@ -95,6 +101,7 @@ class VoltageMetrics(ReportBase):
             name = scenario.name
             data["metric_1"][name] = self._gen_metric_1(name, dfs[name])
             data["metric_2"][name], output = self._gen_metric_4(name, dfs[name], output_dir)
+            data["metric_3"][name] = self._gen_metric_3(name, dfs[name])
             data["metric_4"].append(output)
             data["metric_5"][name] = self._gen_metric_5(scenario, dfs[name])
         data["metric_6"] = self._gen_metric_6(dfs)
@@ -111,7 +118,7 @@ class VoltageMetrics(ReportBase):
         if not dfs:
             return results
 
-        node_violations = {}
+        
         total_a = None
         total_b = None
         for df in dfs.values():
@@ -132,6 +139,36 @@ class VoltageMetrics(ReportBase):
         dur = len(results["time_points"]) * self._resolution
         results["duration"] = f"days={dur.days} seconds={dur.seconds}"
         return results
+    
+    def _gen_metric_3(self, name, dfs):
+        # This metric determines the total time points when any nodal moving average voltage
+        # in the feeder violates ANSI Range A voltage limits.
+        results = {"time_points": []}
+        if not dfs:
+            return results
+        
+        total_a = None
+        
+        for df in dfs.values():
+            df = df.rolling(self._window_size).mean()
+            series_a = df.applymap(self._one_if_violates_range_a).iloc[:, 0]
+            if total_a is None:
+                total_a = series_a
+                
+            else:
+                total_a = total_a.add(series_a, fill_value=0)
+                
+        total_a.iloc[4] = 1
+        
+        results["time_points"] = [
+            str(ts) for ts, val in total_a.iteritems() if val > 0 
+        ]
+        results["duration"] = str(len(results["time_points"]) * self._resolution)
+        dur = len(results["time_points"]) * self._resolution
+        results["duration"] = f"days={dur.days} seconds={dur.seconds}"
+        return results
+    
+    
 
     def _gen_metric_4(self, scenario_name, dfs, output_dir):
         # Create a dataframe whose single column is a percentage of the number
