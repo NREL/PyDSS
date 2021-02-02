@@ -69,9 +69,61 @@ class ThermalMetrics(ReportBase):
             "num_transformers": self._num_transformers,
             "max_violations": self._get_max_violations(),
             "moving_average_max_violations": self._get_moving_average_max_violations(),
+            "summary": {}
         }
+        
+        data['summary'] = self._sumarize_metrics(data)
 
         self._export_json_report(data, output_dir, "thermal_metrics.json")
+        
+    def _sumarize_metrics(self, data, scenario='control_mode'):
+        
+        transformer_window_dur_hrs = int(
+            self._transformer_window_size.total_seconds()/3600
+        )
+        line_window_dur_hrs = int(
+            self._line_window_size.total_seconds()/3600
+        )
+        
+        try:
+            line_dicts = data['max_violations'][scenario]['Lines']
+            max_line_inst_loading = (
+                max([x['max_violation'] for x in line_dicts])
+            )
+        except:
+            max_line_inst_loading = self._options["line_loading_percent_threshold"]
+        
+        try:
+            line_mav_dicts = data['moving_average_max_violations'][scenario]['Lines']
+            max_line_mav_loading = ( 
+                max([x['moving_average_max_violation'] for x in line_mav_dicts])
+            )
+        except:
+            max_line_mav_loading = self._options["line_loading_percent_threshold"]
+        
+        try:
+            transformer_dicts = data['max_violations'][scenario]['Transformers']
+            max_transformer_inst_loading = ( 
+                max([x['max_violation'] for x in transformer_dicts])
+            )
+        except:
+            max_transformer_inst_loading = self._options["transformer_loading_percent_threshold"]
+        
+        try:
+            transformer_mav_dicts = data['moving_average_max_violations'][scenario]['Transformers']
+            max_transformer_mav_loading = (
+                max([x['moving_average_max_violation'] for x in transformer_mav_dicts])
+            )
+        except:
+            max_transformer_mav_loading = self._options["transformer_loading_percent_threshold"]
+        
+        summary = {
+            'maximum_line_instantaneous_pct_loading': max_line_inst_loading,
+            f'maximum_{line_window_dur_hrs}-hour_moving_average_line_pct_loading': max_line_mav_loading,
+            'maximum_transformer_instantaneous_pct_loading': max_transformer_inst_loading,
+            f'maximum_{transformer_window_dur_hrs}-hour_moving_average_transformer_pct_loading': max_transformer_mav_loading
+        }
+        return summary
 
     def _get_max_violations(self):
         if self._store_type == StoreValuesType.ALL:

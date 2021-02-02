@@ -2,15 +2,15 @@
 from collections import defaultdict
 from datetime import timedelta
 import logging
-import os
+#import os
 
 import pandas as pd
 
 from PyDSS.common import StoreValuesType
-from PyDSS.dataset_buffer import DatasetBuffer
+#from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.reports.reports import ReportBase, ReportGranularity
-from PyDSS.utils.utils import dump_data
+#from PyDSS.utils.utils import dump_data
 
 
 logger = logging.getLogger(__name__)
@@ -92,6 +92,7 @@ class VoltageMetrics(ReportBase):
             "metric_4": [],
             "metric_5": {},
             "metric_6": {},
+            "summary": {},
         }
         dfs = {
             x.name: x.get_filtered_dataframes("Nodes", self._prop_name)
@@ -99,12 +100,15 @@ class VoltageMetrics(ReportBase):
         }
         for scenario in self._results.scenarios:
             name = scenario.name
+            
             data["metric_1"][name] = self._gen_metric_1(name, dfs[name])
             data["metric_2"][name], output = self._gen_metric_4(name, dfs[name], output_dir)
             data["metric_3"][name] = self._gen_metric_3(name, dfs[name])
             data["metric_4"].append(output)
             data["metric_5"][name] = self._gen_metric_5(scenario, dfs[name])
         data["metric_6"] = self._gen_metric_6(dfs)
+        
+        data["summary"] = self._sumarize_metrics(data)
 
         # Note: metric 3 has to be read from the raw data. It is not duplicated
         # in the Reports directory.
@@ -311,6 +315,32 @@ class VoltageMetrics(ReportBase):
             violation_time_points.update(set(df.index.values))
         return violation_time_points
 
+    def _sumarize_metrics(self, data, scenario='control_mode'):
+        
+        voltage_metric_summary = {}
+        num_time_points = self._get_num_steps()
+        tot_dur = num_time_points * self._resolution
+        moving_window_minutes = int(
+            (self._window_size*self._resolution).total_seconds()/60
+        )
+        
+        if scenario in data['scenarios']:
+            voltage_metric_summary = {
+                'voltage_duration_between_ansi_a_and_b': data['metric_1'][scenario]['duration'],
+                'max_per_node_voltage_duration_outside_ansi_a': max([x['duration'] for x in data['metric_2'][scenario].values()]),
+                 f'{moving_window_minutes}-minute_moving_average_voltage_duration_outside_ansi_a': data['metric_3'][scenario]['duration'],
+                'max_voltage': data['metric_5'][scenario]['max_voltage'],
+                'min_voltage': data['metric_5'][scenario]['min_voltage'],
+                'num_nodes_always_inside_ansi_a': data['metric_5'][scenario]['num_inside_range_a'],
+                'num_nodes_always_between_ansi_a_and_b': data['metric_5'][scenario]['num_between_ranges'],
+                'num_nodes_always_outside_ansi_b': data['metric_5'][scenario]['num_outside_range_b'],
+                'num_time_points_with_ansi_a_violations': data['metric_6'][f'num_time_points_violations_{scenario}'],
+                'total_num_time_points': num_time_points,
+                'total_simulation_duration': f"days={tot_dur.days} seconds={tot_dur.seconds}"
+            }
+            
+        return voltage_metric_summary
+        
     @staticmethod
     def get_required_exports(simulation_config):
         resolution = timedelta(seconds=simulation_config["Project"]["Step resolution (sec)"])
