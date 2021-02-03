@@ -1,13 +1,11 @@
 
 from datetime import timedelta
 import logging
-import os
+
 
 from PyDSS.common import StoreValuesType
-from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.reports.reports import ReportBase
-from PyDSS.utils.utils import dump_data
 
 
 logger = logging.getLogger(__name__)
@@ -69,9 +67,65 @@ class ThermalMetrics(ReportBase):
             "num_transformers": self._num_transformers,
             "max_violations": self._get_max_violations(),
             "moving_average_max_violations": self._get_moving_average_max_violations(),
+            "summary": {}
         }
+        
+        data['summary'] = self._sumarize_metrics(data)
 
         self._export_json_report(data, output_dir, "thermal_metrics.json")
+        
+    def _sumarize_metrics(self, data, scenario='control_mode'):
+        
+        transformer_window_dur_hrs = int(
+            self._transformer_window_size.total_seconds() / 3600
+        )
+        line_window_dur_hrs = int(
+            self._line_window_size.total_seconds() / 3600
+        )
+        
+        
+        line_dicts = data['max_violations'][scenario]['Lines']
+        if line_dicts:
+            max_line_inst_loading = (
+                max([x['max_violation'] for x in line_dicts])
+            )
+        else:
+            max_line_inst_loading = self._options["line_loading_percent_threshold"]
+        
+        
+        line_mav_dicts = data['moving_average_max_violations'][scenario]['Lines']
+        if line_mav_dicts:
+            max_line_mav_loading = ( 
+                max([x['moving_average_max_violation'] for x in line_mav_dicts])
+            )
+        else:
+            max_line_mav_loading = self._options["line_loading_percent_threshold"]
+        
+        
+        transformer_dicts = data['max_violations'][scenario]['Transformers']
+        if transformer_dicts:
+            max_transformer_inst_loading = ( 
+                max([x['max_violation'] for x in transformer_dicts])
+            )
+        else:
+            max_transformer_inst_loading = self._options["transformer_loading_percent_threshold"]
+        
+        
+        transformer_mav_dicts = data['moving_average_max_violations'][scenario]['Transformers']
+        if transformer_mav_dicts:
+            max_transformer_mav_loading = (
+                max([x['moving_average_max_violation'] for x in transformer_mav_dicts])
+            )
+        else:
+            max_transformer_mav_loading = self._options["transformer_loading_percent_threshold"]
+        
+        summary = {
+            'maximum_line_instantaneous_pct_loading': max_line_inst_loading,
+            f'maximum_{line_window_dur_hrs}-hour_moving_average_line_pct_loading': max_line_mav_loading,
+            'maximum_transformer_instantaneous_pct_loading': max_transformer_inst_loading,
+            f'maximum_{transformer_window_dur_hrs}-hour_moving_average_transformer_pct_loading': max_transformer_mav_loading
+        }
+        return summary
 
     def _get_max_violations(self):
         if self._store_type == StoreValuesType.ALL:
