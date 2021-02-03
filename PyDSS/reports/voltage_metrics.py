@@ -131,8 +131,6 @@ class VoltageMetrics(ReportBase):
             else:
                 total_a = total_a.add(series_a, fill_value=0)
                 total_b = total_b.add(series_b, fill_value=0)
-        total_a.iloc[4] = 1
-        total_b.iloc[4] = 0
         results["time_points"] = [
             str(ts) for ts, val in total_a.iteritems() if val > 0 and total_b.loc[ts] == 0
         ]
@@ -159,8 +157,6 @@ class VoltageMetrics(ReportBase):
             else:
                 total_a = total_a.add(series_a, fill_value=0)
                 
-        total_a.iloc[4] = 1
-        
         results["time_points"] = [
             str(ts) for ts, val in total_a.iteritems() if val > 0 
         ]
