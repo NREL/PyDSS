@@ -2,15 +2,12 @@
 from collections import defaultdict
 from datetime import timedelta
 import logging
-#import os
 
 import pandas as pd
 
 from PyDSS.common import StoreValuesType
-#from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.reports.reports import ReportBase, ReportGranularity
-#from PyDSS.utils.utils import dump_data
 
 
 logger = logging.getLogger(__name__)
@@ -70,7 +67,7 @@ class VoltageMetrics(ReportBase):
         inputs = self.get_inputs_from_defaults(self._simulation_config, self.NAME)
         
         self._window_size = int(
-            timedelta(minutes=inputs["window_size_minutes"])/self._resolution
+            timedelta(minutes=inputs["window_size_minutes"]) / self._resolution
         )
         
         self._store_type = self._get_store_type(inputs, self._resolution)
@@ -168,7 +165,7 @@ class VoltageMetrics(ReportBase):
             str(ts) for ts, val in total_a.iteritems() if val > 0 
         ]
         results["duration"] = str(len(results["time_points"]) * self._resolution)
-        results["duration"] = str(len(results["time_points"]) * self._resolution)
+        
         return results
     
     
@@ -320,7 +317,7 @@ class VoltageMetrics(ReportBase):
         num_time_points = self._get_num_steps()
         tot_dur = num_time_points * self._resolution
         moving_window_minutes = int(
-            (self._window_size*self._resolution).total_seconds()/60
+            (self._window_size * self._resolution).total_seconds() / 60
         )
         
         if scenario in data['scenarios']:

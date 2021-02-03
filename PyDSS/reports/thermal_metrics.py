@@ -1,13 +1,11 @@
 
 from datetime import timedelta
 import logging
-import os
+
 
 from PyDSS.common import StoreValuesType
-from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.reports.reports import ReportBase
-from PyDSS.utils.utils import dump_data
 
 
 logger = logging.getLogger(__name__)
@@ -79,42 +77,46 @@ class ThermalMetrics(ReportBase):
     def _sumarize_metrics(self, data, scenario='control_mode'):
         
         transformer_window_dur_hrs = int(
-            self._transformer_window_size.total_seconds()/3600
+            self._transformer_window_size.total_seconds() / 3600
         )
         line_window_dur_hrs = int(
-            self._line_window_size.total_seconds()/3600
+            self._line_window_size.total_seconds() / 3600
         )
         
-        try:
-            line_dicts = data['max_violations'][scenario]['Lines']
+        
+        line_dicts = data['max_violations'][scenario]['Lines']
+        if line_dicts:
             max_line_inst_loading = (
                 max([x['max_violation'] for x in line_dicts])
             )
-        except:
+        else:
             max_line_inst_loading = self._options["line_loading_percent_threshold"]
         
-        try:
-            line_mav_dicts = data['moving_average_max_violations'][scenario]['Lines']
+        
+        line_mav_dicts = data['moving_average_max_violations'][scenario]['Lines']
+        if line_mav_dicts:
             max_line_mav_loading = ( 
                 max([x['moving_average_max_violation'] for x in line_mav_dicts])
             )
-        except:
+        else:
             max_line_mav_loading = self._options["line_loading_percent_threshold"]
         
-        try:
-            transformer_dicts = data['max_violations'][scenario]['Transformers']
+        
+        transformer_dicts = data['max_violations'][scenario]['Transformers']
+        if transformer_dicts:
             max_transformer_inst_loading = ( 
                 max([x['max_violation'] for x in transformer_dicts])
             )
-        except:
+        else:
             max_transformer_inst_loading = self._options["transformer_loading_percent_threshold"]
         
-        try:
-            transformer_mav_dicts = data['moving_average_max_violations'][scenario]['Transformers']
+        
+        transformer_mav_dicts = data['moving_average_max_violations'][scenario]['Transformers']
+        if transformer_mav_dicts:
             max_transformer_mav_loading = (
                 max([x['moving_average_max_violation'] for x in transformer_mav_dicts])
             )
-        except:
+        else:
             max_transformer_mav_loading = self._options["transformer_loading_percent_threshold"]
         
         summary = {
