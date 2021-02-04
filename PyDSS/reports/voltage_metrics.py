@@ -160,7 +160,8 @@ class VoltageMetrics(ReportBase):
         results["time_points"] = [
             str(ts) for ts, val in total_a.iteritems() if val > 0 
         ]
-        results["duration"] = str(len(results["time_points"]) * self._resolution)
+        dur = str(len(results["time_points"]) * self._resolution)
+        results["duration"] = f"days={dur.days} seconds={dur.seconds}"
         
         return results
     
