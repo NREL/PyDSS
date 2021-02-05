@@ -81,16 +81,17 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         """Constructor method
         """
         super(AutomatedThermalUpgrade, self).__init__(project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger)
-        
-        # TODO: attributes that have been dropped
+
         self.config["units key"] = ["mi", "kft", "km", "m", "Ft", "in", "cm"]  # Units key for lines taken from OpenDSS
+
+        # max limit to the number of iterations for the thermal upgrades algorithm
+        self.thermal_upgrade_iteration_threshold = 5
         
         dss = dssInstance
         self.dssSolver = dssSolver
         
         if simulationSettings["Project"]["Simulation Type"] != "Snapshot":
             raise InvalidParameter("Upgrade post-processors are only supported on Snapshot simulations")
-
         
         # Just send this list as input to the upgrades code via DISCO -  this list may be empty or have as many
         # paths as the user desires - if empty the mults in the 'tps_to_test' input will be used else if non-empty
@@ -116,9 +117,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.orig_xfmrs = {x["name"]: x for x in iter_elements(dss.Transformers, get_transformer_info)}
         self.orig_lines = {x["name"]: x for x in iter_elements(dss.Lines, self.get_line_info)}
 
-        # TODO: To be modified
         self.plot_violations_counter = 0
-        # self.compile_feeder_initialize()
         self.export_line_DT_parameters()
         start = time.time()
         self.logger.info("Determining thermal upgrades")
@@ -141,6 +140,15 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             self.avail_line_upgrades = self.read_available_upgrades("Line_upgrades_library")
             self.avail_xfmr_upgrades = self.read_available_upgrades("Transformer_upgrades_library")
             self.logger.debug("Upgrades library created")
+
+        # PARALLEL LINES AND TRANSFORMERS LIMIT
+        self.PARALLEL_XFMR_LIMIT = 100
+        self.PARALLEL_LINE_LIMIT = 100
+
+        # adding timeout condition
+        TIMEOUT = 1800  # seconds  (1800 seconds is 30minutes)
+        current_time = dt.datetime.now()
+        expire_time = current_time + dt.timedelta(seconds=TIMEOUT)
 
         self.V_upper_thresh = 1.0583
         self.V_lower_thresh = 0.9167
@@ -190,23 +198,24 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
         # Mitigate thermal violations
         self.Line_trial_counter = 0
-        # TODO change to 20
-        self.max_upgrade_iteration = min(5, len(self.xfmr_violations) + len(self.line_violations))
+        # if number of violations is very high,  limit it to a small number
+        self.max_upgrade_iteration = min(self.thermal_upgrade_iteration_threshold,
+                                          len(self.xfmr_violations) + len(self.line_violations))
         while (len(self.xfmr_violations) > 0 or len(self.line_violations) > 0) \
                 and (self.Line_trial_counter < self.max_upgrade_iteration):
             prev_xfmr = len(self.xfmr_violations)
             prev_line = len(self.line_violations)
             self.dssSolver.Solve()
-            print(f"Solution Converged: {dss.Solution.Converged()}")
+            self.logger.info(f"Solution Converged: {dss.Solution.Converged()}")
             if not dss.Solution.Converged():
                 raise OpenDssConvergenceError("OpenDSS solution did not converge")
 
             self.determine_line_ldgs()
             self.logger.info("Determined line loadings.")
-            print(f"\n\nNumber of line violations: {len(self.line_violations)}")
+            self.logger.info(f"\n\nNumber of line violations: {len(self.line_violations)}")
 
             if len(self.line_violations) > prev_line:
-                print(self.line_violations)
+                self.logger.info(self.line_violations)
                 self.logger.info("Write upgrades till this step in debug_upgrades.dss")
                 self.write_dat_file(output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
                 raise Exception(f"Line violations increased from {prev_line} to {len(self.line_violations)} "
@@ -215,19 +224,17 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             if len(self.line_violations) > 0:
                 self.correct_line_violations()
                 self.logger.info("Corrected line violations.")
-                print("\nCorrected line violations")
 
             self.dssSolver.Solve()
-            print(f"Solution Converged: {dss.Solution.Converged()}")
+            self.logger.info(f"Solution Converged: {dss.Solution.Converged()}")
             if not dss.Solution.Converged():
                 raise OpenDssConvergenceError("OpenDSS solution did not converge")
 
             self.determine_xfmr_ldgs()
             self.logger.info("Determined xfmr loadings.")
-            print(f"Number of xfmr violations: {len(self.xfmr_violations)}")
+            self.logger.info(f"Number of xfmr violations: {len(self.xfmr_violations)}")
 
             if len(self.xfmr_violations) > prev_xfmr:
-                print(self.xfmr_violations)
                 self.logger.info("Write upgrades till this step in debug_upgrades.dss")
                 self.write_dat_file(output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
                 raise Exception(f"Xfmr violations increased from {prev_xfmr} to {len(self.xfmr_violations)} "
@@ -236,7 +243,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             if len(self.xfmr_violations) > 0:
                 self.correct_xfmr_violations()
                 self.logger.info("Corrected xfmr violations.")
-                print("\nCorrected xfmr violations")
 
             num_elms_violated_curr_itr = len(self.xfmr_violations) + len(self.line_violations)
             self.logger.info("Iteration Count: %s", self.Line_trial_counter)
@@ -251,10 +257,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.logger.debug("Writing upgrades to DSS file")
         self.write_dat_file()
 
-        # so clear and redirect dss file - to compute final violations, and get new elements
-        # TODO: Test impact of applied settings - can't compile the feeder again in PyDSS
-        # self.compile_feeder_initialize()
-
+        # clear and redirect dss file - to compute final violations, and get new elements
         dss.run_command("Clear")
         base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
         check_redirect(base_dss)
@@ -262,7 +265,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         check_redirect(upgrades_file)
         self.dssSolver.Solve()
 
-        # get final loadings - using function # TODO
+        # get final loadings - using function
         self.final_line_ldg_lst, self.final_xfmr_ldg_lst, self.equip_ldgs = self.create_result_comparison(
             upper_limit=self.V_upper_thresh, lower_limit=self.V_lower_thresh)
         self.equip_ldgs["Equipment_name"] = "Final_loading"
@@ -335,7 +338,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.linecode_lib_reformat()
 
         # # reformat upgrades dictionary in the format needed by post process code
-        # self.xfmr_lib_reformat()  #TODO for transformer
+        # self.xfmr_lib_reformat()  # TODO for transformer: this can be used directly
 
         # Process outputs
         input_dict = {
@@ -509,7 +512,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
     # this function checks for voltage violations based on upper and lower limit passed
     def check_voltage_violations_multi_tps(self, upper_limit, lower_limit, raise_exception=True):
         self.all_bus_names = dss.Circuit.AllBusNames()
-        # TODO: This objective currently gives more weightage if same node has violations at more than 1 time point
+        # This objective currently gives more weightage if same node has violations at more than 1 time point
         num_nodes_counter = 0
         severity_counter = 0
         self.max_V_viol = 0
@@ -542,7 +545,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                             output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
                         if raise_exception:
                             raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                            return False
                         else:
                             return False
                 if tp_cnt == 2 or tp_cnt == 3:
@@ -563,7 +565,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                             output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
                         if raise_exception:
                             raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                            return False
                         else:
                             return False
                 for b in self.all_bus_names:
@@ -623,7 +624,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                             output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
                         if raise_exception:
                             raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                            return False
                         else:
                             return False
                 if tp_cnt == 2 or tp_cnt == 3:
@@ -636,7 +636,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                             output_path=os.path.join(self.config["Outputs"], "debug_upgrades.dss"))
                         if raise_exception:
                             raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                            return False
                         else:
                             return False
                 for b in self.all_bus_names:
@@ -963,7 +962,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
                 # if there are no line codes and geometries defined, create line code with line name
                 elif (ln_lc == '') & (ln_geo == ''):
-                    # print('No Line Codes and Line Geometries defined.')
                     ln_lc = ln_name
                     ampacity = dss.Properties.Value("normamps")
                     self.Linecodes_params[ln_lc] = {"Ampacity": ampacity}
@@ -1072,9 +1070,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         if dss.Lines.First() == 1:
             while True:
                 line_name = dss.Lines.Name()
-                if line_name == 'em_line':
-                    # breakpoint()
-                    print(line_name)
                 line_code = dss.Lines.LineCode()
                 ln_geo = dss.Lines.Geometry()
                 param_name = line_code
@@ -1082,11 +1077,13 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if (line_code == '') & (ln_geo != ''):
                     ln_config = "geometry"
                     param_name = ln_geo
-                    # TODO: Distinguish between overhead and underground cables, currently there is no way to distinguish using opendssdirect/pydss etc
+                    # TODO: Distinguish between overhead and underground cables, currently there is no way to
+                    #  distinguish using opendssdirect/pydss etc
                     # dss.Circuit.SetActiveClass("linegeometry")
                     # flag = dss.ActiveClass.First()
                     # while flag>0:
-                    #     self.logger.info("%s %s %s %s", dss.ActiveClass.Name(),dss.Properties.Value("wire"),dss.Properties.Value("cncable"),dss.Properties.Value("tscable"))
+                    #     self.logger.info("%s %s %s %s", dss.ActiveClass.Name(),dss.Properties.Value("wire"),
+                    #     dss.Properties.Value("cncable"),dss.Properties.Value("tscable"))
                     #     flag = dss.ActiveClass.Next()
                 elif (line_code == '') & (ln_geo == ''):
                     ln_config = "line_definition"
@@ -1307,7 +1304,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         if len(self.line_violations)>0:
             for key,vals in self.line_violations.items():
                 dss.Lines.Name("{}".format(key))
-                # breakpoint()
                 phases = dss.Lines.Phases()
                 length = dss.Lines.Length()
                 units = self.config["units key"][dss.Lines.Units()-1]
@@ -1319,7 +1315,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     ln_config = "geometry"
                 # if there are no line codes and geometries defined, create line code with line name
                 elif (line_code == '') & (ln_geo == ''):
-                    # print('No Line Codes and Line Geometries defined.')
                     ln_config = "line_definition"
                     line_code = key
                 from_bus = dss.CktElement.BusNames()[0]
@@ -1346,7 +1341,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         if lcs!=line_code:
                             if lcs_vals[0]>((vals[0]*self.config["line_safety_margin"])/(self.config["line_loading_limit"])) and lcs_vals[0]<num_par_lns*norm_amps:
                                 if ln_config == 'line_definition':
-                                    # breakpoint()
                                     command_string = "Edit Line.{lnm} normamps={ampacity}".format(lnm=key,
                                                                                                   ampacity=lcs_vals[0])
                                 else:  # if line code and line geometry is available
@@ -1672,8 +1666,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 for kv_cnt in range(len(wdg_kv_list)):
                     dt_key = dt_key + "{}_".format(wdg_kv_list[kv_cnt])
                     dt_key = dt_key + "{}_".format(conn_list[kv_cnt])
-                # Find potential upgrades for this DT. This might be a new higher kVA rated DT in place of the original or
-                #  one or more parallel DTs
+                # Find potential upgrades for this DT. This might be a new higher kVA rated DT in place of the original
+                # or one or more parallel DTs
                 dt_fnd_flag = 0
                 if dt_key in self.avail_xfmr_upgrades:
                     for dt,dt_vals in self.avail_xfmr_upgrades[dt_key].items():
@@ -1697,8 +1691,13 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                                 dt_fnd_flag=1
                                 break
                 if dt_key not in self.avail_xfmr_upgrades or dt_fnd_flag==0:
-                    # Add parallel DTs since no suitable (correct ratings or economical) DT
-                    # replacement was found
+                    # Add parallel DTs since no suitable (correct ratings or economical) DT replacement was found
+
+                    # number of parallel transformers should be less than limit
+                    if num_par_dts > self.PARALLEL_XFMR_LIMIT:
+                        raise Exception(f"Number of parallel transformers determined is {num_par_dts}. "
+                                        f"This is greater than limit of {self.PARALLEL_XFMR_LIMIT} parallel "
+                                        f"transformers allowed")
                     curr_time = str(time.time())
                     time_stamp = curr_time.split(".")[0] + "_" + curr_time.split(".")[1]
                     for dt_cnt in range(num_par_dts-1):
@@ -1741,18 +1740,11 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.dss_upgrades.append(device_command+"\n")
         return
 
-
     def run(self, step, stepMax):
-        """Induces and removes a fault as the simulation runs as per user defined settings. 
+        """Induces and removes a fault as the simulation runs as per user defined settings.
         """
         self.logger.info('Running thermal upgrade post process')
-        has_converged = self.has_converged
-        error = self.error
 
 
         #step-=1 # uncomment the line if the post process needs to rerun for the same point in time
-        return step, has_converged, error
-    
-    def finalize(self):
-        """Method used to combine post processing results from all steps.
-        """
+        return step

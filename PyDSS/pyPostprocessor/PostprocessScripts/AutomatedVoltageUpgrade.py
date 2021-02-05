@@ -92,20 +92,8 @@ def get_cap_controls_info():
 
 
 class AutomatedVoltageUpgrade(AbstractPostprocess):
-    """The class is used to induce faults on bus for dynamic simulation studies. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class. 
-
-    :param FaultObj: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS 'Fault' element
-    :type FaultObj: class:`PyDSS.dssElement.dssElement`
-    :param Settings: A dictionary that defines the settings for the faul controller.
-    :type Settings: dict
-    :param dssInstance: An :class:`opendssdirect` instance
-    :type dssInstance: :class:`opendssdirect` instance
-    :param ElmObjectList: Dictionary of all dssElement, dssBus and dssCircuit ojects
-    :type ElmObjectList: dict
-    :param dssSolver: An instance of one of the classes defined in :mod:`PyDSS.SolveMode`.
-    :type dssSolver: :mod:`PyDSS.SolveMode`
-    :raises: AssertionError  if 'FaultObj' is not a wrapped OpenDSS Fault element
-
+    """
+    This class is used to determine Voltage Upgrades
     """
 
     REQUIRED_INPUT_FIELDS = (
@@ -557,6 +545,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 # (at this point includes pre-reg, sub-LTC)
                 min_cluster = ''
                 min_severity = 1000000000
+                # TODO add detail on why below line is commented out
                 # min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * self.upper_limit
                 for key, vals in self.cluster_optimal_reg_nodes.items():
                     if vals[0] < min_severity:
@@ -708,9 +697,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             },
             self.logger,
         )
-        
-        self.has_converged = dss.Solution.Converged()
-        self.error = dss.Solution.Convergence() # This is fake for now, find how to get this from Opendssdirect
+
 
     @staticmethod
     def _get_required_input_fields():
@@ -1512,7 +1499,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 if not pass_flag:
                     # change command
                     new_control_command = self.edit_capacitor_settings_for_convergence(control_command)
-                    print(new_control_command)
                     dss.run_command(new_control_command)
                     self.dssSolver.Solve()
                     self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit, lower_limit=self.lower_limit,
@@ -1568,7 +1554,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     if not pass_flag:
                         # change command
                         new_control_command = self.edit_capacitor_settings_for_convergence(control_command)
-                        print(new_control_command)
                         dss.run_command(new_control_command)
                         self.dssSolver.Solve()
                         self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
@@ -2524,7 +2509,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             os.path.join(self.config["Outputs"], "Cluster_{}_reglocations.pdf".format(str(self.optimal_clusters))))
 
     def run(self, step, stepMax):
-        """Induces and removes a fault as the simulation runs as per user defined settings. 
+        """
         """
         self.logger.info('Running voltage upgrade post process')
         has_converged = self.has_converged

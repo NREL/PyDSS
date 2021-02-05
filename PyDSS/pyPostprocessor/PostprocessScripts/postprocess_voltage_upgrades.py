@@ -5,7 +5,6 @@ import os
 import json
 import logging
 
-# TODO: Figure out correct time points on which to run this algorithm. How to we reach a target HC and how
 # TODO: do we optimize it such that the most economical solution is reached. Eventually how do we move this
 # TODO: to QSTS simulations
 
@@ -46,8 +45,8 @@ class postprocess_voltage_upgrades():
         self.new_capcontrols = self.Settings["new_capcontrols"]
         self.orig_capcontrols = self.Settings["orig_capcontrols"]
         self.new_ckt_info = self.Settings["new_ckt_info"]
-        # not used anywhere - new is used. This gave error when substation transformer was added in voltage upgrades
-        # so didnt exist in original ckt info
+        # next line not used anywhere - new is used. This gave error when substation transformer
+        # was added in voltage upgrades. didnt exist in original ckt info. TODO: need to check before removing
         self.orig_ckt_info = self.Settings["orig_ckt_info"]  # not used
         self.orig_xfmr_info = self.Settings["orig_xfmr_info"]
         self.final_cap_upgrades = {}
