@@ -8,7 +8,7 @@ import pandas as pd
 from PyDSS.common import StoreValuesType
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.reports.reports import ReportBase, ReportGranularity
-from PyDSS.utils import serialize_timedelta, deserialize_timedelta
+from PyDSS.utils.utils import serialize_timedelta, deserialize_timedelta
 
 
 logger = logging.getLogger(__name__)

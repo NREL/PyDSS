@@ -250,7 +250,7 @@ def serialize_timedelta(timedelta_object):
     
 
 def deserialize_timedelta(text):     
-    regex = re.compile(r"days=(\d+) seconds=(\d+)") 
+    regex = re.compile(r"days=(\d+), seconds=(\d+)") 
     match = regex.search(text)
     if match:
         days = int(match.group(1))
