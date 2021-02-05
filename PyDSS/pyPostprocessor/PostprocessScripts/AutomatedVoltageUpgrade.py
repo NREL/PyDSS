@@ -216,73 +216,14 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
 
         self.get_existing_controller_info()
         if self.config["create_topology_plots"]:
-            # self.plot_feeder()
+            self.plot_feeder()
             pass
         self.write_flag = 1
         self.feeder_parameters = {}
 
-        # If initial and final limits are different,
-        # check with both initial & final limits to get comparison between initial and final violation numbers
-        if (self.config["final_voltage_upper_limit"] != self.config["initial_voltage_upper_limit"]) or \
-           (self.config["final_voltage_lower_limit"] != self.config["initial_voltage_lower_limit"]):
-
-            self.logger.info(f"Initial and Final voltage limits are not the same. "
-                             f"\ninitial_voltage_lower_limit: {self.config['initial_voltage_lower_limit']}, "
-                             f"initial_voltage_upper_limit: {self.config['initial_voltage_upper_limit']} "
-                             f"\nfinal_voltage_lower_limit: {self.config['final_voltage_lower_limit']}, "
-                             f"final_voltage_upper_limit: {self.config['final_voltage_upper_limit']}")
-
-            self.upper_limit = self.config["final_voltage_upper_limit"]
-            self.lower_limit = self.config["final_voltage_lower_limit"]
-            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
-                                                    lower_limit=self.lower_limit)
-
-            self.logger.info(f"Based on Lower limit: {self.lower_limit}, Upper limit: {self.upper_limit}")
-            self.logger.info("Initial number of buses with violations are: %s", len(self.buses_with_violations))
-            self.logger.info("Initial objective function value: %s", self.severity_indices[2])
-
-            self.feeder_parameters["initial_violations_2"] = {
-                "Voltage upper threshold": self.upper_limit,
-                "Voltage lower threshold": self.lower_limit,
-                "Number of buses with violations": len(self.buses_with_violations),
-                "Number of buses with overvoltage violations": len(self.buses_with_overvoltage_violations),
-                "Number of buses with undervoltage violations": len(self.buses_with_undervoltage_violations),
-                "Buses at all tps with violations": self.severity_indices[0],
-                "Severity of bus violations": self.severity_indices[1],
-                "Objective function value": self.severity_indices[2],
-                "Maximum voltage observed": self.max_V_viol,
-                "Minimum voltage observed": self.min_V_viol
-            }
-
-        # start upgrades by checking for violations based on initial voltage limits
-        self.upper_limit = self.config["initial_voltage_upper_limit"]
-        self.lower_limit = self.config["initial_voltage_lower_limit"]
-
-        # Use this block for capacitor settings
-        # initial check for violations
-        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
-                                                lower_limit=self.lower_limit)
-        self.logger.info("Initial maximum voltage observed on any node: %s", self.max_V_viol)
-        self.logger.info("Initial minimum voltage observed on any node: %s", self.min_V_viol)
-        self.logger.info(f"Based on Lower limit: {self.lower_limit}, Upper limit: {self.upper_limit}")
-        self.logger.info("Initial number of buses with violations are: %s", len(self.buses_with_violations))
-        self.logger.info("Initial objective function value: %s", self.severity_indices[2])
+        self.create_result_comparison_voltages(comparison_stage='Before Upgrades')
 
         self.initial_buses_with_violations = self.buses_with_violations  # save initial bus violations
-
-        self.feeder_parameters["initial_violations"] = {
-            "Voltage upper threshold": self.upper_limit,
-            "Voltage lower threshold": self.lower_limit,
-            "Number of buses with violations": len(self.buses_with_violations),
-            "Number of buses with overvoltage violations": len(self.buses_with_overvoltage_violations),
-            "Number of buses with undervoltage violations": len(self.buses_with_undervoltage_violations),
-            "Buses at all tps with violations": self.severity_indices[0],
-            "Severity of bus violations": self.severity_indices[1],
-            "Objective function value": self.severity_indices[2],
-            "Maximum voltage observed": self.max_V_viol,
-            "Minimum voltage observed": self.min_V_viol
-        }
-
         self.upgrade_status = ''  # status - whether voltage upgrades done or not
         # if there are no buses with violations based on initial check, don't get into upgrade process
         # directly go to end of file
@@ -391,6 +332,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             # Writing out the results before adding new devices
             self.logger.info("Write upgrades to dss file, before adding new devices.")
             self.write_upgrades_to_file()
+            # TODO: decide whether postprocess should be done once before going to next stage of adding objects
             # postprocess_voltage_upgrades(
             #     {
             #         "outputs": self.config["Outputs"],
@@ -481,13 +423,12 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                             if len(self.buses_with_violations) > 0:
                                 self.LTC_controls_sweep(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
 
-                                pass_flag = True
                                 self.create_final_comparison(project_path=project.dss_files_path,
                                                              thermal_dss_file=thermal_dss_file)
                                 pass_flag = self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
                                                                                     lower_limit=self.lower_limit,
                                                                                     raise_exception=False)  # TODO
-                                # TODO if pass_flag is false, then just go to create comparison file
+                                # TODO: pass flag to be used: if pass_flag is false, just go to create comparison file
                                 if self.config["create_topology_plots"]:
                                     self.plot_violations()
                         elif self.LTC_exists_flag == 0:
@@ -498,11 +439,11 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                             self.sub_LTC_added_flag = 1
                             if len(self.buses_with_violations) > 0:
                                 self.LTC_controls_sweep(upper_limit=self.upper_limit, lower_limit=self.lower_limit)
-                                pass_flag = True
                                 pass_flag = self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
                                                                                     lower_limit=self.lower_limit,
-                                                                                    raise_exception=False)  # TODO
-                                # TODO if pass_flag is false, then just go to create comparison file
+                                                                                    raise_exception=False)
+                                # TODO: this pass flag is to be used:
+                                #  if pass_flag is false, then just go to create comparison file
                                 if self.config["create_topology_plots"]:
                                     self.plot_violations()
                     elif dss.RegControls.Count() == 0 and len(self.buses_with_violations) > 0:
@@ -520,11 +461,10 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
 
             # Correct regulator settings if regs are present in the feeder other than the sub station LTC
             # TODO: Remove regs of last iteration
-            pass_flag = True
             pass_flag = self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
                                                                 lower_limit=self.lower_limit,
                                                                 raise_exception=False)  # TODO
-            # TODO if pass_flag is false, then just go to create comparison file
+            # TODO: pass flag to be used: if pass_flag is false, then just go to create comparison file
 
             self.logger.info(f"Total number of buses in circuit: {len(dss.Circuit.AllBusNames())}")
             # if number of buses with violations is very high, the loop for adding new regulators will take very long
@@ -545,7 +485,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 # (at this point includes pre-reg, sub-LTC)
                 min_cluster = ''
                 min_severity = 1000000000
-                # TODO add detail on why below line is commented out
+                # TODO - below logic for min_severity was used previously - however, error cases were encountered
+                #  for some feeders due to min_severity being not large enough
                 # min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * self.upper_limit
                 for key, vals in self.cluster_optimal_reg_nodes.items():
                     if vals[0] < min_severity:
@@ -571,7 +512,10 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 self.get_full_distance_dict()
                 self.cluster_square_array()
                 min_severity = 1000000000
+                # TODO - below logic for min_severity was used previously - however, error cases were encountered
+                #  for some feeders due to min_severity being not large enough
                 # min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * self.upper_limit
+
                 #  determining key with minimum objective func. at various levels
                 # (at this point includes pre-reg, sub-LTC, and all newly added regulators)
                 min_cluster = ''
@@ -595,88 +539,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 self.logger.info("cluster_optimal_reg_nodes=%s", self.cluster_optimal_reg_nodes)
 
         end_t = time.time()
-        # self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
-        #                                         lower_limit=self.lower_limit)
-        # if self.config["create_topology_plots"]:
-        #     self.plot_violations()
-        self.logger.debug("Writing upgrades to DSS file")
-        self.write_upgrades_to_file()
-        self.logger.info("total_time = %s", end_t - start_t)
 
-        self.logger.info("Checking impact of redirected upgrades file")
-        dss.run_command("Clear")
-        base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
-        check_redirect(base_dss)
-        check_redirect(thermal_dss_file)
-        upgrades_file = os.path.join(self.config["Outputs"], "voltage_upgrades.dss")
-        check_redirect(upgrades_file)
-        self.dssSolver.Solve()
-
-        self.new_reg_controls = {x["name"]: x for x in iter_elements(dss.RegControls, get_reg_control_info)}
-        self.new_capacitors = {x["name"]: x for x in iter_elements(dss.Capacitors, get_capacitor_info)}
-        self.new_capcontrols = {x["name"]: x for x in iter_elements(dss.CapControls, get_cap_controls_info)}
-        self.new_xfmr_info = dss.Transformers.AllNames()
-        self.new_ckt_info = get_ckt_info()
-
-        # If initial and final limits are different,
-        # also doing with final limits to get comparison between initial and final violation numbers
-        if (self.config["final_voltage_upper_limit"] != self.config["initial_voltage_upper_limit"]) or \
-                (self.config["final_voltage_lower_limit"] != self.config["initial_voltage_lower_limit"]):
-
-            self.upper_limit = self.config["final_voltage_upper_limit"]
-            self.lower_limit = self.config["final_voltage_lower_limit"]
-            self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
-                                                    lower_limit=self.lower_limit)
-            self.feeder_parameters["final_violations_2"] = {
-                "Voltage upper threshold": self.upper_limit,
-                "Voltage lower threshold": self.lower_limit,
-                "Number of buses with violations": len(self.buses_with_violations),
-                "Number of buses with overvoltage violations": len(self.buses_with_overvoltage_violations),
-                "Number of buses with undervoltage violations": len(self.buses_with_undervoltage_violations),
-                "Buses at all tps with violations": self.severity_indices[0],
-                "Severity of bus violations": self.severity_indices[1],
-                "Objective function value": self.severity_indices[2],
-                "Maximum voltage observed": self.max_V_viol,
-                "Minimum voltage observed": self.min_V_viol
-            }
-
-        self.logger.info(f"Based on Lower limit: {self.lower_limit}, Upper limit: {self.upper_limit}")
-        self.logger.info("Final number of buses with violations are: %s", len(self.buses_with_violations))
-        self.logger.info("Final objective function value: %s", self.severity_indices[2])
-
-        # change violation checking thresholds to initial limit - to ensure uniform comparison betn initial & final
-        self.upper_limit = self.config["initial_voltage_upper_limit"]
-        self.lower_limit = self.config["initial_voltage_lower_limit"]
-
-        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
-                                                lower_limit=self.lower_limit)
-        if self.config["create_topology_plots"]:
-            self.plot_violations()
-        self.logger.info("Final maximum voltage observed on any node: %s %s", self.max_V_viol, self.busvmax)
-        self.logger.info("Final minimum voltage observed on any node: %s", self.min_V_viol)
-        self.logger.info(f"Based on Lower limit: {self.lower_limit}, Upper limit: {self.upper_limit}")
-        self.logger.info("Final number of buses with violations are: %s", len(self.buses_with_violations))
-        self.logger.info("Final objective function value: %s", self.severity_indices[2])
-
-        self.feeder_parameters["final_violations"] = {
-            "Voltage upper threshold": self.upper_limit,
-            "Voltage lower threshold": self.lower_limit,
-            "Number of buses with violations": len(self.buses_with_violations),
-            "Number of buses with overvoltage violations": len(self.buses_with_overvoltage_violations),
-            "Number of buses with undervoltage violations": len(self.buses_with_undervoltage_violations),
-            "Buses at all tps with violations": self.severity_indices[0],
-            "Severity of bus violations": self.severity_indices[1],
-            "Objective function value": self.severity_indices[2],
-            "Maximum voltage observed": self.max_V_viol,
-            "Minimum voltage observed": self.min_V_viol
-        }
-
-        self.feeder_parameters["Simulation time (seconds)"] = end_t-start_t
-        self.feeder_parameters["Upgrade status"] = self.upgrade_status
-        self.feeder_parameters["feederhead_name"] = feeder_head_name
-        self.feeder_parameters["feederhead_basekV"] = feeder_head_basekv
-
-        self.write_to_json(self.feeder_parameters, "Voltage_violations_comparison")
+        self.create_final_comparison(project_path=project.dss_files_path, thermal_dss_file=thermal_dss_file)
 
         # go to voltage upgrades post processing script
         postprocess_voltage_upgrades(
@@ -704,15 +568,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         return AutomatedVoltageUpgrade.REQUIRED_INPUT_FIELDS
 
     def create_final_comparison(self, project_path=None, thermal_dss_file=None):
-        # project_path = project.dss_files_path
-        end_t = time.time()
-        # self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
-        #                                         lower_limit=self.lower_limit)
-        # if self.config["create_topology_plots"]:
-        #     self.plot_violations()
         self.logger.debug("Writing upgrades to DSS file")
         self.write_upgrades_to_file()
-        # self.logger.info("total_time = %s", end_t - start_t)
 
         self.logger.info("Checking impact of redirected upgrades file")
         dss.run_command("Clear")
@@ -727,17 +584,41 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.new_capacitors = {x["name"]: x for x in iter_elements(dss.Capacitors, get_capacitor_info)}
         self.new_capcontrols = {x["name"]: x for x in iter_elements(dss.CapControls, get_cap_controls_info)}
         self.new_xfmr_info = dss.Transformers.AllNames()
+        self.new_ckt_info = get_ckt_info()
 
+        self.create_result_comparison_voltages(comparison_stage='After Upgrades')
+
+        self.feeder_parameters["Simulation time (seconds)"] = end_t-start_t
+        self.feeder_parameters["Upgrade status"] = self.upgrade_status
+        self.feeder_parameters["feederhead_name"] = feeder_head_name
+        self.feeder_parameters["feederhead_basekV"] = feeder_head_basekv
+
+        self.write_to_json(self.feeder_parameters, "Voltage_violations_comparison")
+        return
+
+    # this function create comparison file
+    def create_result_comparison_voltages(self, comparison_stage=''):
         # If initial and final limits are different,
         # also doing with final limits to get comparison between initial and final violation numbers
         if (self.config["final_voltage_upper_limit"] != self.config["initial_voltage_upper_limit"]) or \
                 (self.config["final_voltage_lower_limit"] != self.config["initial_voltage_lower_limit"]):
+            self.logger.info(f"Initial and Final voltage limits are not the same. "
+                             f"\ninitial_voltage_lower_limit: {self.config['initial_voltage_lower_limit']}, "
+                             f"initial_voltage_upper_limit: {self.config['initial_voltage_upper_limit']} "
+                             f"\nfinal_voltage_lower_limit: {self.config['final_voltage_lower_limit']}, "
+                             f"final_voltage_upper_limit: {self.config['final_voltage_upper_limit']}")
 
             self.upper_limit = self.config["final_voltage_upper_limit"]
             self.lower_limit = self.config["final_voltage_lower_limit"]
             self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
                                                     lower_limit=self.lower_limit)
-            self.feeder_parameters["final_violations_2"] = {
+
+            self.logger.info(f"Based on Lower limit: {self.lower_limit}, Upper limit: {self.upper_limit}")
+            self.logger.info("{} number of buses with violations are: {}".format(comparison_stage,
+                                                                                 len(self.buses_with_violations)))
+            self.logger.info("{} objective function value: {}".format(comparison_stage, self.severity_indices[2]))
+
+            self.feeder_parameters["{}_violations_2".format(comparison_stage)] = {
                 "Voltage upper threshold": self.upper_limit,
                 "Voltage lower threshold": self.lower_limit,
                 "Number of buses with violations": len(self.buses_with_violations),
@@ -750,10 +631,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 "Minimum voltage observed": self.min_V_viol
             }
 
-        self.logger.info(f"Based on Lower limit: {self.lower_limit}, Upper limit: {self.upper_limit}")
-        self.logger.info("Final number of buses with violations are: %s", len(self.buses_with_violations))
-        self.logger.info("Final objective function value: %s", self.severity_indices[2])
-
         # change violation checking thresholds to initial limit - to ensure uniform comparison betn initial & final
         self.upper_limit = self.config["initial_voltage_upper_limit"]
         self.lower_limit = self.config["initial_voltage_lower_limit"]
@@ -762,13 +639,15 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                                                 lower_limit=self.lower_limit)
         if self.config["create_topology_plots"]:
             self.plot_violations()
-        self.logger.info("Final maximum voltage observed on any node: %s %s", self.max_V_viol, self.busvmax)
-        self.logger.info("Final minimum voltage observed on any node: %s", self.min_V_viol)
+        self.logger.info("{} maximum voltage observed on any node: {} {}".format(comparison_stage, self.max_V_viol,
+                                                                                 self.busvmax))
+        self.logger.info("{} minimum voltage observed on any node: {}".format(comparison_stage, self.min_V_viol))
         self.logger.info(f"Based on Lower limit: {self.lower_limit}, Upper limit: {self.upper_limit}")
-        self.logger.info("Final number of buses with violations are: %s", len(self.buses_with_violations))
-        self.logger.info("Final objective function value: %s", self.severity_indices[2])
+        self.logger.info("{} number of buses with violations are: {}".format(comparison_stage,
+                                                                             len(self.buses_with_violations)))
+        self.logger.info("{} objective function value: {}".format(comparison_stage, self.severity_indices[2]))
 
-        self.feeder_parameters["final_violations"] = {
+        self.feeder_parameters["{}_violations".format(comparison_stage)] = {
             "Voltage upper threshold": self.upper_limit,
             "Voltage lower threshold": self.lower_limit,
             "Number of buses with violations": len(self.buses_with_violations),
@@ -780,14 +659,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             "Maximum voltage observed": self.max_V_viol,
             "Minimum voltage observed": self.min_V_viol
         }
-
-        # self.feeder_parameters["Simulation time (seconds)"] = end_t-start_t
-        # self.feeder_parameters["Upgrade status"] = self.upgrade_status
-        # self.feeder_parameters["feederhead_name"] = feeder_head_name
-        # self.feeder_parameters["feederhead_basekV"] = feeder_head_basekv
-
-        self.write_to_json(self.feeder_parameters, "Voltage_violations_comparison")
-
+        return
 
     def get_load_pv_mults_individual_object(self):
         self.orig_loads = {}
@@ -1708,7 +1580,6 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         new_control_command = re.sub("OFFsetting=\d+\.\d+", 'OFFsetting=' + str(new_capOFF), new_control_command)
         return new_control_command
 
-
     def write_dss_file(self, device_command):
         self.dss_upgrades.append(device_command + "\n")
         return
@@ -2123,8 +1994,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     dss.Circuit.SetActiveElement("Regcontrol.{}".format(regctrl_name))
                     if not dss.RegControls.Next() > 0:
                         break
-                # self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
-                #                                         lower_limit=self.lower_limit)  # TODO uncomment
+                self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                        lower_limit=self.lower_limit)
                 self.subLTC_sweep_viols["{}_{}".format(str(reg_sp), str(bandw))] = self.severity_indices[2]
         self.apply_best_LTCsetting(upper_limit=self.upper_limit)
 
@@ -2134,6 +2005,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         # Start with assumption that each node has a violation at all time points and each violation if outside bounds
         #  by upper voltage limit - basically the maximum possible severity
         min_severity = 10000000000000
+        # TODO - below logic for min_severity was used previously - however, error cases were encountered
+        #  for some feeders due to min_severity being not large enough
         # min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * upper_limit
         self.logger.info(f"Severity: {pow(len(self.all_bus_names), 2) * len(self.config['tps_to_test']) * upper_limit}")
         self.logger.debug(self.subLTC_sweep_viols)
@@ -2183,8 +2056,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 dss.Circuit.SetActiveElement("Regcontrol.{}".format(reg_ctrl_nm))
                 if not dss.RegControls.Next() > 0:
                     break
-        # self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
-        #                                         lower_limit=self.lower_limit)  # TODO uncomment
+        self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
+                                                lower_limit=self.lower_limit)
 
     def apply_orig_LTC_setting(self):
         for key, vals in self.initial_subLTC_settings.items():
@@ -2412,6 +2285,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     self.write_flag = 1
             # For a given cluster identify the node which leads to minimum number of buses with violations
             min_severity = 1000000000
+            # TODO - below logic for min_severity was used previously - however, error cases were encountered
+            #  for some feeders due to min_severity being not large enough
             # min_severity = pow(len(self.all_bus_names), 2) * len(self.config["tps_to_test"]) * upper_limit
             min_node = ''
             for key, value in self.vdev_cluster_nodes.items():

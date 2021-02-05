@@ -48,20 +48,7 @@ def get_transformer_info():
 
 
 class AutomatedThermalUpgrade(AbstractPostprocess):
-    """The class is used to induce faults on bus for dynamic simulation studies. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class. 
-
-    :param FaultObj: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS 'Fault' element
-    :type FaultObj: class:`PyDSS.dssElement.dssElement`
-    :param Settings: A dictionary that defines the settings for the faul controller.
-    :type Settings: dict
-    :param dssInstance: An :class:`opendssdirect` instance
-    :type dssInstance: :class:`opendssdirect` instance
-    :param ElmObjectList: Dictionary of all dssElement, dssBus and dssCircuit ojects
-    :type ElmObjectList: dict
-    :param dssSolver: An instance of one of the classes defined in :mod:`PyDSS.SolveMode`.
-    :type dssSolver: :mod:`PyDSS.SolveMode`
-    :raises: AssertionError  if 'FaultObj' is not a wrapped OpenDSS Fault element
-
+    """The class is used to determine thermal upgrades
     """
 
     REQUIRED_INPUT_FIELDS = (
@@ -74,7 +61,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         "create_upgrade_plots",
         "tps_to_test",
         "create_upgrades_library",
-		"upgrade_library_path",
+        "upgrade_library_path",
     )
 
     def __init__(self, project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger):
@@ -146,13 +133,12 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.PARALLEL_LINE_LIMIT = 100
 
         # adding timeout condition
-        TIMEOUT = 1800  # seconds  (1800 seconds is 30minutes)
-        current_time = dt.datetime.now()
-        expire_time = current_time + dt.timedelta(seconds=TIMEOUT)
+        self.XFMR_VIOLATIONS_TIMEOUT = 120  # seconds
 
         self.V_upper_thresh = 1.0583
         self.V_lower_thresh = 0.9167
         voltage_threshold_type = 'B'
+        # voltage_upgrade =
 
         # use function to determine values to be placed in comparison file
         self.orig_line_ldg_lst, self.orig_xfmr_ldg_lst, self.equip_ldgs = self.create_result_comparison(
@@ -957,11 +943,11 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 ln_name = dss.Lines.Name()
                 ln_lc = dss.Lines.LineCode()
                 ln_geo = dss.Lines.Geometry()
-                if (ln_lc == '') & (ln_geo != ''):
+                if ln_lc == '' and ln_geo != '':
                     ln_lc = ln_geo
 
                 # if there are no line codes and geometries defined, create line code with line name
-                elif (ln_lc == '') & (ln_geo == ''):
+                elif ln_lc == '' and ln_geo == '':
                     ln_lc = ln_name
                     ampacity = dss.Properties.Value("normamps")
                     self.Linecodes_params[ln_lc] = {"Ampacity": ampacity}
@@ -987,7 +973,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.write_to_json(self.original_line_parameters, "Original_line_parameters")
 
         # creating a dictionary with line code and geometries parameters
-        if dss.LineCodes.First() == 1:  # first check if linecodes exist - to avoid segmentation fault
+        if dss.LineCodes.First() > 0:  # first check if linecodes exist - to avoid segmentation fault
             while True:
                 lc_name = dss.LineCodes.Name()
                 ampacity = dss.LineCodes.NormAmps()
@@ -1002,7 +988,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 lc_name = dss.Lines.LineCode()
                 ln_geo = dss.Lines.Geometry()
 
-                if (lc_name == '') & (ln_geo != ''):  # if line geometry exists for this line
+                if lc_name == '' and ln_geo != '':  # if line geometry exists for this line
                     lc_name = ln_geo
                     dss.Circuit.SetActiveClass("linegeometry")
                     flag = dss.ActiveClass.First()
@@ -1074,7 +1060,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 ln_geo = dss.Lines.Geometry()
                 param_name = line_code
                 ln_config = "linecode"
-                if (line_code == '') & (ln_geo != ''):
+                if line_code == '' and ln_geo != '':
                     ln_config = "geometry"
                     param_name = ln_geo
                     # TODO: Distinguish between overhead and underground cables, currently there is no way to
@@ -1085,7 +1071,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     #     self.logger.info("%s %s %s %s", dss.ActiveClass.Name(),dss.Properties.Value("wire"),
                     #     dss.Properties.Value("cncable"),dss.Properties.Value("tscable"))
                     #     flag = dss.ActiveClass.Next()
-                elif (line_code == '') & (ln_geo == ''):
+                elif line_code == '' and ln_geo == '':
                     ln_config = "line_definition"
                     param_name = line_name
                 phases = dss.Lines.Phases()
@@ -1310,11 +1296,11 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 line_code = dss.Lines.LineCode()
                 ln_geo = dss.Lines.Geometry()
                 ln_config = "linecode"
-                if (line_code == '') & (ln_geo != ''):
+                if line_code == '' and ln_geo != '':
                     line_code = ln_geo
                     ln_config = "geometry"
                 # if there are no line codes and geometries defined, create line code with line name
-                elif (line_code == '') & (ln_geo == ''):
+                elif line_code == '' and ln_geo == '':
                     ln_config = "line_definition"
                     line_code = key
                 from_bus = dss.CktElement.BusNames()[0]
@@ -1354,7 +1340,12 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if lc_key not in self.avail_line_upgrades or lcs_fnd_flag==0:
                     # Add parallel lines since no suitable (correct ampacity/ratings or economical) line
                     # replacement was found
-                    # self.logger.info("%s Parallel lines required for line %s", num_par_lns-1, key)
+                    # number of parallel lines should be less than limit
+                    if num_par_lns > self.PARALLEL_LINE_LIMIT:
+                        raise Exception(f"Number of parallel lines determined is {num_par_lns}. "
+                                        f"This is greater than limit of {self.PARALLEL_LINE_LIMIT} parallel "
+                                        f"lines allowed")
+
                     for ln_cnt in range(num_par_lns-1):
                         curr_time = str(time.time())
                         time_stamp = curr_time.split(".")[0] + "_" + curr_time.split(".")[1]
@@ -1614,19 +1605,27 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         break
         return
 
+    # this function raises exception if time limit is exceeded in a particular loop/function
+    def time_limit_exception(self, expire_time, exception_message='Time limit exceeded'):
+        # if time limit is exceeded, then raise exception
+        current_time = time.time()
+        if current_time > expire_time:
+            raise Exception(exception_message)
+
     def correct_xfmr_violations(self):
         # This finds a line code which provides a specified safety margin to a line above its maximum observed loading.
         # If a line code is not found or if line code is too overrated one or more parallel lines (num_par_lns-1)
         # may be added.
 
-        if len(self.xfmr_violations)>0:
-            for key,vals in self.xfmr_violations.items():
+        if len(self.xfmr_violations) > 0:
+            for key, vals in self.xfmr_violations.items():
+                # add timeout limit  - raise exception if exceeds more than a certain time in seconds
+                start_time = time.time()
+                expire_time = start_time + self.XFMR_VIOLATIONS_TIMEOUT
                 # Determine which category this DT belongs to
-                # dss.Circuit.SetActiveElement("Transformer.{}".format(key))
                 dss.Transformers.Name(key)
                 phases = dss.CktElement.NumPhases()
                 num_wdgs = dss.Transformers.NumWindings()
-                #norm_amps = dss.CktElement.NormalAmps()
                 #Kwami's logic
                 n_phases = dss.CktElement.NumPhases()
                 hs_kv = float(dss.Properties.Value('kVs').split('[')[1].split(',')[0])
@@ -1654,10 +1653,13 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     per_R_list.append(dss.Properties.Value("%r"))
                 buses_list = dss.CktElement.BusNames()
                 per_losses.append(dss.Properties.Value("%noloadloss"))
+
+                self.time_limit_exception(expire_time=expire_time, exception_message="Time Limit exceeded in function "
+                                                                                "to mitigate transformer violations.")
                 # per_losses.append(dss.Properties.Value("%loadloss"))
                 # if per_losses[0] > per_losses[1]:
                 #     self.logger.info("For DT %s, %noloadloss is greater than %loadloss %s, continuing...", key, per_losses)
-                if float(norm_amps)-float(vals[1])>0.001:
+                if float(norm_amps)-float(vals[1]) > 0.001:
                     raise InvalidParameter("For DT {} the rated current values ({} {}) do not match, quitting...".format(key,
                                                                                                           norm_amps,
                                                                                                           vals[1]))
@@ -1690,6 +1692,10 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                                 self.write_dss_file(command_string)
                                 dt_fnd_flag=1
                                 break
+
+                self.time_limit_exception(expire_time=expire_time, exception_message="Time Limit exceeded in function "
+                                                                                "to mitigate transformer violations.")
+
                 if dt_key not in self.avail_xfmr_upgrades or dt_fnd_flag==0:
                     # Add parallel DTs since no suitable (correct ratings or economical) DT replacement was found
 
@@ -1732,6 +1738,9 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         dss.run_command(command_string)
                         self.dssSolver.Solve()
                         self.write_dss_file(command_string)
+
+                self.time_limit_exception(expire_time=expire_time, exception_message="Time Limit exceeded in function "
+                                                                                     "to mitigate transformer violations.")
         else:
             self.logger.info("This DPV penetration has no Transformer thermal violations")
         return
