@@ -344,9 +344,9 @@ class VoltageMetrics(ReportBase):
                 minv = self._range_a_limits[1]
                 
             voltage_metric_summary = {
-                'voltage_duration_between_ansi_a_and_b': vdbaab,
-                'max_per_node_voltage_duration_outside_ansi_a': max_pnvdoaa,
-                 f'{moving_window_minutes}-minute_moving_average_voltage_duration_outside_ansi_a': mmavdoa,
+                'voltage_duration_between_ansi_a_and_b-minutes': vdbaab / 60,
+                'max_per_node_voltage_duration_outside_ansi_a-minutes': max_pnvdoaa / 60,
+                 f'{moving_window_minutes}-minute_moving_average_voltage_duration_outside_ansi_a-minutes': mmavdoa / 60,
                 'max_voltage': data['metric_5'][scenario]['max_voltage'],
                 'min_voltage': data['metric_5'][scenario]['min_voltage'],
                 'num_nodes_always_inside_ansi_a': data['metric_5'][scenario]['num_inside_range_a'],
