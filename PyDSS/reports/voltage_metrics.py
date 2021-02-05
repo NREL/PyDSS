@@ -8,6 +8,7 @@ import pandas as pd
 from PyDSS.common import StoreValuesType
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.reports.reports import ReportBase, ReportGranularity
+from PyDSS.utils import serialize_timedelta, deserialize_timedelta
 
 
 logger = logging.getLogger(__name__)
@@ -115,7 +116,11 @@ class VoltageMetrics(ReportBase):
         # This metric determines the total time points when any nodal voltage
         # in the feeder violates ANSI Range A voltage limits but all nodes in
         # the feeder are within ANSI Range B limits.
-        results = {"time_points": []}
+        dur = timedelta(0)
+        results = {
+            "time_points": [],
+            "duration": serialize_timedelta(dur)
+        }
         if not dfs:
             return results
 
@@ -136,13 +141,17 @@ class VoltageMetrics(ReportBase):
         ]
         results["duration"] = str(len(results["time_points"]) * self._resolution)
         dur = len(results["time_points"]) * self._resolution
-        results["duration"] = f"days={dur.days} seconds={dur.seconds}"
+        results["duration"] = serialize_timedelta(dur)
         return results
     
     def _gen_metric_3(self, name, dfs):
         # This metric determines the total time points when any nodal moving average voltage
         # in the feeder violates ANSI Range A voltage limits.
-        results = {"time_points": []}
+        dur = timedelta(0)
+        results = {
+            "time_points": [],
+            "duration": serialize_timedelta(dur)
+        }
         if not dfs:
             return results
         
@@ -161,7 +170,7 @@ class VoltageMetrics(ReportBase):
             str(ts) for ts, val in total_a.iteritems() if val > 0 
         ]
         dur = len(results["time_points"]) * self._resolution
-        results["duration"] = f"days={dur.days} seconds={dur.seconds}"
+        results["duration"] = serialize_timedelta(dur)
         
         return results
     
@@ -185,7 +194,7 @@ class VoltageMetrics(ReportBase):
             count = series.sum()
             dur = count * self._resolution
             node_violations[node_name] = {"duration": {}, "percentage": {}}
-            node_violations[node_name]["duration"] = f"days={dur.days} seconds={dur.seconds}"
+            node_violations[node_name]["duration"] = serialize_timedelta(dur)
             node_violations[node_name]["percentage"] = float(count / num_steps) * 100
             if total is None:
                 total = series
@@ -318,10 +327,26 @@ class VoltageMetrics(ReportBase):
         )
         
         if scenario in data['scenarios']:
+            if data['metric_2'][scenario].values():
+                max_pnvdoaa = max([x['duration'] for x in data['metric_2'][scenario].values()])
+                max_pnvdoaa = deserialize_timedelta(max_pnvdoaa).total_seconds()
+            else:
+                max_pnvdoaa = 0
+            
+            vdbaab = deserialize_timedelta(data['metric_1'][scenario]['duration']).total_seconds()
+            mmavdoa = deserialize_timedelta(data['metric_3'][scenario]['duration']).total_seconds()
+            maxv = data['metric_5'][scenario]['max_voltage']
+            if maxv is None:
+                maxv = self._range_a_limits[1]
+                
+            minv = data['metric_5'][scenario]['min_voltage']
+            if minv is None:
+                minv = self._range_a_limits[1]
+                
             voltage_metric_summary = {
-                'voltage_duration_between_ansi_a_and_b': data['metric_1'][scenario]['duration'],
-                'max_per_node_voltage_duration_outside_ansi_a': max([x['duration'] for x in data['metric_2'][scenario].values()]),
-                 f'{moving_window_minutes}-minute_moving_average_voltage_duration_outside_ansi_a': data['metric_3'][scenario]['duration'],
+                'voltage_duration_between_ansi_a_and_b': vdbaab,
+                'max_per_node_voltage_duration_outside_ansi_a': max_pnvdoaa,
+                 f'{moving_window_minutes}-minute_moving_average_voltage_duration_outside_ansi_a': mmavdoa,
                 'max_voltage': data['metric_5'][scenario]['max_voltage'],
                 'min_voltage': data['metric_5'][scenario]['min_voltage'],
                 'num_nodes_always_inside_ansi_a': data['metric_5'][scenario]['num_inside_range_a'],
@@ -329,7 +354,7 @@ class VoltageMetrics(ReportBase):
                 'num_nodes_always_outside_ansi_b': data['metric_5'][scenario]['num_outside_range_b'],
                 'num_time_points_with_ansi_a_violations': data['metric_6'][f'num_time_points_violations_{scenario}'],
                 'total_num_time_points': num_time_points,
-                'total_simulation_duration': f"days={tot_dur.days} seconds={tot_dur.seconds}"
+                'total_simulation_duration': serialize_timedelta(tot_dur)
             }
             
         return voltage_metric_summary

@@ -9,6 +9,7 @@ import shutil
 import sys
 import time
 import yaml
+import re
 
 import numpy as np
 import opendssdirect as dss
@@ -243,3 +244,17 @@ def make_timestamps(data):
     # Something like pd.to_datetime(data, unit="s") would be faster but it
     # does time zone conversions.
     return pd.to_datetime([datetime.fromtimestamp(x) for x in data])
+
+def serialize_timedelta(timedelta_object):     
+    return f"days={timedelta_object.days}, seconds={timedelta_object.seconds}"
+    
+
+def deserialize_timedelta(text):     
+    regex = re.compile(r"days=(\d+) seconds=(\d+)") 
+    match = regex.search(text)
+    if match:
+        days = int(match.group(1))
+        seconds = int(match.group(2))
+        return timedelta(days=days, seconds=seconds)
+    raise Exception(f"invalid time string: {text}")
+
