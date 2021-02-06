@@ -160,13 +160,13 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.orig_xfmr_info = dss.Transformers.AllNames()
 
         # Get feeder head meta data
-        feeder_head_name = dss.Circuit.Name()
-        feeder_head_bus = dss.CktElement.BusNames()[0].split(".")[0]
-        dss.Circuit.SetActiveBus(feeder_head_bus)
-        feeder_head_basekv = dss.Bus.kVBase()
+        self.feeder_head_name = dss.Circuit.Name()
+        self.feeder_head_bus = dss.CktElement.BusNames()[0].split(".")[0]
+        dss.Circuit.SetActiveBus(self.feeder_head_bus)
+        self.feeder_head_basekv = dss.Bus.kVBase()
         num_nodes = dss.Bus.NumNodes()
         if num_nodes > 1:
-            feeder_head_basekv = round(feeder_head_basekv * math.sqrt(3), 1)
+            self.feeder_head_basekv = round(self.feeder_head_basekv * math.sqrt(3), 1)
 
         # Cap bank default settings -
         self.capON = round((self.config["nominal_voltage"] - self.config["cap_sweep_voltage_gap"] / 2), 1)
@@ -211,7 +211,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             if not dss.Transformers.Next() > 0:
                 break
 
-        start_t = time.time()
+        self.start_t = time.time()  # used to determine time taken for run
         self.generate_nx_representation()
 
         self.get_existing_controller_info()
@@ -336,8 +336,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             # postprocess_voltage_upgrades(
             #     {
             #         "outputs": self.config["Outputs"],
-            #         "feederhead_name": feeder_head_name,
-            #         "feederhead_basekV": feeder_head_basekv
+            #         "feederhead_name": self.feeder_head_name,
+            #         "feederhead_basekV": self.feeder_head_basekv
             #     },
             #     self.logger,
             # )
@@ -538,7 +538,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 self.logger.info("Additional regctrl  devices: %s", min_cluster)
                 self.logger.info("cluster_optimal_reg_nodes=%s", self.cluster_optimal_reg_nodes)
 
-        end_t = time.time()
+        self.end_t = time.time()  # used to determine time taken for run
 
         self.create_final_comparison(project_path=project.dss_files_path, thermal_dss_file=thermal_dss_file)
 
@@ -546,8 +546,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         postprocess_voltage_upgrades(
             {
                 "outputs": self.config["Outputs"],
-                "feederhead_name": feeder_head_name,
-                "feederhead_basekV": feeder_head_basekv,
+                "feederhead_name": self.feeder_head_name,
+                "feederhead_basekV": self.feeder_head_basekv,
                 "orig_ckt_info": self.orig_ckt_info,
                 "new_reg_controls": self.new_reg_controls,
                 "orig_reg_controls": self.orig_reg_controls,
@@ -561,7 +561,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
             },
             self.logger,
         )
-
+        self.has_converged = dss.Solution.Converged()
+        self.error = dss.Solution.Convergence()  # TODO This is fake for now, find how to get this from Opendssdirect
 
     @staticmethod
     def _get_required_input_fields():
@@ -588,10 +589,10 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
 
         self.create_result_comparison_voltages(comparison_stage='After Upgrades')
 
-        self.feeder_parameters["Simulation time (seconds)"] = end_t-start_t
+        self.feeder_parameters["Simulation time (seconds)"] = self.end_t-self.start_t
         self.feeder_parameters["Upgrade status"] = self.upgrade_status
-        self.feeder_parameters["feederhead_name"] = feeder_head_name
-        self.feeder_parameters["feederhead_basekV"] = feeder_head_basekv
+        self.feeder_parameters["feederhead_name"] = self.feeder_head_name
+        self.feeder_parameters["feederhead_basekV"] = self.feeder_head_basekv
 
         self.write_to_json(self.feeder_parameters, "Voltage_violations_comparison")
         return

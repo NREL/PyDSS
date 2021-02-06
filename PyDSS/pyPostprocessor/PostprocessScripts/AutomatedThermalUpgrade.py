@@ -1753,7 +1753,13 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         """Induces and removes a fault as the simulation runs as per user defined settings.
         """
         self.logger.info('Running thermal upgrade post process')
+        has_converged = self.has_converged
+        error = self.error
 
 
         #step-=1 # uncomment the line if the post process needs to rerun for the same point in time
-        return step
+        return step, has_converged, error
+
+    def finalize(self):
+        """Method used to combine post processing results from all steps.
+        """
