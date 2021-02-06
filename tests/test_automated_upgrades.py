@@ -19,6 +19,9 @@ def clean_upgrades_results():
     # delete files in Exports directory, logs in 'Logs' directory
     export_path = os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, "Exports")
     logs_path = os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, "Logs")
+    simulation_run_file = os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, 'simulation-run.toml')
+    store_file = os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, 'store.h5')
+
     for path in (logs_path, export_path):
         if os.path.exists(path):
             shutil.rmtree(path)
@@ -28,31 +31,36 @@ def clean_upgrades_results():
         if os.path.exists(os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, 'Scenarios', f, 'PostProcess')):
             shutil.rmtree(os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, 'Scenarios', f, 'PostProcess'))
 
-    if os.path.exists(os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, 'simulation-run.toml')):
-        os.remove(os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, 'simulation-run.toml'))
+    if os.path.exists(simulation_run_file):
+        os.remove(simulation_run_file)
 
-    if os.path.exists(os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, 'store.h5')):
-        os.remove(os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, 'store.h5'))
+    if os.path.exists(store_file):
+        os.remove(store_file)
 
     yield
 
     # delete files in Exports directory, logs in 'Logs' directory
-    export_path = os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, "Exports")
-    logs_path = os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, "Logs")
     for path in (logs_path, export_path):
         if os.path.exists(path):
             shutil.rmtree(path)
             os.mkdir(path)
+    # create empty file (needed for GIT)
+    with open(os.path.join(logs_path, '.keep'), 'w') as fp:
+        pass
+    with open(os.path.join(export_path, '.keep'), 'w') as fp:
+        pass
+
     # delete 'PostProcess' in Scenarios folder
     for f in os.listdir(os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, 'Scenarios')):
         if os.path.exists(os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, 'Scenarios', f, 'PostProcess')):
             shutil.rmtree(os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, 'Scenarios', f, 'PostProcess'))
 
-    if os.path.exists(os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, 'simulation-run.toml')):
-        os.remove(os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, 'simulation-run.toml'))
+    if os.path.exists(simulation_run_file):
+        os.remove(simulation_run_file)
 
-    if os.path.exists(os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, 'store.h5')):
-        os.remove(os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, 'store.h5'))
+    if os.path.exists(store_file):
+        os.remove(store_file)
+
 
 
 def test_automated_upgrades_project(clean_upgrades_results):
