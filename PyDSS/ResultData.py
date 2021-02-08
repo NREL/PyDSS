@@ -414,16 +414,17 @@ class ResultData:
 
     def _export_pv_systems(self, metadata):
         df = dss.utils.pvsystems_to_dataframe()
-        records = df.to_dict(orient="records")
-        pv_systems = {}
-        flag = dss.PVsystems.First()
-        while flag > 0:
-            pv_systems[dss.PVsystems.Name()] = dss.Properties.Value("Pmpp")
-            flag = dss.PVsystems.Next()
+        if dss.PVsystems.Count() > 0:
+            records = df.to_dict(orient="records")
+            pv_systems = {}
+            flag = dss.PVsystems.First()
+            while flag > 0:
+                pv_systems[dss.PVsystems.Name()] = dss.Properties.Value("Pmpp")
+                flag = dss.PVsystems.Next()
 
-        for record in records:
-            record["Pmpp"] = pv_systems[record["Name"]]
-        df = pd.DataFrame.from_records(records)
+            for record in records:
+                record["Pmpp"] = pv_systems[record["Name"]]
+            df = pd.DataFrame.from_records(records)
 
         relpath = os.path.join(self._export_relative_dir, "PVSystemsInfo.csv")
         filepath = os.path.join(self._export_dir, "PVSystemsInfo.csv")
