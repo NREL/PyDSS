@@ -303,8 +303,6 @@ class ResultData:
         filename = basename + "." + self._export_format
         write_dataframe(df, filename, compress=self._export_compression)
         self._logger.info("Exported %s", filename)
-        
-    
 
     def _find_feeder_head_line(self):
         feeder_head_line = None
@@ -321,7 +319,6 @@ class ResultData:
                 flag = dss.Topology.Next()
                 
         return feeder_head_line
-        
         
     def _get_feeder_head_loading(self):
         head_line = self._find_feeder_head_line()
@@ -344,14 +341,9 @@ class ResultData:
         else:
             return None
     
-
-    
-        
     def _reverse_powerflow(self):
         reverse_pf = max(dss.Circuit.TotalPower()) > 0 # total substation power is an injection(-) or a consumption(+)
-        
         return reverse_pf
-
     
     def _export_feeder_head_info(self, metadata):
         """
@@ -393,7 +385,6 @@ class ResultData:
             ("LoadsInfo", dss.Loads.Count, dss.utils.loads_to_dataframe),
             ("MetersInfo", dss.Meters.Count, dss.utils.meters_to_dataframe),
             ("MonitorsInfo", dss.Monitors.Count, dss.utils.monitors_to_dataframe),
-            ("PVSystemsInfo", dss.PVsystems.Count, dss.utils.pvsystems_to_dataframe),
             ("ReclosersInfo", dss.Reclosers.Count, dss.utils.reclosers_to_dataframe),
             ("RegControlsInfo", dss.RegControls.Count, dss.utils.regcontrols_to_dataframe),
             ("RelaysInfo", dss.Relays.Count, dss.utils.relays_to_dataframe),
@@ -418,7 +409,27 @@ class ResultData:
                 metadata["element_info_files"].append(relpath)
                 self._logger.info("Exported %s information to %s.", filename, filepath)
 
+        self._export_pv_systems(metadata)
         self._export_transformers(metadata)
+
+    def _export_pv_systems(self, metadata):
+        df = dss.utils.pvsystems_to_dataframe()
+        records = df.to_dict(orient="records")
+        pv_systems = {}
+        flag = dss.PVsystems.First()
+        while flag > 0:
+            pv_systems[dss.PVsystems.Name()] = dss.Properties.Value("Pmpp")
+            flag = dss.PVsystems.Next()
+
+        for record in records:
+            record["Pmpp"] = pv_systems[record["Name"]]
+        df = pd.DataFrame.from_records(records)
+
+        relpath = os.path.join(self._export_relative_dir, "PVSystemsInfo.csv")
+        filepath = os.path.join(self._export_dir, "PVSystemsInfo.csv")
+        write_dataframe(df, filepath)
+        metadata["element_info_files"].append(relpath)
+        self._logger.info("Exported PVSystem information to %s", filepath)
 
     def _export_transformers(self, metadata):
         df_dict = {"Transformer": [], "HighSideConnection": [], "NumPhases": []}
