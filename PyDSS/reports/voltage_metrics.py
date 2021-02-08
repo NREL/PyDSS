@@ -335,7 +335,9 @@ class VoltageMetrics(ReportBase):
             
             vdbaab = deserialize_timedelta(data['metric_1'][scenario]['duration']).total_seconds()
             mmavdoa = deserialize_timedelta(data['metric_3'][scenario]['duration']).total_seconds()
+            
             maxv = data['metric_5'][scenario]['max_voltage']
+            
             if maxv is None:
                 maxv = self._range_a_limits[1]
                 
@@ -347,8 +349,8 @@ class VoltageMetrics(ReportBase):
                 'voltage_duration_between_ansi_a_and_b-minutes': vdbaab / 60,
                 'max_per_node_voltage_duration_outside_ansi_a-minutes': max_pnvdoaa / 60,
                  f'{moving_window_minutes}-minute_moving_average_voltage_duration_outside_ansi_a-minutes': mmavdoa / 60,
-                'max_voltage': data['metric_5'][scenario]['max_voltage'],
-                'min_voltage': data['metric_5'][scenario]['min_voltage'],
+                'max_voltage': maxv,
+                'min_voltage': minv,
                 'num_nodes_always_inside_ansi_a': data['metric_5'][scenario]['num_inside_range_a'],
                 'num_nodes_always_between_ansi_a_and_b': data['metric_5'][scenario]['num_between_ranges'],
                 'num_nodes_always_outside_ansi_b': data['metric_5'][scenario]['num_outside_range_b'],
