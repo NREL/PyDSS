@@ -34,6 +34,7 @@ class ControllerType(enum.Enum):
     PV_VOLTAGE_RIDETHROUGH = "PvVoltageRideThru"
     FAULT_CONTROLLER = "FaultController"
     THERMOSTATIC_LOAD_CONTROLLER = "ThermostaticLoad"
+    GENERATOR_CONTROLLER = "GenController"
 
 
 CONTROLLER_TYPES = tuple(x.value for x in ControllerType)

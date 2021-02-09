@@ -144,6 +144,7 @@ class dssElement(dssObjectBase):
 
     def SetParameter(self, Param, Value):
         self._dssInstance.utils.run_command(self._FullName + '.' + Param + ' = ' + str(Value))
+        #print(Value , self.GetParameter(Param))
         return self.GetParameter(Param)
 
     def GetParameter(self, Param):
