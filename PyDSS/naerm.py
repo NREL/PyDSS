@@ -129,5 +129,4 @@ if __name__ == '__main__':
 
     name = 'PyDSS_x/circuit/heco19021/power_real/double'
     print(naerm_to_pydss(name))
-
     print(get_naerm_value([34,45],'PyDSS_x/circuit/heco19021/power_imag/double' ))

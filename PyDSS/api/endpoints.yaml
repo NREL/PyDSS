@@ -64,10 +64,10 @@ services:
     port: 3000
     protocol: http
   bes_data:
-    host: localhost
-    port: 3002
+    host: api.naerm.team
+    port: 443
     path: /data/bes
-    protocol: http
+    protocol: https
   ng_data:
     host: api.naerm.team
     port: 443
@@ -76,7 +76,7 @@ services:
   notifications_data:
     host: api.naerm.team
     port: 443
-    path: /data/bes/notifications
+    path: /notifications
     protocol: https
   ngfast_federate:
     host: localhost

@@ -65,12 +65,12 @@ class Handler:
                                         value:
                                             cosim_uuid: "96c21e00-cd3c-4943-a914-14451f5f7ab6"
                                             start_datetime: "01/01/2020 00:00:00"
-                                            simulation_duration: 1440.0
-                                            simulator_time_resolution: 15
+                                            simulation_duration: 0.00020832
+                                            simulator_time_resolution: 0.00006944
                                             powerflow_options: 
-                                                pydss_project: "6fec60b1-f0cb-42aa-b06d-33d9d28bc36b"
-                                                sub_id : "sample_federate/bus/152/voltage/pu"
-                                            name: PyDSS_x
+                                                pydss_project: "c724c8cc-7915-482f-ba17-f8254e468bd4"
+                                                sub_id : "wecc_federate/bus/10050/voltage/pu"
+                                            name: der_fed
                                     Example 2:
                                         value:
                                             cosim_uuid: "96c21e00-cd3c-4943-a914-14451f5f7ab6"

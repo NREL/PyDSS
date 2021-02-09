@@ -39,12 +39,14 @@ class PyDSS:
         self.data_service_url = services['bes_data']
         notifications_uri = services['notifications_data']
         self.notifier = Notifier(notifications_uri)
-        
-
         try:
             parameters['Broker'] = helics_['broker']['host']
             parameters['Broker port'] = helics_['broker']['port']
             parameters['Co-simulation Mode'] = True
+            self.cosim_uuid = parameters['cosim_uuid']
+            self.federate_service = 'der_federate_service'
+            self.fed_name = parameters['name']
+            self.parameters = parameters
             
             """ If the project path is uuid, grab content from AWS S3"""
             if not os.path.exists(parameters["powerflow_options"]["pydss_project"]):
@@ -58,7 +60,7 @@ class PyDSS:
                     return
             params = restructure_dictionary(parameters)
             params['Helics']['Time delta'] = 0.1*params['Project']['Step resolution (sec)']
-            self.parameters = parameters
+            params['Helics']['Federate name'] = self.fed_name
             self.pydss_obj = OpenDSS(params)
             export_path = os.path.join(self.pydss_obj._dssPath['Export'], params['Project']['Active Scenario'])
             Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
@@ -164,11 +166,18 @@ class PyDSS:
                                     "Multiplier" : 1 
                                 }
                             }
-
                         with open(os.path.join(path_to_sub_file, 'Subscriptions.toml'), "w") as f:
                             toml.dump(sub_dict, f)
 
-                        logger.info('Subscriptions.toml file changed')
+                        pub_dict = {
+                            "Circuits": {
+                                "Publish": ["TotalPower"],
+                                "NoPublish": []
+                            }
+                        }
+                        with open(os.path.join(path_to_sub_file, "ExportMode-byClass.toml"), "w") as f:
+                            toml.dump(pub_dict, f)
+                        logger.info('ExportMode-byClass.toml file changed')
                     
                     """ create log folder if not present """
                     log_folder  = os.path.join(self.project_folder, file_data['case']['active_project'], 'Logs')
@@ -246,13 +255,11 @@ class PyDSS:
         if self.initalized:
             try:
                 Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
-                print("Steps:", Steps)
 
                 for i in range(Steps):
                     results = self.pydss_obj.RunStep(i)
                     restructured_results = self.restructure_results(results)
-                    
-                    # Timestep data payload and metadata only in an inital timestep
+                    #Timestep data payload and metadata only in an inital timestep
                     self.a_writer.write(
                         self.parameters['name'],
                         self.pydss_obj._dssSolver.GetTotalSeconds(),
@@ -261,8 +268,8 @@ class PyDSS:
                         fed_uuid=self.parameters['fed_uuid'],
                         cosim_uuid=self.parameters['cosim_uuid']
                     )
-
-                # closing federate
+                    
+                #closing federate
                 self.a_writer.send_timesteps()
                 
                 # Remove the project data

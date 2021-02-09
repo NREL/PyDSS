@@ -51,7 +51,7 @@ class JSONwriter:
                     res = {
                         "name": ppty,
                         "type": "numeric" if not isinstance(v, str) else "string",
-                        "mappings": [{}],
+                        "mappings": [{"key": "string", "value": "string"}],
                     }
                     asset["measurement_columns"].append(res)
         return results
@@ -93,7 +93,6 @@ class JSONwriter:
                 msg = f'Unable to send asset metadata to Data API > ' \
                       f'{response.data.decode("utf-8")}'
                 self.notify(msg, log_level=logging.ERROR)
-
         results = self.remap(LFresults, fed_name, fed_uuid, cosim_uuid, circuit, currenttime)
         asset_data = results.pop("asset_data")
         results.update({"assets": asset_data})
@@ -108,27 +107,9 @@ class JSONwriter:
             self.notify(msg, log_level=logging.ERROR)
         if index != -1:
             self.update_payload(currenttime, fed_uuid, cosim_uuid)
-        
-        # try:
-        #     jFile = open(os.path.join(self.log_dir, f"Results_{int(currenttime)}.json"), "w")
-        #     pFile = open(os.path.join(self.log_dir, f"payload.json"), "w")
-        #     if not self.metadata:
-        #         mFile = open(os.path.join(self.log_dir, f"metadata.json"), "w")
-        #         self.metadata = self.create_meta_data(LFresults, fed_name, fed_uuid, cosim_uuid, circuit, currenttime)
-        #         json.dump(self.metadata, mFile, indent=4, sort_keys=True)
-        #         mFile.close()
-        #     results = self.remap(LFresults, fed_name, fed_uuid, cosim_uuid, circuit, currenttime)
-        #     self.update_payload(currenttime, fed_uuid, cosim_uuid)
-        #     json.dump(results, jFile, indent=4, sort_keys=True)
-        #     json.dump(self.payload, pFile, indent=4, sort_keys=True)
-        #     jFile.close()
-        #     pFile.close()
-        # except Exception as e:
-        #     print(e)
         return
 
     def send_timesteps(self):
-
         response = send_sync_request(self.federate_close_url, 'POST',
                                      body=self.payload)
 
