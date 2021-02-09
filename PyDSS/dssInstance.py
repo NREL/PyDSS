@@ -405,6 +405,7 @@ class OpenDSS:
         dss.Solution.Convergence(self._Options['Project']['Error tolerance'])
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
         self._Logger.info('Simulation time step {}.'.format(Steps))
+        self._Logger.info("Set OpenDSS convergence to %s", dss.Solution.Convergence())
         self._Logger.info('Max convergence error count {}.'.format(self._maxConvergenceErrorCount))
         if self._Options['Exports']['Result Container'] == 'ResultData' and self.ResultContainer is not None:
             self.ResultContainer.InitializeDataStore(project.hdf_store, Steps, MC_scenario_number)
