@@ -14,11 +14,8 @@
 # Active Scenario- [String] - Project scenario to use
 # DSS File- [String] - The main OpenDSS file
 [Project]
-"Start Year" = 2017
-"Start Day" = 1
-"Start Time (min)" = 0.0
-"End Day" = 1
-"End Time (min)" = 1439.0
+"Start time" = "1/1/2020 00:00:00"
+"Simulation duration (min)" = 1440.0
 "Date offset" = 0
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 50
@@ -47,11 +44,11 @@
 "Export Compression" = false
 "Export Iteration Order" = "ValuesByPropertyAcrossElements"
 "Export Elements" = true
-"Export Data Tables" = false
-"Export Data In Memory" = false
+"Export Data Tables" = true
+"Export Data In Memory" = true
 "HDF Max Chunk Bytes" = 32768
 "Export Event Log" = true
-"Log Results" = true
+"Log Results" = false
 "Result Container" = "ResultData"
 
 # Enable frequency sweep- [Bool] - Enable harmonic sweep. works with only 'Static' and 'QSTS' simulation modes
@@ -77,12 +74,12 @@
 # Uninterruptible - [Bool] - Can the federate be interepted
 # Helics logging level - [int] - logging level for the federate (use Helics documentation for choosig the right value)
 [Helics]
-"Co-simulation Mode" = false
+"Co-simulation Mode" = true
 "Iterative Mode" = false
 "Error tolerance" = 0.0001
 "Max co-iterations" = 15
 "Broker" = "mainbroker"
-"Broker port" = 50001
+"Broker port" = 0
 "Federate name" = "PyDSS"
 "Time delta" = 0.01
 "Core type" = "zmq"

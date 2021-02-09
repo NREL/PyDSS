@@ -30,9 +30,9 @@ from opendssdirect.utils import run_command
 
 CONTROLLER_PRIORITIES = 3
 
+
 class OpenDSS:
     def __init__(self, params):
-
         self._dssInstance = dss
         self._TempResultList = []
         self._dssBuses = {}
@@ -71,12 +71,8 @@ class OpenDSS:
                 params['Project']['DSS File']
             )
         LoggerTag = pyLogger.getLoggerTag(params)
-        if params["Logging"]["Pre-configured logging"]:
-            self._Logger = logging.getLogger(__name__)
-        else:
-            self._Logger = pyLogger.getLogger(LoggerTag, self._dssPath['Log'], LoggerOptions=params["Logging"])
-        self._reportsLogger = pyLogger.getReportLogger(LoggerTag, self._dssPath['Log'], LoggerOptions=params["Logging"])
-
+        self._Logger = logging.getLogger(__name__)
+        self._reportsLogger = logging.getLogger("PyDSS-reports")
         self._Logger.info('An instance of OpenDSS version ' + self._dssInstance.__version__ + ' has been created.')
 
         for key, path in self._dssPath.items():
@@ -84,7 +80,6 @@ class OpenDSS:
 
         self._dssInstance.Basic.ClearAll()
         self._dssInstance.utils.run_command('Log=NO')
-
         run_command('Clear')
         self._Logger.info('Loading OpenDSS model')
         try:
@@ -95,10 +90,11 @@ class OpenDSS:
         self._Logger.info('OpenDSS:  ' + reply)
 
         assert ('error ' not in reply.lower()), 'Error compiling OpenDSS model.\n{}'.format(reply)
-        run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
+
+        #run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
         self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(params['Frequency']['Fundamental frequency']) + ' Hz')
 
-        run_command('Set %SeriesRL={}'.format(params['Frequency']['Percentage load in series']))
+        #run_command('Set %SeriesRL={}'.format(params['Frequency']['Percentage load in series']))
         if params['Frequency']['Neglect shunt admittance']:
             run_command('Set NeglectLoadY=Yes')
 
@@ -109,7 +105,6 @@ class OpenDSS:
         self._dssCommand = run_command
         self._dssSolution = self._dssInstance.Solution
         self._dssSolver = SolveMode.GetSolver(SimulationSettings=params, dssInstance=self._dssInstance)
-
         self._Modifier = Modifier(self._dssInstance, run_command, params)
         self._UpdateDictionary()
         self._CreateBusObjects()
@@ -122,7 +117,6 @@ class OpenDSS:
                 run_command(f'BatchEdit {m}..* yearly=NONE duty=None')
             self.profileStore = ProfileManager(self._dssObjects, self._dssSolver, params)
             self.profileStore.setup_profiles()
-
 
         #if params and params['Exports']['Log Results']:
         if params['Exports']['Result Container'] == 'ResultContainer':
@@ -151,6 +145,7 @@ class OpenDSS:
         if params['Helics']["Co-simulation Mode"]:
             self._HI = HI.helics_interface(self._dssSolver, self._dssObjects, self._dssObjectsByClass, params,
                                            self._dssPath)
+        print("Setup complete")
         return
 
     def _ModifyNetwork(self):
@@ -369,6 +364,11 @@ class OpenDSS:
 
         return self.ResultContainer.max_num_bytes()
 
+    def initStore(self, hdf_store, Steps, MC_scenario_number=None):
+        if self._Options['Exports']['Result Container'] == 'ResultData':
+            print("initializing store")
+            self.ResultContainer.InitializeDataStore(hdf_store, Steps, MC_scenario_number)
+
     def RunSimulation(self, project, scenario, MC_scenario_number=None):
         startTime = time.time()
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
@@ -435,14 +435,14 @@ class OpenDSS:
             self._pyPlotObjects[Plot].UpdatePlot()
         return
 
-    def __del__(self):
-        self._Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')
-        loggers = [self._Logger, self._reportsLogger]
-        if self._Options["Logging"]["Log to external file"]:
-            for L in loggers:
-                handlers = list(L.handlers)
-                for filehandler in handlers:
-                    filehandler.flush()
-                    filehandler.close()
-                    L.removeHandler(filehandler)
-        return
+    # def __del__(self):
+    #     self._Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')
+    #     loggers = [self._Logger, self._reportsLogger]
+    #     if self._Options["Logging"]["Log to external file"]:
+    #         for L in loggers:
+    #             handlers = list(L.handlers)
+    #             for filehandler in handlers:
+    #                 filehandler.flush()
+    #                 filehandler.close()
+    #                 L.removeHandler(filehandler)
+    #     return

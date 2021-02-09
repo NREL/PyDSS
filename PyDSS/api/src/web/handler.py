@@ -10,7 +10,8 @@ from multiprocessing import Queue, Process, Event, cpu_count
 from concurrent.futures import ThreadPoolExecutor
 from PyDSS.api.src.web.parser import variable_decode, bytestream_decode
 from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, VisualizationType
-
+from naerm_core.web import error_responses as error
+from naerm_core.config_reader.config import EndpointsConfig
 
 logger = logging.getLogger(__name__)
 
@@ -18,19 +19,24 @@ class Handler:
 
     """ Handlers for web server. """
 
-    def __init__(self):
+    def __init__(self, helics_: dict,   services: EndpointsConfig, loop=None, debug=False):
         """ Constructor for PyDSS handler. """
         
         logger.info("Initializing Handler ....")
+        self.helics_ = helics_
+        self.services = {}
+        for key in services.endpoints:
+            self.services.update({key: services.__getattr__(key)})
 
         # Initializing pydss_instances dict
         self.pydss_instances = dict()
 
         # Event flag to control shutdown of background tasks
-        self.event = Event()
+        self.shutdown_event = Event()
         logger.info(f"Maximum parallel processes: {cpu_count()-1}")
         self.pool = ThreadPoolExecutor(max_workers=cpu_count()-1)
-        self.loop = asyncio.get_event_loop()
+        self.loop = loop
+
 
     async def get_pydss_project_info(self, request, path):
         """
@@ -76,7 +82,6 @@ class Handler:
                             UUID: None
 
         """
-        print(path)
         logger.info(f"Exploring {path} for valid projects")
 
         if not os.path.exists(path):
@@ -252,28 +257,23 @@ class Handler:
                             examples:
                                     Example 1:
                                         value:
-                                            parameters:
-                                                Start Year: 2017
-                                                Start Day: 1
-                                                Start Time (min): 0
-                                                End Day: 1
-                                                End Time (min): 1439
-                                                Date offset: 0
-                                                Step resolution (sec): 900
-                                                Max Control Iterations: 50
-                                                Error tolerance: 0.001
-                                                Control mode: Static
-                                                Simulation Type: QSTS
-                                                Project Path: "C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples"
-                                                Active Project: custom_contols
-                                                Active Scenario: base_case
-                                                DSS File: Master_Spohn_existing_VV.dss
-                                                Co-simulation Mode: false
-                                                Result Container: ResultData
-                                                Log Results: false
-                                                Export Data Tables: true
-                                                Export Data In Memory: true
-                                                Federate name: PyDSS_x
+                                            Co-simulation UUID: "96c21e00-cd3c-4943-a914-14451f5f7ab6"
+                                            Start time: "1/1/2020 00:00:00"
+                                            Simulation duration (min): 1440.0
+                                            Step resolution (sec): 900
+                                            Project Path: "6fec60b1-f0cb-42aa-b06d-33d9d28bc36b"
+                                            Federate name: PyDSS_x
+                                    Example 2:
+                                        value:
+                                            Co-simulation UUID: "96c21e00-cd3c-4943-a914-14451f5f7ab6"
+                                            Start time: "1/1/2020 00:00:00"
+                                            Simulation duration (min): 0.00166
+                                            Step resolution (sec): 0.0041664
+                                            Project Path: "C:/Users/KDUWADI/Box/NAERM_project/PyDSSexamples/examples"
+                                            Federate name: der_fed
+                                            Active Project: custom_contols
+                                            Active Scenario: base_case
+                                            DSS File: "Master_Spohn_existing_VV.dss"
 
                 responses:
                  '200':
@@ -309,8 +309,10 @@ class Handler:
         pydss_uuid = str(uuid4())
         q = Queue()
 
+        data.update({'fed_uuid': pydss_uuid})
+
         # Create a process for PyDSS instance
-        p = Process(target=PyDSS, name=pydss_uuid, args=(self.event, q, data))
+        p = Process(target=PyDSS, name=pydss_uuid, args=(self.helics_, self.services, self.shutdown_event, q, data))
         # Store queue and process
         self.pydss_instances[pydss_uuid] = {"queue": q, "process": p}
         # Catching data coming from PyDSS
@@ -319,7 +321,7 @@ class Handler:
 
         # Start process for pydss
         p.start()
-        # Return a message to webclient
+        # Return a message to webclient        
         result = {'Status': 200,
                   'Message': 'Starting a PyDSS instance',
                   'UUID': pydss_uuid}

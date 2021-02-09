@@ -5,11 +5,9 @@ class abstact_solver(abc.ABC):
     def __init__(self, dssInstance, SimulationSettings, Logger):
         self.Settings = SimulationSettings
         self.pyLogger = Logger
-        self._Time = datetime.strptime(
-            '{} {}'.format(
-                SimulationSettings['Project']['Start Year'],
-                SimulationSettings['Project']['Start Day'] + SimulationSettings['Project']['Date offset']), '%Y %j'
-        ) + timedelta(minutes=SimulationSettings['Project']['Start Time (min)'])
+
+        self._Time = datetime.strptime(SimulationSettings['Project']["Start time"], "%d/%m/%Y %H:%M:%S")
+
         self._StartTime = self._Time
         self._EndTime = self._Time
         self._dssIntance = dssInstance

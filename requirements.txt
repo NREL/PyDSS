@@ -9,7 +9,7 @@ xlrd==1.2.0
 pyproj
 descartes
 OpenDSSDirect.py==0.3.7
-Shapely
+Shapely==1.6.4
 matplotlib
 Click
 numpy
@@ -24,3 +24,4 @@ aiohttp
 aiohttp_swagger3
 requests
 pyyaml
+xlrd

@@ -34,8 +34,8 @@ class ResultContainer:
         self.SystemPaths = SystemPaths
         self.__dssCommand = dssCommand
         self.__Settings = Options
-        self.__StartDay = Options['Project']['Start Day']
-        self.__EndDay = Options['Project']['End Day']
+        self.__StartDay = dssSolver.StartDay
+        self.__EndDay = dssSolver.EndDay
         self.__DateTime = []
         self.__Frequency = []
         self.__SimulationMode = []

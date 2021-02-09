@@ -1,0 +1,66 @@
+version: 1
+disable_existing_loggers: False
+formatters:
+    # Log record attributes:
+    # https://docs.python.org/3/library/logging.html#logrecord-attributes
+    simple:
+        format: '%(asctime)s - NAERM - app_name - %(name)s - %(levelname)s - %(message)s'
+    json:
+        format: '{ "system": "NAERM", "logger_name":"%(name)s", "timestamp":"%(asctime)s", "epoch_timestamp":"%(created)f", "pid":"%(process)d", "function_name":"%(funcName)s", "line_no":"%(lineno)d", "level_name":"%(levelname)s", "message":"%(message)s" }'
+    notification:
+        format: '{ "system": "NAERM", "logger_name":"%(name)s", "timestamp":"%(asctime)s", "epoch_timestamp":"%(created)f", "pid":"%(process)d", "function_name":"%(funcName)s", "level_name":"%(levelname)s", "message":"%(message)s", "uuid": "%(uuid)s", "service_name": "%(service_name)s", "timestep": "%(timestep)s" }'
+handlers:
+    # Log handlers:
+    # https://docs.python.org/3/library/logging.handlers.html#module-logging.handlers
+    console:
+        class: logging.StreamHandler
+        level: DEBUG
+        formatter: simple
+        stream: ext://sys.stdout
+    rotatingFile:
+        class: logging.handlers.RotatingFileHandler
+        level: DEBUG
+        formatter: simple
+        filename: ../logs/app-name.log
+        maxBytes: 10240000 # 10MB
+        backupCount: 3
+    timedRotatingFile:
+        class: logging.handlers.TimedRotatingFileHandler
+        level: DEBUG
+        formatter: simple
+        filename: ../logs/timed-app-name.log
+        backupCount: 3
+        when: h
+        interval: 1
+    # syslog:
+    #     class: logging.handlers.SysLogHandler
+    #     level: DEBUG
+    #     formatter: json
+    #     # The port number change based on the socktype.
+    #     address: ['host.docker.internal', 1514] # 514/TCP 1514/UDP
+    #     socktype: 2 # 1=TCP 2=UDP
+    # syslog_notification:
+    #     # This handlers is used to log notifications to be forwarded to the
+    #     # visualization tools. 
+    #     class: logging.handlers.SysLogHandler
+    #     level: NOTSET
+    #     formatter: notification
+    #     # The port number change based on the socktype.
+    #     address: ['host.docker.internal', 1514] # 514/TCP 1514/UDP
+    #     socktype: 2 # 1=TCP 2=UDP
+loggers:
+    __main__:
+        level: DEBUG
+        handlers: [rotatingFile]
+        propagate: yes
+    web.handler:
+        level: DEBUG
+        handlers: [timedRotatingFile]
+        propagate: yes
+    core.notifier.notifier:
+        level: NOTSET
+        #handlers: [console, rotatingFile, syslog_notification]
+        propagate: no
+root:
+    level: DEBUG
+    #handlers: [console, rotatingFile, syslog]

@@ -17,6 +17,8 @@ from PyDSS.utils.utils import dump_data
 from PyDSS.value_storage import ValueContainer
 from PyDSS.unitDefinations import type_info
 
+logger = logging.getLogger(__name__)
+
 class ResultData:
     """Exports data to files."""
 
@@ -26,11 +28,7 @@ class ResultData:
     def __init__(self, options, system_paths, dss_objects,
                  dss_objects_by_class, dss_buses, dss_solver, dss_command,
                  dss_instance):
-        if options["Logging"]["Pre-configured logging"]:
-            logger_tag = __name__
-        else:
-            logger_tag = getLoggerTag(options)
-        self._logger = logging.getLogger(logger_tag)
+        self._logger = logger
         self._dss_solver = dss_solver
         self._results = {}
         self._buses = dss_buses
@@ -42,8 +40,8 @@ class ResultData:
 
         self._dss_command = dss_command
         self._dss_instance = dss_instance
-        self._start_day = options["Project"]["Start Day"]
-        self._end_day = options["Project"]["End Day"]
+        self._start_day = dss_solver.StartDay
+        self._end_day = dss_solver.EndDay
         self._time_dataset = None
         self._frequency_dataset = None
         self._mode_dataset = None
@@ -61,13 +59,13 @@ class ResultData:
         )
         # Use / because this is used in HDFStore
         self._export_relative_dir = f"Exports/" + options["Project"]["Active Scenario"]
-        self._store_frequency = False
-        self._store_mode = False
+        self._store_frequency = True
+        self._store_mode = True
         self.CurrentResults = {}
-        if options["Project"]["Simulation Type"] == "Dynamic" or \
-                options["Frequency"]["Enable frequency sweep"]:
-            self._store_frequency = True
-            self._store_mode = True
+        # if options["Project"]["Simulation Type"] == "Dynamic" or \
+        #         options["Frequency"]["Enable frequency sweep"]:
+        #     self._store_frequency = True
+        #     self._store_mode = True
 
         if options["Exports"]["Export Mode"] == "byElement":
             raise InvalidParameter(
@@ -85,6 +83,7 @@ class ResultData:
 
         self._export_list = self._file_reader.pyControllers
         self._create_list_by_class()
+        print("result container created")
 
     def _create_element_list(self, objs, properties):
         elements = []
@@ -166,6 +165,7 @@ class ResultData:
 
     def UpdateResults(self):
         self.CurrentResults.clear()
+        print(self._time_dataset, self._frequency_dataset, self._mode_dataset)
         self._time_dataset.write_value(self._dss_solver.GetDateTime().timestamp())
         self._frequency_dataset.write_value(self._dss_solver.getFrequency())
         self._mode_dataset.write_value(self._dss_solver.getMode())
