@@ -12,11 +12,11 @@ WORKDIR /PyDSS
 
 RUN pip install --upgrade pip
 RUN pip install --upgrade setuptools
+#RUN pip install --upgrade setuptools
 
 #RUN pip install --index-url https://pypi.naerm.team/simple/ naerm_core
 
 RUN pip install --index-url https://pypi.naerm.team/simple/ \
-                --no-cache-dir \
                 -r requirements.txt
 
 # Install the python modules
