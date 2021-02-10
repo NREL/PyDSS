@@ -1,16 +1,17 @@
-from datetime import datetime, timedelta
 from PyDSS.modes.abstract_solver import abstact_solver
+from datetime import datetime, timedelta
+from PyDSS.common import DATE_FORMAT
 import math
 
 class QSTS(abstact_solver):
     def __init__(self, dssInstance, SimulationSettings, Logger):
         super().__init__(dssInstance, SimulationSettings, Logger)
-        print("Entered QSTS mode")
+        self.pyLogger.debug("Setting up QSTS simulation")
         self.Settings = SimulationSettings
         self.pyLogger = Logger
 
 
-        self._Time = datetime.strptime(SimulationSettings['Project']["Start time"], "%d/%m/%Y %H:%M:%S")
+        self._Time = datetime.strptime(SimulationSettings['Project']["Start time"], DATE_FORMAT)
         self._StartTime = self._Time
         self._EndTime = self._Time + timedelta(minutes=SimulationSettings['Project']["Simulation duration (min)"])
         StartDay = (self._StartTime - datetime(self._StartTime.year, 1, 1)).days + 1
@@ -32,7 +33,7 @@ class QSTS(abstact_solver):
         self._dssSolution.Number(1)
         self._dssSolution.StepSize(self._sStepRes)
         self._dssSolution.MaxControlIterations(SimulationSettings['Project']['Max Control Iterations'])
-        print("Solver setup complete")
+        self.pyLogger.debug("QSTS Solver setup complete")
         return
 
 

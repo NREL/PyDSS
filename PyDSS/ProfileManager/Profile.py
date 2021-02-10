@@ -1,3 +1,4 @@
+from PyDSS.common import DATE_FORMAT
 import numpy as np
 import datetime
 import copy
@@ -21,7 +22,7 @@ class Profile:
         self.Objects = objects
         self.dssSolver = dssSolver
         self.attrs = self.profile.attrs
-        self.sTime = datetime.datetime.strptime(self.attrs["sTime"].decode(), '%Y-%m-%d %H:%M:%S.%f')
+        self.sTime = datetime.datetime.strptime(self.attrs["sTime"].decode(), DATE_FORMAT)
         self.eTime = datetime.datetime.strptime(self.attrs["eTime"].decode(), '%Y-%m-%d %H:%M:%S.%f')
         self.simRes = self.dssSolver.GetStepSizeSec()
         self.Time = copy.deepcopy(self.dssSolver.GetDateTime())

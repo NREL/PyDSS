@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from PyDSS.common import DATE_FORMAT
 import abc
 
 class abstact_solver(abc.ABC):
@@ -6,7 +7,7 @@ class abstact_solver(abc.ABC):
         self.Settings = SimulationSettings
         self.pyLogger = Logger
 
-        self._Time = datetime.strptime(SimulationSettings['Project']["Start time"], "%d/%m/%Y %H:%M:%S")
+        self._Time = datetime.strptime(SimulationSettings['Project']["Start time"], DATE_FORMAT)
 
         self._StartTime = self._Time
         self._EndTime = self._Time

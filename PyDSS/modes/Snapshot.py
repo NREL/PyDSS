@@ -1,13 +1,15 @@
-from datetime import datetime, timedelta
 from PyDSS.modes.abstract_solver import abstact_solver
+from datetime import datetime, timedelta
+from PyDSS.common import DATE_FORMAT
 import math
 
 class Snapshot(abstact_solver):
     def __init__(self, dssInstance, SimulationSettings, Logger):
         super().__init__(dssInstance, SimulationSettings, Logger)
+        Logger.debug("Setting up Snapshot simulation")
         self.Settings = SimulationSettings
         self.pyLogger = Logger
-        self._Time = datetime.strptime(SimulationSettings['Project']["Start time"], "%d/%m/%Y %H:%M:%S")
+        self._Time = datetime.strptime(SimulationSettings['Project']["Start time"], DATE_FORMAT)
         self._StartTime = self._Time
         self._EndTime = self._Time + timedelta(minutes=SimulationSettings['Project']["Simulation duration (min)"])
 

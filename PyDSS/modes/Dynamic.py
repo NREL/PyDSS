@@ -1,16 +1,17 @@
-from datetime import datetime, timedelta
 from PyDSS.modes.abstract_solver import abstact_solver
+from datetime import datetime, timedelta
+from PyDSS.common import DATE_FORMAT
 import math
 
 class Dynamic(abstact_solver):
     def __init__(self, dssInstance, SimulationSettings, Logger):
         super().__init__(dssInstance, SimulationSettings, Logger)
-        print('Running Dynamic simulation')
+        Logger.debug('Setting up Dynamic simulation')
         self.Settings = SimulationSettings
         self.pyLogger = Logger
 
         self._MaxItrs = SimulationSettings['Project']['Max Control Iterations']
-        self._Time = datetime.strptime(SimulationSettings['Project']["Start time"], "%d/%m/%Y %H:%M:%S")
+        self._Time = datetime.strptime(SimulationSettings['Project']["Start time"], DATE_FORMAT)
         self._StartTime = self._Time
         self._EndTime = self._Time + timedelta(minutes=SimulationSettings['Project']["Simulation duration (min)"])
         StartDay = (self._StartTime - datetime(self._StartTime.year, 1, 1)).days + 1
