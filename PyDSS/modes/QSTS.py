@@ -1,53 +1,16 @@
-from PyDSS.modes.abstract_solver import abstact_solver
+from PyDSS.modes.solver_base import solver_base
 from datetime import datetime, timedelta
 from PyDSS.common import DATE_FORMAT
 import math
 
-class QSTS(abstact_solver):
+class QSTS(solver_base):
     def __init__(self, dssInstance, SimulationSettings, Logger):
         super().__init__(dssInstance, SimulationSettings, Logger)
-        self.pyLogger.debug("Setting up QSTS simulation")
-        self.Settings = SimulationSettings
-        self.pyLogger = Logger
-
-
-        self._Time = datetime.strptime(SimulationSettings['Project']["Start time"], DATE_FORMAT)
-        self._StartTime = self._Time
-        self._EndTime = self._Time + timedelta(minutes=SimulationSettings['Project']["Simulation duration (min)"])
-        StartDay = (self._StartTime - datetime(self._StartTime.year, 1, 1)).days + 1
-        StartTimeMin = self._StartTime.minute
-        sStepResolution = SimulationSettings['Project']['Step resolution (sec)']
-
-        self.StartDay = (self._StartTime - datetime(self._StartTime.year, 1, 1)).days + 1
-        self.EndDay = (self._EndTime - datetime(self._EndTime.year, 1, 1)).days + 1
-
-        self._sStepRes = sStepResolution
-        self._dssIntance = dssInstance
-        self._dssSolution = dssInstance.Solution
         self._dssSolution.Mode(2)
-
-        self._dssSolution.Hour((StartDay - 1) * 24)
-        self._dssSolution.Seconds(StartTimeMin * 60.0)
-        self.reSolve()
-
         self._dssSolution.Number(1)
         self._dssSolution.StepSize(self._sStepRes)
         self._dssSolution.MaxControlIterations(SimulationSettings['Project']['Max Control Iterations'])
-        self.pyLogger.debug("QSTS Solver setup complete")
         return
-
-
-    def setFrequency(self, frequency):
-        self._dssSolution.Frequency(frequency)
-        return
-
-    def getFrequency(self):
-        return self._dssSolution.Frequency()
-
-    def SimulationSteps(self):
-        Seconds = (self._EndTime - self._StartTime).total_seconds()
-        Steps = math.ceil(Seconds / self._sStepRes)
-        return Steps, self._StartTime, self._EndTime
 
     def SolveFor(self, mStartTime, mTimeStep):
         Hour = int(mStartTime/60)
@@ -68,25 +31,6 @@ class QSTS(abstact_solver):
         #self.pyLogger.info('OpenDSS time [h] - ' + str(self._dssSolution.DblHour()))
         #self.pyLogger.info('PyDSS datetime - ' + str(self._Time))
 
-    def GetOpenDSSTime(self):
-        return self._dssSolution.DblHour() #- self._sStepRes/3600
-
-    def GetTotalSeconds(self):
-        return (self._Time - self._StartTime).total_seconds()
-
-    def GetDateTime(self):
-        return self._Time
-
-    @property
-    def MaxIterations(self):
-        return self.Settings['Project']['Max Control Iterations']
-
-    def GetStepResolutionSeconds(self):
-        return self._sStepRes
-
-    def GetStepSizeSec(self):
-        return self._sStepRes
-
     def reSolve(self):
         self._dssSolution.StepSize(0)
         self._dssSolution.SolveNoControl()
@@ -95,11 +39,8 @@ class QSTS(abstact_solver):
         self._dssSolution.StepSize(0)
         self._dssSolution.Solve()
 
-    def getMode(self):
-        return self._dssSolution.ModeID()
-
     def setMode(self, mode):
-        self._dssIntance.utils.run_command('Set Mode={}'.format(mode))
+        self._dssInstance.utils.run_command('Set Mode={}'.format(mode))
         if mode.lower() == 'yearly':
             self._dssSolution.Mode(2)
             self._dssSolution.Hour(self._Hour)
