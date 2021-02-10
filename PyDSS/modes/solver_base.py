@@ -13,29 +13,26 @@ class solver_base:
                                                       DATE_FORMAT)
         time_offset_days = (self._Time - self._Loadshape_init_time).days
         time_offset_seconds = (self._Time - self._Loadshape_init_time).seconds
-        # print(time_offset_days, time_offset_seconds)
-        # quit()
+
         self._StartTime = self._Time
         self._EndTime = self._Time + timedelta(minutes=SimulationSettings['Project']["Simulation duration (min)"])
-        StartDay = (self._StartTime - datetime(self._StartTime.year, 1, 1)).days + 1 + time_offset_days
-        StartTimeMin = self._StartTime.minute + time_offset_seconds / 60.0
+
+        StartDay = time_offset_days
+        StartTimeMin = time_offset_seconds / 60.0
         sStepResolution = SimulationSettings['Project']['Step resolution (sec)']
 
-        self.StartDay = (self._StartTime - datetime(self._StartTime.year, 1, 1)).days + 1
-        self.EndDay = (self._EndTime - datetime(self._EndTime.year, 1, 1)).days + 1
+        self.StartDay = self._StartTime.timetuple().tm_yday
+        self.EndDay = self._EndTime.timetuple().tm_yday
 
         self._sStepRes = sStepResolution
         self._dssInstance = dssInstance
         self._dssSolution = dssInstance.Solution
 
-        self._dssSolution.Hour((StartDay - 1) * 24)
-        self._dssSolution.Seconds(StartTimeMin * 60.0)
-        self.reSolve()
+        self._Hour = StartDay * 24
+        self._Second = StartTimeMin * 60.0
 
-        self._dssSolution.Number(1)
-        self._dssSolution.StepSize(self._sStepRes)
-        self._MaxItrs = SimulationSettings['Project']['Max Control Iterations']
-        self._dssSolution.MaxControlIterations(SimulationSettings['Project']['Max Control Iterations'])
+        #self._dssSolution.DblHour()
+        self.reSolve()
         self.pyLogger.info("{} solver setup complete".format(SimulationSettings['Project']["Simulation Type"]))
 
 

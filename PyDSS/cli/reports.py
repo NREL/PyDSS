@@ -129,7 +129,7 @@ def getReportTypes(logsPath, reportFile):
     lines = f.readlines()
     reportTypes = []
     for l in lines:
-        data = json.loads(l[:-1])
+        data = json.loads(l.strip())
         if "Report" not in data:
             print("Skipping {}. Not a valid PyDSS report.".format(fileName))
             return None
