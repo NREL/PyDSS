@@ -1,3 +1,5 @@
+from PyDSS.common import DATE_FORMAT
+from datetime import datetime
 import os
 
 settings_dict = {
@@ -109,6 +111,20 @@ def validate_settings(dss_args):
         for key, ctype in params.items():
             assert (key in dss_args[
                 category]), "category='{}' field='{}' definition is missing in the TOML file".format(category, key)
+
+    try:
+        Date = datetime.strptime(dss_args['Project']["Start time" ], DATE_FORMAT)
+    except:
+        raise Exception("For category='Project', field='Start time' should be a datetime string with format {}".format(
+            DATE_FORMAT
+        ))
+
+    try:
+        Date = datetime.strptime(dss_args['Project']["Loadshape start time"], DATE_FORMAT)
+    except:
+        raise Exception("For category='Project', field='Loadshape start time' should be a datetime string with format {}".format(
+            DATE_FORMAT
+        ))
 
     assert (dss_args['Frequency']['End frequency'] >= dss_args['Frequency']['Start frequency']), \
         "'End frequency' can not be smaller than 'Start frequency'"

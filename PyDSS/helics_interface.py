@@ -86,14 +86,12 @@ class helics_interface:
         helics.helicsFederateInfoSetCoreInitString(self.fedinfo, f"--federates=1")
         bLoc = self._options['Helics']['Broker']
         Port = self._options['Helics']['Broker port']
-        print("Connecting to broker @ {}".format(f"{bLoc}:{Port}" if Port else bLoc))
+        self._logger.info("Connecting to broker @ {}".format(f"{bLoc}:{Port}" if Port else bLoc))
 
         if self._options['Helics']['Broker']:
             helics.helicsFederateInfoSetBroker(self.fedinfo, self._options['Helics']['Broker'])
         if self._options['Helics']['Broker port']:
             helics.helicsFederateInfoSetBrokerPort(self.fedinfo, self._options['Helics']['Broker port'])
-        else:
-            print("asdas")
         helics.helicsFederateInfoSetTimeProperty(self.fedinfo, helics.helics_property_time_delta,
                                                  self._options['Helics']['Time delta'])
         helics.helicsFederateInfoSetIntegerProperty(self.fedinfo, helics.helics_property_int_log_level,
@@ -179,7 +177,6 @@ class helics_interface:
                         else:
                             self._subscription_dState[element_name].insert(0, self._subscription_dState[element_name].pop())
                         self._subscription_dState[element_name][0] = value
-                        #print(self._subscription_dState[element_name])
         self.c_seconds_old = self.c_seconds
 
     def _registerFederatePublications(self, pubs):

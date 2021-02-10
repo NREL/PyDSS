@@ -82,8 +82,3 @@ class dssTransformer(dssElement):
         else:
             return None
         return VarValue
-
-    def SetActiveObject(self):
-        self._dssInstance.Circuit.SetActiveElement(self._FullName)
-        if self._dssInstance.CktElement.Name() != self._dssInstance.Element.Name():
-            raise InvalidParameter('Object is not a circuit element')
