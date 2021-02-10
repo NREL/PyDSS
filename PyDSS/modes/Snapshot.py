@@ -1,7 +1,4 @@
 from PyDSS.modes.solver_base import solver_base
-from datetime import datetime, timedelta
-from PyDSS.common import DATE_FORMAT
-import math
 
 class Snapshot(solver_base):
     def __init__(self, dssInstance, SimulationSettings, Logger):

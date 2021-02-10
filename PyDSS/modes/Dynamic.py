@@ -1,6 +1,5 @@
 from PyDSS.modes.solver_base import solver_base
-from datetime import datetime, timedelta
-from PyDSS.common import DATE_FORMAT
+from datetime import timedelta
 import math
 
 class Dynamic(solver_base):
@@ -11,6 +10,21 @@ class Dynamic(solver_base):
         self._dssSolution.StepSize(self._sStepRes)
         self._dssSolution.MaxControlIterations(self._MaxItrs)
         return
+
+    def setFrequency(self, frequency):
+        self._dssSolution.Frequency(frequency)
+        return
+
+    def getFrequency(self):
+        return  self._dssSolution.Frequency()
+
+    def SimulationSteps(self):
+        Seconds = (self._EndTime - self._StartTime).total_seconds()
+        Steps = math.ceil(Seconds / self._sStepRes)
+        return Steps, self._StartTime, self._EndTime
+
+    def GetOpenDSSTime(self):
+        return self._dssSolution.DblHour()
 
     def reset(self):
         self.setMode('Dynamic')
@@ -46,6 +60,4 @@ class Dynamic(solver_base):
     def Solve(self):
         self._dssSolution.StepSize(0)
         self._dssSolution.Solve()
-
-
 

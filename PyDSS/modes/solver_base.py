@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 from PyDSS.common import DATE_FORMAT
 import math
-#import abc
 
 class solver_base:
     def __init__(self, dssInstance, SimulationSettings, Logger):

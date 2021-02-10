@@ -1,7 +1,5 @@
 from PyDSS.modes.solver_base import solver_base
-from datetime import datetime, timedelta
-from PyDSS.common import DATE_FORMAT
-import math
+from datetime import timedelta
 
 class QSTS(solver_base):
     def __init__(self, dssInstance, SimulationSettings, Logger):
@@ -22,14 +20,11 @@ class QSTS(solver_base):
         return
 
     def IncStep(self):
-        #self.__sStepRes = 1/240
         self._dssSolution.StepSize(self._sStepRes)
         self._dssSolution.Solve()
         self._Time = self._Time + timedelta(seconds=self._sStepRes)
         self._Hour = int(self._dssSolution.DblHour() // 1)
         self._Second = (self._dssSolution.DblHour() % 1) * 60 * 60
-        #self.pyLogger.info('OpenDSS time [h] - ' + str(self._dssSolution.DblHour()))
-        #self.pyLogger.info('PyDSS datetime - ' + str(self._Time))
 
     def reSolve(self):
         self._dssSolution.StepSize(0)
