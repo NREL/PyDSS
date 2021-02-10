@@ -117,3 +117,7 @@ class QSTS(abstact_solver):
             dss.Solution.Number(1)
             dss.Solution.StepSize(0)
             dss.Solution.MaxControlIterations(self.Settings['Project']['Max Control Iterations'])
+
+    @property
+    def MaxIterations(self):
+        return self.Settings['Project']['Max Control Iterations']

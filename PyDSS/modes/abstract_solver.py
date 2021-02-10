@@ -65,3 +65,7 @@ class abstact_solver(abc.ABC):
     @abc.abstractmethod
     def setMode(self, mode):
         return
+
+    @abc.abstractmethod
+    def MaxIterations(self):
+        """Return the maximum number of control iterations"""

@@ -95,3 +95,7 @@ class Dynamic(abstact_solver):
 
     def setMode(self, mode):
         self._dssIntance.utils.run_command('Set Mode={}'.format(mode))
+
+    @property
+    def MaxIterations(self):
+        return self.Settings['Project']['Max Control Iterations']

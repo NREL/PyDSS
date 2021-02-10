@@ -7,7 +7,7 @@
 "Date offset" = 0
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 15
-"Error tolerance" = 0.001
+"Error tolerance" = 0.0001
 "Skip export on convergence error" = false
 "Control mode" = "Time"
 "Disable PyDSS controllers" = false

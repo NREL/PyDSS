@@ -63,3 +63,7 @@ class Snapshot(abstact_solver):
 
     def getMode(self):
         return self._dssSolution.ModeID()
+
+    @property
+    def MaxIterations(self):
+        return self.Settings['Project']['Max Control Iterations']

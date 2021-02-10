@@ -67,6 +67,7 @@ class PvController(ControllerAbstract):
         self.__PFrated = Settings['PFlim']
         self.Pmppt = 100
         self.pf = 1
+        self.itr = 0
 
         self.update = [self.ControlDict[Settings['Control' + str(i)]] for i in [1, 2, 3]]
 
@@ -77,6 +78,12 @@ class PvController(ControllerAbstract):
     def Update(self, Priority, Time, Update):
         self.TimeChange = self.Time != (Priority, Time)
         self.Time = (Priority, Time)
+
+        if not self.TimeChange:
+            self.itr += 1
+        else:
+            self.itr = 0
+
         Ppv = -sum(self.__ControlledElm.GetVariable('Powers')[::2]) / self.__Prated
         if self.__pDisconnected:
             if Ppv < self.__cutin:
@@ -258,8 +265,16 @@ class PvController(ControllerAbstract):
             Qcalc = -self.QlimPU
 
         # adding heavy ball term to improve convergence
-        Qcalc = Qpv + (Qcalc - Qpv) * 0.5 / self.__dampCoef + (Qpv - self.oldQcalc) * 0.1 / self.__dampCoef
+        #a1 = 0.5 * (1 + self.__dampCoef * (1 - self.itr / self.__dssSolver.MaxIterations))
+        a = 0.7 + 0.5 * self.__dampCoef * (1 - self.itr / self.__dssSolver.MaxIterations)
+        b = 0.1 / self.__dampCoef
+        #print(a, b)
+        Qcalc = Qpv + (Qcalc - Qpv) * a + (Qpv - self.oldQcalc) * b
         dQ = abs(Qcalc - Qpv)
+
+        # adding heavy ball term to improve convergence
+        #Qcalc = Qpv + (Qcalc - Qpv) * 0.5 / self.__dampCoef + (Qpv - self.oldQcalc) * 0.1 / self.__dampCoef
+        #dQ = abs(Qcalc - Qpv)
 
         if Priority == 'Var':
             Plim = (1 - Qcalc ** 2) ** 0.5
