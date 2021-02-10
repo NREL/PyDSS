@@ -24,4 +24,3 @@ aiohttp
 aiohttp_swagger3
 requests
 pyyaml
-xlrd
