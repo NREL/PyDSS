@@ -69,7 +69,7 @@ class solver_base:
         return self._dssSolution.ModeID()
 
     def setMode(self, mode):
-        return
+        return self._dssInstance.utils.run_command('Set Mode={}'.format(mode))
 
     def GetOpenDSSTime(self):
         return self._dssSolution.DblHour()
@@ -80,20 +80,15 @@ class solver_base:
 
     def SolveFor(self, mStartTime, mTimeStep):
         raise Exception("Implement the 'SolveFor' function in the child class")
-        return
 
     def reset(self):
         raise Exception("Implement the 'reset' function in the child class")
-        return
 
     def reSolve(self):
         raise Exception("Implement the 'reSolve' function in the child class")
-        return
 
     def Solve(self):
         raise Exception("Implement the 'Solve' function in the child class")
-        return
 
     def IncStep(self):
         raise Exception("Implement the 'IncStep' function in the child class")
-        return

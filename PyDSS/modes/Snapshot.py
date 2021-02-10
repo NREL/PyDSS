@@ -11,28 +11,6 @@ class Snapshot(solver_base):
         self._dssSolution.MaxControlIterations(SimulationSettings['Project']['Max Control Iterations'])
         return
 
-    def SimulationSteps(self):
-        return 1, self._StartTime, self._EndTime
-
-    def GetOpenDSSTime(self):
-        return self._dssSolution.DblHour()
-
-    def GetDateTime(self):
-        return self._Time
-
-    @property
-    def MaxIterations(self):
-        return self.Settings['Project']['Max Control Iterations']
-
-    def GetTotalSeconds(self):
-        return (self._Time - self._StartTime).total_seconds()
-
-    def GetStepResolutionSeconds(self):
-        return self._sStepRes
-
-    def GetStepSizeSec(self):
-        return self._sStepRes
-
     def reSolve(self):
         return self._dssSolution.SolveNoControl()
 
@@ -41,16 +19,3 @@ class Snapshot(solver_base):
 
     def IncStep(self):
         return self._dssSolution.Solve()
-
-    def setFrequency(self, frequency):
-        self._dssSolution.Frequency(frequency)
-        return
-
-    def getFrequency(self):
-        return  self._dssSolution.Frequency()
-
-    def setMode(self, mode):
-        return self._dssInstance.utils.run_command('Set Mode={}'.format(mode))
-
-    def getMode(self):
-        return self._dssSolution.ModeID()
