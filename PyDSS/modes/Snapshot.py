@@ -31,6 +31,10 @@ class Snapshot(abstact_solver):
     def GetDateTime(self):
         return self._Time
 
+    @property
+    def MaxIterations(self):
+        return self.Settings['Project']['Max Control Iterations']
+
     def GetTotalSeconds(self):
         return (self._Time - self._StartTime).total_seconds()
 

@@ -10,42 +10,33 @@ from multiprocessing import Queue, Process, Event, cpu_count
 from concurrent.futures import ThreadPoolExecutor
 from PyDSS.api.src.web.parser import variable_decode, bytestream_decode
 from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, VisualizationType
-from naerm_core.web import error_responses as error
-from naerm_core.config_reader.config import EndpointsConfig
 
 logger = logging.getLogger(__name__)
 
-class Handler:
 
+class Handler:
     """ Handlers for web server. """
 
-    def __init__(self, helics_: dict,   services: EndpointsConfig, loop=None, debug=False):
+    def __init__(self):
         """ Constructor for PyDSS handler. """
-        
+
         logger.info("Initializing Handler ....")
-        self.helics_ = helics_
-        self.services = {}
-        for key in services.endpoints:
-            self.services.update({key: services.__getattr__(key)})
 
         # Initializing pydss_instances dict
         self.pydss_instances = dict()
 
         # Event flag to control shutdown of background tasks
-        self.shutdown_event = Event()
-        logger.info(f"Maximum parallel processes: {cpu_count()-1}")
-        self.pool = ThreadPoolExecutor(max_workers=cpu_count()-1)
-        self.loop = loop
-
+        self.event = Event()
+        logger.info(f"Maximum parallel processes: {cpu_count() - 1}")
+        self.pool = ThreadPoolExecutor(max_workers=cpu_count() - 1)
+        self.loop = asyncio.get_event_loop()
 
     async def get_pydss_project_info(self, request, path):
         """
-
         ---
         summary: Returns a dictionary of valid project and scenarios in the provided path
         tags:
          - PyDSS project
-
         parameters:
          - name: path
            in: query
@@ -53,7 +44,6 @@ class Handler:
            schema:
               type: string
               example: C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples
-
         responses:
          '200':
            description: Successfully retrieved project information
@@ -80,8 +70,8 @@ class Handler:
                             Status: 406
                             Message: Provided path does not exist
                             UUID: None
-
         """
+        print(path)
         logger.info(f"Exploring {path} for valid projects")
 
         if not os.path.exists(path):
@@ -113,12 +103,10 @@ class Handler:
 
     async def post_pydss_create(self, request):
         """
-
         ---
         summary: Creates a new project for PyDSS (User uploads a zipped OpenDSS model)
         tags:
          - PyDSS project
-
         requestBody:
             content:
                 multipart/form-data:
@@ -146,7 +134,6 @@ class Handler:
                         fileName:
                           type: string
                           format: binary
-
         responses:
          '200':
            description: Successfully retrieved project information
@@ -172,13 +159,12 @@ class Handler:
                             Status: 403
                             Message: User does not have access to delete folders
                             UUID: None
-
         """
 
         from zipfile import ZipFile
-        examples_path = os.path.join( "C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/", 'examples')
+        examples_path = os.path.join("C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/", 'examples')
         unzip_path = os.path.join(examples_path, "uploaded_opendss_project")
-        zip_path = os.path.join(examples_path , "uploaded_opendss_project.zip")
+        zip_path = os.path.join(examples_path, "uploaded_opendss_project.zip")
 
         data = None
         with open(zip_path, 'wb') as fd:
@@ -241,7 +227,6 @@ class Handler:
 
     async def post_pydss(self, request):
         """
-
                 ---
                 summary: Creates an instance of PyDSS and runs the simulation
                 tags:
@@ -257,24 +242,28 @@ class Handler:
                             examples:
                                     Example 1:
                                         value:
-                                            Co-simulation UUID: "96c21e00-cd3c-4943-a914-14451f5f7ab6"
-                                            Start time: "1/1/2020 00:00:00"
-                                            Simulation duration (min): 1440.0
-                                            Step resolution (sec): 900
-                                            Project Path: "6fec60b1-f0cb-42aa-b06d-33d9d28bc36b"
-                                            Federate name: PyDSS_x
-                                    Example 2:
-                                        value:
-                                            Co-simulation UUID: "96c21e00-cd3c-4943-a914-14451f5f7ab6"
-                                            Start time: "1/1/2020 00:00:00"
-                                            Simulation duration (min): 0.00166
-                                            Step resolution (sec): 0.0041664
-                                            Project Path: "C:/Users/KDUWADI/Box/NAERM_project/PyDSSexamples/examples"
-                                            Federate name: der_fed
-                                            Active Project: custom_contols
-                                            Active Scenario: base_case
-                                            DSS File: "Master_Spohn_existing_VV.dss"
-
+                                            parameters:
+                                                Start Year: 2017
+                                                Start Day: 1
+                                                Start Time (min): 0
+                                                End Day: 1
+                                                End Time (min): 1439
+                                                Date offset: 0
+                                                Step resolution (sec): 900
+                                                Max Control Iterations: 50
+                                                Error tolerance: 0.001
+                                                Control mode: Static
+                                                Simulation Type: QSTS
+                                                Project Path: "C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples"
+                                                Active Project: custom_contols
+                                                Active Scenario: base_case
+                                                DSS File: Master_Spohn_existing_VV.dss
+                                                Co-simulation Mode: false
+                                                Result Container: ResultData
+                                                Log Results: false
+                                                Export Data Tables: true
+                                                Export Data In Memory: true
+                                                Federate name: PyDSS_x
                 responses:
                  '200':
                    description: Successfully retrieved project information
@@ -288,7 +277,6 @@ class Handler:
                                     Status: 200
                                     Message: Starting a PyDSS instance
                                     UUID: 96c21e00-cd3c-4943-a914-14451f5f7ab6
-
                  '500':
                    description: Provided path does not exist
                    content:
@@ -301,7 +289,6 @@ class Handler:
                                     Status: 500
                                     Message: Failed to create a PyDSS instance
                                     UUID: None
-
                 """
         data = await request.json()
         logger.info(f"Running command :{data}")
@@ -309,10 +296,8 @@ class Handler:
         pydss_uuid = str(uuid4())
         q = Queue()
 
-        data.update({'fed_uuid': pydss_uuid})
-
         # Create a process for PyDSS instance
-        p = Process(target=PyDSS, name=pydss_uuid, args=(self.helics_, self.services, self.shutdown_event, q, data))
+        p = Process(target=PyDSS, name=pydss_uuid, args=(self.event, q, data))
         # Store queue and process
         self.pydss_instances[pydss_uuid] = {"queue": q, "process": p}
         # Catching data coming from PyDSS
@@ -321,22 +306,21 @@ class Handler:
 
         # Start process for pydss
         p.start()
-        # Return a message to webclient        
+        # Return a message to webclient
         result = {'Status': 200,
                   'Message': 'Starting a PyDSS instance',
                   'UUID': pydss_uuid}
-        
+
         return web.json_response(result)
 
     async def put_pydss(self, request):
 
         """ Running PyDSS app""""""
-
         ---
         summary: Run a command on an active instance of PyDSS
         tags:
          - Simulation
-        
+
         requestBody:
             content:
                 application/json:
@@ -417,27 +401,25 @@ class Handler:
             self.pydss_instances[pydss_uuid]['queue'].put(data)
 
             result = {"Status": 200,
-                      "Message":f"{data['command']} command submitted, awaiting response ",
-                      "UUID":pydss_uuid
+                      "Message": f"{data['command']} command submitted, awaiting response ",
+                      "UUID": pydss_uuid
                       }
             return web.json_response(result)
         else:
             logger.error(f"UUID={pydss_uuid} not found.")
 
             result = {"Status": 403,
-                      "Message":f"{pydss_uuid} is not valid PyDSS instance id ",
-                      "UUID":pydss_uuid
+                      "Message": f"{pydss_uuid} is not valid PyDSS instance id ",
+                      "UUID": pydss_uuid
                       }
             return web.json_response(result)
 
     async def delete_pydss(self, request):
         """
-
         ---
         summary: Deletes an active instance of PyDSS
         tags:
          - Simulation
-
         parameters:
           - name: uuid
             in: path
@@ -446,7 +428,6 @@ class Handler:
               type: string
               format: uuid
               example: 96c21e00-cd3c-4943-a914-14451f5f7ab6
-
         responses:
          '200':
            description: Successfully retrieved project information
@@ -472,7 +453,6 @@ class Handler:
                             Status: 403
                             Message: Error closing PyDSS instance
                             UUID: None
-
         """
 
         data = await request.json()
@@ -485,7 +465,7 @@ class Handler:
                 logger.error(f"UUID={pydss_uuid} not found.")
 
             try:
-                pydss_t = self.loop.run_in_executor(self.pool,self._delete_background_task,pydss_uuid)
+                pydss_t = self.loop.run_in_executor(self.pool, self._delete_background_task, pydss_uuid)
                 pydss_t.add_done_callback(self._delete_callback)
 
                 self.pydss_instances[pydss_uuid]["queue"].put("END")
@@ -501,19 +481,17 @@ class Handler:
         else:
 
             return web.json_response({
-                    "Status": 403,
-                    "Message": f"Error closing PyDSS instance",
-                    "UUID": None
-                })
+                "Status": 403,
+                "Message": f"Error closing PyDSS instance",
+                "UUID": None
+            })
 
     async def get_instance_uuids(self, request):
         """
-
         ---
         summary: Returns UUIDs of all the instances currently running on the server
         tags:
          - simulation status
-
         responses:
          '200':
            description: UUIDs of all currently running PyDSS instances have been returned
@@ -539,7 +517,6 @@ class Handler:
                             Status: 204
                             Message: No PyDSS instance currently running
                             UUID: ["96c21e00-cd3c-4943-a914-14451f5f7ab6", "96c21e045-cd6c-8394-a914-14451f5f7ab6"]
-
         """
         uuids = [str(k) for k in self.pydss_instances.keys()]
         if len(uuids) > 0:
@@ -557,12 +534,10 @@ class Handler:
 
     async def get_instance_status(self, request, uuid: str):
         """
-
         ---
         summary: Returns states of process of with UUID matching the passed UUID
         tags:
          - simulation status
-
         parameters:
           - name: uuid
             in: path
@@ -571,7 +546,6 @@ class Handler:
               type: string
               format: uuid
               example: 96c21e00-cd3c-4943-a914-14451f5f7ab6
-
         responses:
          '200':
            description: PyDSS instance with the provided UUID is currently running
@@ -597,7 +571,6 @@ class Handler:
                             Status: 204
                             Message: PyDSS instance with the provided UUID does not exist
                             UUID: None
-
         """
 
         if uuid not in self.pydss_instances:
@@ -608,8 +581,8 @@ class Handler:
             msg = "PyDSS instance with the provided UUID is currently running"
 
         return web.json_response({
-            "Status":status,
-            "Message":msg,
+            "Status": status,
+            "Message": msg,
             "UUID": uuid
         })
 
@@ -618,22 +591,22 @@ class Handler:
         q = self.pydss_instances[pydss_uuid]["queue"]
         return q.get()
 
-    def _post_put_callback(self,return_value):
+    def _post_put_callback(self, return_value):
 
         logger.info(f"{return_value.result()}")
 
-    async def _get_uuid(self,data):
+    async def _get_uuid(self, data):
 
         if "UUID" not in data:
             return None
-        
+
         pydss_uuid = data['UUID']
         if pydss_uuid not in self.pydss_instances.keys():
             return None
-        
+
         return pydss_uuid
-    
-    def _delete_background_task(self,pydss_uuid):
+
+    def _delete_background_task(self, pydss_uuid):
 
         while self.pydss_instances[pydss_uuid]["process"].is_alive():
             continue
@@ -641,8 +614,8 @@ class Handler:
         del self.pydss_instances[pydss_uuid]
 
         return {
-            "Status":"Success",
-            "Message":"PyDSS instance closed",
+            "Status": "Success",
+            "Message": "PyDSS instance closed",
             "UUID": pydss_uuid
         }
 

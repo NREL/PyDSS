@@ -1,19 +1,16 @@
 """
 Takes GET/POST variable dictionary, as might be returned by ``cgi``,
 and turns them into lists and dictionaries.
-
 Keys (variable names) can have subkeys, with a ``.`` and
 can be numbered with ``-``, like ``a.b-3=something`` means that
 the value ``a`` is a dictionary with a key ``b``, and ``b``
 is a list, the third(-ish) element with the value ``something``.
 Numbers are used to sort, missing numbers are ignored.
-
 This doesn't deal with multiple keys, like in a query string of
 ``id=10&id=20``, which returns something like ``{'id': ['10',
 '20']}``.  That's left to someplace else to interpret.  If you want to
 represent lists in this model, you use indexes, and the lists are
 explicitly ordered.
-
 If you want to change the character that determines when to split for
 a dict or list, both variable_decode and variable_encode take dict_char
 and list_char keyword args. For example, to have the GET/POST variables,
@@ -29,13 +26,13 @@ defaultSettings.__file__
 __all__ = ['variable_decode']
 
 master_dict = {
-    "Project" : ["Start time", "Simulation duration (min)", "Date offset",
+    "Project" : ["Start Year", "Start Day", "Start Time (min)", "End Day", "End Time (min)", "Date offset",
                  "Step resolution (sec)", "Max Control Iterations", "Error tolerance", "Control mode",
                  "Disable PyDSS controllers", "Simulation Type", "Project Path", "Active Project", "Active Scenario",
                  "DSS File", "DSS File Absolute Path", "Return Results"],
     "Exports" : ["Export Mode", "Export Style", "Export Format", "Export Compression", "Export Iteration Order",
                  "Export Elements", "Export Data Tables", "Export Data In Memory", "HDF Max Chunk Bytes",
-                 "Export Event Log", "Log Results", "Result Container."],
+                 "Export Event Log", "Log Results", "Result Container"],
     "Frequency" : ["Enable frequency sweep", "Fundamental frequency", "Start frequency", "End frequency",
                    "frequency increment", "Neglect shunt admittance", "Percentage load in series"],
     "Helics" : ["Co-simulation Mode", "Federate name", "Time delta", "Core type", "Uninterruptible",
@@ -74,18 +71,18 @@ def restructure_dictionary(d):
             if k in valid_entries:
                 if key not in pydss_settings:
                     pydss_settings[key] = {}
-                if i == "False" or i == "false":
+                if i == "False" or i == "false" or i == False:
                     i = False
-                elif i == "True" or i == "true":
+                elif i == "True" or i == "true" or i == True:
                     i = True
-                # else
-                #     try:
-                #         i = int(i)
-                #     except:
-                #         try:
-                #             i = float(i)
-                #         except:
-                #             pass
+                else:
+                    try:
+                        i = int(i)
+                    except:
+                        try:
+                            i = float(i)
+                        except:
+                            pass
                 pydss_settings[key][k] = i
 
     for key, valid_entries in master_dict.items():
@@ -110,4 +107,3 @@ def variable_decode(d, dict_char='.', list_char='-'):
     for key, value in d.items():
         result[key] = value
     return result
-

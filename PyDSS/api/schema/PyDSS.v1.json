@@ -2,7 +2,7 @@
     "info": {
         "description": "The API enables creating PyDSS instances, running simulations and creation of new projects.",
         "title": "PyDSS RESTful API documentation",
-        "version": "2.0.1"
+        "version": "2.0.0"
     },
     "openapi": "3.0.0",
     "paths": {
@@ -74,25 +74,29 @@
                             "examples": {
                                 "Example 1": {
                                     "value": {
-                                        "Co-simulation UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
-                                        "Federate name": "PyDSS_x",
-                                        "Project Path": "6fec60b1-f0cb-42aa-b06d-33d9d28bc36b",
-                                        "Simulation duration (min)": 1440.0,
-                                        "Start time": "1/1/2020 00:00:00",
-                                        "Step resolution (sec)": 900
-                                    }
-                                },
-                                "Example 2": {
-                                    "value": {
-                                        "Active Project": "custom_contols",
-                                        "Active Scenario": "base_case",
-                                        "Co-simulation UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
-                                        "DSS File": "Master_Spohn_existing_VV.dss",
-                                        "Federate name": "der_fed",
-                                        "Project Path": "C:/Users/KDUWADI/Box/NAERM_project/PyDSSexamples/examples",
-                                        "Simulation duration (min)": 0.00166,
-                                        "Start time": "1/1/2020 00:00:00",
-                                        "Step resolution (sec)": 0.0041664
+                                        "parameters": {
+                                            "Active Project": "custom_contols",
+                                            "Active Scenario": "base_case",
+                                            "Co-simulation Mode": false,
+                                            "Control mode": "Static",
+                                            "DSS File": "Master_Spohn_existing_VV.dss",
+                                            "Date offset": 0,
+                                            "End Day": 1,
+                                            "End Time (min)": 1439,
+                                            "Error tolerance": 0.001,
+                                            "Export Data In Memory": true,
+                                            "Export Data Tables": true,
+                                            "Federate name": "PyDSS_x",
+                                            "Log Results": false,
+                                            "Max Control Iterations": 50,
+                                            "Project Path": "C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples",
+                                            "Result Container": "ResultData",
+                                            "Simulation Type": "QSTS",
+                                            "Start Day": 1,
+                                            "Start Time (min)": 0,
+                                            "Start Year": 2017,
+                                            "Step resolution (sec)": 900
+                                        }
                                     }
                                 }
                             },

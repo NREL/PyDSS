@@ -68,6 +68,10 @@ class abstact_solver(abc.ABC):
     def GetOpenDSSTime(self):
         return
 
+    @abc.abstractmethod
+    def MaxIterations(self):
+        return
+
     def reset(self):
 
         return

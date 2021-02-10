@@ -90,6 +90,7 @@ class PvController(ControllerAbstract):
         self.TimeChange = self.Time != (Priority, Time)
         self.Time = (Priority, Time)
         Ppv = -sum(self.__ControlledElm.GetVariable('Powers')[::2]) / self.__Prated
+
         if self.__pDisconnected:
             if Ppv < self.__cutin:
                 return 0

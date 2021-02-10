@@ -145,7 +145,7 @@ class OpenDSS:
         if params['Helics']["Co-simulation Mode"]:
             self._HI = HI.helics_interface(self._dssSolver, self._dssObjects, self._dssObjectsByClass, params,
                                            self._dssPath)
-        print("Setup complete")
+        self._Logger.info("Simulation initialization complete")
         return
 
     def _ModifyNetwork(self):

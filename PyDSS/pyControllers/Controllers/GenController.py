@@ -87,6 +87,10 @@ class GenController(ControllerAbstract):
     def Update(self, Priority, Time, Update):
         self.TimeChange = self.Time != (Priority, Time)
         self.Time = (Priority, Time)
+        if not self.TimeChange:
+            self.Itr += 1
+        else:
+            self.Itr = 0
         return self.update[Priority]()
 
     def VVARcontrol(self):
@@ -128,9 +132,21 @@ class GenController(ControllerAbstract):
             Qcalc = -self.QlimPU
 
         # adding heavy ball term to improve convergence
-        Qcalc = Qpv + (Qcalc - Qpv)# + (Qpv - self.oldQcalc) * 0.1 / self.__dampCoef
+        a = 0.7 + 0.5 * self.__dampCoef * (1 - self.Itr / self.__dssSolver.MaxIterations)
+        b = 0.1 / self.__dampCoef
+        Qcalc = Qpv + (Qcalc - Qpv) * a + (Qpv - self.oldQcalc) * b
         dQ = Qcalc - Qpv
 
+        #Qcalc = Qpv + (Qcalc - Qpv)# + (Qpv - self.oldQcalc) * 0.1 / self.__dampCoef
+        #dQ = Qcalc - Qpv
+
+        Plim = 1
+        if Priority == 'Var':
+            Plim = (1 - Qcalc ** 2) ** 0.5
+        elif Priority == 'Watt':
+            Qlim = (1 - Ppv/self.__Prated ** 2) ** 0.5
+
+        self.__ControlledElm.SetParameter('kW', self.__Prated * Plim)
         self.__ControlledElm.SetParameter('kvar', self.__Srated * Qcalc)
         #print(dQ, uIn, self.__Srated * Qcalc, self.__Srated * Qpv)
         return abs(dQ)

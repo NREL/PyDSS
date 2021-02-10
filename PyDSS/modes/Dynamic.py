@@ -74,6 +74,10 @@ class Dynamic(abstact_solver):
         self.pyLogger.debug('OpenDSS time [h] - ' + str(self._dssSolution.DblHour()))
         self.pyLogger.debug('PyDSS datetime - ' + str(self._Time))
 
+    @property
+    def MaxIterations(self):
+        return self.Settings['Project']['Max Control Iterations']
+
     def GetTotalSeconds(self):
         return (self._Time - self._StartTime).total_seconds()
 

@@ -16,7 +16,7 @@
 [Project]
 "Start time" = "1/1/2020 00:00:00"
 "Simulation duration (min)" = 1440.0
-"Date offset" = 0
+"Loadshape start time" = "1/1/2020 00:00:00"
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001

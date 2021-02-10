@@ -83,7 +83,7 @@ class ResultData:
 
         self._export_list = self._file_reader.pyControllers
         self._create_list_by_class()
-        print("result container created")
+        self._logger.debug("result container created")
 
     def _create_element_list(self, objs, properties):
         elements = []
@@ -165,7 +165,6 @@ class ResultData:
 
     def UpdateResults(self):
         self.CurrentResults.clear()
-        print(self._time_dataset, self._frequency_dataset, self._mode_dataset)
         self._time_dataset.write_value(self._dss_solver.GetDateTime().timestamp())
         self._frequency_dataset.write_value(self._dss_solver.getFrequency())
         self._mode_dataset.write_value(self._dss_solver.getMode())

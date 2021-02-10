@@ -27,7 +27,6 @@ settings_dict = {
             'Percentage load in series': {'type': float, 'Options': range(0, 100)},
         },
         "Helics": {
-            'Co-simulation UUID': {'type': str},
             'Co-simulation Mode': {'type': bool, 'Options': [True, False]},
             'Iterative Mode': {'type': bool, 'Options': [True, False]},
             'Max co-iterations': {'type': int, 'Options': range(1, 1000)},
@@ -59,6 +58,7 @@ settings_dict = {
             'Start time': {'type': str},
             'Simulation duration (min)': {'type': float},
             'Step resolution (sec)': {'type': float},
+            'Loadshape start time': {'type': str},
             'Max Control Iterations' : {'type': int},
             'Error tolerance': {'type': float},
             'Simulation Type': {'type': str, 'Options': ["QSTS", "Dynamic", "Snapshot", "Monte Carlo"]},
