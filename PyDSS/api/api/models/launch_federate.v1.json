@@ -78,28 +78,27 @@
       "default": "1/1/2021 00:00:00"
     },
     "powerflow_options": {
-      "oneOf": [
+      "anyOf": [
         {
           "properties": {
             "pydss_project": {
               "type": "string",
-              "description": "Power flow case uuid (to retrieve case from the Data API) or filename with full path (for local access)"
+              "description": "Path to PyDSS project"
             },
             "active_project": {
               "type": "string",
-              "description": "Desired power flow output file format (PWB or PTI)",
+              "description": "Name of active project in PyDSS project folder",
               "example": "base_case"
             },
             "active_scenario": {
               "type": "string",
-              "description": "Array of helper file uuids or filenames with full paths to be used by the powerflow software (.aux). These could include files specifiying area control mechanism, reactive capability curves, and generator cost curves.",
+              "description": "Name of active scenario in PyDSS project folder",
               "example": "custom_controls"
             },
             "master_dss_file": {
-              "type": "string",
-              "description": "Array of filenames for spreadsheets with load and renewable generation time series data",
+              "description": "Name of master dss file",
               "example": "Master.dss",
-              "pattern": ".*(.dss)"
+              "type": "string"
             }
           },
           "required": [
@@ -113,11 +112,12 @@
           "properties": {
             "pydss_project": {
               "type": "string",
-              "format": "uuid",
-              "example": "1e861ce4-b8bb-4745-9e04-f76ed6795d52"
+              "example": "1e861ce4-b8bb-4745-9e04-f76ed6795d52",
+              "description": "UUID of the PyDSS zipped project"
             },
             "sub_id": {
-              "type": "string"
+              "type": "string",
+              "description": "Subscription ID "
             }
           },
           "required": [
