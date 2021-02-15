@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import time
 import helics as h
 from math import pi
@@ -54,16 +53,16 @@ pub1 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.load1.power", "
 print("PI SENDER: Publication registered")
 pub2 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.feederhead.voltage", "double", "kW")
 print("PI SENDER: Publication registered")
-sub1 = h.helicsFederateRegisterSubscription(vfed, "PyDSS.Source.DEMO-STATION-S2.KWTOT", "")
+sub1 = h.helicsFederateRegisterSubscription(vfed, "PyDSS.Circuit.heco19021.TotalPower", "")
 #h.helicsInputSetMinimumChange(sub1, 0.1)
 
 # Enter execution mode #
 h.helicsFederateEnterExecutingMode(vfed)
 
 
+
 for t in range(1, 30):
     time_requested = t * 60
-
     #while time_requested < r_seconds:
     currenttime = h.helicsFederateRequestTime(vfed, time_requested)
     iteration_state = h.helics_iteration_result_iterating
@@ -76,8 +75,8 @@ for t in range(1, 30):
         h.helicsPublicationPublishDouble(pub1, 5.0 + 1. / (1.0 + i))
         print("Published: {}".format((5.0 + 1. / (1.0 + i))))
         h.helicsPublicationPublishDouble(pub2, 1.0)
-        value = h.helicsInputGetDouble(sub1)
-        print("Circuit active power demand: {} kW @ time: {}".format(value, currenttime))
+        value = h.helicsInputGetVector(sub1)
+        print("PyDSS.Circuit.heco19021.TotalPower: {} kW @ time: {}".format(value, currenttime))
         #time.sleep(0.01)
         #i+=1
     time.sleep(0.1)
