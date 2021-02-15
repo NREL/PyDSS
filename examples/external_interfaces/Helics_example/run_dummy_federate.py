@@ -49,12 +49,12 @@ vfed = h.helicsCreateValueFederate("Test Federate", fedinfo)
 print("PI SENDER: Value federate created")
 
 # Register the publication #
-pub1 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.load1.power", "double", "(kW)")
+pub1 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.load1.power", "double", "kW")
 
 print("PI SENDER: Publication registered")
-pub2 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.feederhead.voltage", "double", "(kVLN)")
+pub2 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.feederhead.voltage", "double", "kW")
 print("PI SENDER: Publication registered")
-sub1 = h.helicsFederateRegisterSubscription(vfed, "PyDSS.Source.DEMO-STATION-S2.KWTOT", "(kW)")
+sub1 = h.helicsFederateRegisterSubscription(vfed, "PyDSS.Source.DEMO-STATION-S2.KWTOT", "")
 #h.helicsInputSetMinimumChange(sub1, 0.1)
 
 # Enter execution mode #

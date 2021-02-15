@@ -1,11 +1,8 @@
 [Project]
-"Start Year" = 2017
-"Start Day" = 1
-"Start Time (min)" = 0.0
-"End Day" = 1
-"End Time (min)" = 1439.0
-"Date offset" = 0
-"Step resolution (sec)" = 900.0
+"Start time" = "2020-1-1 00:00:00.0"
+"Simulation duration (min)" = 30
+"Loadshape start time" = "2020-1-1 00:00:00.0"
+"Step resolution (sec)" = 60.0
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
 "Control mode" = "Static"
@@ -62,7 +59,7 @@ Uninterruptible = true
 "Helics logging level" = 5
 
 [Logging]
-"Logging Level" = "INFO"
+"Logging Level" = "DEBUG"
 "Log to external file" = true
 "Display on screen" = true
 "Clear old log file" = false
