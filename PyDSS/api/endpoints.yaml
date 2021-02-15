@@ -64,10 +64,10 @@ services:
     port: 3000
     protocol: http
   bes_data:
-    host: api.naerm.team
-    port: 443
+    host: localhost #api.naerm.team
+    port: 3002 #43
     path: /data/bes
-    protocol: https
+    protocol: http #https
   ng_data:
     host: api.naerm.team
     port: 443

@@ -172,7 +172,11 @@ class PyDSS:
                         pub_dict = {
                             "Circuits": {
                                 "Publish": ["TotalPower"],
-                                "NoPublish": []
+                                "NoPublish": ["PVsystems"]
+                            },
+                            "PVSystems": {
+                                "Publish" : [],
+                                "NoPublish" : ["Powers"]
                             }
                         }
                         with open(os.path.join(path_to_sub_file, "ExportMode-byClass.toml"), "w") as f:
