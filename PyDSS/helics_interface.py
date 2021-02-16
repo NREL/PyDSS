@@ -147,6 +147,7 @@ class helics_interface:
                 value = None
                 if sub_info['Data type'].lower() == 'double':
                     value = helics.helicsInputGetDouble(sub_info['Subscription'])
+                    print(element_name, sub_info['Property'], value)
                 elif sub_info['Data type'].lower() == 'vector':
                     value = helics.helicsInputGetVector(sub_info['Subscription'])
                 elif sub_info['Data type'].lower() == 'string':
@@ -181,7 +182,6 @@ class helics_interface:
         if pubs is not None:
             publicationList= pubs
         else:
-
             self._file_reader = pyExportReader(
                 os.path.join(
                     self._system_paths ["ExportLists"],
@@ -220,7 +220,6 @@ class helics_interface:
                 helics.helicsPublicationPublishBoolean(pub, value)
             elif isinstance(value, int):
                 helics.helicsPublicationPublishInteger(pub, value)
-
             #print(element, value)
         return
 

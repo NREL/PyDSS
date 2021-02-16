@@ -2,6 +2,7 @@ import time
 import helics as h
 from math import pi
 import random
+import time
 
 initstring = "-f 2 --name=mainbroker"
 fedinitstring = "--broker=mainbroker --federates=1"
@@ -14,7 +15,7 @@ print("PI SENDER: Helics version = {}".format(helicsversion))
 # Create broker #
 print("Creating Broker")
 broker = h.helicsCreateBroker("zmq", "", initstring)
-print(broker.address)
+#print(broker.address)
 print("Created Broker: ", broker)
 print("Checking if Broker is connected")
 isconnected = h.helicsBrokerIsConnected(broker)
@@ -73,13 +74,12 @@ for t in range(1, 30):
             h.helics_iteration_request_iterate_if_needed
         )
         h.helicsPublicationPublishDouble(pub1, 5.0 + 1. / (1.0 + i))
+        print(iteration_state)
         print("Published: {}".format((5.0 + 1. / (1.0 + i))))
         h.helicsPublicationPublishDouble(pub2, 1.0)
         value = h.helicsInputGetVector(sub1)
         print("PyDSS.Circuit.heco19021.TotalPower: {} kW @ time: {}".format(value, currenttime))
-        #time.sleep(0.01)
         #i+=1
-    time.sleep(0.1)
 
 
 h.helicsFederateFinalize(vfed)

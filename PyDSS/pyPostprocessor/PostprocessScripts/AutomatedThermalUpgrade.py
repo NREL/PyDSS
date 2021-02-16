@@ -5,7 +5,7 @@ from PyDSS.pyPostprocessor.pyPostprocessAbstract import AbstractPostprocess
 from PyDSS.exceptions import InvalidParameter, OpenDssConvergenceError
 # Additional packages
 import os
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import csv
 import pandas as pd
 import math
@@ -18,10 +18,10 @@ import numpy as np
 import seaborn as sns
 import scipy.spatial.distance as ssd
 from sklearn.cluster import AgglomerativeClustering
-import matplotlib.image as mpimg
+#import matplotlib.image as mpimg
 from PyDSS.pyPostprocessor.PostprocessScripts.postprocess_thermal_upgrades import postprocess_thermal_upgrades
 from PyDSS.utils.utils import iter_elements, check_redirect
-plt.rcParams.update({'font.size': 14})
+#plt.rcParams.update({'font.size': 14})
 
 # For an overloaded line if a sensible close enough line code is available then simply change the line code
 #  else add a new line in parallel
@@ -204,15 +204,15 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.logger.info("After upgrades the solution converged: %s", dss.Solution.Converged())
         self.logger.info("Voltages after upgrades max=%s min=%s", max(dss.Circuit.AllBusMagPu()), min(dss.Circuit.AllBusMagPu()))
         self.logger.info("Substation power after upgrades: %s", dss.Circuit.TotalPower())
-        if self.config["Create_upgrade_plots"]:
-            plt.figure(figsize=(40, 40), dpi=10)
-            plt.clf()
-            plt.plot(self.orig_line_ldg_lst, "o", label="Starting Line Loadings")
-            plt.plot(self.final_line_ldg_lst, "o", label="Ending Line Loadings")
-            plt.plot(self.orig_xfmr_ldg_lst, "o", label="Starting Transformer Loadings")
-            plt.plot(self.final_xfmr_ldg_lst, "o", label="Ending Transformer Loadings")
-            plt.legend()
-            plt.savefig(os.path.join(self.config["Outputs"], "Loading_comparisons.pdf"))
+        # if self.config["Create_upgrade_plots"]:
+        #     plt.figure(figsize=(40, 40), dpi=10)
+        #     plt.clf()
+        #     plt.plot(self.orig_line_ldg_lst, "o", label="Starting Line Loadings")
+        #     plt.plot(self.final_line_ldg_lst, "o", label="Ending Line Loadings")
+        #     plt.plot(self.orig_xfmr_ldg_lst, "o", label="Starting Transformer Loadings")
+        #     plt.plot(self.final_xfmr_ldg_lst, "o", label="Ending Transformer Loadings")
+        #     plt.legend()
+        #     plt.savefig(os.path.join(self.config["Outputs"], "Loading_comparisons.pdf"))
         self.logger.debug("Writing Results to output file")
         self.write_dat_file()
         self.logger.debug("Processing upgrade results")
@@ -344,7 +344,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             self.correct_node_coords()
         self.logger.debug("Length: %s", len(self.pos_dict))
         self.create_edge_node_dicts()
-        self.plot_feeder()
+        #self.plot_feeder()
 
     def correct_node_coords(self):
         # If node doesn't have node attributes, attach parent or child node's attributes
@@ -454,22 +454,22 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 self.DT_size_list.append(vals*30)
                 self.DT_sec_coords[bus_sec] = self.pos_dict[bus_sec]
 
-    def plot_feeder(self):
-        plt.figure(figsize=(40, 40), dpi=10)
-        if len(self.edge_size_list)>0:
-            de = nx.draw_networkx_edges(self.G, pos=self.edge_pos_plt_dict, edgelist=self.edge_to_plt_dict, edge_color="r",
-                                        alpha=0.5, width=self.edge_size_list)
-        ec = nx.draw_networkx_edges(self.G, pos=self.pos_dict, alpha=1.0, width=1)
-        if len(self.DT_sec_lst)>0:
-            dt = nx.draw_networkx_nodes(self.G, pos=self.DT_sec_coords, nodelist=self.DT_sec_lst, node_size=self.DT_size_list,
-                                        node_color='deeppink', alpha=1)
-        ldn = nx.draw_networkx_nodes(self.G, pos=self.pos_dict, nodelist=self.nodes_list, node_size=1,
-                                     node_color='k', alpha=1)
-        # nx.draw_networkx_labels(self.G, pos=self.pos_dict, node_size=1, font_size=15)
-        plt.title("Thermal violations")
-        plt.axis("off")
-        plt.savefig(os.path.join(self.config["Outputs"],"Thermal_violations_{}.pdf".format(str(self.plot_violations_counter))))
-        self.plot_violations_counter+=1
+    # def plot_feeder(self):
+    #     #plt.figure(figsize=(40, 40), dpi=10)
+    #     if len(self.edge_size_list)>0:
+    #         de = nx.draw_networkx_edges(self.G, pos=self.edge_pos_plt_dict, edgelist=self.edge_to_plt_dict, edge_color="r",
+    #                                     alpha=0.5, width=self.edge_size_list)
+    #     ec = nx.draw_networkx_edges(self.G, pos=self.pos_dict, alpha=1.0, width=1)
+    #     if len(self.DT_sec_lst)>0:
+    #         dt = nx.draw_networkx_nodes(self.G, pos=self.DT_sec_coords, nodelist=self.DT_sec_lst, node_size=self.DT_size_list,
+    #                                     node_color='deeppink', alpha=1)
+    #     ldn = nx.draw_networkx_nodes(self.G, pos=self.pos_dict, nodelist=self.nodes_list, node_size=1,
+    #                                  node_color='k', alpha=1)
+    #     # nx.draw_networkx_labels(self.G, pos=self.pos_dict, node_size=1, font_size=15)
+    #     plt.title("Thermal violations")
+    #     plt.axis("off")
+    #     plt.savefig(os.path.join(self.config["Outputs"],"Thermal_violations_{}.pdf".format(str(self.plot_violations_counter))))
+    #     self.plot_violations_counter+=1
 
     def export_line_DT_parameters(self):
         self.originial_line_parameters = {}
