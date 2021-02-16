@@ -49,7 +49,8 @@ class pydss_server(ApiServer):
         )
         self.register_media_handlers()
         self.add_routes()
-        self.t = threading.Thread(name='pydss thread', target=getJSONschema, args=(self.host,self.port))
+    
+        self.t = threading.Thread(name='pydss thread', target=getJSONschema, args=('localhost',self.port))
         self.t.start()
         self.run_app(on_cleanup_task=self.cleanup_background_tasks)
 

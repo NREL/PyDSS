@@ -42,7 +42,7 @@ class PyDSS:
         try:
             parameters['Broker'] = helics_['broker']['host']
             parameters['Broker port'] = helics_['broker']['port']
-            parameters['Co-simulation Mode'] = True
+            parameters['Co-simulation Mode'] = False
             self.cosim_uuid = parameters['cosim_uuid']
             self.federate_service = 'der_federate_service'
             self.fed_name = parameters['name']
@@ -172,7 +172,7 @@ class PyDSS:
                         pub_dict = {
                             "Circuits": {
                                 "Publish": ["TotalPower"],
-                                "NoPublish": ["PVsystems"]
+                                "NoPublish": []
                             },
                             "PVSystems": {
                                 "Publish" : [],
@@ -266,7 +266,7 @@ class PyDSS:
                     #Timestep data payload and metadata only in an inital timestep
                     self.a_writer.write(
                         self.parameters['name'],
-                        self.pydss_obj._dssSolver.GetTotalSeconds(),
+                        self.pydss_obj._dssSolver.GetTotalSeconds()/60,
                         restructured_results,
                         i,
                         fed_uuid=self.parameters['fed_uuid'],
@@ -274,7 +274,8 @@ class PyDSS:
                     )
                     
                 #closing federate
-                self.a_writer.send_timesteps()
+                # TODO: At the moment, I cannot pass timestep because bes_data_api attemps to create a vector tile results
+                #self.a_writer.send_timesteps()
                 
                 # Remove the project data
                 if hasattr(self, 'tmp_folder'):
