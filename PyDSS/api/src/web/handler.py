@@ -75,8 +75,8 @@ class Handler:
                                         value:
                                             cosim_uuid: "96c21e00-cd3c-4943-a914-14451f5f7ab6"
                                             start_datetime: "01/01/2020 00:00:00"
-                                            simulation_duration: 0.00166
-                                            simulator_time_resolution: 0.0041664
+                                            simulation_duration: 0.00020832
+                                            simulator_time_resolution: 0.00006944
                                             powerflow_options:
                                                 pydss_project: "C:/Users/KDUWADI/Box/NAERM_project/PyDSSexamples/examples"
                                                 active_project: custom_contols

@@ -60,14 +60,14 @@ services:
     port: 5002
     path: /simulators/ngtransient
   metadata:
-    host: localhost
-    port: 3000
-    protocol: http
+    host: api.naerm.team
+    port: 443
+    protocol: https
   bes_data:
-    host: localhost #api.naerm.team
-    port: 3002 #43
+    host: api.naerm.team
+    port: 443
     path: /data/bes
-    protocol: http #https
+    protocol: https
   ng_data:
     host: api.naerm.team
     port: 443

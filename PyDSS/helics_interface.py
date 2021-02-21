@@ -163,9 +163,9 @@ class helics_interface:
                     value = helics.helicsInputGetInteger(sub_info['Subscription'])
                 if value:
                     value = value * sub_info['Multiplier']
-
                     dssElement = self._objects_by_element[element_name]
-                    dssElement.SetParameter(sub_info['Property'], value)
+                    if value != -1e+48:
+                        a = dssElement.SetParameter(sub_info['Property'], value)
 
                     self._logger.debug('Value for "{}.{}" changed to "{}"'.format(
                         element_name,
