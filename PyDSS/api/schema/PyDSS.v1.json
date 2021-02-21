@@ -100,8 +100,8 @@
                                             "master_dss_file": "Master_Spohn_existing_VV.dss",
                                             "pydss_project": "C:/Users/KDUWADI/Box/NAERM_project/PyDSSexamples/examples"
                                         },
-                                        "simulation_duration": 0.00166,
-                                        "simulator_time_resolution": 0.0041664,
+                                        "simulation_duration": 0.00020832,
+                                        "simulator_time_resolution": 6.944e-05,
                                         "start_datetime": "01/01/2020 00:00:00"
                                     }
                                 }

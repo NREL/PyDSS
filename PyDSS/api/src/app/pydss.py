@@ -59,8 +59,20 @@ class PyDSS:
                     })
                     return
             params = restructure_dictionary(parameters)
+
+            # Hack for fixing HELICS time in PyDSS
+            # PyDSS uses seconds to request federate time whereas other federates in NAERM 
+            # uses minutes to request time
+            params['Project']['Simulation duration (min)'] = params['Project']['Simulation duration (min)']/60
+            params['Project']['Step resolution (sec)'] = params['Project']['Step resolution (sec)']/60
+
+            # Making sure delta time is small enough
             params['Helics']['Time delta'] = 0.1*params['Project']['Step resolution (sec)']
+            
+            # Update federate name
             params['Helics']['Federate name'] = self.fed_name
+            
+            # Create PyDSS instance
             self.pydss_obj = OpenDSS(params)
             export_path = os.path.join(self.pydss_obj._dssPath['Export'], params['Project']['Active Scenario'])
             Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
@@ -266,7 +278,7 @@ class PyDSS:
                     #Timestep data payload and metadata only in an inital timestep
                     self.a_writer.write(
                         self.parameters['name'],
-                        self.pydss_obj._dssSolver.GetTotalSeconds()/60,
+                        self.pydss_obj._dssSolver.GetTotalSeconds(),
                         restructured_results,
                         i,
                         fed_uuid=self.parameters['fed_uuid'],
