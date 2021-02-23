@@ -72,8 +72,15 @@ class PvController(ControllerAbstract):
 
         self.update = [self.ControlDict[Settings['Control' + str(i)]] for i in [1, 2, 3]]
 
+        if Settings["Priority"] == "Var":
+            PvObj.SetParameter('WattPriority',"False")
+        else:
+            PvObj.SetParameter('WattPriority', "True")
+
         #self.QlimPU = self.__Qrated / self.__Srated if self.__Qrated < self.__Srated else 1
         self.QlimPU = min(self.__Qrated / self.__Srated, Settings['QlimPU'], 1.0)
+        print("self.QlimPU:  ", self.QlimPU)
+        self.itr = 0
         return
 
 
@@ -90,6 +97,11 @@ class PvController(ControllerAbstract):
         self.TimeChange = self.Time != (Priority, Time)
         self.Time = (Priority, Time)
         Ppv = -sum(self.__ControlledElm.GetVariable('Powers')[::2]) / self.__Prated
+
+        if self.TimeChange:
+            self.itr = 0
+        else:
+            self.itr += 1
 
         if self.__pDisconnected:
             if Ppv < self.__cutin:
@@ -113,6 +125,8 @@ class PvController(ControllerAbstract):
         uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[::2])
         Ppv = -sum(self.__ControlledElm.GetVariable('Powers')[::2]) / self.__Srated
         Qpv = -sum(self.__ControlledElm.GetVariable('Powers')[1::2]) / self.__Srated
+
+
         #PpvoutPU = Ppv / self.__Prated
 
         Plim = (1 - Qpv ** 2) ** 0.5 if self.__Settings['VWtype'] == 'Available Power' else 1
@@ -270,41 +284,15 @@ class PvController(ControllerAbstract):
         elif uIn >= uMax:
             Qcalc = -self.QlimPU
 
-        # adding heavy ball term to improve convergence
         Qcalc = Qpv + (Qcalc - Qpv) * 0.5 / self.__dampCoef + (Qpv - self.oldQcalc) * 0.1 / self.__dampCoef
         dQ = abs(Qcalc - Qpv)
 
-        if Priority == 'Var':
-            Plim = (1 - Qcalc ** 2) ** 0.5
-            # Pcalc = Pcalc + (Plim - Pcalc) * self.__Settings['qDampCoef']
-            # self.Pmppt = Pcalc / self.__Prated * self.__Srated * 100
-            if self.TimeChange:
-                self.Pmppt = 100
-            if Pcalc > Plim and self.TimeChange is False:
-                self.Pmppt = Plim / self.__Prated * self.__Srated * 100
-                Pcalc = Plim
-            self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
-        else:
-            # no watt priority defined yet
-            pass
-
         if Pcalc > 0:
-            self.pf = math.cos(math.atan(Qcalc / Pcalc))
-            if self.__Settings['Enable PF limit'] and abs(self.pf) < pfLim:
-                self.pf = pfLim
-            if Qcalc < 0:
-                self.pf = -self.pf
-            self.__ControlledElm.SetParameter('pf', self.pf)
+            self.__ControlledElm.SetParameter('kvar', Qcalc * self.__Srated)
         else:
-            #print('Warning: PV power is <0 and VVar controller is active.')
-            #print(self.__Name, Qcalc , Qpv, self.Time, dQ)
-            # self.pf = 0
-            # dQ = 0 # forces VVarr off when PV is off, is that correct?
             pass
 
         Error = abs(dQ)
-        # if Error > 0.1 or math.isnan(Error):
-        #     print((self.__Name, uIn, Qcalc, Qpv, self.oldQcalc, dQ, Pcalc, self.pf, self.__ControlledElm.GetVariable('Powers')))
         self.oldQcalc = Qpv
 
         return Error

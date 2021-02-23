@@ -157,7 +157,7 @@ class helics_interface:
                 elif sub_info['Data type'].lower() == 'integer':
                     value = helics.helicsInputGetInteger(sub_info['Subscription'])
 
-                if value:
+                if value and value != 0:
                     value = value * sub_info['Multiplier']
 
                     dssElement = self._objects_by_element[element_name]
@@ -176,6 +176,11 @@ class helics_interface:
                             self._subscription_dState[element_name].insert(0, self._subscription_dState[element_name].pop())
                         self._subscription_dState[element_name][0] = value
                         #print(self._subscription_dState[element_name])
+                else:
+                    self._logger.warning('{} will not be used to update element for "{}.{}" '.format(
+                        value,
+                        element_name,
+                        sub_info['Property']))
         self.c_seconds_old = self.c_seconds
 
     def _registerFederatePublications(self, pubs):
