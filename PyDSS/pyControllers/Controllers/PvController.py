@@ -62,8 +62,8 @@ class PvController(ControllerAbstract):
         self.__Srated = float(PvObj.GetParameter('kVA'))
         self.__Prated = float(PvObj.GetParameter('Pmpp'))
         self.__Qrated = float(PvObj.GetParameter('kVARlimit'))
-        self.__cutin = float(PvObj.SetParameter('%cutin', Settings['%PCutin'])) / 100
-        self.__cutout = float(PvObj.SetParameter('%cutout',Settings['%PCutout'])) / 100
+        self.__cutin = float(PvObj.SetParameter('%cutin', 0)) / 100
+        self.__cutout = float(PvObj.SetParameter('%cutout', 0)) / 100
         self.__dampCoef = Settings['DampCoef']
 
         self.__PFrated = Settings['PFlim']
@@ -76,7 +76,7 @@ class PvController(ControllerAbstract):
             PvObj.SetParameter('WattPriority', "False")
         else:
             PvObj.SetParameter('WattPriority', "True")
-        PvObj.SetParameter('VarFollowInverter', "False")
+        #PvObj.SetParameter('VarFollowInverter', "False")
 
         #self.QlimPU = self.__Qrated / self.__Srated if self.__Qrated < self.__Srated else 1
         self.QlimPU = min(self.__Qrated / self.__Srated, Settings['QlimPU'], 1.0)
@@ -260,8 +260,24 @@ class PvController(ControllerAbstract):
         uDbMax = self.__Settings['uDbMax']
         Priority = self.__Settings['Priority']
 
-        node = self.__ControlledElm._Nodes[0][0]
-        uIn = self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[2 * (node-1)]
+        baseKV = self.__ControlledElm.GetParameter('kVARlimit')
+        #print(node, self.__ControlledElm.sBus[0].GetVariable('puVmagAngle'))
+        kVBase =self.__ControlledElm.sBus[0].GetVariable('kVBase') * 1000
+
+        Umag = self.__ControlledElm.GetVariable('VoltagesMagAng')[::2]
+        Umag = [i for i in Umag if i != 0]
+        if self.__Settings['VmeaMethod'].lower() == "mean":
+            uIn = sum(Umag) / (len(Umag) * kVBase)
+        elif self.__Settings['VmeaMethod'].lower() == "min":
+            uIn = min(Umag) / kVBase
+        elif self.__Settings['VmeaMethod'].lower() == "1":
+            uIn = Umag[0] / kVBase
+        elif self.__Settings['VmeaMethod'].lower() == "2":
+            uIn = Umag[1] / kVBase
+        elif self.__Settings['VmeaMethod'].lower() == "3":
+            uIn = Umag[3] / kVBase
+        else:
+            uIn = max(Umag) / kVBase
 
         m1 = self.QlimPU / (uMin - uDbMin)
         m2 = self.QlimPU / (uDbMax - uMax)
@@ -285,16 +301,17 @@ class PvController(ControllerAbstract):
         elif uIn >= uMax:
             Qcalc = -self.QlimPU
 
-        self.__dampCoef = 0.7
-        Qcalc = Qpv + (Qcalc - Qpv) * 0.8#0.5 / self.__dampCoef + (Qpv - self.oldQcalc) * 0.1 / self.__dampCoef
+        Qcalc = Qpv + (Qcalc - Qpv) * 0.5 / self.__dampCoef + (Qpv - self.oldQcalc) * 0.1 / self.__dampCoef
         dQ = abs(Qcalc - Qpv)
 
-        if Pcalc > self.__Settings['%PCutout'] / 100.0:
-            self.__ControlledElm.SetParameter('kvar', Qcalc * self.__Srated)
+        if Pcalc > 0:
+            if self.__ControlledElm.NumPhases == 2:
+                self.__ControlledElm.SetParameter('kvar', Qcalc * self.__Srated * 1.3905768334328491495461135972974)
+            else:
+                self.__ControlledElm.SetParameter('kvar', Qcalc * self.__Srated)
         else:
             pass
 
         Error = abs(dQ)
         self.oldQcalc = Qpv
-
         return Error
