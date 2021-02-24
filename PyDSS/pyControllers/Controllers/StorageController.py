@@ -23,6 +23,7 @@ class StorageController(ControllerAbstract):
         self.Time = -1
         super(StorageController).__init__()
 
+        print('starting storage control')
         self.__ControlledElm = StorageObj
         Class, Name = self.__ControlledElm.GetInfo()
         assert (Class.lower() == 'storage'), 'StorageController works only with an OpenDSS Storage element'
