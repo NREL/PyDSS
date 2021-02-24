@@ -73,16 +73,16 @@ class PvController(ControllerAbstract):
         self.update = [self.ControlDict[Settings['Control' + str(i)]] for i in [1, 2, 3]]
 
         if Settings["Priority"] == "Var":
-            PvObj.SetParameter('WattPriority',"False")
+            PvObj.SetParameter('WattPriority', "False")
         else:
             PvObj.SetParameter('WattPriority', "True")
+        PvObj.SetParameter('VarFollowInverter', "False")
 
         #self.QlimPU = self.__Qrated / self.__Srated if self.__Qrated < self.__Srated else 1
         self.QlimPU = min(self.__Qrated / self.__Srated, Settings['QlimPU'], 1.0)
         print("self.QlimPU:  ", self.QlimPU)
         self.itr = 0
         return
-
 
     def Name(self):
         return self.__Name
@@ -260,7 +260,8 @@ class PvController(ControllerAbstract):
         uDbMax = self.__Settings['uDbMax']
         Priority = self.__Settings['Priority']
 
-        uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[::2])
+        node = self.__ControlledElm._Nodes[0][0]
+        uIn = self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[2 * (node-1)]
 
         m1 = self.QlimPU / (uMin - uDbMin)
         m2 = self.QlimPU / (uDbMax - uMax)
@@ -284,10 +285,11 @@ class PvController(ControllerAbstract):
         elif uIn >= uMax:
             Qcalc = -self.QlimPU
 
-        Qcalc = Qpv + (Qcalc - Qpv) * 0.5 / self.__dampCoef + (Qpv - self.oldQcalc) * 0.1 / self.__dampCoef
+        self.__dampCoef = 0.7
+        Qcalc = Qpv + (Qcalc - Qpv) * 0.8#0.5 / self.__dampCoef + (Qpv - self.oldQcalc) * 0.1 / self.__dampCoef
         dQ = abs(Qcalc - Qpv)
 
-        if Pcalc > 0:
+        if Pcalc > self.__Settings['%PCutout'] / 100.0:
             self.__ControlledElm.SetParameter('kvar', Qcalc * self.__Srated)
         else:
             pass
