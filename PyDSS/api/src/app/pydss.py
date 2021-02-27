@@ -42,7 +42,7 @@ class PyDSS:
         try:
             parameters['Broker'] = helics_['broker']['host']
             parameters['Broker port'] = helics_['broker']['port']
-            parameters['Co-simulation Mode'] = False
+            parameters['Co-simulation Mode'] = True
             self.cosim_uuid = parameters['cosim_uuid']
             self.federate_service = 'der_federate_service'
             self.fed_name = parameters['name']
