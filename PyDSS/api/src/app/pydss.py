@@ -189,6 +189,10 @@ class PyDSS:
                             "PVSystems": {
                                 "Publish" : [],
                                 "NoPublish" : ["Powers"]
+                            },
+                            "Generators": {
+                                "Publish" : [],
+                                "NoPublish" : ["Powers"]
                             }
                         }
                         with open(os.path.join(path_to_sub_file, "ExportMode-byClass.toml"), "w") as f:
