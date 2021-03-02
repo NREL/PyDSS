@@ -291,7 +291,7 @@ class PyDSS:
                     
                 #closing federate
                 # TODO: At the moment, I cannot pass timestep because bes_data_api attemps to create a vector tile results
-                #self.a_writer.send_timesteps()
+                self.a_writer.send_timesteps()
                 
                 # Remove the project data
                 if hasattr(self, 'tmp_folder'):
