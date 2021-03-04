@@ -78,7 +78,6 @@ class PyDSS:
             Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
             self.a_writer = JSONwriter(export_path, self.data_service_url, Steps, self.notify)
             self.initalized = True
-            self.run(params={})
         except Exception as e:
             print(e)
             result = {"Status": 500, "Message": f"Failed to create a PyDSS instance"}
@@ -96,7 +95,8 @@ class PyDSS:
 
         if self.queue != None: self.queue.put(result)
 
-        self.run_process()
+        self.run(params={})
+        #self.run_process()
 
     def notify(self, msg: str, timestep: float=None, log_level:
                                                     int=logging.INFO):
