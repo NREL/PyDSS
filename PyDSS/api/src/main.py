@@ -38,7 +38,7 @@ class pydss_server(ApiServer):
     def __init__(self, debug=True, **kwargs):
         super().__init__(**kwargs)
         self.handler = Handler(self.config.helics, self.config.endpoints, loop=self.loop, debug=debug)
-        self.app = web.Application()
+        #self.app = web.Application()
         self.swagger = SwaggerDocs(
             self.app,
             title="PyDSS RESTful API documentation",
@@ -66,6 +66,8 @@ class pydss_server(ApiServer):
             web.post('/cosims/federates/pydss', self.handler.post_pydss),
             web.delete('/cosims/federates/pydss', self.handler.delete_pydss)
         ])
+    
+    
     async def cleanup_background_tasks(self, app):
         logger.info("cleanup_background_tasks")
         self.t.join()
