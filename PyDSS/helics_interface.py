@@ -287,9 +287,15 @@ class helics_interface:
                 return True, self.c_seconds
 
     def __del__(self):
+        
         helics.helicsFederateFinalize(self._PyDSSfederate)
         state = helics.helicsFederateGetState(self._PyDSSfederate)
         helics.helicsFederateInfoFree(self.fedinfo)
         helics.helicsFederateFree(self._PyDSSfederate)
+        try:
+            h.helicsFederateDestroy(self._PyDSSfederate)
+        except Exception as e:
+            pass
+        helics.helicsCloseLibrary()
         self._logger.info('HELICS federate for PyDSS destroyed')
 

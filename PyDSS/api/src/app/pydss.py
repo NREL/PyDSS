@@ -298,6 +298,8 @@ class PyDSS:
                     if os.path.exists(os.path.join(self.tmp_folder, self.folder_name)):
                         shutil.rmtree(os.path.join(self.tmp_folder, self.folder_name))
 
+                self.close_instance()
+
                 self.initalized = False
                 return 200, f"Simulation complete..."
             except Exception as e:
