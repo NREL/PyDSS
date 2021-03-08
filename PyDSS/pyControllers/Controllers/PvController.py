@@ -33,7 +33,6 @@ class PvController(ControllerAbstract):
         self.__pDisconnected = False
 
         self.__ElmObjectList = ElmObjectList
-        #print(PvObj.Bus[0] + ' - ' + PvObj.sBus[0].GetInfo())
         self.ControlDict = {
             'None'           : lambda: 0,
             'CPF'            : self.CPFcontrol,
@@ -80,7 +79,6 @@ class PvController(ControllerAbstract):
 
         #self.QlimPU = self.__Qrated / self.__Srated if self.__Qrated < self.__Srated else 1
         self.QlimPU = min(self.__Qrated / self.__Srated, Settings['QlimPU'], 1.0)
-        print("self.QlimPU:  ", self.QlimPU)
         self.itr = 0
         return
 
@@ -156,8 +154,6 @@ class PvController(ControllerAbstract):
 
         Error = abs(dP)
         self.oldPcalc = Ppv
-        # if Error > 0.1:
-        #     print((self.__Name, uIn, Qpv, Plim, Ppv, Pcalc, self.Pmppt, dP, self.pf))
         return Error
 
     def CutoffControl(self):
@@ -172,14 +168,12 @@ class PvController(ControllerAbstract):
                 return 0
             else:
                 self.__vDisconnected = True
-                # print('Disconnecting {} at voltage {:.2f}'.format(self.__Name, uIn))
                 return self.__Prated
 
         if self.TimeChange and self.__vDisconnected and uIn < uCut:
             self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
             self.__ControlledElm.SetParameter('pf', self.pf)
             self.__vDisconnected = False
-            # print('Reconnecting {} at voltage {:.2f}'.format(self.__Name, uIn))
             return self.__Prated
 
         return 0
@@ -207,8 +201,6 @@ class PvController(ControllerAbstract):
                 self.Pmppt = 100
             else:
                 self.Pmppt = Plim  * self.__Srated
-            #print(self.Pmppt , self.__Srated)
-
 
         Error = abs(PFset + PFact)
         self.__ControlledElm.SetParameter('pf', str(-PFset))
@@ -255,13 +247,9 @@ class PvController(ControllerAbstract):
         """
         uMin = self.__Settings['uMin']
         uMax = self.__Settings['uMax']
-        pfLim = self.__Settings['PFlim']
         uDbMin = self.__Settings['uDbMin']
         uDbMax = self.__Settings['uDbMax']
-        Priority = self.__Settings['Priority']
 
-        baseKV = self.__ControlledElm.GetParameter('kVARlimit')
-        #print(node, self.__ControlledElm.sBus[0].GetVariable('puVmagAngle'))
         kVBase =self.__ControlledElm.sBus[0].GetVariable('kVBase') * 1000
 
         Umag = self.__ControlledElm.GetVariable('VoltagesMagAng')[::2]

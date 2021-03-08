@@ -87,7 +87,7 @@ def printReport(logsPath, project, scenario, report):
     Keys = {}
     with open(os.path.join(logsPath, fileName), "r") as f:
         for l in f:
-            data = json.loads(l[:-1])
+            data = json.loads(l.strip())
             if "Report" not in data:
                 print("Skipping {}. Not a valid PyDSS report.".format(fileName))
                 return None

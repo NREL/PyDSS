@@ -17,7 +17,6 @@ settings_dict = {
             'Export Data In Memory': {'type': bool, 'Options': [True, False]},
             'HDF Max Chunk Bytes': {'type': int, 'Options': range(16 * 1024, 1024 * 1024 + 1)},
             'Log Results': {'type': bool, 'Options': [True, False]},
-            'Result Container': {'type': str, 'Options': ['ResultContainer', 'ResultData']},
         },
         "Frequency": {
             'Enable frequency sweep': {'type': bool, 'Options': [True, False]},

@@ -1,0 +1,13 @@
+New transformer.TBuilding phases=3 winding=3
+~ conns=[delta wye]  kvs=[4.16 .480] kvas=[1000 1000]  XHL=6
+
+
+New transformer.T208  phases=3 winding=3
+~ conns=[delta wye]  kvs=[.48 .208] kvas=[100 100]  XHL=2
+
+New monitor.PQ  Transformer.T208 2
+
+
+
+
+

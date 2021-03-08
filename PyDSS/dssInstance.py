@@ -1,4 +1,3 @@
-from PyDSS.ResultContainer import ResultContainer as RC
 from PyDSS.ResultData import ResultData
 from PyDSS.pyContrReader import pyContrReader as pcr
 from PyDSS.pyPlotReader import pyPlotReader as ppr
@@ -118,13 +117,9 @@ class OpenDSS:
             self.profileStore = ProfileManager(self._dssObjects, self._dssSolver, params)
             self.profileStore.setup_profiles()
 
-        #if params and params['Exports']['Log Results']:
-        if params['Exports']['Result Container'] == 'ResultContainer':
-            self.ResultContainer = RC(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
-                                      self._dssBuses, self._dssSolver, self._dssCommand)
-        elif params['Exports']['Result Container'] == 'ResultData':
-            self.ResultContainer = ResultData(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
-                                                self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance)
+
+        self.ResultContainer = ResultData(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
+                                            self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance)
 
         pyCtrlReader = pcr(self._dssPath['pyControllers'])
         ControllerList = pyCtrlReader.pyControllers

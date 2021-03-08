@@ -14,9 +14,9 @@
 # Active Scenario- [String] - Project scenario to use
 # DSS File- [String] - The main OpenDSS file
 [Project]
-"Start time" = "1/1/2020 00:00:00"
+"Start time" = "2020-1-1 00:00:00.0"
 "Simulation duration (min)" = 1440.0
-"Loadshape start time" = "1/1/2020 00:00:00"
+"Loadshape start time" = "2020-1-1 00:00:00.0"
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
@@ -49,7 +49,6 @@
 "HDF Max Chunk Bytes" = 32768
 "Export Event Log" = true
 "Log Results" = false
-"Result Container" = "ResultData"
 
 # Enable frequency sweep- [Bool] - Enable harmonic sweep. works with only 'Static' and 'QSTS' simulation modes
 # Fundamental frequency- [Float] - Fundamental system frequeny in Hertz
