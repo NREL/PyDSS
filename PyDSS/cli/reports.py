@@ -56,6 +56,7 @@ def reports(project_path, list_reports=False, scenario=None, report=None, index=
     assert os.path.exists(project_path), "The provided project path {} does not exist".format(project_path)
     logsPath = os.path.join(project_path, "Logs")
     assert os.path.exists(logsPath), "No Logs folder in the provided project path.".format(project_path)
+    print(logsPath)
     reportList = getAvailableReports(logsPath)
     project = basename(normpath(project_path))
     if list_reports:
@@ -111,6 +112,7 @@ def getAvailableReports(logsPath):
     reportNumber = 0
     for report in reportFiles:
         project, scenario, _ = report.split("__")
+        print(reportNumber, project, scenario, report)
         reportTypes = getReportTypes(logsPath, report)
         if reportTypes is not None:
             for reportTypes in reportTypes:
@@ -121,6 +123,7 @@ def getAvailableReports(logsPath):
 
 def getReportTypes(logsPath, reportFile):
     fileName = os.path.join(logsPath, reportFile)
+    print(fileName)
     f = open(fileName, "r")
     lines = f.readlines()
     reportTypes = []

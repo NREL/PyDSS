@@ -1,20 +1,20 @@
-from PyDSS.ResultData import ResultData
+from PyDSS.ProfileManager.ProfileStore import ProfileManager
+from PyDSS.dssElementFactory import create_dss_element
+from PyDSS.utils.utils import make_human_readable_size
 from PyDSS.pyContrReader import pyContrReader as pcr
 from PyDSS.pyPlotReader import pyPlotReader as ppr
-from PyDSS.dssElementFactory import create_dss_element
-from PyDSS.dssCircuit import dssCircuit
+from PyDSS.exceptions import InvalidConfiguration
+from PyDSS.pyPostprocessor import pyPostprocess
+import PyDSS.pyControllers as pyControllers
 from PyDSS.NetworkModifier import Modifier
+from PyDSS import helics_interface as HI
+from PyDSS.ResultData import ResultData
+from PyDSS.dssCircuit import dssCircuit
+import PyDSS.pyPlots as pyPlots
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
-from PyDSS import helics_interface as HI
-from PyDSS.utils.utils import make_human_readable_size
-from PyDSS.ProfileManager.ProfileStore import ProfileManager
-from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 
-from PyDSS.pyPostprocessor import pyPostprocess
-import PyDSS.pyControllers as pyControllers
-import PyDSS.pyPlots as pyPlots
 import opendssdirect as dss
 import numpy as np
 import logging
@@ -22,13 +22,13 @@ import json
 import time
 import os
 
+from bokeh.client import push_session
 from bokeh.plotting import curdoc
 from bokeh.layouts import row
-from bokeh.client import push_session
+
 from opendssdirect.utils import run_command
 
 CONTROLLER_PRIORITIES = 3
-
 
 class OpenDSS:
     def __init__(self, params):
@@ -71,7 +71,7 @@ class OpenDSS:
             )
         LoggerTag = pyLogger.getLoggerTag(params)
         self._Logger = logging.getLogger(__name__)
-        self._reportsLogger = logging.getLogger("PyDSS-reports")
+        self._reportsLogger = pyLogger.getReportLogger(LoggerTag, self._dssPath["Log"], params["Logging"])
         self._Logger.info('An instance of OpenDSS version ' + self._dssInstance.__version__ + ' has been created.')
 
         for key, path in self._dssPath.items():
