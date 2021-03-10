@@ -42,7 +42,6 @@ post_process_infos = []
 "HDF Max Chunk Bytes" = 32768
 "Export Event Log" = true
 "Log Results" = true
-"Result Container" = "ResultContainer"
 
 [Frequency]
 "Enable frequency sweep" = false

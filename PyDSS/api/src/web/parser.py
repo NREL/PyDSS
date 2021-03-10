@@ -32,7 +32,7 @@ master_dict = {
                  "DSS File", "DSS File Absolute Path", "Return Results"],
     "Exports" : ["Export Mode", "Export Style", "Export Format", "Export Compression", "Export Iteration Order",
                  "Export Elements", "Export Data Tables", "Export Data In Memory", "HDF Max Chunk Bytes",
-                 "Export Event Log", "Log Results", "Result Container"],
+                 "Export Event Log", "Log Results"],
     "Frequency" : ["Enable frequency sweep", "Fundamental frequency", "Start frequency", "End frequency",
                    "frequency increment", "Neglect shunt admittance", "Percentage load in series"],
     "Helics" : ["Co-simulation Mode", "Federate name", "Time delta", "Core type", "Uninterruptible",

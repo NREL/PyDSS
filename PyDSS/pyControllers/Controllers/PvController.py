@@ -78,6 +78,9 @@ class PvController(ControllerAbstract):
         #PvObj.SetParameter('VarFollowInverter', "False")
 
         #self.QlimPU = self.__Qrated / self.__Srated if self.__Qrated < self.__Srated else 1
+        if 'VmeaMethod' not in self.__Settings:
+            self.__Settings['VmeaMethod'] = "max"
+
         self.QlimPU = min(self.__Qrated / self.__Srated, Settings['QlimPU'], 1.0)
         self.itr = 0
         return

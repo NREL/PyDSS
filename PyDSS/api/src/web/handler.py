@@ -71,7 +71,6 @@ class Handler:
                             Message: Provided path does not exist
                             UUID: None
         """
-        print(path)
         logger.info(f"Exploring {path} for valid projects")
 
         if not os.path.exists(path):
@@ -259,7 +258,6 @@ class Handler:
                                                 Active Scenario: base_case
                                                 DSS File: Master_Spohn_existing_VV.dss
                                                 Co-simulation Mode: false
-                                                Result Container: ResultData
                                                 Log Results: false
                                                 Export Data Tables: true
                                                 Export Data In Memory: true

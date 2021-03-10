@@ -14,6 +14,7 @@ from PyDSS.loggers import setup_logging
 from PyDSS.utils.utils import get_cli_string, make_human_readable_size
 from PyDSS.common import SIMULATION_SETTINGS_FILENAME
 from terminaltables import SingleTable
+from os.path import normpath, basename
 
 logger = logging.getLogger(__name__)
 
@@ -27,12 +28,6 @@ logger = logging.getLogger(__name__)
     is_flag=True,
     default=False,
     show_default=True,
-)
-
-@click.option(
-    "-p", "--project",
-    required=False,
-    help="PyDSS project name.",
 )
 
 @click.option(
@@ -55,13 +50,14 @@ logger = logging.getLogger(__name__)
 )
 @click.command()
 
-def reports(project_path, list_reports=False, project=None, scenario=None, report=None, index=0):
+def reports(project_path, list_reports=False, scenario=None, report=None, index=0):
     """Explore and print PyDSS reports."""
     assert not (list_reports and index), "Both 'list' and 'index' options cannot be set to true at the same time"
     assert os.path.exists(project_path), "The provided project path {} does not exist".format(project_path)
     logsPath = os.path.join(project_path, "Logs")
     assert os.path.exists(logsPath), "No Logs folder in the provided project path.".format(project_path)
     reportList = getAvailableReports(logsPath)
+    project = basename(normpath(project_path))
     if list_reports:
         Table = SingleTable(reportList, title="Available PyDSS reports")
         print("")

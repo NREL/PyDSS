@@ -117,7 +117,6 @@ class OpenDSS:
             self.profileStore = ProfileManager(self._dssObjects, self._dssSolver, params)
             self.profileStore.setup_profiles()
 
-
         self.ResultContainer = ResultData(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
                                             self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance)
 
@@ -360,18 +359,15 @@ class OpenDSS:
         return self.ResultContainer.max_num_bytes()
 
     def initStore(self, hdf_store, Steps, MC_scenario_number=None):
-        if self._Options['Exports']['Result Container'] == 'ResultData':
-            print("initializing store")
-            self.ResultContainer.InitializeDataStore(hdf_store, Steps, MC_scenario_number)
+        self.ResultContainer.InitializeDataStore(hdf_store, Steps, MC_scenario_number)
 
     def RunSimulation(self, project, scenario, MC_scenario_number=None):
         startTime = time.time()
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
         self._Logger.info('Simulation time step {}.'.format(Steps))
-        if self._Options['Exports']['Result Container'] == 'ResultData':
-            self._Logger.info("initializing store")
-            self.ResultContainer.InitializeDataStore(project.hdf_store, Steps, MC_scenario_number)
+        self._Logger.info("initializing store")
+        self.ResultContainer.InitializeDataStore(project.hdf_store, Steps, MC_scenario_number)
 
         postprocessors = [
             pyPostprocess.Create(

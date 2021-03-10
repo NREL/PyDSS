@@ -53,17 +53,6 @@ Next, configure the project.
 - Customize data to be exported for each scenario in
   <project-name>/Scenarios/<scenario-name>/ExportLists
 
-Exporting Data
-==============
-The default behavior of PyDSS is to export raw, unstructured data received from
-opendssdirect into CSV files. It is left to the user to interpret this data.
-
-There is a new method of exporting data under development that adds structure
-for easier analysis. It currently supports a limited set of element properties.
-To enable this behavior set the following in ``simulation.toml``::
-
-    "Result Container" = "ResultData"
-
 Data Format
 -----------
 These configuration customizations exist for data exported using the new
