@@ -16,6 +16,7 @@ settings_dict = {
             'Export Data Tables': {'type': bool, 'Options': [True, False]},
             'Export Data In Memory': {'type': bool, 'Options': [True, False]},
             'HDF Max Chunk Bytes': {'type': int, 'Options': range(16 * 1024, 1024 * 1024 + 1)},
+            'Export PV Profiles': {'type': bool, 'Options': [True, False]},
             'Log Results': {'type': bool, 'Options': [True, False]},
         },
         "Frequency": {
@@ -71,12 +72,17 @@ settings_dict = {
             'Return Results': {'type': bool, 'Options': [True, False]},
             'Control mode': {'type': str, 'Options': ["Static", "Time"]},
             'Disable PyDSS controllers': {'type': bool, 'Options': [True, False]},
+            'Use Controller Registry': {'type': bool, 'Options': [True, False]},
         },
         "Profiles": {
             "Use profile manager":  {'type': bool, 'Options': [True, False]},
             "Profile store path": {'type': str},
             "Profile mapping": {'type': str},
-        }
+        },
+        "Reports": {
+            'Format': {'type': str, 'Options': ["csv", "h5"]},
+            'Types': {'type': list}
+        },
     }
 
 
