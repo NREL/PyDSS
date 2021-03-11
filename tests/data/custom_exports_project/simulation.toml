@@ -15,12 +15,9 @@
 # DSS File- [String] - The main OpenDSS file
 # Return Results- [Bool] - Set true if running PyDSS in Cosimulation environment, RunStep function will return current system states
 [Project]
-"Start Year" = 2017
-"Start Day" = 1
-"Start Time (min)" = 0.0
-"End Day" = 1
-"End Time (min)" = 1439.0
-"Date offset" = 0
+"Start time" = "2020-1-1 00:00:00.0"
+"Simulation duration (min)" = 1440.0
+"Loadshape start time" = "2020-1-1 00:00:00.0"
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 15
 "Error tolerance" = 0.001
@@ -33,6 +30,10 @@
 "DSS File" = "Master_Spohn_existing_VV.dss"
 "Return Results" = false
 "Use Controller Registry" = true
+
+[[Project.Scenarios]]
+name = "basecase"
+post_process_infos = []
 
 [[Project.Scenarios]]
 name = "scenario1"
@@ -53,7 +54,6 @@ post_process_infos = []
 "Export Format" = "h5"
 "Export Compression" = true
 "HDF Max Chunk Bytes" = 32768
-"Result Container" = "ResultData"
 "Log Results" = true
 
 # Create dynamic plots- [Bool] - Enable rendering of dynamic plots using bokeh
@@ -104,3 +104,21 @@ post_process_infos = []
 
 [MonteCarlo]
 "Number of Monte Carlo scenarios" = 0
+
+[Reports]
+Format = "h5"
+[[Reports.Types]]
+name = "Capacitor State Change Counts"
+enabled = true
+
+[[Reports.Types]]
+name = "PV Clipping"
+enabled = true
+
+[[Reports.Types]]
+name = "PV Curtailment"
+enabled = true
+
+[[Reports.Types]]
+name = "RegControl Tap Number Change Counts"
+enabled = true

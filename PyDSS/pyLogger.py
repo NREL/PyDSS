@@ -28,8 +28,8 @@ def getLogger(name, path, LoggerOptions):
 
 def getReportLogger(LoggerTag, path, LoggerOptions):
     log_filename = os.path.join(path, "{}__reports.log".format(LoggerTag))
-    if os.path.exists(log_filename):
-        os.remove(log_filename)
+    # if os.path.exists(log_filename):
+    #     os.remove(log_filename)
 
     logger = logging.getLogger("Reports")
     logger.handlers = []
