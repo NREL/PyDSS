@@ -1,39 +1,37 @@
 [Project]
-"Start Year" = 2017
-"Start Day" = 1
-"Start Time (min)" = 0.0
-"End Day" = 1
-"End Time (min)" = 1439.0
-"Date offset" = 0
+"Start time" = "2020-1-1 00:00:00.0"
+"Simulation duration (min)" = 1440.0
+"Loadshape start time" = "2020-1-1 00:00:00.0"
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
 "Control mode" = "Static"
 "Disable PyDSS controllers" = false
 "Simulation Type" = "QSTS"
-"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS\\examples"
-"Active Project" = "dynamic_visualization"
-"Active Scenario" = "scenario_1"
+"Project Path" = "./examples"
+"Active Project" = "custom_contols"
+"Active Scenario" = "base_case"
 "DSS File" = "Master_Spohn_existing_VV.dss"
 "DSS File Absolute Path" = false
 "Return Results" = false
+
+
 [[Project.Scenarios]]
-name = "scenario_2"
+name = "volt_var"
 post_process_infos = []
 
 [Exports]
 "Export Mode" = "byClass"
 "Export Style" = "Single file"
-"Export Format" = "csv"
+"Export Format" = "h5"
 "Export Compression" = false
 "Export Iteration Order" = "ValuesByPropertyAcrossElements"
-"Export Elements" = true
-"Export Data Tables" = false
-"Export Data In Memory" = false
+"Export Elements" = false
+"Export Data Tables" = true
+"Export Data In Memory" = true
 "HDF Max Chunk Bytes" = 32768
 "Export Event Log" = true
 "Log Results" = true
-"Result Container" = "ResultContainer"
 
 [Frequency]
 "Enable frequency sweep" = false
@@ -57,11 +55,11 @@ Uninterruptible = true
 "Log to external file" = true
 "Display on screen" = true
 "Clear old log file" = false
-"Pre-configured logging" = true
+"Pre-configured logging" = false
 
 [MonteCarlo]
 "Number of Monte Carlo scenarios" = -1
 
 [Plots]
-"Create dynamic plots" = true
+"Create dynamic plots" = false
 "Open plots in browser" = true

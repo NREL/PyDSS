@@ -52,7 +52,6 @@ post_process_infos = []
 "Export Format" = "h5"
 "Export Compression" = true
 "HDF Max Chunk Bytes" = 32768
-"Result Container" = "ResultData"
 "Log Results" = true
 
 # Create dynamic plots- [Bool] - Enable rendering of dynamic plots using bokeh

@@ -1,24 +1,21 @@
 [Project]
-"Start Year" = 2017
-"Start Day" = 1
-"Start Time (min)" = 0.0
-"End Day" = 1
-"End Time (min)" = 1439.0
-"Date offset" = 0
+"Start time" = "1/1/2020 00:00:00"
+"Simulation duration (min)" = 1440.0
+"Loadshape start time" = "1/1/2020 00:00:00"
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
 "Control mode" = "Static"
 "Disable PyDSS controllers" = false
 "Simulation Type" = "QSTS"
-"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS\\examples"
-"Active Project" = "dynamic_visualization"
-"Active Scenario" = "scenario_2"
+"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS_src\\examples"
+"Active Project" = "test_project"
+"Active Scenario" = ""
 "DSS File" = "Master_Spohn_existing_VV.dss"
 "DSS File Absolute Path" = false
 "Return Results" = false
 [[Project.Scenarios]]
-name = "scenario_2"
+name = "basecase"
 post_process_infos = []
 
 [Exports]
@@ -33,7 +30,6 @@ post_process_infos = []
 "HDF Max Chunk Bytes" = 32768
 "Export Event Log" = true
 "Log Results" = true
-"Result Container" = "ResultContainer"
 
 [Frequency]
 "Enable frequency sweep" = false
@@ -45,12 +41,12 @@ post_process_infos = []
 "Percentage load in series" = 50.0
 
 [Helics]
-"Co-simulation Mode" = false
+"Co-simulation Mode" = true
 "Iterative Mode" = false
 "Error tolerance" = 0.0001
 "Max co-iterations" = 15
 Broker = "mainbroker"
-"Broker port" = 50001
+"Broker port" = 0
 "Federate name" = "PyDSS"
 "Time delta" = 0.01
 "Core type" = "zmq"
@@ -62,11 +58,16 @@ Uninterruptible = true
 "Log to external file" = true
 "Display on screen" = true
 "Clear old log file" = false
-"Pre-configured logging" = true
+"Pre-configured logging" = false
 
 [MonteCarlo]
 "Number of Monte Carlo scenarios" = -1
 
 [Plots]
-"Create dynamic plots" = true
+"Create dynamic plots" = false
 "Open plots in browser" = true
+
+[Profiles]
+"Use profile manager" = false
+"Profile store path" = ""
+"Profile mapping" = ""

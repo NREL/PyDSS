@@ -40,7 +40,7 @@ class helics_interface:
         'Distance': 'double'
     }
 
-    def __init__(self, dss_solver, objects_by_name, objects_by_class, options, system_paths):
+    def __init__(self, dss_solver, objects_by_name, objects_by_class, options, system_paths, default=True):
 
         if options["Logging"]["Pre-configured logging"]:
             LoggerTag = __name__
@@ -61,8 +61,15 @@ class helics_interface:
         self._objects_by_class = objects_by_class
         self._create_helics_federate()
         self._dss_solver = dss_solver
-        self._registerFederateSubscriptions()
-        self._registerFederatePublications()
+        if default:
+            self.registerPubSubTags()
+
+
+    def registerPubSubTags(self, pubs=None, subs=None):
+
+        self._registerFederateSubscriptions(subs)
+        self._registerFederatePublications(pubs)
+
         helics.helicsFederateEnterExecutingModeIterative(
             self._PyDSSfederate,
             helics.helics_iteration_request_iterate_if_needed
@@ -74,12 +81,18 @@ class helics_interface:
         helics.helicsFederateInfoSetCoreName(self.fedinfo, self._options['Helics']['Federate name'])
         helics.helicsFederateInfoSetCoreTypeFromString(self.fedinfo, self._options['Helics']['Core type'])
         helics.helicsFederateInfoSetCoreInitString(self.fedinfo, f"--federates=1")
-        #helics.helicsFederateInfoSetBroker(self.fedinfo, self._options['Helics']['Broker'])
-        #helics.helicsFederateInfoSetBrokerPort(self.fedinfo, self._options['Helics']['Broker port'])
+        bLoc = self._options['Helics']['Broker']
+        Port = self._options['Helics']['Broker port']
+        self._logger.info("Connecting to broker @ {}".format(f"{bLoc}:{Port}" if Port else bLoc))
+
+        if self._options['Helics']['Broker']:
+            helics.helicsFederateInfoSetBroker(self.fedinfo, self._options['Helics']['Broker'])
+        if self._options['Helics']['Broker port']:
+            helics.helicsFederateInfoSetBrokerPort(self.fedinfo, self._options['Helics']['Broker port'])
         helics.helicsFederateInfoSetTimeProperty(self.fedinfo, helics.helics_property_time_delta,
                                                  self._options['Helics']['Time delta'])
         helics.helicsFederateInfoSetIntegerProperty(self.fedinfo, helics.helics_property_int_log_level,
-                                                self._options['Helics']['Helics logging level'])
+                                                    self._options['Helics']['Helics logging level'])
 
         helics.helicsFederateInfoSetFlagOption(self.fedinfo, helics.helics_flag_uninterruptible, True)
         helics.helicsFederateInfoSetIntegerProperty(self.fedinfo, helics.helics_property_int_max_iterations,
@@ -90,16 +103,25 @@ class helics_interface:
         return
 
 
-    def _registerFederateSubscriptions(self):
-        self._sub_file_reader = pySubscriptionReader(
-            os.path.join(
-                self._system_paths["ExportLists"],
-                "Subscriptions.toml",
-            ),
-        )
+    def _registerFederateSubscriptions(self, subs):
+        """
+        :param subs:
+        :return:
+        """
+
+        if subs is not None:
+            SubscriptionList = subs
+        else:
+            self._sub_file_reader = pySubscriptionReader(
+                os.path.join(
+                    self._system_paths["ExportLists"],
+                    "Subscriptions.toml",
+                ),
+            )
+            SubscriptionList = self._sub_file_reader.SubscriptionList
         self._subscriptions = {}
         self._subscription_dState = {}
-        for element, subscription in self._sub_file_reader.SubscriptionList.items():
+        for element, subscription in SubscriptionList.items():
             assert element in self._objects_by_element, '"{}" listed in the subscription file not '.format(element) +\
                                                      "available in PyDSS's master object dictionary."
 
@@ -125,6 +147,7 @@ class helics_interface:
                 value = None
                 if sub_info['Data type'].lower() == 'double':
                     value = helics.helicsInputGetDouble(sub_info['Subscription'])
+                    print(element_name, sub_info['Property'], value)
                 elif sub_info['Data type'].lower() == 'vector':
                     value = helics.helicsInputGetVector(sub_info['Subscription'])
                 elif sub_info['Data type'].lower() == 'string':
@@ -134,7 +157,7 @@ class helics_interface:
                 elif sub_info['Data type'].lower() == 'integer':
                     value = helics.helicsInputGetInteger(sub_info['Subscription'])
 
-                if value:
+                if value and value != 0:
                     value = value * sub_info['Multiplier']
 
                     dssElement = self._objects_by_element[element_name]
@@ -150,20 +173,29 @@ class helics_interface:
                         if self.c_seconds != self.c_seconds_old:
                             self._subscription_dState[element_name] = [self.init_state] * self.n_states
                         else:
-                            self._subscription_dState[element_name].insert(0,self._subscription_dState[element_name].pop())
+                            self._subscription_dState[element_name].insert(0, self._subscription_dState[element_name].pop())
                         self._subscription_dState[element_name][0] = value
                         #print(self._subscription_dState[element_name])
+                else:
+                    self._logger.warning('{} will not be used to update element for "{}.{}" '.format(
+                        value,
+                        element_name,
+                        sub_info['Property']))
         self.c_seconds_old = self.c_seconds
 
-    def _registerFederatePublications(self):
-        self._file_reader = pyExportReader(
-            os.path.join(
-                self._system_paths ["ExportLists"],
-                "ExportMode-byClass.toml",
-            ),
-        )
+    def _registerFederatePublications(self, pubs):
+        if pubs is not None:
+            publicationList= pubs
+        else:
+            self._file_reader = pyExportReader(
+                os.path.join(
+                    self._system_paths ["ExportLists"],
+                    "ExportMode-byClass.toml",
+                ),
+            )
+            publicationList = self._file_reader.publicationList
         self._publications = {}
-        for valid_publication in self._file_reader.publicationList:
+        for valid_publication in publicationList:
             obj_class, obj_property = valid_publication.split(' ')
             objects = self._objects_by_class[obj_class]
             for obj_X, obj in objects.items():
@@ -193,6 +225,7 @@ class helics_interface:
                 helics.helicsPublicationPublishBoolean(pub, value)
             elif isinstance(value, int):
                 helics.helicsPublicationPublishInteger(pub, value)
+            #print(element, value)
         return
 
     def request_time_increment(self):
@@ -224,4 +257,3 @@ class helics_interface:
         helics.helicsFederateInfoFree(self.fedinfo)
         helics.helicsFederateFree(self._PyDSSfederate)
         self._logger.info('HELICS federate for PyDSS destroyed')
-

@@ -143,7 +143,10 @@ class dssElement(dssObjectBase):
             raise InvalidParameter('Object is not a circuit element')
 
     def SetParameter(self, Param, Value):
-        self._dssInstance.utils.run_command(self._FullName + '.' + Param + ' = ' + str(Value))
+        reply = self._dssInstance.utils.run_command(self._FullName + '.' + Param + ' = ' + str(Value))
+        if Param == "WattPriority":
+            print(reply)
+        #print(Value , self.GetParameter(Param))
         return self.GetParameter(Param)
 
     def GetParameter(self, Param):

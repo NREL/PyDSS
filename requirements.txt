@@ -4,12 +4,12 @@ setuptools
 scipy
 bokeh
 networkx
-toml==0.10.0
+toml
+xlrd==1.2.0
 pyproj
 descartes
 OpenDSSDirect.py==0.3.7
 Shapely
-matplotlib
 Click
 numpy
 feather-format
@@ -18,3 +18,9 @@ tables
 h5py
 helics
 pytest
+terminaltables
+aiohttp
+aiohttp_swagger3
+requests
+pyyaml
+xlrd

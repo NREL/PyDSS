@@ -314,7 +314,6 @@ class PyDssProject:
 
         inst = instance()
         self._simulation_config["Logging"]["Pre-configured logging"] = logging_configured
-
         if dry_run:
             store_filename = os.path.join(tempfile.gettempdir(), STORE_FILENAME)
         else:
@@ -762,7 +761,7 @@ class PyDssScenario:
                     f"missing post-process field={field}"
                 )
         config_file = post_process_info["config_file"]
-        if not os.path.exists(config_file):
+        if config_file and not os.path.exists(config_file):
             raise InvalidParameter(f"{config_file} does not exist")
 
         self.post_process_infos.append(post_process_info)

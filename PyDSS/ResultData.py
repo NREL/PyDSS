@@ -21,6 +21,8 @@ from PyDSS.value_storage import ValueContainer, ValueByNumber, DatasetPropertyTy
 logger = logging.getLogger(__name__)
 
 
+logger = logging.getLogger(__name__)
+
 class ResultData:
     """Exports data to files."""
 
@@ -30,11 +32,7 @@ class ResultData:
     def __init__(self, options, system_paths, dss_objects,
                  dss_objects_by_class, dss_buses, dss_solver, dss_command,
                  dss_instance):
-        if options["Logging"]["Pre-configured logging"]:
-            logger_tag = __name__
-        else:
-            logger_tag = getLoggerTag(options)
-        self._logger = logging.getLogger(logger_tag)
+        self._logger = logger
         self._dss_solver = dss_solver
         self._results = {}
         self._buses = dss_buses
@@ -46,8 +44,8 @@ class ResultData:
 
         self._dss_command = dss_command
         self._dss_instance = dss_instance
-        self._start_day = options["Project"]["Start Day"]
-        self._end_day = options["Project"]["End Day"]
+        self._start_day = dss_solver.StartDay
+        self._end_day = dss_solver.EndDay
         self._time_dataset = None
         self._frequency_dataset = None
         self._mode_dataset = None
@@ -65,13 +63,13 @@ class ResultData:
         )
         # Use / because this is used in HDFStore
         self._export_relative_dir = f"Exports/" + options["Project"]["Active Scenario"]
-        self._store_frequency = False
-        self._store_mode = False
+        self._store_frequency = True
+        self._store_mode = True
         self.CurrentResults = {}
-        if options["Project"]["Simulation Type"] == "Dynamic" or \
-                options["Frequency"]["Enable frequency sweep"]:
-            self._store_frequency = True
-            self._store_mode = True
+        # if options["Project"]["Simulation Type"] == "Dynamic" or \
+        #         options["Frequency"]["Enable frequency sweep"]:
+        #     self._store_frequency = True
+        #     self._store_mode = True
 
         if options["Exports"]["Export Mode"] == "byElement":
             raise InvalidParameter(
@@ -88,6 +86,7 @@ class ResultData:
             export_list_filename = os.path.join(
                 system_paths["ExportLists"],
                 "ExportMode-byClass.toml",
+# <<<<<<< master
             )
         self._export_list = ExportListReader(export_list_filename)
         Reports.append_required_exports(self._export_list, options)
@@ -102,6 +101,20 @@ class ResultData:
                 objs = self._objects_by_class[elem_class]
             else:
                 continue
+# =======
+#             ),
+#         )
+
+#         self._export_list = self._file_reader.pyControllers
+#         self._create_list_by_class()
+#         self._logger.debug("result container created")
+
+#     def _create_element_list(self, objs, properties):
+#         elements = []
+#         element_names = set()
+#         for property_name in properties:
+#             assert isinstance(property_name, str)
+# >>>>>>> bug_fixes_merge
             for name, obj in objs.items():
                 if not obj.Enabled:
                     continue
@@ -153,6 +166,13 @@ class ResultData:
         for element in self._elements:
             element.initialize_data_store(hdf_store, self._scenario, num_steps)
 
+    def GetCurrentData(self):
+        self.CurrentResults.clear()
+        for elem in self._elements:
+            data = elem.get_current_data()
+            self.CurrentResults.update(data)
+        return self.CurrentResults
+
     def UpdateResults(self):
         self.CurrentResults.clear()
 
@@ -176,7 +196,6 @@ class ResultData:
             "event_log": None,
             "element_info_files": [],
         }
-
         if self._options["Exports"]["Export Event Log"]:
             self._export_event_log(metadata)
         if self._options["Exports"]["Export Elements"]:
@@ -484,6 +503,7 @@ class ElementData:
         self._num_steps = num_steps
         self._scenario = scenario
         # Reset these for MonteCarlo simulations.
+# <<<<<<< master
         for key in self._data:
             self._data[key] = None
         self._step_number = 1
@@ -500,6 +520,23 @@ class ElementData:
             self._change_counts[key] = (None, 0)
 
     def append_values(self, timestamp):
+# =======
+#         for prop in self._data:
+#             self._data[prop] = None
+
+#     def get_current_data(self):
+#         curr_data = {}
+#         for prop in self.properties:
+#             value = self._obj.GetValue(prop, convert=True)
+#             if len(value.make_columns()) > 1:
+#                 for column, val in zip(value.make_columns(), value.value):
+#                     curr_data[column] = val
+#             else:
+#                 curr_data[value.make_columns()[0]] = value.value
+#         return curr_data
+
+#     def append_values(self):
+# >>>>>>> bug_fixes_merge
         curr_data = {}
         cached_values = {}
         for prop in self._properties:

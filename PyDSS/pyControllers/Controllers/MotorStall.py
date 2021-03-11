@@ -28,9 +28,9 @@ class MotorStall(ControllerAbstract):
 
 
     def __init__(self, MotorObj, Settings, dssInstance, ElmObjectList, dssSolver):
-        super(MotorStall).__init__()
-        _class, _name = MotorObj.GetInfo()
-        self.name = "Controller-{}-{}".format(_class, _name)
+        super(MotorStall, self).__init__(MotorObj, Settings, dssInstance, ElmObjectList, dssSolver)
+        self._class, self._name = MotorObj.GetInfo()
+        self.name = "Controller-{}-{}".format(self._class, self._name)
         self.__ControlledElm = MotorObj
         self.__Settings = Settings
         self.__dssSolver = dssSolver
@@ -49,6 +49,17 @@ class MotorStall(ControllerAbstract):
         self.disconnected =False
         self.Tdisconnect_start = 0
         return
+
+
+    def Name(self):
+        return self.name
+
+    def ControlledElement(self):
+        return "{}.{}".format(self._class, self._name)
+
+    def debugInfo(self):
+        return [self.__Settings['Control{}'.format(i+1)] for i in range(3)]
+
 
     def Update(self, Priority, Time, UpdateResults):
         if Priority == 0:

@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
 import time
 import helics as h
 from math import pi
 import random
+import time
 
 initstring = "-f 2 --name=mainbroker"
 fedinitstring = "--broker=mainbroker --federates=1"
@@ -15,8 +15,8 @@ print("PI SENDER: Helics version = {}".format(helicsversion))
 # Create broker #
 print("Creating Broker")
 broker = h.helicsCreateBroker("zmq", "", initstring)
-print("Created Broker")
-
+#print(broker.address)
+print("Created Broker: ", broker)
 print("Checking if Broker is connected")
 isconnected = h.helicsBrokerIsConnected(broker)
 print("Checked if Broker is connected")
@@ -54,15 +54,16 @@ pub1 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.load1.power", "
 print("PI SENDER: Publication registered")
 pub2 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.feederhead.voltage", "double", "kW")
 print("PI SENDER: Publication registered")
-sub1 = h.helicsFederateRegisterSubscription(vfed, "PyDSS.PVSystem.pvgnem_mpx000635970.Powers", "kW")
+sub1 = h.helicsFederateRegisterSubscription(vfed, "PyDSS.Circuit.heco19021.TotalPower", "")
 #h.helicsInputSetMinimumChange(sub1, 0.1)
 
 # Enter execution mode #
 h.helicsFederateEnterExecutingMode(vfed)
 
 
-for t in range(1, 5):
-    time_requested = t * 15 * 60
+
+for t in range(1, 30):
+    time_requested = t * 60
     #while time_requested < r_seconds:
     currenttime = h.helicsFederateRequestTime(vfed, time_requested)
     iteration_state = h.helics_iteration_result_iterating
@@ -73,13 +74,12 @@ for t in range(1, 5):
             h.helics_iteration_request_iterate_if_needed
         )
         h.helicsPublicationPublishDouble(pub1, 5.0 + 1. / (1.0 + i))
+        print(iteration_state)
         print("Published: {}".format((5.0 + 1. / (1.0 + i))))
         h.helicsPublicationPublishDouble(pub2, 1.0)
-        value = h.helicsInputGetString(sub1)
-        print("Circuit active power demand: {} kW @ time: {}".format(value, currenttime))
-        #time.sleep(0.01)
+        value = h.helicsInputGetVector(sub1)
+        print("PyDSS.Circuit.heco19021.TotalPower: {} kW @ time: {}".format(value, currenttime))
         #i+=1
-    time.sleep(0.1)
 
 
 h.helicsFederateFinalize(vfed)

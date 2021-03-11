@@ -1,0 +1,30 @@
+/*
+   FUSE model demo for IEEE 123 test feeder supplied with OpenDSS
+
+   Define a lateral fuse and put a Monitor at the same location
+   Fuse will have the same number of phases as the monitored element (1 in this case)
+   Two TCC_Curve objects for fuses are defined by default for every circuit: KLINK and TLINK
+
+*/
+
+New Fuse.Fuse1 line.L2 1 Fusecurve=TLINK ratedcurrent=65  ! 65T fuse
+New Monitor.Fuse1 Line.L2 1
+
+solve  ! snapshot prior to dynamics mode to get Monitor and Fuse assimilated into circuit
+
+// solve a few steps (1 60-Hz cycle) in Dynamics mode just to get everything going
+Solve mode=dynamics stepsize=0.0016666666 number=10
+
+// Add a fault at the end of the lateral
+New Fault.F1 phases=1 Bus1=6.3
+Solve number=100   ! solve 10 cycles, still in Dynamics mode
+
+// check out the results of the simulation
+show monitor fuse1
+
+Export monitors fuse1
+Plot monitor object= fuse1 channels=(3 )  ! currents
+Plot monitor object= fuse1 channels=(1)   ! voltage
+Show Eventlog
+
+
