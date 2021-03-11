@@ -1,8 +1,8 @@
+from PyDSS.pyContrReader import read_controller_settings_from_registry
 from PyDSS.ProfileManager.ProfileStore import ProfileManager
 from PyDSS.dssElementFactory import create_dss_element
 from PyDSS.utils.utils import make_human_readable_size
 from PyDSS.pyContrReader import pyContrReader as pcr
-from PyDSS.pyContrReader import read_controller_settings_from_registry
 from PyDSS.pyPlotReader import pyPlotReader as ppr
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.pyPostprocessor import pyPostprocess

@@ -86,7 +86,6 @@ class ResultData:
             export_list_filename = os.path.join(
                 system_paths["ExportLists"],
                 "ExportMode-byClass.toml",
-# <<<<<<< master
             )
         self._export_list = ExportListReader(export_list_filename)
         Reports.append_required_exports(self._export_list, options)
@@ -101,20 +100,6 @@ class ResultData:
                 objs = self._objects_by_class[elem_class]
             else:
                 continue
-# =======
-#             ),
-#         )
-
-#         self._export_list = self._file_reader.pyControllers
-#         self._create_list_by_class()
-#         self._logger.debug("result container created")
-
-#     def _create_element_list(self, objs, properties):
-#         elements = []
-#         element_names = set()
-#         for property_name in properties:
-#             assert isinstance(property_name, str)
-# >>>>>>> bug_fixes_merge
             for name, obj in objs.items():
                 if not obj.Enabled:
                     continue

@@ -74,3 +74,21 @@ Uninterruptible = true
 [Plots]
 "Create dynamic plots" = false
 "Open plots in browser" = false
+
+[Reports]
+Format = "h5"
+[[Reports.Types]]
+name = "Capacitor State Change Counts"
+enabled = true
+
+[[Reports.Types]]
+name = "PV Clipping"
+enabled = true
+
+[[Reports.Types]]
+name = "PV Curtailment"
+enabled = true
+
+[[Reports.Types]]
+name = "RegControl Tap Number Change Counts"
+enabled = true
