@@ -19,6 +19,6 @@ helics
 pytest
 terminaltables
 aiohttp
-aiohttp_swagger3
+aiohttp_swagger3==0.4.3
 requests
 pyyaml
