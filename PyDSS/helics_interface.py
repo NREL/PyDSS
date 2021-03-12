@@ -164,7 +164,7 @@ class helics_interface:
                 if value:
                     value = value * sub_info['Multiplier']
                     dssElement = self._objects_by_element[element_name]
-                    if value != -1e+48:
+                    if self._dss_solver._StartTime != self._dss_solver._Time:
                         a = dssElement.SetParameter(sub_info['Property'], value)
 
                     self._logger.debug('Value for "{}.{}" changed to "{}"'.format(

@@ -43,6 +43,7 @@ class PyDSS:
             parameters['Broker'] = helics_['broker']['host']
             parameters['Broker port'] = helics_['broker']['port']
             parameters['Co-simulation Mode'] = True
+
             self.cosim_uuid = parameters['cosim_uuid']
             self.federate_service = 'der_federate_service'
             self.fed_name = parameters['name']
@@ -50,6 +51,7 @@ class PyDSS:
             
             """ If the project path is uuid, grab content from AWS S3"""
             if not os.path.exists(parameters["powerflow_options"]["pydss_project"]):
+                self.notify("Initiating project creation process")
                 parameters = self.update_project_params(parameters)
                 if parameters is None:
                     self.queue({
@@ -65,6 +67,7 @@ class PyDSS:
             # uses minutes to request time
             params['Project']['Simulation duration (min)'] = params['Project']['Simulation duration (min)']/60
             params['Project']['Step resolution (sec)'] = params['Project']['Step resolution (sec)']/60
+            params['Project']["Loadshape start time"] = "1/1/2020 00:00:00"
 
             # Making sure delta time is small enough
             params['Helics']['Time delta'] = 0.1*params['Project']['Step resolution (sec)']
@@ -78,9 +81,10 @@ class PyDSS:
             Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
             self.a_writer = JSONwriter(export_path, self.data_service_url, Steps, self.notify)
             self.initalized = True
+            self.notify("PyDSS projects initialized successfully")
         except Exception as e:
-            print(e)
             result = {"Status": 500, "Message": f"Failed to create a PyDSS instance"}
+            self.notify(f"PyDSS error occurred: {str(e)}", log_level=logging.ERROR)
             self.queue.put(result)
             return
 
@@ -207,13 +211,16 @@ class PyDSS:
                     return params
                 else:
                     logger.error(f'PyDSS case file is not a zip file')
+                    self.notify(f"PyDSS case file is not a zip file", log_level=logging.ERROR)
                     return None
             else:
                 logger.error(f'Error fetching data from AWS S3')
+                self.notify(f"Error fetching data from AWS S3", log_level=logging.ERROR)
                 return None
 
         else:
             logger.error(f'Error fetching PyDSS project!')
+            self.notify(f"Error fetching PyDSS project!", log_level=logging.ERROR)
             return None
     
     def run_process(self):
@@ -277,6 +284,7 @@ class PyDSS:
                 Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
 
                 for i in range(Steps):
+                    self.notify(f"PyDSS cosim running for timestep : {Steps}, minutes : {sTime*60}")
                     results = self.pydss_obj.RunStep(i)
                     restructured_results = self.restructure_results(results)
                     #Timestep data payload and metadata only in an inital timestep
@@ -288,17 +296,21 @@ class PyDSS:
                         fed_uuid=self.parameters['fed_uuid'],
                         cosim_uuid=self.parameters['cosim_uuid']
                     )
+                    self.notify(f"PyDSS output written for timestep : {Steps}, minutes : {sTime*60}")
                     
                 #closing federate
                 # TODO: At the moment, I cannot pass timestep because bes_data_api attemps to create a vector tile results
                 self.a_writer.send_timesteps()
+                self.notify(f"PyDSS send final timesteps")
                 
                 # Remove the project data
                 if hasattr(self, 'tmp_folder'):
+                    self.notify(f"PyDSS cleaned project folder")
                     if os.path.exists(os.path.join(self.tmp_folder, self.folder_name)):
                         shutil.rmtree(os.path.join(self.tmp_folder, self.folder_name))
 
                 self.close_instance()
+                self.notify(f"PyDSS federate successfully finalized")
 
                 self.initalized = False
                 return 200, f"Simulation complete..."
