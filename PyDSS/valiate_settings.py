@@ -59,6 +59,7 @@ settings_dict = {
             'Start time': {'type': str},
             'Simulation duration (min)': {'type': float},
             'Step resolution (sec)': {'type': float},
+            'Loadshape start time': {'type': str},
             'Max Control Iterations' : {'type': int},
             'Error tolerance': {'type': float},
             'Simulation Type': {'type': str, 'Options': ["QSTS", "Dynamic", "Snapshot", "Monte Carlo"]},
