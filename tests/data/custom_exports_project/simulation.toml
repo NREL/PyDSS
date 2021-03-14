@@ -17,10 +17,6 @@
 "Use Controller Registry" = true
 
 [[Project.Scenarios]]
-name = "basecase"
-post_process_infos = []
-
-[[Project.Scenarios]]
 name = "scenario1"
 post_process_infos = []
 
@@ -67,21 +63,3 @@ Uninterruptible = true
 
 [MonteCarlo]
 "Number of Monte Carlo scenarios" = 0
-
-[Reports]
-Format = "h5"
-[[Reports.Types]]
-name = "Capacitor State Change Counts"
-enabled = true
-
-[[Reports.Types]]
-name = "PV Clipping"
-enabled = true
-
-[[Reports.Types]]
-name = "PV Curtailment"
-enabled = true
-
-[[Reports.Types]]
-name = "RegControl Tap Number Change Counts"
-enabled = true
