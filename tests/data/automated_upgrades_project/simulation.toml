@@ -3,12 +3,9 @@
 "DSS File" = "Master.dss"
 "Return Results" = false
 "DSS File Absolute Path" = false
-"Start Year" = 2020
-"Start Day" = 1
-"End Day" = 1
-"Start Time (min)" = 0
-"End Time (min)" = 0
-"Date offset" = 0
+"Start time" = "2020-1-1 00:00:00.0"
+"Simulation duration (min)" = 1.0
+"Loadshape start time" = "2020-1-1 00:00:00.0"
 "Step resolution (sec)" = 900
 "Max Control Iterations" = 15
 "Error tolerance" = 0.001
@@ -43,7 +40,6 @@ config_file = "tests/data/voltage_upgrade_config.toml"
 "Export Compression" = true
 "Export Data Tables" = false
 "Export PV Profiles" = false
-"Result Container" = "ResultData"
 
 [Frequency]
 "Enable frequency sweep" = false

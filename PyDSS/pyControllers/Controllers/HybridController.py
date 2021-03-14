@@ -14,7 +14,7 @@ class HybridController(ControllerAbstract):
     __pDisconnected = False
 
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
-        super(HybridController).__init__()
+        super(HybridController).__init__(PvObj, Settings, dssInstance, ElmObjectList, dssSolver)
 
         self.__ElmObjectList = ElmObjectList
         #print(PvObj.Bus[0] + ' - ' + PvObj.sBus[0].GetInfo())

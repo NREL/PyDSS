@@ -1,17 +1,14 @@
 [Project]
-"Start Year" = 2017
-"Start Day" = 1
-"Start Time (min)" = 0.0
-"End Day" = 1
-"End Time (min)" = 74.0
-"Date offset" = 0
-"Step resolution (sec)" = 900.0
+"Start time" = "2020-1-1 00:00:00.0"
+"Simulation duration (min)" = 5
+"Loadshape start time" = "2020-1-1 00:00:00.0"
+"Step resolution (sec)" = 60.0
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
 "Control mode" = "Static"
 "Disable PyDSS controllers" = false
 "Simulation Type" = "QSTS"
-"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS\\examples\\external_interfaces"
+"Project Path" = "./examples/external_interfaces"
 "Active Project" = "pydss_project"
 "Active Scenario" = ""
 "DSS File" = "Master_Spohn_existing_VV.dss"
@@ -41,7 +38,6 @@ post_process_infos = []
 "HDF Max Chunk Bytes" = 32768
 "Export Event Log" = true
 "Log Results" = true
-"Result Container" = "ResultData"
 
 [Frequency]
 "Enable frequency sweep" = false
@@ -57,8 +53,8 @@ post_process_infos = []
 "Iterative Mode" = true
 "Error tolerance" = 0.1
 "Max co-iterations" = 20
-"Broker" = "mainbroker"
-"Broker port" = 50001
+"Broker" = "127.0.0.1"
+"Broker port" = 23404
 "Federate name" = "PyDSS"
 "Time delta" = 0.01
 "Core type" = "zmq"

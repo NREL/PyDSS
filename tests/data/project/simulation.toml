@@ -15,12 +15,9 @@
 # DSS File- [String] - The main OpenDSS file
 # Return Results- [Bool] - Set true if running PyDSS in Cosimulation environment, RunStep function will return current system states
 [Project]
-"Start Year" = 2017
-"Start Day" = 1
-"Start Time (min)" = 0.0
-"End Day" = 1
-"End Time (min)" = 1439.0
-"Date offset" = 0
+"Start time" = "2020-1-1 00:00:00.0"
+"Simulation duration (min)" = 1440.0
+"Loadshape start time" = "2020-1-1 00:00:00.0"
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 15
 "Error tolerance" = 0.001
@@ -44,14 +41,13 @@ post_process_infos = []
 "Export Mode" = "byClass"
 "Export Style" = "Single file"
 "Export Elements" = true
-"Export Data Tables" = false
+"Export Data Tables" = true
 "Export Data In Memory" = true
 "Export PV Profiles" = true
 "Export Event Log" = true
 "Export Format" = "h5"
 "Export Compression" = true
 "HDF Max Chunk Bytes" = 32768
-"Result Container" = "ResultData"
 "Log Results" = true
 
 # Create dynamic plots- [Bool] - Enable rendering of dynamic plots using bokeh

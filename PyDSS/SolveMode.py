@@ -8,6 +8,7 @@ from PyDSS.modes.Snapshot import Snapshot
 from PyDSS.modes.QSTS import QSTS
 
 
+
 def GetSolver(SimulationSettings, dssInstance):
     if SimulationSettings["Logging"]["Pre-configured logging"]:
         LoggerTag = __name__

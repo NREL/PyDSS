@@ -5,6 +5,7 @@ import os
 import PyDSS
 from PyDSS.utils.utils import load_data
 
+DATE_FORMAT = '%Y-%m-%d %H:%M:%S.%f' # '%Y-%m-%d %H:%M:%S.%f', "%m/%d/%Y %H:%M:%S"
 
 PLOTS_FILENAME = "plots.toml"
 SIMULATION_SETTINGS_FILENAME = "simulation.toml"
@@ -16,7 +17,6 @@ PROJECT_ZIP = "project.zip"
 PV_LOAD_SHAPE_FILENAME = "pv_load_shape_data.h5"
 PV_PROFILES_FILENAME = "pv_profiles.json"
 INTEGER_NAN = -9999
-
 
 class VisualizationType(enum.Enum):
     FREQUENCY_PLOT = "FrequencySweep"
@@ -37,6 +37,8 @@ class ControllerType(enum.Enum):
     MOTOR_STALL = "MotorStall"
     PV_VOLTAGE_RIDETHROUGH = "PvVoltageRideThru"
     FAULT_CONTROLLER = "FaultController"
+    THERMOSTATIC_LOAD_CONTROLLER = "ThermostaticLoad"
+    GENERATOR_CONTROLLER = "GenController"
 
 
 CONTROLLER_TYPES = tuple(x.value for x in ControllerType)

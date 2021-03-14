@@ -1,16 +1,13 @@
 [Project]
-"Start Year" = 2017
-"Start Day" = 1
-"Start Time (min)" = 0.0
-"End Day" = 8
-"End Time (min)" = 1439.0
-"Date offset" = 250
+"Start time" = "2020-1-1 00:00:00.0"
+"Simulation duration (min)" = 1440.0
+"Loadshape start time" = "2020-1-1 00:00:00.0"
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 15
 "Error tolerance" = 0.0001
 "Max error tolerance" = 0.0
 "Convergence error percent threshold" = 0
-"Skip export on convergence error" = false
+"Skip export on convergence error" = true
 "Control mode" = "Time"
 "Disable PyDSS controllers" = false
 "Project Path" = "./tests/data"
@@ -42,7 +39,6 @@ post_process_infos = []
 "Export Format" = "csv"
 "Export Compression" = true
 "HDF Max Chunk Bytes" = 32768
-"Result Container" = "ResultData"
 "Log Results" = true
 
 # Create dynamic plots- [Bool] - Enable rendering of dynamic plots using bokeh
@@ -88,7 +84,7 @@ post_process_infos = []
 [Logging]
 "Logging Level" = "INFO"
 "Log to external file" = true
-"Display on screen" = false
+"Display on screen" = true
 "Clear old log file" = false
 
 [MonteCarlo]

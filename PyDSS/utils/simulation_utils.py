@@ -7,6 +7,8 @@ import numpy as np
 import opendssdirect as dss
 import pandas as pd
 
+from PyDSS.common import DATE_FORMAT
+
 
 logger = logging.getLogger(__name__)
 
@@ -94,21 +96,9 @@ def create_time_range_from_settings(settings):
         (start, end, step)
 
     """
-    resolution = settings['Project']['Step resolution (sec)']
-
-    year = settings['Project']['Start Year']
-    start_day = settings['Project']['Start Day'] + settings['Project']['Date offset']
-    start_minutes = settings['Project']["Start Time (min)"]
-    end_day = settings['Project']['End Day'] + settings['Project']['Date offset']
-    end_minutes = settings['Project']["End Time (min)"]
-    step_secs = settings["Project"]["Step resolution (sec)"]
-
-    start_time = datetime(year=year, month=1, day=1) + \
-        timedelta(days=start_day - 1, minutes=start_minutes)
-    end_time = datetime(year=year, month=1, day=1) + \
-        timedelta(days=end_day - 1, minutes=end_minutes)
-    step_time = timedelta(seconds=step_secs)
-
+    start_time = datetime.strptime(settings['Project']["Start time"], DATE_FORMAT)
+    end_time = start_time + timedelta(minutes=settings["Project"]["Simulation duration (min)"])
+    step_time = timedelta(seconds=settings['Project']['Step resolution (sec)'])
     return start_time, end_time, step_time
 
 
@@ -149,9 +139,7 @@ def create_loadshape_pmult_dataframe(settings):
     pd.DatetimeIndex
 
     """
-    year = settings['Project']['Start Year']
-    start_time = datetime(year=year, month=1, day=1) + timedelta(settings['Project']['Date offset'])
-
+    start_time = datetime.strptime(settings['Project']['Loadshape start time'], DATE_FORMAT)
     data = dss.LoadShape.PMult()
     interval = timedelta(seconds=dss.LoadShape.SInterval())
     npts = dss.LoadShape.Npts()

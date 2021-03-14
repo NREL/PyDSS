@@ -20,7 +20,7 @@ class FaultController(ControllerAbstract):
         """Constructor method
         """
 
-        super(FaultController).__init__()    
+        super(FaultController, self).__init__(FaultObj, Settings, dssInstance, ElmObjectList, dssSolver)
         self.P_old = 0
         self.Time = -1
         self.__Locked = False
@@ -57,5 +57,15 @@ class FaultController(ControllerAbstract):
             print(f"Fault disabled at time: {time}")
             self.__FaultEnabled = False
         return 0
+        
+    def Name(self):
+        return self.__Name
+
+    def ControlledElement(self):
+        return "{}.{}".format(self.ceClass, self.ceName)
+
+    def debugInfo(self):
+        return [self.__Settings['Control{}'.format(i+1)] for i in range(3)]
+
 
 

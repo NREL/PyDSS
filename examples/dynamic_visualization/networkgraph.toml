@@ -11,7 +11,7 @@
 "Control mode" = "Static"
 "Disable PyDSS controllers" = false
 "Simulation Type" = "QSTS"
-"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS\\examples"
+"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS_src\\examples"
 "Active Project" = "dynamic_visualization"
 "Active Scenario" = "scenario_1"
 "DSS File" = "Master_Spohn_existing_VV.dss"
@@ -24,15 +24,14 @@ post_process_infos = []
 [Exports]
 "Export Mode" = "byClass"
 "Export Style" = "Single file"
-"Export Format" = "csv"
+"Export Format" = "h5"
 "Export Compression" = false
-"Export Elements" = true
-"Export Data Tables" = false
-"Export Data In Memory" = false
+"Export Elements" = false
+"Export Data Tables" = true
+"Export Data In Memory" = true
 "HDF Max Chunk Bytes" = 32768
 "Export Event Log" = true
 "Log Results" = true
-"Result Container" = "ResultContainer"
 
 [Frequency]
 "Enable frequency sweep" = false

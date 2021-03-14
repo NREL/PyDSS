@@ -279,6 +279,10 @@ class VoltageMetrics(ReportBase):
             "max_min_node_voltages": node_voltages,
             "max_voltage": overall_max,
             "min_voltage": overall_min,
+            # TODO: these are not implemented for this mode
+            "num_outside_range_b": None,
+            "num_between_ranges": None,
+            "num_inside_range_a": None,
         }
 
     @staticmethod

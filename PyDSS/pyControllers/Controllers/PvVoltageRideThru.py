@@ -24,7 +24,7 @@ class PvVoltageRideThru(ControllerAbstract):
     """
 
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
-        super(PvVoltageRideThru).__init__()
+        super(PvVoltageRideThru, self).__init__(PvObj, Settings, dssInstance, ElmObjectList, dssSolver)
 
         self.TimeChange = False
         self.Time = (-1, 0)
@@ -51,11 +51,11 @@ class PvVoltageRideThru(ControllerAbstract):
         self.__dssSolver = dssSolver
         self.__Settings = Settings
 
-        Class, Name = self.__ControlledElm.GetInfo()
-        assert (Class.lower() == 'generator'), 'PvControllerGen works only with an OpenDSS Generator element'
-        self.__Name = 'pyCont_' + Class + '_' + Name
-        if '_' in Name:
-            self.Phase = Name.split('_')[1]
+        self.Class, self.Name = self.__ControlledElm.GetInfo()
+        assert (self.Class.lower() == 'generator'), 'PvControllerGen works only with an OpenDSS Generator element'
+        self.__Name = 'pyCont_' + self.Class + '_' + self.Name
+        if '_' in self.Name:
+            self.Phase = self.Name.split('_')[1]
         else:
             self.Phase = None
 
@@ -104,6 +104,15 @@ class PvVoltageRideThru(ControllerAbstract):
         self.__VoltVioM = False
         self.__VoltVioP = False
         return
+
+    def Name(self):
+        return self.__Name
+
+    def ControlledElement(self):
+        return "{}.{}".format(self.Class, self.Name)
+
+    def debugInfo(self):
+        return [self.__Settings['Control{}'.format(i+1)] for i in range(3)]
 
     def __initializeRideThroughSettings(self):
         self.__isConnected = True
