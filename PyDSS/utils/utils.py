@@ -198,7 +198,7 @@ def iter_elements(element_class, element_func):
 
     >>> for reg_control in iter_elements(opendssdirect.RegControls, get_reg_control_info):
         print(reg_control["name"])
-        
+
     """
     element_class.First()
     for _ in range(element_class.Count()):
@@ -242,20 +242,18 @@ def make_json_serializable(obj):
 
 
 def make_timestamps(data):
-    # Something like pd.to_datetime(data, unit="s") would be faster but it
-    # does time zone conversions.
-    return pd.to_datetime([datetime.fromtimestamp(x) for x in data])
+    return pd.to_datetime(data, unit="s")
 
-def serialize_timedelta(timedelta_object):     
+
+def serialize_timedelta(timedelta_object):
     return f"days={timedelta_object.days}, seconds={timedelta_object.seconds}"
-    
 
-def deserialize_timedelta(text):     
-    regex = re.compile(r"days=(\d+), seconds=(\d+)") 
+
+def deserialize_timedelta(text):
+    regex = re.compile(r"days=(\d+), seconds=(\d+)")
     match = regex.search(text)
     if match:
         days = int(match.group(1))
         seconds = int(match.group(2))
         return timedelta(days=days, seconds=seconds)
     raise Exception(f"invalid time string: {text}")
-

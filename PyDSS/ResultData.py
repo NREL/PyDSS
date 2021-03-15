@@ -1,10 +1,11 @@
 
-from collections import defaultdict
 import copy
 import logging
 import os
 import pathlib
 import time
+from collections import defaultdict
+from datetime import datetime
 
 import opendssdirect as dss
 import pandas as pd
@@ -217,7 +218,8 @@ class ResultData:
         update_start = time.time()
         self.CurrentResults.clear()
 
-        timestamp = self._dss_solver.GetDateTime().timestamp()
+        # Get the number of seconds since the Epoch without any timezone conversions.
+        timestamp = (self._dss_solver.GetDateTime() - datetime.utcfromtimestamp(0)).total_seconds()
         self._time_dataset.write_value([timestamp])
         self._frequency_dataset.write_value([self._dss_solver.getFrequency()])
         self._mode_dataset.write_value([self._dss_solver.getMode()])
