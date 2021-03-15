@@ -48,7 +48,6 @@ settings_dict = {
             'Log to external file': {'type': bool, 'Options': [True, False]},
             'Display on screen': {'type': bool, 'Options': [True, False]},
             'Clear old log file': {'type': bool, 'Options': [True, False]},
-            'Pre-configured logging': {'type': bool, 'Options': [True, False]},
         },
         "MonteCarlo": {
             'Number of Monte Carlo scenarios': {'type': int},
@@ -195,7 +194,6 @@ settings_dict = {
             'Log to external file': {'type': bool, 'Options': [True, False]},
             'Display on screen': {'type': bool, 'Options': [True, False]},
             'Clear old log file': {'type': bool, 'Options': [True, False]},
-            'Pre-configured logging': {'type': bool, 'Options': [True, False]},
         },
         "MonteCarlo": {
             'Number of Monte Carlo scenarios': {'type': int},

@@ -41,12 +41,7 @@ class helics_interface:
     }
 
     def __init__(self, dss_solver, objects_by_name, objects_by_class, options, system_paths, default=True):
-
-        if options["Logging"]["Pre-configured logging"]:
-            LoggerTag = __name__
-        else:
-            LoggerTag = getLoggerTag(options)
-
+        LoggerTag = getLoggerTag(options)
         self.itr = 0
         self.c_seconds = 0
         self.c_seconds_old = -1

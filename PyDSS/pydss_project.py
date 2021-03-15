@@ -18,6 +18,7 @@ from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, CONTROLLER_TYPES, \
     filename_from_enum, VisualizationType, DEFAULT_MONTE_CARLO_SETTINGS_FILE,\
     SUBSCRIPTIONS_FILENAME, DEFAULT_SUBSCRIPTIONS_FILE, OPENDSS_MASTER_FILENAME
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
+from PyDSS.loggers import setup_logging
 from PyDSS.pyDSS import instance
 from PyDSS.pydss_fs_interface import PyDssDirectoryInterface, \
     PyDssArchiveFileInterfaceBase, PyDssTarFileInterface, \
@@ -314,7 +315,22 @@ class PyDssProject:
             raise InvalidConfiguration("a valid opendss file needs to be passed")
 
         inst = instance()
-        self._simulation_config["Logging"]["Pre-configured logging"] = logging_configured
+        if not logging_configured:
+            if self._simulation_config["Logging"]["Display on screen"]:
+                console_level = logging.INFO
+            else:
+                console_level = logging.ERROR
+            if self._simulation_config["Logging"]["Log to external file"]:
+                filename = os.path.join(self._project_dir, "Logs", "pydss.log")
+            else:
+                filename = None
+            file_level = logging.INFO
+            setup_logging(
+                "PyDSS",
+                filename=filename,
+                console_level=console_level,
+                file_level=file_level,
+            )
         if dry_run:
             store_filename = os.path.join(tempfile.gettempdir(), STORE_FILENAME)
         else:

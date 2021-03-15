@@ -98,7 +98,6 @@
 "Log to external file" = true
 "Display on screen" = true
 "Clear old log file" = false
-"Pre-configured logging" = false
 
 [MonteCarlo]
 "Number of Monte Carlo scenarios" = -1

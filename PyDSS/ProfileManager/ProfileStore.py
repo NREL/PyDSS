@@ -17,10 +17,7 @@ import os
 class ProfileManager:
 
     def __init__(self,  dssObjects, dssSolver, options, mode="r+"):
-        if options["Logging"]["Pre-configured logging"]:
-            logger_tag = __name__
-        else:
-            logger_tag = getLoggerTag(options)
+        logger_tag = getLoggerTag(options)
         self._logger = logging.getLogger(logger_tag)
         self.dssSolver = dssSolver
         self.Objects = dssObjects
