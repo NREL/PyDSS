@@ -73,14 +73,13 @@ class ResultData:
             options["Project"]["Active Scenario"],
         )
         # Use / because this is used in HDFStore
-        self._export_relative_dir = f"Exports/" + options["Project"]["Active Scenario"]
-        self._store_frequency = True
-        self._store_mode = True
-        self.CurrentResults = {}
-        # if options["Project"]["Simulation Type"] == "Dynamic" or \
-        #         options["Frequency"]["Enable frequency sweep"]:
-        #     self._store_frequency = True
-        #     self._store_mode = True
+        self._export_relative_dir = "Exports/" + options["Project"]["Active Scenario"]
+        self._store_frequency = False
+        self._store_mode = False
+        if options["Project"]["Simulation Type"] == "Dynamic" or \
+                 options["Frequency"]["Enable frequency sweep"]:
+            self._store_frequency = True
+            self._store_mode = True
 
         if options["Exports"]["Export Mode"] == "byElement":
             raise InvalidParameter(
@@ -216,7 +215,7 @@ class ResultData:
 
     def UpdateResults(self, store_nan=False):
         update_start = time.time()
-        self.CurrentResults.clear()
+        current_results = {}
 
         # Get the number of seconds since the Epoch without any timezone conversions.
         timestamp = (self._dss_solver.GetDateTime() - datetime.utcfromtimestamp(0)).total_seconds()
@@ -237,7 +236,7 @@ class ResultData:
             if isinstance(data, dict):
                 # TODO: reconsider
                 # Something is only returned for OpenDSS properties
-                self.CurrentResults.update(data)
+                current_results.update(data)
 
         end = time.time()
         self._stats["Total"].update(end - update_start)
@@ -249,9 +248,9 @@ class ResultData:
             logger.info("Flushed datasets")
 
         self._cur_step += 1
-        return self.CurrentResults
+        return current_results
 
-    def ExportResults(self, fileprefix=""):
+    def ExportResults(self):
         metadata = {
             "event_log": None,
             "element_info_files": [],
@@ -277,9 +276,8 @@ class ResultData:
             metric.close()
         for stats in self._stats.values():
             stats.log_stats()
-        
+
     def _export_event_log(self, metadata):
-        # TODO: move to a base class
         event_log = "event_log.csv"
         file_path = os.path.join(self._export_dir, event_log)
         if os.path.exists(file_path):
@@ -304,45 +302,40 @@ class ResultData:
 
     def _find_feeder_head_line(self):
         feeder_head_line = None
-    
         flag = dss.Topology.First()
-      
         while flag > 0:
-        
             if 'line' in dss.Topology.BranchName().lower():
                 feeder_head_line = dss.Topology.BranchName()
                 break
-                
             else:
                 flag = dss.Topology.Next()
-                
+
         return feeder_head_line
-        
+
     def _get_feeder_head_loading(self):
         head_line = self._find_feeder_head_line()
         if head_line is not None:
             flag = dss.Circuit.SetActiveElement(head_line)
-            
+
             if flag>0:
                 n_phases = dss.CktElement.NumPhases()
                 max_amp = dss.CktElement.NormalAmps()
                 Currents = dss.CktElement.CurrentsMagAng()[:2*n_phases]
                 Current_magnitude = Currents[::2]
-        
+
                 max_flow = max(max(Current_magnitude), 1e-10)
                 loading = max_flow/max_amp
-                
+
                 return loading
-                
             else:
                 return None
         else:
             return None
-    
+
     def _reverse_powerflow(self):
         reverse_pf = max(dss.Circuit.TotalPower()) > 0 # total substation power is an injection(-) or a consumption(+)
         return reverse_pf
-    
+
     def _export_feeder_head_info(self, metadata):
         """
         Gets feeder head information comprising:
@@ -353,18 +346,15 @@ class ResultData:
         """
         if not "feeder_head_info_files" in metadata.keys():
             metadata["feeder_head_info_files"] = []
-        
+
         df_dict = {"FeederHeadLine": self._find_feeder_head_line(),
                    "FeederHeadLoading": self._get_feeder_head_loading(),
                    "FeederHeadLoad": dss.Circuit.TotalPower(),
                    "ReversePowerFlow": self._reverse_powerflow()
                   }
-        
-        #df = pd.DataFrame.from_dict(df_dict)
-        
+
         filename = "FeederHeadInfo"
         fname = filename + ".json"
-        
         relpath = os.path.join(self._export_relative_dir, fname)
         filepath = os.path.join(self._export_dir, fname)
         #write_dataframe(df, filepath)
