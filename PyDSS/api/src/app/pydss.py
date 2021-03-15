@@ -284,7 +284,7 @@ class PyDSS:
                 Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
 
                 for i in range(Steps):
-                    self.notify(f"PyDSS cosim running for timestep : {Steps}, minutes : {sTime*60}")
+                    self.notify(f"PyDSS cosim running for timestep : {Steps}")
                     results = self.pydss_obj.RunStep(i)
                     restructured_results = self.restructure_results(results)
                     #Timestep data payload and metadata only in an inital timestep
@@ -296,7 +296,7 @@ class PyDSS:
                         fed_uuid=self.parameters['fed_uuid'],
                         cosim_uuid=self.parameters['cosim_uuid']
                     )
-                    self.notify(f"PyDSS output written for timestep : {Steps}, minutes : {sTime*60}")
+                    self.notify(f"PyDSS output written for timestep : {Steps}")
                     
                 #closing federate
                 # TODO: At the moment, I cannot pass timestep because bes_data_api attemps to create a vector tile results
