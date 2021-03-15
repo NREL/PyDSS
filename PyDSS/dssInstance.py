@@ -453,9 +453,7 @@ class OpenDSS:
                 postprocessor.finalize()
 
         if self._Options and self._Options['Exports']['Log Results']:
-            self.ResultContainer.ExportResults(
-                fileprefix="",
-            )
+            self.ResultContainer.ExportResults()
 
         self._Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
         self._Logger.info('End of simulation')
