@@ -77,7 +77,7 @@
 # Uninterruptible - [Bool] - Can the federate be interepted
 # Helics logging level - [int] - logging level for the federate (use Helics documentation for choosig the right value)
 [Helics]
-"Co-simulation Mode" = true
+"Co-simulation Mode" = false
 "Iterative Mode" = false
 "Error tolerance" = 0.0001
 "Max co-iterations" = 15
