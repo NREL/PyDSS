@@ -237,7 +237,9 @@ class OpenDSS:
                 if error > self._Options['Project']['Error tolerance']:
                     errorTag = {
                             "Report": "Convergence",
+                            "Scenario": self._Options["Project"]["Active Scenario"],
                             "Time": self._dssSolver.GetTotalSeconds(),
+                            "DateTime": str(self._dssSolver.GetDateTime()),
                             "Controller": controller.Name(),
                             "Controlled element": controller.ControlledElement(),
                             "Error": error,
