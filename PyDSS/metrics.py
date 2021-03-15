@@ -50,6 +50,12 @@ class MetricBase(abc.ABC):
             if container is not None:
                 container.close()
 
+        # Write an empty dataset to the .h5 file if no data was collected.
+        for prop in self.iter_empty_containers():
+            assert not isinstance(self, SummedElementsOpenDssPropertyMetric)
+            path = f"{self._base_path}/{prop.elem_class}/ElementProperties/{prop.storage_name}"
+            self.make_empty_storage_container(path, prop)
+
     def flush_data(self):
         """Flush any data in memory to storage."""
         for container in self.iter_containers():
@@ -70,6 +76,12 @@ class MetricBase(abc.ABC):
     def iter_containers(self):
         """Return an iterator over the StorageFilterBase containers."""
 
+    def iter_empty_containers(self):
+        """Return an iterator over empty containers."""
+        return
+        yield
+
+
     def label(self):
         """Return a label for the metric.
 
@@ -84,7 +96,17 @@ class MetricBase(abc.ABC):
     def _make_elem_names(self):
         return [x.FullName for x in self._dss_objs]
 
-    def make_storage_container(self, hdf_store, path, prop, num_steps, max_chunk_bytes, values, **kwargs):
+    def make_empty_storage_container(self, path, prop):
+        """Make an empty storage container."""
+        if prop.store_values_type not in STORAGE_TYPE_MAP:
+            raise InvalidConfiguration(f"unsupported {prop.store_values_type}")
+        elem_names = self._make_elem_names()
+        cls = STORAGE_TYPE_MAP[prop.store_values_type]
+        values = [ValueByNumber(x.FullName, self.label(), 0.0) for x in self._dss_objs]
+        container = cls(self._hdf_store, path, prop, 1, self._max_chunk_bytes, values, elem_names)
+        return container
+
+    def make_storage_container(self, path, prop, num_steps, max_chunk_bytes, values, **kwargs):
         """Make a storage container.
 
         Returns
@@ -96,7 +118,7 @@ class MetricBase(abc.ABC):
             raise InvalidConfiguration(f"unsupported {prop.store_values_type}")
         elem_names = self._make_elem_names()
         cls = STORAGE_TYPE_MAP[prop.store_values_type]
-        container = cls(hdf_store, path, prop, num_steps, max_chunk_bytes, values, elem_names, **kwargs)
+        container = cls(self._hdf_store, path, prop, num_steps, max_chunk_bytes, values, elem_names, **kwargs)
         return container
 
     def max_num_bytes(self):
@@ -183,7 +205,6 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
                 vals = values
             path = f"{self._base_path}/{prop.elem_class}/ElementProperties/{prop.storage_name}"
             self._containers[prop.store_values_type] = self.make_storage_container(
-                self._hdf_store,
                 path,
                 prop,
                 self._num_steps,
@@ -217,6 +238,11 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
     def iter_containers(self):
         return self._containers.values()
 
+    def iter_empty_containers(self):
+        for prop in self._properties.values():
+            if prop.store_values_type not in self._containers:
+                yield prop
+
 
 class OpenDssPropertyMetric(MultiValueTypeMetricBase):
     """Stores metrics for any OpenDSS element property."""
@@ -227,7 +253,7 @@ class OpenDssPropertyMetric(MultiValueTypeMetricBase):
     def append_values(self, time_step, store_nan=False):
         curr_data = {}
         values = super().append_values(time_step, store_nan=store_nan)
-        for dss_obj, value in zip(self._dss_objs, values):
+        for _, value in zip(self._dss_objs, values):
             if len(value.make_columns()) > 1:
                 for column, val in zip(value.make_columns(), value.value):
                     curr_data[column] = val
@@ -308,7 +334,6 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
             total.set_name("Total")
             path = f"{self._base_path}/{prop.elem_class}/SummedElementProperties/{prop.storage_name}"
             self._container = self.make_storage_container(
-                self._hdf_store,
                 path,
                 prop,
                 self._num_steps,
@@ -347,7 +372,6 @@ class NodeVoltageMetric(MetricBase):
             for prop in self._properties.values():
                 path = f"{self._base_path}/Nodes/ElementProperties/{prop.storage_name}"
                 self._containers[prop.store_values_type] = self.make_storage_container(
-                    self._hdf_store,
                     path,
                     prop,
                     self._num_steps,
@@ -371,6 +395,11 @@ class NodeVoltageMetric(MetricBase):
         for sv_type in self._properties:
             if sv_type in self._containers:
                 yield self._containers[sv_type]
+
+    def iter_empty_containers(self):
+        for prop in self._properties.values():
+            if prop.store_values_type not in self._containers:
+                yield prop
 
 
 class TrackCapacitorChangeCounts(ChangeCountMetricBase):
@@ -484,7 +513,6 @@ class OpenDssExportMetric(MetricBase):
                     window_sizes = None
                 path = f"{self._base_path}/{self.element_class()}/ElementProperties/{prop.storage_name}"
                 self._containers[prop.store_values_type] = self.make_storage_container(
-                    self._hdf_store,
                     path,
                     prop,
                     self._num_steps,
@@ -514,7 +542,6 @@ class OpenDssExportMetric(MetricBase):
             assert prop.store_values_type in (StoreValuesType.ALL, StoreValuesType.SUM)
             path = f"{self._base_path}/{prop.elem_class}/SummedElementProperties/{prop.storage_name}"
             self._containers[prop.store_values_type] = self.make_storage_container(
-                self._hdf_store,
                 path,
                 prop,
                 self._num_steps,
@@ -586,9 +613,6 @@ class OpenDssExportMetric(MetricBase):
     def label():
         """Return the label to use in dataframe columns."""
 
-    def iter_containers(self):
-        yield self._containers.values()
-
     @staticmethod
     def is_circuit_wide():
         return True
@@ -597,6 +621,11 @@ class OpenDssExportMetric(MetricBase):
         for sv_type in self._properties:
             if sv_type in self._containers:
                 yield self._containers[sv_type]
+
+    def iter_empty_containers(self):
+        for prop in self._properties.values():
+            if prop.store_values_type not in self._containers:
+                yield prop
 
     @abc.abstractmethod
     def parse_file(self, filename):
