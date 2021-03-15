@@ -68,3 +68,7 @@ class FeederLossesReport(ReportBase):
                 },
             ]
         }
+
+    @staticmethod
+    def get_required_scenario_names():
+        return set()

@@ -285,6 +285,10 @@ class ThermalMetrics(ReportBase):
         }
 
     @staticmethod
+    def get_required_scenario_names():
+        return set(["control_mode"])
+
+    @staticmethod
     def _get_window_sizes(inputs, resolution):
         line_window_size = timedelta(hours=inputs["line_window_size_hours"])
         if line_window_size % resolution != timedelta(0):

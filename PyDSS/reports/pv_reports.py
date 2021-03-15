@@ -68,6 +68,10 @@ class PvReportBase(ReportBase, abc.ABC):
         }
 
     @staticmethod
+    def get_required_scenario_names():
+        return set(["pf1", "control_mode"])
+
+    @staticmethod
     def set_required_project_settings(simulation_config):
         if not simulation_config["Exports"]["Export PV Profiles"]:
             simulation_config["Exports"]["Export PV Profiles"] = True

@@ -381,6 +381,10 @@ class VoltageMetrics(ReportBase):
         return data
 
     @staticmethod
+    def get_required_scenario_names():
+        return set(["control_mode"])
+
+    @staticmethod
     def _get_required_exports_instantaneous(inputs):
         return {
             "Nodes": [

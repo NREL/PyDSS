@@ -49,12 +49,19 @@ class Reports:
         if report_options is None:
             return
 
+        existing_scenarios = {x["name"] for x in options["Project"]["Scenarios"]}
         for report in report_options["Types"]:
             if not report["enabled"]:
                 continue
             name = report["name"]
             if name not in all_reports:
                 raise InvalidConfiguration(f"{name} is not a valid report")
+
+            required_scenarios = all_reports[name].get_required_scenario_names()
+            missing = required_scenarios.difference(existing_scenarios)
+            if missing:
+                text = " ".join(missing)
+                raise InvalidConfiguration(f"{name} requires these scenarios: {text}")
 
             scenarios = report.get("scenarios")
             active_scenario = options["Project"]["Active Scenario"]
@@ -175,6 +182,18 @@ class ReportBase(abc.ABC):
         Returns
         -------
         dict
+
+        """
+
+    @staticmethod
+    @abc.abstractmethod
+    def get_required_scenario_names():
+        """Return the scenario names that the report expects to be able to retrieve.
+
+        Returns
+        -------
+        set
+            Set of strings
 
         """
 
