@@ -1,16 +1,19 @@
 [Project]
-"Start time" = "2020-1-1 00:00:00.0"
-"Simulation duration (min)" = 1440.0
-"Loadshape start time" = "2020-1-1 00:00:00.0"
+"Start Year" = 2017
+"Start Day" = 200
+"Start Time (min)" = 0.0
+"End Day" = 200
+"End Time (min)" = 1439.0
+"Date offset" = 0
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
 "Control mode" = "Static"
 "Disable PyDSS controllers" = false
 "Simulation Type" = "QSTS"
-"Project Path" = "./examples"
+"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS_src\\examples"
 "Active Project" = "custom_contols"
-"Active Scenario" = "base_case"
+"Active Scenario" = ""
 "DSS File" = "Master_Spohn_existing_VV.dss"
 "DSS File Absolute Path" = false
 "Return Results" = false
@@ -73,22 +76,10 @@ Uninterruptible = true
 
 [Plots]
 "Create dynamic plots" = false
-"Open plots in browser" = false
+"Open plots in browser" = true
 
-[Reports]
-Format = "h5"
-[[Reports.Types]]
-name = "Capacitor State Change Counts"
-enabled = false
+[Profiles]
+"Use profile manager" = false
+"Profile store path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS_src\\examples\\custom_contols\\Profiles\\profiles.hdf5"
+"Profile mapping" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS_src\\examples\\custom_contols\\Profiles\\mapping.toml"
 
-[[Reports.Types]]
-name = "PV Clipping"
-enabled = false
-
-[[Reports.Types]]
-name = "PV Curtailment"
-enabled = false
-
-[[Reports.Types]]
-name = "RegControl Tap Number Change Counts"
-enabled = false

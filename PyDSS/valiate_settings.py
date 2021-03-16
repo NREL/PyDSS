@@ -131,6 +131,8 @@ def validate_settings(dss_args):
             DATE_FORMAT
         ))
 
+
+
     assert (dss_args['Frequency']['End frequency'] >= dss_args['Frequency']['Start frequency']), \
         "'End frequency' can not be smaller than 'Start frequency'"
     assert (os.path.exists(dss_args['Project']['Project Path'])), \

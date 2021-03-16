@@ -1,0 +1,6 @@
+,Transformer,HighSideConnection,NumPhases
+0,Transformer.sub,delta,3
+1,Transformer.reg1,wye,1
+2,Transformer.reg2,wye,1
+3,Transformer.reg3,wye,1
+4,Transformer.xfm1,wye,3

@@ -51,6 +51,7 @@ class dssObjectBase(abc.ABC):
         return self._Name
 
     def GetValue(self, VarName, convert=False):
+        self.SetActiveObject()
         if VarName in self._Variables:
             VarValue = self.GetVariable(VarName, convert=convert)
         else:
@@ -64,7 +65,6 @@ class dssObjectBase(abc.ABC):
         self.SetActiveObject()
         func = self._Variables[VarName]
         if func is None:
-            print(func, VarName)
             raise InvalidParameter(f"get function for {self._FullName} / {VarName} is None")
 
         value = func()

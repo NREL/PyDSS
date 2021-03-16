@@ -1,0 +1,3 @@
+,AvailableSteps,IsDelta,Name,NumSteps,States,kV,kvar
+cap1,0,False,cap1,1,[1],4.16,600.0
+cap2,0,False,cap2,1,[1],2.4,100.0

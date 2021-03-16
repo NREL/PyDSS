@@ -382,7 +382,6 @@ class OpenDSS:
         self._Logger.info('Simulation time step {}.'.format(Steps))
         self._Logger.info("initializing store")
         self.ResultContainer.InitializeDataStore(project.hdf_store, Steps, MC_scenario_number)
-
         postprocessors = [
             pyPostprocess.Create(
                 project,
