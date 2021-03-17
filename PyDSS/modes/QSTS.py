@@ -1,5 +1,8 @@
-from PyDSS.modes.solver_base import solver_base
 from datetime import timedelta
+
+from PyDSS.modes.solver_base import solver_base
+from PyDSS.utils.dss_utils import get_load_shape_resolution_secs
+
 
 class QSTS(solver_base):
     def __init__(self, dssInstance, SimulationSettings, Logger):
@@ -8,7 +11,15 @@ class QSTS(solver_base):
         self._dssSolution.Number(1)
         self._dssSolution.StepSize(self._sStepRes)
         self._dssSolution.MaxControlIterations(SimulationSettings['Project']['Max Control Iterations'])
-        self._dssSolution.DblHour(self._Hour + self._Second / 3600.0)
+
+        start_time_hours = self._Hour + self._Second / 3600.0
+        load_shape_resolutions_secs = get_load_shape_resolution_secs()
+        if load_shape_resolutions_secs == self._sStepRes:
+            # I don't know why this is needed in this case.
+            # The first data point gets skipped without it.
+            # FIXME
+            start_time_hours += self._sStepRes / 3600.0
+        self._dssSolution.DblHour(start_time_hours)
         return
 
     def SolveFor(self, mStartTime, mTimeStep):
