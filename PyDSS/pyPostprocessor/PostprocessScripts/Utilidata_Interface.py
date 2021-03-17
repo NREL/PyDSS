@@ -67,9 +67,8 @@ class Utilidata_Interface(AbstractPostprocess):
             pass
         elif obj._Class == "Transformer":
             if isControllable:
-                val1 = obj.GetParameter("MinTap")
-                val2 = obj.GetParameter("MaxTap")
-                return {"lower_bound": val1,"upper_bound": val2}
+                ntaps = obj.GetParameter("NumTaps") / 2
+                return {"lower_bound": -ntaps,"upper_bound": ntaps}
         elif obj._Class == "Line":
             if isControllable:
                 return {"direct_control": True}
@@ -129,7 +128,16 @@ class Utilidata_Interface(AbstractPostprocess):
             res = obj.GetValue("Powers")
             res = sum(res[::2])
         elif ppty == "TAP_POSITION":
-            res = obj.GetParameter("Tap")
+            minTap = obj.GetParameter("MinTap")
+            maxTap = obj.GetParameter("MaxTap")
+            dV = maxTap - minTap
+            ntaps = obj.GetParameter("NumTaps")
+            dvdT = dV / ntaps
+            tap = obj.GetParameter("Tap")
+            tap_int = int(round((tap - 1) / dvdT))
+            # print(tap, minTap, maxTap,dV, dvdT,tap_int)
+            # quit()
+            res = tap_int
         elif ppty == "SWING_V" or ppty == "PRIMARY_V":
             res = obj.GetValue("VoltagesMagAng")
             vbase = obj.sBus[1].GetVariable("kVBase")
@@ -139,15 +147,25 @@ class Utilidata_Interface(AbstractPostprocess):
             res = res[::2]
         elif ppty == "SWING_P" or ppty == "PRIMARY_P":
             res = obj.GetValue("Powers")
-            res = sum(res[::2])
+            res = res[:int(len(res) / len(obj.sBus))]
+
+            if ppty == "SWING_P":
+                res = -sum(res[0::2])
+            else:
+                res = sum(res[0::2])
+
         elif ppty == "SWING_Q" or ppty == "PRIMARY_Q":
             res = obj.GetValue("Powers")
-            res = sum(res[1::2])
+            res = res[:int(len(res) / len(obj.sBus))]
+            if ppty == "SWING_Q":
+                res = -sum(res[1::2])
+            else:
+                res = sum(res[1::2])
         return res
 
     def update_training_payload(self):
         time_stamp, results = self.get_measurements()
-        self.metadata["ts_data"][str(time_stamp)] = results
+        self.metadata["ts_data"][time_stamp.isoformat()] = results
         return
 
     def get_measurement_assets(self, asset_info):
@@ -223,18 +241,23 @@ class Utilidata_Interface(AbstractPostprocess):
         return
 
     def submit_init_payload(self):
+
         json_object = json.dumps(self.metadata, indent=4)
+
+        with open(r'C:\Users\alatif\Desktop\PyDSS_2.0\PyDSS_src\examples\utilidata_example\payload.txt', "w") as f:
+            f.write(json_object)
         url = f"https://nrel.utilidatacloud.com/models/build/{self._uuid}"
-        reply = requests.post(url, data=self.metadata, verify=False)
+        reply = requests.post(url, json=json_object, verify=False)
         print(json_object)
-        print(reply.text)
-        os.system("pause")
+        reply =reply.json()
+        if not reply["success"]:
+            raise Exception(f"Failed to build optimization model:\n{reply}")
         return
 
     def submit_operation_payload(self):
         payload = self.define_constraints()
         time_stamp, results = self.get_measurements()
-        payload[str(time_stamp)] = results
+        payload[time_stamp.isoformat()] = results
         json_object = json.dumps(payload, indent=4)
         print(json_object)
         os.system("pause")
