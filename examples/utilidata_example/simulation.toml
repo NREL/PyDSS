@@ -15,12 +15,16 @@
 "DSS File Absolute Path" = false
 "Return Results" = false
 
+
 [[Project.Scenarios]]
 name = "base_case"
+post_process_infos = []
+
+[[Project.Scenarios]]
+name = "vvo_interface"
 [[Project.Scenarios.post_process_infos]]
 script = "Utilidata_Interface"
 config_file = "examples/utilidata_example/utilidata_config.toml"
-
 
 [Exports]
 "Export Mode" = "byClass"

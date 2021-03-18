@@ -241,33 +241,66 @@ class Utilidata_Interface(AbstractPostprocess):
         return
 
     def submit_init_payload(self):
-
-        json_object = json.dumps(self.metadata, indent=4)
-
+        json_object = json.dumps(self.metadata)
         with open(r'C:\Users\alatif\Desktop\PyDSS_2.0\PyDSS_src\examples\utilidata_example\payload.txt', "w") as f:
             f.write(json_object)
         url = f"https://nrel.utilidatacloud.com/models/build/{self._uuid}"
-        reply = requests.post(url, json=json_object, verify=False)
-        print(json_object)
-        reply =reply.json()
-        if not reply["success"]:
-            raise Exception(f"Failed to build optimization model:\n{reply}")
+        headers = {'Content-type': 'application/json'}
+        reply = requests.post(url, data=json_object, verify=False, headers=headers)
+
+        assert reply.status_code == 204
+        self.disable_control_elements()
         return
 
     def submit_operation_payload(self):
-        payload = self.define_constraints()
+        payload = {}
+        payload["metadata"] = self.metadata["metadata"]
         time_stamp, results = self.get_measurements()
-        payload[time_stamp.isoformat()] = results
+        payload["ts_data"] = {}
+        payload["ts_data"][time_stamp.isoformat()] = results
         json_object = json.dumps(payload, indent=4)
-        print(json_object)
-        os.system("pause")
+        url = f"https://nrel.utilidatacloud.com/optimize/{self._uuid}"
+        headers = {'Content-type': 'application/json'}
+        reply = requests.post(url, data=json_object, verify=False, headers=headers)
+        if reply.status_code == 200:
+            reply = reply.json()
+            print(reply)
+            return reply['recommendations']
+        else:
+            raise Exception(f"Error optimizing the model.\nReply from the server:\n{reply.text}")
+
+    def disable_control_elements(self):
+        reply = self._dssInstance.utils.run_command("Batchedit CapControl..* enabled=false")
+        self.logger.info(f"Disabling local capacitor controls: {reply}")
+        reply = self._dssInstance.utils.run_command("Batchedit RegControl..* enabled=false")
+        self.logger.info(f"Disabling local regulator controls: {reply}")
         return
 
+    def update_system_states(self, new_settings):
+        for key, val in new_settings.items():
+            Data = key.split("___")
+            if len(Data) == 3:
+                elm_name, ppty, idx = Data
+            else:
+                elm_name, ppty = Data
+                idx = None
 
-    def get_system_states(self):
-        return
-
-    def update_system_states(self):
+            if val['action']:
+                obj = self.mAssets[elm_name]['object']
+                if ppty == "CAP_STATE":
+                    obj.SetParameter("Tap",)
+                elif ppty == "TAP_POSITION":
+                    minTap = obj.GetParameter("MinTap")
+                    maxTap = obj.GetParameter("MaxTap")
+                    dV = maxTap - minTap
+                    ntaps = obj.GetParameter("NumTaps")
+                    dvdT = dV / ntaps
+                    tap = val['current_value'] + val['action']
+                    res = 1 + tap * dvdT
+                    reply = obj.SetParameter("Tap", res)
+                    self.logger.info(f"Regulator {obj._Class}.{obj._Name} tap changed to {res}")
+                else:
+                    self.logger.warning(f"Please extend code to implement updates from the following key: {key}")
         return
 
     def run(self, step, stepMax):
@@ -280,7 +313,8 @@ class Utilidata_Interface(AbstractPostprocess):
                 self.submit_init_payload()
                 self.training_complete = True
             else:
-                self.submit_operation_payload()
+                new_settings = self.submit_operation_payload()
+                self.update_system_states(new_settings)
         return step
 
     def _get_required_input_fields(self):
