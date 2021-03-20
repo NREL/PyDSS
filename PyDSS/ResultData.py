@@ -20,8 +20,10 @@ from PyDSS.export_list_reader import ExportListReader, StoreValuesType
 from PyDSS.reports.reports import Reports, ReportGranularity
 from PyDSS.utils.dataframe_utils import write_dataframe
 from PyDSS.utils.utils import dump_data
-from PyDSS.utils.simulation_utils import CircularBufferHelper, TimerStats, \
-    create_datetime_index_from_settings, create_loadshape_pmult_dataframe_for_simulation
+from PyDSS.utils.simulation_utils import (
+    TimerStats, create_datetime_index_from_settings,
+    create_loadshape_pmult_dataframe_for_simulation,
+)
 from PyDSS.value_storage import ValueContainer, ValueByNumber
 from PyDSS.metrics import OpenDssPropertyMetric, SummedElementsOpenDssPropertyMetric
 

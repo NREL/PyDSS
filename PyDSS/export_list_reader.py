@@ -9,9 +9,11 @@ from PyDSS.common import DataConversion, LimitsFilter, StoreValuesType, \
 from PyDSS.pyContrReader import pyExportReader
 from PyDSS.utils.utils import load_data
 from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
-from PyDSS.metrics import NodeVoltageMetric, TrackCapacitorChangeCounts, \
-    TrackRegControlTapNumberChanges, LineLoadingPercent, \
+from PyDSS.metrics import (
+    NodeVoltageMetric, TrackCapacitorChangeCounts,
+    TrackRegControlTapNumberChanges, LineLoadingPercent,
     TransformerLoadingPercent, ExportOverloadsMetric, ExportPowersMetric
+)
 
 
 MinMax = namedtuple("MinMax", "min, max")
@@ -39,8 +41,10 @@ class ExportListProperty:
         self.publish = data.get("publish", False)
         self._data_conversion = DataConversion(data.get("data_conversion", "none"))
         self._sum_elements = data.get("sum_elements", False)
-        self._limits = self._parse_limits(data)
+        self._limits = self._parse_limits(data, "limits")
         self._limits_filter = LimitsFilter(data.get("limits_filter", "outside"))
+        self._limits_b = self._parse_limits(data, "limits_b")
+        self._limits_filter_b = LimitsFilter(data.get("limits_filter_b", "outside"))
         self._store_values_type = StoreValuesType(data.get("store_values_type", "all"))
         self._names, self._are_names_regex = self._parse_names(data)
         self._sample_interval = data.get("sample_interval", 1)
@@ -71,8 +75,8 @@ class ExportListProperty:
         )
 
     @staticmethod
-    def _parse_limits(data):
-        limits = data.get("limits")
+    def _parse_limits(data, field_name):
+        limits = data.get(field_name)
         if limits is None:
             return None
 
@@ -87,7 +91,7 @@ class ExportListProperty:
         name_regexes = data.get("name_regexes")
 
         if names and name_regexes:
-            raise InvalidConfiguration(f"names and name_regexes cannot both be set")
+            raise InvalidConfiguration("names and name_regexes cannot both be set")
         for obj in (names, name_regexes):
             if obj is None:
                 continue
@@ -177,6 +181,17 @@ class ExportListProperty:
         return self._limits
 
     @property
+    def limits_b(self):
+        """Return the limits_b for the export property.
+
+        Returns
+        -------
+        MinMax
+
+        """
+        return self._limits_b
+
+    @property
     def opendss_classes(self):
         """Return the element classes to be used with the property.
 
@@ -208,12 +223,15 @@ class ExportListProperty:
         if self._limits is not None:
             data["limits"] = [self._limits.min, self._limits.max]
             data["limits_filter"] = self._limits_filter.value
+        if self._limits_b is not None:
+            data["limits_b"] = [self._limits_b.min, self._limits_b.max]
+            data["limits_filter_b"] = self._limits_filter_b.value
         if self.is_moving_average():
             if self.window_sizes:
                 data["window_sizes"] = self._window_sizes
                 if not self._opendss_classes:
                     raise InvalidConfiguration(
-                        f"window_sizes requires opendss_classes: {prop.name}"
+                        f"window_sizes requires opendss_classes: {self.name}"
                     )
             else:
                 data["window_size"] = self._window_size
