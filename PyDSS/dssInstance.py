@@ -297,9 +297,9 @@ class OpenDSS:
 
     def RunStep(self, step, updateObjects=None):
         # updating parameters bebore simulation run
-        time_step_has_converged = True
-        self._Logger.info(f'PyDSS datetime - {self._dssSolver.GetDateTime()}')
-        self._Logger.info(f'OpenDSS time [h] - {self._dssSolver.GetOpenDSSTime()}')
+        if self._Options["Logging"]["Log time step updates"]:
+            self._Logger.info(f'PyDSS datetime - {self._dssSolver.GetDateTime()}')
+            self._Logger.info(f'OpenDSS time [h] - {self._dssSolver.GetOpenDSSTime()}')
         if self._Options['Profiles']["Use profile manager"]:
             self.profileStore.update()
 
@@ -312,6 +312,7 @@ class OpenDSS:
                     self._Modifier.Edit_Element(cl, name, params)
 
         # run simulation time step and get results
+        time_step_has_converged = True
         if not self._Options['Project']['Disable PyDSS controllers']:
             for priority in range(CONTROLLER_PRIORITIES):
                 priority_has_converged = False

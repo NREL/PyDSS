@@ -98,6 +98,7 @@
 "Log to external file" = true
 "Display on screen" = true
 "Clear old log file" = false
+"Log time step updates" = true
 
 [MonteCarlo]
 "Number of Monte Carlo scenarios" = -1
