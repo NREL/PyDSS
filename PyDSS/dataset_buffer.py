@@ -162,6 +162,7 @@ class DatasetBuffer:
             dtype,
             max_chunk_bytes=DEFAULT_MAX_CHUNK_BYTES
         ):
+        assert max_size > 0, f"max_size={max_size}"
         tmp = np.empty((1, num_columns), dtype=dtype)
         size_row = tmp.size * tmp.itemsize
         chunk_count = min(int(max_chunk_bytes / size_row), max_size)
