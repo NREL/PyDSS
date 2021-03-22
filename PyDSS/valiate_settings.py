@@ -43,13 +43,6 @@ settings_dict = {
             'Uninterruptible': {'type': bool, 'Options': [True, False]},
             'Helics logging level': {'type': int, 'Options': range(0, 10)},
         },
-        "Logging": {
-            'Logging Level': {'type': str, 'Options': ["DEBUG", "INFO", "WARNING" , "ERROR"]},
-            'Log to external file': {'type': bool, 'Options': [True, False]},
-            'Display on screen': {'type': bool, 'Options': [True, False]},
-            'Clear old log file': {'type': bool, 'Options': [True, False]},
-            'Log time step updates': {'type': bool, 'Options': [True, False]},
-        },
         "MonteCarlo": {
             'Number of Monte Carlo scenarios': {'type': int},
         },
@@ -195,6 +188,7 @@ settings_dict = {
             'Log to external file': {'type': bool, 'Options': [True, False]},
             'Display on screen': {'type': bool, 'Options': [True, False]},
             'Clear old log file': {'type': bool, 'Options': [True, False]},
+            'Log time step updates': {'type': bool, 'Options': [True, False]},
         },
         "MonteCarlo": {
             'Number of Monte Carlo scenarios': {'type': int},
