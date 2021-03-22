@@ -452,7 +452,7 @@ class OpenDSS:
                 # with any data in memory.
                 self.ResultContainer.Close()
 
-            for postprocessor in postprocessors: 
+            for postprocessor in postprocessors:
                 postprocessor.finalize()
 
         if self._Options and self._Options['Exports']['Log Results']:
