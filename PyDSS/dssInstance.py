@@ -19,6 +19,7 @@ import PyDSS.pyPlots as pyPlots
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
+from PyDSS.utils.timing_utils import timed_info
 
 import opendssdirect as dss
 import numpy as np
@@ -85,19 +86,7 @@ class OpenDSS:
         for key, path in self._dssPath.items():
             assert (os.path.exists(path)), '{} path: {} does not exist!'.format(key, path)
 
-        self._dssInstance.Basic.ClearAll()
-        self._dssInstance.utils.run_command('Log=NO')
-        run_command('Clear')
-        self._Logger.info('Loading OpenDSS model')
-        try:
-            orig_dir = os.getcwd()
-            reply = run_command('compile ' + self._dssPath['dssFilePath'])
-        finally:
-            os.chdir(orig_dir)
-        self._Logger.info('OpenDSS:  ' + reply)
-
-        if reply != "":
-            raise OpenDssModelError(f"Error compiling OpenDSS model: {reply}")
+        self._CompileModel()
 
         #run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
         self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(params['Frequency']['Fundamental frequency']) + ' Hz')
@@ -153,6 +142,22 @@ class OpenDSS:
                                            self._dssPath)
         self._Logger.info("Simulation initialization complete")
         return
+
+    @timed_info
+    def _CompileModel(self):
+        self._dssInstance.Basic.ClearAll()
+        self._dssInstance.utils.run_command('Log=NO')
+        run_command('Clear')
+        self._Logger.info('Loading OpenDSS model')
+        try:
+            orig_dir = os.getcwd()
+            reply = run_command('compile ' + self._dssPath['dssFilePath'])
+        finally:
+            os.chdir(orig_dir)
+
+        self._Logger.info('OpenDSS:  ' + reply)
+        if reply != "":
+            raise OpenDssModelError(f"Error compiling OpenDSS model: {reply}")
 
     def _ModifyNetwork(self):
         # self._Modifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
