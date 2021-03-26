@@ -18,11 +18,11 @@
 "Return Results" = false
 "Use Controller Registry" = true
 [[Project.Scenarios]]
-name = "pf1"
+name = "control_mode"
 post_process_infos = []
 
 [[Project.Scenarios]]
-name = "control_mode"
+name = "pf1"
 post_process_infos = []
 
 # Export Mode- [Str] - Possible options "byClass" and "byElement"

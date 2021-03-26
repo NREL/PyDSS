@@ -21,7 +21,8 @@ class FeederLossesReport(ReportBase):
 
     def generate(self, output_dir):
         assert len(self._results.scenarios) == 2
-        scenario = self._results.scenarios[1]
+        scenario = self._results.scenarios[0]
+        assert scenario.name == "control_mode"
         total_losses_dict = scenario.get_summed_element_total("Circuits", "LossesSum")
         total_losses = abs(next(iter(total_losses_dict.values())))
         line_losses_dict = scenario.get_summed_element_total("Circuits", "LineLossesSum")
@@ -71,4 +72,4 @@ class FeederLossesReport(ReportBase):
 
     @staticmethod
     def get_required_scenario_names():
-        return set()
+        return set(["control_mode"])
