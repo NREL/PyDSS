@@ -46,7 +46,7 @@ class VoltageMetric3(VoltageMetricsBaseModel):
     )
     duration: timedelta = Field(
         title="duration",
-        description="amount of time where metric 2 existed (len(time_points) * resolution)",
+        description="amount of time where metric 3 existed (len(time_points) * resolution)",
     )
 
 
@@ -196,7 +196,7 @@ class NodeVoltageMetrics:
         self._metric_4_violations = []
         self._metric_5_min_violations = []
         self._metric_5_max_violations = []
-        self._metric_6_time_points_outside_range_b = 0
+        self._num_metric_6_time_points_outside_range_b = 0
         self._bufs = None
         self._num_time_points = 0
 
@@ -292,11 +292,11 @@ class NodeVoltageMetrics:
             },
         )
         metric_6 = VoltageMetric6(
-            num_time_points=self._metric_6_time_points_outside_range_b,
-            percent_time_points=self._metric_6_time_points_outside_range_b
+            num_time_points=self._num_metric_6_time_points_outside_range_b,
+            percent_time_points=self._num_metric_6_time_points_outside_range_b
             / self._num_time_points
             * 100,
-            duration=self._metric_6_time_points_outside_range_b * self._resolution,
+            duration=self._num_metric_6_time_points_outside_range_b * self._resolution,
         )
         metrics = VoltageMetricsModel(
             metric_1=metric_1,
@@ -381,4 +381,4 @@ class NodeVoltageMetrics:
             self._metric_3_time_steps.append(cur_time)
 
         if any_outside_range_b:
-            self._metric_6_time_points_outside_range_b += 1
+            self._num_metric_6_time_points_outside_range_b += 1
