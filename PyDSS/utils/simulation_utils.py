@@ -82,6 +82,38 @@ class TimerStats:
             self._min = duration
 
 
+def get_start_time(settings):
+    """Return the start time of the simulation.
+
+    Parameters
+    ----------
+    settings : dict
+        settings from project simulation.toml
+
+    Returns
+    -------
+    datetime
+
+    """
+    return datetime.strptime(settings['Project']["Start time"], DATE_FORMAT)
+
+
+def get_simulation_resolution(settings):
+    """Return the simulation of the resolution
+
+    Parameters
+    ----------
+    settings : dict
+        settings from project simulation.toml
+
+    Returns
+    -------
+    datetime
+
+    """
+    return timedelta(seconds=settings["Project"]["Step resolution (sec)"])
+
+
 def create_time_range_from_settings(settings):
     """Return the start time, step time, and end time from the settings.
 
@@ -96,9 +128,9 @@ def create_time_range_from_settings(settings):
         (start, end, step)
 
     """
-    start_time = datetime.strptime(settings['Project']["Start time"], DATE_FORMAT)
+    start_time = get_start_time(settings)
     end_time = start_time + timedelta(minutes=settings["Project"]["Simulation duration (min)"])
-    step_time = timedelta(seconds=settings['Project']['Step resolution (sec)'])
+    step_time = get_simulation_resolution(settings)
     return start_time, end_time, step_time
 
 

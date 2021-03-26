@@ -1,19 +1,24 @@
-
-from collections import defaultdict
 import abc
 import copy
 import logging
 import os
+import shutil
+import tempfile
+from datetime import datetime, timedelta
+from pathlib import Path
 
-import h5py
 import numpy as np
 import pandas as pd
 import opendssdirect as dss
 
-from PyDSS.common import DataConversion, StoreValuesType
+from PyDSS.common import DataConversion, DatasetPropertyType, StoreValuesType
+from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
+from PyDSS.reports.reports import ReportBase
 from PyDSS.storage_filters import STORAGE_TYPE_MAP, StorageFilterBase
 from PyDSS.value_storage import ValueByNumber
+from PyDSS.node_voltage_metrics import NodeVoltageMetrics
+from PyDSS.utils.simulation_utils import get_start_time, get_simulation_resolution
 
 
 logger = logging.getLogger(__name__)
@@ -21,6 +26,7 @@ logger = logging.getLogger(__name__)
 
 class MetricBase(abc.ABC):
     """Base class for all metrics"""
+
     def __init__(self, prop, dss_objs, options):
         self._name = prop.name
         self._base_path = None
@@ -29,6 +35,7 @@ class MetricBase(abc.ABC):
         self._num_steps = None
         self._properties = {}  # StoreValuesType to ExportListProperty
         self._dss_objs = dss_objs
+        self._options = options
 
         self.add_property(prop)
 
@@ -81,7 +88,6 @@ class MetricBase(abc.ABC):
         return
         yield
 
-
     def label(self):
         """Return a label for the metric.
 
@@ -103,10 +109,14 @@ class MetricBase(abc.ABC):
         elem_names = self._make_elem_names()
         cls = STORAGE_TYPE_MAP[prop.store_values_type]
         values = [ValueByNumber(x.FullName, self.label(), 0.0) for x in self._dss_objs]
-        container = cls(self._hdf_store, path, prop, 1, self._max_chunk_bytes, values, elem_names)
+        container = cls(
+            self._hdf_store, path, prop, 1, self._max_chunk_bytes, values, elem_names
+        )
         return container
 
-    def make_storage_container(self, path, prop, num_steps, max_chunk_bytes, values, **kwargs):
+    def make_storage_container(
+        self, path, prop, num_steps, max_chunk_bytes, values, **kwargs
+    ):
         """Make a storage container.
 
         Returns
@@ -118,7 +128,16 @@ class MetricBase(abc.ABC):
             raise InvalidConfiguration(f"unsupported {prop.store_values_type}")
         elem_names = self._make_elem_names()
         cls = STORAGE_TYPE_MAP[prop.store_values_type]
-        container = cls(self._hdf_store, path, prop, num_steps, max_chunk_bytes, values, elem_names, **kwargs)
+        container = cls(
+            self._hdf_store,
+            path,
+            prop,
+            num_steps,
+            max_chunk_bytes,
+            values,
+            elem_names,
+            **kwargs,
+        )
         return container
 
     def max_num_bytes(self):
@@ -138,6 +157,7 @@ class MetricBase(abc.ABC):
 
 class ChangeCountMetricBase(MetricBase, abc.ABC):
     """Base class for any metric that only tracks number of changes."""
+
     def __init__(self, prop, dss_objs, options):
         super().__init__(prop, dss_objs, options)
         self._container = None
@@ -150,10 +170,11 @@ class ChangeCountMetricBase(MetricBase, abc.ABC):
     def close(self):
         assert len(self._properties) == 1
         prop = next(iter(self._properties.values()))
-        path = f"{self._base_path}/{prop.elem_class}/ElementProperties/{prop.storage_name}"
+        path = (
+            f"{self._base_path}/{prop.elem_class}/ElementProperties/{prop.storage_name}"
+        )
         values = [
-            ValueByNumber(x, prop.name, y)
-            for x, y in self._change_counts.items()
+            ValueByNumber(x, prop.name, y) for x, y in self._change_counts.items()
         ]
         # This class creates an instance of ValueContainer directly because
         # these metrics can only store one type, and so don't need an instance
@@ -181,6 +202,7 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
     max of all instantaneous values.
 
     """
+
     def __init__(self, prop, dss_objs, options):
         super().__init__(prop, dss_objs, options)
         self._containers = {}  # StoreValuesType to StorageFilterBase
@@ -265,6 +287,7 @@ class OpenDssPropertyMetric(MultiValueTypeMetricBase):
 
 class LineLoadingPercent(MultiValueTypeMetricBase):
     """Calculates line loading percent at every time point."""
+
     def __init__(self, prop, dss_objs, options):
         super().__init__(prop, dss_objs, options)
         self._normal_amps = {}  # Name to normal_amps value
@@ -284,6 +307,7 @@ class LineLoadingPercent(MultiValueTypeMetricBase):
 
 class TransformerLoadingPercent(MultiValueTypeMetricBase):
     """Calculates transformer loading percent at every time point."""
+
     def __init__(self, prop, dss_objs, options):
         super().__init__(prop, dss_objs, options)
         self._normal_amps = {}  # Name to normal_amps value
@@ -303,6 +327,7 @@ class TransformerLoadingPercent(MultiValueTypeMetricBase):
 
 class SummedElementsOpenDssPropertyMetric(MetricBase):
     """Sums all elements' values for a given property at each time point."""
+
     def __init__(self, prop, dss_objs, options):
         super().__init__(prop, dss_objs, options)
         self._container = None
@@ -342,7 +367,6 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
             )
         self._container.append_values([value], time_step)
 
-
     @staticmethod
     def is_circuit_wide():
         return True
@@ -353,12 +377,25 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
 
 class NodeVoltageMetric(MetricBase):
     """Stores metrics for node voltages."""
+
     def __init__(self, prop, dss_obj, options):
         super().__init__(prop, dss_obj, options)
+        props = list(self._properties)
+        assert len(props) == 1
+        self._prop = props[0]
         # Indices for node names are tied to indices for node voltages.
         self._node_names = None
         self._containers = {}
         self._voltages = None
+        start_time = get_start_time(options)
+        sim_resolution = get_simulation_resolution(options)
+        inputs = ReportBase.get_inputs_from_defaults(options, "Voltage Metrics")
+        window_size = int(
+            timedelta(minutes=inputs["window_size_minutes"]) / sim_resolution
+        )
+        self._voltage_metrics = NodeVoltageMetrics(
+            prop, start_time, sim_resolution, window_size
+        )
 
     def _make_elem_names(self):
         return self._node_names
@@ -368,38 +405,36 @@ class NodeVoltageMetric(MetricBase):
         if not self._containers:
             # TODO: limit to objects that have been added
             self._node_names = dss.Circuit.AllNodeNames()
-            self._voltages = [ValueByNumber(x, "Voltage", y) for x, y in zip(self._node_names, voltages)]
-            for prop in self._properties.values():
-                path = f"{self._base_path}/Nodes/ElementProperties/{prop.storage_name}"
-                self._containers[prop.store_values_type] = self.make_storage_container(
-                    path,
-                    prop,
-                    self._num_steps,
-                    self._max_chunk_bytes,
-                    self._voltages,
-                )
+            self._voltages = [
+                ValueByNumber(x, "Voltage", y)
+                for x, y in zip(self._node_names, voltages)
+            ]
+            self._voltage_metrics.node_names = self._node_names
         else:
-            for i in range(len(voltages)):
+            for i in enumerate(voltages):
                 self._voltages[i].set_value_from_raw(voltages[i])
-        if store_nan:
-            for i in range(len(voltages)):
-                self._voltages[i].set_nan()
-        for sv_type, prop in self._properties.items():
-            self._containers[sv_type].append_values(self._voltages, time_step)
+
+        if not store_nan:
+            self._voltage_metrics.update(time_step, self._voltages)
+
+        self._voltage_metrics.increment_steps()
+
+    def close(self):
+        path = os.path.join(
+            self._options["Project"]["Project Path"],
+            self._options["Project"]["Active Project"],
+            "Exports",
+            self._options["Project"]["Active Scenario"],
+        )
+        self._voltage_metrics.generate_report(path)
 
     @staticmethod
     def is_circuit_wide():
         return True
 
     def iter_containers(self):
-        for sv_type in self._properties:
-            if sv_type in self._containers:
-                yield self._containers[sv_type]
-
-    def iter_empty_containers(self):
-        for prop in self._properties.values():
-            if prop.store_values_type not in self._containers:
-                yield prop
+        return
+        yield
 
 
 class TrackCapacitorChangeCounts(ChangeCountMetricBase):
@@ -415,20 +450,17 @@ class TrackCapacitorChangeCounts(ChangeCountMetricBase):
     def _update_counts(self, capacitor):
         dss.Capacitors.Name(capacitor.Name)
         if dss.CktElement.Name() != dss.Element.Name():
-            raise InvalidParameter(
-                f"Object is not a circuit element {capacitor.Name}"
-            )
+            raise InvalidParameter(f"Object is not a circuit element {capacitor.Name}")
         states = dss.Capacitors.States()
         if states == -1:
-            raise Exception(
-                f"failed to get Capacitors.States() for {capacitor.Name}"
-            )
+            raise Exception(f"failed to get Capacitors.States() for {capacitor.Name}")
 
         cur_value = sum(states)
         last_value = self._last_values[capacitor.FullName]
         if last_value is None and cur_value != last_value:
-            logger.debug("%s changed state old=%s new=%s", capacitor.Name,
-                         last_value, cur_value)
+            logger.debug(
+                "%s changed state old=%s new=%s", capacitor.Name, last_value, cur_value
+            )
             self._change_counts[capacitor.FullName] += 1
 
         self._last_values[capacitor.FullName] = cur_value
@@ -454,9 +486,13 @@ class TrackRegControlTapNumberChanges(ChangeCountMetricBase):
         last_value = self._last_values[reg_control.FullName]
         if last_value is not None:
             self._change_counts[reg_control.FullName] += abs(tap_number - last_value)
-            logger.debug("%s changed count from %s to %s count=%s",
-                         reg_control.Name, last_value, tap_number,
-                         self._change_counts[reg_control.FullName])
+            logger.debug(
+                "%s changed count from %s to %s count=%s",
+                reg_control.Name,
+                last_value,
+                tap_number,
+                self._change_counts[reg_control.FullName],
+            )
 
         self._last_values[reg_control.FullName] = tap_number
 
@@ -464,6 +500,7 @@ class TrackRegControlTapNumberChanges(ChangeCountMetricBase):
 class OpenDssExportMetric(MetricBase):
     def __init__(self, prop, dss_objs, options):
         super().__init__(prop, dss_objs, options)
+        self._tmp_dir = tempfile.mkdtemp()
         self._containers = {}
         self._sum_elements = prop.sum_elements
         if self._sum_elements:
@@ -475,7 +512,7 @@ class OpenDssExportMetric(MetricBase):
         # Some OpenDSS files upper-case the name.
         # Make a mapping for fast matching and lookup.
         self._names = {}
-        self._values =  []
+        self._values = []
         for i, dss_obj in enumerate(dss_objs):
             elem_type, name = dss_obj.FullName.split(".")
             if self.requires_upper_case():
@@ -486,6 +523,9 @@ class OpenDssExportMetric(MetricBase):
                 self._values.append(ValueByNumber("Total", self.label(), 0.0))
                 break
             self._values.append(ValueByNumber(dss_obj.FullName, self.label(), 0.0))
+
+    def __del__(self):
+        shutil.rmtree(self._tmp_dir)
 
     def _run_command(self):
         cmd = f"{self.export_command()}"
@@ -518,7 +558,7 @@ class OpenDssExportMetric(MetricBase):
                     self._num_steps,
                     self._max_chunk_bytes,
                     self._values,
-                    window_sizes=window_sizes
+                    window_sizes=window_sizes,
                 )
 
         if store_nan:
@@ -537,7 +577,9 @@ class OpenDssExportMetric(MetricBase):
         prop = next(iter(self._properties.values()))
         if not self._containers:
             if len(self._properties) > 1:
-                raise InvalidConfiguration("summing elements only supports one Property")
+                raise InvalidConfiguration(
+                    "summing elements only supports one Property"
+                )
             assert len(self._properties) == 1
             assert prop.store_values_type in (StoreValuesType.ALL, StoreValuesType.SUM)
             path = f"{self._base_path}/{prop.elem_class}/SummedElementProperties/{prop.storage_name}"
@@ -567,7 +609,9 @@ class OpenDssExportMetric(MetricBase):
     def _get_window_size_by_name_index(self, prop):
         """Returns a list of window sizes per element name corresponding to self._names."""
         if not prop.opendss_classes:
-            raise InvalidConfiguration(f"window_sizes requires opendss_classes: {prop.name}")
+            raise InvalidConfiguration(
+                f"window_sizes requires opendss_classes: {prop.name}"
+            )
 
         window_sizes = [None] * len(self._names)
         for opendss_class, window_size in prop.window_sizes.items():
@@ -603,9 +647,8 @@ class OpenDssExportMetric(MetricBase):
     def expected_column_headers():
         """Return the expected column headers in the CSV file."""
 
-    @staticmethod
     @abc.abstractmethod
-    def export_command():
+    def export_command(self):
         """Return the command to run in OpenDSS."""
 
     @staticmethod
@@ -645,7 +688,6 @@ class OpenDssExportMetric(MetricBase):
 
 
 class ExportOverloadsMetric(OpenDssExportMetric):
-
     @staticmethod
     def element_class():
         return "CktElement"
@@ -654,9 +696,9 @@ class ExportOverloadsMetric(OpenDssExportMetric):
     def expected_column_headers():
         return {0: "Element", 5: "%Normal"}
 
-    @staticmethod
-    def export_command():
-        return "export overloads"
+    def export_command(self):
+        filename = Path(self._tmp_dir) / "opendss_overloads.csv"
+        return f"export overloads {filename}"
 
     @staticmethod
     def label():
@@ -684,14 +726,13 @@ class ExportOverloadsMetric(OpenDssExportMetric):
 
 
 class ExportPowersMetric(OpenDssExportMetric):
-
     @staticmethod
     def element_class():
         return "CktElement"
 
-    @staticmethod
-    def export_command():
-        return "export powers"
+    def export_command(self):
+        filename = Path(self._tmp_dir) / "opendss_powers.csv"
+        return f"export powers {filename}"
 
     @staticmethod
     def expected_column_headers():
@@ -741,7 +782,9 @@ def convert_data(name, prop_name, value, conversion):
     elif conversion == DataConversion.ABS_SUM:
         converted = ValueByNumber(name, prop_name, abs(sum(value.value)))
     elif conversion == DataConversion.SUM_ABS_REAL:
-        converted = ValueByNumber(name, prop_name, sum((abs(x.real) for x in value.value)))
+        converted = ValueByNumber(
+            name, prop_name, sum((abs(x.real) for x in value.value))
+        )
     else:
         converted = value
 

@@ -137,3 +137,6 @@ sample_interval = 1
 publish = false
 store_values_type = "all"
 limits = [1.02, 1.04]
+limits_filter = "outside"
+limits_b = [1.01, 1.05]
+limits_filter_b = "outside"

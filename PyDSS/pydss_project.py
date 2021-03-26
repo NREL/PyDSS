@@ -343,41 +343,48 @@ class PyDssProject:
         if os.path.exists(store_filename):
             os.remove(store_filename)
 
-        # This ensures that all datasets are flushed and closed after each
-        # scenario. If there is an unexpected crash in a later scenario then
-        # the file will still be valid for completed scenarios.
-        for scenario in self._scenarios:
-            with h5py.File(store_filename, mode="a", driver=driver) as hdf_store:
-                self._hdf_store = hdf_store
-                self._hdf_store.attrs["version"] = DATA_FORMAT_VERSION
-                self._simulation_config["Project"]["Active Scenario"] = scenario.name
-                inst.run(self._simulation_config, self, scenario, dry_run=dry_run)
-                self._estimated_space[scenario.name] = inst.get_estimated_space()
+        is_successful = True
+        try:
+            # This ensures that all datasets are flushed and closed after each
+            # scenario. If there is an unexpected crash in a later scenario then
+            # the file will still be valid for completed scenarios.
+            for scenario in self._scenarios:
+                with h5py.File(store_filename, mode="a", driver=driver) as hdf_store:
+                    self._hdf_store = hdf_store
+                    self._hdf_store.attrs["version"] = DATA_FORMAT_VERSION
+                    self._simulation_config["Project"]["Active Scenario"] = scenario.name
+                    inst.run(self._simulation_config, self, scenario, dry_run=dry_run)
+                    self._estimated_space[scenario.name] = inst.get_estimated_space()
+        except Exception:
+            logger.exception("Simulation failed")
+            is_successful = False
+            raise
 
-        if not dry_run:
-            results = None
-            export_tables = self._simulation_config["Exports"].get(
-                "Export Data Tables", False
-            )
-            generate_reports = self._simulation_config.get("Reports", False)
-            if export_tables or generate_reports:
-                # Hack. Have to import here. Need to re-organize to fix.
-                from PyDSS.pydss_results import PyDssResults
-                results = PyDssResults(self._project_dir)
-                if export_tables:
-                    for scenario in results.scenarios:
-                        scenario.export_data()
+        finally:
+            if not dry_run and is_successful:
+                results = None
+                export_tables = self._simulation_config["Exports"].get(
+                    "Export Data Tables", False
+                )
+                generate_reports = self._simulation_config.get("Reports", False)
+                if export_tables or generate_reports:
+                    # Hack. Have to import here. Need to re-organize to fix.
+                    from PyDSS.pydss_results import PyDssResults
+                    results = PyDssResults(self._project_dir)
+                    if export_tables:
+                        for scenario in results.scenarios:
+                            scenario.export_data()
 
-                if generate_reports:
-                    results.generate_reports()
+                    if generate_reports:
+                        results.generate_reports()
 
-        if tar_project:
-            self._tar_project_files()
-        elif zip_project:
-            self._zip_project_files()
+            if tar_project:
+                self._tar_project_files()
+            elif zip_project:
+                self._zip_project_files()
 
-        if dry_run and os.path.exists(store_filename):
-            os.remove(store_filename)
+            if dry_run and os.path.exists(store_filename):
+                os.remove(store_filename)
 
     def _dump_simulation_settings(self):
         # Various settings may have been updated. Write the actual settings to a file.

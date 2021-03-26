@@ -11,6 +11,9 @@ class Snapshot(solver_base):
     def reSolve(self):
         return self._dssSolution.SolveNoControl()
 
+    def SimulationSteps(self):
+        return 1, self._StartTime, self._EndTime
+
     def Solve(self):
         self._dssSolution.Solve()
 

@@ -20,14 +20,13 @@ from PyDSS.export_list_reader import ExportListReader, StoreValuesType
 from PyDSS.reports.reports import Reports, ReportGranularity
 from PyDSS.utils.dataframe_utils import write_dataframe
 from PyDSS.utils.utils import dump_data
-from PyDSS.utils.simulation_utils import CircularBufferHelper, TimerStats, \
-    create_datetime_index_from_settings, create_loadshape_pmult_dataframe_for_simulation
+from PyDSS.utils.simulation_utils import (
+    TimerStats, create_datetime_index_from_settings,
+    create_loadshape_pmult_dataframe_for_simulation,
+)
 from PyDSS.value_storage import ValueContainer, ValueByNumber
 from PyDSS.metrics import OpenDssPropertyMetric, SummedElementsOpenDssPropertyMetric
 
-
-# Flush to disk after this number of steps
-FLUSH_INTERVAL = 1000
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +52,6 @@ class ResultData:
         self._stats = {}
         self._options = options
         self._cur_step = 0
-        self._num_updates = 0
 
         self._dss_command = dss_command
         self._start_day = dss_solver.StartDay
@@ -198,7 +196,6 @@ class ResultData:
 
         self._stats.clear()
         self._stats["Total"] = TimerStats("Total")
-        self._stats["Flusher"] = TimerStats("Flusher")
         base_path = "Exports/" + self._scenario
         for metric in self._iter_metrics():
             metric.initialize_data_store(hdf_store, base_path, num_steps)
@@ -240,12 +237,6 @@ class ResultData:
 
         end = time.time()
         self._stats["Total"].update(end - update_start)
-        self._num_updates += 1
-        if self._num_updates % FLUSH_INTERVAL == 0:
-            start = time.time()
-            self._hdf_store.flush()
-            self._stats["Flusher"].update(time.time() - start)
-            logger.info("Flushed datasets")
 
         self._cur_step += 1
         return current_results

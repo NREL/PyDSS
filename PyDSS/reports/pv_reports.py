@@ -25,8 +25,9 @@ class PvReportBase(ReportBase, abc.ABC):
     def __init__(self, name, results, simulation_config):
         super().__init__(name, results, simulation_config)
         assert len(results.scenarios) == 2
-        self._pf1_scenario = results.scenarios[0]
-        self._control_mode_scenario = results.scenarios[1]
+        self._control_mode_scenario = results.scenarios[0]
+        assert self._control_mode_scenario.name == "control_mode"
+        self._pf1_scenario = results.scenarios[1]
         cm_profiles = self._control_mode_scenario.read_pv_profiles()
         if not cm_profiles:
             self._pv_system_names = []

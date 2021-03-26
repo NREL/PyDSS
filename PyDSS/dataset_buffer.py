@@ -38,7 +38,7 @@ class DatasetBuffer:
     def __init__(
             self, hdf_store, path, max_size, dtype, columns, scaleoffset=None,
             max_chunk_bytes=None, attributes=None, names=None,
-            column_ranges_per_name=None
+            column_ranges_per_name=None, data=None
         ):
         if max_chunk_bytes is None:
             max_chunk_bytes = DEFAULT_MAX_CHUNK_BYTES
@@ -46,18 +46,24 @@ class DatasetBuffer:
         self._hdf_store = hdf_store
         self._max_size = max_size
         num_columns = len(columns)
-        self._chunk_size = self.compute_chunk_count(
-            num_columns,
-            max_size,
-            dtype,
-            max_chunk_bytes,
-        )
-        shape = (self._max_size, num_columns)
-        chunks = (self._chunk_size, num_columns)
+        if data is None:
+            self._chunk_size = self.compute_chunk_count(
+                num_columns,
+                max_size,
+                dtype,
+                max_chunk_bytes,
+            )
+            shape = (self._max_size, num_columns)
+            chunks = (self._chunk_size, num_columns)
+        else:
+            self._chunk_size = None
+            shape = None
+            chunks = None
 
         self._dataset = self._hdf_store.create_dataset(
             name=path,
             shape=shape,
+            data=data,
             chunks=chunks,
             dtype=dtype,
             compression="gzip",
@@ -122,6 +128,7 @@ class DatasetBuffer:
         self._buf_index = 0
         self._dataset_index = new_index
         self._dataset.attrs["length"] = new_index
+        self._dataset.flush()
 
     def max_num_bytes(self):
         """Return the maximum number of bytes the container could hold.
@@ -141,6 +148,13 @@ class DatasetBuffer:
         if self._buf_index == self._chunk_size:
             self.flush_data()
 
+    def write_data(self, values):
+        """Write the data to the dataset."""
+        new_index = self._dataset_index + len(values)
+        self._dataset[self._dataset_index:new_index] = values
+        self._dataset_index = new_index
+        self._dataset.attrs["length"] = new_index
+
     @staticmethod
     def compute_chunk_count(
             num_columns,
@@ -148,6 +162,7 @@ class DatasetBuffer:
             dtype,
             max_chunk_bytes=DEFAULT_MAX_CHUNK_BYTES
         ):
+        assert max_size > 0, f"max_size={max_size}"
         tmp = np.empty((1, num_columns), dtype=dtype)
         size_row = tmp.size * tmp.itemsize
         chunk_count = min(int(max_chunk_bytes / size_row), max_size)

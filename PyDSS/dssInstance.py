@@ -19,6 +19,7 @@ import PyDSS.pyPlots as pyPlots
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
+from PyDSS.utils.timing_utils import timed_info
 
 import opendssdirect as dss
 import numpy as np
@@ -85,19 +86,7 @@ class OpenDSS:
         for key, path in self._dssPath.items():
             assert (os.path.exists(path)), '{} path: {} does not exist!'.format(key, path)
 
-        self._dssInstance.Basic.ClearAll()
-        self._dssInstance.utils.run_command('Log=NO')
-        run_command('Clear')
-        self._Logger.info('Loading OpenDSS model')
-        try:
-            orig_dir = os.getcwd()
-            reply = run_command('compile ' + self._dssPath['dssFilePath'])
-        finally:
-            os.chdir(orig_dir)
-        self._Logger.info('OpenDSS:  ' + reply)
-
-        if reply != "":
-            raise OpenDssModelError(f"Error compiling OpenDSS model: {reply}")
+        self._CompileModel()
 
         #run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
         self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(params['Frequency']['Fundamental frequency']) + ' Hz')
@@ -153,6 +142,22 @@ class OpenDSS:
                                            self._dssPath)
         self._Logger.info("Simulation initialization complete")
         return
+
+    @timed_info
+    def _CompileModel(self):
+        self._dssInstance.Basic.ClearAll()
+        self._dssInstance.utils.run_command('Log=NO')
+        run_command('Clear')
+        self._Logger.info('Loading OpenDSS model')
+        try:
+            orig_dir = os.getcwd()
+            reply = run_command('compile ' + self._dssPath['dssFilePath'])
+        finally:
+            os.chdir(orig_dir)
+
+        self._Logger.info('OpenDSS:  ' + reply)
+        if reply != "":
+            raise OpenDssModelError(f"Error compiling OpenDSS model: {reply}")
 
     def _ModifyNetwork(self):
         # self._Modifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
@@ -297,9 +302,9 @@ class OpenDSS:
 
     def RunStep(self, step, updateObjects=None):
         # updating parameters bebore simulation run
-        time_step_has_converged = True
-        self._Logger.info(f'PyDSS datetime - {self._dssSolver.GetDateTime()}')
-        self._Logger.info(f'OpenDSS time [h] - {self._dssSolver.GetOpenDSSTime()}')
+        if self._Options["Logging"]["Log time step updates"]:
+            self._Logger.info(f'PyDSS datetime - {self._dssSolver.GetDateTime()}')
+            self._Logger.info(f'OpenDSS time [h] - {self._dssSolver.GetOpenDSSTime()}')
         if self._Options['Profiles']["Use profile manager"]:
             self.profileStore.update()
 
@@ -312,6 +317,7 @@ class OpenDSS:
                     self._Modifier.Edit_Element(cl, name, params)
 
         # run simulation time step and get results
+        time_step_has_converged = True
         if not self._Options['Project']['Disable PyDSS controllers']:
             for priority in range(CONTROLLER_PRIORITIES):
                 priority_has_converged = False
@@ -451,7 +457,7 @@ class OpenDSS:
                 # with any data in memory.
                 self.ResultContainer.Close()
 
-            for postprocessor in postprocessors: 
+            for postprocessor in postprocessors:
                 postprocessor.finalize()
 
         if self._Options and self._Options['Exports']['Log Results']:
