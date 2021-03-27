@@ -482,8 +482,13 @@ class OpenDSS:
 
         for stats in self._stats.values():
             stats.log_stats()
-        for count, occurrences in sorted(self._controller_iteration_counts.items(), reverse=True):
-            self._Logger.info("Controller iteration count %s occurrences=%s", count, occurrences)
+        if self._controller_iteration_counts:
+            data = {
+                "Report": "ControllerIterationCounts",
+                "Scenario": self._Options["Project"]["Active Scenario"],
+                "Counts": self._controller_iteration_counts,
+            }
+            self._reportsLogger.warning(json.dumps(data))
 
         self._Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
         self._Logger.info('End of simulation')
