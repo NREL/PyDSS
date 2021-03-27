@@ -343,7 +343,6 @@ class PyDssProject:
         if os.path.exists(store_filename):
             os.remove(store_filename)
 
-        is_successful = True
         try:
             # This ensures that all datasets are flushed and closed after each
             # scenario. If there is an unexpected crash in a later scenario then
@@ -355,29 +354,27 @@ class PyDssProject:
                     self._simulation_config["Project"]["Active Scenario"] = scenario.name
                     inst.run(self._simulation_config, self, scenario, dry_run=dry_run)
                     self._estimated_space[scenario.name] = inst.get_estimated_space()
+
+            export_tables = self._simulation_config["Exports"].get(
+                "Export Data Tables", False
+            )
+            generate_reports = self._simulation_config.get("Reports", False)
+            if not dry_run and (export_tables or generate_reports):
+                # Hack. Have to import here. Need to re-organize to fix.
+                from PyDSS.pydss_results import PyDssResults
+                results = PyDssResults(self._project_dir)
+                if export_tables:
+                    for scenario in results.scenarios:
+                        scenario.export_data()
+
+                if generate_reports:
+                    results.generate_reports()
+
         except Exception:
             logger.exception("Simulation failed")
-            is_successful = False
             raise
 
         finally:
-            if not dry_run and is_successful:
-                results = None
-                export_tables = self._simulation_config["Exports"].get(
-                    "Export Data Tables", False
-                )
-                generate_reports = self._simulation_config.get("Reports", False)
-                if export_tables or generate_reports:
-                    # Hack. Have to import here. Need to re-organize to fix.
-                    from PyDSS.pydss_results import PyDssResults
-                    results = PyDssResults(self._project_dir)
-                    if export_tables:
-                        for scenario in results.scenarios:
-                            scenario.export_data()
-
-                    if generate_reports:
-                        results.generate_reports()
-
             if tar_project:
                 self._tar_project_files()
             elif zip_project:

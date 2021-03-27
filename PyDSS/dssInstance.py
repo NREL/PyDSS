@@ -19,7 +19,7 @@ import PyDSS.pyPlots as pyPlots
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
-from PyDSS.utils.timing_utils import timed_info
+from PyDSS.utils.simulation_utils import TimerStats
 
 import opendssdirect as dss
 import numpy as np
@@ -50,6 +50,10 @@ class OpenDSS:
         self._convergenceErrors = 0
         self._maxConvergenceErrorCount = 0
         self._maxConvergenceError = 0.0
+        self._controller_iteration_counts = {}
+        self._stats = {}
+        for label in ("CompileModel", "RunStep", "UpdateControllers"):
+            self._stats[label] = TimerStats(label)
 
         rootPath = params['Project']['Project Path']
         self._ActiveProject = params['Project']['Active Project']
@@ -143,8 +147,8 @@ class OpenDSS:
         self._Logger.info("Simulation initialization complete")
         return
 
-    @timed_info
     def _CompileModel(self):
+        start = time.time()
         self._dssInstance.Basic.ClearAll()
         self._dssInstance.utils.run_command('Log=NO')
         run_command('Clear')
@@ -158,6 +162,8 @@ class OpenDSS:
         self._Logger.info('OpenDSS:  ' + reply)
         if reply != "":
             raise OpenDssModelError(f"Error compiling OpenDSS model: {reply}")
+
+        self._stats["CompileModel"].update(time.time() - start)
 
     def _ModifyNetwork(self):
         # self._Modifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
@@ -302,6 +308,7 @@ class OpenDSS:
 
     def RunStep(self, step, updateObjects=None):
         # updating parameters bebore simulation run
+        start = time.time()
         if self._Options["Logging"]["Log time step updates"]:
             self._Logger.info(f'PyDSS datetime - {self._dssSolver.GetDateTime()}')
             self._Logger.info(f'OpenDSS time [h] - {self._dssSolver.GetOpenDSSTime()}')
@@ -319,6 +326,7 @@ class OpenDSS:
         # run simulation time step and get results
         time_step_has_converged = True
         if not self._Options['Project']['Disable PyDSS controllers']:
+            update_start = time.time()
             for priority in range(CONTROLLER_PRIORITIES):
                 priority_has_converged = False
                 for i in range(self._Options['Project']['Max Control Iterations']):
@@ -328,11 +336,19 @@ class OpenDSS:
                         priority_has_converged = True
                         break
                     self._dssSolver.reSolve()
+                if i == 0:
+                    # Don't track 0.
+                    pass
+                elif i not in self._controller_iteration_counts:
+                    self._controller_iteration_counts[i] = 1
+                else:
+                    self._controller_iteration_counts[i] += 1
                 if not priority_has_converged:
                     time_step_has_converged = False
                     self._Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
                     self._HandleConvergenceErrorChecks(step, error)
 
+            self._stats["UpdateControllers"].update(time.time() - update_start)
             self._UpdatePlots()
 
         if self._Options['Frequency']['Enable frequency sweep'] and \
@@ -355,6 +371,7 @@ class OpenDSS:
             self._HI.updateHelicsPublications()
             self._increment_flag, helics_time = self._HI.request_time_increment()
 
+        self._stats["RunStep"].update(time.time() - start)
         return time_step_has_converged
 
     def _HandleConvergenceErrorChecks(self, step, error):
@@ -462,6 +479,11 @@ class OpenDSS:
 
         if self._Options and self._Options['Exports']['Log Results']:
             self.ResultContainer.ExportResults()
+
+        for stats in self._stats.values():
+            stats.log_stats()
+        for count, occurrences in sorted(self._controller_iteration_counts.items(), reverse=True):
+            self._Logger.info("Controller iteration count %s occurrences=%s", count, occurrences)
 
         self._Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
         self._Logger.info('End of simulation')
