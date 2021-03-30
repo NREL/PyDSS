@@ -284,7 +284,7 @@ class PyDSS:
                 Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
 
                 for i in range(Steps):
-                    self.notify(f"PyDSS cosim running for timestep : {Steps}")
+                    self.notify(f"PyDSS cosim running for timestep: {i}, total timesteps: {Steps}")
                     results = self.pydss_obj.RunStep(i)
                     restructured_results = self.restructure_results(results)
                     #Timestep data payload and metadata only in an inital timestep
@@ -300,8 +300,9 @@ class PyDSS:
                     
                 #closing federate
                 # TODO: At the moment, I cannot pass timestep because bes_data_api attemps to create a vector tile results
+                self.notify(f"PyDSS attempting to close")
                 self.a_writer.send_timesteps()
-                self.notify(f"PyDSS send final timesteps")
+                self.notify(f"PyDSS closed properly")
                 
                 # Remove the project data
                 if hasattr(self, 'tmp_folder'):
