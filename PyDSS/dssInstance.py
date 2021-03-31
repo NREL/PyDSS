@@ -1,10 +1,10 @@
 from PyDSS.pyContrReader import read_controller_settings_from_registry
-from PyDSS.ProfileManager.ProfileStore import ProfileManager
 from PyDSS.dssElementFactory import create_dss_element
 from PyDSS.utils.utils import make_human_readable_size
 from PyDSS.pyContrReader import pyContrReader as pcr
 from PyDSS.pyPlotReader import pyPlotReader as ppr
 from PyDSS.exceptions import InvalidConfiguration
+from PyDSS.ProfileManager import ProfileInterface
 from PyDSS.pyPostprocessor import pyPostprocess
 import PyDSS.pyControllers as pyControllers
 from PyDSS.NetworkModifier import Modifier
@@ -115,8 +115,13 @@ class OpenDSS:
             self._Logger.info('Disabling internal yearly and duty-cycle profiles.')
             for m in ["Loads", "PVSystem", "Generator", "Storage"]:
                 run_command(f'BatchEdit {m}..* yearly=NONE duty=None')
-            self.profileStore = ProfileManager(self._dssObjects, self._dssSolver, params)
-            self.profileStore.setup_profiles()
+            profileSettings = self._Options["Profiles"]["settings"]
+            profileSettings["objects"] = self._dssObjects
+            self.profileStore = ProfileInterface.Create(
+                self._dssInstance, self._dssSolver, self._Options, self._Logger, **profileSettings
+            )
+            #self.profileStore = ProfileManager(self._dssObjects, self._dssSolver, params)
+            #self.profileStore.setup_profiles()
 
         self.ResultContainer = ResultData(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
                                             self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance)
@@ -300,7 +305,7 @@ class OpenDSS:
         self._Logger.info(f'PyDSS datetime - {self._dssSolver.GetDateTime()}')
         self._Logger.info(f'OpenDSS time [h] - {self._dssSolver.GetOpenDSSTime()}')
         if self._Options['Profiles']["Use profile manager"]:
-            self.profileStore.update()
+            updated_values = self.profileStore.update()
 
         if self._Options['Helics']['Co-simulation Mode']:
             self._HI.updateHelicsSubscriptions()

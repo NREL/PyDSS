@@ -14,6 +14,8 @@ OPENDSS_MASTER_FILENAME = "Master.dss"
 SUBSCRIPTIONS_FILENAME = "Subscriptions.toml"
 PROJECT_TAR = "project.tar"
 PROJECT_ZIP = "project.zip"
+PROFILE_MAPPING = "mapping.toml"
+PROFILE_SRC_H5 = "profiles.hdf5"
 
 class VisualizationType(enum.Enum):
     FREQUENCY_PLOT = "FrequencySweep"

@@ -1,59 +1,54 @@
-from PyDSS.ProfileManager.Profile import Profile as TSP
+from PyDSS.ProfileManager.base_definations import BaseProfileManager, BaseProfile
 from PyDSS.ProfileManager.common import PROFILE_TYPES
 from PyDSS.exceptions import InvalidParameter
-from PyDSS.pyLogger import getLoggerTag
-from PyDSS.utils.utils import load_data
+from PyDSS.common import DATE_FORMAT
 from datetime import datetime
 import pandas as pd
 import numpy as np
 import datetime
-import logging
-import toml
 import h5py
+import copy
 import os
 
+class ProfileManager(BaseProfileManager):
 
-
-class ProfileManager:
-
-    def __init__(self,  dssObjects, dssSolver, options, mode="r+"):
-        if options["Logging"]["Pre-configured logging"]:
-            logger_tag = __name__
+    def __init__(self,  sim_instance, solver, options, logger, **kwargs):
+        super(ProfileManager, self).__init__(sim_instance, solver, options, logger, **kwargs)
+        self.Objects = kwargs["objects"]
+        if os.path.exists(self.basepath):
+            self.logger.info("Loading existing h5 store")
+            self.store = h5py.File(self.basepath, "r+")
         else:
-            logger_tag = getLoggerTag(options)
-        self._logger = logging.getLogger(logger_tag)
-        self.dssSolver = dssSolver
-        self.Objects = dssObjects
-
-        self.profileMapping = load_data(options['Profiles']["Profile mapping"])
-
-        filePath = options['Profiles']["Profile store path"]
-        if os.path.exists(filePath):
-            self._logger.info("Loading existing h5 store")
-            self.store = h5py.File(filePath, mode)
-        else:
-            self._logger.info("Creating new h5 store")
-            self.store = h5py.File(filePath, "w")
+            self.logger.info("Creating new h5 store")
+            self.store = h5py.File(self.basepath, "w")
             for profileGroup in PROFILE_TYPES.names():
                 self.store.create_group(profileGroup)
+        self.setup_profiles()
         return
 
     def setup_profiles(self):
         self.Profiles = {}
-        for group, profileMap in self.profileMapping.items():
+        for group, profileMap in self.mapping.items():
             if group in self.store:
                 grp = self.store[group]
                 for profileName, mappingDict in profileMap.items():
                     if profileName in grp:
-                        objects = {x['object'] : self.Objects[x['object']] for x in mappingDict}
-                        self.Profiles[f"{group}/{profileName}"] = TSP(grp[profileName], objects, self.dssSolver,
-                                                                      mappingDict)
+                        objects = {x['object']: self.Objects[x['object']] for x in mappingDict}
+                        self.Profiles[f"{group}/{profileName}"] = Profile(
+                            self.sim_instance,
+                            grp[profileName],
+                            objects,
+                            self.solver,
+                            mappingDict,
+                            self.logger,
+                            **self.kwargs
+                        )
                     else:
-                        self._logger.warning("Group {} \ data set {} not found in the h5 store".format(
+                        self.logger.warning("Group {} \ data set {} not found in the h5 store".format(
                             group, profileName
                         ))
             else:
-                self._logger.warning("Group {} not found in the h5 store".format(group))
+                self.logger.warning("Group {} not found in the h5 store".format(group))
         return
 
     def create_dataset(self, dname, pType, data ,startTime, resolution, units, info):
@@ -73,7 +68,7 @@ class ProfileManager:
                 dset, startTime, resolution, data, units, info
             )
         else:
-            self._logger.error('Dataset "{}" already exists in group "{}".'.format(dname, pType))
+            self.logger.error('Dataset "{}" already exists in group "{}".'.format(dname, pType))
             raise Exception('Dataset "{}" already exists in group "{}".'.format(dname, pType))
 
     def add_from_arrays(self, data, name, pType, startTime, resolution, units="", info=""):
@@ -135,3 +130,56 @@ class ProfileManager:
             result = profileObj.update()
             results[profileaName] = result
         return results
+
+class Profile(BaseProfile):
+
+    DEFAULT_SETTINGS = {
+        "multiplier": 1,
+        "normalize": False,
+        "interpolate": False
+    }
+
+    def __init__(self, sim_instance, dataset, devices, solver, mapping_dict, logger, **kwargs):
+        super(Profile, self).__init__(sim_instance, dataset, devices, solver, mapping_dict, logger, **kwargs)
+        self.valueSettings = {x['object']: {**self.DEFAULT_SETTINGS, **x} for x in mapping_dict}
+
+        self.bufferSize = kwargs["bufferSize"]
+        self.buffer = np.zeros(self.bufferSize)
+        self.profile = dataset
+        self.neglectYear = kwargs["neglectYear"]
+        self.Objects = devices
+
+        self.attrs = self.profile.attrs
+        self.sTime = datetime.datetime.strptime(self.attrs["sTime"].decode(), DATE_FORMAT)
+        self.eTime = datetime.datetime.strptime(self.attrs["eTime"].decode(), '%Y-%m-%d %H:%M:%S.%f')
+        self.simRes = solver.GetStepSizeSec()
+        self.Time = copy.deepcopy(solver.GetDateTime())
+        return
+
+    def update_profile_settings(self):
+        return
+
+    def update(self, updateObjectProperties=True):
+        self.Time = copy.deepcopy(self.solver.GetDateTime())
+        if self.Time < self.sTime or self.Time > self.eTime:
+            value = 0
+            value1 = 0
+        else:
+            dT = (self.Time - self.sTime).total_seconds()
+            n = int(dT / self.attrs["resTime"])
+            value = self.profile[n]
+            dT2 = (self.Time - (self.sTime + datetime.timedelta(seconds=int(n * self.attrs["resTime"])))).total_seconds()
+            value1 = self.profile[n] + (self.profile[n+1] - self.profile[n]) * dT2 / self.attrs["resTime"]
+        if updateObjectProperties:
+            for objName, obj in self.Objects.items():
+                if self.valueSettings[objName]['interpolate']:
+                    value = value1
+                mult = self.valueSettings[objName]['multiplier']
+                if self.valueSettings[objName]['normalize']:
+                    valueF = value / self.attrs["max"] * mult
+                else:
+                    valueF = value * mult
+                obj.SetParameter(self.attrs["units"].decode(), valueF)
+        return value
+
+

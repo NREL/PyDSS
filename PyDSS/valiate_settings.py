@@ -76,8 +76,11 @@ settings_dict = {
         },
         "Profiles": {
             "Use profile manager":  {'type': bool, 'Options': [True, False]},
-            "Profile store path": {'type': str},
+            "source_type": {'type': str},
+            "source": {'type': str},
             "Profile mapping": {'type': str},
+            "is_relavtive_path":  {'type': bool, 'Options': [True, False]},
+            "settings": {'type': dict},
         },
         "Reports": {
             'Format': {'type': str, 'Options': ["csv", "h5"]},
