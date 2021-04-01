@@ -25,9 +25,6 @@ class CircularBufferHelper:
         self._buf.append(val)
 
     def average(self):
-        assert self._buf
-        if isinstance(self._buf[0], list):
-            return pd.DataFrame(self._buf).rolling(self._window_size).mean().values
         if len(self._buf) < self._window_size:
             return np.NaN
         return sum(self._buf) / len(self._buf)

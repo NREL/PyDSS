@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List
@@ -5,6 +6,9 @@ from typing import Dict, List
 from pydantic import BaseModel, Field
 
 from PyDSS.utils.simulation_utils import CircularBufferHelper
+
+
+logger = logging.getLogger(__name__)
 
 
 class VoltageMetricsBaseModel(BaseModel):
@@ -263,6 +267,10 @@ class NodeVoltageMetrics:
             report filename
 
         """
+        if self._num_time_points == 0:
+            logger.error("Cannot generate report with no time points")
+            return
+
         metric_1 = VoltageMetric1(
             time_points=self._metric_1_time_steps,
             duration=len(self._metric_1_time_steps) * self._resolution,

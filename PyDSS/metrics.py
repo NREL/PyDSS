@@ -385,7 +385,6 @@ class NodeVoltageMetric(MetricBase):
         self._prop = props[0]
         # Indices for node names are tied to indices for node voltages.
         self._node_names = None
-        self._containers = {}
         self._voltages = None
         start_time = get_start_time(options)
         sim_resolution = get_simulation_resolution(options)
@@ -402,7 +401,7 @@ class NodeVoltageMetric(MetricBase):
 
     def append_values(self, time_step, store_nan=False):
         voltages = dss.Circuit.AllBusMagPu()
-        if not self._containers:
+        if self._voltages is None:
             # TODO: limit to objects that have been added
             self._node_names = dss.Circuit.AllNodeNames()
             self._voltages = [
@@ -411,8 +410,8 @@ class NodeVoltageMetric(MetricBase):
             ]
             self._voltage_metrics.node_names = self._node_names
         else:
-            for i in enumerate(voltages):
-                self._voltages[i].set_value_from_raw(voltages[i])
+            for i, voltage in enumerate(voltages):
+                self._voltages[i].set_value_from_raw(voltage)
 
         if not store_nan:
             self._voltage_metrics.update(time_step, self._voltages)
