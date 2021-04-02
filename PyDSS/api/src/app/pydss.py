@@ -67,6 +67,7 @@ class PyDSS:
             # uses minutes to request time
             params['Project']['Simulation duration (min)'] = params['Project']['Simulation duration (min)']/60
             params['Project']['Step resolution (sec)'] = params['Project']['Step resolution (sec)']/60
+            self.time_resolution = params['Project']['Step resolution (sec)']*60
             params['Project']["Loadshape start time"] = "1/1/2020 00:00:00"
 
             # Making sure delta time is small enough
@@ -284,7 +285,7 @@ class PyDSS:
                 Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
 
                 for i in range(Steps):
-                    self.notify(f"PyDSS cosim running for timestep: {i}, total timesteps: {Steps}")
+                    self.notify(f"PyDSS cosim running for timestep: {i*self.time_resolution}, total timesteps: {Steps}")
                     results = self.pydss_obj.RunStep(i)
                     restructured_results = self.restructure_results(results)
                     #Timestep data payload and metadata only in an inital timestep
