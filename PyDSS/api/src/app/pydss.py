@@ -67,7 +67,7 @@ class PyDSS:
             # uses minutes to request time
             params['Project']['Simulation duration (min)'] = params['Project']['Simulation duration (min)']/60
             params['Project']['Step resolution (sec)'] = params['Project']['Step resolution (sec)']/60
-            self.time_resolution = params['Project']['Step resolution (sec)']*60
+            self.time_resolution = params['Project']['Step resolution (sec)']
             params['Project']["Loadshape start time"] = "1/1/2020 00:00:00"
 
             # Making sure delta time is small enough
