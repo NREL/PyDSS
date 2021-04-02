@@ -178,7 +178,7 @@ class PyDSS:
                                     "Property" : "pu",
                                     "Subscription ID": sub_id,
                                     "Unit" : "",
-                                    "Subscribe" : True,
+                                    "Subscribe" : False,
                                     "Data type" : "double",
                                     "Multiplier" : 1 
                                 }
