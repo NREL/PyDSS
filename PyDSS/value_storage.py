@@ -23,13 +23,14 @@ class ValueStorageBase(abc.ABC):
         self._dataset = None
 
     @staticmethod
-    def get_columns(df, name, options, **kwargs):
-        """Return the column names in the dataframe that match name and kwargs.
+    def get_columns(df, names, options, **kwargs):
+        """Return the column names in the dataframe that match names and kwargs.
 
         Parameters
         ----------
         df : pd.DataFrame
-        name : str
+        names : str | list
+            single name or list of names
         kwargs : dict
             Filter on options; values can be strings or regular expressions.
 
@@ -38,6 +39,12 @@ class ValueStorageBase(abc.ABC):
         list
 
         """
+        if isinstance(names, str):
+            names = set([names])
+        elif isinstance(names, set):
+            pass
+        else:
+            names = set(names)
         field_indices = {option: i + 1 for i, option in enumerate(options)}
         columns = []
         for column in df.columns:
@@ -46,11 +53,11 @@ class ValueStorageBase(abc.ABC):
             if index != -1:
                 col = column[:index]
             # [name, option1, option2, ...]
-            fields = ValueStorageBase.get_fields(col, name)
+            fields = ValueStorageBase.get_fields(col, next(iter(names)))
             if options and kwargs:
                 assert len(fields) == 1 + len(options), f"fields={fields} options={options}"
             _name = fields[0]
-            if _name != name:
+            if _name not in names:
                 continue
             match = True
             for key, val in kwargs.items():

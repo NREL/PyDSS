@@ -19,7 +19,7 @@ import PyDSS.pyPlots as pyPlots
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
-from PyDSS.utils.simulation_utils import TimerStats
+from PyDSS.utils.timing_utils import TimerStatsManager, Timer, track_timing
 
 import opendssdirect as dss
 import numpy as np
@@ -51,9 +51,7 @@ class OpenDSS:
         self._maxConvergenceErrorCount = 0
         self._maxConvergenceError = 0.0
         self._controller_iteration_counts = {}
-        self._stats = {}
-        for label in ("CompileModel", "RunStep", "UpdateControllers"):
-            self._stats[label] = TimerStats(label)
+        self._stats = TimerStatsManager()
 
         rootPath = params['Project']['Project Path']
         self._ActiveProject = params['Project']['Active Project']
@@ -90,7 +88,8 @@ class OpenDSS:
         for key, path in self._dssPath.items():
             assert (os.path.exists(path)), '{} path: {} does not exist!'.format(key, path)
 
-        self._CompileModel()
+        with Timer(self._stats, "CompileModel"):
+            self._CompileModel()
 
         #run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
         self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(params['Frequency']['Fundamental frequency']) + ' Hz')
@@ -120,7 +119,8 @@ class OpenDSS:
             self.profileStore.setup_profiles()
 
         self.ResultContainer = ResultData(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
-                                            self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance)
+                                          self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance,
+                                          self._stats)
 
         if params['Project']['Use Controller Registry']:
             ControllerList = read_controller_settings_from_registry(self._dssPath['pyControllers'])
@@ -148,7 +148,6 @@ class OpenDSS:
         return
 
     def _CompileModel(self):
-        start = time.time()
         self._dssInstance.Basic.ClearAll()
         self._dssInstance.utils.run_command('Log=NO')
         run_command('Clear')
@@ -162,8 +161,6 @@ class OpenDSS:
         self._Logger.info('OpenDSS:  ' + reply)
         if reply != "":
             raise OpenDssModelError(f"Error compiling OpenDSS model: {reply}")
-
-        self._stats["CompileModel"].update(time.time() - start)
 
     def _ModifyNetwork(self):
         # self._Modifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
@@ -326,29 +323,28 @@ class OpenDSS:
         # run simulation time step and get results
         time_step_has_converged = True
         if not self._Options['Project']['Disable PyDSS controllers']:
-            update_start = time.time()
-            for priority in range(CONTROLLER_PRIORITIES):
-                priority_has_converged = False
-                for i in range(self._Options['Project']['Max Control Iterations']):
-                    has_converged, error = self._UpdateControllers(priority, step, i, UpdateResults=False)
-                    self._Logger.debug('Control Loop {} convergence error: {}'.format(priority, error))
-                    if has_converged:
-                        priority_has_converged = True
-                        break
-                    self._dssSolver.reSolve()
-                if i == 0:
-                    # Don't track 0.
-                    pass
-                elif i not in self._controller_iteration_counts:
-                    self._controller_iteration_counts[i] = 1
-                else:
-                    self._controller_iteration_counts[i] += 1
-                if not priority_has_converged:
-                    time_step_has_converged = False
-                    self._Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
-                    self._HandleConvergenceErrorChecks(step, error)
+            with Timer(self._stats, "UpdateControllers"):
+                for priority in range(CONTROLLER_PRIORITIES):
+                    priority_has_converged = False
+                    for i in range(self._Options['Project']['Max Control Iterations']):
+                        has_converged, error = self._UpdateControllers(priority, step, i, UpdateResults=False)
+                        self._Logger.debug('Control Loop {} convergence error: {}'.format(priority, error))
+                        if has_converged:
+                            priority_has_converged = True
+                            break
+                        self._dssSolver.reSolve()
+                    if i == 0:
+                        # Don't track 0.
+                        pass
+                    elif i not in self._controller_iteration_counts:
+                        self._controller_iteration_counts[i] = 1
+                    else:
+                        self._controller_iteration_counts[i] += 1
+                    if not priority_has_converged:
+                        time_step_has_converged = False
+                        self._Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
+                        self._HandleConvergenceErrorChecks(step, error)
 
-            self._stats["UpdateControllers"].update(time.time() - update_start)
             self._UpdatePlots()
 
         if self._Options['Frequency']['Enable frequency sweep'] and \
@@ -371,7 +367,6 @@ class OpenDSS:
             self._HI.updateHelicsPublications()
             self._increment_flag, helics_time = self._HI.request_time_increment()
 
-        self._stats["RunStep"].update(time.time() - start)
         return time_step_has_converged
 
     def _HandleConvergenceErrorChecks(self, step, error):
@@ -438,7 +433,8 @@ class OpenDSS:
         try:
             step = 0
             while step < Steps:
-                pydss_has_converged = self.RunStep(step)
+                with Timer(self._stats, "RunStep"):
+                    pydss_has_converged = self.RunStep(step)
                 opendss_has_converged = dss.Solution.Converged()
                 if not opendss_has_converged:
                     self._Logger.info("OpenDSS did not converge at step=%s pydss_converged=%s",
@@ -480,8 +476,7 @@ class OpenDSS:
         if self._Options and self._Options['Exports']['Log Results']:
             self.ResultContainer.ExportResults()
 
-        for stats in self._stats.values():
-            stats.log_stats()
+        self._stats.log_stats(clear=True)
         if self._controller_iteration_counts:
             data = {
                 "Report": "ControllerIterationCounts",

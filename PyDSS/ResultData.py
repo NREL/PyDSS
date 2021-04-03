@@ -21,9 +21,10 @@ from PyDSS.reports.reports import Reports, ReportGranularity
 from PyDSS.utils.dataframe_utils import write_dataframe
 from PyDSS.utils.utils import dump_data
 from PyDSS.utils.simulation_utils import (
-    TimerStats, create_datetime_index_from_settings,
+    create_datetime_index_from_settings,
     create_loadshape_pmult_dataframe_for_simulation,
 )
+from PyDSS.utils.timing_utils import TimerStatsManager, Timer, track_timing
 from PyDSS.value_storage import ValueContainer, ValueByNumber
 from PyDSS.metrics import OpenDssPropertyMetric, SummedElementsOpenDssPropertyMetric
 
@@ -39,7 +40,7 @@ class ResultData:
 
     def __init__(self, options, system_paths, dss_objects,
                  dss_objects_by_class, dss_buses, dss_solver, dss_command,
-                 dss_instance):
+                 dss_instance, timer_stats):
         self._logger = logger
         self._dss_solver = dss_solver
         self._results = {}
@@ -49,9 +50,9 @@ class ResultData:
         self.system_paths = system_paths
         self._element_metrics = {}  # object full name to OpenDssPropertyMetric
         self._summed_element_metrics = {}
-        self._stats = {}
         self._options = options
         self._cur_step = 0
+        self._stats = timer_stats
 
         self._dss_command = dss_command
         self._start_day = dss_solver.StartDay
@@ -194,13 +195,9 @@ class ResultData:
         )
         self._cur_step = 0
 
-        self._stats.clear()
-        self._stats["Total"] = TimerStats("Total")
         base_path = "Exports/" + self._scenario
         for metric in self._iter_metrics():
             metric.initialize_data_store(hdf_store, base_path, num_steps)
-            label = metric.label()
-            self._stats[label] = TimerStats(label)
 
     def _iter_metrics(self):
         for metric in self._element_metrics.values():
@@ -220,23 +217,15 @@ class ResultData:
         self._frequency_dataset.write_value([self._dss_solver.getFrequency()])
         self._mode_dataset.write_value([self._dss_solver.getMode()])
 
-        for metric in self._iter_metrics():
-            label = metric.label()
-            stats = self._stats[label]
-            start = time.time()
+        with Timer(self._stats, "Total"):
+            for metric in self._iter_metrics():
+                with Timer(self._stats, metric.label()):
+                    data = metric.append_values(self._cur_step, store_nan=store_nan)
 
-            data = metric.append_values(self._cur_step, store_nan=store_nan)
-
-            end = time.time()
-            stats.update(end - start)
-
-            if isinstance(data, dict):
-                # TODO: reconsider
-                # Something is only returned for OpenDSS properties
-                current_results.update(data)
-
-        end = time.time()
-        self._stats["Total"].update(end - update_start)
+                if isinstance(data, dict):
+                    # TODO: reconsider
+                    # Something is only returned for OpenDSS properties
+                    current_results.update(data)
 
         self._cur_step += 1
         return current_results
@@ -265,8 +254,6 @@ class ResultData:
             dataset.flush_data()
         for metric in self._iter_metrics():
             metric.close()
-        for stats in self._stats.values():
-            stats.log_stats()
 
     def _export_event_log(self, metadata):
         event_log = "event_log.csv"

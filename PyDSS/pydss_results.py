@@ -531,10 +531,9 @@ class PyDssScenarioResults:
         dataset = self._group[f"{element_class}/ElementProperties/{prop}"]
         df = DatasetBuffer.to_dataframe(dataset)
         if kwargs:
-            columns = set()
             options = self._check_options(element_class, prop, **kwargs)
-            for name in self._elems_by_class.get(element_class, set()):
-                columns.update(ValueStorageBase.get_columns(df, name, options, **kwargs))
+            names = self._elems_by_class.get(element_class, set())
+            columns = ValueStorageBase.get_columns(df, names, options, **kwargs)
             columns = list(columns)
             columns.sort()
             df = df[columns]
