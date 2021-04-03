@@ -287,6 +287,24 @@ class PyDssScenarioResults:
                 else:
                     self._summed_elem_timeseries_props[elem_class].append(prop)
 
+    @staticmethod
+    def get_name_from_column(column):
+        """Return the element name from the dataframe column. The dataframe should have been
+        returned from this class.
+
+        Parameters
+        ----------
+        column : str
+
+        Returns
+        -------
+        str
+
+        """
+        fields = column.split(ValueStorageBase.DELIMITER)
+        assert len(fields) > 1
+        return fields[0]
+
     @property
     def name(self):
         """Return the name of the scenario.
@@ -391,7 +409,7 @@ class PyDssScenarioResults:
             If dtype of any column is complex, drop the imaginary component.
         abs_val : bool
             If dtype of any column is complex, compute its absolute value.
-        kwargs : dict
+        kwargs
             Filter on options; values can be strings or regular expressions.
 
         Returns
@@ -419,8 +437,7 @@ class PyDssScenarioResults:
                 element_class, prop, element_name, dataset, real_only=real_only,
                 abs_val=abs_val, **kwargs
             )
-        else:
-            assert False, str(prop_type)
+        assert False, str(prop_type)
 
     def get_filtered_dataframes(self, element_class, prop, real_only=False, abs_val=False):
         """Return the dataframes for all elements.
@@ -489,7 +506,7 @@ class PyDssScenarioResults:
             )
         return dfs
 
-    def get_full_dataframe(self, element_class, prop, real_only=False, abs_val=False):
+    def get_full_dataframe(self, element_class, prop, real_only=False, abs_val=False, **kwargs):
         """Return a dataframe containing all data.  The dataframe is copied.
 
         Parameters
@@ -500,6 +517,8 @@ class PyDssScenarioResults:
             If dtype of any column is complex, drop the imaginary component.
         abs_val : bool
             If dtype of any column is complex, compute its absolute value.
+        kwargs
+            Filter on options; values can be strings or regular expressions.
 
         Returns
         -------
@@ -511,6 +530,14 @@ class PyDssScenarioResults:
 
         dataset = self._group[f"{element_class}/ElementProperties/{prop}"]
         df = DatasetBuffer.to_dataframe(dataset)
+        if kwargs:
+            columns = set()
+            options = self._check_options(element_class, prop, **kwargs)
+            for name in self._elems_by_class.get(element_class, set()):
+                columns.update(ValueStorageBase.get_columns(df, name, options, **kwargs))
+            columns = list(columns)
+            columns.sort()
+            df = df[columns]
         self._finalize_dataframe(df, dataset, real_only=real_only, abs_val=abs_val)
         return df
 
