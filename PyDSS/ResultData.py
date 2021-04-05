@@ -24,7 +24,7 @@ from PyDSS.utils.simulation_utils import (
     create_datetime_index_from_settings,
     create_loadshape_pmult_dataframe_for_simulation,
 )
-from PyDSS.utils.timing_utils import TimerStatsManager, Timer, track_timing
+from PyDSS.utils.timing_utils import Timer
 from PyDSS.value_storage import ValueContainer, ValueByNumber
 from PyDSS.metrics import OpenDssPropertyMetric, SummedElementsOpenDssPropertyMetric
 

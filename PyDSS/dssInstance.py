@@ -19,7 +19,7 @@ import PyDSS.pyPlots as pyPlots
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
-from PyDSS.utils.timing_utils import TimerStatsManager, Timer, track_timing
+from PyDSS.utils.timing_utils import TimerStatsCollector, Timer
 
 import opendssdirect as dss
 import numpy as np
@@ -51,7 +51,7 @@ class OpenDSS:
         self._maxConvergenceErrorCount = 0
         self._maxConvergenceError = 0.0
         self._controller_iteration_counts = {}
-        self._stats = TimerStatsManager()
+        self._stats = TimerStatsCollector()
 
         rootPath = params['Project']['Project Path']
         self._ActiveProject = params['Project']['Active Project']
