@@ -19,10 +19,14 @@ logger = logging.getLogger(__name__)
 
 FakeObj = namedtuple("FakeObj", "FullName, Name")
 OBJS = [
+    FakeObj("Line.one", "one"),
+    FakeObj("Line.two", "two"),
     FakeObj("Load.one", "one"),
     FakeObj("Load.two", "two"),
     FakeObj("PVSystem.one", "one"),
     FakeObj("PVSystem.two", "two"),
+    FakeObj("Transformer.ONE", "one"),
+    FakeObj("Transformer.TWO", "two"),
 ]
 OPTIONS = load_data("PyDSS/defaults/simulation.toml")
 STORE_FILENAME = os.path.join(tempfile.gettempdir(), "store.h5")
@@ -45,19 +49,19 @@ def test_export_powers(mocked_func):
     data1 = {
         "property": "ExportPowersMetric",
         "store_values_type": "all",
-        "opendss_elements": ["Loads", "PVSystems"],
+        "opendss_elements": ["Lines", "Loads", "PVSystems", "Transformers"],
     }
     prop1 = ExportListProperty("CktElement", data1)
     data2 = {
         "property": "ExportPowersMetric",
         "store_values_type": "max",
-        "opendss_elements": ["Loads", "PVSystems"],
+        "opendss_elements": ["Lines", "Loads", "PVSystems", "Transformers"],
     }
     prop2 = ExportListProperty("CktElement", data2)
     data3 = {
         "property": "ExportPowersMetric",
         "store_values_type": "sum",
-        "opendss_elements": ["Loads", "PVSystems"],
+        "opendss_elements": ["Lines", "Loads", "PVSystems", "Transformers"],
     }
     prop3 = ExportListProperty("CktElement", data3)
     num_time_steps = NUM_POWERS_FILES
@@ -85,15 +89,16 @@ def test_export_powers(mocked_func):
         dataset2 = hdf_store["CktElement/ElementProperties/ExportPowersMetricMax"]
         assert dataset2.attrs["length"] == 1
         assert dataset2.attrs["type"] == "value"
-        assert dataset2[0][0] == max(LOAD_1_VALUES)
-        assert dataset2[0][1] == max(LOAD_2_VALUES)
-        assert dataset2[0][2] == max(PV_SYSTEM_1_VALUES)
-        assert dataset2[0][3] == max(PV_SYSTEM_2_VALUES)
+        # Loads are at the index 2, PVSystems at 4
+        assert dataset2[0][2] == max(LOAD_1_VALUES)
+        assert dataset2[0][3] == max(LOAD_2_VALUES)
+        assert dataset2[0][4] == max(PV_SYSTEM_1_VALUES)
+        assert dataset2[0][5] == max(PV_SYSTEM_2_VALUES)
 
         dataset3 = hdf_store["CktElement/ElementProperties/ExportPowersMetricSum"]
         assert dataset3.attrs["length"] == 1
         assert dataset3.attrs["type"] == "value"
-        assert dataset3[0][0] == sum(LOAD_1_VALUES)
-        assert dataset3[0][1] == sum(LOAD_2_VALUES)
-        assert dataset3[0][2] == sum(PV_SYSTEM_1_VALUES)
-        assert dataset3[0][3] == sum(PV_SYSTEM_2_VALUES)
+        assert dataset3[0][2] == sum(LOAD_1_VALUES)
+        assert dataset3[0][3] == sum(LOAD_2_VALUES)
+        assert dataset3[0][4] == sum(PV_SYSTEM_1_VALUES)
+        assert dataset3[0][5] == sum(PV_SYSTEM_2_VALUES)

@@ -12,7 +12,8 @@ from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
 from PyDSS.metrics import (
     NodeVoltageMetric, TrackCapacitorChangeCounts,
     TrackRegControlTapNumberChanges, LineLoadingPercent,
-    TransformerLoadingPercent, ExportOverloadsMetric, ExportPowersMetric
+    TransformerLoadingPercent, ExportOverloadsMetric, ExportOverloadsMetricInMemory,
+    ExportPowersMetric
 )
 
 
@@ -22,6 +23,7 @@ MinMax = namedtuple("MinMax", "min, max")
 CUSTOM_METRICS = {
     "Capacitors.TrackStateChanges": TrackCapacitorChangeCounts,
     "CktElement.ExportOverloadsMetric": ExportOverloadsMetric,
+    "CktElement.ExportOverloadsMetricInMemory": ExportOverloadsMetricInMemory,
     "CktElement.ExportPowersMetric": ExportPowersMetric,
     "Lines.LoadingPercent": LineLoadingPercent,
     "Nodes.VoltageMetric": NodeVoltageMetric,

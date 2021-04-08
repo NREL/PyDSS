@@ -142,6 +142,10 @@ class ValueStorageBase(abc.ABC):
         """
 
     @property
+    def name(self):
+        return self._name
+
+    @property
     @abc.abstractmethod
     def num_columns(self):
         """Return the number of columns in the data.

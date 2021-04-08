@@ -18,6 +18,7 @@ from PyDSS.reports.reports import ReportBase
 from PyDSS.storage_filters import STORAGE_TYPE_MAP, StorageFilterBase
 from PyDSS.value_storage import ValueByNumber
 from PyDSS.node_voltage_metrics import NodeVoltageMetrics
+from PyDSS.thermal_metrics import ThermalMetrics
 from PyDSS.utils.simulation_utils import get_start_time, get_simulation_resolution
 
 
@@ -535,9 +536,7 @@ class OpenDssExportMetric(MetricBase):
 
     def append_values(self, time_step, store_nan=False):
         filename = self._run_command()
-        if not self.parse_file(filename):
-            return
-
+        self.parse_file(filename)
         self._append_func(time_step, store_nan=store_nan)
 
     def _append_values(self, time_step, store_nan=False):
@@ -671,14 +670,7 @@ class OpenDssExportMetric(MetricBase):
 
     @abc.abstractmethod
     def parse_file(self, filename):
-        """Parse data in filename.
-
-        Returns
-        -------
-        bool
-            Returns False is there is no data to store.
-
-        """
+        """Parse data in filename."""
 
     @staticmethod
     @abc.abstractmethod
@@ -687,6 +679,7 @@ class OpenDssExportMetric(MetricBase):
 
 
 class ExportOverloadsMetric(OpenDssExportMetric):
+    """Stores line and transformer loading percentages in HDF5."""
     @staticmethod
     def element_class():
         return "CktElement"
@@ -704,7 +697,6 @@ class ExportOverloadsMetric(OpenDssExportMetric):
         return "Overloads"
 
     def parse_file(self, filename):
-        found_data = False
         with open(filename) as f_in:
             # Skip the header.
             next(f_in)
@@ -715,9 +707,8 @@ class ExportOverloadsMetric(OpenDssExportMetric):
                     index = self._names[name]
                     val = float(fields[5].strip())
                     self._values[index].set_value_from_raw(val)
-                    found_data = True
-
-        return found_data
+                else:
+                    self._values[index].set_value_from_raw(np.nan)
 
     @staticmethod
     def requires_upper_case():
@@ -725,6 +716,7 @@ class ExportOverloadsMetric(OpenDssExportMetric):
 
 
 class ExportPowersMetric(OpenDssExportMetric):
+    """Stores power values in HDF5."""
     @staticmethod
     def element_class():
         return "CktElement"
@@ -749,20 +741,128 @@ class ExportPowersMetric(OpenDssExportMetric):
             for line in f_in:
                 fields = line.split(",")
                 name = self._get_name_from_line(fields)
-                if name in self._names:
-                    terminal = int(fields[1])
-                    if terminal == 1:
-                        val = abs(float(fields[2].strip()))
-                        data[name] = val
-
-        if not data:
-            return False
+                assert name in self._names, f"name={name} names={self._names.keys()}"
+                terminal = int(fields[1])
+                if terminal == 1:
+                    val = abs(float(fields[2].strip()))
+                    data[name] = val
 
         for name, val in data.items():
             index = self._names[name]
             self._values[index].set_value_from_raw(val)
 
+    @staticmethod
+    def requires_upper_case():
         return True
+
+
+class ExportOverloadsMetricInMemory(OpenDssExportMetric):
+    """Stores line and transformer loading percentages in memory."""
+    def __init__(self, prop, dss_objs, options):
+        super().__init__(prop, dss_objs, options)
+        # Indices for node names are tied to indices for node voltages.
+        self._transformer_index = None
+        self._line_loadings = None
+        self._tranformer_loadings = None
+        start_time = get_start_time(options)
+        sim_resolution = get_simulation_resolution(options)
+        inputs = ReportBase.get_inputs_from_defaults(options, "Thermal Metrics")
+        line_window_size, transformer_window_size = self._get_window_sizes(inputs, sim_resolution)
+        self._thermal_metrics = ThermalMetrics(
+            prop,
+            start_time,
+            sim_resolution,
+            line_window_size_hours=inputs["line_window_size_hours"],
+            line_window_size=line_window_size,
+            transformer_window_size_hours=inputs["transformer_window_size_hours"],
+            transformer_window_size=transformer_window_size,
+            line_loading_percent_threshold=inputs["line_loading_percent_threshold"],
+            line_loading_percent_moving_average_threshold=inputs["line_loading_percent_moving_average_threshold"],
+            transformer_loading_percent_threshold=inputs["transformer_loading_percent_threshold"],
+            transformer_loading_percent_moving_average_threshold=inputs["transformer_loading_percent_moving_average_threshold"],
+        )
+
+    def _append_values(self, time_step, store_nan=False):
+        if self._transformer_index is None:
+            line_names = []
+            transformer_names = []
+            for i, val in enumerate(self._values):
+                if val.name.startswith("Line"):
+                    line_names.append(val.name)
+                elif val.name.startswith("Transformer"):
+                    assert i != 0
+                    transformer_names.append(val.name)
+                    if self._transformer_index is None:
+                        self._transformer_index = i
+                else:
+                    assert False, val.name
+            self._thermal_metrics.line_names = line_names
+            self._thermal_metrics.transformer_names = transformer_names
+
+        line_loadings = self._values[:self._transformer_index]
+        transformer_loadings = self._values[self._transformer_index:]
+
+        if not store_nan:
+            self._thermal_metrics.update(time_step, line_loadings, transformer_loadings)
+
+        self._thermal_metrics.increment_steps()
+
+    @staticmethod
+    def _get_window_sizes(inputs, resolution):
+        line_window_size = timedelta(hours=inputs["line_window_size_hours"])
+        if line_window_size % resolution != timedelta(0):
+            raise InvalidConfiguration(
+                f"line_window_size={line_window_size} must be a multiple of {resolution}"
+            )
+        transformer_window_size = timedelta(hours=inputs["transformer_window_size_hours"])
+        if transformer_window_size % resolution != timedelta(0):
+            raise InvalidConfiguration(
+                f"transformer_window_size={transformer_window_size} must be a multiple of {resolution}"
+            )
+        line_window_size = int(line_window_size / resolution)
+        transformer_window_size = int(transformer_window_size / resolution)
+        return line_window_size, transformer_window_size
+
+    def close(self):
+        path = os.path.join(
+            self._options["Project"]["Project Path"],
+            self._options["Project"]["Active Project"],
+            "Exports",
+            self._options["Project"]["Active Scenario"],
+        )
+        self._thermal_metrics.generate_report(path)
+
+    @staticmethod
+    def element_class():
+        return "CktElement"
+
+    @staticmethod
+    def expected_column_headers():
+        return {0: "Name", 2: "%normal"}
+
+    def export_command(self):
+        filename = Path(self._tmp_dir) / "opendss_capacity.csv"
+        return f"export capacity {filename}"
+
+    @staticmethod
+    def _get_name_from_line(fields):
+        return fields[0].strip()
+
+    @staticmethod
+    def label():
+        return "Overloads"
+
+    def parse_file(self, filename):
+        with open(filename) as f_in:
+            # Skip the header.
+            next(f_in)
+            for line in f_in:
+                fields = line.split(",")
+                name = self._get_name_from_line(fields)
+                assert name in self._names, f"name={name} names={self._names.keys()}"
+                index = self._names[name]
+                val = float(fields[2].strip())
+                self._values[index].set_value_from_raw(val)
 
     @staticmethod
     def requires_upper_case():

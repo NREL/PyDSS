@@ -1,11 +1,11 @@
 
-from datetime import timedelta
 import logging
+import os
 
 
-from PyDSS.common import StoreValuesType
-from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.reports.reports import ReportBase
+from PyDSS.thermal_metrics import SimulationThermalMetricsModel, ThermalMetricsSummaryModel
+from PyDSS.utils.utils import load_data
 
 
 logger = logging.getLogger(__name__)
@@ -38,289 +38,41 @@ class ThermalMetrics(ReportBase):
         self._num_lines = 0
         self._num_transformers = 0
         self._resolution = self._get_simulation_resolution()
-        inputs = self.get_inputs_from_defaults(self._simulation_config, self.NAME)
-        self._store_type = self._get_store_type(inputs, self._resolution)
-        self._line_window_size, self._transformer_window_size = self._get_window_sizes(inputs, self._resolution)
-
-        prop_name = "ExportOverloadsMetric"
-        if self._store_type == StoreValuesType.MOVING_AVERAGE:
-            prop_name += "AvgMax"
-            node_names1 = self._scenarios[0].list_element_value_names("CktElement", prop_name)
-            node_names2 = self._scenarios[1].list_element_value_names("CktElement", prop_name)
-        else:
-            node_names1 = self._scenarios[0].list_element_names("CktElement", prop_name)
-            node_names2 = self._scenarios[1].list_element_names("CktElement", prop_name)
-        assert len(node_names1) == len(node_names2)
-        self._node_names = node_names1
-
-        for name in self._node_names:
-            if name.startswith("Line"):
-                self._num_lines += 1
-            elif name.startswith("Transformer"):
-                self._num_transformers += 1
-            else:
-                continue
 
     def generate(self, output_dir):
-        data = {
-            "num_lines": self._num_lines,
-            "num_transformers": self._num_transformers,
-            "max_violations": self._get_max_violations(),
-            "moving_average_max_violations": self._get_moving_average_max_violations(),
-            "summary": {}
-        }
-        
-        data['summary'] = self._sumarize_metrics(data)
-
-        self._export_json_report(data, output_dir, "thermal_metrics.json")
-        
-    def _sumarize_metrics(self, data, scenario='control_mode'):
-        
-        transformer_window_dur_hrs = int(
-            self._transformer_window_size.total_seconds() / 3600
-        )
-        line_window_dur_hrs = int(
-            self._line_window_size.total_seconds() / 3600
-        )
-        
-        
-        line_dicts = data['max_violations'][scenario]['Lines']
-        if line_dicts:
-            max_line_inst_loading = (
-                max([x['max_violation'] for x in line_dicts])
-            )
-        else:
-            max_line_inst_loading = self._options["line_loading_percent_threshold"]
-        
-        
-        line_mav_dicts = data['moving_average_max_violations'][scenario]['Lines']
-        if line_mav_dicts:
-            max_line_mav_loading = ( 
-                max([x['moving_average_max_violation'] for x in line_mav_dicts])
-            )
-        else:
-            max_line_mav_loading = self._options["line_loading_percent_threshold"]
-        
-        
-        transformer_dicts = data['max_violations'][scenario]['Transformers']
-        if transformer_dicts:
-            max_transformer_inst_loading = ( 
-                max([x['max_violation'] for x in transformer_dicts])
-            )
-        else:
-            max_transformer_inst_loading = self._options["transformer_loading_percent_threshold"]
-        
-        
-        transformer_mav_dicts = data['moving_average_max_violations'][scenario]['Transformers']
-        if transformer_mav_dicts:
-            max_transformer_mav_loading = (
-                max([x['moving_average_max_violation'] for x in transformer_mav_dicts])
-            )
-        else:
-            max_transformer_mav_loading = self._options["transformer_loading_percent_threshold"]
-        
-        summary = {
-            'maximum_line_instantaneous_pct_loading': max_line_inst_loading,
-            f'maximum_{line_window_dur_hrs}-hour_moving_average_line_pct_loading': max_line_mav_loading,
-            'maximum_transformer_instantaneous_pct_loading': max_transformer_inst_loading,
-            f'maximum_{transformer_window_dur_hrs}-hour_moving_average_transformer_pct_loading': max_transformer_mav_loading
-        }
-        return summary
-
-    def _get_max_violations(self):
-        if self._store_type == StoreValuesType.ALL:
-            data = self._get_max_violations_instantaneous()
-        elif self._store_type == StoreValuesType.MOVING_AVERAGE:
-            data = self._get_max_violations_moving_average()
-        return data
-
-    def _get_max_violations_moving_average(self):
-        data = {}
+        metrics = {}
         for scenario in self._results.scenarios:
-            data[scenario.name] = {"Lines": [], "Transformers": []}
-            data[scenario.name] = {"Lines": [], "Transformers": []}
-            for name in scenario.list_element_value_names("CktElement", "ExportOverloadsMetricMax"):
-                num = scenario.get_element_property_value("CktElement", "ExportOverloadsMetricMax", name)
-                if name.startswith("Line"):
-                    items = data[scenario.name]["Lines"]
-                    threshold = self._options["line_loading_percent_threshold"]
-                elif name.startswith("Transformer"):
-                    items = data[scenario.name]["Transformers"]
-                    threshold = self._options["transformer_loading_percent_threshold"]
-                else:
-                    continue
-                if num > threshold:
-                    items.append(
-                        {
-                            "name": name,
-                            "max_violation": num,
-                        }
-                    )
+            filename = os.path.join(
+                self._simulation_config["Project"]["Project Path"],
+                self._simulation_config["Project"]["Active Project"],
+                "Exports",
+                scenario.name,
+                self.FILENAME,
+            )
+            metrics[scenario.name] = ThermalMetricsSummaryModel(**load_data(filename))
 
-        return data
+        model = SimulationThermalMetricsModel(scenarios=metrics)
 
-    def _get_max_violations_instantaneous(self):
-        data = {}
-        for scenario in self._results.scenarios:
-            data[scenario.name] = {"Lines": [], "Transformers": []}
-            dfs = scenario.get_filtered_dataframes("CktElement", "ExportOverloadsMetric")
-            for name, df in dfs.items():
-                if name.startswith("Line"):
-                    items = data[scenario.name]["Lines"]
-                    threshold = self._options["line_loading_percent_threshold"]
-                elif name.startswith("Transformers"):
-                    items = data[scenario.name]["Transformers"]
-                    threshold = self._options["transformer_loading_percent_threshold"]
-                else:
-                    continue
-                max_val = df.iloc[:, 0].max()
-                if max_val > threshold:
-                    items.append({"name": name, "max_violation": max_val})
+        filename = os.path.join(output_dir, self.FILENAME)
+        with open(filename, "w") as f_out:
+            f_out.write(model.json(indent=2))
+            f_out.write("\n")
 
-        return data
-
-    def _get_moving_average_max_violations(self):
-        if self._store_type == StoreValuesType.ALL:
-            data = self._get_moving_average_max_violations_instantaneous()
-        elif self._store_type == StoreValuesType.MOVING_AVERAGE:
-            data = self._get_moving_average_max_violations_moving_average()
-        return data
-
-    def _get_moving_average_max_violations_moving_average(self):
-        data = {}
-        for scenario in self._results.scenarios:
-            data[scenario.name] = {"Lines": [], "Transformers": []}
-            data[scenario.name] = {"Lines": [], "Transformers": []}
-            for name in scenario.list_element_value_names("CktElement", "ExportOverloadsMetricAvgMax"):
-                num = scenario.get_element_property_value("CktElement", "ExportOverloadsMetricAvgMax", name)
-                if name.startswith("Line"):
-                    items = data[scenario.name]["Lines"]
-                    threshold = self._options["line_loading_percent_moving_average_threshold"]
-                elif name.startswith("Transformer"):
-                    items = data[scenario.name]["Transformers"]
-                    threshold = self._options["transformer_loading_percent_moving_average_threshold"]
-                else:
-                    continue
-                if num > threshold:
-                    items.append(
-                        {
-                            "name": name,
-                            "moving_average_max_violation": num,
-                        }
-                    )
-
-        return data
-
-    def _get_moving_average_max_violations_instantaneous(self):
-        data = {}
-        for scenario in self._results.scenarios:
-            data[scenario.name] = {"Lines": [], "Transformers": []}
-            data[scenario.name] = {"Lines": [], "Transformers": []}
-            dfs = scenario.get_filtered_dataframes("CktElement", "ExportOverloadsMetric")
-            for name, df in dfs.items():
-                if name.startswith("Line"):
-                    items = data[scenario.name]["Lines"]
-                    threshold = self._options["line_loading_percent_moving_average_threshold"]
-                    window_size = self._line_window_size
-                elif name.startswith("Transformers"):
-                    items = data[scenario.name]["Transformers"]
-                    threshold = self._options["transformer_loading_percent_moving_average_threshold"]
-                    window_size = self._transformer_window_size
-                else:
-                    continue
-                window_size = int(window_size / self._resolution)
-                moving_avg_max = df.rolling(window_size).mean().max()[0]
-                if moving_avg_max > threshold:
-                    items.append(
-                        {
-                            "name": name,
-                            "moving_average_max_violation": moving_avg_max,
-                        }
-                    )
-        return data
-
-    @staticmethod
-    def _get_store_type(inputs, resolution):
-        if inputs.get("force_instantaneous", False):
-            val = StoreValuesType.ALL
-        elif inputs.get("force_moving_average", False):
-            val = StoreValuesType.MOVING_AVERAGE
-        elif resolution >= timedelta(minutes=15):
-            val = StoreValuesType.ALL
-        else:
-            val = StoreValuesType.MOVING_AVERAGE
-
-        return val
+        logger.info("Generated %s", filename)
 
     @staticmethod
     def get_required_exports(simulation_config):
-        resolution = timedelta(seconds=simulation_config["Project"]["Step resolution (sec)"])
-        inputs = ThermalMetrics.get_inputs_from_defaults(simulation_config, ThermalMetrics.NAME)
-        store_type = ThermalMetrics._get_store_type(inputs, resolution)
-        inputs = ThermalMetrics.get_inputs_from_defaults(simulation_config, ThermalMetrics.NAME)
-        if store_type == StoreValuesType.ALL:
-            data = ThermalMetrics._get_required_exports_instantaneous(inputs)
-        elif store_type == StoreValuesType.MOVING_AVERAGE:
-            data = ThermalMetrics._get_required_exports_moving_average(inputs, resolution)
-        else:
-            assert False
-
-        return data
-
-    @staticmethod
-    def _get_required_exports_instantaneous(inputs):
-        limits_max = min(
-            inputs["line_loading_percent_threshold"],
-            inputs["transformer_loading_percent_threshold"],
-        )
         return {
             "CktElement": [
                 {
-                    "property": "ExportOverloadsMetric",
+                    "property": "ExportOverloadsMetricInMemory",
                     "store_values_type": "all",
                     "opendss_classes": ["Lines", "Transformers"],
-                    "limits": [0, limits_max],
                 }
              ]
         }
 
+
     @staticmethod
     def get_required_scenario_names():
         return set(["control_mode"])
-
-    @staticmethod
-    def _get_window_sizes(inputs, resolution):
-        line_window_size = timedelta(hours=inputs["line_window_size_hours"])
-        if line_window_size % resolution != timedelta(0):
-            raise InvalidConfiguration(
-                f"line_window_size={line_window_size} must be a multiple of {resolution}"
-            )
-        transformer_window_size = timedelta(hours=inputs["transformer_window_size_hours"])
-        if transformer_window_size % resolution != timedelta(0):
-            raise InvalidConfiguration(
-                f"transformer_window_size={transformer_window_size} must be a multiple of {resolution}"
-            )
-        return line_window_size, transformer_window_size
-
-    @staticmethod
-    def _get_required_exports_moving_average(inputs, resolution):
-        line_window_size, transformer_window_size = ThermalMetrics._get_window_sizes(inputs, resolution)
-
-        return {
-            "CktElement": [
-                {
-                    "property": "ExportOverloadsMetric",
-                    "store_values_type": "max",
-                    "opendss_classes": ["Lines", "Transformers"]
-                },
-                {
-                    "property": "ExportOverloadsMetric",
-                    "opendss_classes": ["Lines", "Transformers"],
-                    "store_values_type": "moving_average_max",
-                    "window_sizes": {
-                        "Lines": int(line_window_size / resolution),
-                        "Transformers": int(transformer_window_size / resolution),
-                    },
-                },
-            ],
-        }

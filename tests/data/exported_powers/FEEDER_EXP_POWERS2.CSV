@@ -1,10 +1,8 @@
 Element, Terminal, P(kW), Q(kvar),  P_Normal, Q_Normal, P_Emergency, Q_Emergency
 "Line.ONE"         ,   1,     -8071.3,      1841.4,         0.0,         0.0,         0.0,         0.0
 "Line.TWO"         ,   2,      8071.7,     -1841.0
-"Transformer.ONE-1A" ,   1,       -26.4,         4.8,         0.0,         0.0,         0.0,         0.0
-"Transformer.ONE-1A" ,   2,        26.6,        -4.5
-"Transformer.TWO-1C" ,   1,        -8.1,         1.9,         0.0,         0.0,         0.0,         0.0
-"Transformer.TWO-1C" ,   2,         8.1,        -1.8
+"Transformer.ONE" ,   1,       -26.4,         4.8,         0.0,         0.0,         0.0,         0.0
+"Transformer.TWO" ,   1,        -8.1,         1.9,         0.0,         0.0,         0.0,         0.0
 "Load.ONE" ,   1,         1.8,         1.1
 "Load.TWO" ,   1,         2.9,         1.1
 "PVSystem.ONE",   1,         -11.5,         0.0
