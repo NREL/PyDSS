@@ -75,12 +75,6 @@ class VoltageMetrics(ReportBase):
         self._resolution = self._get_simulation_resolution()
 
     def generate(self, output_dir):
-        # The generation code in this file has been deprecated in favor of the in-memory
-        # collection in PyDSS/node_voltage_metrics.
-        # Keeping this code around in case we want to make the behavior configurable.
-        # The old code stores all violations, which could be useful.
-        # data["summary"] = self._sumarize_metrics(data)
-
         metrics = {}
         for scenario in self._results.scenarios:
             filename = os.path.join(

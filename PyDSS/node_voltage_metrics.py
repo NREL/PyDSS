@@ -139,6 +139,20 @@ class VoltageMetricsSummaryModel(VoltageMetricsBaseModel):
     )
 
 
+VOLTAGE_METRIC_FIELDS_TO_INCLUDE_AS_PASS_CRITERIA = (
+    # These are being temporarily disabled because of issues in one set of feeders.
+    #"voltage_duration_between_ansi_a_and_b_minutes",
+    #"max_per_node_voltage_duration_outside_ansi_a_minutes",
+    #"moving_average_voltage_duration_outside_ansi_a_minutes",
+    #"num_nodes_always_inside_ansi_a",
+    #"num_nodes_any_outside_ansi_a_always_inside_ansi_b",
+    "num_nodes_any_outside_ansi_b",
+    "num_time_points_with_ansi_b_violations",
+    "min_voltage",
+    "max_voltage",
+)
+
+
 class VoltageMetricsModel(VoltageMetricsBaseModel):
     metric_1: VoltageMetric1 = Field(
         title="metric_1",
