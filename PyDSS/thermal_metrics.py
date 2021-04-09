@@ -1,5 +1,6 @@
 import logging
 import os
+from collections import defaultdict
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List
@@ -7,7 +8,7 @@ from typing import Dict, List
 from pydantic import BaseModel, Field
 
 from PyDSS.utils.simulation_utils import CircularBufferHelper
-from PyDSS.utils.utils import dump_data
+from PyDSS.utils.utils import dump_data, load_data
 
 
 logger = logging.getLogger(__name__)
@@ -74,10 +75,40 @@ class ThermalMetricsSummaryModel(ThermalMetricsBaseModel):
 
 
 class SimulationThermalMetricsModel(ThermalMetricsBaseModel):
-    scenarios: Dict[str, ThermalMetricsBaseModel] = Field(
+    scenarios: Dict[str, ThermalMetricsSummaryModel] = Field(
         title="scenarios",
         description="thermal metrics by PyDSS scenario name",
     )
+
+
+def create_summary(filename):
+    """Create a summary of the metrics values for use in a table.
+
+    Parameters
+    ----------
+    filename: str
+        File containing a serialized SimulationThermalMetricsModel instance
+
+    Returns
+    -------
+    dict
+        Two-level dict. First level keys are scenario names. Second level has line/transform
+        metric names and values.
+
+    """
+    data = load_data(filename)
+    summary = SimulationThermalMetricsModel(**data)
+    report = defaultdict(dict)
+    for scenario in summary.scenarios:
+        for model, elem_type in zip(("line_loadings", "transformer_loadings"), ("line", "transformer")):
+            model = getattr(summary.scenarios[scenario], model)
+            for column in model.fields:
+                val = getattr(model, column)
+                if not isinstance(val, dict):
+                    new_name = elem_type + "_" + column
+                    report[scenario][new_name] = val
+
+    return report
 
 
 class ThermalMetrics:
