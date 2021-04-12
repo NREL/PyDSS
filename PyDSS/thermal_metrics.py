@@ -82,6 +82,11 @@ class SimulationThermalMetricsModel(ThermalMetricsBaseModel):
 
 
 def create_summary(filename):
+    data = load_data(filename)
+    return create_summary_from_dict(data)
+
+
+def create_summary_from_dict(data):
     """Create a summary of the metrics values for use in a table.
 
     Parameters
@@ -96,7 +101,6 @@ def create_summary(filename):
         metric names and values.
 
     """
-    data = load_data(filename)
     summary = SimulationThermalMetricsModel(**data)
     report = defaultdict(dict)
     for scenario in summary.scenarios:
