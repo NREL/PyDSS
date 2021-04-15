@@ -334,24 +334,29 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
         self._container = None
         self._data_conversion = prop.data_conversion
 
+    def _get_value(self, obj):
+        value = obj.UpdateValue(self._name)
+        if self._data_conversion != DataConversion.NONE:
+            value = convert_data(
+                "Total",
+                next(iter(self._properties.values())).name,
+                value,
+                self._data_conversion,
+            )
+        return value
+
     def append_values(self, time_step, store_nan=False):
         if store_nan:
-            return
-
-        total = None
-        for obj in self._dss_objs:
-            value = obj.UpdateValue(self._name)
-            if self._data_conversion != DataConversion.NONE:
-                value = convert_data(
-                    "Total",
-                    next(iter(self._properties.values())).name,
-                    value,
-                    self._data_conversion,
-                )
-            if total is None:
-                total = value
-            else:
-                total += value
+            total = self._get_value(self._dss_objs[0])
+            total.set_nan()
+        else:
+            total = None
+            for obj in self._dss_objs:
+                value = self._get_value(obj)
+                if total is None:
+                    total = value
+                else:
+                    total += value
 
         if self._container is None:
             assert len(self._properties) == 1
@@ -366,7 +371,7 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
                 self._max_chunk_bytes,
                 [total],
             )
-        self._container.append_values([value], time_step)
+        self._container.append_values([total], time_step)
 
     @staticmethod
     def is_circuit_wide():
