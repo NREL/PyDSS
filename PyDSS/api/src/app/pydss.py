@@ -77,7 +77,7 @@ class PyDSS:
             params['Helics']['Federate name'] = self.fed_name
             
             # Create PyDSS instance
-            self.pydss_obj = OpenDSS(params)
+            self.pydss_obj = OpenDSS(params, self.notify)
             export_path = os.path.join(self.pydss_obj._dssPath['Export'], params['Project']['Active Scenario'])
             Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
             self.a_writer = JSONwriter(export_path, self.data_service_url, Steps, self.notify)
