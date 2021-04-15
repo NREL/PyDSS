@@ -13,11 +13,13 @@
 # Active Project- [String] - Name of project to run
 # Active Scenario- [String] - Project scenario to use
 # DSS File- [String] - The main OpenDSS file
+# Simulation range- [Dict] - Restrict control algorithms and data collection to these hours. Useful for skipping night when simulating PV Systems.
 [Project]
 "Start time" = "2020-1-1 00:00:00.0"
 "Simulation duration (min)" = 1440.0
 "Loadshape start time" = "2020-1-1 00:00:00.0"
 "Step resolution (sec)" = 900.0
+"Simulation range" = {start = "00:00:00", end = "11:59:59"}
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
 "Max error tolerance" = 0.0

@@ -3,6 +3,7 @@
 "Simulation duration (min)" = 1440.0
 "Loadshape start time" = "2020-1-1 00:00:00.0"
 "Step resolution (sec)" = 900.0
+"Simulation range" = {start = "06:00:00", end = "18:00:00"}
 "Max Control Iterations" = 15
 "Error tolerance" = 0.0001
 "Max error tolerance" = 0.0

@@ -1,13 +1,14 @@
 
+import logging
+import time
 from collections import deque
 from datetime import datetime, timedelta
-import logging
 
 import numpy as np
 import opendssdirect as dss
 import pandas as pd
 
-from PyDSS.common import DATE_FORMAT
+from PyDSS.common import DATE_FORMAT, TIME_FORMAT
 
 
 logger = logging.getLogger(__name__)
@@ -28,6 +29,56 @@ class CircularBufferHelper:
         if len(self._buf) < self._window_size:
             return np.NaN
         return sum(self._buf) / len(self._buf)
+
+
+class SimulationFilteredTimeRange:
+    """Provides filtering in a time range."""
+    def __init__(self, start, end):
+        self._start = start
+        self._end = end
+        default_start = time.strptime("00:00:00", TIME_FORMAT)
+        default_end = time.strptime("11:59:59", TIME_FORMAT)
+        self._no_filtering = start == default_start and end == default_end
+
+    @classmethod
+    def from_settings(cls, settings):
+        """Return SimulationFilteredRange from the simulation settings.
+
+        Parameters
+        ----------
+        settings : dict
+            settings from project simulation.toml
+
+        Returns
+        -------
+        SimulationFilteredRange
+
+        """
+        start = time.strptime(settings["Project"]["Simulation range"]["start"], TIME_FORMAT)
+        end = time.strptime(settings["Project"]["Simulation range"]["end"], TIME_FORMAT)
+        return cls(start=start, end=end)
+
+    def is_within_range(self, timestamp):
+        """Return True if the timestamp is within the filtered range.
+
+        Parameters
+        ----------
+        timestamp : datetime
+
+        Returns
+        -------
+        bool
+
+        """
+        if self._no_filtering:
+            return True
+
+        ts = time.struct_time((
+            self._start.tm_year, self._start.tm_mon, self._start.tm_mday, timestamp.hour,
+            timestamp.minute, timestamp.second, self._start.tm_wday, self._start.tm_yday,
+            self._start.tm_isdst
+        ))
+        return ts >= self._start and ts <=self._end
 
 
 def get_start_time(settings):

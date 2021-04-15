@@ -63,6 +63,7 @@ settings_dict = {
             'Simulation duration (min)': {'type': float},
             'Step resolution (sec)': {'type': float},
             'Loadshape start time': {'type': str},
+            'Simulation range': {'type': dict},
             'Max Control Iterations' : {'type': int},
             'Convergence error percent threshold': {'type': float},
             'Skip export on convergence error': {'type': float},

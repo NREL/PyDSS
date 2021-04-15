@@ -19,6 +19,7 @@ import PyDSS.pyPlots as pyPlots
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
+from PyDSS.utils.simulation_utils import SimulationFilteredTimeRange
 from PyDSS.utils.timing_utils import TimerStatsCollector, Timer
 
 import opendssdirect as dss
@@ -52,6 +53,7 @@ class OpenDSS:
         self._maxConvergenceError = 0.0
         self._controller_iteration_counts = {}
         self._stats = TimerStatsCollector()
+        self._simulation_range = SimulationFilteredTimeRange.from_settings(params)
 
         rootPath = params['Project']['Project Path']
         self._ActiveProject = params['Project']['Active Project']
@@ -433,17 +435,21 @@ class OpenDSS:
         try:
             step = 0
             while step < Steps:
-                with Timer(self._stats, "RunStep"):
-                    pydss_has_converged = self.RunStep(step)
-                opendss_has_converged = dss.Solution.Converged()
-                if not opendss_has_converged:
-                    self._Logger.info("OpenDSS did not converge at step=%s pydss_converged=%s",
-                                      step, pydss_has_converged)
+                pydss_has_converged = True
+                opendss_has_converged = True
+                within_range = self._simulation_range.is_within_range(self._dssSolver.GetDateTime())
+                if within_range:
+                    with Timer(self._stats, "RunStep"):
+                        pydss_has_converged = self.RunStep(step)
+                        opendss_has_converged = dss.Solution.Converged()
+                        if not opendss_has_converged:
+                            self._Logger.info("OpenDSS did not converge at step=%s pydss_converged=%s",
+                                              step, pydss_has_converged)
                 has_converged = pydss_has_converged and opendss_has_converged
                 if step == 0 and self.ResultContainer is not None:
                     size = make_human_readable_size(self.ResultContainer.max_num_bytes())
                     self._Logger.info('Storage requirement estimation: %s, estimated based on first time step run.', size)
-                if postprocessors:
+                if postprocessors and within_range:
                     step, has_converged = self._RunPostProcessors(step, Steps, postprocessors)
                 if self._increment_flag:
                     step += 1
@@ -453,7 +459,11 @@ class OpenDSS:
                 # after the postprocessors.
                 # the Helics update needs to happen after that.
                 if self._Options['Exports']['Log Results']:
-                    store_nan = not has_converged and self._Options['Project']['Skip export on convergence error']
+                    store_nan = (
+                        not within_range or
+                        (not has_converged and
+                         self._Options['Project']['Skip export on convergence error'])
+                    )
                     self.ResultContainer.UpdateResults(store_nan=store_nan)
 
                 if self._Options['Helics']['Co-simulation Mode']:
