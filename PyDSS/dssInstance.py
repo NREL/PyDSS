@@ -32,8 +32,9 @@ CONTROLLER_PRIORITIES = 3
 
 
 class OpenDSS:
-    def __init__(self, params):
+    def __init__(self, params, notifier=None):
         self._dssInstance = dss
+        self.notify = notifier
         self._TempResultList = []
         self._dssBuses = {}
         self._dssObjects = {}
@@ -144,7 +145,7 @@ class OpenDSS:
         self._increment_flag = True
         if params['Helics']["Co-simulation Mode"]:
             self._HI = HI.helics_interface(self._dssSolver, self._dssObjects, self._dssObjectsByClass, params,
-                                           self._dssPath)
+                                           self._dssPath, notifier=self.notify)
         print("Setup complete")
         return
 

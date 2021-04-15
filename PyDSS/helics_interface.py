@@ -43,12 +43,14 @@ class helics_interface:
         'Distance': 'double'
     }
 
-    def __init__(self, dss_solver, objects_by_name, objects_by_class, options, system_paths, default=True):
+    def __init__(self, dss_solver, objects_by_name, objects_by_class, options, system_paths, default=True, notifier=None):
 
         if options["Logging"]["Pre-configured logging"]:
             LoggerTag = __name__
         else:
             LoggerTag = getLoggerTag(options)
+
+        self.notify = notifier
 
         self.itr = 0
         self.c_seconds = 0
@@ -163,8 +165,12 @@ class helics_interface:
                     value = helics.helicsInputGetInteger(sub_info['Subscription'])
                 if value:
                     value = value * sub_info['Multiplier']
+                    
                     dssElement = self._objects_by_element[element_name]
                     if self._dss_solver._StartTime != self._dss_solver._Time:
+                        
+                        if self.notify != None:
+                            self.notify(f"PyDSS changing property {sub_info['Property']} to a new value {value}")
                         a = dssElement.SetParameter(sub_info['Property'], value)
 
                     self._logger.debug('Value for "{}.{}" changed to "{}"'.format(
@@ -250,6 +256,9 @@ class helics_interface:
                     self._logger.error(f'Could not get values for {naerm_name}')
                 else:
                     value = message
+
+            if self.notify != None:
+                self.notify(f"PyDSS publishing {naerm_name} with a value > {value}")
 
             if isinstance(value, list):
                 helics.helicsPublicationPublishVector(pub, value)
