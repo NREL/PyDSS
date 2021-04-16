@@ -169,9 +169,10 @@ class helics_interface:
                     dssElement = self._objects_by_element[element_name]
                     if self._dss_solver._StartTime != self._dss_solver._Time:
                         
-                        if self.notify != None:
-                            self.notify(f"PyDSS changing property {sub_info['Property']} to a new value {value}")
                         a = dssElement.SetParameter(sub_info['Property'], value)
+                        if self.notify != None:
+                            self.notify(f"PyDSS changing property {sub_info['Property']} to a new value {value}, getting from opendss > {a}")
+
 
                     self._logger.debug('Value for "{}.{}" changed to "{}"'.format(
                         element_name,

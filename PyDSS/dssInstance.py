@@ -228,7 +228,8 @@ class OpenDSS:
         for controller in self._pyControls.values():
             error = controller.Update(Priority, Time, UpdateResults)
             try:
-                self.notify(f"{controller.ControlledElement()}: {controller._ControlledElm.GetVariable('VoltagesMagAng')[::2]}")
+                if controller.ControlledElement() == 'Generator.pv_system_p1ulv582':
+                    self.notify(f"{controller.ControlledElement()}: {controller._ControlledElm.GetVariable('VoltagesMagAng')[::2]}")
             except Exception as e:
                 self.notify(f"Error notifying> {str(e)}")
             maxError = error if error > maxError else maxError
