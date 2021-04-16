@@ -132,11 +132,13 @@ class PyDSS:
             os.mkdir(self.project_folder)
         
         """ Retrieve the file url from the BES Data API """
+        self.notify(f"URL for PYDSS case file {case_file_url}")
         file_response = send_sync_request(case_file_url, 'GET', body=None)
         file_data = json.loads(file_response.data.decode('utf-8'))
 
         if file_response.status == HTTPStatus.OK:
             file_url = file_data['file_url']
+            self.notify(f"URL to download the file> {file_url}")
             file_format = file_data['format']
 
             """ Retrieve the file from AWS and store in the tmp directory """
