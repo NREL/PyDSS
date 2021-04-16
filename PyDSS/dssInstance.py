@@ -344,6 +344,11 @@ class OpenDSS:
                 self._dssSolver.IncStep()
             else:
                 self._dssSolver.reSolve()
+
+            try:
+                self.notify(f"PyDSS Convergence status> {self._dssSolver._dssSolution.Converged()}")
+            except Exception as e:
+                self.notify(f"Notify Error > {str(e)}")
         else:
             self._dssSolver.IncStep()
 
