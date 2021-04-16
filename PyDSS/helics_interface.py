@@ -147,7 +147,6 @@ class helics_interface:
                 value = None
                 if sub_info['Data type'].lower() == 'double':
                     value = helics.helicsInputGetDouble(sub_info['Subscription'])
-                    print(element_name, sub_info['Property'], value)
                 elif sub_info['Data type'].lower() == 'vector':
                     value = helics.helicsInputGetVector(sub_info['Subscription'])
                 elif sub_info['Data type'].lower() == 'string':
@@ -175,7 +174,6 @@ class helics_interface:
                         else:
                             self._subscription_dState[element_name].insert(0, self._subscription_dState[element_name].pop())
                         self._subscription_dState[element_name][0] = value
-                        #print(self._subscription_dState[element_name])
                 else:
                     self._logger.warning('{} will not be used to update element for "{}.{}" '.format(
                         value,
@@ -225,7 +223,6 @@ class helics_interface:
                 helics.helicsPublicationPublishBoolean(pub, value)
             elif isinstance(value, int):
                 helics.helicsPublicationPublishInteger(pub, value)
-            #print(element, value)
         return
 
     def request_time_increment(self):

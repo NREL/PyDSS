@@ -147,7 +147,6 @@ class dssElement(dssObjectBase):
         reply = self._dssInstance.utils.run_command(self._FullName + '.' + Param + ' = ' + str(Value))
         if Param == "WattPriority":
             print(reply)
-        #print(Value , self.GetParameter(Param))
         return self.GetParameter(Param)
 
     def GetParameter(self, Param):
@@ -159,7 +158,6 @@ class dssElement(dssObjectBase):
             except:
                 return x
         else:
-            print('Could not set ' + self._FullName + ' as active element.')
             return None
 
     @property

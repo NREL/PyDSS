@@ -68,7 +68,6 @@ logger = logging.getLogger(__name__)
 def run(project_path, options=None, tar_project=False, zip_project=False, verbose=False, simulations_file=None, dry_run=False):
     """Run a PyDSS simulation."""
     if not os.path.exists(project_path):
-        print(f"project-path={project_path} does not exist")
         sys.exit(1)
 
     config = PyDssProject.load_simulation_config(project_path, simulations_file)
@@ -87,7 +86,6 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
     if config["Logging"]["Log to external file"]:
         logs_path = os.path.join(project_path, "Logs")
         if not os.path.exists(logs_path):
-            print("Logs path does not exist. If you are trying to run an archived project, that is not supported.")
             sys.exit(1)
         filename = os.path.join(logs_path, "pydss.log")
 
@@ -102,14 +100,12 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
     if options is not None:
         options = ast.literal_eval(options)
         if not isinstance(options, dict):
-            print(f"options must be of type dict; received {type(options)}")
             sys.exit(1)
 
     project = PyDssProject.load_project(project_path, options=options, simulation_file=simulations_file)
     project.run(tar_project=tar_project, zip_project=zip_project, dry_run=dry_run)
 
     if dry_run:
-        print("="*30)
         maxlen = max([len(k) for k in project.estimated_space.keys()])
         if len("ScenarioName") > maxlen:
             maxlen = len("ScenarioName")
@@ -121,9 +117,9 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
             vstr = make_human_readable_size(v)
             template += "{:<{width}} : {}\n".format(k, vstr, width=maxlen)
         template = template.strip()
-        print(template)
-        print("-"*30)
-        print(f"TotalSpace: {make_human_readable_size(total_size)}")
-        print("="*30)
-        print("Note: compression may reduce the size by ~90% depending on the data.")
+        logger.info(template)
+        logger.info("-"*30)
+        logger.info(f"TotalSpace: {make_human_readable_size(total_size)}")
+        logger.info("="*30)
+        logger.info("Note: compression may reduce the size by ~90% depending on the data.")
 

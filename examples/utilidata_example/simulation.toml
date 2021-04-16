@@ -1,6 +1,6 @@
 [Project]
 "Start time" = "2020-1-1 00:00:00.0"
-"Simulation duration (min)" = 1440.0
+"Simulation duration (min)" = 10080.0
 "Loadshape start time" = "2020-1-1 00:00:00.0"
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 50
@@ -87,3 +87,13 @@ enabled = false
 [[Reports.Types]]
 name = "RegControl Tap Number Change Counts"
 enabled = false
+
+[Profiles]
+"Use profile manager" = false
+source_type = "HDF5"
+source = "profiles.hdf5"
+"Profile mapping" = ""
+is_relative_path = true
+[Profiles.settings]
+bufferSize =  10
+neglectYear = false

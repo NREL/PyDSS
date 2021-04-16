@@ -37,12 +37,7 @@ class PvVoltageRideThru(ControllerAbstract):
 
         self.__ElmObjectList = ElmObjectList
         self.ControlDict = {
-            'None'           : lambda: 0,
-            'CPF'            : self.CPFcontrol,
-            'VPF'            : self.VPFcontrol,
-            'VVar'           : self.VVARcontrol,
-            'VW'             : self.VWcontrol,
-            #'Cutoff'         : self.CutoffControl,
+            'None': lambda: 0,
         }
 
         self.__ControlledElm = PvObj
@@ -245,13 +240,22 @@ class PvVoltageRideThru(ControllerAbstract):
         #     Error = self.update[Priority]()
         if Priority == 2:
             uIn = self.__UpdateViolatonTimers()
-            self.VoltageRideThrough(uIn)
+            if self.__Settings["Follow standard"] == "1547-2018":
+                self.VoltageRideThrough(uIn)
+            elif self.__Settings["Follow standard"] == "1547-2003":
+                self.Trip(uIn)
+            else:
+                raise Exception("Valid standard setting defined. Options are: 1547-2003, 1547-2018")
 
         return Error
 
     def Trip(self, uIn):
         """ Implementation of the IEEE1587-2003 voltage ride-through requirements for inverter systems
         """
+        if uIn < 0.88:
+            if self.__isConnected:
+                print(f"PV {self.ControlledElement()} has tripped")
+                self.__Trip(30.0, 0.4, False)
         return
 
     def VoltageRideThrough(self, uIn):
@@ -262,13 +266,10 @@ class PvVoltageRideThru(ControllerAbstract):
         Pm = Point(self.__uViolationtime, uIn)
         if Pm.within(self.CurrLimRegion):
             isinContioeousRegion = False
-            #print('Operating in current limited region.')
         elif self.MomentarySucessionRegion and Pm.within(self.MomentarySucessionRegion):
-            #print('Operating in momentary sucession region.')
             isinContioeousRegion = False
             self.__Trip(self.__dssSolver.GetStepSizeSec(), 0.4, False)
         elif Pm.within(self.TripRegion):
-            #print('Operating in trip region.')
             isinContioeousRegion = False
             self.__Trip(self.__trip_deadtime_sec, self.__Time_to_Pmax_sec, False)
         else:
@@ -278,13 +279,11 @@ class PvVoltageRideThru(ControllerAbstract):
             self.__FaultwindowClearingStartTime = self.__dssSolver.GetDateTime()
         clearingTime = (self.__dssSolver.GetDateTime() - self.__FaultwindowClearingStartTime).total_seconds()
 
-
         if self.__isinContioeousRegion and not isinContioeousRegion:
             if  clearingTime <= self.__faultCounterClearingTimeSec:
                 self.__faultCounter += 1
                 if self.__faultCounter >= self.__faultCounterMax:
                     if self.__Settings['Multiple disturbances'] == 'Trip':
-                        print('Forced tripping')
                         self.__Trip(self.__trip_deadtime_sec, self.__Time_to_Pmax_sec, True)
                         self.__faultCounter = 0
                     else:
@@ -299,7 +298,7 @@ class PvVoltageRideThru(ControllerAbstract):
             uIn = self.__ControlledElm.GetVariable('VoltagesMagAng')[::2]
             uBase = self.__ControlledElm.sBus[0].GetVariable('kVBase') * 1000
             uIn = max(uIn) / uBase if self.__UcalcMode == 'Max' else sum(uIn) / (uBase * len(uIn))
-            deadtime  =  (self.__dssSolver.GetDateTime() - self.__TrippedStartTime).total_seconds()
+            deadtime  = (self.__dssSolver.GetDateTime() - self.__TrippedStartTime).total_seconds()
             if uIn < self.__rVs[0] and uIn > self.__rVs[1] and deadtime >= self.__TrippedDeadtime:
                 self.__ControlledElm.SetParameter('enabled', True)
                 self.__isConnected = True
@@ -342,191 +341,3 @@ class PvVoltageRideThru(ControllerAbstract):
             else:
                 self.__uViolationtime = (self.__dssSolver.GetDateTime() - self.__uViolationstartTime).total_seconds()
         return uIn
-
-    def VVARcontrol(self):
-        if self.TimeChange:
-            self.__ControlledElm.SetParameter('kw', self.__Prated)
-
-        # Read measured variables
-        uIn = self.__ControlledElm.GetVariable('VoltagesMagAng')[::2]
-        uBase = self.__ControlledElm.sBus[0].GetVariable('kVBase') * 1000
-        uIn = max(uIn)/uBase if self.__UcalcMode == 'Max' else sum(uIn) / (uBase * len(uIn))
-        Ppv = sum(self.__ControlledElm.GetVariable('Powers')[::2])
-        Qpv = -sum(self.__ControlledElm.GetVariable('Powers')[1::2])
-        # calculate per unit values
-
-        QlimPU = self.__maxQ / self.__Srated
-        Ppvpu = Ppv / self.__Srated
-        Qpvpu = Qpv / self.__Srated
-
-        # calculate equation parameters for the VVAR droop curve
-        m1 = QlimPU / (self.__uMin - self.__uDbMin)
-        m2 = QlimPU / (self.__uDbMax - self.__uMax)
-        c1 = QlimPU * self.__uDbMin / (self.__uDbMin - self.__uMin)
-        c2 = QlimPU * self.__uDbMax / (self.__uMax - self.__uDbMax)
-
-        # Droop curve used to calculate reactive power set point for the inverter
-        Qcalc = 0
-        if uIn <= self.__uMin:
-            Qcalc = QlimPU
-        elif uIn <= self.__uDbMin and uIn > self.__uMin:
-            Qcalc = uIn * m1 + c1
-        elif uIn <= self.__uDbMax and uIn > self.__uDbMin:
-            Qcalc = 0
-        elif uIn <= self.__uMax and uIn > self.__uDbMax:
-            Qcalc = uIn * m2 + c2
-        elif uIn >= self.__uMax:
-            Qcalc = -QlimPU
-
-        # Adding heavy ball term to improve convergence
-        dQ = Qcalc - Qpvpu
-        QpvNew = Qpvpu + dQ * self.__alpha  + (Qpvpu - self.Qpvpu) * self.__beta
-        QpvNew = min([max([QpvNew, -QlimPU]), QlimPU])
-        self.Qpvpu = Qpvpu
-
-        # Calculate the active power limit (dependent on the chosen priority)
-        if self.__priority == 'Var':
-            Pscaler = (1 - QpvNew ** 2) ** 0.5
-            print(QpvNew, self.__Srated * Qcalc, Qcalc)
-            P = self.__Srated * Pscaler
-            Q = self.__Srated * QpvNew
-            pfCalc = math.cos(math.atan(QpvNew / Pscaler))
-        elif self.__priority == 'Watt':
-            Qscaler = abs((1 - min([Ppvpu, 1]) ** 2) ** 0.5)
-            P = self.__Prated
-            Q = self.__Srated * min([max([QpvNew, -Qscaler]), Qscaler])
-            pfCalc = math.cos(math.atan(QpvNew / 1))
-        elif self.__priority == 'Equal':
-            Pmax = self.__Prated / self.__Srated
-            scaler = (Ppvpu ** 2 + QpvNew ** 2) ** 0.5
-            if scaler > 1:
-                Pscaler = Pmax / scaler
-                Qscaler = Qcalc / scaler
-                P = self.__Srated * Pscaler
-                Q = self.__Srated * Qscaler
-                pfCalc = math.cos(math.atan(Pscaler / Qscaler))
-            else:
-                P = self.__Prated
-                Q = self.__Srated * QpvNew
-
-                pfCalc = math.cos(math.atan(QpvNew))
-        else:
-            pass
-
-        self.__ControlledElm.SetParameter('kw', P)
-        self.__ControlledElm.SetParameter('kvar', Q)
-
-        # Check for PF violation
-        if self.__enablePFlimit:
-            if pfCalc < self.__minPF:
-                if uIn > 1:
-                    self.__ControlledElm.SetParameter('pf', -self.__minPF)
-                else:
-                    self.__ControlledElm.SetParameter('pf', self.__minPF)
-        # Calculate convergence error
-        Error = abs(self.oldQcalc - Qpv)
-        self.oldQcalc = Qpv
-        return Error
-
-    def VWcontrol(self):
-        # Get measurement values for the volt var controller
-        uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[::2])
-        Ppv = -sum(self.__ControlledElm.GetVariable('Powers')[::2]) / self.__Srated
-        Qpv = -sum(self.__ControlledElm.GetVariable('Powers')[1::2]) / self.__Srated
-
-        Plim = (1 - Qpv ** 2) ** 0.5 if self.__Settings['VWtype'] == 'Available Power' else 1
-
-        m = (1 - Pmin) / (uMinC - uMaxC)
-        #m = (Plim - Pmin) / (uMinC - uMaxC)
-        c = ((Pmin * uMinC) - uMaxC) / (uMinC - uMaxC)
-
-        if uIn < uMinC:
-            Pcalc = Plim
-        elif uIn < uMaxC and uIn > uMinC:
-            Pcalc = min(m * uIn + c, Plim)
-        else:
-            Pcalc = Pmin
-
-        if Ppv > Pcalc or (Ppv > 0 and self.Pmppt < 100):
-            # adding heavy ball term to improve convergence
-            dP = (Ppv - Pcalc) * 0.5 / self.__dampCoef + (self.oldPcalc - Ppv) * 0.1 / self.__dampCoef
-            Pcalc = Ppv - dP
-            self.Pmppt = min(self.Pmppt * Pcalc / Ppv, 100)
-            self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
-            self.pf = math.cos(math.atan(Qpv / Pcalc))
-            if Qpv < 0:
-                self.pf = -self.pf
-            self.__ControlledElm.SetParameter('pf', self.pf)
-        else:
-            dP = 0
-
-        Error = abs(dP)
-        self.oldPcalc = Ppv
-        # if Error > 0.1:
-        #     print((self.__Name, uIn, Qpv, Plim, Ppv, Pcalc, self.Pmppt, dP, self.pf))
-        return Error
-
-    def CPFcontrol(self):
-        PFset = self.__Settings['pf']
-        PFact = self.__ControlledElm.GetParameter('pf')
-        Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))/ self.__Srated
-        Qpv = -sum(self.__ControlledElm.GetVariable('Powers')[1::2])/ self.__Srated
-
-
-        if self.__Settings['cpf-priority'] == 'PF':
-           # if self.TimeChange:
-            Plim = PFset * 100
-            self.__ControlledElm.SetParameter('pctPmpp', Plim)
-           # else:
-        else:
-            if self.__Settings['cpf-priority'] == 'Var':
-                #add code for var priority here
-                Plim = 0
-            else:
-                Plim = 1
-            if self.TimeChange:
-                self.Pmppt = 100
-            else:
-                self.Pmppt = Plim  * self.__Srated
-            #print(self.Pmppt , self.__Srated)
-
-
-        Error = abs(PFset + PFact)
-
-        self.__ControlledElm.SetParameter('pf', str(-PFset))
-        return Error
-
-    def VPFcontrol(self):
-        Pmin = self.__Settings['Pmin']
-        Pmax = self.__Settings['Pmax']
-        PFmin = self.__Settings['pfMin']
-        PFmax = self.__Settings['pfMax']
-        self.__dssSolver.reSolve()
-        Pcalc = abs(sum(-(float(x)) for x in self.__ControlledElm.GetVariable('Powers')[0::2]) )/ self.__Srated
-        if Pcalc > 0:
-            if Pcalc < Pmin:
-                PF = PFmax
-            elif Pcalc > Pmax:
-                PF = PFmin
-            else:
-                m = (PFmax - PFmin) / (Pmin - Pmax)
-                c = (PFmin * Pmin - PFmax * Pmax) / (Pmin - Pmax)
-                PF = Pcalc * m + c
-        else:
-            PF = PFmax
-
-        self.__ControlledElm.SetParameter('irradiance', 1)
-        self.__ControlledElm.SetParameter('pf', str(-PF))
-        self.__dssSolver.reSolve()
-
-        for i in range(10):
-            Error = PF + float(self.__ControlledElm.GetParameter('pf'))
-            if abs(Error) < 1E-4:
-                break
-            Pirr = float(self.__ControlledElm.GetParameter('irradiance'))
-            self.__ControlledElm.SetParameter('pf', str(-PF))
-            self.__ControlledElm.SetParameter('irradiance', Pirr * (1 + Error*1.5))
-            self.__dssSolver.reSolve()
-
-        return 0
-

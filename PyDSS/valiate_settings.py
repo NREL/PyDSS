@@ -79,7 +79,7 @@ settings_dict = {
             "source_type": {'type': str},
             "source": {'type': str},
             "Profile mapping": {'type': str},
-            "is_relavtive_path":  {'type': bool, 'Options': [True, False]},
+            "is_relative_path":  {'type': bool, 'Options': [True, False]},
             "settings": {'type': dict},
         },
         "Reports": {

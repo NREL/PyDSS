@@ -229,8 +229,6 @@ class PyDssProject:
             os.makedirs(os.path.join(self._project_dir, name), exist_ok=True)
         if opendss_project_folder:
             dest = os.path.join(self._project_dir, PROJECT_DIRECTORIES[0])
-            print("OpenDSS project: ", opendss_project_folder)
-            print("Destination: ", dest)
             copy_tree(opendss_project_folder, dest)
         self._serialize_scenarios()
         dump_data(

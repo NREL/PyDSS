@@ -110,6 +110,7 @@ class OpenDSS:
         self._CreateBusObjects()
         self._dssSolver.reSolve()
 
+
         if params['Profiles']["Use profile manager"]:
             #TODO: disable internal profiles
             self._Logger.info('Disabling internal yearly and duty-cycle profiles.')
@@ -287,6 +288,7 @@ class OpenDSS:
             'Circuit.' + self._dssCircuit.Name(): self._dssObjects['Circuit.' + self._dssCircuit.Name()]
         }
         self._dssObjectsByClass['Buses'] = self._dssBuses
+
         return
 
     def _GetRelaventObjectDict(self, key):

@@ -1,6 +1,6 @@
 [settings]
 "uuid" = "nrel_1"
-"training period (hours)" = 5.0 
+"training period (hours)" = 24.0 
 
 [assets]
 [[assets.Capacitors]]

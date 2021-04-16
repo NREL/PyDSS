@@ -55,7 +55,6 @@ def check_VI_correct(V1,PQ_node,slack_number,coeff_V,coeff_Vm,coeff_Vmag_P,coeff
     V1_linear = np.dot(coeff_V,np.conj(PQ_node[slack_number:]*1000)) + coeff_Vm
     V1_linear = list(V1_linear)
     Vdiff = list(map(lambda x: abs(x[0]-x[1])/abs(x[0])*100,zip(V1[slack_number:],V1_linear)))
-    print(sum(Vdiff))
     with open('voltage_diff.csv','w') as f:
         csvwriter = csv.writer(f)
         csvwriter.writerow(Vdiff)
@@ -64,7 +63,6 @@ def check_VI_correct(V1,PQ_node,slack_number,coeff_V,coeff_Vm,coeff_Vmag_P,coeff
     V1_mag_linear = np.dot(coeff_Vmag_P,(PQ_node[slack_number:]*1000).real) + np.dot(coeff_Vmag_Q,(PQ_node[slack_number:]*1000).imag) + coeff_Vmag_k
     V1_mag_linear = list(V1_mag_linear)
     Vdiff = list(map(lambda x: abs(abs(x[0])-x[1])/abs(x[0])*100,zip(V1[slack_number:],V1_mag_linear)))
-    print(sum(Vdiff))
     with open('voltageMag_diff.csv','w') as f:
         csvwriter = csv.writer(f)
         csvwriter.writerow(Vdiff)
@@ -76,7 +74,6 @@ def check_VI_correct(V1,PQ_node,slack_number,coeff_V,coeff_Vm,coeff_Vmag_P,coeff
     Ibus_cal_1 = np.dot(Y11,V1[slack_number:])
     Ibus_cal = list(map(lambda x: x[0]+x[1],zip(Ibus_cal_0,Ibus_cal_1)))
     Idiff = list(map(lambda x: abs(x[0]-x[1]),zip(Ibus,Ibus_cal)))
-    print(sum(Idiff))
     with open('currentBus_diff.csv','w') as f:
         csvwriter = csv.writer(f)
         csvwriter.writerow(Idiff)
@@ -86,7 +83,6 @@ def check_VI_correct(V1,PQ_node,slack_number,coeff_V,coeff_Vm,coeff_Vmag_P,coeff
     Ibranch = np.dot(I_coeff,V1)
     Ibranch_cal = np.dot(I_coeff[:,slack_number:],V1_linear)+np.dot(I_coeff[:,0:slack_number],V1[:slack_number])
     Ibranch_diff = list(map(lambda x: abs(x[0]-x[1]),zip(Ibranch,Ibranch_cal)))
-    print(sum(Ibranch_diff))
     with open('current_diff.csv','w') as f:
         csvwriter = csv.writer(f)
         csvwriter.writerow(Ibranch_diff)
@@ -392,9 +388,6 @@ class DERMS:
         mu_Vmag_upper0 = mu0[0]
         mu_Vmag_lower0 = mu0[1]
         mu_I0 = mu0[2]
-
-        #print([max(mu_Vmag_upper0),max(mu_Vmag_lower0)])
-        # compute gradient
 
         PVcost_fun_gradient = PV_costFun_gradient(x0, coeff_p, coeff_q, PV_Pmax_forecast)
 

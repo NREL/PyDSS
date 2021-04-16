@@ -129,4 +129,5 @@ enabled = false
 source_type = "h5"
 source = "Profiles_backup.hdf5"
 "Profile mapping" = ""
-is_relavtive_path = true
+is_relative_path = true
+[Profiles.settings]

@@ -34,12 +34,12 @@ post_process_infos = []
 [Exports]
 "Export Mode" = "byClass"
 "Export Style" = "Single file"
-"Export Format" = "h5"
+"Export Format" = "csv"
 "Export Compression" = false
 "Export Iteration Order" = "ValuesByPropertyAcrossElements"
 "Export Elements" = false
-"Export Data Tables" = true
-"Export Data In Memory" = true
+"Export Data Tables" = false
+"Export Data In Memory" = false
 "HDF Max Chunk Bytes" = 32768
 "Export Event Log" = true
 "Log Results" = true
@@ -98,7 +98,7 @@ enabled = false
 source_type = "HDF5"
 source = "profiles.hdf5"
 "Profile mapping" = ""
-is_relavtive_path = true
+is_relative_path = true
 [Profiles.settings]
 bufferSize =  10
 neglectYear = false

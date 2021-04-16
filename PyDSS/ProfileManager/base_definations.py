@@ -12,8 +12,8 @@ class BaseProfileManager(abc.ABC):
         self.solver = solver
         self.logger = logger
         self.kwargs = kwargs
-        if not options["Profiles"]["is_relavtive_path"]:
-            self.basepath = options["profiles"]["source"]
+        if not options["Profiles"]["is_relative_path"]:
+            self.basepath = options["Profiles"]["source"]
         else:
             self.basepath = os.path.join(
                 options["Project"]["Project Path"],

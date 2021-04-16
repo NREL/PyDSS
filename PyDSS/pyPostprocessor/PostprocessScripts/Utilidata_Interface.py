@@ -16,8 +16,11 @@ class Utilidata_Interface(AbstractPostprocess):
         super(Utilidata_Interface, self).__init__(
             project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger
         )
+        #print(dssObjects["Capacitor.cap_487254258"]._Variables)
+        #quit()
         configuration = load_data(inputs["config_file"])
-
+        rootPath = simulationSettings['Project']['Project Path']
+        self.root_path = os.path.join(rootPath, simulationSettings['Project']['Active Project'])
         self.training_period = configuration['settings']['training period (hours)']
         self._uuid = configuration['settings']["uuid"]
         self.training_complete = False
@@ -27,7 +30,6 @@ class Utilidata_Interface(AbstractPostprocess):
         self.Solver = dssSolver
 
         self.mAssets = self.get_measurement_assets(configuration['assets'])
-
         self.metadata = self.define_metadata()
         self.metadata["ts_data"] = {}
         self.Options = {**self.REQUIRED_INPUT_FIELDS_AND_DEFAULTS, **configuration}
@@ -113,19 +115,19 @@ class Utilidata_Interface(AbstractPostprocess):
     def get_measurement(self, obj, ppty):
         res = None
         if ppty == "SWITCH_STATE":
-            res = 1 if obj.GetValue("enabled") == "true" else 0
+            res = 1 if obj.GetParameter("enabled") == "true" else 0
         elif ppty == "CAP_STATE":
             res = obj.GetParameter("States")
             res = ast.literal_eval(res)
         elif ppty == "AMI_V_120":
-            res = obj.GetValue("VoltagesMagAng")
+            res = obj.GetVariable("VoltagesMagAng")
             vbase = obj.sBus[0].GetVariable("kVBase")
             res = [x for x in res if x != 0]
             res = [x / (1000.0 * vbase) * 120.0 for x in res if x != 0]
             res = res[::2]
             res = sum(res)/len(res)
         elif ppty == "AMI_P":
-            res = obj.GetValue("Powers")
+            res = obj.GetVariable("Powers")
             res = sum(res[::2])
         elif ppty == "TAP_POSITION":
             minTap = obj.GetParameter("MinTap")
@@ -139,14 +141,14 @@ class Utilidata_Interface(AbstractPostprocess):
             # quit()
             res = tap_int
         elif ppty == "SWING_V" or ppty == "PRIMARY_V":
-            res = obj.GetValue("VoltagesMagAng")
+            res = obj.GetVariable("VoltagesMagAng")
             vbase = obj.sBus[1].GetVariable("kVBase")
             if len(obj.sBus) == 2:
                 res = res[:int(len(res)/2)]
             res = [x/(1000.0 * vbase) * 120.0 for x in res if x != 0]
             res = res[::2]
         elif ppty == "SWING_P" or ppty == "PRIMARY_P":
-            res = obj.GetValue("Powers")
+            res = obj.GetVariable("Powers")
             res = res[:int(len(res) / len(obj.sBus))]
 
             if ppty == "SWING_P":
@@ -155,7 +157,7 @@ class Utilidata_Interface(AbstractPostprocess):
                 res = sum(res[0::2])
 
         elif ppty == "SWING_Q" or ppty == "PRIMARY_Q":
-            res = obj.GetValue("Powers")
+            res = obj.GetVariable("Powers")
             res = res[:int(len(res) / len(obj.sBus))]
             if ppty == "SWING_Q":
                 res = -sum(res[1::2])
@@ -241,8 +243,10 @@ class Utilidata_Interface(AbstractPostprocess):
         return
 
     def submit_init_payload(self):
-        json_object = json.dumps(self.metadata)
-        with open(r'C:\Users\alatif\Desktop\PyDSS_2.0\PyDSS_src\examples\utilidata_example\payload.txt', "w") as f:
+
+        json_object = json.dumps(self.metadata, indent=4)
+        fpath = os.path.join(self.root_path, "init_payload.txt")
+        with open(fpath, "w") as f:
             f.write(json_object)
         url = f"https://nrel.utilidatacloud.com/models/build/{self._uuid}"
         headers = {'Content-type': 'application/json'}
@@ -259,6 +263,9 @@ class Utilidata_Interface(AbstractPostprocess):
         payload["ts_data"] = {}
         payload["ts_data"][time_stamp.isoformat()] = results
         json_object = json.dumps(payload, indent=4)
+        fpath = os.path.join(self.root_path, "oper_payload.txt")
+        with open(fpath, "w") as f:
+            f.write(json_object)
         url = f"https://nrel.utilidatacloud.com/optimize/{self._uuid}"
         headers = {'Content-type': 'application/json'}
         reply = requests.post(url, data=json_object, verify=False, headers=headers)
