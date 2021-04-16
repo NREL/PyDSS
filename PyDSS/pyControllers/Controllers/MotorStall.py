@@ -31,19 +31,19 @@ class MotorStall(ControllerAbstract):
         super(MotorStall, self).__init__(MotorObj, Settings, dssInstance, ElmObjectList, dssSolver)
         self._class, self._name = MotorObj.GetInfo()
         self.name = "Controller-{}-{}".format(self._class, self._name)
-        self.__ControlledElm = MotorObj
+        self._ControlledElm = MotorObj
         self.__Settings = Settings
         self.__dssSolver = dssSolver
 
-        self.__ControlledElm.SetParameter('model', 2)
-        self.__ControlledElm.SetParameter('vminpu', 0.0)
-        # self.kw = self.__ControlledElm.GetParameter('kw')
-        # self.kvar = self.__ControlledElm.GetParameter('kvar')
+        self._ControlledElm.SetParameter('model', 2)
+        self._ControlledElm.SetParameter('vminpu', 0.0)
+        # self.kw = self._ControlledElm.GetParameter('kw')
+        # self.kvar = self._ControlledElm.GetParameter('kvar')
         self.kw = self.__Settings['ratedKW']
         S = self.kw / self.__Settings['ratedPF']
         self.kvar = math.sqrt(S**2 - self.kw**2)
-        self.__ControlledElm.SetParameter('kw', self.kw)
-        self.__ControlledElm.SetParameter('kvar', self.kvar)
+        self._ControlledElm.SetParameter('kw', self.kw)
+        self._ControlledElm.SetParameter('kvar', self.kvar)
         self.stall_time_start = 0
         self.stall = False
         self.disconnected =False
@@ -63,15 +63,15 @@ class MotorStall(ControllerAbstract):
 
     def Update(self, Priority, Time, UpdateResults):
         if Priority == 0:
-            Vbase = self.__ControlledElm.sBus[0].GetVariable('kVBase')
-            Ve_mags = max(self.__ControlledElm.GetVariable('VoltagesMagAng')[::2])/ 120.0
+            Vbase = self._ControlledElm.sBus[0].GetVariable('kVBase')
+            Ve_mags = max(self._ControlledElm.GetVariable('VoltagesMagAng')[::2])/ 120.0
 
 
             if Ve_mags < self.__Settings['Vstall'] and not self.stall:
                 print(Ve_mags)
-                self.__ControlledElm.SetParameter('kw', self.kw * self.__Settings['Pfault'] )
-                self.__ControlledElm.SetParameter('kvar', self.kw * self.__Settings['Qfault'] )
-                self.__ControlledElm.SetParameter('model', 1)
+                self._ControlledElm.SetParameter('kw', self.kw * self.__Settings['Pfault'] )
+                self._ControlledElm.SetParameter('kvar', self.kw * self.__Settings['Qfault'] )
+                self._ControlledElm.SetParameter('model', 1)
                 self.stall = True
                 self.stall_time_start = self.__dssSolver.GetTotalSeconds()
                 return 0.1
@@ -83,8 +83,8 @@ class MotorStall(ControllerAbstract):
                 if self.stall_time > self.__Settings['Tprotection']:
                     self.stall = False
                     self.disconnected = True
-                    self.__ControlledElm.SetParameter('kw', 0)
-                    self.__ControlledElm.SetParameter('kvar', 0)
+                    self._ControlledElm.SetParameter('kw', 0)
+                    self._ControlledElm.SetParameter('kvar', 0)
                     self.Tdisconnect_start = self.__dssSolver.GetTotalSeconds()
                 return 0 #self.model_1(Priority)
             return 0
@@ -93,10 +93,10 @@ class MotorStall(ControllerAbstract):
                 time = self.__dssSolver.GetTotalSeconds() - self.Tdisconnect_start
                 if time > self.__Settings['Treconnect']:
                     self.disconnected = False
-                    self.__ControlledElm.SetParameter('kw', self.kw)
-                    self.__ControlledElm.SetParameter('kvar', self.kvar)
-                    self.__ControlledElm.SetParameter('model', 2)
-                    self.__ControlledElm.SetParameter('vminpu', 0.0)
+                    self._ControlledElm.SetParameter('kw', self.kw)
+                    self._ControlledElm.SetParameter('kvar', self.kvar)
+                    self._ControlledElm.SetParameter('model', 2)
+                    self._ControlledElm.SetParameter('vminpu', 0.0)
 
         return 0
 
