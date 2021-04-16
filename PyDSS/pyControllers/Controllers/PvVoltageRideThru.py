@@ -92,10 +92,13 @@ class PvVoltageRideThru(ControllerAbstract):
         self.__initializeRideThroughSettings()
         self.__rVs, self.__rTs = self.__CreateOperationRegions()
         # For debugging only
-        # self.voltage = list(range(96))
-        # self.reactive_power = list(range(96))
-        # self.reactive_power_2 = list(range(96))
-
+        self.useAvgVoltage = True
+        cycleAvg = 5
+        freq = dssSolver.getFrequency()
+        step = dssSolver.GetStepSizeSec()
+        hist_size = math.ceil(cycleAvg / (step * freq))
+        self.voltage = [1.0 for i in range(hist_size)]
+        self.reactive_power = [0.0 for i in range(hist_size)]
         self.__VoltVioM = False
         self.__VoltVioP = False
         return
@@ -298,7 +301,11 @@ class PvVoltageRideThru(ControllerAbstract):
             uIn = self.__ControlledElm.GetVariable('VoltagesMagAng')[::2]
             uBase = self.__ControlledElm.sBus[0].GetVariable('kVBase') * 1000
             uIn = max(uIn) / uBase if self.__UcalcMode == 'Max' else sum(uIn) / (uBase * len(uIn))
-            deadtime  = (self.__dssSolver.GetDateTime() - self.__TrippedStartTime).total_seconds()
+            if self.useAvgVoltage:
+                self.voltage = self.voltage[1:] + self.voltage[:1]
+                self.voltage[0] = uIn
+                uIn = sum(self.voltage) / len(self.voltage)
+            deadtime = (self.__dssSolver.GetDateTime() - self.__TrippedStartTime).total_seconds()
             if uIn < self.__rVs[0] and uIn > self.__rVs[1] and deadtime >= self.__TrippedDeadtime:
                 self.__ControlledElm.SetParameter('enabled', True)
                 self.__isConnected = True
@@ -324,6 +331,11 @@ class PvVoltageRideThru(ControllerAbstract):
         uIn = self.__ControlledElm.GetVariable('VoltagesMagAng')[::2]
         uBase = self.__ControlledElm.sBus[0].GetVariable('kVBase') * 1000
         uIn = max(uIn) / uBase if self.__UcalcMode == 'Max' else sum(uIn) / (uBase * len(uIn))
+        if self.useAvgVoltage:
+            self.voltage = self.voltage[1:] + self.voltage[:1]
+            self.voltage[0] = uIn
+            uIn = sum(self.voltage) / len(self.voltage)
+
         if uIn < self.__rVs[0] and uIn > self.__rVs[1]:
             if not self.__NormOper:
                 self.__NormOper = True
