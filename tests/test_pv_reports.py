@@ -116,7 +116,6 @@ def verify_skip_night():
             assert np.isnan(val)
     for i in range(24, 30):
         for val in df.iloc[i, :]:
-            if np.isnan(val):breakpoint()
             assert not np.isnan(val)
     for i in range(90, 96):
         for val in df.iloc[i, :]:

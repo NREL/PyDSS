@@ -42,7 +42,7 @@ class SimulationFilteredTimeRange:
 
     @classmethod
     def from_settings(cls, settings):
-        """Return SimulationFilteredRange from the simulation settings.
+        """Return SimulationFilteredTimeRange from the simulation settings.
 
         Parameters
         ----------
@@ -51,7 +51,7 @@ class SimulationFilteredTimeRange:
 
         Returns
         -------
-        SimulationFilteredRange
+        SimulationFilteredTimeRange
 
         """
         start = time.strptime(settings["Project"]["Simulation range"]["start"], TIME_FORMAT)
