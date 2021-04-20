@@ -73,7 +73,7 @@ def restructure_dictionary(d):
     # rename some keys
     d['Start time'] = d['start_datetime']
     d['Simulation duration (min)'] = d['simulation_duration']
-    d['Step resolution (sec)'] = d['simulator_time_resolution'] #d['simulator_time_resolution']*60 if d['time_unit'] == 'm' else d['simulator_time_resolution']
+    d['Step resolution (sec)'] = d['simulator_time_resolution']*60 if d['time_unit'] == 'm' else d['simulator_time_resolution']
     d['Core type'] = d['core_type']
     d['DSS File'] = d['powerflow_options']['master_dss_file']
     d['Active Project'] = d['powerflow_options']['active_project']

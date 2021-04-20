@@ -280,9 +280,11 @@ class helics_interface:
         r_seconds = self._dss_solver.GetTotalSeconds() #- self._dss_solver.GetStepResolutionSeconds()
         if not self._options['Helics']['Iterative Mode']:
             while self.c_seconds < r_seconds:
-                self.c_seconds = helics.helicsFederateRequestTime(self._PyDSSfederate, r_seconds/60.0 )
-            
-            self.notify('PYDSS: Time requested: {} - time granted: {} '.format(r_seconds/60, self.c_seconds))
+                self.c_seconds = helics.helicsFederateRequestTime(self._PyDSSfederate, r_seconds )
+            try:
+                self.notify(f'PYDSS: Time requested: {r_seconds} - time granted: {float(self.c_seconds)}' ))
+            except Exception as e:
+                self.notify(f"Error> {str(e)}")
             self._logger.info('Time requested: {} - time granted: {} '.format(r_seconds, self.c_seconds))
             return True, self.c_seconds
         else:
