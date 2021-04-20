@@ -65,8 +65,9 @@ class PyDSS:
             # Hack for fixing HELICS time in PyDSS
             # PyDSS uses seconds to request federate time whereas other federates in NAERM 
             # uses minutes to request time
-            params['Project']['Simulation duration (min)'] = params['Project']['Simulation duration (min)']/60
-            params['Project']['Step resolution (sec)'] = params['Project']['Step resolution (sec)']/60
+            # params['Project']['Simulation duration (min)'] = params['Project']['Simulation duration (min)']/60.0
+            # params['Project']['Step resolution (sec)'] = params['Project']['Step resolution (sec)']/60.0
+            
             self.time_resolution = params['Project']['Step resolution (sec)']/60
             params['Project']["Loadshape start time"] = "1/1/2020 00:00:00"
 
@@ -323,6 +324,7 @@ class PyDSS:
                 return 200, f"Simulation complete..."
             except Exception as e:
                 print(e)
+                self.notify(f"Error, > {str(e)}")
                 self.initalized = False
                 return 500, f"Simulation crashed at at simulation time step: {self.pydss_obj._dssSolver.GetDateTime()}, {e}"
         else:

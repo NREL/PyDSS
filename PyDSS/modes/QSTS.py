@@ -64,7 +64,10 @@ class QSTS(abstact_solver):
         
         if self.notify != None:
             try:
-                self.notify(f"Source voltage just before solving > {self._dssIntance.Vsources.PU()}")
+                self._dssIntance.Vsources.First()
+                self.notify(f"Source voltage just before solving > {self._dssIntance.CktElement.VoltagesMagAng()[::2]}")
+                print('Before', self._dssIntance.CktElement.VoltagesMagAng()[::2])
+                #print('element name', self._dssIntance.CktElement.Name())
             except Exception as e:
                 self.notify(f'Error notifying the voltage > {str(e)}')
 
@@ -72,14 +75,16 @@ class QSTS(abstact_solver):
 
         if self.notify != None:
             try:
-                self.notify(f"Source voltage just after solving > {self._dssIntance.Vsources.PU()}")
+                self._dssIntance.Vsources.First()
+                self.notify(f"Source voltage just after solving > {self._dssIntance.CktElement.VoltagesMagAng()[::2]}")
+                #print('Before', self._dssIntance.CktElement.VoltagesMagAng()[::2])
             except Exception as e:
                 self.notify(f'Error notifying the voltage > {str(e)}')
 
         self._Time = self._Time + timedelta(seconds=self._sStepRes)
         self._Hour = int(self._dssSolution.DblHour() // 1)
         self._Second = (self._dssSolution.DblHour() % 1) * 60 * 60
-        #self.pyLogger.info('OpenDSS time [h] - ' + str(self._dssSolution.DblHour()))
+        #print('OpenDSS time [h] - ' + str(self._dssSolution.DblHour()))
         #self.pyLogger.info('PyDSS datetime - ' + str(self._Time))
 
     def GetOpenDSSTime(self):

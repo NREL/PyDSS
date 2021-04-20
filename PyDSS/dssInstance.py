@@ -111,7 +111,10 @@ class OpenDSS:
         self._CreateBusObjects()
         self._dssSolver.reSolve()
 
+        
+        print(params)
         if params['Profiles']["Use profile manager"]:
+            #print('I am here profile manager is True')
             #TODO: disable internal profiles
             self._Logger.info('Disabling internal yearly and duty-cycle profiles.')
             for m in ["Loads", "PVSystem", "Generator", "Storage"]:
