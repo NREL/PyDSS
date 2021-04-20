@@ -74,12 +74,12 @@ class Reports:
             for elem_class, required_properties in required.items():
                 for req_prop in required_properties:
                     found = False
-                    store_type = req_prop["store_values_type"]
+                    store_type = req_prop.get("store_values_type", "all")
                     for prop in exports.list_element_properties(elem_class):
                         if prop.name == req_prop["property"] and \
                                 prop.store_values_type.value == store_type:
                             if prop.opendss_classes or req_prop.get("opendss_classes"):
-                                assert prop.sum_elements == req_prop["sum_elements"]
+                                assert prop.sum_elements == req_prop.get("sum_elements", False)
                                 assert prop.data_conversion == \
                                     req_prop.get("data_conversion", DataConversion.NONE)
                                 prop.append_opendss_classes(req_prop["opendss_classes"])

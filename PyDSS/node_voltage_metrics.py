@@ -191,6 +191,47 @@ class SimulationVoltageMetricsModel(VoltageMetricsBaseModel):
     )
 
 
+def compare_voltage_metrics(metrics1: VoltageMetricsModel, metrics2: VoltageMetricsModel):
+    """Compares the values of two instances of VoltageMetricsModel.
+
+    Returns
+    -------
+    bool
+        Return True if they match.
+
+    """
+    match = True
+    fields = (
+        "voltage_duration_between_ansi_a_and_b_minutes",
+        "max_per_node_voltage_duration_outside_ansi_a_minutes",
+        "moving_average_voltage_duration_outside_ansi_a_minutes",
+        "moving_window_minutes",
+        "max_voltage",
+        "min_voltage",
+        "num_nodes_always_inside_ansi_a",
+        "num_nodes_any_outside_ansi_a_always_inside_ansi_b",
+        "num_nodes_any_outside_ansi_b",
+        "num_time_points_with_ansi_b_violations",
+        "total_num_time_points",
+        "total_simulation_duration",
+    )
+    for field in fields:
+        val1 = getattr(metrics1.summary, field)
+        val2 = getattr(metrics2.summary, field)
+        if val1 != val2:
+            logger.error("field=%s mismatch %s != %s", field, val1, val2)
+            match = False
+
+    for field in ("metric_1", "metric_2", "metric_3", "metric_4", "metric_5", "metric_6"):
+        val1 = getattr(metrics1, field)
+        val2 = getattr(metrics2, field)
+        if val1 != val2:
+            logger.error("%s mismatch: val1=%s val2=%s", field, val1, val2)
+            match = False
+
+    return match
+
+
 class NodeVoltageMetrics:
     """Stores node voltage metrics in memory.
 
@@ -218,10 +259,10 @@ class NodeVoltageMetrics:
         self._bufs = None
         self._num_time_points = 0
 
-    def _create_summary(self, metric_1, metric_2, metric_3, metric_5, metric_6):
-        moving_window_minutes = int(
-            (self._window_size * self._resolution).total_seconds() / 60
-        )
+    @staticmethod
+    def create_summary(metric_1, metric_2, metric_3, metric_5, metric_6, node_names,
+                       num_time_points, resolution, range_a_limits, range_b_limits,
+                       moving_window_minutes):
         max_pnvdoaa = max((x.duration for x in metric_2.values())).total_seconds()
         vdbaab = metric_1.duration.total_seconds()
         mmavdoa = metric_3.duration.total_seconds()
@@ -231,17 +272,17 @@ class NodeVoltageMetrics:
         num_nodes_always_inside_range_a = 0
         num_nodes_any_outside_range_a_no_b = 0
         num_nodes_any_outside_range_b = 0
-        for node in self._node_names:
+        for node in node_names:
             min_voltage = metric_5.min_voltages[node]
             max_voltage = metric_5.max_voltages[node]
             if (
-                min_voltage < self._range_b_limits.min
-                or max_voltage > self._range_b_limits.max
+                min_voltage < range_b_limits.min
+                or max_voltage > range_b_limits.max
             ):
                 num_nodes_any_outside_range_b += 1
             elif (
-                min_voltage < self._range_a_limits.min
-                or max_voltage > self._range_a_limits.max
+                min_voltage < range_a_limits.min
+                or max_voltage > range_a_limits.max
             ):
                 num_nodes_any_outside_range_a_no_b += 1
             else:
@@ -258,8 +299,8 @@ class NodeVoltageMetrics:
             num_nodes_any_outside_ansi_a_always_inside_ansi_b=num_nodes_any_outside_range_a_no_b,
             num_nodes_any_outside_ansi_b=num_nodes_any_outside_range_b,
             num_time_points_with_ansi_b_violations=metric_6.num_time_points,
-            total_num_time_points=self._num_time_points,
-            total_simulation_duration=self._num_time_points * self._resolution,
+            total_num_time_points=num_time_points,
+            total_simulation_duration=num_time_points * resolution,
         )
 
     def _is_outside_range_a(self, value):
@@ -320,6 +361,10 @@ class NodeVoltageMetrics:
             * 100,
             duration=self._num_metric_6_time_points_outside_range_b * self._resolution,
         )
+        moving_window_minutes = int(
+            (self._window_size * self._resolution).total_seconds() / 60
+        )
+
         metrics = VoltageMetricsModel(
             metric_1=metric_1,
             metric_2=metric_2,
@@ -327,9 +372,11 @@ class NodeVoltageMetrics:
             metric_4=metric_4,
             metric_5=metric_5,
             metric_6=metric_6,
-            summary=self._create_summary(
-                metric_1, metric_2, metric_3, metric_5, metric_6
-            ),
+            summary=self.create_summary(
+                metric_1, metric_2, metric_3, metric_5, metric_6, self._node_names,
+                self._num_time_points, self._resolution, self._range_a_limits, self._range_b_limits,
+                moving_window_minutes,
+            )
         )
 
         filename = Path(path) / self.FILENAME
@@ -361,9 +408,7 @@ class NodeVoltageMetrics:
         """
         cur_time = self._start_time + self._resolution * time_step
         if self._bufs is None:
-            self._bufs = [CircularBufferHelper(self._window_size)] * len(
-                self._node_names
-            )
+            self._bufs = [CircularBufferHelper(self._window_size) for _ in range(len(self._node_names))]
             self._metric_2_violation_counts = [0] * len(self._node_names)
             self._metric_5_min_violations = [None] * len(self._node_names)
             self._metric_5_max_violations = [None] * len(self._node_names)

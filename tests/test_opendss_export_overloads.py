@@ -10,52 +10,52 @@ import pandas as pd
 
 from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.export_list_reader import ExportListProperty
-from PyDSS.metrics import ExportOverloadsMetric, OpenDssExportMetric
+from PyDSS.metrics import ExportLoadingsMetric, OpenDssExportMetric
 import PyDSS.metrics
 from PyDSS.utils.utils import load_data
+from tests.common import FakeElement
 
 
 logger = logging.getLogger(__name__)
 
-FakeObj = namedtuple("FakeObj", "FullName, Name")
 OBJS = [
-    FakeObj("Line.one", "one"),
-    FakeObj("Line.two", "two"),
-    FakeObj("Transformer.one", "one"),
-    FakeObj("Transformer.two", "two"),
+    FakeElement("Line.one", "one"),
+    FakeElement("Line.two", "two"),
+    FakeElement("Transformer.one", "one"),
+    FakeElement("Transformer.two", "two"),
 ]
 OPTIONS = load_data("PyDSS/defaults/simulation.toml")
 STORE_FILENAME = os.path.join(tempfile.gettempdir(), "store.h5")
-EXPORTED_OVERLINES_BASE_FILENAME = "tests/data/exported_overloads/FEEDER_EXP_OVERLOADS"
-NUM_OVERLINES_FILES = 3
-LINE_1_VALUES = [147.47, 148.53, 147.88]
-LINE_2_VALUES = [147.34, 150.05, 149.73]
-TRANSFORMER_1_VALUES = [178.2, 179.6, 178.4]
-TRANSFORMER_2_VALUES = [175.7, 178.6, 177.1]
+EXPORTED_LOADINGS_BASE_FILENAME = "tests/data/exported_loadings/FEEDER_EXP_CAPACITY"
+NUM_LOADINGS_FILES = 3
+LINE_1_VALUES = [6.97, 2.75, 0.93]
+LINE_2_VALUES = [1.19, 1.16, 11.44]
+TRANSFORMER_1_VALUES = [8.60, 4.33, 12.82]
+TRANSFORMER_2_VALUES = [12.10, 12.51, 28.79]
 
 
 overloads_file_id = 1
 def mock_run_command():
-    filename = f"{EXPORTED_OVERLINES_BASE_FILENAME}{overloads_file_id}.CSV"
+    filename = f"{EXPORTED_LOADINGS_BASE_FILENAME}{overloads_file_id}.CSV"
     return filename
 
 
 @mock.patch("PyDSS.metrics.OpenDssExportMetric._run_command", side_effect=mock_run_command)
 def test_export_overloads(mocked_func):
     data1 = {
-        "property": "ExportOverloadsMetric",
+        "property": "ExportLoadingsMetric",
         "store_values_type": "all",
         "opendss_elements": ["Lines", "Transformers"],
     }
     prop1 = ExportListProperty("CktElement", data1)
     data2 = {
-        "property": "ExportOverloadsMetric",
+        "property": "ExportLoadingsMetric",
         "store_values_type": "max",
         "opendss_elements": ["Lines", "Transformers"],
     }
     prop2 = ExportListProperty("CktElement", data2)
-    num_time_steps = NUM_OVERLINES_FILES
-    metric = ExportOverloadsMetric(prop1, OBJS, OPTIONS)
+    num_time_steps = NUM_LOADINGS_FILES
+    metric = ExportLoadingsMetric(prop1, OBJS, OPTIONS)
     metric.add_property(prop2)
     with h5py.File(STORE_FILENAME, mode="w", driver="core") as hdf_store:
         metric.initialize_data_store(hdf_store, "", num_time_steps)
@@ -65,7 +65,7 @@ def test_export_overloads(mocked_func):
             overloads_file_id += 1
         metric.close()
 
-        dataset1 = hdf_store["CktElement/ElementProperties/ExportOverloadsMetric"]
+        dataset1 = hdf_store["CktElement/ElementProperties/ExportLoadingsMetric"]
         assert dataset1.attrs["length"] == num_time_steps
         assert dataset1.attrs["type"] == "per_time_point"
         df = DatasetBuffer.to_dataframe(dataset1)
@@ -75,7 +75,7 @@ def test_export_overloads(mocked_func):
         assert [x for x in df["Transformer.one__Overloads"].values] == TRANSFORMER_1_VALUES
         assert [x for x in df["Transformer.two__Overloads"].values] == TRANSFORMER_2_VALUES
 
-        dataset2 = hdf_store["CktElement/ElementProperties/ExportOverloadsMetricMax"]
+        dataset2 = hdf_store["CktElement/ElementProperties/ExportLoadingsMetricMax"]
         assert dataset2.attrs["length"] == 1
         assert dataset2.attrs["type"] == "value"
         assert dataset2[0][0] == max(LINE_1_VALUES)

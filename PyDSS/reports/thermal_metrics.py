@@ -1,10 +1,16 @@
 
 import logging
 import os
+from datetime import timedelta
 
 
+from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.reports.reports import ReportBase
-from PyDSS.thermal_metrics import SimulationThermalMetricsModel, ThermalMetricsSummaryModel
+from PyDSS.thermal_metrics import (
+    SimulationThermalMetricsModel,
+    ThermalMetricsSummaryModel,
+    ThermalMetricsModel,
+)
 from PyDSS.utils.utils import load_data
 
 
@@ -28,6 +34,7 @@ class ThermalMetrics(ReportBase):
         "transformer_loading_percent_threshold": 150,
         "transformer_window_size_hours": 2,
         "transformer_loading_percent_moving_average_threshold": 120,
+        "store_all_time_points": False,
     }
     FILENAME = "thermal_metrics.json"
     NAME = "Thermal Metrics"
@@ -40,7 +47,22 @@ class ThermalMetrics(ReportBase):
         self._resolution = self._get_simulation_resolution()
 
     def generate(self, output_dir):
-        metrics = {}
+        inputs = ThermalMetrics.get_inputs_from_defaults(self._simulation_config, self.NAME)
+        if inputs["store_all_time_points"]:
+            scenarios = self._generate_from_all_time_points()
+        else:
+            scenarios = self._generate_from_in_memory_metrics()
+
+        model = SimulationThermalMetricsModel(scenarios=scenarios)
+        filename = os.path.join(output_dir, self.FILENAME)
+        with open(filename, "w") as f_out:
+            f_out.write(model.json(indent=2))
+            f_out.write("\n")
+
+        logger.info("Generated %s", filename)
+
+    def _generate_from_in_memory_metrics(self):
+        scenarios = {}
         for scenario in self._results.scenarios:
             filename = os.path.join(
                 self._simulation_config["Project"]["Project Path"],
@@ -49,29 +71,114 @@ class ThermalMetrics(ReportBase):
                 scenario.name,
                 self.FILENAME,
             )
-            metrics[scenario.name] = ThermalMetricsSummaryModel(**load_data(filename))
+            scenarios[scenario.name] = ThermalMetricsSummaryModel(**load_data(filename))
 
-        model = SimulationThermalMetricsModel(scenarios=metrics)
+        return scenarios
 
-        filename = os.path.join(output_dir, self.FILENAME)
-        with open(filename, "w") as f_out:
-            f_out.write(model.json(indent=2))
-            f_out.write("\n")
+    def _generate_from_all_time_points(self):
+        inputs = self.get_inputs_from_defaults(self._simulation_config, self.NAME)
+        line_window_size, transformer_window_size = self._get_window_sizes(inputs, self._resolution)
+        scenarios = {}
+        for scenario in self._results.scenarios:
+            df = scenario.get_full_dataframe("CktElement", "ExportLoadingsMetric")
+            df.columns = [x.replace("__Overloads", "") for x in df.columns]
+            line_columns = []
+            transform_columns = []
+            for col in df.columns:
+                if col.startswith("Line"):
+                    line_columns.append(col)
+                elif col.startswith("Transformer"):
+                    transform_columns.append(col)
+            df_lines = df[line_columns]
+            lines_model = self._make_thermal_metrics_model(
+                df_lines,
+                line_window_size,
+                inputs["line_window_size_hours"],
+                inputs["line_loading_percent_threshold"],
+                inputs["line_loading_percent_moving_average_threshold"],
+            )
+            df_transformers = df[transform_columns]
+            transformers_model = self._make_thermal_metrics_model(
+                df_transformers,
+                transformer_window_size,
+                inputs["transformer_window_size_hours"],
+                inputs["transformer_loading_percent_threshold"],
+                inputs["transformer_loading_percent_moving_average_threshold"],
+            )
+            scenarios[scenario.name] = ThermalMetricsSummaryModel(
+                line_loadings=lines_model,
+                transformer_loadings=transformers_model,
+            )
 
-        logger.info("Generated %s", filename)
+        return scenarios
+
+    def _make_thermal_metrics_model(self, df, window_size, window_size_hours, inst_threshold, mavg_threshold):
+        df_mavg = df.rolling(window=window_size).mean()
+        max_instantaneous = self._get_max_values(df)
+        max_mavg = self._get_max_values(df_mavg)
+        return ThermalMetricsModel(
+            max_instantaneous_loadings=max_instantaneous,
+            max_instantaneous_loading=max(max_instantaneous.values()),
+            max_moving_average_loadings=max_mavg,
+            max_moving_average_loading=max(max_mavg.values()),
+            window_size_hours=window_size_hours,
+            num_time_points_with_instantaneous_violations=self._get_num_time_points_with_violations(df, inst_threshold),
+            num_time_points_with_moving_average_violations=self._get_num_time_points_with_violations(df_mavg, mavg_threshold),
+            instantaneous_threshold=inst_threshold,
+            moving_average_threshold=mavg_threshold,
+        )
+
+    @staticmethod
+    def _get_window_sizes(inputs, resolution):
+        line_window_size = timedelta(hours=inputs["line_window_size_hours"])
+        if line_window_size % resolution != timedelta(0):
+            raise InvalidConfiguration(
+                f"line_window_size={line_window_size} must be a multiple of {resolution}"
+            )
+        transformer_window_size = timedelta(hours=inputs["transformer_window_size_hours"])
+        if transformer_window_size % resolution != timedelta(0):
+            raise InvalidConfiguration(
+                f"transformer_window_size={transformer_window_size} must be a multiple of {resolution}"
+            )
+        return line_window_size // resolution, transformer_window_size // resolution
+
+    @staticmethod
+    def _get_max_values(df):
+        """Return a dict with max values per column."""
+        return {x: df[x].max() for x in df.columns}
+
+    @staticmethod
+    def _get_num_time_points_with_violations(df, threshold):
+        """Return the number of time points where at least one value exceeds threshold."""
+        num_violations = 0
+        for i, row in df.iterrows():
+            if row.max() > threshold:
+                num_violations += 1
+
+        return num_violations
 
     @staticmethod
     def get_required_exports(simulation_config):
+        inputs = ThermalMetrics.get_inputs_from_defaults(simulation_config, ThermalMetrics.NAME)
+        if inputs["store_all_time_points"]:
+            return {
+                "CktElement": [
+                    {
+                        "property": "ExportLoadingsMetric",
+                        "store_values_type": "all",
+                        "opendss_classes": ["Lines", "Transformers"],
+                    }
+                ]
+            }
+
         return {
             "CktElement": [
                 {
-                    "property": "ExportOverloadsMetricInMemory",
-                    "store_values_type": "all",
+                    "property": "OverloadsMetricInMemory",
                     "opendss_classes": ["Lines", "Transformers"],
                 }
              ]
         }
-
 
     @staticmethod
     def get_required_scenario_names():

@@ -1,4 +1,3 @@
-from collections import namedtuple
 import logging
 import os
 import tempfile
@@ -13,20 +12,20 @@ from PyDSS.export_list_reader import ExportListProperty
 from PyDSS.metrics import ExportPowersMetric, OpenDssExportMetric
 import PyDSS.metrics
 from PyDSS.utils.utils import load_data
+from tests.common import FakeElement
 
 
 logger = logging.getLogger(__name__)
 
-FakeObj = namedtuple("FakeObj", "FullName, Name")
 OBJS = [
-    FakeObj("Line.one", "one"),
-    FakeObj("Line.two", "two"),
-    FakeObj("Load.one", "one"),
-    FakeObj("Load.two", "two"),
-    FakeObj("PVSystem.one", "one"),
-    FakeObj("PVSystem.two", "two"),
-    FakeObj("Transformer.ONE", "one"),
-    FakeObj("Transformer.TWO", "two"),
+    FakeElement("Line.one", "one"),
+    FakeElement("Line.two", "two"),
+    FakeElement("Load.one", "one"),
+    FakeElement("Load.two", "two"),
+    FakeElement("PVSystem.one", "one"),
+    FakeElement("PVSystem.two", "two"),
+    FakeElement("Transformer.ONE", "one"),
+    FakeElement("Transformer.TWO", "two"),
 ]
 OPTIONS = load_data("PyDSS/defaults/simulation.toml")
 STORE_FILENAME = os.path.join(tempfile.gettempdir(), "store.h5")

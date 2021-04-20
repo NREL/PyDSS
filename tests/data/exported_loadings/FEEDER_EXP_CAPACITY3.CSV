@@ -1,5 +1,5 @@
-Element, Terminal,  I1, AmpsOver, kVAOver, %Normal, %Emergency, I2, %I2/I1, I0, %I0/I1
-"Line.ONE"           , 1,    25.07,    24.07,     2507.3,   147.88,      9.9,      0.0,      0.0,      0.0,      0.0
-"Line.TWO"          , 1,    25.07,    24.07,     2507.3,   149.73,      9.9,      0.0,      0.0,      0.0,      0.0
-"Transformer.ONE"           , 1,    25.07,    24.07,     2507.3,   178.4,      9.9,      0.0,      0.0,      0.0,      0.0
-"Transformer.TWO"          , 1,    25.07,    24.07,     2507.3,   177.1,      9.9,      0.0,      0.0,      0.0,      0.0
+Name, Imax, %normal, %emergency, kW, kvar, NumCustomers, TotalCustomers, NumPhases, kVBase
+Line.ONE,    1.07366,     0.93,     0.18,   0.227126,   0.136895, 0, 0, 2, 0.12 
+Line.TWO,    13.1603,    11.44,     2.19,    3.11967,   0.913101, 0, 0, 2, 0.12 
+Transformer.ONE,   0.489818,    12.82,     9.40,    3.47424,    1.05708, 0, 0, 1, 7.2 
+Transformer.TWO,    1.09963,    28.79,    21.11,    7.88751,    2.06817, 0, 0, 1, 7.2 

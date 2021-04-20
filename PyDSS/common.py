@@ -1,6 +1,7 @@
 
 import enum
 import os
+from collections import namedtuple
 
 import PyDSS
 from PyDSS.utils.utils import load_data
@@ -159,3 +160,8 @@ class StoreValuesType(enum.Enum):
     MOVING_AVERAGE = "moving_average"
     MOVING_AVERAGE_MAX = "moving_average_max"
     SUM = "sum"
+
+
+MinMax = namedtuple("MinMax", "min, max")
+
+

@@ -76,7 +76,6 @@ def test_create_project(pydss_project):
 
 EXPECTED_ELEM_CLASSES_PROPERTIES = {
     "Loads": ["Powers"],
-    "PVSystems": ["Pmpp"],
     "Storages": ["Powers"],
     "Buses": ["puVmagAngle", "Distance"],
     "Circuits": ["TotalPower", "LineLosses", "Losses", "SubstationLosses"],

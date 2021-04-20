@@ -82,7 +82,7 @@ def test_export_list_reader__limits():
 def test_export_list_reader__legacy_file():
     reader = ExportListReader(LEGACY_FILE)
     assert reader.list_element_classes() == \
-        ["Buses", "Circuits", "Lines", "Loads", "PVSystems", "Storages", "Transformers"]
+        ["Buses", "Circuits", "Lines", "Loads", "Storages", "Transformers"]
     assert reader.list_element_property_names("Buses") == \
         ["Distance", "puVmagAngle"]
     prop = reader.get_element_properties("Buses", "puVmagAngle")[0]

@@ -4,15 +4,23 @@ from datetime import timedelta
 from pathlib import Path
 import logging
 
+import numpy as np
 import pandas as pd
 
-from PyDSS.common import StoreValuesType
+from PyDSS.common import MinMax
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.reports.reports import ReportBase, ReportGranularity
 from PyDSS.utils.utils import serialize_timedelta, deserialize_timedelta, load_data
 from PyDSS.node_voltage_metrics import (
+    NodeVoltageMetrics,
     SimulationVoltageMetricsModel,
     VoltageMetricsModel,
+    VoltageMetric1,
+    VoltageMetric2,
+    VoltageMetric3,
+    VoltageMetric4,
+    VoltageMetric5,
+    VoltageMetric6,
 )
 
 
@@ -60,6 +68,7 @@ class VoltageMetrics(ReportBase):
         "range_a_limits": [0.95, 1.05],
         "range_b_limits": [0.90, 1.0583],
         "window_size_minutes": 10,
+        "store_all_time_points": False,
     }
     FILENAME = "voltage_metrics.json"
     NAME = "Voltage Metrics"
@@ -70,12 +79,36 @@ class VoltageMetrics(ReportBase):
         self._granularity = ReportGranularity(
             self._report_global_options["Granularity"]
         )
-        self._range_a_limits = self._report_options["range_a_limits"]
-        self._range_b_limits = self._report_options["range_b_limits"]
+        self._range_a_limits = MinMax(
+            min=self._report_options["range_a_limits"][0],
+            max=self._report_options["range_a_limits"][1],
+        )
+        self._range_b_limits = MinMax(
+            min=self._report_options["range_b_limits"][0],
+            max=self._report_options["range_b_limits"][1],
+        )
         self._resolution = self._get_simulation_resolution()
+        inputs = self.get_inputs_from_defaults(self._simulation_config, self.NAME)
+        self._window_size = timedelta(minutes=inputs["window_size_minutes"]) // self._resolution
+        self._moving_window_minutes = inputs["window_size_minutes"]
 
     def generate(self, output_dir):
-        metrics = {}
+        inputs = VoltageMetrics.get_inputs_from_defaults(self._simulation_config, self.NAME)
+        if inputs["store_all_time_points"]:
+            scenarios = self._generate_from_all_time_points()
+        else:
+            scenarios = self._generate_from_in_memory_metrics()
+        model = SimulationVoltageMetricsModel(scenarios=scenarios)
+
+        filename = os.path.join(output_dir, self.FILENAME)
+        with open(filename, "w") as f_out:
+            f_out.write(model.json(indent=2))
+            f_out.write("\n")
+
+        logger.info("Generated %s", filename)
+
+    def _generate_from_in_memory_metrics(self):
+        scenarios = {}
         for scenario in self._results.scenarios:
             filename = os.path.join(
                 self._simulation_config["Project"]["Project Path"],
@@ -84,22 +117,127 @@ class VoltageMetrics(ReportBase):
                 scenario.name,
                 self.FILENAME,
             )
-            metrics[scenario.name] = VoltageMetricsModel(**load_data(filename))
+            scenarios[scenario.name] = VoltageMetricsModel(**load_data(filename))
 
-        model = SimulationVoltageMetricsModel(scenarios=metrics)
+        return scenarios
 
-        filename = os.path.join(output_dir, self.FILENAME)
-        with open(filename, "w") as f_out:
-            f_out.write(model.json())
-            f_out.write("\n")
+    def _generate_from_all_time_points(self):
+        scenarios = {}
+        for scenario in self._results.scenarios:
+            df = scenario.get_full_dataframe("Buses", "puVmagAngle", mag_ang="mag")
+            # Make the names match the results from NodeVoltageMetrics.
+            columns = []
+            for column in df.columns:
+                column = column.replace("__mag [pu]", "")
+                column = column.replace("__A1", ".1")
+                column = column.replace("__B1", ".2")
+                column = column.replace("__C1", ".3")
+                columns.append(column)
+            df.columns = columns
+            scenarios[scenario.name] = self._gen_metrics(df)
 
-        logger.info("Generated %s", filename)
+        return scenarios
+
+    def _gen_metrics(self, df):
+        assert len(df) > 0
+        metric_2 = {x: 0 for x in df.columns}
+        metric_4 = []
+        metric_5_min = {x: None for x in df.columns}
+        metric_5_max = {x: None for x in df.columns}
+        metric_1_violation_time_points = []
+        num_time_points_violate_range_b = 0
+        for timestamp, row in df.iterrows():
+            num_range_a_violations = 0
+            for name, val in row.iteritems():
+                if val > self._range_a_limits.max or val < self._range_a_limits.min:
+                    metric_2[name] += 1
+                    num_range_a_violations += 1
+                cur_min = metric_5_min[name]
+                cur_max = metric_5_max[name]
+                if not np.isnan(val):
+                    if cur_min is None or val < cur_min:
+                        metric_5_min[name] = val
+                    if cur_max is None or val > cur_max:
+                        metric_5_max[name] = val
+            max_val = row.max()
+            min_val = row.min()
+            if (
+                    not (max_val > self._range_b_limits.max)
+                    and not (min_val < self._range_b_limits.min)
+                    and (max_val > self._range_a_limits.max or min_val < self._range_a_limits.min)
+            ):
+                metric_1_violation_time_points.append(timestamp)
+            if max_val > self._range_b_limits.max or min_val < self._range_b_limits.min:
+                num_time_points_violate_range_b += 1
+
+            if num_range_a_violations > 0:
+                metric_4.append([timestamp, num_range_a_violations / len(df.columns) * 100])
+
+        df_mavg = df.rolling(window=self._window_size).mean()
+        metric_3 = []
+        for timestamp, row in df_mavg.iterrows():
+            max_val = row.max()
+            min_val = row.min()
+            if max_val > self._range_a_limits.max or min_val < self._range_a_limits.min:
+                metric_3.append(timestamp)
+
+        vmetric_1 = VoltageMetric1(
+            time_points=metric_1_violation_time_points,
+            duration=len(metric_1_violation_time_points) * self._resolution,
+        )
+        vmetric_2 = {
+            name: VoltageMetric2(
+                duration=val * self._resolution,
+                duration_percentage=val / len(df) * 100,
+            )
+            for name, val in metric_2.items()
+        }
+        vmetric_3 = VoltageMetric3(
+            time_points=metric_3,
+            duration=len(metric_3) * self._resolution,
+        )
+        vmetric_4 = VoltageMetric4(
+            percent_node_ansi_a_violations=metric_4,
+        )
+        vmetric_5 = VoltageMetric5(
+            min_voltages=metric_5_min,
+            max_voltages=metric_5_max,
+        )
+        vmetric_6 = VoltageMetric6(
+            num_time_points=num_time_points_violate_range_b,
+            percent_time_points=num_time_points_violate_range_b / len(df) * 100,
+            duration=num_time_points_violate_range_b * self._resolution,
+        )
+
+        return VoltageMetricsModel(
+            metric_1=vmetric_1,
+            metric_2=vmetric_2,
+            metric_3=vmetric_3,
+            metric_4=vmetric_4,
+            metric_5=vmetric_5,
+            metric_6=vmetric_6,
+            summary=NodeVoltageMetrics.create_summary(
+                vmetric_1, vmetric_2, vmetric_3, vmetric_5, vmetric_6, df.columns,
+                len(df), self._resolution, self._range_a_limits, self._range_b_limits,
+                self._moving_window_minutes
+            )
+        )
 
     @staticmethod
     def get_required_exports(simulation_config):
         inputs = VoltageMetrics.get_inputs_from_defaults(
             simulation_config, VoltageMetrics.NAME
         )
+        if inputs["store_all_time_points"]:
+            return {
+                "Buses": [
+                    {
+                        "property": "puVmagAngle",
+                        "store_values_type": "all",
+                    }
+                ]
+            }
+
         return {
             "Nodes": [
                 {

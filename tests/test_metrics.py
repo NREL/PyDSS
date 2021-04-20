@@ -1,5 +1,4 @@
 
-from collections import namedtuple
 import logging
 import os
 import tempfile
@@ -15,6 +14,7 @@ from PyDSS.export_list_reader import ExportListProperty
 from PyDSS.metrics import MultiValueTypeMetricBase
 from PyDSS.value_storage import ValueByNumber, ValueByList
 from PyDSS.utils.utils import load_data
+from tests.common import FakeElement
 
 
 OPTIONS = load_data("PyDSS/defaults/simulation.toml")
@@ -34,10 +34,9 @@ LIST_COMPLEX_NUMS = (
 
 logger = logging.getLogger(__name__)
 
-FakeObj = namedtuple("FakeObj", "FullName, Name")
 OBJS = [
-    FakeObj("Fake.a", "a"),
-    FakeObj("Fake.b", "b"),
+    FakeElement("Fake.a", "a"),
+    FakeElement("Fake.b", "b"),
 ]
 
 
@@ -58,7 +57,7 @@ class FakeMetric(MultiValueTypeMetricBase):
         self._val_index = 0
         self._values = values
 
-    def _get_value(self, obj, timestamp):
+    def _get_value(self, obj, timestamp, set_active):
         prop = next(iter(self._properties.values()))
         if isinstance(self._values[self._val_index], list):
             val = ValueByList(obj.FullName, prop.name, self._values[self._val_index], ["", ""])
