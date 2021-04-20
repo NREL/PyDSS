@@ -5,6 +5,7 @@ import re
 import shutil
 import tempfile
 
+import numpy as np
 import pandas as pd
 
 from PyDSS.utils.dataframe_utils import read_dataframe
@@ -36,6 +37,8 @@ def test_pv_reports_per_element_per_time_point(cleanup_project):
                 PV_REPORTS_PROJECT_PATH,
                 simulation_file=TEST_SIM_BASE_NAME,
             )
+            if granularity == ReportGranularity.PER_ELEMENT_PER_TIME_POINT:
+                verify_skip_night()
             verify_pv_reports(granularity)
         finally:
             os.remove(TEST_FILENAME)
@@ -100,3 +103,20 @@ def verify_thermal_metrics(settings):
 
 def verify_voltage_metrics(settings):
     pass
+
+
+def verify_skip_night():
+    results = PyDssResults(PV_REPORTS_PROJECT_PATH)
+    scenario = results.scenarios[0]
+    df = scenario.get_full_dataframe("PVSystems", "Powers")
+    # Anytime before 6am or after 6pm should be excluded.
+    # Some times in the middle of the day have convergence errors.
+    for i in range(24):
+        for val in df.iloc[i, :]:
+            assert np.isnan(val)
+    for i in range(24, 30):
+        for val in df.iloc[i, :]:
+            assert not np.isnan(val)
+    for i in range(90, 96):
+        for val in df.iloc[i, :]:
+            assert np.isnan(val)

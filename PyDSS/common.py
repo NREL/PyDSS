@@ -6,6 +6,7 @@ import PyDSS
 from PyDSS.utils.utils import load_data
 
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S.%f' # '%Y-%m-%d %H:%M:%S.%f', "%m/%d/%Y %H:%M:%S"
+TIME_FORMAT = '%H:%M:%S'
 
 PLOTS_FILENAME = "plots.toml"
 SIMULATION_SETTINGS_FILENAME = "simulation.toml"
