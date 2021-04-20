@@ -48,7 +48,7 @@ class ResultData:
         self._objects_by_element = dss_objects
         self._objects_by_class = dss_objects_by_class
         self.system_paths = system_paths
-        self._element_metrics = {}  # object full name to OpenDssPropertyMetric
+        self._element_metrics = {}  # (elem_class, prop_name) to OpenDssPropertyMetric
         self._summed_element_metrics = {}
         self._options = options
         self._cur_step = 0

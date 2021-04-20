@@ -36,12 +36,17 @@ class MetricBase(abc.ABC):
         self._num_steps = None
         self._properties = {}  # StoreValuesType to ExportListProperty
         self._dss_objs = dss_objs
+        self._name_to_dss_obj = {x.Name: x for x in dss_objs}
+        self._elem_class = _OPEN_DSS_CLASS_FOR_ITERATION.get(dss_objs[0]._Class)
         self._options = options
+        self._are_names_filtered = prop.are_names_filtered
 
         self.add_property(prop)
 
     def add_property(self, prop):
         """Add an instance of ExportListProperty for tracking."""
+        if prop.are_names_filtered != self._are_names_filtered:
+            raise InvalidConfiguration(f"All properties for shared elements must have the same filters: {prop.name}.")
         existing = self._properties.get(prop.store_values_type)
         if existing is None:
             self._properties[prop.store_values_type] = prop
@@ -155,6 +160,9 @@ class MetricBase(abc.ABC):
                 total += container.max_num_bytes()
         return total
 
+    def _can_use_native_iteration(self):
+        return self._elem_class is not None and not self._are_names_filtered
+
 
 class ChangeCountMetricBase(MetricBase, abc.ABC):
     """Base class for any metric that only tracks number of changes."""
@@ -209,8 +217,17 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
         self._containers = {}  # StoreValuesType to StorageFilterBase
 
     @abc.abstractmethod
-    def _get_value(self, dss_obj, time_step):
-        """Get a value at the current time step."""
+    def _get_value(self, dss_obj, time_step, set_active):
+        """Get a value at the current time step.
+
+        Parameters
+        ----------
+        dss_obj : dssObjBase
+        time_step : int
+        set_active : bool
+            Set to True if the element is not already set to Active.
+
+        """
 
     def _initialize_containers(self, values):
         prop_name = None
@@ -236,7 +253,15 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
             )
 
     def append_values(self, time_step, store_nan=False):
-        values = [self._get_value(x, time_step) for x in self._dss_objs]
+        if self._can_use_native_iteration():
+            self._elem_class.First()
+            values = []
+            for _ in range(self._elem_class.Count()):
+                dss_obj = self._name_to_dss_obj[self._elem_class.Name()]
+                values.append(self._get_value(dss_obj, time_step, False))
+                self._elem_class.Next()
+        else:
+            values = [self._get_value(x, time_step, True) for x in self._dss_objs]
 
         if not self._containers:
             self._initialize_containers(values)
@@ -270,8 +295,8 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
 class OpenDssPropertyMetric(MultiValueTypeMetricBase):
     """Stores metrics for any OpenDSS element property."""
 
-    def _get_value(self, dss_obj, _time_step):
-        return dss_obj.UpdateValue(self._name)
+    def _get_value(self, dss_obj, _time_step, set_active):
+        return dss_obj.UpdateValue(self._name, set_active)
 
     def append_values(self, time_step, store_nan=False):
         curr_data = {}
@@ -286,44 +311,46 @@ class OpenDssPropertyMetric(MultiValueTypeMetricBase):
         return curr_data
 
 
-class LineLoadingPercent(MultiValueTypeMetricBase):
-    """Calculates line loading percent at every time point."""
+# These next two might work but are untested.
 
-    def __init__(self, prop, dss_objs, options):
-        super().__init__(prop, dss_objs, options)
-        self._normal_amps = {}  # Name to normal_amps value
-
-    def _get_value(self, dss_obj, _time_step):
-        line = dss_obj
-        normal_amps = self._normal_amps.get(line.Name)
-        if normal_amps is None:
-            normal_amps = line.GetValue("NormalAmps", convert=True).value
-            self._normal_amps[line.Name] = normal_amps
-
-        currents = line.UpdateValue("Currents").value
-        current = max([abs(x) for x in currents])
-        loading = current / normal_amps * 100
-        return ValueByNumber(line.Name, "LineLoading", loading)
-
-
-class TransformerLoadingPercent(MultiValueTypeMetricBase):
-    """Calculates transformer loading percent at every time point."""
-
-    def __init__(self, prop, dss_objs, options):
-        super().__init__(prop, dss_objs, options)
-        self._normal_amps = {}  # Name to normal_amps value
-
-    def _get_value(self, dss_obj, _time_step):
-        transformer = dss_obj
-        normal_amps = self._normal_amps.get(transformer.Name)
-        if normal_amps is None:
-            normal_amps = transformer.GetValue("NormalAmps", convert=True).value
-            self._normal_amps[transformer.Name] = normal_amps
-
-        currents = transformer.UpdateValue("Currents").value
-        current = max([abs(x) for x in currents])
-        loading = current / normal_amps * 100
-        return ValueByNumber(transformer.Name, "TransformerLoading", loading)
+#class LineLoadingPercent(MultiValueTypeMetricBase):
+#    """Calculates line loading percent at every time point."""
+#
+#    def __init__(self, prop, dss_objs, options):
+#        super().__init__(prop, dss_objs, options)
+#        self._normal_amps = {}  # Name to normal_amps value
+#
+#    def _get_value(self, dss_obj, _time_step, set_active):
+#        line = dss_obj
+#        normal_amps = self._normal_amps.get(line.Name)
+#        if normal_amps is None:
+#            normal_amps = line.GetValue("NormalAmps", convert=True).value
+#            self._normal_amps[line.Name] = normal_amps
+#
+#        currents = line.UpdateValue("Currents", set_active).value
+#        current = max([abs(x) for x in currents])
+#        loading = current / normal_amps * 100
+#        return ValueByNumber(line.Name, "LineLoading", loading)
+#
+#
+#class TransformerLoadingPercent(MultiValueTypeMetricBase):
+#    """Calculates transformer loading percent at every time point."""
+#
+#    def __init__(self, prop, dss_objs, options):
+#        super().__init__(prop, dss_objs, options)
+#        self._normal_amps = {}  # Name to normal_amps value
+#
+#    def _get_value(self, dss_obj, _time_step, set_active):
+#        transformer = dss_obj
+#        normal_amps = self._normal_amps.get(transformer.Name)
+#        if normal_amps is None:
+#            normal_amps = transformer.GetValue("NormalAmps", convert=True).value
+#            self._normal_amps[transformer.Name] = normal_amps
+#
+#        currents = transformer.UpdateValue("Currents", set_active).value
+#        current = max([abs(x) for x in currents])
+#        loading = current / normal_amps * 100
+#        return ValueByNumber(transformer.Name, "TransformerLoading", loading)
 
 
 class SummedElementsOpenDssPropertyMetric(MetricBase):
@@ -334,8 +361,8 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
         self._container = None
         self._data_conversion = prop.data_conversion
 
-    def _get_value(self, obj):
-        value = obj.UpdateValue(self._name)
+    def _get_value(self, obj, set_active):
+        value = obj.UpdateValue(self._name, set_active)
         if self._data_conversion != DataConversion.NONE:
             value = convert_data(
                 "Total",
@@ -347,16 +374,31 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
 
     def append_values(self, time_step, store_nan=False):
         if store_nan:
-            total = self._get_value(self._dss_objs[0])
+            if self._can_use_native_iteration():
+                self._elem_class.First()
+                total = self._get_value(self._dss_objs[0], False)
+            else:
+                total = self._get_value(self._dss_objs[0], True)
             total.set_nan()
         else:
             total = None
-            for obj in self._dss_objs:
-                value = self._get_value(obj)
-                if total is None:
-                    total = value
-                else:
-                    total += value
+            if self._can_use_native_iteration():
+                self._elem_class.First()
+                for _ in range(self._elem_class.Count()):
+                    dss_obj = self._name_to_dss_obj[self._elem_class.Name()]
+                    value = self._get_value(dss_obj, False)
+                    if total is None:
+                        total = value
+                    else:
+                        total += value
+                    self._elem_class.Next()
+            else:
+                for dss_obj in self._dss_objs:
+                    value = self._get_value(dss_obj, True)
+                    if total is None:
+                        total = value
+                    else:
+                        total += value
 
         if self._container is None:
             assert len(self._properties) == 1
@@ -449,13 +491,13 @@ class TrackCapacitorChangeCounts(ChangeCountMetricBase):
         if store_nan:
             return
 
-        for capacitor in self._dss_objs:
+        dss.Capacitors.First()
+        for _ in range(dss.Capacitors.Count()):
+            capacitor = self._name_to_dss_obj[dss.Capacitors.Name()]
             self._update_counts(capacitor)
+            dss.Capacitors.Next()
 
     def _update_counts(self, capacitor):
-        dss.Capacitors.Name(capacitor.Name)
-        if dss.CktElement.Name() != dss.Element.Name():
-            raise InvalidParameter(f"Object is not a circuit element {capacitor.Name}")
         states = dss.Capacitors.States()
         if states == -1:
             raise Exception(f"failed to get Capacitors.States() for {capacitor.Name}")
@@ -478,15 +520,13 @@ class TrackRegControlTapNumberChanges(ChangeCountMetricBase):
         if store_nan:
             return
 
-        for reg_control in self._dss_objs:
+        dss.RegControls.First()
+        for _ in range(dss.RegControls.Count()):
+            reg_control = self._name_to_dss_obj[dss.RegControls.Name()]
             self._update_counts(reg_control)
+            dss.RegControls.Next()
 
     def _update_counts(self, reg_control):
-        dss.RegControls.Name(reg_control.Name)
-        if reg_control.dss.CktElement.Name() != dss.Element.Name():
-            raise InvalidParameter(
-                f"Object is not a circuit element {reg_control.Name()}"
-            )
         tap_number = dss.RegControls.TapNumber()
         last_value = self._last_values[reg_control.FullName]
         if last_value is not None:
@@ -683,7 +723,7 @@ class OpenDssExportMetric(MetricBase):
         """Return True if the names are upper case."""
 
 
-class ExportOverloadsMetric(OpenDssExportMetric):
+class ExportLoadingsMetric(OpenDssExportMetric):
     """Stores line and transformer loading percentages in HDF5."""
     @staticmethod
     def element_class():
@@ -691,15 +731,19 @@ class ExportOverloadsMetric(OpenDssExportMetric):
 
     @staticmethod
     def expected_column_headers():
-        return {0: "Element", 5: "%Normal"}
+        return {0: "Name", 2: "%normal"}
 
     def export_command(self):
-        filename = Path(self._tmp_dir) / "opendss_overloads.csv"
-        return f"export overloads {filename}"
+        filename = Path(self._tmp_dir) / "opendss_loading.csv"
+        return f"export capacity {filename}"
 
     @staticmethod
     def label():
         return "Overloads"
+
+    @staticmethod
+    def _get_name_from_line(fields):
+        return fields[0].strip()
 
     def parse_file(self, filename):
         with open(filename) as f_in:
@@ -710,10 +754,10 @@ class ExportOverloadsMetric(OpenDssExportMetric):
                 name = self._get_name_from_line(fields)
                 if name in self._names:
                     index = self._names[name]
-                    val = float(fields[5].strip())
+                    val = float(fields[2].strip())
                     self._values[index].set_value_from_raw(val)
                 else:
-                    self._values[index].set_value_from_raw(np.nan)
+                    assert False, line
 
     @staticmethod
     def requires_upper_case():
@@ -746,11 +790,11 @@ class ExportPowersMetric(OpenDssExportMetric):
             for line in f_in:
                 fields = line.split(",")
                 name = self._get_name_from_line(fields)
-                assert name in self._names, f"name={name} names={self._names.keys()}"
-                terminal = int(fields[1])
-                if terminal == 1:
-                    val = abs(float(fields[2].strip()))
-                    data[name] = val
+                if name in self._names:
+                    terminal = int(fields[1])
+                    if terminal == 1:
+                        val = abs(float(fields[2].strip()))
+                        data[name] = val
 
         for name, val in data.items():
             index = self._names[name]
@@ -761,14 +805,12 @@ class ExportPowersMetric(OpenDssExportMetric):
         return True
 
 
-class ExportOverloadsMetricInMemory(OpenDssExportMetric):
+class OverloadsMetricInMemory(OpenDssExportMetric):
     """Stores line and transformer loading percentages in memory."""
     def __init__(self, prop, dss_objs, options):
         super().__init__(prop, dss_objs, options)
         # Indices for node names are tied to indices for node voltages.
         self._transformer_index = None
-        self._line_loadings = None
-        self._tranformer_loadings = None
         start_time = get_start_time(options)
         sim_resolution = get_simulation_resolution(options)
         inputs = ReportBase.get_inputs_from_defaults(options, "Thermal Metrics")
@@ -864,10 +906,10 @@ class ExportOverloadsMetricInMemory(OpenDssExportMetric):
             for line in f_in:
                 fields = line.split(",")
                 name = self._get_name_from_line(fields)
-                assert name in self._names, f"name={name} names={self._names.keys()}"
-                index = self._names[name]
-                val = float(fields[2].strip())
-                self._values[index].set_value_from_raw(val)
+                if name in self._names:
+                    index = self._names[name]
+                    val = float(fields[2].strip())
+                    self._values[index].set_value_from_raw(val)
 
     @staticmethod
     def requires_upper_case():
@@ -893,3 +935,26 @@ def convert_data(name, prop_name, value, conversion):
         converted = value
 
     return converted
+
+
+# Bus and Circuit are excluded.
+_OPEN_DSS_CLASS_FOR_ITERATION = {
+    "Capacitor": dss.Capacitors,
+    "Fuse": dss.Fuses,
+    "Fuse": dss.Fuses,
+    "Generator": dss.Generators,
+    "Generator": dss.Generators,
+    "Isource": dss.Isource,
+    "Line": dss.Lines,
+    "Load": dss.Loads,
+    "Meter": dss.Meters,
+    "Monitor": dss.Monitors,
+    "PVSystem": dss.PVsystems,
+    "Recloser": dss.Reclosers,
+    "RegControl": dss.RegControls,
+    "Relay": dss.Relays,
+    "Sensor": dss.Sensors,
+    "Transformer": dss.Transformers,
+    "Vsource": dss.Vsources,
+    "XYCurve": dss.XYCurves,
+}

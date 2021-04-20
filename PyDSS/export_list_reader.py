@@ -1,34 +1,30 @@
-from collections import defaultdict, namedtuple
+from collections import defaultdict
 import enum
 import logging
 import os
 import re
 
 from PyDSS.common import DataConversion, LimitsFilter, StoreValuesType, \
-    DatasetPropertyType
+    DatasetPropertyType, MinMax
 from PyDSS.pyContrReader import pyExportReader
 from PyDSS.utils.utils import load_data
 from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
 from PyDSS.metrics import (
     NodeVoltageMetric, TrackCapacitorChangeCounts,
-    TrackRegControlTapNumberChanges, LineLoadingPercent,
-    TransformerLoadingPercent, ExportOverloadsMetric, ExportOverloadsMetricInMemory,
+    TrackRegControlTapNumberChanges, ExportLoadingsMetric, OverloadsMetricInMemory,
     ExportPowersMetric
 )
 
 
-MinMax = namedtuple("MinMax", "min, max")
-
-
 CUSTOM_METRICS = {
     "Capacitors.TrackStateChanges": TrackCapacitorChangeCounts,
-    "CktElement.ExportOverloadsMetric": ExportOverloadsMetric,
-    "CktElement.ExportOverloadsMetricInMemory": ExportOverloadsMetricInMemory,
+    "CktElement.ExportLoadingsMetric": ExportLoadingsMetric,
+    "CktElement.OverloadsMetricInMemory": OverloadsMetricInMemory,
     "CktElement.ExportPowersMetric": ExportPowersMetric,
-    "Lines.LoadingPercent": LineLoadingPercent,
+    #"Lines.LoadingPercent": LineLoadingPercent,
     "Nodes.VoltageMetric": NodeVoltageMetric,
     "RegControls.TrackTapNumberChanges": TrackRegControlTapNumberChanges,
-    "Transformers.LoadingPercent": TransformerLoadingPercent,
+    #"Transformers.LoadingPercent": TransformerLoadingPercent,
 }
 
 logger = logging.getLogger(__name__)
@@ -48,7 +44,7 @@ class ExportListProperty:
         self._limits_b = self._parse_limits(data, "limits_b")
         self._limits_filter_b = LimitsFilter(data.get("limits_filter_b", "outside"))
         self._store_values_type = StoreValuesType(data.get("store_values_type", "all"))
-        self._names, self._are_names_regex = self._parse_names(data)
+        self._names, self._are_names_regex, self._are_names_filtered = self._parse_names(data)
         self._sample_interval = data.get("sample_interval", 1)
         self._window_size = data.get("window_size", 100)
         self._window_sizes = data.get("window_sizes", {})
@@ -70,6 +66,10 @@ class ExportListProperty:
         return self._store_values_type in (
             StoreValuesType.MAX, StoreValuesType.MOVING_AVERAGE_MAX,
         )
+
+    @property
+    def are_names_filtered(self):
+        return self._are_names_filtered
 
     def is_moving_average(self):
         return self._store_values_type in (
@@ -101,11 +101,11 @@ class ExportListProperty:
                 raise InvalidConfiguration(f"invalid name format: {obj}")
 
         if names:
-            return set(names), False
+            return set(names), False, True
         if name_regexes:
-            return [re.compile(r"{}".format(x)) for x in name_regexes], True
+            return [re.compile(r"{}".format(x)) for x in name_regexes], True, True
 
-        return None, False
+        return None, False, False
 
     def _is_inside_limits(self, value):
         """Return True if the value is between min and max, inclusive."""

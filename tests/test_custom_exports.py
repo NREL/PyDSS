@@ -43,10 +43,10 @@ def test_custom_exports(cleanup_project):
 
     # TODO DT: these values are no longer correct. What should they be?
     # Filtered value on custom function.
-    df = scenario.get_dataframe("Lines", "LoadingPercent", "Line.sl_22")
+    #df = scenario.get_dataframe("Lines", "LoadingPercent", "Line.sl_22")
     #assert len(df) == 14
 
-    df = scenario.get_dataframe("Lines", "LoadingPercentAvg", "Line.sl_22")
+    #df = scenario.get_dataframe("Lines", "LoadingPercentAvg", "Line.sl_22")
     # This was computed from raw data.
     #assert len(df) == 9
     # TODO incorrect after more decimal points

@@ -85,22 +85,22 @@ sample_interval = 1
 publish = false
 store_values_type = "all"
 
-[[Lines]]
-property = "LoadingPercent"
-sample_interval = 1
-publish = false
-store_values_type = "all"
-limits = [ 0.0, 20.0,]
-limits_filter = "outside"
+#[[Lines]]
+#property = "LoadingPercent"
+#sample_interval = 1
+#publish = false
+#store_values_type = "all"
+#limits = [ 0.0, 20.0,]
+#limits_filter = "outside"
 
-[[Lines]]
-property = "LoadingPercent"
-sample_interval = 1
-publish = false
-store_values_type = "moving_average"
-window_size = 10
-limits = [ 0.0, 20.0]
-limits_filter = "outside"
+#[[Lines]]
+#property = "LoadingPercent"
+#sample_interval = 1
+#publish = false
+#store_values_type = "moving_average"
+#window_size = 10
+#limits = [ 0.0, 20.0]
+#limits_filter = "outside"
 
 [[Transformers]]
 property = "NormalAmps"
@@ -108,22 +108,22 @@ sample_interval = 1
 publish = false
 store_values_type = "all"
 
-[[Transformers]]
-property = "LoadingPercent"
-sample_interval = 1
-publish = false
-store_values_type = "all"
-limits = [ 0.0, 0.2,]
-limits_filter = "outside"
-
-[[Transformers]]
-property = "LoadingPercent"
-sample_interval = 1
-publish = false
-store_values_type = "moving_average"
-window_size = 10
-limits = [ 0.0, 1.0]
-limits_filter = "outside"
+#[[Transformers]]
+#property = "LoadingPercent"
+#sample_interval = 1
+#publish = false
+#store_values_type = "all"
+#limits = [ 0.0, 0.2,]
+#limits_filter = "outside"
+#
+#[[Transformers]]
+#property = "LoadingPercent"
+#sample_interval = 1
+#publish = false
+#store_values_type = "moving_average"
+#window_size = 10
+#limits = [ 0.0, 1.0]
+#limits_filter = "outside"
 
 [[RegControls]]
 property = "TrackTapNumberChanges"
