@@ -40,13 +40,13 @@ class PvVoltageRideThru(ControllerAbstract):
             'None': lambda: 0,
         }
 
-        self.__ControlledElm = PvObj
+        self._ControlledElm = PvObj
         self.__ElmObjectList = ElmObjectList
         self.__dssInstance = dssInstance
         self.__dssSolver = dssSolver
         self.__Settings = Settings
 
-        self.Class, self.Name = self.__ControlledElm.GetInfo()
+        self.Class, self.Name = self._ControlledElm.GetInfo()
         assert (self.Class.lower() == 'generator'), 'PvControllerGen works only with an OpenDSS Generator element'
         self.__Name = 'pyCont_' + self.Class + '_' + self.Name
         if '_' in self.Name:
@@ -173,9 +173,9 @@ class PvVoltageRideThru(ControllerAbstract):
             self.__faultCounterMax = 3
             self.__faultCounterClearingTimeSec = 5
 
-        self.__ControlledElm.SetParameter('Model', '7')
-        self.__ControlledElm.SetParameter('Vmaxpu', V[0])
-        self.__ControlledElm.SetParameter('Vminpu', V[1])
+        self._ControlledElm.SetParameter('Model', '7')
+        self._ControlledElm.SetParameter('Vmaxpu', V[0])
+        self._ControlledElm.SetParameter('Vminpu', V[1])
 
         ContineousPoints = [Point(V[0], 0), Point(V[0], tMax), Point(V[1], tMax), Point(V[1], 0)]
         ContineousRegion = Polygon([[p.y, p.x] for p in ContineousPoints])
@@ -298,8 +298,8 @@ class PvVoltageRideThru(ControllerAbstract):
 
     def __Connect(self):
         if not self.__isConnected:
-            uIn = self.__ControlledElm.GetVariable('VoltagesMagAng')[::2]
-            uBase = self.__ControlledElm.sBus[0].GetVariable('kVBase') * 1000
+            uIn = self._ControlledElm.GetVariable('VoltagesMagAng')[::2]
+            uBase = self._ControlledElm.sBus[0].GetVariable('kVBase') * 1000
             uIn = max(uIn) / uBase if self.__UcalcMode == 'Max' else sum(uIn) / (uBase * len(uIn))
             if self.useAvgVoltage:
                 self.voltage = self.voltage[1:] + self.voltage[:1]
@@ -307,20 +307,20 @@ class PvVoltageRideThru(ControllerAbstract):
                 uIn = sum(self.voltage) / len(self.voltage)
             deadtime = (self.__dssSolver.GetDateTime() - self.__TrippedStartTime).total_seconds()
             if uIn < self.__rVs[0] and uIn > self.__rVs[1] and deadtime >= self.__TrippedDeadtime:
-                self.__ControlledElm.SetParameter('enabled', True)
+                self._ControlledElm.SetParameter('enabled', True)
                 self.__isConnected = True
-                self.__ControlledElm.SetParameter('kw', 0)
+                self._ControlledElm.SetParameter('kw', 0)
                 self.__ReconnStartTime = self.__dssSolver.GetDateTime()
         else:
             conntime = (self.__dssSolver.GetDateTime() - self.__ReconnStartTime).total_seconds()
             self.__Plimit = conntime / self.__TrippedPmaxDelay * self.__Prated if conntime < self.__TrippedPmaxDelay \
                 else self.__Prated
-            self.__ControlledElm.SetParameter('kw', self.__Plimit)
+            self._ControlledElm.SetParameter('kw', self.__Plimit)
         return self.__isConnected
 
     def __Trip(self, Deadtime, Time2Pmax, forceTrip):
         if self.__isConnected or forceTrip:
-            self.__ControlledElm.SetParameter('enabled', False)
+            self._ControlledElm.SetParameter('enabled', False)
             self.__isConnected = False
             self.__TrippedStartTime = self.__dssSolver.GetDateTime()
             self.__TrippedPmaxDelay = Time2Pmax
@@ -328,8 +328,8 @@ class PvVoltageRideThru(ControllerAbstract):
         return
 
     def __UpdateViolatonTimers(self):
-        uIn = self.__ControlledElm.GetVariable('VoltagesMagAng')[::2]
-        uBase = self.__ControlledElm.sBus[0].GetVariable('kVBase') * 1000
+        uIn = self._ControlledElm.GetVariable('VoltagesMagAng')[::2]
+        uBase = self._ControlledElm.sBus[0].GetVariable('kVBase') * 1000
         uIn = max(uIn) / uBase if self.__UcalcMode == 'Max' else sum(uIn) / (uBase * len(uIn))
         if self.useAvgVoltage:
             self.voltage = self.voltage[1:] + self.voltage[:1]

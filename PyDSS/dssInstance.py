@@ -240,6 +240,7 @@ class OpenDSS:
         maxError = 0
         for controller in self._pyControls.values():
             error = controller.Update(Priority, Time, UpdateResults)
+            print(f"{controller.ControlledElement()} {controller._ControlledElm.GetVariable('VoltagesMagAng')[::2]}")
             maxError = error if error > maxError else maxError
             if Iteration == self._Options['Project']['Max Control Iterations'] - 1:
                 if error > self._Options['Project']['Error tolerance']:
