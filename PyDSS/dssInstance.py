@@ -80,9 +80,7 @@ class OpenDSS:
             assert (os.path.exists(path)), '{} path: {} does not exist!'.format(key, path)
 
         self._dssInstance.Basic.ClearAll()
-        message = run_command("Vsource.source.yearly=NONE")
-        if len(message) !=0:
-            self.notify(f"Error updating yearly property of vsource > {str(e)}")
+        
         
         self._dssInstance.utils.run_command('Log=NO')
         run_command('Clear')
@@ -93,6 +91,11 @@ class OpenDSS:
         finally:
             os.chdir(orig_dir)
         self._Logger.info('OpenDSS:  ' + reply)
+
+        message = run_command("Vsource.source.yearly=NONE")
+        
+        if len(message) !=0:
+            self.notify(f"Error updating yearly property of vsource > {str(message)}")
 
         assert ('error ' not in reply.lower()), 'Error compiling OpenDSS model.\n{}'.format(reply)
 
