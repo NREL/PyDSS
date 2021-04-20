@@ -3,11 +3,12 @@ from PyDSS.modes.abstract_solver import abstact_solver
 import math
 
 class QSTS(abstact_solver):
-    def __init__(self, dssInstance, SimulationSettings, Logger):
+    def __init__(self, dssInstance, SimulationSettings, Logger, notifier=None):
         super().__init__(dssInstance, SimulationSettings, Logger)
         print("Entered QSTS mode")
         self.Settings = SimulationSettings
         self.pyLogger = Logger
+        self.notify = notifier
 
 
         self._Time = datetime.strptime(SimulationSettings['Project']["Start time"], "%d/%m/%Y %H:%M:%S")
@@ -60,6 +61,14 @@ class QSTS(abstact_solver):
     def IncStep(self):
         #self.__sStepRes = 1/240
         self._dssSolution.StepSize(self._sStepRes)
+        self._dssIntance.run_command('vsources.source.yearly=none')
+        if self.notify != None:
+            try:
+                self._dssIntance.Vsources.PU(0.98)
+                self.notify(f"Source voltage just before solving > {self._dssIntance.Vsources.PU()}")
+            except Exception as e:
+                self.notify(f'Error notifying the voltage > {str(e)}')
+
         self._dssSolution.Solve()
         self._Time = self._Time + timedelta(seconds=self._sStepRes)
         self._Hour = int(self._dssSolution.DblHour() // 1)

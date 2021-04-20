@@ -8,7 +8,7 @@ from PyDSS.modes.Snapshot import Snapshot
 from PyDSS.modes.QSTS import QSTS
 
 
-def GetSolver(SimulationSettings, dssInstance):
+def GetSolver(SimulationSettings, dssInstance, notifier=None):
     if SimulationSettings["Logging"]["Pre-configured logging"]:
         LoggerTag = __name__
     else:
@@ -19,7 +19,7 @@ def GetSolver(SimulationSettings, dssInstance):
     if SimulationSettings['Project']['Simulation Type'].lower() == 'snapshot':
         return Snapshot(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger)
     elif SimulationSettings['Project']['Simulation Type'].lower() == 'qsts':
-        return QSTS(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger)
+        return QSTS(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger, notifier=notifier)
     elif SimulationSettings['Project']['Simulation Type'].lower() == 'dynamic':
         return Dynamic(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger)
     else:

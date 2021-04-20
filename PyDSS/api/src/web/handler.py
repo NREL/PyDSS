@@ -78,10 +78,10 @@ class Handler:
                                             simulation_duration: 0.00020832
                                             simulator_time_resolution: 0.00006944
                                             powerflow_options:
-                                                pydss_project: "C:/Users/KDUWADI/Box/NAERM_project/PyDSSexamples/examples"
-                                                active_project: custom_contols
-                                                active_scenario: base_case
-                                                master_dss_file: "Master_Spohn_existing_VV.dss"
+                                                pydss_project: "C:/Users/KDUWADI/Downloads/PyDSS"
+                                                active_project: project1
+                                                active_scenario: std-2003
+                                                master_dss_file: "Master_2.dss"
                                             name: der_fed
 
                 responses:

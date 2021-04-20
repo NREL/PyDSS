@@ -79,6 +79,7 @@ class OpenDSS:
         for key, path in self._dssPath.items():
             assert (os.path.exists(path)), '{} path: {} does not exist!'.format(key, path)
 
+        self._dssIntance.run_command('vsources.source.yearly=none')
         self._dssInstance.Basic.ClearAll()
         self._dssInstance.utils.run_command('Log=NO')
         run_command('Clear')
@@ -105,7 +106,7 @@ class OpenDSS:
         self._dssClass = self._dssInstance.ActiveClass
         self._dssCommand = run_command
         self._dssSolution = self._dssInstance.Solution
-        self._dssSolver = SolveMode.GetSolver(SimulationSettings=params, dssInstance=self._dssInstance)
+        self._dssSolver = SolveMode.GetSolver(SimulationSettings=params, dssInstance=self._dssInstance, notifier=self.notify)
         self._Modifier = Modifier(self._dssInstance, run_command, params)
         self._UpdateDictionary()
         self._CreateBusObjects()

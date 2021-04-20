@@ -95,10 +95,10 @@
                                         "cosim_uuid": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
                                         "name": "der_fed",
                                         "powerflow_options": {
-                                            "active_project": "custom_contols",
-                                            "active_scenario": "base_case",
-                                            "master_dss_file": "Master_Spohn_existing_VV.dss",
-                                            "pydss_project": "C:/Users/KDUWADI/Box/NAERM_project/PyDSSexamples/examples"
+                                            "active_project": "project1",
+                                            "active_scenario": "std-2003",
+                                            "master_dss_file": "Master_2.dss",
+                                            "pydss_project": "C:/Users/KDUWADI/Downloads/PyDSS"
                                         },
                                         "simulation_duration": 0.00020832,
                                         "simulator_time_resolution": 6.944e-05,
