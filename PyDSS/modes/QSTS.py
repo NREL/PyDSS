@@ -69,6 +69,13 @@ class QSTS(abstact_solver):
                 self.notify(f'Error notifying the voltage > {str(e)}')
 
         self._dssSolution.Solve()
+
+        if self.notify != None:
+            try:
+                self.notify(f"Source voltage just after solving > {self._dssIntance.Vsources.PU()}")
+            except Exception as e:
+                self.notify(f'Error notifying the voltage > {str(e)}')
+
         self._Time = self._Time + timedelta(seconds=self._sStepRes)
         self._Hour = int(self._dssSolution.DblHour() // 1)
         self._Second = (self._dssSolution.DblHour() % 1) * 60 * 60
