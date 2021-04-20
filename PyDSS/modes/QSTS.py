@@ -61,10 +61,9 @@ class QSTS(abstact_solver):
     def IncStep(self):
         #self.__sStepRes = 1/240
         self._dssSolution.StepSize(self._sStepRes)
-        self._dssIntance.run_command('vsources.source.yearly=none')
+        
         if self.notify != None:
             try:
-                self._dssIntance.Vsources.PU(0.98)
                 self.notify(f"Source voltage just before solving > {self._dssIntance.Vsources.PU()}")
             except Exception as e:
                 self.notify(f'Error notifying the voltage > {str(e)}')
