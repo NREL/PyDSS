@@ -79,7 +79,7 @@ class OpenDSS:
         for key, path in self._dssPath.items():
             assert (os.path.exists(path)), '{} path: {} does not exist!'.format(key, path)
 
-        self._dssIntance.run_command('vsources.source.yearly=none')
+        self._dssInstance.run_command('vsources.source.yearly=none')
         self._dssInstance.Basic.ClearAll()
         self._dssInstance.utils.run_command('Log=NO')
         run_command('Clear')
