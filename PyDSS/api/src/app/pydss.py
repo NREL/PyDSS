@@ -77,6 +77,7 @@ class PyDSS:
             params['Helics']['Federate name'] = self.fed_name
             
             # Create PyDSS instance
+            params['Profiles']["Use profile manager"] = False
             self.notify(f"PyDSS scenario > {params['Project']}")
             self.pydss_obj = OpenDSS(params, self.notify)
             export_path = os.path.join(self.pydss_obj._dssPath['Export'], params['Project']['Active Scenario'])

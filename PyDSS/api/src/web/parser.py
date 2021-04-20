@@ -45,6 +45,7 @@ master_dict = {
                  "Pre-configured logging"],
     "MonteCarlo" : ["Number of Monte Carlo scenarios"],
     "Plots" : ["Create dynamic plots", "Open plots in browser"],
+    "Profiles": ["Use profile manager","Profile store path","Profile mapping"]
 }
 
 def bytestream_decode(s):
