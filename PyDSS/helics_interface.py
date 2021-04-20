@@ -238,6 +238,7 @@ class helics_interface:
         return
 
     def updateHelicsPublications(self):
+        
         for element, pub in self._publications.items():
             
             naerm_name = None
@@ -245,6 +246,7 @@ class helics_interface:
             if isnaerm(element):
                 naerm_name = element
                 element = naerm_to_pydss(element)
+            
             
             fed_name, class_name, object_name, ppty_name = element.split('.')
             obj_name = '{}.{}'.format(class_name, object_name)
@@ -259,7 +261,7 @@ class helics_interface:
                     value = message
 
             if self.notify != None:
-                self.notify(f"PyDSS publishing {naerm_name} with a value > {value}")
+                self.notify(f"PyDSS publishing {naerm_name} with a value > {value}, element is >> {element}")
 
             if isinstance(value, list):
                 helics.helicsPublicationPublishVector(pub, value)
