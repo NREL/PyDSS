@@ -1,0 +1,20 @@
+Clear
+
+New Circuit.feeder_p1udt5257-p1uhs21_1247x bus1=p1udt5257-p1uhs21_1247x pu=1.03 basekV=12.47 R1=1e-05 X1=1e-05 R0=1e-05 X0=1e-05
+
+Redirect LineCodes.dss
+Redirect Lines.dss
+Redirect Transformers.dss
+Redirect LoadShapes.dss
+Redirect Loads.dss
+Redirect PVShapes.dss
+Redirect PVSystems.dss
+
+Set Voltagebases=[0.2080002494301389, 0.48, 7.199560000000001, 12.47]
+
+Calcvoltagebases
+
+Buscoords Buscoords.dss
+
+Solve
+
