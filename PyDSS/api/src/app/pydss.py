@@ -72,7 +72,7 @@ class PyDSS:
             params['Project']["Loadshape start time"] = "1/1/2020 00:00:00"
 
             # Making sure delta time is small enough
-            params['Helics']['Time delta'] = 0.1*params['Project']['Step resolution (sec)']
+            params['Helics']['Time delta'] = 0.1*params['Project']['Step resolution (sec)']/60.0
             
             # Update federate name
             params['Helics']['Federate name'] = self.fed_name
