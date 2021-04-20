@@ -66,7 +66,8 @@ class QSTS(abstact_solver):
             try:
                 self._dssIntance.Vsources.First()
                 self.notify(f"Source voltage just before solving > {self._dssIntance.CktElement.VoltagesMagAng()[::2]}")
-                print('Before', self._dssIntance.CktElement.VoltagesMagAng()[::2])
+                self.notify(f"Source voltage just before solving using PU> {self._dssIntance.Vsources.PU()}")
+                #print('Before', self._dssIntance.CktElement.VoltagesMagAng()[::2])
                 #print('element name', self._dssIntance.CktElement.Name())
             except Exception as e:
                 self.notify(f'Error notifying the voltage > {str(e)}')
