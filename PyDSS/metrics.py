@@ -46,7 +46,8 @@ class MetricBase(abc.ABC):
     def add_property(self, prop):
         """Add an instance of ExportListProperty for tracking."""
         if prop.are_names_filtered != self._are_names_filtered:
-            raise InvalidConfiguration(f"All properties for shared elements must have the same filters: {prop.name}.")
+            raise InvalidConfiguration(f"All properties for shared elements must have the same filters: "
+                f"{self._elem_class.__name__} / {prop.name}.")
         existing = self._properties.get(prop.store_values_type)
         if existing is None:
             self._properties[prop.store_values_type] = prop
