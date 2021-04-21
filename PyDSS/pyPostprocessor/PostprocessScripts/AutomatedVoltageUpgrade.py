@@ -118,6 +118,8 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         """Constructor method
         """
         super(AutomatedVoltageUpgrade, self).__init__(project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger)
+        self._simulation = None
+        self._step = None
         if simulationSettings["Project"]["Simulation Type"] != "Snapshot":
             raise InvalidParameter("Upgrade post-processors are only supported on Snapshot simulations")
 
@@ -2384,14 +2386,23 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         plt.savefig(
             os.path.join(self.config["Outputs"], "Cluster_{}_reglocations.pdf".format(str(self.optimal_clusters))))
 
-    def run(self, step, stepMax):
-        """
-        """
-        self.logger.info('Running voltage upgrade post process')
-        has_converged = self.has_converged
-        error = self.error
+    def _run(self):
+        # do all the things that currently happen in the constructor
+        pass
 
-        return step, has_converged, error
-    
+    def run(self, step, stepMax, simulation=None):
+        self.logger.info('Running voltage upgrade post process')
+        self._simulation = simulation
+        self._step = step
+        try:
+            self._run()
+            has_converged = self.has_converged
+            error = self.error
+
+            return step, has_converged, error
+        finally:
+            self._simulation = None
+            self._step = None
+
     def finalize(self):
         pass

@@ -68,7 +68,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         """Constructor method
         """
         super(AutomatedThermalUpgrade, self).__init__(project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger)
-
+        self._simulation = None
+        self._step = None
         self.config["units key"] = ["mi", "kft", "km", "m", "Ft", "in", "cm"]  # Units key for lines taken from OpenDSS
 
         # max limit to the number of iterations for the thermal upgrades algorithm
@@ -1749,16 +1750,24 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.dss_upgrades.append(device_command+"\n")
         return
 
-    def run(self, step, stepMax):
-        """Induces and removes a fault as the simulation runs as per user defined settings.
-        """
+    def _run(self):
+        # do all the things that currently happen in the constructor
+        pass
+
+    def run(self, step, stepMax, simulation=None):
         self.logger.info('Running thermal upgrade post process')
-        has_converged = self.has_converged
-        error = self.error
+        self._simulation = simulation
+        self._step = step
+        try:
+            self._run()
+            has_converged = self.has_converged
+            error = self.error
 
-
-        #step-=1 # uncomment the line if the post process needs to rerun for the same point in time
-        return step, has_converged, error
+            #step-=1 # uncomment the line if the post process needs to rerun for the same point in time
+            return step, has_converged, error
+        finally:
+            self._simulation = None
+            self._step = None
 
     def finalize(self):
         """Method used to combine post processing results from all steps.

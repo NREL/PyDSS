@@ -647,7 +647,7 @@ class EdLiFoControl(AbstractPostprocess):
         self.error = sol.Convergence()
         # This error is fake for now, find how to get this from Opendssdirect
 
-    def run(self, step, stepMax):
+    def run(self, step, stepMax, simulation=None):
         """
         Runs edLiFo
         """

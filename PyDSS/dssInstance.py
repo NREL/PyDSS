@@ -501,7 +501,7 @@ class OpenDSS:
     def _RunPostProcessors(self, step, Steps, postprocessors):
         for postprocessor in postprocessors:
             orig_step = step
-            step, has_converged, error = postprocessor.run(step, Steps)
+            step, has_converged, error = postprocessor.run(step, Steps, simulation=self)
             assert step <= orig_step, "step cannot increment in postprocessor"
             if not has_converged:
                 name = postprocessor.__class__.__name__

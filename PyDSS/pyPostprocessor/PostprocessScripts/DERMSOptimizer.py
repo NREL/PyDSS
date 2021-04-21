@@ -337,7 +337,7 @@ class DERMSOptimizer(AbstractPostprocess):
             bus += ["1", "2", "3"]
         return [f"{bus[0]}.{i}" for i in bus[1:]]
 
-    def run(self, step, stepMax):
+    def run(self, step, stepMax, simulation=None):
         """Induces and removes a fault as the simulation runs as per user defined settings.
         """
         self.logger.info('Running DERMS optimization module')
