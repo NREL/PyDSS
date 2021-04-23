@@ -16,8 +16,6 @@ class Utilidata_Interface(AbstractPostprocess):
         super(Utilidata_Interface, self).__init__(
             project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger
         )
-        #print(dssObjects["Capacitor.cap_487254258"]._Variables)
-        #quit()
         configuration = load_data(inputs["config_file"])
         rootPath = simulationSettings['Project']['Project Path']
         self.root_path = os.path.join(rootPath, simulationSettings['Project']['Active Project'])
@@ -36,6 +34,8 @@ class Utilidata_Interface(AbstractPostprocess):
         self.dssSolver = dssSolver
         self.dss = dssInstance
         self.Logger = Logger
+
+        self.bufferSize = int(self.training_period * 3600 / dssSolver.GetStepSizeSec())
 
         self.logger.info('Creating Utilidata interface')
 
@@ -66,7 +66,6 @@ class Utilidata_Interface(AbstractPostprocess):
             if isControllable:
                 val = obj.GetParameter("kW")
                 return {"lower_bound": 0,"upper_bound": int(val)}
-            pass
         elif obj._Class == "Transformer":
             if isControllable:
                 ntaps = obj.GetParameter("NumTaps") / 2
@@ -89,9 +88,17 @@ class Utilidata_Interface(AbstractPostprocess):
                 values = info["result"][i]
                 if isinstance(values, list):
                     for j, v in enumerate(values):
-                        metadata["metadata"][f"{elm_name}___{ppty}___{j}"] = {"meas_class": ppty}
+                        metadata["metadata"][f"{elm_name}___{ppty}___{j}"] = {
+                            "meas_class": ppty,
+                            "device_id": elm_name,
+                            "feeder_id": "Feeder_1"
+                        }
                 else:
-                    metadata["metadata"][f"{elm_name}___{ppty}"] = {"meas_class": ppty}
+                    metadata["metadata"][f"{elm_name}___{ppty}"] = {
+                        "meas_class": ppty,
+                        "device_id": elm_name,
+                        "feeder_id":  "Feeder_1"
+                    }
         return metadata
 
     def get_measurements(self):
@@ -167,6 +174,12 @@ class Utilidata_Interface(AbstractPostprocess):
 
     def update_training_payload(self):
         time_stamp, results = self.get_measurements()
+        #results["air_temp"] = 35
+        #results["solar_irradiance"] = 1.0
+        #print(results)
+        if len(self.metadata["ts_data"]) == self.bufferSize:
+            tstamps = list(self.metadata["ts_data"].keys())
+            del self.metadata["ts_data"][tstamps[0]]
         self.metadata["ts_data"][time_stamp.isoformat()] = results
         return
 
@@ -242,7 +255,7 @@ class Utilidata_Interface(AbstractPostprocess):
     def get_control_assets(self):
         return
 
-    def submit_init_payload(self):
+    def create_optimization_model(self):
 
         json_object = json.dumps(self.metadata, indent=4)
         fpath = os.path.join(self.root_path, "init_payload.txt")
@@ -251,7 +264,7 @@ class Utilidata_Interface(AbstractPostprocess):
         url = f"https://nrel.utilidatacloud.com/models/build/{self._uuid}"
         headers = {'Content-type': 'application/json'}
         reply = requests.post(url, data=json_object, verify=False, headers=headers)
-
+        print(reply.status_code)
         assert reply.status_code == 204
         self.disable_control_elements()
         return
@@ -271,7 +284,6 @@ class Utilidata_Interface(AbstractPostprocess):
         reply = requests.post(url, data=json_object, verify=False, headers=headers)
         if reply.status_code == 200:
             reply = reply.json()
-            print(reply)
             return reply['recommendations']
         else:
             raise Exception(f"Error optimizing the model.\nReply from the server:\n{reply.text}")
@@ -312,14 +324,14 @@ class Utilidata_Interface(AbstractPostprocess):
 
     def run(self, step, stepMax):
         tstep = self.Solver.GetStepSizeSec() / 3600.0
-        if step * tstep < self.training_period:
-            print("updating traning payload")
-            self.update_training_payload()
+        self.update_training_payload()
+        if step * tstep % self.training_period == 0.0 and step is not 0:
+            self.logger.info("Rebuilding optimization model")
+            self.create_optimization_model()
+            self.training_complete = True
         else:
-            if not self.training_complete:
-                self.submit_init_payload()
-                self.training_complete = True
-            else:
+            if self.training_complete:
+                self.logger.info("Optimizing system state")
                 new_settings = self.submit_operation_payload()
                 self.update_system_states(new_settings)
         return step

@@ -1,8 +1,8 @@
 [Project]
 "Start time" = "2020-07-13 00:00:00.0"
-"Simulation duration (min)" = 43200.0
+"Simulation duration (min)" = 10
 "Loadshape start time" = "2020-07-13 00:00:00.0"
-"Step resolution (sec)" = 900.0
+"Step resolution (sec)" = 60.0
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
 "Control mode" = "Static"
@@ -15,13 +15,13 @@
 "DSS File Absolute Path" = false
 "Return Results" = false
 
-[[Project.Scenarios]]
-name = "base_case"
-post_process_infos = []
-
 #[[Project.Scenarios]]
-#name = "multiple_controls"
+#name = "base_case"
 #post_process_infos = []
+
+[[Project.Scenarios]]
+name = "multiple_controls"
+post_process_infos = []
 
 #[[Project.Scenarios]]
 #name = "self_consumption"

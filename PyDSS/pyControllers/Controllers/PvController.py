@@ -253,9 +253,9 @@ class PvController(ControllerAbstract):
         uDbMin = self.__Settings['uDbMin']
         uDbMax = self.__Settings['uDbMax']
 
-        kVBase =self.__ControlledElm.sBus[0].GetVariable('kVBase') * 1000
+        kVBase =self.__ControlledElm.sBus[0].GetVariable('kVBase', get_object=False) * 1000
 
-        Umag = self.__ControlledElm.GetVariable('VoltagesMagAng')[::2]
+        Umag = self.__ControlledElm.GetVariable('VoltagesMagAng', get_object=False)[::2]
         Umag = [i for i in Umag if i != 0]
         if self.__Settings['VmeaMethod'].lower() == "mean":
             uIn = sum(Umag) / (len(Umag) * kVBase)
@@ -275,9 +275,9 @@ class PvController(ControllerAbstract):
         c1 = self.QlimPU * uDbMin / (uDbMin - uMin)
         c2 = self.QlimPU * uDbMax / (uMax - uDbMax)
 
-        Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))
+        Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers', get_object=False)[::2]))
         Pcalc = Ppv / self.__Srated
-        Qpv = -sum(self.__ControlledElm.GetVariable('Powers')[1::2])
+        Qpv = -sum(self.__ControlledElm.GetVariable('Powers', get_object=False)[1::2])
         Qpv = Qpv / self.__Srated
 
         Qcalc = 0
@@ -297,9 +297,9 @@ class PvController(ControllerAbstract):
 
         if Pcalc > 0:
             if self.__ControlledElm.NumPhases == 2:
-                self.__ControlledElm.SetParameter('kvar', Qcalc * self.__Srated * 1.3905768334328491495461135972974)
+                self.__ControlledElm.SetParameter('kvar', Qcalc * self.__Srated * 1.3905768334328491495461135972974, get_object=False)
             else:
-                self.__ControlledElm.SetParameter('kvar', Qcalc * self.__Srated)
+                self.__ControlledElm.SetParameter('kvar', Qcalc * self.__Srated, get_object=False)
         else:
             pass
 

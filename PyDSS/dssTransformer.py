@@ -63,11 +63,11 @@ class dssTransformer(dssElement):
     def chunk_list(values, nLists):
         return [values[i * nLists:(i + 1) * nLists] for i in range((len(values) + nLists - 1) // nLists)]
 
-    def GetValue(self, VarName, convert=False):
+    def GetValue(self, VarName, convert=False, get_object=True):
         if VarName in self._Variables:
-            VarValue = self.GetVariable(VarName, convert=convert)
+            VarValue = self.GetVariable(VarName, convert=convert, get_object=get_object)
         elif VarName in self._Parameters:
-            VarValue = self.GetParameter(VarName)
+            VarValue = self.GetParameter(VarName, get_object=get_object)
             if convert:
                 if VarName in self.VARIABLE_OUTPUTS_BY_LIST:
                     VarValue = ast.literal_eval(VarValue)

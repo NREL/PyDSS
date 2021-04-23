@@ -319,13 +319,13 @@ class StorageController(ControllerAbstract):
         """
         Pub = self.__Settings['PS_ub']
         Plb = self.__Settings['PS_lb']
-        IdlingkWPercent = float(self.__ControlledElm.GetParameter('%IdlingkW'))
+        IdlingkWPercent = float(self.__ControlledElm.GetParameter('%IdlingkW', get_object=False))
         IdlingkW = -IdlingkWPercent/100*self.__Prated
         if self.__Settings['PowerMeaElem'] == 'Total':
             Sin = self.__dssInstance.Circuit.TotalPower()
             Pin = -sum(Sin[0:5:2])
         else:
-            Sin = self.__ElmObjectList[self.__Settings['PowerMeaElem']].GetVariable('Powers')
+            Sin = self.__ElmObjectList[self.__Settings['PowerMeaElem']].GetVariable('Powers', get_object=False)
             Pin = sum(Sin[0:int(len(Sin)/2):2])
 
         #Pbatt = -float(self.__ControlledElm.GetVariable('Powers')[0])*3 + IdlingkW
@@ -344,14 +344,14 @@ class StorageController(ControllerAbstract):
         if Pbatt >= 0:
             pctdischarge = min(100, Pbatt/ (self.__Prated)* 100)
             pctdischarge = 100 if pctdischarge > 100 else pctdischarge
-            self.__ControlledElm.SetParameter('State', 'DISCHARGING')
-            self.__ControlledElm.SetParameter('%Discharge', str(pctdischarge))
+            self.__ControlledElm.SetParameter('State', 'DISCHARGING', get_object=False)
+            self.__ControlledElm.SetParameter('%Discharge', str(pctdischarge), get_object=False)
 
         elif Pbatt < 0:
             pctcharge = min(100, -Pbatt / (self.__Prated)* 100)
             pctcharge = 100 if pctcharge > 100 else pctcharge
-            self.__ControlledElm.SetParameter('State', 'CHARGING')
-            self.__ControlledElm.SetParameter('%charge', str(pctcharge))
+            self.__ControlledElm.SetParameter('State', 'CHARGING', get_object=False)
+            self.__ControlledElm.SetParameter('%charge', str(pctcharge), get_object=False)
 
 
         Error = abs(Pbatt - self.PbattOld) / self.__Srated
