@@ -23,7 +23,7 @@ class xfmrController(ControllerAbstract):
         self.Time = -1
         self.__Locked = False
         self.__ControlledElm = RegulatorObj
-        self.__ConnTransformerName = 'Transformer.' + self.__ControlledElm.GetParameter('transformer').lower()
+        self.__ConnTransformerName = 'Transformer.' + self.__ControlledElm.GetParameter('transformer', get_object=False).lower()
         self.__ConnTransformer = ElmObjectList[self.__ConnTransformerName]
         self.__ElmObjectList = ElmObjectList
         self.__RPFlocking = Settings['RPF locking']
@@ -49,17 +49,15 @@ class xfmrController(ControllerAbstract):
         elif self.__RPFlocking and self.P_old > 0:
             self.__Locked = self.__DisableLock()
         else:
-           # self.__Locked = self.__EnableLock()
             pass
         self.P_old = P_new
         return 0
 
     def __EnableLock(self):
-        self.__ControlledElm.SetParameter('enabled','False')
+        self.__ControlledElm.SetParameter('enabled','False', get_object=False)
         return True
 
     def __DisableLock(self):
-        self.__ControlledElm.SetParameter('enabled', 'True')
-        #self.__ControlledElm.SetParameter('enabled', 'False')
+        self.__ControlledElm.SetParameter('enabled', 'True', get_object=False)
         return False
 

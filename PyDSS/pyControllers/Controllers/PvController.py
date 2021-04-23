@@ -97,7 +97,7 @@ class PvController(ControllerAbstract):
     def Update(self, Priority, Time, Update):
         self.TimeChange = self.Time != (Priority, Time)
         self.Time = (Priority, Time)
-        Ppv = -sum(self.__ControlledElm.GetVariable('Powers')[::2]) / self.__Prated
+        Ppv = -sum(self.__ControlledElm.GetVariable('Powers', get_object=False)[::2]) / self.__Prated
 
         if self.TimeChange:
             self.itr = 0
@@ -112,7 +112,7 @@ class PvController(ControllerAbstract):
         else:
             if Ppv < self.__cutout:
                 self.__pDisconnected = True
-                self.__ControlledElm.SetParameter('pf', 1)
+                self.__ControlledElm.SetParameter('pf', 1, get_object=False)
                 return 0
         return self.update[Priority]()
 
@@ -124,8 +124,8 @@ class PvController(ControllerAbstract):
         Pmin  = self.__Settings['PminVW'] / 100
 
         uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[::2])
-        Ppv = -sum(self.__ControlledElm.GetVariable('Powers')[::2]) / self.__Srated
-        Qpv = -sum(self.__ControlledElm.GetVariable('Powers')[1::2]) / self.__Srated
+        Ppv = -sum(self.__ControlledElm.GetVariable('Powers', get_object=False)[::2]) / self.__Srated
+        Qpv = -sum(self.__ControlledElm.GetVariable('Powers', get_object=False)[1::2]) / self.__Srated
 
 
         #PpvoutPU = Ppv / self.__Prated
@@ -147,11 +147,11 @@ class PvController(ControllerAbstract):
             dP = (Ppv - Pcalc) * 0.5 / self.__dampCoef + (self.oldPcalc - Ppv) * 0.1 / self.__dampCoef
             Pcalc = Ppv - dP
             self.Pmppt = min(self.Pmppt * Pcalc / Ppv, 100)
-            self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
+            self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt, get_object=False)
             self.pf = math.cos(math.atan(Qpv / Pcalc))
             if Qpv < 0:
                 self.pf = -self.pf
-            self.__ControlledElm.SetParameter('pf', self.pf)
+            self.__ControlledElm.SetParameter('pf', self.pf, get_object=False)
         else:
             dP = 0
 
@@ -165,8 +165,8 @@ class PvController(ControllerAbstract):
         uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[::2])
         uCut = self.__Settings['%UCutoff']
         if uIn >= uCut:
-            self.__ControlledElm.SetParameter('pctPmpp', 0)
-            self.__ControlledElm.SetParameter('pf', 1)
+            self.__ControlledElm.SetParameter('pctPmpp', 0, get_object=False)
+            self.__ControlledElm.SetParameter('pf', 1, get_object=False)
             if self.__vDisconnected:
                 return 0
             else:
@@ -174,8 +174,8 @@ class PvController(ControllerAbstract):
                 return self.__Prated
 
         if self.TimeChange and self.__vDisconnected and uIn < uCut:
-            self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
-            self.__ControlledElm.SetParameter('pf', self.pf)
+            self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt, get_object=False)
+            self.__ControlledElm.SetParameter('pf', self.pf, get_object=False)
             self.__vDisconnected = False
             return self.__Prated
 
@@ -185,14 +185,14 @@ class PvController(ControllerAbstract):
         """Constant power factor implementation
         """
         PFset = self.__Settings['pf']
-        PFact = self.__ControlledElm.GetParameter('pf')
-        Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))/ self.__Srated
-        Qpv = -sum(self.__ControlledElm.GetVariable('Powers')[1::2])/ self.__Srated
+        PFact = self.__ControlledElm.GetParameter('pf', get_object=False)
+        Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers', get_object=False)[::2])) / self.__Srated
+        Qpv = -sum(self.__ControlledElm.GetVariable('Powers', get_object=False)[1::2]) / self.__Srated
 
         if self.__Settings['cpf-priority'] == 'PF':
            # if self.TimeChange:
             Plim = PFset * 100
-            self.__ControlledElm.SetParameter('pctPmpp', Plim)
+            self.__ControlledElm.SetParameter('pctPmpp', Plim, get_object=False)
            # else:
         else:
             if self.__Settings['cpf-priority'] == 'Var':
@@ -206,7 +206,7 @@ class PvController(ControllerAbstract):
                 self.Pmppt = Plim  * self.__Srated
 
         Error = abs(PFset + PFact)
-        self.__ControlledElm.SetParameter('pf', str(-PFset))
+        self.__ControlledElm.SetParameter('pf', str(-PFset), get_object=False)
         return Error
 
     def VPFcontrol(self):
@@ -217,7 +217,7 @@ class PvController(ControllerAbstract):
         PFmin = self.__Settings['pfMin']
         PFmax = self.__Settings['pfMax']
         self.__dssSolver.reSolve()
-        Pcalc = abs(sum(-(float(x)) for x in self.__ControlledElm.GetVariable('Powers')[0::2]) )/ self.__Srated
+        Pcalc = abs(sum(-(float(x)) for x in self.__ControlledElm.GetVariable('Powers', get_object=False)[0::2]) ) / self.__Srated
         if Pcalc > 0:
             if Pcalc < Pmin:
                 PF = PFmax
@@ -230,17 +230,17 @@ class PvController(ControllerAbstract):
         else:
             PF = PFmax
 
-        self.__ControlledElm.SetParameter('irradiance', 1)
-        self.__ControlledElm.SetParameter('pf', str(-PF))
+        self.__ControlledElm.SetParameter('irradiance', 1, get_object=False)
+        self.__ControlledElm.SetParameter('pf', str(-PF), get_object=False)
         self.__dssSolver.reSolve()
 
         for i in range(10):
-            Error = PF + float(self.__ControlledElm.GetParameter('pf'))
+            Error = PF + float(self.__ControlledElm.GetParameter('pf'), get_object=False)
             if abs(Error) < 1E-4:
                 break
-            Pirr = float(self.__ControlledElm.GetParameter('irradiance'))
-            self.__ControlledElm.SetParameter('pf', str(-PF))
-            self.__ControlledElm.SetParameter('irradiance', Pirr * (1 + Error*1.5))
+            Pirr = float(self.__ControlledElm.GetParameter('irradiance'), get_object=False)
+            self.__ControlledElm.SetParameter('pf', str(-PF), get_object=False)
+            self.__ControlledElm.SetParameter('irradiance', Pirr * (1 + Error*1.5), get_object=False)
             self.__dssSolver.reSolve()
 
         return 0
@@ -253,7 +253,7 @@ class PvController(ControllerAbstract):
         uDbMin = self.__Settings['uDbMin']
         uDbMax = self.__Settings['uDbMax']
 
-        kVBase =self.__ControlledElm.sBus[0].GetVariable('kVBase', get_object=False) * 1000
+        kVBase =self.__ControlledElm.sBus[0].GetVariable('kVBase') * 1000
 
         Umag = self.__ControlledElm.GetVariable('VoltagesMagAng', get_object=False)[::2]
         Umag = [i for i in Umag if i != 0]

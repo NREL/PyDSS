@@ -13,14 +13,14 @@ class ThermostaticLoad(ControllerAbstract):
         self.__ControlledElm = LoadObj
         self.dssSolver = dssSolver
 
-        Class, Name = self.__ControlledElm.GetInfo()
-        self.__Name = 'pyCont_' + Class + '_' + Name
+        self.eClass, self.eName = self.__ControlledElm.GetInfo()
+        self.__Name = 'pyCont_' + self.eClass + '_' + self.eName
         self.Tmax = Settings["Tmax"]
         self.Tmin = Settings["Tmin"]
         self.T = random.random() * (self.Tmax - self.Tmin) + self.Tmin
         self.On = True if random.random() > 0.5 else False
-        self.__ControlledElm.SetParameter("kw", Settings["kw"])
-        self.Prated = LoadObj.GetParameter("kw")
+        self.__ControlledElm.SetParameter("kw", Settings["kw"], get_object=False)
+        self.Prated = LoadObj.GetParameter("kw", get_object=False)
 
 
         self.a = 1 / (Settings["R"] * Settings["C"])
@@ -39,7 +39,7 @@ class ThermostaticLoad(ControllerAbstract):
 
     @property
     def ControlledElement(self):
-        return "{}.{}".format(self.Class, self.Name)
+        return "{}.{}".format(self.eClass, self.eName)
 
     def Update(self, Priority, Time, UpdateResults):
         self.TimeChange = self.Time != (Priority, Time)
@@ -58,10 +58,10 @@ class ThermostaticLoad(ControllerAbstract):
 
             if self.T > self.Tmax:
                 self.On = True
-                self.__ControlledElm.SetParameter("kw", self.Prated)
+                self.__ControlledElm.SetParameter("kw", self.Prated, get_object=False)
             elif self.T < self.Tmin:
                 self.On = False
-                self.__ControlledElm.SetParameter("kw", 0)
+                self.__ControlledElm.SetParameter("kw", 0, get_object=False)
 
             self.f.write(f"{Ta},{self.T},{self.On}" + "\n")
         return 0

@@ -51,7 +51,7 @@ class SocketController(ControllerAbstract):
         if self.TimeChange and Priority==0:
             Values = []
             for Variable in self.Inputs:
-                Val =  self.__ControlledElm.GetValue(Variable)
+                Val =  self.__ControlledElm.GetValue(Variable, get_object=False)
                 if isinstance(Val, list):
                     Values.extend(Val)
                 else:
@@ -64,5 +64,5 @@ class SocketController(ControllerAbstract):
                 tag = str(numDoubles) + 'd'
                 Data = list(struct.unpack(tag, Data))
                 for i, Variable in enumerate(self.Outputs):
-                    self.__ControlledElm.SetParameter(Variable, Data[0])
+                    self.__ControlledElm.SetParameter(Variable, Data[0], get_object=False)
         return 0
