@@ -3,7 +3,7 @@ from PyDSS.pyLogger import getLoggerTag
 import logging
 import helics
 import os
-
+import time
 import math
 
 class helics_interface:
@@ -39,7 +39,8 @@ class helics_interface:
         'Frequency': 'double',
         'Taps': 'vector',
         '%stored': 'double',
-        'Distance': 'double'
+        'Distance': 'double',
+        'AllBusMagPu': 'vector'
     }
 
     def __init__(self, dss_solver, objects_by_name, objects_by_class, options, system_paths):
@@ -76,7 +77,8 @@ class helics_interface:
         helics.helicsFederateInfoSetBroker(self.fedinfo, self._options['Helics']['Broker'])
         helics.helicsFederateInfoSetCoreName(self.fedinfo, self._options['Helics']['Federate name'])
         helics.helicsFederateInfoSetCoreTypeFromString(self.fedinfo, self._options['Helics']['Core type'])
-        helics.helicsFederateInfoSetCoreInitString(self.fedinfo, f"--federates=1")
+        helics.helicsFederateInfoSetCoreInitString(self.fedinfo, f"--federates=1 --timeout=60min")
+        helics.helicsFederateInfoSetFlagOption(self.fedinfo, 72, 0) # set terminate_on_error to false
         if 'Broker' in self._options['Helics']:
             helics.helicsFederateInfoSetBroker(self.fedinfo, self._options['Helics']['Broker'])
         #helics.helicsFederateInfoSetBroker(self.fedinfo, self._options['Helics']['Broker'])
@@ -86,11 +88,12 @@ class helics_interface:
         helics.helicsFederateInfoSetIntegerProperty(self.fedinfo, helics.helics_property_int_log_level,
                                                 self._options['Helics']['Helics logging level'])
 
-        helics.helicsFederateInfoSetFlagOption(self.fedinfo, helics.helics_flag_uninterruptible, True)
+        #helics.helicsFederateInfoSetFlagOption(self.fedinfo, helics.helics_flag_uninterruptible, True)
         helics.helicsFederateInfoSetIntegerProperty(self.fedinfo, helics.helics_property_int_max_iterations,
                                                     self._options["Helics"]["Max co-iterations"])
+        print(f'federate info setup with {self.fedinfo}')
         self._PyDSSfederate = helics.helicsCreateValueFederate(self._options['Helics']['Federate name'], self.fedinfo)
-
+        print('federate created')
 
         return
 
@@ -104,6 +107,7 @@ class helics_interface:
         )
         self._subscriptions = {}
         self._subscription_dState = {}
+        print('Registering federate subscriptions')
         for element, subscription in self._sub_file_reader.SubscriptionList.items():
             assert element in self._objects_by_element, '"{}" listed in the subscription file not '.format(element) +\
                                                      "available in PyDSS's master object dictionary."
@@ -149,9 +153,12 @@ class helics_interface:
                         print(f'voltage {value} continuing with nominal')
                         value = 1.0
                     elif element_name.startswith('Load.load') and self._options['Helics']['Iterative Mode'] and (abs(value)>10e20 or math.isnan(value) or value=='nan'):
-                        self._logger.debug('load {value} at time {self.c_seconds} iterationi {self.itr}, continuing with 0 load.')
-                        print(f'load {element_name} = {value}, conitinuing with 0 load.') 
-                        value = 0.0
+
+                        new_value = 0.0#0.2/(self.itr+1)
+                        self._logger.debug('load {value} at time {self.c_seconds} iterationi {self.itr}, continuing with new_value load.')
+                        print(f'load {element_name} = {value}, waiting for updated value, solving with 0.0.') 
+                        value = new_value
+                        time.sleep(1)
                     dssElement = self._objects_by_element[element_name]
                     dssElement.SetParameter(sub_info['Property'], value)
                     print(f'Value for {element_name}.{sub_info["Property"]} changed to {value}')
@@ -171,6 +178,7 @@ class helics_interface:
         self.c_seconds_old = self.c_seconds
 
     def _registerFederatePublications(self):
+        print('registering federate publications')
         self._file_reader = pyExportReader(
             os.path.join(
                 self._system_paths ["ExportLists"],
@@ -190,6 +198,8 @@ class helics_interface:
                     ''
                 )
                 self._logger.info(f'Publication registered: {name}')
+                print(f"Publication registered: {name}")
+        print('Publications registered')
         return
 
     def updateHelicsPublications(self):
@@ -214,7 +224,7 @@ class helics_interface:
     def request_time_increment(self, step=1):
         error = sum([abs(x[0] - x[1]) for k, x in self._subscription_dState.items()])
         r_seconds = self._dss_solver.GetTotalSeconds() #- self._dss_solver.GetStepResolutionSeconds()
-        if not self._options['Helics']['Iterative Mode'] or error<0.0001 or step==0:
+        if not self._options['Helics']['Iterative Mode'] or error<0.0001 or step==0:    
             while self.c_seconds < r_seconds:
                 self.c_seconds = helics.helicsFederateRequestTime(self._PyDSSfederate, r_seconds)
             self._logger.info('Time requested: {} - time granted: {} '.format(r_seconds, self.c_seconds))

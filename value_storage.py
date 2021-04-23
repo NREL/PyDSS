@@ -340,6 +340,7 @@ class ValueByLabel(ValueStorageBase):
                     label += " " + units[0]
                     self._labels.append(label)
                     self._value += [complex(x[0], x[1])]
+                #elif units[0] == '[pu]'
                 else:
                     # TODO: only generate labels once.
                     # Should be able to do that with an existing instance.
