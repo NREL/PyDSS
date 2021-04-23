@@ -92,7 +92,6 @@ class Reports:
         filenames = []
         for name in self._report_names:
             report = REPORTS[name](self._results, self._report_options)
-            print(name, report)
             filename = report.generate(self._output_dir)
             filenames.append(filename)
 

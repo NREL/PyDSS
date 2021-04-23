@@ -19,8 +19,8 @@ class ThermostaticLoad(ControllerAbstract):
         self.Tmin = Settings["Tmin"]
         self.T = random.random() * (self.Tmax - self.Tmin) + self.Tmin
         self.On = True if random.random() > 0.5 else False
-        self.__ControlledElm.SetParameter("kw", Settings["kw"], get_object=False)
-        self.Prated = LoadObj.GetParameter("kw", get_object=False)
+        self.__ControlledElm.SetParameter("kw", Settings["kw"])
+        self.Prated = LoadObj.GetParameter("kw")
 
 
         self.a = 1 / (Settings["R"] * Settings["C"])
@@ -58,10 +58,10 @@ class ThermostaticLoad(ControllerAbstract):
 
             if self.T > self.Tmax:
                 self.On = True
-                self.__ControlledElm.SetParameter("kw", self.Prated, get_object=False)
+                self.__ControlledElm.SetParameter("kw", self.Prated)
             elif self.T < self.Tmin:
                 self.On = False
-                self.__ControlledElm.SetParameter("kw", 0, get_object=False)
+                self.__ControlledElm.SetParameter("kw", 0)
 
             self.f.write(f"{Ta},{self.T},{self.On}" + "\n")
         return 0

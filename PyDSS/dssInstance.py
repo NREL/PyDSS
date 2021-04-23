@@ -178,7 +178,6 @@ class OpenDSS:
                                                   self._dssInstance, self._dssSolver)
                 if Controller != -1:
                     controller_name = 'Controller.' + ElmName
-                    print(controller_name)
                     self._pyControls[controller_name] = Controller
                     class_name, element_name = Controller.ControlledElement().split(".")
                     if controller_name not in self._pyControls_types:
@@ -267,27 +266,7 @@ class OpenDSS:
                             }
                             json_object = json.dumps(errorTag)
                             self._reportsLogger.warning(json_object)
-                #print(element_name, controller_name)
                 elm = self._dssInstance.ActiveClass.Next()
-        # quit()
-        #
-        #
-        # for controller in self._pyControls.values():
-        #     error = controller.Update(Priority, Time, UpdateResults)
-        #     print(f"{controller.ControlledElement()} {controller._ControlledElm.GetVariable('VoltagesMagAng')[::2]}")
-        #     maxError = error if error > maxError else maxError
-        #     if Iteration == self._Options['Project']['Max Control Iterations'] - 1:
-        #         if error > self._Options['Project']['Error tolerance']:
-        #             errorTag = {
-        #                     "Report": "Convergence",
-        #                     "Time": self._dssSolver.GetTotalSeconds(),
-        #                     "Controller": controller.Name(),
-        #                     "Controlled element": controller.ControlledElement(),
-        #                     "Error": error,
-        #                     "Control algorithm": controller.debugInfo()[Priority],
-        #             }
-        #             json_object = json.dumps(errorTag)
-        #             self._reportsLogger.warning(json_object)
         return maxError < self._Options['Project']['Error tolerance'], maxError
 
     def _CreateBusObjects(self):

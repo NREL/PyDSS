@@ -158,17 +158,17 @@ class Registry:
 
     def show_controllers(self):
         """Show the registered controllers."""
-        print("PyDSS Controllers:")
+        logger.debug("PyDSS Controllers:")
         for controller_type in self._controllers:
-            print(f"Controller Type:  {controller_type}")
+            logger.debug(f"Controller Type:  {controller_type}")
             controllers = list(self._controllers[controller_type].values())
             if controllers:
                 for controller in controllers:
                     name = controller["name"]
                     filename = controller["filename"]
-                    print(f"  {name}:  {filename}")
+                    logger.debug(f"  {name}:  {filename}")
             else:
-                print(f"  None")
+                logger.debug(f"  None")
 
     def unregister_controller(self, controller_type, name):
         """Unregisters a controller.

@@ -42,8 +42,6 @@ class QSTS(solver_base):
         if mode.lower() == 'yearly':
             self._dssSolution.Mode(2)
             self._dssSolution.DblHour(self._Hour + self._Second / 3600.0)
-            # self._dssSolution.Hour(self._Hour)
-            # self._dssSolution.Seconds(self._Second)
             self._dssSolution.Number(1)
             self._dssSolution.StepSize(self._sStepRes)
             self._dssSolution.MaxControlIterations(self.Settings['Project']['Max Control Iterations'])

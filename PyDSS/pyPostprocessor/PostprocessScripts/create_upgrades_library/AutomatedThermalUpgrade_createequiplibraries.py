@@ -1,12 +1,14 @@
 #**Authors:**
 # Akshay Kumar Jain; Akshay.Jain@nrel.gov
-
-import json
+from PyDSS.exceptions import InvalidParameter
 import opendssdirect as dss
-import os
+import logging
 import time
+import json
+import os
 
 # Functionality to read both linecodes and line geometries added
+logger = logging.getLogger(__name__)
 
 class create_upgrades_library():
     def __init__(self, Settings):
@@ -49,10 +51,10 @@ class create_upgrades_library():
                     else:
                         continue
         end_t = time.time()
-        print(end_t-start_t)
+        logger.debug(end_t-start_t)
         self.write_to_json(self.avail_line_upgrades,"Line_upgrades_library")
         self.write_to_json(self.avail_xfmr_upgrades, "Transformer_upgrades_library")
-        print("")
+        logger.debug("")
 
     def write_to_json(self, dict, file_name):
         with open("{}.json".format(file_name), "w") as fp:
@@ -63,9 +65,9 @@ class create_upgrades_library():
         dss.run_command("Clear")
         dss.Basic.ClearAll()
         Master_file = os.path.join(self.Settings["Feeder_path"],self.folders,self.sub_folder,self.feeder,"Master.dss")
-        print(Master_file)
+        logger.debug(Master_file)
         if not os.path.exists(Master_file):
-            print("error {} does not exist".format(Master_file))
+            logger.debug("error {} does not exist".format(Master_file))
             self.break_flag=1
 
         if self.break_flag==0:
@@ -82,7 +84,7 @@ class create_upgrades_library():
                 self.sol.Solve()
             except:
                 self.break_flag==1
-                print("here")
+                logger.debug("here")
 
 
     def determine_available_line_upgrades(self):
@@ -100,7 +102,6 @@ class create_upgrades_library():
                     # dss.Circuit.SetActiveClass("linegeometry")
                     # flag = dss.ActiveClass.First()
                     # while flag>0:
-                    #     print(dss.ActiveClass.Name(),dss.Properties.Value("wire"),dss.Properties.Value("cncable"),dss.Properties.Value("tscable"))
                     #     flag = dss.ActiveClass.Next()
                 phases = dss.Lines.Phases()
                 # TODO change this to properties
@@ -178,11 +179,11 @@ class create_upgrades_library():
                 per_losses.append(dss.Properties.Value("%noloadloss"))
                 per_losses.append(dss.Properties.Value("%loadloss"))
                 if per_losses[0]>per_losses[1]:
-                    print("For DT {}, %noloadloss is greater than %loadloss {}, continuing...".format(xfmr_name,
+                    logger.debug("For DT {}, %noloadloss is greater than %loadloss {}, continuing...".format(xfmr_name,
                                                                                                               per_losses))
                 for i in wdg_kva_list:
                     if i!=wdg_kva_list[0]:
-                        print(" DT {} will not be considered as a upgrade option as the kVA values of its" \
+                        logger.debug(" DT {} will not be considered as a upgrade option as the kVA values of its" \
                               " windings do not match {}".format(xfmr_name,wdg_kva_list))
                         ignore_upgrade = 1
                         break
@@ -249,7 +250,7 @@ class create_upgrades_library():
                 if not dss.Transformers.Next()>0:
                     break
         except:
-            print("xfmr")
+            logger.debug("xfmr")
             pass
         return
 

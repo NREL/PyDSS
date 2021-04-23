@@ -29,11 +29,10 @@ class FaultController(ControllerAbstract):
         self.__FaultEnabled = False
         self.__Settings = Settings
         nPhases = len(Settings['Bus1'].split('.')) - 1
-        FaultObj.SetParameter('bus1', Settings['Bus1'], get_object=False)
-        FaultObj.SetParameter('bus2', Settings['Bus2'], get_object=False)
-        FaultObj.SetParameter('phases', nPhases, get_object=False)
-        FaultObj.SetParameter('r', Settings['Fault resistance'], get_object=False)
-        print(FaultObj, Settings, nPhases)
+        FaultObj.SetParameter('bus1', Settings['Bus1'])
+        FaultObj.SetParameter('bus2', Settings['Bus2'])
+        FaultObj.SetParameter('phases', nPhases)
+        FaultObj.SetParameter('r', Settings['Fault resistance'])
         Class, Name = self.__FaultObj.GetInfo()
         assert (Class.lower() == 'fault'), 'FaultController works only with an OpenDSS Fault element'
         self.__Name = 'pyCont_' + Class + '_' + Name
@@ -46,15 +45,13 @@ class FaultController(ControllerAbstract):
         """Induces and removes a fault as the simulation runs as per user defined settings. 
         """
         time = self.__dssSolver.GetTotalSeconds() - self.__dssSolver.GetStepSizeSec()
-        self.__FaultObj.SetParameter('enabled', 'yes', get_object=False)
+        self.__FaultObj.SetParameter('enabled', 'yes')
         if time >= self.__Settings['Fault start time (sec)'] and time < self.__Settings['Fault end time (sec)'] and\
             self.__FaultEnabled==False:
-            self.__FaultObj.SetParameter('enabled', 'yes', get_object=False)
+            self.__FaultObj.SetParameter('enabled', 'yes')
             self.__FaultEnabled = True
-            print(f"Fault enabled at time: {time}")
         elif time >= self.__Settings['Fault end time (sec)'] and self.__FaultEnabled==True:
-            self.__FaultObj.SetParameter('enabled', 'no', get_object=False)
-            print(f"Fault disabled at time: {time}")
+            self.__FaultObj.SetParameter('enabled', 'no')
             self.__FaultEnabled = False
         return 0
         

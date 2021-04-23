@@ -45,11 +45,11 @@ class ProfileManager(BaseProfileManager):
         record = C.find({"date": {"$exists" : 1}})
         count = record.count()
         posts = []
-        print("Count: ", count)
+        self.logger.debug("Count: ", count)
         for i in range(count):
             total_load = {}
             profile_data = record.next()
-            print(profile_data["date"])
+            self.logger.debug(profile_data["date"])
             time = profile_data["date"]
             total_load["_id"] = ObjectId()
             total_load["date"] = time
@@ -66,8 +66,7 @@ class ProfileManager(BaseProfileManager):
                             total_load[var][load_name] += val
             posts.append(total_load)
             C.insert(total_load)
-        #C.insert_many(posts)
-        print("Insert successful")
+        self.logger.debug("Insert successful")
 
 
     def setup_profiles(self):
@@ -87,7 +86,6 @@ class ProfileManager(BaseProfileManager):
                         model_found = False
                         for model_name, model in self.Objects.items():
                             if collection in model_name and profile_name in model_name:
-                                #print(collection, property, profile_name, model_name)
                                 profile_dict[profile_name].append(model_name)
                                 model_found = True
                                 break
@@ -107,7 +105,7 @@ class ProfileManager(BaseProfileManager):
         pass
 
     def update(self):
-        print(self.solver.GetDateTime())
+        self.logger.debug(self.solver.GetDateTime())
         for collection in self.collections:
             C = self.db[collection]
             record = C.find({"aggregated": {"$exists": 1}, 'date': self.solver.GetDateTime()})

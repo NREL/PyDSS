@@ -419,10 +419,7 @@ class DERMS:
 
         # compute x1, mu1
         x1 = np.concatenate([x0[:NPV] - stepsize_xp * gradient[:NPV], x0[NPV:] - stepsize_xq * gradient[NPV:]])
-        #print('solved: '+str(sum(x1[0:NPV]))+','+str(sum(x1[NPV:]))) # in kW/kVar
         [x1, Pmax_allPV, Qmax_allPV] = project_PV(x1, PV_Pmax_forecast, PV_inverter_size)
-        #print('Available P = '+str(Pmax_allPV)+' , Available Q = '+str(Qmax_allPV))
-        #print('projected: ' + str(sum(x1[0:NPV])) + ',' + str(sum(x1[NPV:])))  # in kW/kVar
         x1 = np.array([round(ii, 5) for ii in x1])
 
         mu_Vmag_lower1 = mu_Vmag_lower0 + stepsize_mu * (Vlower - np.array(Vmes))

@@ -55,12 +55,12 @@ class PvVoltageRideThru(ControllerAbstract):
             self.Phase = None
 
         # Initializing the model
-        PvObj.SetParameter('kvar', 0, get_object=False)
+        PvObj.SetParameter('kvar', 0)
         #self.__BaseKV = float(PvObj.SetParameter('kv',Settings['kV']))
-        self.__Srated = float(PvObj.SetParameter('kva', Settings['kVA'], get_object=False))
-        self.__Prated = float(PvObj.SetParameter('kW', Settings['maxKW'], get_object=False))
-        self.__minQ = float(PvObj.SetParameter('minkvar', -Settings['KvarLimit'], get_object=False))
-        self.__maxQ = float(PvObj.SetParameter('maxkvar', Settings['KvarLimit'], get_object=False))
+        self.__Srated = float(PvObj.SetParameter('kva', Settings['kVA']))
+        self.__Prated = float(PvObj.SetParameter('kW', Settings['maxKW']))
+        self.__minQ = float(PvObj.SetParameter('minkvar', -Settings['KvarLimit']))
+        self.__maxQ = float(PvObj.SetParameter('maxkvar', Settings['KvarLimit']))
 
         # MISC settings
         self.__cutin = Settings['%PCutin']
@@ -173,9 +173,9 @@ class PvVoltageRideThru(ControllerAbstract):
             self.__faultCounterMax = 3
             self.__faultCounterClearingTimeSec = 5
 
-        self._ControlledElm.SetParameter('Model', '7', get_object=False)
-        self._ControlledElm.SetParameter('Vmaxpu', V[0], get_object=False)
-        self._ControlledElm.SetParameter('Vminpu', V[1], get_object=False)
+        self._ControlledElm.SetParameter('Model', '7')
+        self._ControlledElm.SetParameter('Vmaxpu', V[0])
+        self._ControlledElm.SetParameter('Vminpu', V[1])
 
         ContineousPoints = [Point(V[0], 0), Point(V[0], tMax), Point(V[1], tMax), Point(V[1], 0)]
         ContineousRegion = Polygon([[p.y, p.x] for p in ContineousPoints])
@@ -257,7 +257,6 @@ class PvVoltageRideThru(ControllerAbstract):
         """
         if uIn < 0.88:
             if self.__isConnected:
-                print(f"PV {self.ControlledElement()} has tripped")
                 self.__Trip(30.0, 0.4, False)
         return
 
@@ -298,7 +297,7 @@ class PvVoltageRideThru(ControllerAbstract):
 
     def __Connect(self):
         if not self.__isConnected:
-            uIn = self._ControlledElm.GetVariable('VoltagesMagAng', get_object=False)[::2]
+            uIn = self._ControlledElm.GetVariable('VoltagesMagAng')[::2]
             uBase = self._ControlledElm.sBus[0].GetVariable('kVBase') * 1000
             uIn = max(uIn) / uBase if self.__UcalcMode == 'Max' else sum(uIn) / (uBase * len(uIn))
             if self.useAvgVoltage:
@@ -307,20 +306,20 @@ class PvVoltageRideThru(ControllerAbstract):
                 uIn = sum(self.voltage) / len(self.voltage)
             deadtime = (self.__dssSolver.GetDateTime() - self.__TrippedStartTime).total_seconds()
             if uIn < self.__rVs[0] and uIn > self.__rVs[1] and deadtime >= self.__TrippedDeadtime:
-                self._ControlledElm.SetParameter('enabled', True, get_object=False)
+                self._ControlledElm.SetParameter('enabled', True)
                 self.__isConnected = True
-                self._ControlledElm.SetParameter('kw', 0, get_object=False)
+                self._ControlledElm.SetParameter('kw', 0)
                 self.__ReconnStartTime = self.__dssSolver.GetDateTime()
         else:
             conntime = (self.__dssSolver.GetDateTime() - self.__ReconnStartTime).total_seconds()
             self.__Plimit = conntime / self.__TrippedPmaxDelay * self.__Prated if conntime < self.__TrippedPmaxDelay \
                 else self.__Prated
-            self._ControlledElm.SetParameter('kw', self.__Plimit, get_object=False)
+            self._ControlledElm.SetParameter('kw', self.__Plimit)
         return self.__isConnected
 
     def __Trip(self, Deadtime, Time2Pmax, forceTrip):
         if self.__isConnected or forceTrip:
-            self._ControlledElm.SetParameter('enabled', False, get_object=False)
+            self._ControlledElm.SetParameter('enabled', False)
             self.__isConnected = False
             self.__TrippedStartTime = self.__dssSolver.GetDateTime()
             self.__TrippedPmaxDelay = Time2Pmax
@@ -328,7 +327,7 @@ class PvVoltageRideThru(ControllerAbstract):
         return
 
     def __UpdateViolatonTimers(self):
-        uIn = self._ControlledElm.GetVariable('VoltagesMagAng', get_object=False)[::2]
+        uIn = self._ControlledElm.GetVariable('VoltagesMagAng')[::2]
         uBase = self._ControlledElm.sBus[0].GetVariable('kVBase') * 1000
         uIn = max(uIn) / uBase if self.__UcalcMode == 'Max' else sum(uIn) / (uBase * len(uIn))
         if self.useAvgVoltage:

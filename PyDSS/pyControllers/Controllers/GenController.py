@@ -109,8 +109,8 @@ class GenController(ControllerAbstract):
         c1 = self.QlimPU * uDbMin / (uDbMin - uMin)
         c2 = self.QlimPU * uDbMax / (uMax - uDbMax)
 
-        phases = int(self.__ControlledElm.GetParameter('phases', get_object=False))
-        S = self.__ControlledElm.GetVariable('Powers', get_object=False)[: 2*phases]
+        phases = int(self.__ControlledElm.GetParameter('phases'))
+        S = self.__ControlledElm.GetVariable('Powers')[: 2*phases]
         Ppv = abs(sum(S[::2]))
         Pcalc = Ppv / self.__Srated
         Qpv = -sum(S[1::2])
@@ -143,6 +143,6 @@ class GenController(ControllerAbstract):
         elif Priority == 'Watt':
             Qlim = (1 - Ppv/self.__Prated ** 2) ** 0.5
 
-        self.__ControlledElm.SetParameter('kW', self.__Prated * Plim, get_object=False)
-        self.__ControlledElm.SetParameter('kvar', self.__Srated * Qcalc, get_object=False)
+        self.__ControlledElm.SetParameter('kW', self.__Prated * Plim)
+        self.__ControlledElm.SetParameter('kvar', self.__Srated * Qcalc)
         return abs(dQ)

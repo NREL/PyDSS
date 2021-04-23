@@ -54,15 +54,15 @@ class dssObjectBase(abc.ABC):
         if get_object:
             self.SetActiveObject()
         if VarName in self._Variables:
-            VarValue = self.GetVariable(VarName, convert=convert, get_object=get_object)
+            VarValue = self.GetVariable(VarName, convert=convert)
         else:
             VarValue = -1
         return VarValue
 
-    def GetVariable(self, VarName, convert=False, get_object=True):
+    def GetVariable(self, VarName, convert=False):
         if VarName not in self._Variables:
             raise InvalidParameter(f'{VarName} is an invalid variable name for element {self._FullName}')
-        if get_object:
+        if self._dssInstance.Element.Name() != self._FullName:
             self.SetActiveObject()
         func = self._Variables[VarName]
         if func is None:
@@ -99,8 +99,8 @@ class dssObjectBase(abc.ABC):
     def Name(self):
         return self._Name
 
-    def SetVariable(self, VarName, Value, get_object=True):
-        if get_object:
+    def SetVariable(self, VarName, Value):
+        if self._dssInstance.Element.Name() != self._FullName:
             self.SetActiveObject()
         if VarName not in self._Variables:
             raise InvalidParameter(f"invalid variable name {VarName}")

@@ -160,9 +160,7 @@ class ResultData:
 
     def UpdateResults(self):
         self.CurrentResults.clear()
-
         timestamp = self._dss_solver.GetDateTime().timestamp()
-        print(self._dss_solver.GetDateTime(), timestamp)
         self._time_dataset.write_value(timestamp)
         self._frequency_dataset.write_value(self._dss_solver.getFrequency())
         self._mode_dataset.write_value(self._dss_solver.getMode())
@@ -222,7 +220,6 @@ class ResultData:
 
     def _export_dataframe(self, df, basename):
         filename = basename + "." + self._export_format
-        print(df)
         write_dataframe(df, filename, compress=self._export_compression)
         self._logger.info("Exported %s", filename)
 

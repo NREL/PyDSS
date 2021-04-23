@@ -144,8 +144,6 @@ class Utilidata_Interface(AbstractPostprocess):
             dvdT = dV / ntaps
             tap = obj.GetParameter("Tap")
             tap_int = int(round((tap - 1) / dvdT))
-            # print(tap, minTap, maxTap,dV, dvdT,tap_int)
-            # quit()
             res = tap_int
         elif ppty == "SWING_V" or ppty == "PRIMARY_V":
             res = obj.GetVariable("VoltagesMagAng")
@@ -174,9 +172,6 @@ class Utilidata_Interface(AbstractPostprocess):
 
     def update_training_payload(self):
         time_stamp, results = self.get_measurements()
-        #results["air_temp"] = 35
-        #results["solar_irradiance"] = 1.0
-        #print(results)
         if len(self.metadata["ts_data"]) == self.bufferSize:
             tstamps = list(self.metadata["ts_data"].keys())
             del self.metadata["ts_data"][tstamps[0]]
@@ -264,7 +259,6 @@ class Utilidata_Interface(AbstractPostprocess):
         url = f"https://nrel.utilidatacloud.com/models/build/{self._uuid}"
         headers = {'Content-type': 'application/json'}
         reply = requests.post(url, data=json_object, verify=False, headers=headers)
-        print(reply.status_code)
         assert reply.status_code == 204
         self.disable_control_elements()
         return
