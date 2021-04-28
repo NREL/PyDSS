@@ -21,16 +21,18 @@ class ProfileManager(BaseProfileManager):
         usersettings = options["Profiles"]['settings']
 
         self.client = MongoClient(self.basepath, username=usersettings["username"], password=usersettings["password"])
+        self.db_name = usersettings["database"]
         self.db = self.client[usersettings["database"]]
         self.collections = self.db.collection_names()
-
-        #self.one_Time_fix()
+        self.mapping = usersettings["mapping"]
+        #self.one_Time_fix(usersettings['collection'])
         self.setup_profiles()
         #quit()
         pass
 
-    def one_Time_fix(self):
-        C = self.db["Load"]
+    def one_Time_fix(self, collection_name):
+        self.logger.info("Creating aggregated load profiles")
+        C = self.db[collection_name]
         cursor = C.find({"name": "customer_metadata"})
         customer_metadata = cursor.next()
         i = 0
@@ -45,11 +47,10 @@ class ProfileManager(BaseProfileManager):
         record = C.find({"date": {"$exists" : 1}})
         count = record.count()
         posts = []
-        self.logger.debug("Count: ", count)
+        self.logger.info(f"Count: {count}")
         for i in range(count):
             total_load = {}
             profile_data = record.next()
-            self.logger.debug(profile_data["date"])
             time = profile_data["date"]
             total_load["_id"] = ObjectId()
             total_load["date"] = time
@@ -66,13 +67,17 @@ class ProfileManager(BaseProfileManager):
                             total_load[var][load_name] += val
             posts.append(total_load)
             C.insert(total_load)
+            self.logger.info(f"Percentage complete: {(i+1)/count*100.0}")
         self.logger.debug("Insert successful")
 
-
     def setup_profiles(self):
-        for collection in self.collections:
-            C = self.db[collection]
-            record = C.find({"aggregated": {"$exists" : 1}})
+        for element_name, collection_name in self.mapping.items():
+            if collection_name not in self.collections:
+                raise Exception(f"{collection_name} is not a valid collection for database {self.db_name}")
+            self.logger.info(f"Reading collection: {collection_name}")
+        #for collection in self.collections:
+            C = self.db[collection_name]
+            record = C.find({"date": {"$exists" : 1}})
             profile_data = record.next()
             profile_data.pop('_id', None)
             profile_data.pop('date', None)
@@ -85,16 +90,16 @@ class ProfileManager(BaseProfileManager):
                             profile_dict[profile_name] = []
                         model_found = False
                         for model_name, model in self.Objects.items():
-                            if collection in model_name and profile_name in model_name:
+                            if element_name in model_name and profile_name in model_name:
                                 profile_dict[profile_name].append(model_name)
                                 model_found = True
                                 break
                         if not model_found:
-                            self.logger.warning(f"Profile {profile_name} could not be mapped to any element of type {collection} in the OpenDSS model")
+                            self.logger.warning(f"Profile {profile_name} could not be mapped to any element of type {collection_name} in the OpenDSS model")
                     for profile_name, model_list in profile_dict.items():
-                        self.Profiles[f"{collection}.{profile_name}.{property}"] = Profile(
+                        self.Profiles[f"{element_name}.{profile_name}.{property}"] = Profile(
                                         self.sim_instance,
-                                        (collection, profile_name, property),
+                                        (collection_name, element_name, profile_name, property),
                                         [self.Objects[x] for x in model_list],
                                         self.solver,
                                         None,
@@ -102,13 +107,11 @@ class ProfileManager(BaseProfileManager):
                                         **self.kwargs
                                     )
 
-        pass
-
     def update(self):
         self.logger.debug(self.solver.GetDateTime())
-        for collection in self.collections:
-            C = self.db[collection]
-            record = C.find({"aggregated": {"$exists": 1}, 'date': self.solver.GetDateTime()})
+        for element_name, collection_name in self.mapping.items():
+            C = self.db[collection_name]
+            record = C.find({'date': self.solver.GetDateTime()})
             if not record.count():
                 self.logger.warning(f"No record found for time period {self.solver.GetDateTime()} in the database")
             else:
@@ -117,9 +120,6 @@ class ProfileManager(BaseProfileManager):
                 profile_data.pop('date', None)
                 for profile in self.Profiles:
                     self.Profiles[profile].update(profile_data)
-
-
-
         pass
 
 class Profile(BaseProfile):
@@ -132,8 +132,7 @@ class Profile(BaseProfile):
 
     def __init__(self, sim_instance, dataset, devices, solver, mapping_dict, logger, **kwargs):
         super(Profile, self).__init__(sim_instance, dataset, devices, solver, mapping_dict, logger, **kwargs)
-        self.class_name, self.profile_name, self.property = self.dataset
-        pass
+        self.collection_name, self.class_name, self.profile_name, self.property = self.dataset
 
     def update_profile_settings(self):
         pass

@@ -21,11 +21,11 @@ class create_upgrades_library():
         #self.avail_folders = self.Settings["Test_folders"]
         self.avail_folders = [f for f in os.listdir(os.path.join(self.Settings["Feeder_path"]))]
         for self.folders in self.avail_folders:
-            self.sub_folders = [f for f in os.listdir(os.path.join(self.Settings["Feeder_path"],self.folders))]
+            self.sub_folders = [f for f in os.listdir(os.path.join(self.Settings["Feeder_path"], self.folders))]
             self.del_folders = []
             for fold in self.sub_folders:
                 fold_end = fold.split(".")[-1]
-                fold_end = "."+fold_end
+                fold_end = "." + fold_end
                 if fold_end in self.Settings["file types"]:
                     self.del_folders.append(fold)
             for fold in self.del_folders:
@@ -257,8 +257,8 @@ class create_upgrades_library():
 if __name__ == "__main__":
     Settings = {
         "Feeder_path"   : r"C:\Documents_NREL\Grid_Cost_DER_PhaseII\Control_device_placement\inputs",
-        "Test_folders"  : ["J","B"],
-        "file types"    : [".dss",".txt",".png"],
+        "Test_folders"  : ["J", "B"],
+        "file types"    : [".dss", ".txt", ".png"],
         "ignore folder" : "DEAD"
     }
     data = create_upgrades_library(Settings)

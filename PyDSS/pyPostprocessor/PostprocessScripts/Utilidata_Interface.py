@@ -1,5 +1,8 @@
 from PyDSS.pyPostprocessor.pyPostprocessAbstract import AbstractPostprocess
 from PyDSS.utils.utils import load_data
+from datetime import timedelta
+import opendssdirect as dss
+import random as rdm
 import requests
 import json
 import ast
@@ -36,6 +39,13 @@ class Utilidata_Interface(AbstractPostprocess):
         self.Logger = Logger
 
         self.bufferSize = int(self.training_period * 3600 / dssSolver.GetStepSizeSec())
+        self.day = self.dssSolver.GetDateTime().day
+
+        choice = [1, 2, 5]
+        ld = dss.Loads.First()
+        while ld:
+            dss.Loads.Model(rdm.choice(choice))
+            ld = dss.Loads.Next()
 
         self.logger.info('Creating Utilidata interface')
 
@@ -61,15 +71,15 @@ class Utilidata_Interface(AbstractPostprocess):
         if obj._Class == "Capacitor":
             if isControllable:
                 val = obj.GetParameter("NumSteps")
-                return {"lower_bound": 0,"upper_bound": int(val)}
+                return {"lower_bound": 0, "upper_bound": int(val)}
         elif obj._Class == "Load":
             if isControllable:
                 val = obj.GetParameter("kW")
-                return {"lower_bound": 0,"upper_bound": int(val)}
+                return {"lower_bound": 0, "upper_bound": int(val)}
         elif obj._Class == "Transformer":
             if isControllable:
                 ntaps = obj.GetParameter("NumTaps") / 2
-                return {"lower_bound": -ntaps,"upper_bound": ntaps}
+                return {"lower_bound": -ntaps, "upper_bound": ntaps}
         elif obj._Class == "Line":
             if isControllable:
                 return {"direct_control": True}
@@ -91,13 +101,13 @@ class Utilidata_Interface(AbstractPostprocess):
                         metadata["metadata"][f"{elm_name}___{ppty}___{j}"] = {
                             "meas_class": ppty,
                             "device_id": elm_name,
-                            "feeder_id": "Feeder_1"
+                            "feeder_id": info["feeder"]
                         }
                 else:
                     metadata["metadata"][f"{elm_name}___{ppty}"] = {
                         "meas_class": ppty,
                         "device_id": elm_name,
-                        "feeder_id":  "Feeder_1"
+                        "feeder_id":  info["feeder"]
                     }
         return metadata
 
@@ -189,7 +199,8 @@ class Utilidata_Interface(AbstractPostprocess):
                                 "object": elm_obj,
                                 "values": info["values"],
                                 "result": [self.get_measurement(elm_obj, x) for x in info["values"]],
-                                "Controllable": info["Controllable"]
+                                "Controllable": info["Controllable"],
+                                "feeder": self.get_feeder(elm_name)
                             }
                     elif info["measure"] == "from list":
                         for elem in info["list"]:
@@ -200,7 +211,8 @@ class Utilidata_Interface(AbstractPostprocess):
                                     "object": elm_obj,
                                     "values": info["values"],
                                     "result": [self.get_measurement(elm_obj, x) for x in info["values"]],
-                                    "Controllable": info["Controllable"]
+                                    "Controllable": info["Controllable"],
+                                    "feeder": self.get_feeder(name)
                                 }
                     elif info["measure"] == "use regex":
                         filt = info['regex']
@@ -210,7 +222,8 @@ class Utilidata_Interface(AbstractPostprocess):
                                     "object": elm_obj,
                                     "values": info["values"],
                                     "result": [self.get_measurement(elm_obj, x) for x in info["values"]],
-                                    "Controllable": info["Controllable"]
+                                    "Controllable": info["Controllable"],
+                                    "feeder": self.get_feeder(elm_name)
                                 }
                 else:
                     if info["measure"] == "all":
@@ -220,7 +233,8 @@ class Utilidata_Interface(AbstractPostprocess):
                                     "object": elm_obj,
                                     "values": info["values"],
                                     "result": [self.get_measurement(elm_obj, x) for x in info["values"]],
-                                    "Controllable": info["Controllable"]
+                                    "Controllable": info["Controllable"],
+                                    "feeder": self.get_feeder(elm_name)
                                 }
                     elif info["measure"] == "from list":
                         for elem in info["list"]:
@@ -232,7 +246,8 @@ class Utilidata_Interface(AbstractPostprocess):
                                         "object": elm_obj,
                                         "values": info["values"],
                                         "result": [self.get_measurement(elm_obj, x) for x in info["values"]],
-                                        "Controllable": info["Controllable"]
+                                        "Controllable": info["Controllable"],
+                                        "feeder": self.get_feeder(name)
                                     }
                     elif info["measure"] == "use regex":
                         filt = info['regex']
@@ -243,12 +258,31 @@ class Utilidata_Interface(AbstractPostprocess):
                                         "object": elm_obj,
                                         "values": info["values"],
                                         "result": [self.get_measurement(elm_obj, x) for x in info["values"]],
-                                        "Controllable": info["Controllable"]
+                                        "Controllable": info["Controllable"],
+                                        "feeder": self.get_feeder(elm_name)
                                     }
         return measured_elems
 
-    def get_control_assets(self):
-        return
+    def find_filenames(self, path_to_dir, suffix=".csv"):
+        filenames = os.listdir(path_to_dir)
+        return [filename for filename in filenames if filename.endswith(suffix)]
+
+    def get_feeder(self, elm_name):
+        dss_path = os.path.join(
+            self.Settings['Project']['Project Path'],
+            self.Settings['Project']["Active Project"],
+            "DSSfiles"
+        )
+        feeders = [x for x in os.listdir(dss_path) if os.path.isdir(os.path.join(dss_path, x))]
+        for feeder in feeders:
+            fpath = os.path.join(dss_path, feeder)
+            files = self.find_filenames(fpath, suffix=".dss")
+            for file in files:
+                file_path = os.path.join(dss_path, feeder, file)
+                with open(file_path) as f:
+                    if elm_name.lower() in f.read().lower():
+                        return feeder
+        return "substation"
 
     def create_optimization_model(self):
 
@@ -278,9 +312,12 @@ class Utilidata_Interface(AbstractPostprocess):
         reply = requests.post(url, data=json_object, verify=False, headers=headers)
         if reply.status_code == 200:
             reply = reply.json()
+            print(reply)
             return reply['recommendations']
         else:
-            raise Exception(f"Error optimizing the model.\nReply from the server:\n{reply.text}")
+            reply = reply.json()
+            self.logger.error(f"Error optimizing the model.{reply['message']}")
+            #raise Exception(f"Error optimizing the model.\nReply from the server:\n{reply.text}")
 
     def disable_control_elements(self):
         reply = self._dssInstance.utils.run_command("Batchedit CapControl..* enabled=false")
@@ -327,8 +364,76 @@ class Utilidata_Interface(AbstractPostprocess):
             if self.training_complete:
                 self.logger.info("Optimizing system state")
                 new_settings = self.submit_operation_payload()
-                self.update_system_states(new_settings)
+                if new_settings:
+                    self.update_system_states(new_settings)
         return step
 
     def _get_required_input_fields(self):
         return self.REQUIRED_INPUT_FIELDS_AND_DEFAULTS.keys()
+
+class NOAAData(object):
+    def __init__(self, token):
+        # NOAA API Endpoint
+        self.url = 'https://www.ncdc.noaa.gov/cdo-web/api/v2/'
+        self.h = dict(token=token)
+
+    def poll_api(self, req_type, payload):
+        # Initiate http request - kwargs are constructed into a dict and passed as optional parameters
+        # Ex (limit=100, sortorder='desc', startdate='1970-10-03', etc)
+        r = requests.get(self.url + req_type, headers=self.h, params=payload)
+
+        if r.status_code != 200:  # Handle erroneous requests
+            print("Error: " + str(r.status_code))
+        else:
+            r = r.json()
+            try:
+                return r['results']  # Most JSON results are nested under 'results' key
+            except KeyError:
+                return r  # for non-nested results, return the entire JSON string
+
+    # Fetch available datasets
+    # http://www.ncdc.noaa.gov/cdo-web/webservices/v2#datasets
+    def datasets(self, **kwargs):
+        req_type = 'datasets'
+        return self.poll_api(req_type, kwargs)
+
+    # Fetch data categories
+    # http://www.ncdc.noaa.gov/cdo-web/webservices/v2#dataCategories
+    def data_categories(self, **kwargs):
+        req_type = 'datacategories'
+        return self.poll_api(req_type, kwargs)
+
+    # Fetch data types
+    # http://www.ncdc.noaa.gov/cdo-web/webservices/v2#dataTypes
+    def data_types(self, **kwargs):
+        req_type = 'datatypes'
+        return self.poll_api(req_type, kwargs)
+
+    # Fetch available location categories
+    # http://www.ncdc.noaa.gov/cdo-web/webservices/v2#locationCategories
+    def location_categories(self, **kwargs):
+        req_type = 'locationcategories'
+        return self.poll_api(req_type, kwargs)
+
+    # Fetch all available locations
+    # http://www.ncdc.noaa.gov/cdo-web/webservices/v2#locations
+    def locations(self, **kwargs):
+        req_type = 'locations'
+        return self.poll_api(req_type, kwargs)
+
+    # Fetch All available stations
+    # http://www.ncdc.noaa.gov/cdo-web/webservices/v2#stations
+    def stations(self, h, p, **kwargs):
+        req_type = 'stations'
+        return self.poll_api(req_type, kwargs)
+
+    # Fetch information about specific dataset
+    def dataset_spec(self, set_code, **kwargs):
+        req_type = 'datacategories/' + set_code
+        return self.poll_api(req_type, kwargs)
+
+    # Fetch data
+    # http://www.ncdc.noaa.gov/cdo-web/webservices/v2#data
+    def fetch_data(self, **kwargs):
+        req_type = 'data'
+        return self.poll_api(req_type, kwargs)
