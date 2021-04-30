@@ -17,6 +17,7 @@ settings_dict = {
             'Export Event Log': {'type': bool, 'Options': [True, False]},
             'Export Data Tables': {'type': bool, 'Options': [True, False]},
             'Export Data In Memory': {'type': bool, 'Options': [True, False]},
+            'Export Node Names By Type': {'type': bool, 'Options': [True, False]},
             'HDF Max Chunk Bytes': {'type': int, 'Options': range(16 * 1024, 1024 * 1024 + 1)},
             'Export PV Profiles': {'type': bool, 'Options': [True, False]},
             'Log Results': {'type': bool, 'Options': [True, False]},

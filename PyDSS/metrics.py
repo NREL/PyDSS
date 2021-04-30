@@ -427,6 +427,8 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
 class NodeVoltageMetric(MetricBase):
     """Stores metrics for node voltages."""
 
+    PRIMARY_BUS_THRESHOLD_KV = 1.0
+
     def __init__(self, prop, dss_obj, options):
         super().__init__(prop, dss_obj, options)
         props = list(self._properties)
@@ -444,20 +446,41 @@ class NodeVoltageMetric(MetricBase):
         self._voltage_metrics = NodeVoltageMetrics(
             prop, start_time, sim_resolution, window_size
         )
+        self._primary_node_names = []
+        self._primary_indices = []
+        self._secondary_node_names = []
+        self._secondary_indices = []
 
     def _make_elem_names(self):
         return self._node_names
+
+    def _identify_primary_v_secondary(self):
+        for i, name in enumerate(self._node_names):
+            dss.Circuit.SetActiveBus(name)
+            kv_base = dss.Bus.kVBase()
+            if kv_base > self.PRIMARY_BUS_THRESHOLD_KV:
+                self._primary_node_names.append(name)
+                self._primary_indices.append(i)
+            else:
+                self._secondary_node_names.append(name)
+                self._secondary_indices.append(i)
 
     def append_values(self, time_step, store_nan=False):
         voltages = dss.Circuit.AllBusMagPu()
         if self._voltages is None:
             # TODO: limit to objects that have been added
             self._node_names = dss.Circuit.AllNodeNames()
+            self._identify_primary_v_secondary()
             self._voltages = [
                 ValueByNumber(x, "Voltage", y)
                 for x, y in zip(self._node_names, voltages)
             ]
-            self._voltage_metrics.node_names = self._node_names
+            self._voltage_metrics.set_node_info(
+                self._primary_node_names,
+                self._primary_indices,
+                self._secondary_node_names,
+                self._secondary_indices,
+            )
         else:
             for i, voltage in enumerate(voltages):
                 self._voltages[i].set_value_from_raw(voltage)

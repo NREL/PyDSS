@@ -184,14 +184,26 @@ class VoltageMetricsModel(VoltageMetricsBaseModel):
     )
 
 
+class VoltageMetricsByBusTypeModel(VoltageMetricsBaseModel):
+    """Metrics separated by bus type"""
+    primaries: VoltageMetricsModel = Field(
+        title="primaries",
+        description="metrics for primary buses",
+    )
+    secondaries: VoltageMetricsModel = Field(
+        title="secondaries",
+        description="metrics for secondary buses",
+    )
+
+
 class SimulationVoltageMetricsModel(VoltageMetricsBaseModel):
-    scenarios: Dict[str, VoltageMetricsModel] = Field(
+    scenarios: Dict[str, VoltageMetricsByBusTypeModel] = Field(
         title="scenarios",
         description="voltage metrics by PyDSS scenario name",
     )
 
 
-def compare_voltage_metrics(metrics1: VoltageMetricsModel, metrics2: VoltageMetricsModel):
+def compare_voltage_metrics(metrics1: VoltageMetricsByBusTypeModel, metrics2: VoltageMetricsByBusTypeModel):
     """Compares the values of two instances of VoltageMetricsModel.
 
     Returns
@@ -215,33 +227,27 @@ def compare_voltage_metrics(metrics1: VoltageMetricsModel, metrics2: VoltageMetr
         "total_num_time_points",
         "total_simulation_duration",
     )
-    for field in fields:
-        val1 = getattr(metrics1.summary, field)
-        val2 = getattr(metrics2.summary, field)
-        if val1 != val2:
-            logger.error("field=%s mismatch %s != %s", field, val1, val2)
-            match = False
+    for node_type in ("primaries", "secondaries"):
+        _metrics1 = getattr(metrics1, node_type)
+        _metrics2 = getattr(metrics2, node_type)
+        for field in fields:
+            val1 = getattr(_metrics1.summary, field)
+            val2 = getattr(_metrics2.summary, field)
+            if val1 != val2:
+                logger.error("field=%s mismatch %s != %s", field, val1, val2)
+                match = False
 
-    for field in ("metric_1", "metric_2", "metric_3", "metric_4", "metric_5", "metric_6"):
-        val1 = getattr(metrics1, field)
-        val2 = getattr(metrics2, field)
-        if val1 != val2:
-            logger.error("%s mismatch: val1=%s val2=%s", field, val1, val2)
-            match = False
+        for field in ("metric_1", "metric_2", "metric_3", "metric_4", "metric_5", "metric_6"):
+            val1 = getattr(_metrics1, field)
+            val2 = getattr(_metrics2, field)
+            if val1 != val2:
+                logger.error("%s mismatch: val1=%s val2=%s", field, val1, val2)
+                match = False
 
     return match
 
 
-class NodeVoltageMetrics:
-    """Stores node voltage metrics in memory.
-
-    The metrics are defined in this paper:
-    https://www.sciencedirect.com/science/article/pii/S0306261920311351
-
-    """
-
-    FILENAME = "voltage_metrics.json"
-
+class NodeVoltageMetricsByType:
     def __init__(self, prop, start_time, resolution, window_size):
         self._start_time = start_time
         self._resolution = resolution
@@ -249,6 +255,7 @@ class NodeVoltageMetrics:
         self._range_b_limits = prop.limits_b
         self._window_size = window_size
         self._node_names = None
+        self._node_indices = None
         self._metric_1_time_steps = []
         self._metric_2_violation_counts = []
         self._metric_3_time_steps = []
@@ -303,25 +310,7 @@ class NodeVoltageMetrics:
             total_simulation_duration=num_time_points * resolution,
         )
 
-    def _is_outside_range_a(self, value):
-        return value < self._range_a_limits.min or value > self._range_a_limits.max
-
-    def _is_outside_range_b(self, value):
-        return value < self._range_b_limits.min or value > self._range_b_limits.max
-
-    def generate_report(self, path):
-        """Create a summary file containing all metrics.
-
-        Parameters
-        ----------
-        path : str
-
-        Returns
-        -------
-        str
-            report filename
-
-        """
+    def generate(self):
         if self._num_time_points == 0:
             logger.error("Cannot generate report with no time points")
             return
@@ -357,8 +346,8 @@ class NodeVoltageMetrics:
         metric_6 = VoltageMetric6(
             num_time_points=self._num_metric_6_time_points_outside_range_b,
             percent_time_points=self._num_metric_6_time_points_outside_range_b
-            / self._num_time_points
-            * 100,
+                / self._num_time_points
+                * 100,
             duration=self._num_metric_6_time_points_outside_range_b * self._resolution,
         )
         moving_window_minutes = int(
@@ -379,33 +368,12 @@ class NodeVoltageMetrics:
             )
         )
 
-        filename = Path(path) / self.FILENAME
-        with open(filename, "w") as f_out:
-            f_out.write(metrics.json())
-            f_out.write("\n")
+        return metrics
 
-    @property
-    def node_names(self):
-        return self._node_names
-
-    @node_names.setter
-    def node_names(self, names):
-        self._node_names = names
-
-    def increment_steps(self):
-        """Increment the time step counter."""
-        self._num_time_points += 1
+    def has_data(self):
+        return self._bufs is not None
 
     def update(self, time_step, voltages):
-        """Update the metrics for the time step.
-
-        Parameters
-        ----------
-        time_step : int
-        voltages : list
-            list of ValueStorageBase
-
-        """
         cur_time = self._start_time + self._resolution * time_step
         if self._bufs is None:
             self._bufs = [CircularBufferHelper(self._window_size) for _ in range(len(self._node_names))]
@@ -416,12 +384,13 @@ class NodeVoltageMetrics:
         count_outside_range_a = 0
         any_outside_range_b = False
         any_moving_avg_violates_range_a = False
-        for i, voltage in enumerate(voltages):
+        # The voltages passed include all nodes. self._node_indices has the ones
+        # being tracked here.
+        for i, node_index in enumerate(self._node_indices):
+            voltage = voltages[node_index]
             buf = self._bufs[i]
             buf.append(voltage.value)
-            if not any_moving_avg_violates_range_a and self._is_outside_range_a(
-                buf.average()
-            ):
+            if not any_moving_avg_violates_range_a and self._is_outside_range_a(buf.average()):
                 any_moving_avg_violates_range_a = True
 
             if self._is_outside_range_a(voltage.value):
@@ -449,3 +418,86 @@ class NodeVoltageMetrics:
 
         if any_outside_range_b:
             self._num_metric_6_time_points_outside_range_b += 1
+
+    def _is_outside_range_a(self, value):
+        return value < self._range_a_limits.min or value > self._range_a_limits.max
+
+    def _is_outside_range_b(self, value):
+        return value < self._range_b_limits.min or value > self._range_b_limits.max
+
+    def increment_steps(self):
+        self._num_time_points += 1
+
+    def set_node_info(self, node_names, node_indices):
+        self._node_names = node_names
+        self._node_indices = node_indices
+
+
+class NodeVoltageMetrics:
+    """Stores node voltage metrics in memory.
+
+    The metrics are defined in this paper:
+    https://www.sciencedirect.com/science/article/pii/S0306261920311351
+
+    """
+
+    FILENAME = "voltage_metrics.json"
+
+    def __init__(self, prop, start_time, resolution, window_size):
+        self._start_time = start_time
+        self._resolution = resolution
+        self._window_size = window_size
+        self._num_time_points = 0
+        self._metrics = {
+            "primary": NodeVoltageMetricsByType(prop, start_time, resolution, window_size),
+            "secondary": NodeVoltageMetricsByType(prop, start_time, resolution, window_size),
+        }
+
+    def generate_report(self, path):
+        """Create a summary file containing all metrics.
+
+        Parameters
+        ----------
+        path : str
+
+        Returns
+        -------
+        str
+            report filename
+
+        """
+        if not self._metrics["primary"].has_data():
+            logger.error("Cannot generate report with no data")
+            return
+
+        metrics = VoltageMetricsByBusTypeModel(
+            primaries=self._metrics["primary"].generate(),
+            secondaries=self._metrics["secondary"].generate(),
+        )
+
+        filename = Path(path) / self.FILENAME
+        with open(filename, "w") as f_out:
+            f_out.write(metrics.json())
+            f_out.write("\n")
+
+    def increment_steps(self):
+        """Increment the time step counter."""
+        for metric in self._metrics.values():
+            metric.increment_steps()
+
+    def set_node_info(self, primary_names, primary_indices, secondary_names, secondary_indices):
+        self._metrics["primary"].set_node_info(primary_names, primary_indices)
+        self._metrics["secondary"].set_node_info(secondary_names, secondary_indices)
+
+    def update(self, time_step, voltages):
+        """Update the metrics for the time step.
+
+        Parameters
+        ----------
+        time_step : int
+        voltages : list
+            list of ValueStorageBase
+
+        """
+        for metric in self._metrics.values():
+            metric.update(time_step, voltages)

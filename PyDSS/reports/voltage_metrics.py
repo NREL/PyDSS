@@ -5,15 +5,14 @@ from pathlib import Path
 import logging
 
 import numpy as np
-import pandas as pd
 
-from PyDSS.common import MinMax
-from PyDSS.exceptions import InvalidConfiguration
+from PyDSS.common import MinMax, NODE_NAMES_BY_TYPE_FILENAME
 from PyDSS.reports.reports import ReportBase, ReportGranularity
 from PyDSS.utils.utils import serialize_timedelta, deserialize_timedelta, load_data
 from PyDSS.node_voltage_metrics import (
-    NodeVoltageMetrics,
+    NodeVoltageMetricsByType,
     SimulationVoltageMetricsModel,
+    VoltageMetricsByBusTypeModel,
     VoltageMetricsModel,
     VoltageMetric1,
     VoltageMetric2,
@@ -116,24 +115,39 @@ class VoltageMetrics(ReportBase):
                 scenario.name,
                 self.FILENAME,
             )
-            scenarios[scenario.name] = VoltageMetricsModel(**load_data(filename))
+            scenarios[scenario.name] = VoltageMetricsByBusTypeModel(**load_data(filename))
 
         return scenarios
 
     def _generate_from_all_time_points(self):
         scenarios = {}
         for scenario in self._results.scenarios:
+            filename = os.path.join(
+                self._simulation_config["Project"]["Project Path"],
+                self._simulation_config["Project"]["Active Project"],
+                "Exports",
+                scenario.name,
+                NODE_NAMES_BY_TYPE_FILENAME,
+            )
+            node_names_by_type = load_data(filename)
+            node_names_by_type["primaries"] = set(node_names_by_type["primaries"])
+            node_names_by_type["secondaries"] = set(node_names_by_type["secondaries"])
             df = scenario.get_full_dataframe("Buses", "puVmagAngle", mag_ang="mag")
-            # Make the names match the results from NodeVoltageMetrics.
             columns = []
             for column in df.columns:
+                # Make the names match the results from NodeVoltageMetrics.
                 column = column.replace("__mag [pu]", "")
                 column = column.replace("__A1", ".1")
                 column = column.replace("__B1", ".2")
                 column = column.replace("__C1", ".3")
                 columns.append(column)
             df.columns = columns
-            scenarios[scenario.name] = self._gen_metrics(df)
+
+            by_type = {}
+            for node_type in ("primaries", "secondaries"):
+                df_by_type = df[node_names_by_type[node_type]]
+                by_type[node_type] = self._gen_metrics(df_by_type)
+            scenarios[scenario.name] = VoltageMetricsByBusTypeModel(**by_type)
 
         return scenarios
 
@@ -215,7 +229,7 @@ class VoltageMetrics(ReportBase):
             metric_4=vmetric_4,
             metric_5=vmetric_5,
             metric_6=vmetric_6,
-            summary=NodeVoltageMetrics.create_summary(
+            summary=NodeVoltageMetricsByType.create_summary(
                 vmetric_1, vmetric_2, vmetric_3, vmetric_5, vmetric_6, df.columns,
                 len(df), self._resolution, self._range_a_limits, self._range_b_limits,
                 self._moving_window_minutes
@@ -251,3 +265,9 @@ class VoltageMetrics(ReportBase):
     @staticmethod
     def get_required_scenario_names():
         return set(["control_mode"])
+
+    @staticmethod
+    def set_required_project_settings(simulation_config):
+        if not simulation_config["Exports"]["Export Node Names By Type"]:
+            simulation_config["Exports"]["Export Node Names By Type"] = True
+            logger.info("Enabled Export Node Names By Type")

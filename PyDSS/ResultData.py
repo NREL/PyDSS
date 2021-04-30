@@ -13,8 +13,14 @@ import opendssdirect as dss
 
 from PyDSS.pyLogger import getLoggerTag
 from PyDSS.unitDefinations import unit_info
-from PyDSS.common import PV_LOAD_SHAPE_FILENAME, PV_PROFILES_FILENAME, DatasetPropertyType
+from PyDSS.common import (
+    PV_LOAD_SHAPE_FILENAME,
+    PV_PROFILES_FILENAME,
+    NODE_NAMES_BY_TYPE_FILENAME,
+    DatasetPropertyType,
+)
 from PyDSS.dataset_buffer import DatasetBuffer
+from PyDSS.utils.dss_utils import get_node_names_by_type
 from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
 from PyDSS.export_list_reader import ExportListReader, StoreValuesType
 from PyDSS.reports.reports import Reports, ReportGranularity
@@ -243,6 +249,8 @@ class ResultData:
             self._export_feeder_head_info(metadata)
         if self._options["Exports"]["Export PV Profiles"]:
             self._export_pv_profiles()
+        if self._options["Exports"]["Export Node Names By Type"]:
+            self._export_node_names_by_type()
 
         filename = os.path.join(self._export_dir, self.METADATA_FILENAME)
         dump_data(metadata, filename, indent=4)
@@ -481,6 +489,12 @@ class ResultData:
         filename = os.path.join(self._export_dir, PV_PROFILES_FILENAME)
         dump_data(data, filename, indent=2)
         self._logger.info("Exported PV profile information to %s", filename)
+
+    def _export_node_names_by_type(self):
+        data = get_node_names_by_type()
+        filename = os.path.join(self._export_dir, NODE_NAMES_BY_TYPE_FILENAME)
+        dump_data(data, filename, indent=2)
+        self._logger.info("Exported node names by type to %s", filename)
 
     @staticmethod
     def get_units(prop, index=None):

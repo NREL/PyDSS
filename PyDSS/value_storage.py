@@ -77,7 +77,7 @@ class ValueStorageBase(abc.ABC):
                 columns.append(column)
 
         if not columns:
-            raise InvalidParameter(f"{name} does not exist in DataFrame")
+            raise InvalidParameter(f"{names} does not exist in DataFrame")
 
         return columns
 

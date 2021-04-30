@@ -222,8 +222,8 @@ class ThermalMetrics:
             report filename
 
         """
-        if self._num_time_points == 0:
-            logger.error("Cannot generate report with no time points")
+        if self._num_time_points == 0 or self._max_inst_line_violations is None:
+            logger.error("Cannot generate report with no data")
             return
 
         inst_violations_by_line = {}
