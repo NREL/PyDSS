@@ -50,8 +50,19 @@ class Utilidata_Interface(AbstractPostprocess):
         self.logger.info('Creating Utilidata interface')
 
     def define_constraints(self):
-        metadata = {
-            "metadata": {}
+        metadata ={
+            "metadata": {
+                "air_temp": {
+                    "meas_class": "WEATHER",
+                    "device_id": "NOAA",
+                    "feeder_id": "substation",
+                },
+                "solar_irradiance": {
+                    "meas_class": "WEATHER",
+                    "device_id": "NOAA",
+                    "feeder_id": "substation"
+                }
+            }
         }
         for elm_name, info in self.mAssets.items():
             constraints = self.get_constraint(elm_name, info['Controllable'])
@@ -91,7 +102,18 @@ class Utilidata_Interface(AbstractPostprocess):
 
     def define_metadata(self):
         metadata = {
-            "metadata": {}
+            "metadata": {
+                "air_temp": {
+                    "meas_class": "WEATHER",
+                    "device_id": "NOAA",
+                    "feeder_id": "substation",
+                },
+                "solar_irradiance": {
+                    "meas_class": "WEATHER",
+                    "device_id": "NOAA",
+                    "feeder_id": "substation"
+                }
+            }
         }
         for elm_name, info in self.mAssets.items():
             for i, ppty in enumerate(info['values']):
@@ -115,18 +137,24 @@ class Utilidata_Interface(AbstractPostprocess):
         timestamp = self.dssSolver.GetDateTime()
         meas = {}
         for name, info in self.metadata["metadata"].items():
-            Data = name.split("___")
-            if len(Data) == 3:
-                elm_name, ppty, idx = Data
-            else:
-                elm_name, ppty = Data
-                idx = None
+            if name not in ["air_temp", "solar_irradiance"]:
+                Data = name.split("___")
+                if len(Data) == 3:
+                    elm_name, ppty, idx = Data
+                else:
+                    elm_name, ppty = Data
+                    idx = None
 
-            value = self.get_measurement(self.mAssets[elm_name]['object'], ppty)
-            if isinstance(value, list):
-                meas[name] = value[int(idx)]
+                value = self.get_measurement(self.mAssets[elm_name]['object'], ppty)
+                if isinstance(value, list):
+                    meas[name] = value[int(idx)]
+                else:
+                    meas[name] = value
             else:
-                meas[name] = value
+                if name == "air_temp":
+                    meas[name] = 35   #TODO get actual temp data here
+                elif name == "solar_irradiance":
+                    meas[name] = 2.4  #TODO get actual irradiance data here
         return timestamp, meas
 
     def get_measurement(self, obj, ppty):

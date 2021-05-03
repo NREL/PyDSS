@@ -48,7 +48,7 @@ h.helicsFederateEnterExecutingMode(vfed)
 
 for t in range(1, 30):
     time_requested = t * 60
-    currenttime = h.helicsFederateRequestTime(vfed, time_requested)
+    #currenttime = h.helicsFederateRequestTime(vfed, time_requested)
     iteration_state = h.helics_iteration_result_iterating
     for i in range(20):
         currenttime, iteration_state = h.helicsFederateRequestTimeIterative(
@@ -59,6 +59,7 @@ for t in range(1, 30):
         h.helicsPublicationPublishDouble(pub1, 5.0 + 1. / (1.0 + i))
         h.helicsPublicationPublishDouble(pub2, 1.0)
         value = h.helicsInputGetVector(sub1)
+        print(value)
 
 h.helicsFederateFinalize(vfed)
 
