@@ -117,7 +117,6 @@ store_all_time_points = true
 [[Reports.Types]]
 name = "Feeder Losses"
 enabled = true
-scenarios = ["control_mode"]
 store_all_time_points = true
 
 [[Reports.Types]]
