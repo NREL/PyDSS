@@ -797,8 +797,6 @@ class PyDssScenario:
             raise InvalidParameter(f"{config_file} does not exist")
 
         self.post_process_infos.append(post_process_info)
-        logger.info("Appended post-process script %s to %s",
-                    post_process_info["script"], self.name)
 
 def load_config(path):
     """Return a configuration from files.
