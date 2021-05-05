@@ -333,9 +333,11 @@ class ResultData:
         if not "feeder_head_info_files" in metadata.keys():
             metadata["feeder_head_info_files"] = []
 
+        total_power = dss.Circuit.TotalPower()
         df_dict = {"FeederHeadLine": self._find_feeder_head_line(),
                    "FeederHeadLoading": self._get_feeder_head_loading(),
-                   "FeederHeadLoad": dss.Circuit.TotalPower(),
+                   "FeederHeadLoadKW": total_power[0],
+                   "FeederHeadLoadKVar": total_power[1],
                    "ReversePowerFlow": self._reverse_powerflow()
                   }
 
