@@ -22,4 +22,4 @@ aiohttp
 aiohttp_swagger3==0.4.3
 requests
 pyyaml
-pydantic
+pydantic>=1.8

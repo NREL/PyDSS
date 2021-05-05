@@ -151,7 +151,7 @@ def create_summary_from_dict(data):
     for scenario in summary.scenarios:
         for model, elem_type in zip(("line_loadings", "transformer_loadings"), ("line", "transformer")):
             model = getattr(summary.scenarios[scenario], model)
-            for column in model.fields:
+            for column in model.__fields__:
                 val = getattr(model, column)
                 if not isinstance(val, dict):
                     new_name = elem_type + "_" + column
