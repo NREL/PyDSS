@@ -19,8 +19,6 @@ def Create(ElmName, ControllerType, Settings, ElmObjectList, dssInstance, dssSol
                                                 "Please define the controller in ~PyDSS\pyControllers\Controllers".format(
         ControllerType
     )
-    # try:
-        #print(ElmObjectList)
     assert (ElmName in ElmObjectList), "'{}' does not exist in the PyDSS master object dictionary.".format(ElmName)
     relObject = ElmObjectList[ElmName]
     # except:
@@ -29,7 +27,6 @@ def Create(ElmName, ControllerType, Settings, ElmObjectList, dssInstance, dssSol
     #         ElmObjectList[ElmName] = dssElement(dssInstance)
     #         relObject = ElmObjectList[ElmName]
     # else:
-    #     print('The controller dictionary does not contain {}'.format(ElmName))
     #     return -1
 
 

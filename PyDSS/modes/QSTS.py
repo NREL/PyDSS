@@ -17,7 +17,7 @@ class QSTS(solver_base):
         self._dssSolution.DblHour(Hour + Min / 60.0)
         self._dssSolution.Number(mTimeStep)
         self._dssSolution.Solve()
-        return
+        return self._dssSolution.Converged()
 
     def IncStep(self):
         self._dssSolution.StepSize(self._sStepRes)
@@ -25,22 +25,23 @@ class QSTS(solver_base):
         self._Time = self._Time + timedelta(seconds=self._sStepRes)
         self._Hour = int(self._dssSolution.DblHour() // 1)
         self._Second = (self._dssSolution.DblHour() % 1) * 60 * 60
+        return self._dssSolution.Converged()
 
     def reSolve(self):
         self._dssSolution.StepSize(0)
         self._dssSolution.SolveNoControl()
+        return self._dssSolution.Converged()
 
     def Solve(self):
         self._dssSolution.StepSize(0)
         self._dssSolution.Solve()
+        return self._dssSolution.Converged()
 
     def setMode(self, mode):
         self._dssInstance.utils.run_command('Set Mode={}'.format(mode))
         if mode.lower() == 'yearly':
             self._dssSolution.Mode(2)
             self._dssSolution.DblHour(self._Hour + self._Second / 3600.0)
-            # self._dssSolution.Hour(self._Hour)
-            # self._dssSolution.Seconds(self._Second)
             self._dssSolution.Number(1)
             self._dssSolution.StepSize(self._sStepRes)
             self._dssSolution.MaxControlIterations(self.Settings['Project']['Max Control Iterations'])

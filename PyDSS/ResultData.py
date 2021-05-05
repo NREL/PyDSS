@@ -160,7 +160,6 @@ class ResultData:
 
     def UpdateResults(self):
         self.CurrentResults.clear()
-
         timestamp = self._dss_solver.GetDateTime().timestamp()
         self._time_dataset.write_value(timestamp)
         self._frequency_dataset.write_value(self._dss_solver.getFrequency())
@@ -223,8 +222,6 @@ class ResultData:
         filename = basename + "." + self._export_format
         write_dataframe(df, filename, compress=self._export_compression)
         self._logger.info("Exported %s", filename)
-        
-    
 
     def _find_feeder_head_line(self):
         dss = self._dss_instance
@@ -242,8 +239,7 @@ class ResultData:
                 flag = dss.Topology.Next()
                 
         return feeder_head_line
-        
-        
+
     def _get_feeder_head_loading(self):
         dss = self._dss_instance
         head_line = self._find_feeder_head_line()
@@ -265,10 +261,7 @@ class ResultData:
                 return None
         else:
             return None
-    
 
-    
-        
     def _reverse_powerflow(self):
         dss = self._dss_instance
 
@@ -276,7 +269,6 @@ class ResultData:
         
         return reverse_pf
 
-    
     def _export_feeder_head_info(self, metadata):
         """
         Gets feeder head information comprising:
@@ -304,6 +296,7 @@ class ResultData:
         
         relpath = os.path.join(self._export_relative_dir, fname)
         filepath = os.path.join(self._export_dir, fname)
+
         #write_dataframe(df, filepath)
         dump_data(df_dict, filepath)
         metadata["feeder_head_info_files"].append(relpath)
@@ -442,7 +435,6 @@ class ResultData:
         for element in self._elements:
             total += element.max_num_bytes()
         return total
-
 
 class ElementData:
     """Stores all property data for an element."""
@@ -662,7 +654,6 @@ class ElementData:
     @property
     def properties(self):
         return self._properties[:]
-
 
 class _CircularBufferHelper:
     def __init__(self, prop):

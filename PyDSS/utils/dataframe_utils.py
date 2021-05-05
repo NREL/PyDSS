@@ -95,6 +95,7 @@ def read_dataframe(filename, index_col=None, columns=None, parse_dates=False,
 
 def write_dataframe(df, file_path, compress=False, keep_original=False,
                     **kwargs):
+
     """Write the dataframe to a file with in a format matching the extension.
 
     Note that the feather and h5 formats do not support row indices.

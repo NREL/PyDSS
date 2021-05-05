@@ -16,8 +16,6 @@ from PyDSS.common import SIMULATION_SETTINGS_FILENAME
 from terminaltables import SingleTable
 from os.path import normpath, basename
 
-logger = logging.getLogger(__name__)
-
 @click.argument(
     "project-path",
 )

@@ -10,7 +10,6 @@ import os
 @click.option('--sim_file',
               default=r'socket_interface.toml')
 def run_pyDSS(pydss_path, sim_path, sim_file):
-    print(pydss_path, sim_path, sim_file)
     sys.path.append(pydss_path)
     sys.path.append(os.path.join(pydss_path, 'PyDSS'))
     from pyDSS import instance as dssInstance

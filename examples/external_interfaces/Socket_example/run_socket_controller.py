@@ -7,7 +7,6 @@ sockets = []
 for i in range(2):
     s = socket.socket()
     s.bind(('127.0.0.1', 5001 + i))
-    print("socket binded to %s" % (5001 + i))
     s.listen(5)
     sockets.append(s)
 
@@ -17,7 +16,6 @@ while True:
     for s in sockets:
         c, addr = s.accept()
         conns.append(c)
-        print('Got connection from', addr)
 
     while True:
         for c in conns:
@@ -26,7 +24,6 @@ while True:
                 numDoubles = int(len(Data) / 8)
                 tag = str(numDoubles) + 'd'
                 Data = list(struct.unpack(tag, Data))
-                print(Data)
 
         for c , v in zip(conns, [5, 3]):
             values = [v]

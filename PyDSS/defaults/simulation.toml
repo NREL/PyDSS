@@ -14,9 +14,9 @@
 # Active Scenario- [String] - Project scenario to use
 # DSS File- [String] - The main OpenDSS file
 [Project]
-"Start time" = "2020-1-1 00:00:00.0"
-"Simulation duration (min)" = 1440.0
-"Loadshape start time" = "2020-1-1 00:00:00.0"
+"Start time" = "2020-7-15 00:00:00.0"
+"Simulation duration (min)" = 43200.0
+"Loadshape start time" = "2020-7-15 00:00:00.0"
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
@@ -126,5 +126,8 @@ enabled = false
 
 [Profiles]
 "Use profile manager" = false
-"Profile store path" = ""
+source_type = "h5"
+source = "Profiles_backup.hdf5"
 "Profile mapping" = ""
+is_relative_path = true
+[Profiles.settings]
