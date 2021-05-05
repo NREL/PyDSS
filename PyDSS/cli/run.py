@@ -68,6 +68,7 @@ logger = logging.getLogger(__name__)
 def run(project_path, options=None, tar_project=False, zip_project=False, verbose=False, simulations_file=None, dry_run=False):
     """Run a PyDSS simulation."""
     if not os.path.exists(project_path):
+        print(f"project-path={project_path} does not exist")
         sys.exit(1)
 
     config = PyDssProject.load_simulation_config(project_path, simulations_file)

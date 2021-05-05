@@ -1,4 +1,4 @@
-from PyDSS.ProfileManager.base_definations import BaseProfileManager, BaseProfile
+from PyDSS.ProfileManager.base_definitions import BaseProfileManager, BaseProfile
 from bson.objectid import ObjectId
 from pymongo import MongoClient
 
@@ -20,7 +20,8 @@ class ProfileManager(BaseProfileManager):
         self.Objects = kwargs["objects"]
         usersettings = options["Profiles"]['settings']
 
-        self.client = MongoClient(self.basepath, username=usersettings["username"], password=usersettings["password"])
+        #self.client = MongoClient(self.basepath, username=usersettings["username"], password=usersettings["password"])
+        self.client = MongoClient("mongodb://user:password@bmather-131003:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false&connect=false")
         self.db_name = usersettings["database"]
         self.db = self.client[usersettings["database"]]
         self.collections = self.db.collection_names()

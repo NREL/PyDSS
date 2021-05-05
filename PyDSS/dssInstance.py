@@ -121,8 +121,6 @@ class OpenDSS:
             self.profileStore = ProfileInterface.Create(
                 self._dssInstance, self._dssSolver, self._Options, self._Logger, **profileSettings
             )
-            #self.profileStore = ProfileManager(self._dssObjects, self._dssSolver, params)
-            #self.profileStore.setup_profiles()
 
         self.ResultContainer = ResultData(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
                                             self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance)
@@ -321,7 +319,7 @@ class OpenDSS:
         self._Logger.info(f'PyDSS datetime - {self._dssSolver.GetDateTime()}')
         self._Logger.info(f'OpenDSS time [h] - {self._dssSolver.GetOpenDSSTime()}')
         if self._Options['Profiles']["Use profile manager"]:
-            updated_values = self.profileStore.update()
+             self.profileStore.update()
 
         if self._Options['Helics']['Co-simulation Mode']:
             self._HI.updateHelicsSubscriptions()

@@ -32,7 +32,6 @@ class BaseProfileManager(abc.ABC):
         self.sTime = None
         self.eTime = None
         self.simRes = None
-        pass
 
     @abc.abstractmethod
     def setup_profiles(self):
@@ -51,8 +50,6 @@ class BaseProfile(abc.ABC):
         self.devices = devices
         self.logger = logger
         self.solver = solver
-
-        pass
 
     @abc.abstractmethod
     def update_profile_settings(self):

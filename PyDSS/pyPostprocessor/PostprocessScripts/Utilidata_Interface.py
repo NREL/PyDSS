@@ -23,6 +23,8 @@ class Utilidata_Interface(AbstractPostprocess):
         rootPath = simulationSettings['Project']['Project Path']
         self.root_path = os.path.join(rootPath, simulationSettings['Project']['Active Project'])
         self.training_period = configuration['settings']['training period (hours)']
+        self.retraining_period = configuration['settings']['retraining period (hours)']
+
         self._uuid = configuration['settings']["uuid"]
         self.training_complete = False
 
@@ -40,6 +42,8 @@ class Utilidata_Interface(AbstractPostprocess):
 
         self.bufferSize = int(self.training_period * 3600 / dssSolver.GetStepSizeSec())
         self.day = self.dssSolver.GetDateTime().day
+
+        self.firstBuildComplete = False
 
         choice = [1, 2, 5]
         ld = dss.Loads.First()
@@ -384,16 +388,23 @@ class Utilidata_Interface(AbstractPostprocess):
     def run(self, step, stepMax):
         tstep = self.Solver.GetStepSizeSec() / 3600.0
         self.update_training_payload()
-        if step * tstep % self.training_period == 0.0 and step is not 0:
-            self.logger.info("Rebuilding optimization model")
-            self.create_optimization_model()
-            self.training_complete = True
+
+        if not self.firstBuildComplete:
+            if step * tstep % self.training_period == 0.0 and step is not 0:
+                self.logger.info("Building initial optimization model")
+                self.create_optimization_model()
+                self.firstBuildComplete = True
         else:
-            if self.training_complete:
-                self.logger.info("Optimizing system state")
-                new_settings = self.submit_operation_payload()
-                if new_settings:
-                    self.update_system_states(new_settings)
+            if step * tstep % self.retraining_period == 0.0 and step is not 0:
+                self.logger.info("Rebuilding optimization model")
+                self.create_optimization_model()
+                self.training_complete = True
+            else:
+                if self.training_complete:
+                    self.logger.info("Optimizing system state")
+                    new_settings = self.submit_operation_payload()
+                    if new_settings:
+                        self.update_system_states(new_settings)
         return step
 
     def _get_required_input_fields(self):

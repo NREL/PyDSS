@@ -1,7 +1,7 @@
 [Project]
-"Start time" = "2020-1-1 00:00:00.0"
-"Simulation duration (min)" = 10080.0
-"Loadshape start time" = "2020-1-1 00:00:00.0"
+"Start time" = "2019-2-23 00:00:00.0"
+"Simulation duration (min)" = 54720.0
+"Loadshape start time" = "2019-2-23 00:00:00.0"
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
@@ -15,9 +15,9 @@
 "DSS File Absolute Path" = false
 "Return Results" = false
 
-[[Project.Scenarios]]
-name = "base_case"
-post_process_infos = []
+#[[Project.Scenarios]]
+#name = "base_case"
+#post_process_infos = []
 
 [[Project.Scenarios]]
 name = "vvo_interface"

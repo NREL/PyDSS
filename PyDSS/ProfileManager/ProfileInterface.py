@@ -1,16 +1,19 @@
 from os.path import dirname, basename, isfile
 from PyDSS.ProfileManager import hooks
+import importlib
 import glob
 
 
 modules = glob.glob(hooks.__path__[0]+"/*.py")
-pythonFiles = [basename(f)[:-3] for f in modules if isfile(f) and not f.endswith('__init__.py')]
+pythonFiles = [(basename(f)[:-3], f) for f in modules if isfile(f) and not f.endswith('__init__.py')]
 
 ProfileInterfaces = {}
-for file in pythonFiles:
-    exec('from PyDSS.ProfileManager.hooks import {}'.format(file))
-    exec('ProfileInterfaces["{}"] = {}.ProfileManager'.format(file, file))
-
+modules_instances = {}
+for module, file in pythonFiles:
+    spec = importlib.util.spec_from_file_location(module, file)
+    modules_instances[module] = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modules_instances[module])
+    ProfileInterfaces[module] = modules_instances[module].ProfileManager
 
 def Create(sim_instance, solver, options, logger, **kwargs):
     source_type = options["Profiles"]["source_type"]

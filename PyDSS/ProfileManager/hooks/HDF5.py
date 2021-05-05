@@ -1,4 +1,4 @@
-from PyDSS.ProfileManager.base_definations import BaseProfileManager, BaseProfile
+from PyDSS.ProfileManager.base_definitions import BaseProfileManager, BaseProfile
 from PyDSS.ProfileManager.common import PROFILE_TYPES
 from PyDSS.exceptions import InvalidParameter
 from PyDSS.common import DATE_FORMAT

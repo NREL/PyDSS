@@ -50,9 +50,8 @@ class dssObjectBase(abc.ABC):
     def GetInfo(self):
         return self._Name
 
-    def GetValue(self, VarName, convert=False, get_object=True):
-        if get_object:
-            self.SetActiveObject()
+    def GetValue(self, VarName, convert=False):
+        self.SetActiveObject()
         if VarName in self._Variables:
             VarValue = self.GetVariable(VarName, convert=convert)
         else:
