@@ -375,6 +375,7 @@ class PyDssProject:
             raise
 
         finally:
+            logging.shutdown()
             if tar_project:
                 self._tar_project_files()
             elif zip_project:
@@ -429,7 +430,6 @@ class PyDssProject:
                     shutil.rmtree(name)
 
             path = os.path.join(self._project_dir, filename)
-            logger.info("Created project tar file: %s", path)
         finally:
             os.chdir(orig)
 
@@ -459,7 +459,6 @@ class PyDssProject:
                     shutil.rmtree(name)
 
             path = os.path.join(self._project_dir, filename)
-            logger.info("Created project zip file: %s", path)
         finally:
             os.chdir(orig)
 
