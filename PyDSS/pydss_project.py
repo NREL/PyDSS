@@ -375,6 +375,7 @@ class PyDssProject:
             raise
 
         finally:
+            logging.shutdown()
             if tar_project:
                 self._tar_project_files()
             elif zip_project:
@@ -429,7 +430,6 @@ class PyDssProject:
                     shutil.rmtree(name)
 
             path = os.path.join(self._project_dir, filename)
-            logger.info("Created project tar file: %s", path)
         finally:
             os.chdir(orig)
 
@@ -459,7 +459,6 @@ class PyDssProject:
                     shutil.rmtree(name)
 
             path = os.path.join(self._project_dir, filename)
-            logger.info("Created project zip file: %s", path)
         finally:
             os.chdir(orig)
 
@@ -798,8 +797,6 @@ class PyDssScenario:
             raise InvalidParameter(f"{config_file} does not exist")
 
         self.post_process_infos.append(post_process_info)
-        logger.info("Appended post-process script %s to %s",
-                    post_process_info["script"], self.name)
 
 def load_config(path):
     """Return a configuration from files.

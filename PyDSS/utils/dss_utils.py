@@ -3,7 +3,6 @@ import logging
 import re
 
 import opendssdirect as dss
-import pandas as pd
 
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.utils.utils import iter_elements
@@ -52,3 +51,30 @@ def get_load_shape_resolution_secs():
             f"SInterval for all LoadShapes must be the same: {res}"
         )
     return res[0]
+
+
+def get_node_names_by_type(kv_base_threshold=1.0):
+    """Return a mapping of node type to node names.
+
+    Parameters
+    ----------
+    kv_base_threshold : float
+        Voltage to use as threshold for identifying primary vs secondary
+
+    Returns
+    -------
+    dict
+        keys are "primaries" or "secondaries"
+        values are a list of node names
+
+    """
+    names_by_type = {"primaries": [], "secondaries": []}
+    for i, name in enumerate(dss.Circuit.AllNodeNames()):
+        dss.Circuit.SetActiveBus(name)
+        kv_base = dss.Bus.kVBase()
+        if kv_base > kv_base_threshold:
+            names_by_type["primaries"].append(name)
+        else:
+            names_by_type["secondaries"].append(name)
+
+    return names_by_type

@@ -52,6 +52,7 @@
 "Export PV Profiles" = false
 "Export Data Tables" = true
 "Export Data In Memory" = false
+"Export Node Names By Type" = false
 "HDF Max Chunk Bytes" = 524288
 "Export Event Log" = true
 "Log Results" = false

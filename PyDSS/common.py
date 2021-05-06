@@ -18,6 +18,7 @@ PROJECT_TAR = "project.tar"
 PROJECT_ZIP = "project.zip"
 PV_LOAD_SHAPE_FILENAME = "pv_load_shape_data.h5"
 PV_PROFILES_FILENAME = "pv_profiles.json"
+NODE_NAMES_BY_TYPE_FILENAME = "node_names_by_type.json"
 INTEGER_NAN = -9999
 
 class VisualizationType(enum.Enum):

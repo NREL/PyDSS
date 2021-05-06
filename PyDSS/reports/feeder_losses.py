@@ -2,6 +2,7 @@
 import logging
 import math
 import os
+from typing import Dict
 
 from pydantic import BaseModel, Field
 
@@ -40,10 +41,16 @@ class FeederLossesMetricsModel(BaseModel):
         description="Total power output of loads",
     )
 
+class SimulationFeederLossesMetricsModel(BaseModel):
+    scenarios: Dict[str, FeederLossesMetricsModel] = Field(
+        title="scenarios",
+        description="Feeder losses by PyDSS scenario name",
+    )
+
 
 def compare_feeder_losses(
-        metrics1: FeederLossesMetricsModel,
-        metrics2: FeederLossesMetricsModel,
+        metrics1: SimulationFeederLossesMetricsModel,
+        metrics2: SimulationFeederLossesMetricsModel,
         rel_tol=0.000001,
 ):
     """Compares the values of two instances of FeederLossesMetricsModel.
@@ -55,12 +62,13 @@ def compare_feeder_losses(
 
     """
     match = True
-    for field in FeederLossesMetricsModel.__fields__:
-        val1 = getattr(metrics1, field)
-        val2 = getattr(metrics2, field)
-        if not math.isclose(val1, val2, rel_tol=rel_tol):
-            logger.error("field=%s mismatch %s : %s", field, val1, val2)
-            match = False
+    for scenario in metrics1.scenarios:
+        for field in FeederLossesMetricsModel.__fields__:
+            val1 = getattr(metrics1.scenarios[scenario], field)
+            val2 = getattr(metrics2.scenarios[scenario], field)
+            if not math.isclose(val1, val2, rel_tol=rel_tol):
+                logger.error("field=%s mismatch %s : %s", field, val1, val2)
+                match = False
 
     return match
 
@@ -80,15 +88,15 @@ class FeederLossesReport(ReportBase):
 
     def generate(self, output_dir):
         assert len(self._results.scenarios) >= 1
-        scenario = self._results.scenarios[0]
-        assert scenario.name == "control_mode"
+        scenarios = {}
+        for scenario in self._results.scenarios:
+            inputs = FeederLossesReport.get_inputs_from_defaults(self._simulation_config, self.NAME)
+            if inputs["store_all_time_points"]:
+                scenarios[scenario.name] = self._generate_from_all_time_points(scenario)
+            else:
+                scenarios[scenario.name] = self._generate_from_in_memory_metrics(scenario)
 
-        inputs = FeederLossesReport.get_inputs_from_defaults(self._simulation_config, self.NAME)
-        if inputs["store_all_time_points"]:
-            model = self._generate_from_all_time_points(scenario)
-        else:
-            model = self._generate_from_in_memory_metrics(scenario)
-
+        model = SimulationFeederLossesMetricsModel(scenarios=scenarios)
         filename = os.path.join(output_dir, self.FILENAME)
         with open(filename, "w") as f_out:
             f_out.write(model.json(indent=2))
