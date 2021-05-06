@@ -26,20 +26,20 @@ class ThermalMetricsBaseModel(BaseModel):
 
 
 class ThermalMetricsModel(ThermalMetricsBaseModel):
-    max_instantaneous_loadings: Dict[str, float] = Field(
-        title="max_instantaneous_loadings",
+    max_instantaneous_loadings_pct: Dict[str, float] = Field(
+        title="max_instantaneous_loadings_pct",
         description="maximum instantaneous loading percent for each element",
     )
-    max_instantaneous_loading: float = Field(
-        title="max_instantaneous_loading",
+    max_instantaneous_loading_pct: float = Field(
+        title="max_instantaneous_loading_pct",
         description="maximum instantaneous loading percent overall",
     )
-    max_moving_average_loadings: Dict[str, float] = Field(
-        title="max_moving_average_loadings",
+    max_moving_average_loadings_pct: Dict[str, float] = Field(
+        title="max_moving_average_loadings_pct",
         description="maximum moving average loading percent for each element",
     )
-    max_moving_average_loading: float = Field(
-        title="max_moving_average_loading",
+    max_moving_average_loading_pct: float = Field(
+        title="max_moving_average_loading_pct",
         description="maximum moving average loading percent overall",
     )
     window_size_hours: int = Field(
@@ -76,7 +76,7 @@ def compare_thermal_metrics(metrics1: ThermalMetricsModel, metrics2: ThermalMetr
     """
     match = True
     fields = (
-        "max_instantaneous_loading", "window_size_hours",
+        "max_instantaneous_loading_pct", "window_size_hours",
         "num_time_points_with_instantaneous_violations",
         "num_time_points_with_moving_average_violations",
         "instantaneous_threshold", "moving_average_threshold",
@@ -88,21 +88,21 @@ def compare_thermal_metrics(metrics1: ThermalMetricsModel, metrics2: ThermalMetr
             logger.error("field=%s mismatch %s != %s", field, val1, val2)
             match = False
 
-    if not math.isclose(metrics1.max_moving_average_loading, metrics2.max_instantaneous_loading, rel_tol=rel_tol):
-        logger.error("max_moving_average_loading mismatch %s != %s",
-                     metrics1.max_moving_average_loading, metrics2.max_instantaneous_loading)
+    if not math.isclose(metrics1.max_moving_average_loading_pct, metrics2.max_instantaneous_loading_pct, rel_tol=rel_tol):
+        logger.error("max_moving_average_loading_pct mismatch %s != %s",
+                     metrics1.max_moving_average_loading_pct, metrics2.max_instantaneous_loading_pct)
         match = False
 
-    for name, val1 in metrics1.max_instantaneous_loadings.items():
-        val2 = metrics2.max_instantaneous_loadings[name]
+    for name, val1 in metrics1.max_instantaneous_loadings_pct.items():
+        val2 = metrics2.max_instantaneous_loadings_pct[name]
         if val1 != val2:
-            logger.error("max_instantaneous_loadings mismatch %s != %s", name, val1, val2)
+            logger.error("max_instantaneous_loadings_pct mismatch %s != %s", name, val1, val2)
             match = False
 
-    for name, val1 in metrics1.max_moving_average_loadings.items():
-        val2 = metrics2.max_moving_average_loadings[name]
+    for name, val1 in metrics1.max_moving_average_loadings_pct.items():
+        val2 = metrics2.max_moving_average_loadings_pct[name]
         if not math.isclose(val1, val2, rel_tol=rel_tol):
-            logger.error("max_moving_average_loadings mismatch %s != %s", name, val1, val2)
+            logger.error("max_moving_average_loadings_pct mismatch %s != %s", name, val1, val2)
             match = False
 
     return match
@@ -233,10 +233,10 @@ class ThermalMetrics:
         for i in range(len(self._max_mavg_line_violations)):
             mavg_violations_by_line[self._line_names[i]] = self._max_mavg_line_violations[i]
         line_metric = ThermalMetricsModel(
-            max_instantaneous_loadings=inst_violations_by_line,
-            max_instantaneous_loading=max(inst_violations_by_line.values()),
-            max_moving_average_loadings=mavg_violations_by_line,
-            max_moving_average_loading=max(mavg_violations_by_line.values()),
+            max_instantaneous_loadings_pct=inst_violations_by_line,
+            max_instantaneous_loading_pct=max(inst_violations_by_line.values()),
+            max_moving_average_loadings_pct=mavg_violations_by_line,
+            max_moving_average_loading_pct=max(mavg_violations_by_line.values()),
             window_size_hours=self._line_window_size_hours,
             num_time_points_with_instantaneous_violations=self._num_time_points_inst_line_violations,
             num_time_points_with_moving_average_violations=self._num_time_points_mavg_line_violations,
@@ -252,10 +252,10 @@ class ThermalMetrics:
             mavg_violations_by_transformer[self._transformer_names[i]] = self._max_mavg_transformer_violations[i]
 
         transformer_metric = ThermalMetricsModel(
-            max_instantaneous_loadings=inst_violations_by_transformer,
-            max_instantaneous_loading=max(inst_violations_by_transformer.values()),
-            max_moving_average_loadings=mavg_violations_by_transformer,
-            max_moving_average_loading=max(mavg_violations_by_transformer.values()),
+            max_instantaneous_loadings_pct=inst_violations_by_transformer,
+            max_instantaneous_loading_pct=max(inst_violations_by_transformer.values()),
+            max_moving_average_loadings_pct=mavg_violations_by_transformer,
+            max_moving_average_loading_pct=max(mavg_violations_by_transformer.values()),
             window_size_hours=self._transformer_window_size_hours,
             num_time_points_with_instantaneous_violations=self._num_time_points_inst_transformer_violations,
             num_time_points_with_moving_average_violations=self._num_time_points_mavg_transformer_violations,
