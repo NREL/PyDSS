@@ -264,7 +264,7 @@ class VoltageMetrics(ReportBase):
 
     @staticmethod
     def get_required_scenario_names():
-        return set(["control_mode"])
+        return set()
 
     @staticmethod
     def set_required_project_settings(simulation_config):
