@@ -146,7 +146,6 @@ class dssElement(dssObjectBase):
         reply = self._dssInstance.utils.run_command(self._FullName + '.' + Param + ' = ' + str(Value))
         if reply != "":
             print(f"SetParameter failed: {reply}")
-        #print(Value , self.GetParameter(Param))
         return self.GetParameter(Param)
 
     def GetParameter(self, Param):

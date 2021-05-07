@@ -186,8 +186,8 @@ class PvController(ControllerAbstract):
         """
         PFset = self.__Settings['pf']
         PFact = self.__ControlledElm.GetParameter('pf')
-        Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))/ self.__Srated
-        Qpv = -sum(self.__ControlledElm.GetVariable('Powers')[1::2])/ self.__Srated
+        Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2])) / self.__Srated
+        Qpv = -sum(self.__ControlledElm.GetVariable('Powers')[1::2]) / self.__Srated
 
         if self.__Settings['cpf-priority'] == 'PF':
            # if self.TimeChange:
@@ -217,7 +217,7 @@ class PvController(ControllerAbstract):
         PFmin = self.__Settings['pfMin']
         PFmax = self.__Settings['pfMax']
         self.__dssSolver.reSolve()
-        Pcalc = abs(sum(-(float(x)) for x in self.__ControlledElm.GetVariable('Powers')[0::2]) )/ self.__Srated
+        Pcalc = abs(sum(-(float(x)) for x in self.__ControlledElm.GetVariable('Powers')[0::2]) ) / self.__Srated
         if Pcalc > 0:
             if Pcalc < Pmin:
                 PF = PFmax

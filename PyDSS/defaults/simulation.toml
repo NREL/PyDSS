@@ -15,9 +15,9 @@
 # DSS File- [String] - The main OpenDSS file
 # Simulation range- [Dict] - Restrict control algorithms and data collection to these hours. Useful for skipping night when simulating PV Systems.
 [Project]
-"Start time" = "2020-1-1 00:00:00.0"
-"Simulation duration (min)" = 1440.0
-"Loadshape start time" = "2020-1-1 00:00:00.0"
+"Start time" = "2020-7-15 00:00:00.0"
+"Simulation duration (min)" = 43200.0
+"Loadshape start time" = "2020-7-15 00:00:00.0"
 "Step resolution (sec)" = 900.0
 "Simulation range" = {start = "00:00:00", end = "11:59:59"}
 "Max Control Iterations" = 50
@@ -158,5 +158,8 @@ range_b_limits = [0.90, 1.0583]
 
 [Profiles]
 "Use profile manager" = false
-"Profile store path" = ""
+source_type = "h5"
+source = "Profiles_backup.hdf5"
 "Profile mapping" = ""
+is_relative_path = true
+[Profiles.settings]

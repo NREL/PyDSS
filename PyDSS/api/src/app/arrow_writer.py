@@ -41,7 +41,6 @@ class ArrowWriter:
         for obj_type in powerflow_output:
             # Add object status data to a DataFrame
             df = pd.DataFrame(data=powerflow_output[obj_type], index=[0])
-            #print(df)
             # Add additional columns
             df["TimeStep"] = float(currenttime)
             df["Interconnect"] = fed_name

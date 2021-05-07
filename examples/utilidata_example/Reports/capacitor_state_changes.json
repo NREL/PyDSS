@@ -1,0 +1,17 @@
+{
+  "scenarios": [
+    {
+      "name": "base_case",
+      "capacitors": [
+        {
+          "name": "Capacitor.cap1",
+          "change_count": 1
+        },
+        {
+          "name": "Capacitor.cap2",
+          "change_count": 1
+        }
+      ]
+    }
+  ]
+}

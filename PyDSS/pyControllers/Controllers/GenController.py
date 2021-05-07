@@ -33,7 +33,6 @@ class GenController(ControllerAbstract):
         self.__pDisconnected = False
 
         self.__ElmObjectList = ElmObjectList
-        #print(PvObj.Bus[0] + ' - ' + PvObj.sBus[0].GetInfo())
         self.ControlDict = {
             'None'           : lambda: 0,
             'VVar'           : self.VVARcontrol,
@@ -112,8 +111,6 @@ class GenController(ControllerAbstract):
 
         phases = int(self.__ControlledElm.GetParameter('phases'))
         S = self.__ControlledElm.GetVariable('Powers')[: 2*phases]
-        #print(self.__ControlledElm.GetVariable('Powers'))
-        #print(S)
         Ppv = abs(sum(S[::2]))
         Pcalc = Ppv / self.__Srated
         Qpv = -sum(S[1::2])
@@ -148,5 +145,4 @@ class GenController(ControllerAbstract):
 
         self.__ControlledElm.SetParameter('kW', self.__Prated * Plim)
         self.__ControlledElm.SetParameter('kvar', self.__Srated * Qcalc)
-        #print(dQ, uIn, self.__Srated * Qcalc, self.__Srated * Qpv)
         return abs(dQ)
