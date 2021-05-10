@@ -218,15 +218,13 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
         self._containers = {}  # StoreValuesType to StorageFilterBase
 
     @abc.abstractmethod
-    def _get_value(self, dss_obj, time_step, set_active):
+    def _get_value(self, dss_obj, time_step):
         """Get a value at the current time step.
 
         Parameters
         ----------
         dss_obj : dssObjBase
         time_step : int
-        set_active : bool
-            Set to True if the element is not already set to Active.
 
         """
 
@@ -259,10 +257,10 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
             values = []
             for _ in range(self._elem_class.Count()):
                 dss_obj = self._name_to_dss_obj[self._elem_class.Name()]
-                values.append(self._get_value(dss_obj, time_step, False))
+                values.append(self._get_value(dss_obj, time_step))
                 self._elem_class.Next()
         else:
-            values = [self._get_value(x, time_step, True) for x in self._dss_objs]
+            values = [self._get_value(x, time_step) for x in self._dss_objs]
 
         if not self._containers:
             self._initialize_containers(values)
@@ -296,8 +294,8 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
 class OpenDssPropertyMetric(MultiValueTypeMetricBase):
     """Stores metrics for any OpenDSS element property."""
 
-    def _get_value(self, dss_obj, _time_step, set_active):
-        return dss_obj.UpdateValue(self._name, set_active)
+    def _get_value(self, dss_obj, _time_step):
+        return dss_obj.UpdateValue(self._name)
 
     def append_values(self, time_step, store_nan=False):
         curr_data = {}
@@ -321,14 +319,14 @@ class OpenDssPropertyMetric(MultiValueTypeMetricBase):
 #        super().__init__(prop, dss_objs, options)
 #        self._normal_amps = {}  # Name to normal_amps value
 #
-#    def _get_value(self, dss_obj, _time_step, set_active):
+#    def _get_value(self, dss_obj, _time_step):
 #        line = dss_obj
 #        normal_amps = self._normal_amps.get(line.Name)
 #        if normal_amps is None:
 #            normal_amps = line.GetValue("NormalAmps", convert=True).value
 #            self._normal_amps[line.Name] = normal_amps
 #
-#        currents = line.UpdateValue("Currents", set_active).value
+#        currents = line.UpdateValue("Currents").value
 #        current = max([abs(x) for x in currents])
 #        loading = current / normal_amps * 100
 #        return ValueByNumber(line.Name, "LineLoading", loading)
@@ -341,14 +339,14 @@ class OpenDssPropertyMetric(MultiValueTypeMetricBase):
 #        super().__init__(prop, dss_objs, options)
 #        self._normal_amps = {}  # Name to normal_amps value
 #
-#    def _get_value(self, dss_obj, _time_step, set_active):
+#    def _get_value(self, dss_obj, _time_step):
 #        transformer = dss_obj
 #        normal_amps = self._normal_amps.get(transformer.Name)
 #        if normal_amps is None:
 #            normal_amps = transformer.GetValue("NormalAmps", convert=True).value
 #            self._normal_amps[transformer.Name] = normal_amps
 #
-#        currents = transformer.UpdateValue("Currents", set_active).value
+#        currents = transformer.UpdateValue("Currents").value
 #        current = max([abs(x) for x in currents])
 #        loading = current / normal_amps * 100
 #        return ValueByNumber(transformer.Name, "TransformerLoading", loading)
@@ -362,8 +360,8 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
         self._container = None
         self._data_conversion = prop.data_conversion
 
-    def _get_value(self, obj, set_active):
-        value = obj.UpdateValue(self._name, set_active)
+    def _get_value(self, obj):
+        value = obj.UpdateValue(self._name)
         if self._data_conversion != DataConversion.NONE:
             value = convert_data(
                 "Total",
@@ -377,9 +375,9 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
         if store_nan:
             if self._can_use_native_iteration():
                 self._elem_class.First()
-                total = self._get_value(self._dss_objs[0], False)
+                total = self._get_value(self._dss_objs[0])
             else:
-                total = self._get_value(self._dss_objs[0], True)
+                total = self._get_value(self._dss_objs[0])
             total.set_nan()
         else:
             total = None
@@ -387,7 +385,7 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
                 self._elem_class.First()
                 for _ in range(self._elem_class.Count()):
                     dss_obj = self._name_to_dss_obj[self._elem_class.Name()]
-                    value = self._get_value(dss_obj, False)
+                    value = self._get_value(dss_obj)
                     if total is None:
                         total = value
                     else:
@@ -395,7 +393,7 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
                     self._elem_class.Next()
             else:
                 for dss_obj in self._dss_objs:
-                    value = self._get_value(dss_obj, True)
+                    value = self._get_value(dss_obj)
                     if total is None:
                         total = value
                     else:

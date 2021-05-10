@@ -87,16 +87,13 @@ class dssObjectBase(abc.ABC):
             return ValueByList(self._FullName, VarName, value, labels)
         return ValueByNumber(self._FullName, VarName, value)
 
-    def UpdateValue(self, VarName, NeedsSetActive=True):
+    def UpdateValue(self, VarName):
         cachedValue = self._CachedValueStorage.get(VarName)
         if cachedValue is None:
             cachedValue = self.GetValue(VarName, convert=True)
             self._CachedValueStorage[VarName] = cachedValue
         else:
-            if NeedsSetActive:
-                value = self.GetValue(VarName, convert=False)
-            else:
-                value = self._Variables[VarName]()
+            value = self.GetValue(VarName, convert=False)
             if isinstance(cachedValue, ValueByNumber) and VarName in self.VARIABLE_OUTPUTS_COMPLEX:
                 value = complex(value[0], value[1])
             cachedValue.set_value_from_raw(value)

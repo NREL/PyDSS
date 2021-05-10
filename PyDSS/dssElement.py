@@ -126,6 +126,8 @@ class dssElement(dssObjectBase):
             return 0, None
 
     def GetValue(self, VarName, convert=False):
+        if self._dssInstance.Element.Name() != self._FullName:
+            self.SetActiveObject()
         if VarName in self._Variables:
             VarValue = self.GetVariable(VarName, convert=convert)
         elif VarName in self._Parameters:
@@ -135,7 +137,6 @@ class dssElement(dssObjectBase):
         else:
             return None
         return VarValue
-
 
     def SetActiveObject(self):
         self._dssInstance.Circuit.SetActiveElement(self._FullName)

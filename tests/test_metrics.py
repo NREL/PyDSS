@@ -57,7 +57,7 @@ class FakeMetric(MultiValueTypeMetricBase):
         self._val_index = 0
         self._values = values
 
-    def _get_value(self, obj, timestamp, set_active):
+    def _get_value(self, obj, timestamp):
         prop = next(iter(self._properties.values()))
         if isinstance(self._values[self._val_index], list):
             val = ValueByList(obj.FullName, prop.name, self._values[self._val_index], ["", ""])
