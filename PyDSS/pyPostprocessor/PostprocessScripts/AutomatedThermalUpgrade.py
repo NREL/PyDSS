@@ -68,18 +68,21 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         """Constructor method
         """
         super(AutomatedThermalUpgrade, self).__init__(project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger)
-
+        self._simulation = None
+        self._step = None
         self.config["units key"] = ["mi", "kft", "km", "m", "Ft", "in", "cm"]  # Units key for lines taken from OpenDSS
+        self.config["project_dss_files_path"] = project.dss_files_path
 
-        # max limit to the number of iterations for the thermal upgrades algorithm
-        self.thermal_upgrade_iteration_threshold = 5
-        
         dss = dssInstance
         self.dssSolver = dssSolver
-        
+
         if simulationSettings["Project"]["Simulation Type"] != "Snapshot":
             raise InvalidParameter("Upgrade post-processors are only supported on Snapshot simulations")
-        
+
+    def _run(self):
+        # max limit to the number of iterations for the thermal upgrades algorithm
+        self.thermal_upgrade_iteration_threshold = 5
+
         # Just send this list as input to the upgrades code via DISCO -  this list may be empty or have as many
         # paths as the user desires - if empty the mults in the 'tps_to_test' input will be used else if non-empty
         # max and min load mults from the load.dss files will be used. Tne tps to test input should always be specified
@@ -191,7 +194,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 and (self.Line_trial_counter < self.max_upgrade_iteration):
             prev_xfmr = len(self.xfmr_violations)
             prev_line = len(self.line_violations)
-            self.dssSolver.Solve()
+            # self.dssSolver.Solve()
+            self._simulation.RunStep(self._step)
             self.logger.info(f"Solution Converged: {dss.Solution.Converged()}")
             if not dss.Solution.Converged():
                 raise OpenDssConvergenceError("OpenDSS solution did not converge")
@@ -211,7 +215,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 self.correct_line_violations()
                 self.logger.info("Corrected line violations.")
 
-            self.dssSolver.Solve()
+            # self.dssSolver.Solve()
+            self._simulation.RunStep(self._step)
             self.logger.info(f"Solution Converged: {dss.Solution.Converged()}")
             if not dss.Solution.Converged():
                 raise OpenDssConvergenceError("OpenDSS solution did not converge")
@@ -245,11 +250,12 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
         # clear and redirect dss file - to compute final violations, and get new elements
         dss.run_command("Clear")
-        base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
+        base_dss = os.path.join(self.config["project_dss_files_path"], self.Settings["Project"]["DSS File"])
         check_redirect(base_dss)
         upgrades_file = os.path.join(self.config["Outputs"], "thermal_upgrades.dss")
         check_redirect(upgrades_file)
-        self.dssSolver.Solve()
+        # self.dssSolver.Solve()
+        self._simulation.RunStep(self._step)
 
         # get final loadings - using function
         self.final_line_ldg_lst, self.final_xfmr_ldg_lst, self.equip_ldgs = self.create_result_comparison(
@@ -374,7 +380,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
     def get_load_pv_mults_individual_object(self):
         self.orig_loads = {}
         self.orig_pvs = {}
-        self.dssSolver.Solve()
+        # self.dssSolver.Solve()
+        self._simulation.RunStep(self._step)
         if dss.Loads.Count() > 0:
             dss.Loads.First()
             while True:
@@ -439,7 +446,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
     def get_load_mults(self):
         self.orig_loads = {}
-        self.dssSolver.Solve()
+        # self.dssSolver.Solve()
+        self._simulation.RunStep(self._step)
         dss.Loads.First()
         while True:
             load_name = dss.Loads.Name().split(".")[0].lower()
@@ -524,7 +532,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         dss.Loads.kW(new_kw)
                         if not dss.Loads.Next()>0:
                             break
-                    self.dssSolver.Solve()
+                    # self.dssSolver.Solve()
+                    self._simulation.RunStep(self._step)
                     if not dss.Solution.Converged():
                         self.logger.info("Write upgrades before Convergence Error in debug_upgrades.dss")
                         self.write_upgrades_to_file(
@@ -544,7 +553,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         dss.Loads.kW(new_kw)
                         if not dss.Loads.Next() > 0:
                             break
-                    self.dssSolver.Solve()
+                    # self.dssSolver.Solve()
+                    self._simulation.RunStep(self._step)
                     if not dss.Solution.Converged():
                         self.logger.info("Write upgrades before Convergence Error in debug_upgrades.dss")
                         self.write_upgrades_to_file(
@@ -603,7 +613,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if tp_cnt == 0 or tp_cnt == 1:
                     dss.run_command("BatchEdit PVSystem..* Enabled=False")
                     dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
-                    self.dssSolver.Solve()
+                    # self.dssSolver.Solve()
+                    self._simulation.RunStep(self._step)
                     if not dss.Solution.Converged():
                         self.logger.info("Write upgrades before Convergence Error in debug_upgrades.dss")
                         self.write_upgrades_to_file(
@@ -615,7 +626,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if tp_cnt == 2 or tp_cnt == 3:
                     dss.run_command("BatchEdit PVSystem..* Enabled=True")
                     dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
-                    self.dssSolver.Solve()
+                    # self.dssSolver.Solve()
+                    self._simulation.RunStep(self._step)
                     if not dss.Solution.Converged():
                         self.logger.info("Write upgrades before Convergence Error in debug_upgrades.dss")
                         self.write_upgrades_to_file(
@@ -702,7 +714,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     dss.Loads.kW(new_kw)
                     if not dss.Loads.Next() > 0:
                         break
-            self.dssSolver.Solve()
+            # self.dssSolver.Solve()
+            self._simulation.RunStep(self._step)
             if not dss.Solution.Converged():
                 raise OpenDssConvergenceError(f"OpenDSS solution did not converge for timepoint "
                                               f"{list(self.other_load_dss_files.keys())[tp_cnt]}")
@@ -739,7 +752,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         dss.Loads.kW(new_kw)
                         if not dss.Loads.Next() > 0:
                             break
-                    self.dssSolver.Solve()
+                    # self.dssSolver.Solve()
+                    self._simulation.RunStep(self._step)
                     if not dss.Solution.Converged():
                         raise OpenDssConvergenceError("OpenDSS solution did not converge")
                 if tp_cnt == 2 or tp_cnt == 3:
@@ -753,7 +767,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         dss.Loads.kW(new_kw)
                         if not dss.Loads.Next() > 0:
                             break
-                    self.dssSolver.Solve()
+                    # self.dssSolver.Solve()
+                    self._simulation.RunStep(self._step)
                     if not dss.Solution.Converged():
                         raise OpenDssConvergenceError("OpenDSS solution did not converge")
                 for b in self.buses:
@@ -773,13 +788,15 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if tp_cnt == 0 or tp_cnt == 1:
                     dss.run_command("BatchEdit PVSystem..* Enabled=False")
                     dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
-                    self.dssSolver.Solve()
+                    # self.dssSolver.Solve()
+                    self._simulation.RunStep(self._step)
                     if not dss.Solution.Converged():
                         raise OpenDssConvergenceError("OpenDSS solution did not converge")
                 if tp_cnt == 2 or tp_cnt == 3:
                     dss.run_command("BatchEdit PVSystem..* Enabled=True")
                     dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
-                    self.dssSolver.Solve()
+                    # self.dssSolver.Solve()
+                    self._simulation.RunStep(self._step)
                     if not dss.Solution.Converged():
                         raise OpenDssConvergenceError("OpenDSS solution did not converge")
                 for b in self.buses:
@@ -1154,7 +1171,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     dss.Loads.kW(new_kw)
                     if not dss.Loads.Next() > 0:
                         break
-            self.dssSolver.Solve()
+            # self.dssSolver.Solve()
+            self._simulation.RunStep(self._step)
             if not dss.Solution.Converged():
                 raise OpenDssConvergenceError(f"OpenDSS solution did not converge for timepoint "
                                               f"{list(self.other_load_dss_files.keys())[tp_cnt]}")
@@ -1202,7 +1220,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         dss.Loads.kW(new_kw)
                         if not dss.Loads.Next() > 0:
                             break
-                    self.dssSolver.Solve()
+                    # self.dssSolver.Solve()
+                    self._simulation.RunStep(self._step)
                     if not dss.Solution.Converged():
                         raise OpenDssConvergenceError("OpenDSS solution did not converge")
                 if tp_cnt==2 or tp_cnt==3:
@@ -1216,7 +1235,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         dss.Loads.kW(new_kw)
                         if not dss.Loads.Next() > 0:
                             break
-                    self.dssSolver.Solve()
+                    # self.dssSolver.Solve()
+                    self._simulation.RunStep(self._step)
                     self.logger.info("TotalPower=%s", dss.Circuit.TotalPower())
                     if not dss.Solution.Converged():
                         raise OpenDssConvergenceError("OpenDSS solution did not converge")
@@ -1248,13 +1268,15 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if tp_cnt==0 or tp_cnt==1:
                     dss.run_command("BatchEdit PVSystem..* Enabled=False")
                     dss.run_command("set LoadMult = {LM}".format(LM = self.config["tps_to_test"][tp_cnt]))
-                    self.dssSolver.Solve()
+                    # self.dssSolver.Solve()
+                    self._simulation.RunStep(self._step)
                     if not dss.Solution.Converged():
                         raise OpenDssConvergenceError("OpenDSS solution did not converge")
                 if tp_cnt==2 or tp_cnt==3:
                     dss.run_command("BatchEdit PVSystem..* Enabled=True")
                     dss.run_command("set LoadMult = {LM}".format(LM = self.config["tps_to_test"][tp_cnt]))
-                    self.dssSolver.Solve()
+                    # self.dssSolver.Solve()
+                    self._simulation.RunStep(self._step)
                     self.logger.info("TotalPower=%s", dss.Circuit.TotalPower())
                     if not dss.Solution.Converged():
                         raise OpenDssConvergenceError("OpenDSS solution did not converge")
@@ -1333,7 +1355,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                                     command_string = "Edit Line.{lnm} {cnfig}={lnc}".format(lnm=key, cnfig=ln_config,
                                                                                             lnc=lcs)
                                 dss.run_command(command_string)
-                                self.dssSolver.Solve()
+                                # self.dssSolver.Solve()
+                                self._simulation.RunStep(self._step)
                                 self.write_dss_file(command_string)
                                 lcs_fnd_flag = 1
                                 break
@@ -1363,7 +1386,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                             )
 
                         dss.run_command(command_string)
-                        self.dssSolver.Solve()
+                        # self.dssSolver.Solve()
+                        self._simulation.RunStep(self._step)
                         self.write_dss_file(command_string)
         else:
             self.logger.info("This DPV penetration has no line violations")
@@ -1468,7 +1492,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     dss.Loads.kW(new_kw)
                     if not dss.Loads.Next() > 0:
                         break
-            self.dssSolver.Solve()
+            # self.dssSolver.Solve()
+            self._simulation.RunStep(self._step)
             if not dss.Solution.Converged():
                 raise OpenDssConvergenceError("OpenDSS solution did not converge")
             dss.Transformers.First()
@@ -1518,7 +1543,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         dss.Loads.kW(new_kw)
                         if not dss.Loads.Next() > 0:
                             break
-                    self.dssSolver.Solve()
+                    # self.dssSolver.Solve()
+                    self._simulation.RunStep(self._step)
                     if not dss.Solution.Converged():
                         raise OpenDssConvergenceError("OpenDSS solution did not converge")
                 if tp_cnt == 2 or tp_cnt == 3:
@@ -1532,7 +1558,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         dss.Loads.kW(new_kw)
                         if not dss.Loads.Next() > 0:
                             break
-                    self.dssSolver.Solve()
+                    # self.dssSolver.Solve()
+                    self._simulation.RunStep(self._step)
                     if not dss.Solution.Converged():
                         raise OpenDssConvergenceError("OpenDSS solution did not converge")
                 dss.Transformers.First()
@@ -1568,13 +1595,15 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if tp_cnt == 0 or tp_cnt == 1:
                     dss.run_command("BatchEdit PVSystem..* Enabled=False")
                     dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
-                    self.dssSolver.Solve()
+                    # self.dssSolver.Solve()
+                    self._simulation.RunStep(self._step)
                     if not dss.Solution.Converged():
                         raise OpenDssConvergenceError("OpenDSS solution did not converge")
                 if tp_cnt == 2 or tp_cnt == 3:
                     dss.run_command("BatchEdit PVSystem..* Enabled=True")
                     dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
-                    self.dssSolver.Solve()
+                    # self.dssSolver.Solve()
+                    self._simulation.RunStep(self._step)
                     if not dss.Solution.Converged():
                         raise OpenDssConvergenceError("OpenDSS solution did not converge")
                 dss.Transformers.First()
@@ -1688,7 +1717,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                                     command_string = command_string + per_reac_str
                                 add_str = "XHL={xhl} ".format(xhl=dt_vals[4][0])
                                 dss.run_command(command_string)
-                                self.dssSolver.Solve()
+                                # self.dssSolver.Solve()
+                                self._simulation.RunStep(self._step)
                                 self.write_dss_file(command_string)
                                 dt_fnd_flag=1
                                 break
@@ -1736,7 +1766,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         add_str = "XHL={xhl} enabled=True".format(xhl=per_reac[0])
                         command_string=command_string+add_str
                         dss.run_command(command_string)
-                        self.dssSolver.Solve()
+                        # self.dssSolver.Solve()
+                        self._simulation.RunStep(self._step)
                         self.write_dss_file(command_string)
 
                 self.time_limit_exception(expire_time=expire_time, exception_message="Time Limit exceeded in function "
@@ -1749,16 +1780,20 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.dss_upgrades.append(device_command+"\n")
         return
 
-    def run(self, step, stepMax):
-        """Induces and removes a fault as the simulation runs as per user defined settings.
-        """
+    def run(self, step, stepMax, simulation=None):
         self.logger.info('Running thermal upgrade post process')
-        has_converged = self.has_converged
-        error = self.error
+        self._simulation = simulation
+        self._step = step
+        try:
+            self._run()
+            has_converged = self.has_converged
+            error = self.error
 
-
-        #step-=1 # uncomment the line if the post process needs to rerun for the same point in time
-        return step, has_converged, error
+            #step-=1 # uncomment the line if the post process needs to rerun for the same point in time
+            return step, has_converged, error
+        finally:
+            self._simulation = None
+            self._step = None
 
     def finalize(self):
         """Method used to combine post processing results from all steps.

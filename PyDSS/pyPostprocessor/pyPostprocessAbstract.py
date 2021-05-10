@@ -46,8 +46,19 @@ class AbstractPostprocess(abc.ABC):
         self._check_input_fields()
 
     @abc.abstractmethod
-    def run(self, step, stepMax):
+    def run(self, step, stepMax, simulation=None):
         """Method used to run a post processing script.
+
+        Parameters
+        ----------
+        step : int
+            Current step
+        stepMax : int
+            Last step of the simulation
+        simulation : OpenDSS
+            PyDSS simulation control class. Provided for access to control algorithms.
+            Subclasses should not hold references to this instance after this method exits.
+
         """
 
     @abc.abstractmethod
