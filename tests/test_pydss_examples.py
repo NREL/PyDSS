@@ -9,7 +9,9 @@ import pytest
 import subprocess
 from PyDSS.pydss_project import PyDssProject
 
+import logging
 
+logger = logging.getLogger(__name__)
 
 PATH = os.path.join(tempfile.gettempdir(), "pydss-projects")
 EXAMPLES_path = "examples"
@@ -30,7 +32,6 @@ def copy_examples_to_temp_folder(example_name):
     #assert os.path.exists(EXAMPLES_path)
     proc = None
     base_projects_path = os.path.join(PATH,example_name)
-    print(f"Temporary path: {base_projects_path}")
     os.makedirs(base_projects_path, exist_ok=True)
     assert os.path.exists(base_projects_path)
     copy_tree(EXAMPLES_path, base_projects_path)
@@ -133,7 +134,7 @@ def run_example(example_name, scenarios):
         sim_file = S["TOML"]
         sup_file = S["file"]
 
-        print(f'Running scenario {example_name} for example {sim_file}')
+        logger(f'Running scenario {example_name} for example {sim_file}')
         if sup_file != None:
             sup_file_path = os.path.join(base_projects_path, sup_file)
             assert os.path.exists(sup_file_path)
@@ -141,9 +142,6 @@ def run_example(example_name, scenarios):
             dir_main = os.getcwd()
             try:
                 os.chdir(dir_path)
-                print(dir_path)
-                print(f"Running {sup_file_path} in a subprocess")
-                print(sys.executable)
                 proc = subprocess.Popen([sys.executable, sup_file_path], shell=True)
             finally:
                 os.chdir(dir_main)
@@ -154,8 +152,6 @@ def run_example(example_name, scenarios):
                 PyDssProject.run_project(project_path, options=None, tar_project=False, zip_project=False,
                                          simulation_file=sim_file)
         finally:
-            print("Run complete")
-
             if proc != None:
                 proc.terminate()
     return

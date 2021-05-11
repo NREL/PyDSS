@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 def extract(project_path, file_path, output_dir=None, verbose=False):
     """Extract a file from an archived PyDSS project."""
     if not os.path.exists(project_path):
-        print(f"project-path={project_path} does not exist")
+        logger.error(f"project-path={project_path} does not exist")
         sys.exit(1)
 
     filename = "pydss_extract.log"
@@ -69,7 +69,7 @@ def extract(project_path, file_path, output_dir=None, verbose=False):
     with open(path, mode) as f_out:
         f_out.write(data)
 
-    print(f"Extracted {file_path} to {path}")
+    logger.info(f"Extracted {file_path} to {path}")
 
 
 @click.argument(
@@ -90,7 +90,7 @@ def extract(project_path, file_path, output_dir=None, verbose=False):
 def extract_element_files(project_path, output_dir=None, verbose=False):
     """Extract the element info files from an archived PyDSS project."""
     if not os.path.exists(project_path):
-        print(f"project-path={project_path} does not exist")
+        logger.error(f"project-path={project_path} does not exist")
         sys.exit(1)
 
     filename = "pydss_extract.log"
@@ -124,4 +124,4 @@ def extract_element_files(project_path, output_dir=None, verbose=False):
             with open(path, "w") as f_out:
                 f_out.write(text)
 
-            print(f"Extracted {filename} to {path}")
+            logger.info(f"Extracted {filename} to {path}")

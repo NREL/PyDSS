@@ -126,6 +126,8 @@ class dssElement(dssObjectBase):
             return 0, None
 
     def GetValue(self, VarName, convert=False):
+        if self._dssInstance.Element.Name() != self._FullName:
+            self.SetActiveObject()
         if VarName in self._Variables:
             VarValue = self.GetVariable(VarName, convert=convert)
         elif VarName in self._Parameters:
@@ -136,7 +138,6 @@ class dssElement(dssObjectBase):
             return None
         return VarValue
 
-
     def SetActiveObject(self):
         self._dssInstance.Circuit.SetActiveElement(self._FullName)
         if self._dssInstance.CktElement.Name() != self._dssInstance.Element.Name():
@@ -146,7 +147,6 @@ class dssElement(dssObjectBase):
         reply = self._dssInstance.utils.run_command(self._FullName + '.' + Param + ' = ' + str(Value))
         if reply != "":
             print(f"SetParameter failed: {reply}")
-        #print(Value , self.GetParameter(Param))
         return self.GetParameter(Param)
 
     def GetParameter(self, Param):

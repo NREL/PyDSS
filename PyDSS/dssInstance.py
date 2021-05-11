@@ -1,5 +1,4 @@
 from PyDSS.pyContrReader import read_controller_settings_from_registry
-from PyDSS.ProfileManager.ProfileStore import ProfileManager
 from PyDSS.dssElementFactory import create_dss_element
 from PyDSS.utils.utils import make_human_readable_size
 from PyDSS.pyContrReader import pyContrReader as pcr
@@ -8,7 +7,7 @@ from PyDSS.exceptions import (
     InvalidConfiguration, PyDssConvergenceError, PyDssConvergenceErrorCountExceeded,
     PyDssConvergenceMaxError, OpenDssModelError
 )
-
+from PyDSS.ProfileManager import ProfileInterface
 from PyDSS.pyPostprocessor import pyPostprocess
 import PyDSS.pyControllers as pyControllers
 from PyDSS.NetworkModifier import Modifier
@@ -117,8 +116,11 @@ class OpenDSS:
             self._Logger.info('Disabling internal yearly and duty-cycle profiles.')
             for m in ["Loads", "PVSystem", "Generator", "Storage"]:
                 run_command(f'BatchEdit {m}..* yearly=NONE duty=None')
-            self.profileStore = ProfileManager(self._dssObjects, self._dssSolver, params)
-            self.profileStore.setup_profiles()
+            profileSettings = self._Options["Profiles"]["settings"]
+            profileSettings["objects"] = self._dssObjects
+            self.profileStore = ProfileInterface.Create(
+                self._dssInstance, self._dssSolver, self._Options, self._Logger, **profileSettings
+            )
 
         self.ResultContainer = ResultData(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
                                           self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance,
@@ -164,6 +166,16 @@ class OpenDSS:
         if reply != "":
             raise OpenDssModelError(f"Error compiling OpenDSS model: {reply}")
 
+    def _ReadControllerDefinitions(self):
+        controllers = None
+        mappings = os.path.join(os.path.dirname(self._dssPath['pyControllers']), "ControllerMappings")
+        if os.path.exists(mappings):
+            ctrl_mapping_files = os.listdir(self._dssPath["ControllerMappings"])
+            for filename in ctrl_mapping_files: 
+                data = load_data(os.path.join(self._dssPath["ControllerMappings"], filename))
+
+        return controllers
+
     def _ModifyNetwork(self):
         # self._Modifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
         #                              True, self._dssObjects)
@@ -173,13 +185,17 @@ class OpenDSS:
 
     def _CreateControllers(self, ControllerDict):
         self._pyControls = {}
-
+        self._pyControls_types = {}
         for ControllerType, ElementsDict in ControllerDict.items():
             for ElmName, SettingsDict in ElementsDict.items():
                 Controller = pyControllers.pyController.Create(ElmName, ControllerType, SettingsDict, self._dssObjects,
                                                   self._dssInstance, self._dssSolver)
                 if Controller != -1:
-                    self._pyControls['Controller.' + ElmName] = Controller
+                    controller_name = 'Controller.' + ElmName
+                    self._pyControls[controller_name] = Controller
+                    class_name, element_name = Controller.ControlledElement().split(".")
+                    if controller_name not in self._pyControls_types:
+                        self._pyControls_types[controller_name] = class_name
                     self._Logger.info('Created pyController -> Controller.' + ElmName)
         return
 
@@ -240,23 +256,33 @@ class OpenDSS:
     def _UpdateControllers(self, Priority, Time, Iteration, UpdateResults):
         errors = []
         maxError = 0
-        for controller in self._pyControls.values():
-            error = controller.Update(Priority, Time, UpdateResults)
-            maxError = error if error > maxError else maxError
-            if Iteration == self._Options['Project']['Max Control Iterations'] - 1:
-                if error > self._Options['Project']['Error tolerance']:
-                    errorTag = {
-                            "Report": "Convergence",
-                            "Scenario": self._Options["Project"]["Active Scenario"],
-                            "Time": self._dssSolver.GetTotalSeconds(),
-                            "DateTime": str(self._dssSolver.GetDateTime()),
-                            "Controller": controller.Name(),
-                            "Controlled element": controller.ControlledElement(),
-                            "Error": error,
-                            "Control algorithm": controller.debugInfo()[Priority],
-                    }
-                    json_object = json.dumps(errorTag)
-                    self._reportsLogger.warning(json_object)
+        _pyControls_types = set(self._pyControls_types.values())
+
+        for class_name in _pyControls_types:
+            self._dssInstance.Basic.SetActiveClass(class_name)
+            elm = self._dssInstance.ActiveClass.First()
+            while elm:
+                element_name = self._dssInstance.CktElement.Name()
+                controller_name = 'Controller.' + element_name
+                if controller_name in self._pyControls:
+                    controller = self._pyControls[controller_name]
+                    error = controller.Update(Priority, Time, UpdateResults)
+                    maxError = error if error > maxError else maxError
+                    if Iteration == self._Options['Project']['Max Control Iterations'] - 1:
+                        if error > self._Options['Project']['Error tolerance']:
+                            errorTag = {
+                                "Report": "Convergence",
+                                "Scenario": self._Options["Project"]["Active Scenario"],
+                                "Time": self._dssSolver.GetTotalSeconds(),
+                                "DateTime": str(self._dssSolver.GetDateTime()),
+                                "Controller": controller.Name(),
+                                "Controlled element": controller.ControlledElement(),
+                                "Error": error,
+                                "Control algorithm": controller.debugInfo()[Priority],
+                            }
+                            json_object = json.dumps(errorTag)
+                            self._reportsLogger.warning(json_object)
+                elm = self._dssInstance.ActiveClass.Next()
         return maxError < self._Options['Project']['Error tolerance'], maxError
 
     def _CreateBusObjects(self):
@@ -292,6 +318,7 @@ class OpenDSS:
             'Circuit.' + self._dssCircuit.Name(): self._dssObjects['Circuit.' + self._dssCircuit.Name()]
         }
         self._dssObjectsByClass['Buses'] = self._dssBuses
+
         return
 
     def _GetRelaventObjectDict(self, key):
@@ -307,7 +334,6 @@ class OpenDSS:
 
     def RunStep(self, step, updateObjects=None):
         # updating parameters bebore simulation run
-        start = time.time()
         if self._Options["Logging"]["Log time step updates"]:
             self._Logger.info(f'PyDSS datetime - {self._dssSolver.GetDateTime()}')
             self._Logger.info(f'OpenDSS time [h] - {self._dssSolver.GetOpenDSSTime()}')

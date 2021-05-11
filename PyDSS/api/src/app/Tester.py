@@ -2,9 +2,12 @@ from PyDSS.dssInstance import OpenDSS
 from PyDSS.valiate_settings import validate_settings
 from PyDSS.api.src.web.parser import restructure_dictionary
 from PyDSS.api.src.app.DataWriter import DataWriter
+import logging
 import toml
 import time
 import os
+
+logger = logging.getLogger(__name__)
 
 def run_test(tomlpath):
     pydss_obj = OpenDSS()
@@ -12,9 +15,8 @@ def run_test(tomlpath):
         args = toml.load(f_in)
     try:
         validate_settings(args)
-        print(f'Parameter validation a success')
     except Exception as e:
-        print(f"Invalid simulation settings passed, {e}")
+        logger.error(f"Invalid simulation settings passed, {e}")
         return
 
     pydss_obj.init(args)
@@ -43,6 +45,6 @@ def run_test(tomlpath):
             restructured_results,
             i
         )
-    print("{} seconds".format(time.time() - st))
+    logger.debug("{} seconds".format(time.time() - st))
 
 run_test(r"C:\Users\alatif\Desktop\PyDSS_tests\IEEE123\simulation.toml")

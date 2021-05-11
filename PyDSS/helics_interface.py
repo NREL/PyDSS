@@ -76,10 +76,9 @@ class helics_interface:
         helics.helicsFederateInfoSetCoreName(self.fedinfo, self._options['Helics']['Federate name'])
         helics.helicsFederateInfoSetCoreTypeFromString(self.fedinfo, self._options['Helics']['Core type'])
         helics.helicsFederateInfoSetCoreInitString(self.fedinfo, f"--federates=1")
-        bLoc = self._options['Helics']['Broker']
+        IP = self._options['Helics']['Broker']
         Port = self._options['Helics']['Broker port']
-        self._logger.info("Connecting to broker @ {}".format(f"{bLoc}:{Port}" if Port else bLoc))
-
+        self._logger.info("Connecting to broker @ {}".format(f"{IP}:{Port}" if Port else IP))
         if self._options['Helics']['Broker']:
             helics.helicsFederateInfoSetBroker(self.fedinfo, self._options['Helics']['Broker'])
         if self._options['Helics']['Broker port']:
@@ -88,13 +87,9 @@ class helics_interface:
                                                  self._options['Helics']['Time delta'])
         helics.helicsFederateInfoSetIntegerProperty(self.fedinfo, helics.helics_property_int_log_level,
                                                     self._options['Helics']['Helics logging level'])
-
-        helics.helicsFederateInfoSetFlagOption(self.fedinfo, helics.helics_flag_uninterruptible, True)
         helics.helicsFederateInfoSetIntegerProperty(self.fedinfo, helics.helics_property_int_max_iterations,
                                                     self._options["Helics"]["Max co-iterations"])
         self._PyDSSfederate = helics.helicsCreateValueFederate(self._options['Helics']['Federate name'], self.fedinfo)
-
-
         return
 
 
@@ -142,7 +137,6 @@ class helics_interface:
                 value = None
                 if sub_info['Data type'].lower() == 'double':
                     value = helics.helicsInputGetDouble(sub_info['Subscription'])
-                    print(element_name, sub_info['Property'], value)
                 elif sub_info['Data type'].lower() == 'vector':
                     value = helics.helicsInputGetVector(sub_info['Subscription'])
                 elif sub_info['Data type'].lower() == 'string':
@@ -158,7 +152,7 @@ class helics_interface:
                     dssElement = self._objects_by_element[element_name]
                     dssElement.SetParameter(sub_info['Property'], value)
 
-                    self._logger.debug('Value for "{}.{}" changed to "{}"'.format(
+                    self._logger.info('Value for "{}.{}" changed to "{}"'.format(
                         element_name,
                         sub_info['Property'],
                         value * sub_info['Multiplier']
@@ -170,7 +164,6 @@ class helics_interface:
                         else:
                             self._subscription_dState[element_name].insert(0, self._subscription_dState[element_name].pop())
                         self._subscription_dState[element_name][0] = value
-                        #print(self._subscription_dState[element_name])
                 else:
                     self._logger.warning('{} will not be used to update element for "{}.{}" '.format(
                         value,
@@ -220,7 +213,6 @@ class helics_interface:
                 helics.helicsPublicationPublishBoolean(pub, value)
             elif isinstance(value, int):
                 helics.helicsPublicationPublishInteger(pub, value)
-            #print(element, value)
         return
 
     def request_time_increment(self):
@@ -228,18 +220,20 @@ class helics_interface:
         r_seconds = self._dss_solver.GetTotalSeconds() #- self._dss_solver.GetStepResolutionSeconds()
         if not self._options['Helics']['Iterative Mode']:
             while self.c_seconds < r_seconds:
-                self.c_seconds = helics.helicsFederateRequestTime(self._PyDSSfederate, r_seconds )
+                self.c_seconds = helics.helicsFederateRequestTime(self._PyDSSfederate, r_seconds)
             self._logger.info('Time requested: {} - time granted: {} '.format(r_seconds, self.c_seconds))
             return True, self.c_seconds
         else:
+
             self.c_seconds, iteration_state = helics.helicsFederateRequestTimeIterative(
                 self._PyDSSfederate,
                 r_seconds,
                 helics.helics_iteration_request_iterate_if_needed
             )
+
             self._logger.info('Time requested: {} - time granted: {} error: {} it: {}'.format(
                 r_seconds, self.c_seconds, error, self.itr))
-            if error > -1 and self.itr < self._co_convergance_max_iterations:
+            if error > -1 and self.itr < self._co_convergance_max_iterations - 1:
                 self.itr += 1
                 return False, self.c_seconds
             else:

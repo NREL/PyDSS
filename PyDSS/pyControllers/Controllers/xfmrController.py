@@ -49,7 +49,6 @@ class xfmrController(ControllerAbstract):
         elif self.__RPFlocking and self.P_old > 0:
             self.__Locked = self.__DisableLock()
         else:
-           # self.__Locked = self.__EnableLock()
             pass
         self.P_old = P_new
         return 0
@@ -60,6 +59,5 @@ class xfmrController(ControllerAbstract):
 
     def __DisableLock(self):
         self.__ControlledElm.SetParameter('enabled', 'True')
-        #self.__ControlledElm.SetParameter('enabled', 'False')
         return False
 

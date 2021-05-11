@@ -42,7 +42,6 @@ class TimeSeries(PlotAbstract):
             if newValue is not None:
                 if isinstance(newValue, list):
                     if self.__index[i] == 'SumEven':
-                        print(PlotProperties['FileName'], newValue)
                         self.Y[i].append(Multiplier * sum(newValue[::2]))
                     elif self.__index[i] == 'SumOdd':
                         self.Y[i].append(Multiplier * sum(newValue[1::2]))

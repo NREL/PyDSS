@@ -53,6 +53,7 @@ class dssObjectBase(abc.ABC):
         return self._Name
 
     def GetValue(self, VarName, convert=False):
+        self.SetActiveObject()
         if VarName in self._Variables:
             VarValue = self.GetVariable(VarName, convert=convert)
         else:
@@ -62,11 +63,10 @@ class dssObjectBase(abc.ABC):
     def GetVariable(self, VarName, convert=False):
         if VarName not in self._Variables:
             raise InvalidParameter(f'{VarName} is an invalid variable name for element {self._FullName}')
-
-        self.SetActiveObject()
+        if self._dssInstance.Element.Name() != self._FullName:
+            self.SetActiveObject()
         func = self._Variables[VarName]
         if func is None:
-            print(func, VarName)
             raise InvalidParameter(f"get function for {self._FullName} / {VarName} is None")
 
         value = func()
@@ -87,16 +87,13 @@ class dssObjectBase(abc.ABC):
             return ValueByList(self._FullName, VarName, value, labels)
         return ValueByNumber(self._FullName, VarName, value)
 
-    def UpdateValue(self, VarName, NeedsSetActive=True):
+    def UpdateValue(self, VarName):
         cachedValue = self._CachedValueStorage.get(VarName)
         if cachedValue is None:
             cachedValue = self.GetValue(VarName, convert=True)
             self._CachedValueStorage[VarName] = cachedValue
         else:
-            if NeedsSetActive:
-                value = self.GetValue(VarName, convert=False)
-            else:
-                value = self._Variables[VarName]()
+            value = self.GetValue(VarName, convert=False)
             if isinstance(cachedValue, ValueByNumber) and VarName in self.VARIABLE_OUTPUTS_COMPLEX:
                 value = complex(value[0], value[1])
             cachedValue.set_value_from_raw(value)
@@ -121,7 +118,8 @@ class dssObjectBase(abc.ABC):
         return self._Name
 
     def SetVariable(self, VarName, Value):
-        self.SetActiveObject()
+        if self._dssInstance.Element.Name() != self._FullName:
+            self.SetActiveObject()
         if VarName not in self._Variables:
             raise InvalidParameter(f"invalid variable name {VarName}")
 
