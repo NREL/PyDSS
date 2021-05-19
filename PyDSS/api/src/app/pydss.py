@@ -3,10 +3,10 @@ import logging
 from multiprocessing import current_process
 import inspect
 from queue import Empty
+
 from PyDSS.dssInstance import OpenDSS
-from PyDSS.valiate_settings import validate_settings
+from PyDSS.api.src.app.model_creator.Scenario_generator import PyDSS_Model
 from PyDSS.api.src.web.parser import restructure_dictionary
-#from PyDSS.api.src.app.arrow_writer import ArrowWriter
 from PyDSS.api.src.app.JSON_writer import JSONwriter
 from naerm_core.web.client_requests import send_sync_request
 from naerm_core.notification.notifier import Notifier
@@ -128,12 +128,19 @@ class PyDSS:
 
         """ Creating a project folder and removing if already exists"""
         self.project_folder = os.path.join(self.tmp_folder, folder_name)
+        self.dss_dump = os.path.join(self.tmp_folder, "dss_dump")
         if not os.path.exists(self.project_folder):
             os.mkdir(self.project_folder)
         else:
             shutil.rmtree(self.project_folder)
             os.mkdir(self.project_folder)
-        
+
+        if not os.path.exists(self.dss_dump):
+            os.mkdir(self.dss_dump)
+        else:
+            shutil.rmtree(self.dss_dump)
+            os.mkdir(self.dss_dump)
+
         """ Retrieve the file url from the BES Data API """
         self.notify(f"URL for PYDSS case file {case_file_url}")
         file_response = send_sync_request(case_file_url, 'GET', body=None)
@@ -147,23 +154,48 @@ class PyDSS:
             """ Retrieve the file from AWS and store in the tmp directory """
             data_response = send_sync_request(file_url, 'GET')
             if data_response.status == HTTPStatus.OK:
-                file = os.path.join(self.project_folder, f'{file_uuid}.{file_format}')
+                file = os.path.join(self.dss_dump, f'{file_uuid}.{file_format}')
                 with open(file, 'wb') as f:
                     f.write(data_response.data)
 
                 """ Unzip the files """
-                zip_path = os.path.join(self.project_folder, f'{file_uuid}.{file_format}')
+                zip_path = os.path.join(self.dss_dump, f'{file_uuid}.{file_format}')
                 if zip_path.endswith('.zip'):
                     with ZipFile(zip_path, 'r') as zipObj:
-                        zipObj.extractall(path=self.project_folder)
-                    
+                        zipObj.extractall(path=self.dss_dump)
                     os.remove(zip_path)
-                
+
+                    """ create a new PyDSS project here"""
+                    self.create_project(self.dss_dump, self.project_folder, file_data)
+
+                    """ update the model with new settings """
+                    model_modifier = PyDSS_Model(self.project_folder)
+                    model_modifier.create_new_scenario(
+                        file_data['case']['active_scenario'],
+                        {
+                            "Lp": params["psse"]["Pl"],
+                            "Lq": params["psse"]["Ql"],
+                            "PVp": params["psse"]["Pg"],
+                            "PVq": params["psse"]["Qg"],
+                            "Mtr": params["psse"]["%motorD"]
+                        },
+                        {
+                            "new_master": file_data['case']['dss_file'],
+                            "master": file_data['case']['dss_file'],
+                            "load": 'Loads.dss',
+                            "motor": 'Motors_new.dss',
+                            "PVsystem": 'PVSystems_new.dss',
+                        },
+                        isSubstation=False,
+                        PVstandard="1547-2018",
+                        PVcategory="Mix"
+                    )
+
                     params['powerflow_options'].update({
-                        'pydss_project' : self.project_folder,
-                        'active_project' : file_data['case']['active_project'],
-                        'active_scenario' : file_data['case']['active_scenario'],
-                        'master_dss_file' : file_data['case']['dss_file']
+                        'pydss_project': self.project_folder,
+                        'active_project': file_data['case']['active_project'],
+                        'active_scenario': file_data['case']['active_scenario'],
+                        'master_dss_file': file_data['case']['dss_file']
                     })
                     print(params)
                     #TODO: validate pydss project skeleton
@@ -228,7 +260,20 @@ class PyDSS:
             logger.error(f'Error fetching PyDSS project!')
             self.notify(f"Error fetching PyDSS project!", log_level=logging.ERROR)
             return None
-    
+
+    def create_project(self, dss_path, project_path, project_info):
+
+        cmd = "pydss create-project -P {} -p {} -s {} -F {} -m {} -c {}".format(
+            project_path,
+            project_info['case']['active_project'],
+            "base_case",
+            dss_path,
+            project_info['case']['dss_file'],
+            "PvVoltageRideThru,MotorStall"
+        )
+        os.system(cmd)
+        return
+
     def run_process(self):
         logger.info("PyDSS simulation starting")
         while not self.shutdownevent.is_set():
