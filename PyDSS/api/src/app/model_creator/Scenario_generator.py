@@ -1,4 +1,4 @@
-from PyDSS_model_generator import ModelGenerator
+from PyDSS.api.src.app.model_creator.PyDSS_model_generator import ModelGenerator
 from PyDSS.pydss_project import PyDssScenario
 from PyDSS import defaults as PyDSS_defaults
 from PyDSS.common import ControllerType
@@ -51,8 +51,9 @@ class PyDSS_Model:
 
     def __init__(self, pydssProjectPath):
         self.path = pydssProjectPath
-        self.project = os.path.join(pydssProjectPath, 'PyDSS Scenarios')
+        self.project = os.path.join(pydssProjectPath, 'Scenarios')
         self.scenarios = [f.name for f in os.scandir(self.project) if f.is_dir()]
+        print('sceanrio',self.scenarios)
 
 
     def get_init_model_info(self, master_file):
@@ -61,7 +62,7 @@ class PyDSS_Model:
         #try:
         orig_dir = os.getcwd()
         os.chdir(orig_dir)
-        dss_path = os.path.join(self.path, "dssfiles", master_file)
+        dss_path = os.path.join(self.path, "DSSfiles", master_file)
         reply = dss.utils.run_command(f'redirect {dss_path}')
         dss.Solution.Solve()
         Pl = -dss.Circuit.TotalPower()[0]
@@ -251,24 +252,24 @@ class PyDSS_Model:
         return
 
 
-a = PyDSS_Model(r"C:\Users\alatif\Desktop\p1uhs1_1247")
-a.create_new_scenario(
-    "test",
-    {
-        "Lp": 20,
-        "Lq": 5,
-        "PVp": 3,
-        "PVq": 0,
-        "Mtr": 10.3
-    },
-    {
-        "new_master": "Master_new.dss",
-        "master": "Master.dss",
-        "load": 'Loads.dss',
-        "motor": 'Motors_new.dss',
-        "PVsystem": 'PVSystems_new.dss',
-    },
-    isSubstation=True,
-    PVstandard="1547-2018",
-    PVcategory="Mix"
-)
+# a = PyDSS_Model(r"C:\Users\alatif\Desktop\p1uhs1_1247")
+# a.create_new_scenario(
+#     "test",
+#     {
+#         "Lp": 20,
+#         "Lq": 5,
+#         "PVp": 3,
+#         "PVq": 0,
+#         "Mtr": 10.3
+#     },
+#     {
+#         "new_master": "Master_new.dss",
+#         "master": "Master.dss",
+#         "load": 'Loads.dss',
+#         "motor": 'Motors_new.dss',
+#         "PVsystem": 'PVSystems_new.dss',
+#     },
+#     isSubstation=True,
+#     PVstandard="1547-2018",
+#     PVcategory="Mix"
+# )

@@ -61,12 +61,6 @@ class PyDSS:
                     })
                     return
             params = restructure_dictionary(parameters)
-
-            # Hack for fixing HELICS time in PyDSS
-            # PyDSS uses seconds to request federate time whereas other federates in NAERM 
-            # uses minutes to request time
-            # params['Project']['Simulation duration (min)'] = params['Project']['Simulation duration (min)']/60.0
-            # params['Project']['Step resolution (sec)'] = params['Project']['Step resolution (sec)']/60.0
             
             self.time_resolution = params['Project']['Step resolution (sec)']/60
             params['Project']["Loadshape start time"] = "1/1/2020 00:00:00"
@@ -150,6 +144,7 @@ class PyDSS:
             file_url = file_data['file_url']
             self.notify(f"URL to download the file> {file_url}")
             file_format = file_data['format']
+            
 
             """ Retrieve the file from AWS and store in the tmp directory """
             data_response = send_sync_request(file_url, 'GET')
@@ -166,45 +161,53 @@ class PyDSS:
                     os.remove(zip_path)
 
                     """ create a new PyDSS project here"""
-                    self.create_project(self.dss_dump, self.project_folder, file_data)
+                    #print(params)
+                    #print(file_data.keys())
+                    self.scenario = "scenario1"
+                    self.project = "project1"
+                    try:
+                        self.create_project(self.dss_dump, self.project_folder, file_data)
+                        
 
-                    """ update the model with new settings """
-                    model_modifier = PyDSS_Model(self.project_folder)
-                    model_modifier.create_new_scenario(
-                        file_data['case']['active_scenario'],
-                        {
-                            "Lp": params["psse"]["Pl"],
-                            "Lq": params["psse"]["Ql"],
-                            "PVp": params["psse"]["Pg"],
-                            "PVq": params["psse"]["Qg"],
-                            "Mtr": params["psse"]["%motorD"]
-                        },
-                        {
-                            "new_master": file_data['case']['dss_file'],
-                            "master": file_data['case']['dss_file'],
-                            "load": 'Loads.dss',
-                            "motor": 'Motors_new.dss',
-                            "PVsystem": 'PVSystems_new.dss',
-                        },
-                        isSubstation=False,
-                        PVstandard="1547-2018",
-                        PVcategory="Mix"
-                    )
+                        """ update the model with new settings """
+                        model_modifier = PyDSS_Model(os.path.join(self.project_folder,self.project))
+                        model_modifier.create_new_scenario(
+                            self.scenario, #file_data['case']['active_scenario']
+                            {
+                                "Lp": params["psse"]["Lp"],
+                                "Lq": params["psse"]["Lq"],
+                                "PVp": params["psse"]["PVp"],
+                                "PVq": params["psse"]["PVq"],
+                                "Mtr": params["psse"]["Mtr"]
+                            },
+                            {
+                                "new_master": "new_" + file_data['case']['master_file'],
+                                "master": file_data['case']['master_file'],
+                                "load": 'Loads.dss', # TODO: needs to come from metadata
+                                "motor": 'Motors_new.dss',
+                                "PVsystem": 'PVSystems_new.dss',
+                            },
+                            isSubstation=True, # needs to come from metadata
+                            PVstandard="1547-2018", # needs to come from cosim-input
+                            PVcategory="Mix" # needs to come from from cosim-input
+                        )
 
-                    params['powerflow_options'].update({
-                        'pydss_project': self.project_folder,
-                        'active_project': file_data['case']['active_project'],
-                        'active_scenario': file_data['case']['active_scenario'],
-                        'master_dss_file': file_data['case']['dss_file']
-                    })
-                    print(params)
+                        params['powerflow_options'].update({
+                            'pydss_project': self.project_folder,
+                            'active_project': self.project,
+                            'active_scenario': self.scenario,
+                            'master_dss_file': file_data['case']['master_file']
+                        })
+                        print(params)
+                    except Exception as e:
+                        print(f"Error> {str(e)}")
                     #TODO: validate pydss project skeleton
 
                     # Update subscriptions.toml file with sub id if sub_id exists
                     if 'sub_id' in params['powerflow_options']:
                         sub_id = params['powerflow_options'].pop('sub_id')
-                        path_to_sub_file = os.path.join(self.project_folder, file_data['case']['active_project'], 
-                                'Scenarios', file_data['case']['active_scenario'], 'ExportLists')
+                        path_to_sub_file = os.path.join(self.project_folder, self.project, 
+                                'Scenarios', self.scenario, 'ExportLists')
 
                         if os.path.exists(path_to_sub_file):
                             if 'Subscriptions.toml' in os.listdir(path_to_sub_file):
@@ -242,9 +245,9 @@ class PyDSS:
                         logger.info('ExportMode-byClass.toml file changed')
                     
                     """ create log folder if not present """
-                    log_folder  = os.path.join(self.project_folder, file_data['case']['active_project'], 'Logs')
-                    if not os.path.exists(log_folder):
-                        os.mkdir(log_folder)
+                    # log_folder  = os.path.join(self.project_folder, self.project, 'Logs')
+                    # if not os.path.exists(log_folder):
+                    #     os.mkdir(log_folder)
 
                     return params
                 else:
@@ -263,12 +266,13 @@ class PyDSS:
 
     def create_project(self, dss_path, project_path, project_info):
 
-        cmd = "pydss create-project -P {} -p {} -s {} -F {} -m {} -c {}".format(
+        #activate pydss_api && 
+        cmd = "activate pydss_api &&  pydss create-project -P {} -p {} -s {} -F {} -m {} -c {}".format(
             project_path,
-            project_info['case']['active_project'],
+            self.project,
             "base_case",
             dss_path,
-            project_info['case']['dss_file'],
+            project_info['case']['master_file'],
             "PvVoltageRideThru,MotorStall"
         )
         os.system(cmd)
