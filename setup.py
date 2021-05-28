@@ -27,7 +27,7 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
-setup(name='PyDSS_',
+setup(name='dsspy',
       version=find_version("PyDSS", "__init__.py"),
       description='A high-level python interface for OpenDSS',
       author='Aadil Latif',
