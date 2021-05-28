@@ -1,5 +1,4 @@
 pandas
-seaborn
 setuptools
 scipy
 bokeh
