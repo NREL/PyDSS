@@ -108,7 +108,6 @@ class OpenDSS:
         self._dssCommand = run_command
         self._dssSolution = dss.Solution
         self._dssSolver = SolveMode.GetSolver(SimulationSettings=params, dssInstance=self._dssInstance)
-
         self._Modifier = Modifier(dss, run_command, params)
         self._UpdateDictionary()
         self._CreateBusObjects()
@@ -144,6 +143,7 @@ class OpenDSS:
                 break
         self._increment_flag = True
         if params['Helics']["Co-simulation Mode"]:
+            #self._increment_flag = False
             self._HI = HI.helics_interface(self._dssSolver, self._dssObjects, self._dssObjectsByClass, params,
                                            self._dssPath)
         return
@@ -255,14 +255,23 @@ class OpenDSS:
 
         for ElmName in self._dssInstance.Circuit.AllElementNames():
             Class, Name =  ElmName.split('.', 1)
-            if Class + 's' not in self._dssObjectsByClass:
-                self._dssObjectsByClass[Class + 's'] = {}
+            #print(f'adding {Class}, {Name} to dictionary')
+            if Class[-1] == 's':
+                Classes = Class + 'es'
+            else:
+                Classes = Class + 's'
+            if Classes not in self._dssObjectsByClass:
+                self._dssObjectsByClass[Classes] = {}
             self._dssInstance.Circuit.SetActiveElement(ElmName)
-            self._dssObjectsByClass[Class + 's'][ElmName] = create_dss_element(Class, Name, self._dssInstance)
-            self._dssObjects[ElmName] = self._dssObjectsByClass[Class + 's'][ElmName]
+            self._dssObjectsByClass[Classes][ElmName] = create_dss_element(Class, Name, self._dssInstance)
+            self._dssObjects[ElmName] = self._dssObjectsByClass[Classes][ElmName]
 
         for ObjName in self._dssObjects.keys():
-            Class = ObjName.split('.')[0] + 's'
+            Class = ObjName.split('.')[0]
+            if Class[-1] == 's':
+                Classes = Class+'es'
+            else:
+                Classes = Class+'s'
             if Class not in self._dssObjectsByClass:
                 self._dssObjectsByClass[Class] = {}
             if  ObjName not in self._dssObjectsByClass[Class]:
@@ -287,13 +296,26 @@ class OpenDSS:
 
     def RunStep(self, step, updateObjects=None):
         # updating paramters bebore simulation run
-
+        self._HI.updateHelicsPublications()
         if self._Options['Helics']['Co-simulation Mode']:
+            #self._HI.updateHelicsPublications()
             if self._increment_flag:
-                self._dssSolver.IncStep()
+                if step == 0:
+                    print('solving first step')
+                    self._dssSolver.Solve()
+                else:
+                    self._Logger.debug('incrementing step and solving')
+                    self._dssSolver.IncStep()
+                    #self._dssSolver.Solve()
             else:
+                print('solving step again')
+                self._Logger.debug('solving same step over')
+                #self._dssSolver.Solve()
                 self._dssSolver.reSolve()
+            print('timestep solved, updating subscriptions')
             self._HI.updateHelicsSubscriptions()
+            #print('updating publications')
+            #self._HI.updateHelicsPublications()
         else:
             self._dssSolver.IncStep()
             if updateObjects:
@@ -335,7 +357,7 @@ class OpenDSS:
 
         if self._Options['Helics']['Co-simulation Mode']:
             self._HI.updateHelicsPublications()
-            self._increment_flag, helics_time = self._HI.request_time_increment()
+            self._increment_flag, helics_time = self._HI.request_time_increment(step)
 
         return self.ResultContainer.CurrentResults
 
@@ -358,10 +380,12 @@ class OpenDSS:
     def RunSimulation(self, project, scenario, MC_scenario_number=None):
         startTime = time.time()
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
+        print(f"Running simulation from {sTime} to {eTime} with {Steps} steps.")
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
         self._Logger.info('Simulation time step {}.'.format(Steps))
         if self._Options['Exports']['Result Container'] == 'ResultData' and self.ResultContainer is not None:
-            self.ResultContainer.InitializeDataStore(project.hdf_store, Steps, MC_scenario_number)
+            # make space for Steps*5 to allow for co-iterations
+            self.ResultContainer.InitializeDataStore(project.hdf_store, Steps*10, MC_scenario_number)
 
         postprocessors = [
             pyPostprocess.Create(
@@ -383,10 +407,10 @@ class OpenDSS:
             step = 0
             while step < Steps:
                 self.RunStep(step)
-
-                if step == 0 and self.ResultContainer is not None:
-                    size = make_human_readable_size(self.ResultContainer.max_num_bytes())
-                    self._Logger.info('Storage requirement estimation: %s, estimated based on first time step run.', size)
+                size = make_human_readable_size(self.ResultContainer.max_num_bytes())
+                self._Logger.info('Storage requirement estimation: %s, estimated based on first time step run.', size)
+                size = make_human_readable_size(self.ResultContainer.max_num_bytes())
+                self._Logger.info('Storage requirement estimation: %s, estimated based on first time step run.', size)
 
                 for postprocessor in postprocessors:
                     step = postprocessor.run(step, Steps)
@@ -406,6 +430,7 @@ class OpenDSS:
 
         self._Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
         self._Logger.info('End of simulation')
+        print('End of simulation')
 
     def RunMCsimulation(self, project, scenario, samples):
         from PyDSS.Extensions.MonteCarlo import MonteCarloSim

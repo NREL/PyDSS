@@ -16,6 +16,7 @@ class dssObjectBase(abc.ABC):
         self._Variables = {}
         self._dssInstance = dssInstance
         self._Enabled = True
+        self._Parameters = {}
 
     @property
     def dss(self):
