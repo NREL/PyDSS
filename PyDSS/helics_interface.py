@@ -130,50 +130,63 @@ class helics_interface:
     def updateHelicsSubscriptions(self):
 
         for element_name, sub_info in self._subscriptions.items():
+            print(f'getting subscription: {element_name}')
             if 'Subscription' in sub_info:
                 value = None
+                sub_property = [sub_info['Property']]
+                sub_multiplier = [sub_info['Multiplier']]
                 if sub_info['Data type'].lower() == 'double':
-                    value = helics.helicsInputGetDouble(sub_info['Subscription'])
+                    value = [helics.helicsInputGetDouble(sub_info['Subscription'])]
                 elif sub_info['Data type'].lower() == 'vector':
                     value = helics.helicsInputGetVector(sub_info['Subscription'])
+                    print(f'{element_name}: {value}')
+                    last_sub_index = sub_info['index']
+                    if isinstance(sub_info['Property'], list):
+                        sub_property = sub_info['Property']
+                        sub_multiplier = sub_info['Multiplier']
+                        last_sub_index = sub_info['index'][-1]
                     if isinstance(value, list):
-                        value = value[sub_info['index']]
+                        if len(value)<last_sub_index+1 and self._options['Helics']['Iterative Mode'] and abs(value[0]) > 10e20:
+                             value = [value[0] for i in range(last_sub_index+1)]
+                        #value = value[last_sub_index]
                 elif sub_info['Data type'].lower() == 'string':
-                    value = helics.helicsInputGetString(sub_info['Subscription'])
+                    value = [helics.helicsInputGetString(sub_info['Subscription'])]
                 elif sub_info['Data type'].lower() == 'boolean':
-                    value = helics.helicsInputGetBoolean(sub_info['Subscription'])
+                    value = [helics.helicsInputGetBoolean(sub_info['Subscription'])]
                 elif sub_info['Data type'].lower() == 'integer':
-                    value = helics.helicsInputGetInteger(sub_info['Subscription'])
+                    value = [helics.helicsInputGetInteger(sub_info['Subscription'])]
 
                 if value:
-                    value = value * sub_info['Multiplier']
+                    #value = value * sub_info['Multiplier']
                     # if you are iterating and the feedin voltage is close to 0, log the time and iteration, but continue with nominal so that you can continue
-                    if element_name == "Vsource.source" and self._options['Helics']['Iterative Mode'] and (value<0.01 or math.isnan(value) or value=='nan'):
+                    if element_name == "Vsource.source" and self._options['Helics']['Iterative Mode'] and (value[0]<0.01 or math.isnan(value[0]) or value[0]=='nan'):
                         self._logger.debug('Feed-in voltage {value} at time {self.c_seconds} iteration {self.itr}, continuing with nominal voltage.')
                         print(f'voltage {value} continuing with nominal')
-                        value = 1.0
-                    elif element_name.startswith('Load.load') and self._options['Helics']['Iterative Mode'] and (abs(value)>10e20 or math.isnan(value) or value=='nan'):
-
-                        new_value = 0.0#0.2/(self.itr+1)
+                        value = [1.0]*len(sub_property)
+                    elif element_name.startswith('Load.load') and self._options['Helics']['Iterative Mode'] and (abs(value[0])>10e20 or math.isnan(value[0]) or value[0]=='nan'):
+                        new_value = [0.0]*len(sub_property) #0.2/(self.itr+1)
                         self._logger.debug('load {value} at time {self.c_seconds} iterationi {self.itr}, continuing with new_value load.')
                         print(f'load {element_name} = {value}, waiting for updated value, solving with 0.0.') 
                         value = new_value
                         time.sleep(1)
                     dssElement = self._objects_by_element[element_name]
-                    dssElement.SetParameter(sub_info['Property'], value)
-                    print(f'Value for {element_name}.{sub_info["Property"]} changed to {value}')
+                    val_mult = []
+                    for prop_i in range(len(sub_property)):
+                        val_i = value[prop_i] * sub_multiplier[prop_i]
+                        dssElement.SetParameter(sub_property[prop_i], val_i)#(sub_info['Property'], value)
+                        print(f'Value for {element_name}.{sub_property[prop_i]} changed to {val_i}')
+                        val_mult.append(val_i)
                     self._logger.debug('Value for "{}.{}" changed to "{}"'.format(
                     element_name,
                     sub_info['Property'],
-                    value * sub_info['Multiplier']
-                    ))
+                    val_mult))
 
                     if self._options['Helics']['Iterative Mode']:
                         if self.c_seconds != self.c_seconds_old:
                             self._subscription_dState[element_name] = [self.init_state] * self.n_states
                         else:
                             self._subscription_dState[element_name].insert(0,self._subscription_dState[element_name].pop())
-                        self._subscription_dState[element_name][0] = value
+                        self._subscription_dState[element_name][0] = val_mult[0]
                         print(self._subscription_dState[element_name])
         self.c_seconds_old = self.c_seconds
 
