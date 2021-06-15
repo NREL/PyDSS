@@ -5,9 +5,9 @@ import os
 
 @click.command()
 @click.option('--pydss_path',
-              default=r'C:\Users\alatif\Desktop\PyDSS_2.0\PyDSS')
+              default=r'C:\Users\alatif\Desktop\pydss_test')
 @click.option('--sim_path',
-              default=r'C:\Users\alatif\Desktop\PyDSS_2.0\PyDSS\examples\external_interfaces\Python_example')
+              default=r'C:\Users\alatif\Desktop\pydss_test\examples\external_interfaces\Python_example')
 @click.option('--sim_file',
               default=r'simulation.toml')
 def run_pyDSS(pydss_path, sim_path, sim_file):

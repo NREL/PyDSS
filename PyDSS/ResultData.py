@@ -5,6 +5,7 @@ import os
 import pathlib
 
 import pandas as pd
+import opendssdirect as dss
 
 from PyDSS.pyLogger import getLoggerTag
 from PyDSS.unitDefinations import unit_info
@@ -20,6 +21,8 @@ from PyDSS.value_storage import ValueContainer, ValueByNumber, DatasetPropertyTy
 logger = logging.getLogger(__name__)
 
 
+logger = logging.getLogger(__name__)
+
 class ResultData:
     """Exports data to files."""
 
@@ -29,11 +32,7 @@ class ResultData:
     def __init__(self, options, system_paths, dss_objects,
                  dss_objects_by_class, dss_buses, dss_solver, dss_command,
                  dss_instance):
-        if options["Logging"]["Pre-configured logging"]:
-            logger_tag = __name__
-        else:
-            logger_tag = getLoggerTag(options)
-        self._logger = logging.getLogger(logger_tag)
+        self._logger = logger
         self._dss_solver = dss_solver
         self._results = {}
         self._buses = dss_buses
@@ -45,8 +44,8 @@ class ResultData:
 
         self._dss_command = dss_command
         self._dss_instance = dss_instance
-        self._start_day = options["Project"]["Start Day"]
-        self._end_day = options["Project"]["End Day"]
+        self._start_day = dss_solver.StartDay
+        self._end_day = dss_solver.EndDay
         self._time_dataset = None
         self._frequency_dataset = None
         self._mode_dataset = None
@@ -64,13 +63,13 @@ class ResultData:
         )
         # Use / because this is used in HDFStore
         self._export_relative_dir = f"Exports/" + options["Project"]["Active Scenario"]
-        self._store_frequency = False
-        self._store_mode = False
+        self._store_frequency = True
+        self._store_mode = True
         self.CurrentResults = {}
-        if options["Project"]["Simulation Type"] == "Dynamic" or \
-                options["Frequency"]["Enable frequency sweep"]:
-            self._store_frequency = True
-            self._store_mode = True
+        # if options["Project"]["Simulation Type"] == "Dynamic" or \
+        #         options["Frequency"]["Enable frequency sweep"]:
+        #     self._store_frequency = True
+        #     self._store_mode = True
 
         if options["Exports"]["Export Mode"] == "byElement":
             raise InvalidParameter(
@@ -152,9 +151,15 @@ class ResultData:
         for element in self._elements:
             element.initialize_data_store(hdf_store, self._scenario, num_steps)
 
+    def GetCurrentData(self):
+        self.CurrentResults.clear()
+        for elem in self._elements:
+            data = elem.get_current_data()
+            self.CurrentResults.update(data)
+        return self.CurrentResults
+
     def UpdateResults(self):
         self.CurrentResults.clear()
-
         timestamp = self._dss_solver.GetDateTime().timestamp()
         self._time_dataset.write_value(timestamp)
         self._frequency_dataset.write_value(self._dss_solver.getFrequency())
@@ -175,11 +180,11 @@ class ResultData:
             "event_log": None,
             "element_info_files": [],
         }
-
         if self._options["Exports"]["Export Event Log"]:
             self._export_event_log(metadata)
         if self._options["Exports"]["Export Elements"]:
             self._export_elements(metadata)
+            self._export_feeder_head_info(metadata)
         if self._options["Exports"]["Export PV Profiles"]:
             self._export_pv_profiles()
 
@@ -212,6 +217,90 @@ class ResultData:
             metadata["event_log"] = self._export_relative_dir + f"/{event_log}"
         finally:
             os.chdir(orig)
+
+    def _export_dataframe(self, df, basename):
+        filename = basename + "." + self._export_format
+        write_dataframe(df, filename, compress=self._export_compression)
+        self._logger.info("Exported %s", filename)
+
+    def _find_feeder_head_line(self):
+        dss = self._dss_instance
+        feeder_head_line = None
+    
+        flag = dss.Topology.First()
+      
+        while flag > 0:
+        
+            if 'line' in dss.Topology.BranchName().lower():
+                feeder_head_line = dss.Topology.BranchName()
+                break
+                
+            else:
+                flag = dss.Topology.Next()
+                
+        return feeder_head_line
+
+    def _get_feeder_head_loading(self):
+        dss = self._dss_instance
+        head_line = self._find_feeder_head_line()
+        if head_line is not None:
+            flag = dss.Circuit.SetActiveElement(head_line)
+            
+            if flag>0:
+                n_phases = dss.CktElement.NumPhases()
+                max_amp = dss.CktElement.NormalAmps()
+                Currents = dss.CktElement.CurrentsMagAng()[:2*n_phases]
+                Current_magnitude = Currents[::2]
+        
+                max_flow = max(max(Current_magnitude), 1e-10)
+                loading = max_flow/max_amp
+                
+                return loading
+                
+            else:
+                return None
+        else:
+            return None
+
+    def _reverse_powerflow(self):
+        dss = self._dss_instance
+
+        reverse_pf = max(dss.Circuit.TotalPower()) > 0 # total substation power is an injection(-) or a consumption(+)
+        
+        return reverse_pf
+
+    def _export_feeder_head_info(self, metadata):
+        """
+        Gets feeder head information comprising:
+        1- The name of the feeder head line
+        2- The feeder head loading in per unit
+        3- The feeder head load in (kW, kVar). Negative in case of power injection
+        4- The reverse power flow flag. True if power is flowing back to the feeder head, False otherwise
+        """
+    
+    
+        dss = self._dss_instance
+        if not "feeder_head_info_files" in metadata.keys():
+            metadata["feeder_head_info_files"] = []
+        
+        df_dict = {"FeederHeadLine": self._find_feeder_head_line(),
+                   "FeederHeadLoading": self._get_feeder_head_loading(),
+                   "FeederHeadLoad": dss.Circuit.TotalPower(),
+                   "ReversePowerFlow": self._reverse_powerflow()
+                    }
+        
+        #df = pd.DataFrame.from_dict(df_dict)
+        
+        filename = "FeederHeadInfo"
+        fname = filename + ".json"
+        
+        relpath = os.path.join(self._export_relative_dir, fname)
+        filepath = os.path.join(self._export_dir, fname)
+
+        #write_dataframe(df, filepath)
+        dump_data(df_dict, filepath)
+        metadata["feeder_head_info_files"].append(relpath)
+        self._logger.info("Exported %s information to %s.", filename, filepath)
 
     def _export_elements(self, metadata):
         dss = self._dss_instance
@@ -347,7 +436,6 @@ class ResultData:
             total += element.max_num_bytes()
         return total
 
-
 class ElementData:
     """Stores all property data for an element."""
     def __init__(self, name, obj, max_chunk_bytes, options, scenario=None, hdf_store=None):
@@ -392,6 +480,7 @@ class ElementData:
         self._num_steps = num_steps
         self._scenario = scenario
         # Reset these for MonteCarlo simulations.
+# <<<<<<< master
         for key in self._data:
             self._data[key] = None
         self._step_number = 1
@@ -408,6 +497,23 @@ class ElementData:
             self._change_counts[key] = (None, 0)
 
     def append_values(self, timestamp):
+# =======
+#         for prop in self._data:
+#             self._data[prop] = None
+
+#     def get_current_data(self):
+#         curr_data = {}
+#         for prop in self.properties:
+#             value = self._obj.GetValue(prop, convert=True)
+#             if len(value.make_columns()) > 1:
+#                 for column, val in zip(value.make_columns(), value.value):
+#                     curr_data[column] = val
+#             else:
+#                 curr_data[value.make_columns()[0]] = value.value
+#         return curr_data
+
+#     def append_values(self):
+# >>>>>>> bug_fixes_merge
         curr_data = {}
         cached_values = {}
         for prop in self._properties:
@@ -548,7 +654,6 @@ class ElementData:
     @property
     def properties(self):
         return self._properties[:]
-
 
 class _CircularBufferHelper:
     def __init__(self, prop):

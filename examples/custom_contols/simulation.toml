@@ -1,11 +1,8 @@
 [Project]
-"Start Year" = 2017
-"Start Day" = 1
-"Start Time (min)" = 0.0
-"End Day" = 1
-"End Time (min)" = 1439.0
-"Date offset" = 0
-"Step resolution (sec)" = 900.0
+"Start time" = "2020-07-13 00:00:00.0"
+"Simulation duration (min)" = 10
+"Loadshape start time" = "2020-07-13 00:00:00.0"
+"Step resolution (sec)" = 60.0
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
 "Control mode" = "Static"
@@ -13,26 +10,26 @@
 "Simulation Type" = "QSTS"
 "Project Path" = "./examples"
 "Active Project" = "custom_contols"
-"Active Scenario" = ""
+"Active Scenario" = "base_case"
 "DSS File" = "Master_Spohn_existing_VV.dss"
 "DSS File Absolute Path" = false
 "Return Results" = false
 
-[[Project.Scenarios]]
-name = "base_case"
-post_process_infos = []
-
-[[Project.Scenarios]]
-name = "volt_var"
-post_process_infos = []
-
-[[Project.Scenarios]]
-name = "self_consumption"
-post_process_infos = []
+#[[Project.Scenarios]]
+#name = "base_case"
+#post_process_infos = []
 
 [[Project.Scenarios]]
 name = "multiple_controls"
 post_process_infos = []
+
+#[[Project.Scenarios]]
+#name = "self_consumption"
+#post_process_infos = []
+
+#[[Project.Scenarios]]
+#name = "volt_var"
+#post_process_infos = []
 
 [Exports]
 "Export Mode" = "byClass"
@@ -40,13 +37,12 @@ post_process_infos = []
 "Export Format" = "csv"
 "Export Compression" = false
 "Export Iteration Order" = "ValuesByPropertyAcrossElements"
-"Export Elements" = true
+"Export Elements" = false
 "Export Data Tables" = false
 "Export Data In Memory" = false
 "HDF Max Chunk Bytes" = 32768
 "Export Event Log" = true
 "Log Results" = true
-"Result Container" = "ResultContainer"
 
 [Frequency]
 "Enable frequency sweep" = false
@@ -77,4 +73,34 @@ Uninterruptible = true
 
 [Plots]
 "Create dynamic plots" = false
-"Open plots in browser" = true
+"Open plots in browser" = false
+
+[Reports]
+Format = "h5"
+[[Reports.Types]]
+name = "Capacitor State Change Counts"
+enabled = false
+
+[[Reports.Types]]
+name = "PV Clipping"
+enabled = false
+
+[[Reports.Types]]
+name = "PV Curtailment"
+enabled = false
+
+[[Reports.Types]]
+name = "RegControl Tap Number Change Counts"
+enabled = false
+
+[Profiles]
+"Use profile manager" = true
+source_type = "HDF5"
+source = "profiles.hdf5"
+"Profile mapping" = ""
+is_relative_path = true
+[Profiles.settings]
+bufferSize =  10
+neglectYear = false
+
+

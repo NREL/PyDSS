@@ -40,27 +40,33 @@ def cleanup_project():
                 with tarfile.open(PROJECT_TAR) as tar:
                     tar.extractall()
                 os.remove(PROJECT_TAR)
+                pass
             elif os.path.exists(PROJECT_ZIP):
                 with zipfile.ZipFile(PROJECT_ZIP) as zipf:
                     zipf.extractall()
                 os.remove(PROJECT_ZIP)
+                pass
         finally:
             os.chdir(orig)
 
         for path in (logs_path, export_path):
             if os.path.exists(path):
+                os.chmod(path, 0o777)
                 shutil.rmtree(path)
+                pass
             os.mkdir(path)
 
         store_filename = os.path.join(project_path, STORE_FILENAME)
         if os.path.exists(store_filename):
             os.remove(store_filename)
+            pass
 
         scenario_config_file = os.path.join(
             project_path, "Scenarios", "scenario1", "simulation-run.toml"
         )
         if os.path.exists(scenario_config_file):
             os.remove(scenario_config_file)
+            pass
 
 
 def run_project_with_custom_exports(path, scenario, sim_file, data):

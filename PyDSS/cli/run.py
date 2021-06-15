@@ -86,14 +86,9 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
         file_level = logging.DEBUG
     if config["Logging"]["Log to external file"]:
         logs_path = os.path.join(project_path, "Logs")
-        filename = os.path.join(
-            logs_path,
-            os.path.basename(project_path) + ".log",
-        )
-
-    if not os.path.exists(logs_path):
-        print("Logs path does not exist. 'run' is not supported on a tarred project.")
-        sys.exit(1)
+        if not os.path.exists(logs_path):
+            sys.exit(1)
+        filename = os.path.join(logs_path, "pydss.log")
 
     setup_logging(
         "PyDSS",
@@ -106,14 +101,12 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
     if options is not None:
         options = ast.literal_eval(options)
         if not isinstance(options, dict):
-            print(f"options must be of type dict; received {type(options)}")
             sys.exit(1)
 
     project = PyDssProject.load_project(project_path, options=options, simulation_file=simulations_file)
     project.run(tar_project=tar_project, zip_project=zip_project, dry_run=dry_run)
 
     if dry_run:
-        print("="*30)
         maxlen = max([len(k) for k in project.estimated_space.keys()])
         if len("ScenarioName") > maxlen:
             maxlen = len("ScenarioName")
@@ -125,9 +118,9 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
             vstr = make_human_readable_size(v)
             template += "{:<{width}} : {}\n".format(k, vstr, width=maxlen)
         template = template.strip()
-        print(template)
-        print("-"*30)
-        print(f"TotalSpace: {make_human_readable_size(total_size)}")
-        print("="*30)
-        print("Note: compression may reduce the size by ~90% depending on the data.")
+        logger.info(template)
+        logger.info("-"*30)
+        logger.info(f"TotalSpace: {make_human_readable_size(total_size)}")
+        logger.info("="*30)
+        logger.info("Note: compression may reduce the size by ~90% depending on the data.")
 

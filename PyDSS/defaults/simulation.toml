@@ -14,12 +14,9 @@
 # Active Scenario- [String] - Project scenario to use
 # DSS File- [String] - The main OpenDSS file
 [Project]
-"Start Year" = 2017
-"Start Day" = 1
-"Start Time (min)" = 0.0
-"End Day" = 1
-"End Time (min)" = 1439.0
-"Date offset" = 0
+"Start time" = "2020-7-15 00:00:00.0"
+"Simulation duration (min)" = 43200.0
+"Loadshape start time" = "2020-7-15 00:00:00.0"
 "Step resolution (sec)" = 900.0
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
@@ -44,17 +41,16 @@
 [Exports]
 "Export Mode" = "byClass"
 "Export Style" = "Single file"
-"Export Format" = "csv"
+"Export Format" = "h5"
 "Export Compression" = false
 "Export Iteration Order" = "ValuesByPropertyAcrossElements"
 "Export Elements" = true
-"Export Data Tables" = false
-"Export Data In Memory" = false
 "Export PV Profiles" = false
+"Export Data Tables" = true
+"Export Data In Memory" = true
 "HDF Max Chunk Bytes" = 32768
 "Export Event Log" = true
-"Log Results" = true
-"Result Container" = "ResultContainer"
+"Log Results" = false
 
 # Enable frequency sweep- [Bool] - Enable harmonic sweep. works with only 'Static' and 'QSTS' simulation modes
 # Fundamental frequency- [Float] - Fundamental system frequeny in Hertz
@@ -79,12 +75,12 @@
 # Uninterruptible - [Bool] - Can the federate be interepted
 # Helics logging level - [int] - logging level for the federate (use Helics documentation for choosig the right value)
 [Helics]
-"Co-simulation Mode" = false
+"Co-simulation Mode" = true
 "Iterative Mode" = false
 "Error tolerance" = 0.0001
 "Max co-iterations" = 15
 "Broker" = "mainbroker"
-"Broker port" = 50001
+"Broker port" = 0
 "Federate name" = "PyDSS"
 "Time delta" = 0.01
 "Core type" = "zmq"
@@ -128,3 +124,10 @@ enabled = false
 name = "RegControl Tap Number Change Counts"
 enabled = false
 
+[Profiles]
+"Use profile manager" = false
+source_type = "h5"
+source = "Profiles_backup.hdf5"
+"Profile mapping" = ""
+is_relative_path = true
+[Profiles.settings]

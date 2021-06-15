@@ -3,7 +3,7 @@ from PyDSS.dssElement import dssElement
 from PyDSS.value_storage import ValueByNumber
 from PyDSS.value_storage import ValueByList
 import ast
-
+from PyDSS.exceptions import InvalidParameter
 
 class dssTransformer(dssElement):
 
@@ -53,6 +53,7 @@ class dssTransformer(dssElement):
     def __init__(self, dssInstance):
         super(dssTransformer, self).__init__(dssInstance)
         self._NumWindings = dssInstance.Transformers.NumWindings()
+        self._dssInstance = dssInstance
 
     @property
     def NumWindings(self):
@@ -70,6 +71,7 @@ class dssTransformer(dssElement):
             if convert:
                 if VarName in self.VARIABLE_OUTPUTS_BY_LIST:
                     VarValue = ast.literal_eval(VarValue)
+                    VarValue = VarValue[:self.NumWindings]
                     VarValue = ValueByList(
                         self._FullName, VarName, VarValue, ['wdg{}'.format(i+1) for i in range(self.NumWindings)]
                     )

@@ -126,6 +126,8 @@ class dssElement(dssObjectBase):
             return 0, None
 
     def GetValue(self, VarName, convert=False):
+        if self._dssInstance.Element.Name() != self._FullName:
+            self.SetActiveObject()
         if VarName in self._Variables:
             VarValue = self.GetVariable(VarName, convert=convert)
         elif VarName in self._Parameters:
@@ -143,19 +145,19 @@ class dssElement(dssObjectBase):
             raise InvalidParameter('Object is not a circuit element')
 
     def SetParameter(self, Param, Value):
-        self._dssInstance.utils.run_command(self._FullName + '.' + Param + ' = ' + str(Value))
+        reply = self._dssInstance.utils.run_command(self._FullName + '.' + Param + ' = ' + str(Value))
         return self.GetParameter(Param)
 
     def GetParameter(self, Param):
-        self._dssInstance.Circuit.SetActiveElement(self._FullName)
-        if self._dssInstance.Element.Name() == (self._FullName):
+        if self._dssInstance.Element.Name() != self._FullName:
+            self._dssInstance.Circuit.SetActiveElement(self._FullName)
+        if self._dssInstance.Element.Name() == self._FullName:
             x = self._dssInstance.Properties.Value(Param)
             try:
                 return float(x)
             except:
                 return x
         else:
-            print('Could not set ' + self._FullName + ' as active element.')
             return None
 
     @property
