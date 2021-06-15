@@ -38,6 +38,7 @@ class helics_interface:
         'Vminpu': 'double',
         'Frequency': 'double',
         'Taps': 'vector',
+        'taps': 'vector',
         '%stored': 'double',
         'Distance': 'double',
         'AllBusMagPu': 'vector'
