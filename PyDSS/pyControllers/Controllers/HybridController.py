@@ -14,8 +14,10 @@ class HybridController(ControllerAbstract):
     __pDisconnected = False
 
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
-        super(HybridController).__init__(PvObj, Settings, dssInstance, ElmObjectList, dssSolver)
+        super(HybridController).__init__()
+
         self.__ElmObjectList = ElmObjectList
+        #print(PvObj.Bus[0] + ' - ' + PvObj.sBus[0].GetInfo())
         self.ControlDict = {
             'None'           : lambda: 0,
             'CPF'            : self.CPFcontrol,
@@ -95,6 +97,8 @@ class HybridController(ControllerAbstract):
 
         Error = abs(dP)
         self.oldPcalc = Ppv
+        # if Error > 0.1:
+        #     print((self.__Name, uIn, Qpv, Plim, Ppv, Pcalc, self.Pmppt, dP, self.pf))
         return Error
 
     def CutoffControl(self):
@@ -107,12 +111,14 @@ class HybridController(ControllerAbstract):
                 return 0
             else:
                 self.__vDisconnected = True
+                # print('Disconnecting {} at voltage {:.2f}'.format(self.__Name, uIn))
                 return self.__Prated
 
         if self.TimeChange and self.__vDisconnected and uIn < uCut:
             self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
             self.__ControlledElm.SetParameter('pf', self.pf)
             self.__vDisconnected = False
+            # print('Reconnecting {} at voltage {:.2f}'.format(self.__Name, uIn))
             return self.__Prated
 
         return 0
@@ -139,7 +145,7 @@ class HybridController(ControllerAbstract):
         PFmin = self.__Settings['pfMin']
         PFmax = self.__Settings['pfMax']
         self.__dssSolver.reSolve()
-        Pcalc = abs(sum(-(float(x)) for x in self.__ControlledElm.GetVariable('Powers')[0::2])) / self.__Srated
+        Pcalc = abs(sum(-(float(x)) for x in self.__ControlledElm.GetVariable('Powers')[0::2]) )/ self.__Srated
         if Pcalc > 0:
             if Pcalc < Pmin:
                 PF = PFmax
@@ -205,6 +211,8 @@ class HybridController(ControllerAbstract):
 
         if Priority == 'Var':
             Plim = (1 - Qcalc ** 2) ** 0.5
+            # Pcalc = Pcalc + (Plim - Pcalc) * self.__Settings['qDampCoef']
+            # self.Pmppt = Pcalc / self.__Prated * self.__Srated * 100
             if self.TimeChange:
                 self.Pmppt = 100
             if Pcalc > Plim and self.TimeChange is False:
@@ -212,6 +220,7 @@ class HybridController(ControllerAbstract):
                 Pcalc = Plim
             self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
         else:
+            # no watt priority defined yet
             pass
 
         if Pcalc > 0:
@@ -222,9 +231,15 @@ class HybridController(ControllerAbstract):
                 self.pf = -self.pf
             self.__ControlledElm.SetParameter('pf', self.pf)
         else:
-            pass
+            print('Warning: PV power is <0 and VVar controller is active.')
+            print((self.__Name, uIn, Qcalc, Qpv, self.oldQcalc, dQ, Pcalc, self.pf))
+            # self.pf = 0
+            # dQ = 0 # forces VVarr off when PV is off, is that correct?
+
 
         Error = abs(dQ)
+        # if Error > 0.1 or math.isnan(Error):
+        #     print((self.__Name, uIn, Qcalc, Qpv, self.oldQcalc, dQ, Pcalc, self.pf, self.__ControlledElm.GetVariable('Powers')))
         self.oldQcalc = Qpv
 
         return Error

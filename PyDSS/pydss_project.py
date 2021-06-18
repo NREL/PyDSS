@@ -229,6 +229,8 @@ class PyDssProject:
             os.makedirs(os.path.join(self._project_dir, name), exist_ok=True)
         if opendss_project_folder:
             dest = os.path.join(self._project_dir, PROJECT_DIRECTORIES[0])
+            print("OpenDSS project: ", opendss_project_folder)
+            print("Destination: ", dest)
             copy_tree(opendss_project_folder, dest)
         self._serialize_scenarios()
         dump_data(
@@ -238,7 +240,6 @@ class PyDssProject:
         logger.info("Initialized directories in %s", self._project_dir)
 
     @classmethod
-
     def create_project(cls, path, name, scenarios, simulation_config=None, options=None,
                        simulation_file=SIMULATION_SETTINGS_FILENAME, opendss_project_folder=None,
                        master_dss_file=OPENDSS_MASTER_FILENAME):
@@ -312,6 +313,7 @@ class PyDssProject:
 
         inst = instance()
         self._simulation_config["Logging"]["Pre-configured logging"] = logging_configured
+
         if dry_run:
             store_filename = os.path.join(tempfile.gettempdir(), STORE_FILENAME)
         else:
@@ -759,7 +761,7 @@ class PyDssScenario:
                     f"missing post-process field={field}"
                 )
         config_file = post_process_info["config_file"]
-        if config_file and not os.path.exists(config_file):
+        if not os.path.exists(config_file):
             raise InvalidParameter(f"{config_file} does not exist")
 
         self.post_process_infos.append(post_process_info)
@@ -803,18 +805,18 @@ def update_pydss_controllers(project_path, scenario, controller_type,
     """
     if controller_type not in READ_CONTROLLER_FUNCTIONS:
         supported_types = list(READ_CONTROLLER_FUNCTIONS.keys())
-        logger.error(f"Currently only {supported_types} types are supported")
+        print(f"Currently only {supported_types} types are supported")
         sys.exit(1)
 
     sim_file = os.path.join(project_path, SIMULATION_SETTINGS_FILENAME)
     config = load_data(sim_file)
     if not config["Project"].get("Use Controller Registry", False):
-        logger.error(f"'Use Controller Registry' must be set to true in {sim_file}")
+        print(f"'Use Controller Registry' must be set to true in {sim_file}")
         sys.exit(1)
 
     registry = Registry()
     if not registry.is_controller_registered(controller_type, controller):
-        logger.error(f"{controller_type} / {controller} is not registered")
+        print(f"{controller_type} / {controller} is not registered")
         sys.exit(1)
 
     data = {}
@@ -823,7 +825,7 @@ def update_pydss_controllers(project_path, scenario, controller_type,
         data = load_data(filename)
         for val in data.values():
             if not isinstance(val, list):
-                logger.error(f"{filename} has an invalid format")
+                print(f"{filename} has an invalid format")
                 sys.exit(1)
 
     element_names = READ_CONTROLLER_FUNCTIONS[controller_type](dss_file)
@@ -849,4 +851,4 @@ def update_pydss_controllers(project_path, scenario, controller_type,
             data[_controller] = final_list
 
     dump_data(data, filename)
-    logger.info(f"Added {num_added} names to {filename}")
+    print(f"Added {num_added} names to {filename}")

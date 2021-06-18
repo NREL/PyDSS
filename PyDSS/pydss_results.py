@@ -1,7 +1,7 @@
 """Provides access to PyDSS result data."""
+
 from collections import defaultdict
 import copy
-import json
 import logging
 import os
 import re
@@ -659,16 +659,6 @@ class PyDssScenarioResults:
                 )
 
         return self._options.list_options(element_class, prop)
-
-    def read_feeder_head_info(self):
-        """Read the feeder head information.
-
-        Returns
-        -------
-        dict
-
-        """
-        return json.loads(self.read_file(f"Exports/{self._name}/FeederHeadInfo.json"))
 
     def read_file(self, path):
         """Read a file from the PyDSS project.

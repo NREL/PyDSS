@@ -17,8 +17,9 @@ class xfmrController(ControllerAbstract):
 
         """
 
+
     def __init__(self, RegulatorObj, Settings, dssInstance, ElmObjectList, dssSolver):
-        super(xfmrController).__init__(RegulatorObj, Settings, dssInstance, ElmObjectList, dssSolver)
+        super(xfmrController).__init__()
         self.P_old = 0
         self.Time = -1
         self.__Locked = False
@@ -32,16 +33,8 @@ class xfmrController(ControllerAbstract):
         self.__Name = 'pyCont_' + Class + '_' + Name
         return
 
-    @property
-    def Name(self):
-        return self.__Name
-
-    @property
-    def ControlledElement(self):
-        return "{}.{}".format(self.Class, self.Name)
-
     def Update(self, Priority, Time, UpdateResults):
-        Powers = self.__ConnTransformer.GetVariable('CurrentsMagAng')
+        Powers = self.__ConnTransformer.GetVariable('Powers')
         Powers = Powers[:int(len(Powers)/2)][::2]
         P_new = sum((float(x)) for x in Powers)
         if self.__RPFlocking and self.P_old < 0:
@@ -49,6 +42,7 @@ class xfmrController(ControllerAbstract):
         elif self.__RPFlocking and self.P_old > 0:
             self.__Locked = self.__DisableLock()
         else:
+           # self.__Locked = self.__EnableLock()
             pass
         self.P_old = P_new
         return 0
@@ -59,5 +53,6 @@ class xfmrController(ControllerAbstract):
 
     def __DisableLock(self):
         self.__ControlledElm.SetParameter('enabled', 'True')
+        #self.__ControlledElm.SetParameter('enabled', 'False')
         return False
 

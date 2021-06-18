@@ -8,7 +8,6 @@ import logging
 from PyDSS.loggers import setup_logging
 from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, ExportMode, VisualizationType
 
-logger = logging.getLogger(__name__)
 
 @click.option(
     "-P", "--path",
@@ -88,7 +87,7 @@ def create_project(path=None, project=None, scenarios=None, simulation_file=None
     if options is not None:
         options = ast.literal_eval(options)
         if not isinstance(options, dict):
-            logger.error(f"options must be of type dict; received {type(options)}")
+            print(f"options must be of type dict; received {type(options)}")
             sys.exit(1)
 
     scenarios = [

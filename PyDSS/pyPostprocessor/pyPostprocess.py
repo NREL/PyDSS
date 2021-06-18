@@ -18,6 +18,7 @@ def Create(project, scenario, ppInfo, dssInstance, dssSolver, dssObjects, dssObj
     test = None
     PostProcessorClass = None
     ScriptName = ppInfo['script']
+
     assert (ScriptName in pythonFiles), \
         f"Definition for '{ScriptName}' post process script not found. \n" \
         "Please define the controller in PyDSS/pyPostprocessor/PostprocessScripts"

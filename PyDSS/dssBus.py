@@ -48,7 +48,7 @@ class dssBus(dssObjectBase):
         super(dssBus, self).__init__(dssInstance, name, name)
         self._Index = None
         self.XY = None
-        self._Class = 'Bus'
+        self._Class  = 'Bus'
         #  self._Nodes is nested in a list to be consistent with dssElement._Nodes
         self._Nodes = [dssInstance.Bus.Nodes()]
         self._NumTerminals = 1
@@ -78,5 +78,4 @@ class dssBus(dssObjectBase):
         return self._Nodes[:]
 
     def SetActiveObject(self):
-        if self._dssInstance.Bus.Name() != self._Name:
-            self._dssInstance.Circuit.SetActiveBus(self._Name)
+        self._dssInstance.Circuit.SetActiveBus(self._Name)

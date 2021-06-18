@@ -126,6 +126,7 @@ class Topology(PlotAbstract):
         self.Voltage_color_bar.color_mapper.high = self.Vmax
         self.Current_color_bar.color_mapper.low = self.Pmin
         self.Current_color_bar.color_mapper.high = self.Pmax
+        print('finfished updating plot')
         return
 
     def GetColorArray(self, DataSeries, Pallete):

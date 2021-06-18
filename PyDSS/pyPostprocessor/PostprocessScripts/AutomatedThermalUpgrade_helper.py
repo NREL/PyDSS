@@ -27,5 +27,6 @@ class AutomatedThermalUpgrade_helper(AbstractPostprocess):
     def run(self, step, stepMax):
         """Induces and removes a fault as the simulation runs as per user defined settings.
         """
+        print('Running voltage upgrade post process')
 
         return step

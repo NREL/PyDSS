@@ -65,15 +65,19 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
     """
 
     REQUIRED_INPUT_FIELDS = (
-        "line_loading_limit",
-        "dt_loading_limit",
+        "DPV_penetration_HClimit",
+        "DPV_penetration_target",
+        "DPV_penetration_step",
+        "line loading limit",
+        "DT loading limit",
         "line_safety_margin",
         "xfmr_safety_margin",
         "nominal_voltage",
-        "max_iterations",
-        "create_upgrade_plots",
+        "Max iterations",
+        "Create_upgrade_plots",
         "tps_to_test",
-        "create_upgrades_library",
+        "units key",
+        "Create_upgrades_library",
 		"upgrade_library_path",
     )
 
@@ -81,40 +85,22 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         """Constructor method
         """
         super(AutomatedThermalUpgrade, self).__init__(project, scenario, inputs, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger)
-        
-        # TODO: attributes that have been dropped
-        self.config["units key"] = ["mi", "kft", "km", "m", "Ft", "in", "cm"]  # Units key for lines taken from OpenDSS
-        
         dss = dssInstance
         self.dssSolver = dssSolver
-        # Just send this list as input to the upgrades code via DISCO -  this list may be empty or have as many
-        # paths as the user desires - if empty the mults in the 'tps_to_test' input will be used else if non-empty
-        # max and min load mults from the load.dss files will be used. Tne tps to test input should always be specified
-        # irrespective of whether it gets used or not
-
-        # these parameters are used only if multiple load and pv files are present
-        # TODO: only fixed_tps (using tps_to_test list from config) works in this version
-        #  associated function to compute violations need to be changed to make the multiple dss files option work
-        use_fixed_tps = True
-        if ~ use_fixed_tps:
-            self.other_load_dss_files = {}
-            self.other_pv_dss_files = {}
-
-            self.other_pv_dss_files = self.config["project_data"]["pydss_other_pvs_dss_files"]
-            self.other_load_dss_files = self.config["project_data"]["pydss_other_loads_dss_files"]
-
-            self.get_load_pv_mults_individual_object()
-            # self.get_load_mults()
 
         self.orig_xfmrs = {x["name"]: x for x in iter_elements(dss.Transformers, get_transformer_info)}
         self.orig_lines = {x["name"]: x for x in iter_elements(dss.Lines, self.get_line_info)}
 
         # TODO: To be modified
         self.plot_violations_counter=0
-        # self.compile_feeder_initialize()
+        start_pen = self.config["DPV_penetration_HClimit"]
+        target_pen = self.config["DPV_penetration_target"]
+        pen_step = self.config["DPV_penetration_step"]
+        self.pen_level = start_pen
+        #self.compile_feeder_initialize()
         self.export_line_DT_parameters()
         start= time.time()
-        self.logger.info("Determining thermal upgrades")
+        self.logger.info("Determining thermal upgrades for PV penetration level: %s", self.pen_level)
         dss.Vsources.First()
         self.source = dss.CktElement.BusNames()[0].split(".")[0]
         self.feeder_parameters = {}
@@ -124,7 +110,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
         # Determine available upgrades - either by looping over the existing feeder or by reading an
         #  externally created library
-        if self.config["create_upgrades_library"]:
+        if self.config["Create_upgrades_library"]:
             self.logger.debug("Creating upgrades library from the feeder")
             self.determine_available_line_upgrades()
             self.determine_available_xfmr_upgrades()
@@ -155,14 +141,14 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         for key, vals in self.temp_xfmr_viols.items():
             self.orig_xfmr_ldg_lst.append(vals[0] * 100 / vals[1])
             self.equip_ldgs["Xfmr_" + key] = (vals[0] * 100 / vals[1])
-        self.write_to_json(self.equip_ldgs, "Initial_equipment_loadings")
+        self.write_to_json(self.equip_ldgs, "Initial_equipment_loadings_pen_{}".format(self.pen_level))
 
         # Store voltage violations before any upgrades - max, min and number
         self.V_upper_thresh = 1.05
         self.V_lower_thresh = 0.95
         self.get_nodal_violations()
 
-        self.feeder_parameters["initial_violations"] = {
+        self.feeder_parameters["Initial violations"] = {
             "Number of lines with violations": len(self.line_violations),
             "Number of xfmrs with violations": len(self.xfmr_violations),
             "Max line loading observed": max(self.orig_line_ldg_lst),
@@ -172,17 +158,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             "Number of buses outside ANSI A limits":len(self.cust_viol),
         }
 
-        if self.config["create_upgrade_plots"]:
+        if self.config["Create_upgrade_plots"]:
             self.create_op_plots()
-
-        self.upgrade_status = ''  # parameter stating status of thermal upgrades - needed or not
-
-        if len(self.xfmr_violations) > 0 or len(self.line_violations) > 0:
-            self.upgrade_status = 'Thermal Upgrades were needed'  # status - whether voltage upgrades done or not
-            self.logger.info("Thermal Upgrades Required.")
-        else:
-            self.logger.info("No Thermal Upgrades Required.")
-            self.upgrade_status = 'No Thermal Upgrades needed'  # status - whether voltage upgrades done or not
 
         # Mitigate thermal violations
         self.Line_trial_counter = 0
@@ -196,27 +173,12 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             self.logger.info("Iteration Count: %s", self.Line_trial_counter)
             self.logger.info("Number of devices with violations: %s", num_elms_violated_curr_itr)
             self.Line_trial_counter += 1
-            if self.Line_trial_counter > self.config["max_iterations"]:
+            if self.Line_trial_counter > self.config["Max iterations"]:
                 self.logger.info("Max iterations limit reached, quitting")
                 break
-        # self.determine_xfmr_ldgs()
-        # self.determine_line_ldgs()
+        self.determine_xfmr_ldgs()
+        self.determine_line_ldgs()
         end = time.time()
-
-        # upgrading process is over
-        self.logger.debug("Writing upgrades to DSS file")
-        self.write_dat_file()
-
-        # so clear and redirect dss file - to compute final violations, and get new elements
-        # TODO: Test impact of applied settings - can't compile the feeder again in PyDSS
-        # self.compile_feeder_initialize()
-        dss.run_command("Clear")
-        base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
-
-        check_redirect(base_dss)
-        upgrades_file = os.path.join(self.config["Outputs"], "thermal_upgrades.dss")
-        check_redirect(upgrades_file)
-        self.dssSolver.Solve()
 
         # Get final loadings
         self.final_line_ldg_lst = []
@@ -229,12 +191,12 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         for key, vals in self.all_xfmr_ldgs.items():
             self.final_xfmr_ldg_lst.append(vals[0] * 100 / vals[1])
             self.equip_ldgs["Xfmr_" + key] = (vals[0] * 100 / vals[1])
-        self.write_to_json(self.equip_ldgs, "Final_equipment_loadings")
+        self.write_to_json(self.equip_ldgs, "Final_equipment_loadings_pen_{}".format(self.pen_level))
         self.orig_line_ldg_lst.sort(reverse=True)
         self.final_line_ldg_lst.sort(reverse=True)
         self.orig_xfmr_ldg_lst.sort(reverse=True)
         self.final_xfmr_ldg_lst.sort(reverse=True)
-        if self.config["create_upgrade_plots"]:
+        if self.config["Create_upgrade_plots"]:
             self.create_op_plots()
 
         # Store final results
@@ -242,7 +204,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.logger.info("After upgrades the solution converged: %s", dss.Solution.Converged())
         self.logger.info("Voltages after upgrades max=%s min=%s", max(dss.Circuit.AllBusMagPu()), min(dss.Circuit.AllBusMagPu()))
         self.logger.info("Substation power after upgrades: %s", dss.Circuit.TotalPower())
-        if self.config["create_upgrade_plots"]:
+        if self.config["Create_upgrade_plots"]:
             plt.figure(figsize=(40, 40), dpi=10)
             plt.clf()
             plt.plot(self.orig_line_ldg_lst, "o", label="Starting Line Loadings")
@@ -251,10 +213,18 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
             plt.plot(self.final_xfmr_ldg_lst, "o", label="Ending Transformer Loadings")
             plt.legend()
             plt.savefig(os.path.join(self.config["Outputs"], "Loading_comparisons.pdf"))
-        # self.logger.debug("Writing Results to output file")
-        # self.write_dat_file()
+        self.logger.debug("Writing Results to output file")
+        self.write_dat_file()
         self.logger.debug("Processing upgrade results")
         self.logger.info("Total time = %s", end - start)
+        # # TODO: Test impact of applied settings - can't compile the feeder again in PyDSS
+        # self.compile_feeder_initialize()
+        dss.run_command("Clear")
+        base_dss = os.path.join(project.dss_files_path, self.Settings["Project"]["DSS File"])
+        check_redirect(base_dss)
+        upgrades_file = os.path.join(self.config["Outputs"], "thermal_upgrades.dss")
+        check_redirect(upgrades_file)
+        self.dssSolver.Solve()
 
         # save new upgraded objects
         self.new_xfmrs = {x["name"]: x for x in iter_elements(dss.Transformers, get_transformer_info)}
@@ -262,8 +232,20 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
         self.determine_line_ldgs()
         self.determine_xfmr_ldgs()
-        # if self.config["create_upgrade_plots"]:
+        # if self.config["Create_upgrade_plots"]:
         #     self.create_op_plots()
+        self.get_nodal_violations()
+        self.feeder_parameters["Final violations"] = {
+            "Number of lines with violations": len(self.line_violations),
+            "Number of xfmrs with violations": len(self.xfmr_violations),
+            "Max line loading observed": max(self.final_line_ldg_lst),
+            "Max xfmr loading observed": max(self.final_xfmr_ldg_lst),
+            "Maximum voltage on any bus": self.max_V_viol,
+            "Minimum voltage on any bus":self.min_V_viol,
+            "Number of buses outside ANSI A limits":len(self.cust_viol),
+        }
+        self.feeder_parameters["Simulation time (seconds)"] = end - start
+        self.write_to_json(self.feeder_parameters, "Thermal_violations_comparison")
 
         feeder_head_name = dss.Circuit.Name()
         feeder_head_bus = dss.CktElement.BusNames()[0].split(".")[0]
@@ -273,28 +255,13 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         if num_nodes>1:
             feeder_head_basekv = round(feeder_head_basekv*math.sqrt(3),1)
 
-        # final computation of violations
-        self.get_nodal_violations()
-        self.feeder_parameters["final_violations"] = {
-            "Number of lines with violations": len(self.line_violations),
-            "Number of xfmrs with violations": len(self.xfmr_violations),
-            "Max line loading observed": max(self.final_line_ldg_lst),
-            "Max xfmr loading observed": max(self.final_xfmr_ldg_lst),
-            "Maximum voltage on any bus": self.max_V_viol,
-            "Minimum voltage on any bus": self.min_V_viol,
-            "Number of buses outside ANSI A limits": len(self.cust_viol),
-        }
-        self.feeder_parameters["Simulation time (seconds)"] = end - start
-        self.feeder_parameters["Upgrade status"] = self.upgrade_status
-        self.feeder_parameters["feederhead_name"] = feeder_head_name
-        self.feeder_parameters["feederhead_basekV"] = feeder_head_basekv
-
-        self.write_to_json(self.feeder_parameters, "Thermal_violations_comparison")
-
         # Process outputs
         input_dict = {
+            "DPV_penetration_HClimit"       : self.config["DPV_penetration_HClimit"],
+            "DPV_penetration_target"        : self.config["DPV_penetration_target"],
+            "DPV_penetration_step"          : self.config["DPV_penetration_step"],
             "Outputs"                       : self.config["Outputs"],
-            "Create_plots"                  : self.config["create_upgrade_plots"],
+            "Create_plots"                  : self.config["Create_upgrade_plots"],
             "feederhead_name"               : feeder_head_name,
             "feederhead_basekV"             : feeder_head_basekv,
             "new_xfmrs": self.new_xfmrs,
@@ -308,103 +275,6 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
     @staticmethod
     def _get_required_input_fields():
         return AutomatedThermalUpgrade.REQUIRED_INPUT_FIELDS
-
-    def get_load_pv_mults_individual_object(self):
-        self.orig_loads = {}
-        self.orig_pvs = {}
-        self.dssSolver.Solve()
-        if dss.Loads.Count() > 0:
-            dss.Loads.First()
-            while True:
-                load_name = dss.Loads.Name().split(".")[0].lower()
-                kW = dss.Loads.kW()
-                self.orig_loads[load_name] = [kW]
-                if not dss.Loads.Next() > 0:
-                    break
-            for key, dss_paths in self.other_load_dss_files.items():
-                self.read_load_files_get_load_pv_mults_individual_object(key, dss_paths)
-
-        if dss.PVsystems.Count() > 0:
-            dss.PVsystems.First()
-            while True:
-                pv_name = dss.PVsystems.Name().split(".")[0].lower()
-                pmpp = float(dss.Properties.Value("irradiance"))
-                self.orig_pvs[pv_name] = [pmpp]
-                if not dss.PVsystems.Next() > 0:
-                    break
-
-            for key, dss_paths in self.other_pv_dss_files.items():
-                self.read_pv_files_get_load_pv_mults_individual_object(key, dss_paths)
-
-    def read_load_files_get_load_pv_mults_individual_object(self,key_paths,dss_path):
-
-        # Add all load kW values
-        temp_dict = {}
-        for path_f in dss_path:
-            with open(path_f, "r") as datafile:
-                for line in datafile:
-                    if line.lower().startswith("new load."):
-                        for params in line.split():
-                            if params.lower().startswith("load."):
-                                ld_name = params.lower().split("load.")[1]
-                            if params.lower().startswith("kw"):
-                                ld_kw = float(params.lower().split("=")[1])
-                        temp_dict[ld_name] = ld_kw
-        for key,vals in self.orig_loads.items():
-            if key in temp_dict:
-                self.orig_loads[key].append(temp_dict[key])
-            elif key not in temp_dict:
-                self.orig_loads[key].append(self.orig_loads[key][0])
-
-    def read_pv_files_get_load_pv_mults_individual_object(self, key_paths, dss_path):
-        # Add all PV pmpp values
-        temp_dict = {}
-        for path_f in self.other_pv_dss_files[key_paths]:
-            with open(path_f, "r") as datafile:
-                for line in datafile:
-                    if line.lower().startswith("new pvsystem."):
-                        for params in line.split():
-                            if params.lower().startswith("pvsystem."):
-                                pv_name = params.lower().split("pvsystem.")[1]
-                            if params.lower().startswith("irradiance"):
-                                pv_pmpp = float(params.lower().split("=")[1])
-                        temp_dict[pv_name] = pv_pmpp
-        for key, vals in self.orig_pvs.items():
-            if key in temp_dict:
-                self.orig_pvs[key].append(temp_dict[key])
-            elif key not in temp_dict:
-                self.orig_pvs[key].append(self.orig_pvs[key][0])
-
-    def get_load_mults(self):
-        self.orig_loads = {}
-        self.dssSolver.Solve()
-        dss.Loads.First()
-        while True:
-            load_name = dss.Loads.Name().split(".")[0].lower()
-            kW = dss.Loads.kW()
-            self.orig_loads[load_name] = [kW]
-            if not dss.Loads.Next()>0:
-                break
-        for dss_path in self.other_load_dss_files:
-            self.read_load_files(dss_path)
-        self.get_min_max_load_mult()
-
-    def read_load_files(self, dss_path):
-        with open(dss_path, "r") as datafile:
-            for line in datafile:
-                if line.lower().startswith("new load."):
-                    for params in line.split():
-                        if params.lower().startswith("load."):
-                            ld_name = params.lower().split("load.")[1]
-                        if params.lower().startswith("kw"):
-                            ld_kw = float(params.lower().split("=")[1])
-                    if ld_name in self.orig_loads:
-                        self.orig_loads[ld_name].append(ld_kw)
-
-    def get_min_max_load_mult(self):
-        self.min_max_load_kw = {}
-        for key,vals in self.orig_loads.items():
-            self.min_max_load_kw[key] = [min(vals),max(vals)]
 
     # function to get line information
     def get_line_info(self):
@@ -431,40 +301,26 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         data = json.load(f)
         return data
 
-    # (not used) computes nodal violations when we have multipliers for individual Load and PV objects
-    def get_nodal_violations_individual_object(self):
+    def get_nodal_violations(self):
         # Get the maximum and minimum voltages and number of buses with violations
         self.buses          = dss.Circuit.AllBusNames()
         self.max_V_viol     = 0
         self.min_V_viol     = 2
         self.cust_viol      = []
-        for tp_cnt in range(len(self.other_load_dss_files)):
-            # Apply correct pmpp values to all PV systems
-            if dss.PVsystems.Count() > 0:
-                dss.PVsystems.First()
-                while True:
-                    pv_name = dss.PVsystems.Name().split(".")[0].lower()
-                    if pv_name not in self.orig_pvs:
-                        raise Exception("PV system not found, quitting...")
-                    new_pmpp = self.orig_pvs[pv_name][tp_cnt]
-                    dss.run_command(f"Edit PVsystem.{pv_name} irradiance={new_pmpp}")
-                    if not dss.PVsystems.Next()>0:
-                        break
-            # Apply correct kW value to all loads
-            if dss.Loads.Count() > 0:
-                dss.Loads.First()
-                while True:
-                    load_name = dss.Loads.Name().split(".")[0].lower()
-                    if load_name not in self.orig_loads:
-                        raise Exception("Load not found, quitting...")
-                    new_kw = self.orig_loads[load_name][tp_cnt]
-                    dss.Loads.kW(new_kw)
-                    if not dss.Loads.Next() > 0:
-                        break
-            self.dssSolver.Solve()
-            if not dss.Solution.Converged():
-                raise OpenDssConvergenceError(f"OpenDSS solution did not converge for timepoint "
-                                              f"{list(self.other_load_dss_files.keys())[tp_cnt]}")
+        for tp_cnt in range(len(self.config["tps_to_test"])):
+            # First two tps are for disabled PV case
+            if tp_cnt == 0 or tp_cnt == 1:
+                dss.run_command("BatchEdit PVSystem..* Enabled=False")
+                dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
+                self.dssSolver.Solve()
+                if not dss.Solution.Converged():
+                    raise OpenDssConvergenceError("OpenDSS solution did not converge")
+            if tp_cnt == 2 or tp_cnt == 3:
+                dss.run_command("BatchEdit PVSystem..* Enabled=True")
+                dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
+                self.dssSolver.Solve()
+                if not dss.Solution.Converged():
+                    raise OpenDssConvergenceError("OpenDSS solution did not converge")
             for b in self.buses:
                 dss.Circuit.SetActiveBus(b)
                 bus_v = dss.Bus.puVmagAngle()[::2]
@@ -478,89 +334,13 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     self.cust_viol.append(b)
         return
 
-    def get_nodal_violations(self):
-        # Get the maximum and minimum voltages and number of buses with violations
-        self.buses          = dss.Circuit.AllBusNames()
-        self.max_V_viol     = 0
-        self.min_V_viol     = 2
-        self.cust_viol      = []
-        if len(self.other_load_dss_files)>0:
-            for tp_cnt in range(len(self.config["tps_to_test"])):
-                # First two tps are for disabled PV case
-                if tp_cnt == 0 or tp_cnt == 1:
-                    dss.run_command("BatchEdit PVSystem..* Enabled=False")
-                    dss.Loads.First()
-                    while True:
-                        load_name = dss.Loads.Name().split(".")[0].lower()
-                        if load_name not in self.min_max_load_kw:
-                            raise Exception("Load not found, quitting...")
-                        new_kw = self.min_max_load_kw[load_name][tp_cnt]
-                        dss.Loads.kW(new_kw)
-                        if not dss.Loads.Next() > 0:
-                            break
-                    self.dssSolver.Solve()
-                    if not dss.Solution.Converged():
-                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                if tp_cnt == 2 or tp_cnt == 3:
-                    dss.run_command("BatchEdit PVSystem..* Enabled=True")
-                    dss.Loads.First()
-                    while True:
-                        load_name = dss.Loads.Name().split(".")[0].lower()
-                        if load_name not in self.min_max_load_kw:
-                            raise Exception("Load not found, quitting...")
-                        new_kw = self.min_max_load_kw[load_name][tp_cnt - 2]
-                        dss.Loads.kW(new_kw)
-                        if not dss.Loads.Next() > 0:
-                            break
-                    self.dssSolver.Solve()
-                    if not dss.Solution.Converged():
-                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                for b in self.buses:
-                    dss.Circuit.SetActiveBus(b)
-                    bus_v = dss.Bus.puVmagAngle()[::2]
-                    if max(bus_v) > self.max_V_viol:
-                        self.max_V_viol = max(bus_v)
-                    if min(bus_v) < self.min_V_viol:
-                        self.min_V_viol = min(bus_v)
-                    if max(bus_v)>self.V_upper_thresh and b not in self.cust_viol:
-                        self.cust_viol.append(b)
-                    if min(bus_v)<self.V_lower_thresh and b not in self.cust_viol:
-                        self.cust_viol.append(b)
-        elif len(self.other_load_dss_files)==0:
-            for tp_cnt in range(len(self.config["tps_to_test"])):
-                # First two tps are for disabled PV case
-                if tp_cnt == 0 or tp_cnt == 1:
-                    dss.run_command("BatchEdit PVSystem..* Enabled=False")
-                    dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
-                    self.dssSolver.Solve()
-                    if not dss.Solution.Converged():
-                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                if tp_cnt == 2 or tp_cnt == 3:
-                    dss.run_command("BatchEdit PVSystem..* Enabled=True")
-                    dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
-                    self.dssSolver.Solve()
-                    if not dss.Solution.Converged():
-                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                for b in self.buses:
-                    dss.Circuit.SetActiveBus(b)
-                    bus_v = dss.Bus.puVmagAngle()[::2]
-                    if max(bus_v) > self.max_V_viol:
-                        self.max_V_viol = max(bus_v)
-                    if min(bus_v) < self.min_V_viol:
-                        self.min_V_viol = min(bus_v)
-                    if max(bus_v)>self.V_upper_thresh and b not in self.cust_viol:
-                        self.cust_viol.append(b)
-                    if min(bus_v)<self.V_lower_thresh and b not in self.cust_viol:
-                        self.cust_viol.append(b)
-        return
-
     def create_op_plots(self):
         self.all_bus_names = dss.Circuit.AllBusNames()
         self.G = nx.DiGraph()
         self.generate_nodes()
         self.generate_edges()
         self.pos_dict = nx.get_node_attributes(self.G, 'pos')
-        if self.config["create_upgrade_plots"]:
+        if self.config["Create_upgrade_plots"]:
             self.correct_node_coords()
         self.logger.debug("Length: %s", len(self.pos_dict))
         self.create_edge_node_dicts()
@@ -655,7 +435,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.DT_size_list = []
         self.DT_sec_coords = {}
         for key,vals in self.equip_ldgs.items():
-            if key.lower().startswith("line") and round(vals,2)>self.config["line_loading_limit"]*100:
+            if key.lower().startswith("line") and round(vals,2)>self.config["line loading limit"]*100:
                 key = key.split("Line_")[1]
                 key = "Line."+key
                 dss.Circuit.SetActiveElement("{}".format(key))
@@ -665,7 +445,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 self.edge_pos_plt_dict[from_bus] = self.pos_dict[from_bus]
                 self.edge_pos_plt_dict[to_bus] = self.pos_dict[to_bus]
                 self.edge_size_list.append(vals)
-            if key.lower().startswith("xfmr") and round(vals,2)>self.config["dt_loading_limit"]*100:
+            if key.lower().startswith("xfmr") and round(vals,2)>self.config["DT loading limit"]*100:
                 key = key.split("Xfmr_")[1]
                 key = "Transformer." + key
                 dss.Circuit.SetActiveElement("{}".format(key))
@@ -839,39 +619,26 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         for key, vals in self.all_line_ldgs_alltps.items():
             self.all_line_ldgs[key] = [max(vals[0]), vals[1]]
 
-    # (not used) solves when we have multipliers for individual Load and PV objects
-    def solve_diff_tps_lines_individual_object(self):
-        # Uses Kwami's logic
+    def solve_diff_tps_lines(self):
+        # Uses Kwami's LA100 logic
         self.logger.info("PVsystems: %s",dss.PVsystems.Count())
         self.line_violations_alltps = {}
         self.all_line_ldgs_alltps = {}
-        for tp_cnt in range(len(self.other_load_dss_files)):
-            # Apply correct pmpp values to all PV systems
-            if dss.PVsystems.Count() > 0:
-                dss.PVsystems.First()
-                while True:
-                    pv_name = dss.PVsystems.Name().split(".")[0].lower()
-                    if pv_name not in self.orig_pvs:
-                        raise Exception("PV system not found, quitting...")
-                    new_pmpp = self.orig_pvs[pv_name][tp_cnt]
-                    dss.run_command(f"Edit PVsystem.{pv_name} irradiance={new_pmpp}")
-                    if not dss.PVsystems.Next()>0:
-                        break
-            # Apply correct kW value to all loads
-            if dss.Loads.Count() > 0:
-                dss.Loads.First()
-                while True:
-                    load_name = dss.Loads.Name().split(".")[0].lower()
-                    if load_name not in self.orig_loads:
-                        raise Exception("Load not found, quitting...")
-                    new_kw = self.orig_loads[load_name][tp_cnt]
-                    dss.Loads.kW(new_kw)
-                    if not dss.Loads.Next() > 0:
-                        break
-            self.dssSolver.Solve()
-            if not dss.Solution.Converged():
-                raise OpenDssConvergenceError(f"OpenDSS solution did not converge for timepoint "
-                                              f"{list(self.other_load_dss_files.keys())[tp_cnt]}")
+        for tp_cnt in range(len(self.config["tps_to_test"])):
+            # First two tps are for disabled PV case
+            if tp_cnt==0 or tp_cnt==1:
+                dss.run_command("BatchEdit PVSystem..* Enabled=False")
+                dss.run_command("set LoadMult = {LM}".format(LM = self.config["tps_to_test"][tp_cnt]))
+                self.dssSolver.Solve()
+                if not dss.Solution.Converged():
+                    raise OpenDssConvergenceError("OpenDSS solution did not converge")
+            if tp_cnt==2 or tp_cnt==3:
+                dss.run_command("BatchEdit PVSystem..* Enabled=True")
+                dss.run_command("set LoadMult = {LM}".format(LM = self.config["tps_to_test"][tp_cnt]))
+                self.dssSolver.Solve()
+                self.logger.info("TotalPower=%s", dss.Circuit.TotalPower())
+                if not dss.Solution.Converged():
+                    raise OpenDssConvergenceError("OpenDSS solution did not converge")
             dss.Circuit.SetActiveClass("Line")
             dss.ActiveClass.First()
             while True:
@@ -887,113 +654,13 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                         self.all_line_ldgs_alltps[line_name] = [[max(line_current)], line_limit]
                     elif line_name in self.all_line_ldgs_alltps:
                         self.all_line_ldgs_alltps[line_name][0].append(max(line_current))
-                if ldg > self.config["line_loading_limit"] and switch == "False":  # and switch==False:
+                if ldg > self.config["line loading limit"] and switch == "False":  # and switch==False:
                     if line_name not in self.line_violations_alltps:
                         self.line_violations_alltps[line_name] = [[max(line_current)], line_limit]
                     elif line_name in self.line_violations_alltps:
                         self.line_violations_alltps[line_name][0].append(max(line_current))
                 if not dss.ActiveClass.Next() > 0:
                     break
-        return
-
-    # this function solves using list of tps_to_test
-    def solve_diff_tps_lines(self):
-        # Uses Kwami's logic
-        self.logger.info("PVsystems: %s",dss.PVsystems.Count())
-        self.line_violations_alltps = {}
-        self.all_line_ldgs_alltps = {}
-        if len(self.other_load_dss_files)>0:
-            for tp_cnt in range(len(self.config["tps_to_test"])):
-                # First two tps are for disabled PV case
-                if tp_cnt==0 or tp_cnt==1:
-                    dss.run_command("BatchEdit PVSystem..* Enabled=False")
-                    dss.Loads.First()
-                    while True:
-                        load_name = dss.Loads.Name().split(".")[0].lower()
-                        if load_name not in self.min_max_load_kw:
-                            raise Exception("Load not found, quitting...")
-                        new_kw = self.min_max_load_kw[load_name][tp_cnt]
-                        dss.Loads.kW(new_kw)
-                        if not dss.Loads.Next() > 0:
-                            break
-                    self.dssSolver.Solve()
-                    if not dss.Solution.Converged():
-                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                if tp_cnt==2 or tp_cnt==3:
-                    dss.run_command("BatchEdit PVSystem..* Enabled=True")
-                    dss.Loads.First()
-                    while True:
-                        load_name = dss.Loads.Name().split(".")[0].lower()
-                        if load_name not in self.min_max_load_kw:
-                            raise Exception("Load not found, quitting...")
-                        new_kw = self.min_max_load_kw[load_name][tp_cnt - 2]
-                        dss.Loads.kW(new_kw)
-                        if not dss.Loads.Next() > 0:
-                            break
-                    self.dssSolver.Solve()
-                    self.logger.info("TotalPower=%s", dss.Circuit.TotalPower())
-                    if not dss.Solution.Converged():
-                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                dss.Circuit.SetActiveClass("Line")
-                dss.ActiveClass.First()
-                while True:
-                    switch = dss.Properties.Value("switch")
-                    line_name = dss.CktElement.Name().split(".")[1].lower()
-                    n_phases = dss.CktElement.NumPhases()
-                    line_limit = dss.CktElement.NormalAmps()
-                    Currents = dss.CktElement.CurrentsMagAng()[:2 * n_phases]
-                    line_current = Currents[::2]
-                    ldg = round( max(line_current)/ float(line_limit), 2)
-                    if switch == "False":
-                        if line_name not in self.all_line_ldgs_alltps:
-                            self.all_line_ldgs_alltps[line_name] = [[max(line_current)], line_limit]
-                        elif line_name in self.all_line_ldgs_alltps:
-                            self.all_line_ldgs_alltps[line_name][0].append(max(line_current))
-                    if ldg > self.config["line_loading_limit"] and switch == "False":  # and switch==False:
-                        if line_name not in self.line_violations_alltps:
-                            self.line_violations_alltps[line_name] = [[max(line_current)], line_limit]
-                        elif line_name in self.line_violations_alltps:
-                            self.line_violations_alltps[line_name][0].append(max(line_current))
-                    if not dss.ActiveClass.Next() > 0:
-                        break
-        if len(self.other_load_dss_files) == 0:
-            for tp_cnt in range(len(self.config["tps_to_test"])):
-                # First two tps are for disabled PV case
-                if tp_cnt==0 or tp_cnt==1:
-                    dss.run_command("BatchEdit PVSystem..* Enabled=False")
-                    dss.run_command("set LoadMult = {LM}".format(LM = self.config["tps_to_test"][tp_cnt]))
-                    self.dssSolver.Solve()
-                    if not dss.Solution.Converged():
-                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                if tp_cnt==2 or tp_cnt==3:
-                    dss.run_command("BatchEdit PVSystem..* Enabled=True")
-                    dss.run_command("set LoadMult = {LM}".format(LM = self.config["tps_to_test"][tp_cnt]))
-                    self.dssSolver.Solve()
-                    self.logger.info("TotalPower=%s", dss.Circuit.TotalPower())
-                    if not dss.Solution.Converged():
-                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                dss.Circuit.SetActiveClass("Line")
-                dss.ActiveClass.First()
-                while True:
-                    switch = dss.Properties.Value("switch")
-                    line_name = dss.CktElement.Name().split(".")[1].lower()
-                    n_phases = dss.CktElement.NumPhases()
-                    line_limit = dss.CktElement.NormalAmps()
-                    Currents = dss.CktElement.CurrentsMagAng()[:2 * n_phases]
-                    line_current = Currents[::2]
-                    ldg = round( max(line_current)/ float(line_limit), 2)
-                    if switch == "False":
-                        if line_name not in self.all_line_ldgs_alltps:
-                            self.all_line_ldgs_alltps[line_name] = [[max(line_current)], line_limit]
-                        elif line_name in self.all_line_ldgs_alltps:
-                            self.all_line_ldgs_alltps[line_name][0].append(max(line_current))
-                    if ldg > self.config["line_loading_limit"] and switch == "False":  # and switch==False:
-                        if line_name not in self.line_violations_alltps:
-                            self.line_violations_alltps[line_name] = [[max(line_current)], line_limit]
-                        elif line_name in self.line_violations_alltps:
-                            self.line_violations_alltps[line_name][0].append(max(line_current))
-                    if not dss.ActiveClass.Next() > 0:
-                        break
         return
 
     def correct_line_violations(self):
@@ -1021,7 +688,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 kv_to_bus = dss.Bus.kVBase()
                 dss.Circuit.SetActiveElement("Line.{}".format(key))
                 norm_amps = dss.CktElement.NormalAmps()
-                num_par_lns = int((vals[0]*self.config["line_safety_margin"])/(vals[1]*self.config["line_loading_limit"]))+1
+                num_par_lns = int((vals[0]*self.config["line_safety_margin"])/(vals[1]*self.config["line loading limit"]))+1
                 if kv_from_bus != kv_to_bus:
                     raise InvalidParameter("For line {} the from and to bus kV ({} {}) do not match, quitting...".format(key,
                                                                                                         kv_from_bus,
@@ -1035,7 +702,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if lc_key in self.avail_line_upgrades:
                     for lcs,lcs_vals in self.avail_line_upgrades[lc_key].items():
                         if lcs!=line_code:
-                            if lcs_vals[0]>((vals[0]*self.config["line_safety_margin"])/(self.config["line_loading_limit"])) and lcs_vals[0]<num_par_lns*norm_amps:
+                            if lcs_vals[0]>((vals[0]*self.config["line_safety_margin"])/(self.config["line loading limit"])) and lcs_vals[0]<num_par_lns*norm_amps:
                                 command_string = "Edit Line.{lnm} {cnfig}={lnc}".format(lnm=key, cnfig=ln_config, lnc=lcs)
                                 dss.run_command(command_string)
                                 self.dssSolver.Solve()
@@ -1105,10 +772,8 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 per_R_list.append(dss.Properties.Value("%r"))
             per_losses.append(dss.Properties.Value("%noloadloss"))
             per_losses.append(dss.Properties.Value("%loadloss"))
-            if float(per_losses[0])>float(per_losses[1]):
-                pct_nl = per_losses[0]
-                pct_l = per_losses[1]
-                self.logger.info(f"For DT {xfmr_name}, pct_noloadloss {pct_nl} is greater than %loadloss {pct_l}, continuing...")
+            if per_losses[0]>per_losses[1]:
+                self.logger.info("For DT %s, %noloadloss is greater than %loadloss %s, continuing...", xfmr_name, per_losses)
             for i in wdg_kva_list:
                 if i!=wdg_kva_list[0]:
                     self.logger.info(" DT %s will not be considered as a upgrade option as the kVA values of its" \
@@ -1132,7 +797,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         return
 
     def determine_xfmr_ldgs(self):
-        # TODO: team please correct the logic used for determining DT loadings. This is the same logic Nicolas
+        # TODO: LA100 team please correct the logic used for determining DT loadings. This is the same logic Nicolas
         # TODO: used for the SETO project. This may break down for some DT configurations such as 3 wdg transformers
         self.xfmr_violations = {}
         self.all_xfmr_ldgs = {}
@@ -1142,36 +807,23 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         for key,vals in self.all_xfmr_ldgs_alltps.items():
             self.all_xfmr_ldgs[key] = [max(vals[0]),vals[1]]
 
-    # (not used) computes violations when we have multipliers for individual Load and PV objects
-    def determine_xfmr_ldgs_alltps_individual_object(self):
+    def determine_xfmr_ldgs_alltps(self):
         self.xfmr_violations_alltps = {}
         self.all_xfmr_ldgs_alltps = {}
-        for tp_cnt in range(len(self.other_load_dss_files)):
-            # Apply correct pmpp values to all PV systems
-            if dss.PVsystems.Count() > 0:
-                dss.PVsystems.First()
-                while True:
-                    pv_name = dss.PVsystems.Name().split(".")[0].lower()
-                    if pv_name not in self.orig_pvs:
-                        raise Exception("PV system not found, quitting...")
-                    new_pmpp = self.orig_pvs[pv_name][tp_cnt]
-                    dss.run_command(f"Edit PVsystem.{pv_name} irradiance={new_pmpp}")
-                    if not dss.PVsystems.Next()>0:
-                        break
-            # Apply correct kW value to all loads
-            if dss.Loads.Count() > 0:
-                dss.Loads.First()
-                while True:
-                    load_name = dss.Loads.Name().split(".")[0].lower()
-                    if load_name not in self.orig_loads:
-                        raise Exception("Load not found, quitting...")
-                    new_kw = self.orig_loads[load_name][tp_cnt]
-                    dss.Loads.kW(new_kw)
-                    if not dss.Loads.Next() > 0:
-                        break
-            self.dssSolver.Solve()
-            if not dss.Solution.Converged():
-                raise OpenDssConvergenceError("OpenDSS solution did not converge")
+        for tp_cnt in range(len(self.config["tps_to_test"])):
+            # First two tps are for disabled PV case
+            if tp_cnt == 0 or tp_cnt == 1:
+                dss.run_command("BatchEdit PVSystem..* Enabled=False")
+                dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
+                self.dssSolver.Solve()
+                if not dss.Solution.Converged():
+                    raise OpenDssConvergenceError("OpenDSS solution did not converge")
+            if tp_cnt == 2 or tp_cnt == 3:
+                dss.run_command("BatchEdit PVSystem..* Enabled=True")
+                dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
+                self.dssSolver.Solve()
+                if not dss.Solution.Converged():
+                    raise OpenDssConvergenceError("OpenDSS solution did not converge")
             dss.Transformers.First()
             while True:
                 xfmr_name = dss.CktElement.Name().split(".")[1].lower()
@@ -1191,117 +843,13 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     self.all_xfmr_ldgs_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
                 elif xfmr_name in self.all_xfmr_ldgs_alltps:
                     self.all_xfmr_ldgs_alltps[xfmr_name][0].append(max(xfmr_current))
-                if ldg > self.config["dt_loading_limit"]:
+                if ldg > self.config["DT loading limit"]:
                     if xfmr_name not in self.xfmr_violations_alltps:
                         self.xfmr_violations_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
                     elif xfmr_name in self.xfmr_violations_alltps:
                         self.xfmr_violations_alltps[xfmr_name][0].append(max(xfmr_current))
                 if not dss.Transformers.Next() > 0:
                     break
-        return
-
-    # this function is used to determine loadings - using a list of tps provided in config
-    def determine_xfmr_ldgs_alltps(self):
-        self.xfmr_violations_alltps = {}
-        self.all_xfmr_ldgs_alltps = {}
-        if len(self.other_load_dss_files)>0:
-            for tp_cnt in range(len(self.config["tps_to_test"])):
-                # First two tps are for disabled PV case
-                if tp_cnt == 0 or tp_cnt == 1:
-                    dss.run_command("BatchEdit PVSystem..* Enabled=False")
-                    dss.Loads.First()
-                    while True:
-                        load_name = dss.Loads.Name().split(".")[0].lower()
-                        if load_name not in self.min_max_load_kw:
-                            raise Exception("Load not found, quitting...")
-                        new_kw = self.min_max_load_kw[load_name][tp_cnt]
-                        dss.Loads.kW(new_kw)
-                        if not dss.Loads.Next() > 0:
-                            break
-                    self.dssSolver.Solve()
-                    if not dss.Solution.Converged():
-                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                if tp_cnt == 2 or tp_cnt == 3:
-                    dss.run_command("BatchEdit PVSystem..* Enabled=True")
-                    dss.Loads.First()
-                    while True:
-                        load_name = dss.Loads.Name().split(".")[0].lower()
-                        if load_name not in self.min_max_load_kw:
-                            raise Exception("Load not found, quitting...")
-                        new_kw = self.min_max_load_kw[load_name][tp_cnt - 2]
-                        dss.Loads.kW(new_kw)
-                        if not dss.Loads.Next() > 0:
-                            break
-                    self.dssSolver.Solve()
-                    if not dss.Solution.Converged():
-                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                dss.Transformers.First()
-                while True:
-                    xfmr_name = dss.CktElement.Name().split(".")[1].lower()
-                    # Kwami's approach
-                    n_phases = dss.CktElement.NumPhases()
-                    hs_kv = float(dss.Properties.Value('kVs').split('[')[1].split(',')[0])
-                    kva = float(dss.Properties.Value('kVA'))
-                    if n_phases > 1:
-                        xfmr_limit = kva / (hs_kv * math.sqrt(3))
-                    else:
-                        xfmr_limit = kva / (hs_kv)
-                    Currents = dss.CktElement.CurrentsMagAng()[:2 * n_phases]
-                    xfmr_current = Currents[::2]
-                    max_flow = max(xfmr_current)
-                    ldg = max_flow / xfmr_limit
-                    if xfmr_name not in self.all_xfmr_ldgs_alltps:
-                        self.all_xfmr_ldgs_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
-                    elif xfmr_name in self.all_xfmr_ldgs_alltps:
-                        self.all_xfmr_ldgs_alltps[xfmr_name][0].append(max(xfmr_current))
-                    if ldg > self.config["dt_loading_limit"]:
-                        if xfmr_name not in self.xfmr_violations_alltps:
-                            self.xfmr_violations_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
-                        elif xfmr_name in self.xfmr_violations_alltps:
-                            self.xfmr_violations_alltps[xfmr_name][0].append(max(xfmr_current))
-                    if not dss.Transformers.Next() > 0:
-                        break
-        elif len(self.other_load_dss_files) == 0:
-            for tp_cnt in range(len(self.config["tps_to_test"])):
-                # First two tps are for disabled PV case
-                if tp_cnt == 0 or tp_cnt == 1:
-                    dss.run_command("BatchEdit PVSystem..* Enabled=False")
-                    dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
-                    self.dssSolver.Solve()
-                    if not dss.Solution.Converged():
-                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                if tp_cnt == 2 or tp_cnt == 3:
-                    dss.run_command("BatchEdit PVSystem..* Enabled=True")
-                    dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
-                    self.dssSolver.Solve()
-                    if not dss.Solution.Converged():
-                        raise OpenDssConvergenceError("OpenDSS solution did not converge")
-                dss.Transformers.First()
-                while True:
-                    xfmr_name = dss.CktElement.Name().split(".")[1].lower()
-                    # Kwami's approach
-                    n_phases = dss.CktElement.NumPhases()
-                    hs_kv = float(dss.Properties.Value('kVs').split('[')[1].split(',')[0])
-                    kva = float(dss.Properties.Value('kVA'))
-                    if n_phases > 1:
-                        xfmr_limit = kva / (hs_kv * math.sqrt(3))
-                    else:
-                        xfmr_limit = kva / (hs_kv)
-                    Currents = dss.CktElement.CurrentsMagAng()[:2 * n_phases]
-                    xfmr_current = Currents[::2]
-                    max_flow = max(xfmr_current)
-                    ldg = max_flow / xfmr_limit
-                    if xfmr_name not in self.all_xfmr_ldgs_alltps:
-                        self.all_xfmr_ldgs_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
-                    elif xfmr_name in self.all_xfmr_ldgs_alltps:
-                        self.all_xfmr_ldgs_alltps[xfmr_name][0].append(max(xfmr_current))
-                    if ldg > self.config["dt_loading_limit"]:
-                        if xfmr_name not in self.xfmr_violations_alltps:
-                            self.xfmr_violations_alltps[xfmr_name] = [[max(xfmr_current)], xfmr_limit]
-                        elif xfmr_name in self.xfmr_violations_alltps:
-                            self.xfmr_violations_alltps[xfmr_name][0].append(max(xfmr_current))
-                    if not dss.Transformers.Next() > 0:
-                        break
         return
 
     def correct_xfmr_violations(self):
@@ -1351,7 +899,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                     raise InvalidParameter("For DT {} the rated current values ({} {}) do not match, quitting...".format(key,
                                                                                                           norm_amps,
                                                                                                           vals[1]))
-                num_par_dts = int((vals[0] * self.config["xfmr_safety_margin"]) / (vals[1]*self.config["dt_loading_limit"])) + 1
+                num_par_dts = int((vals[0] * self.config["xfmr_safety_margin"]) / (vals[1]*self.config["DT loading limit"])) + 1
                 dt_key = "type_" + "{}_".format(phases) + "{}_".format(num_wdgs)
                 for kv_cnt in range(len(wdg_kv_list)):
                     dt_key = dt_key + "{}_".format(wdg_kv_list[kv_cnt])
@@ -1362,7 +910,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
                 if dt_key in self.avail_xfmr_upgrades:
                     for dt,dt_vals in self.avail_xfmr_upgrades[dt_key].items():
                         if dt!=key:
-                            if dt_vals[1][0]>((vals[0]*self.config["xfmr_safety_margin"])/(self.config["line_loading_limit"])) and dt_vals[1][0]<num_par_dts*norm_amps:
+                            if dt_vals[1][0]>((vals[0]*self.config["xfmr_safety_margin"])/(self.config["line loading limit"])) and dt_vals[1][0]<num_par_dts*norm_amps:
                                 command_string = "Edit Transformer.{xf} %noloadloss={nll} ".format(xf=key,
                                                                                                   nll=dt_vals[3][0])
                                 for wdgs_cnt in range(num_wdgs):
@@ -1425,6 +973,23 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         self.dss_upgrades.append(device_command+"\n")
         return
 
+    def redirect_dss_upgrades(self):
+        # TODO: Probably not useful here
+        # Get all available dss upgrades files
+        self.thermal_upgrades_files = [f for f in os.listdir(self.config["Outputs"]) if f.startswith("Thermal_upgrades_pen")]
+        if int(self.pen_level) > int(self.config["DPV_penetration_HClimit"]):
+            prev_pen_level = self.pen_level - self.config["DPV_penetration_step"]
+            expected_file_name = "Thermal_upgrades_pen_{}.dss".format(prev_pen_level)
+            self.logger.debug("expected_file_name", expected_file_name)
+            if expected_file_name in self.thermal_upgrades_files:
+                expected_file_path = os.path.join(self.config["Outputs"],expected_file_name)
+                check_redirect(expected_file_path)
+                # Also append all upgrades in the previous penetration level to the next level
+                with open(os.path.join(self.config["Outputs"], "Thermal_upgrades_pen_{}.dss".format(prev_pen_level)),"r") as datafile:
+                    for line in datafile:
+                        self.dss_upgrades.append(line)
+            elif expected_file_name not in self.thermal_upgrades_files:
+                raise InvalidParameter("Previous upgrades file does not exist, some error is code execution")
 
     def run(self, step, stepMax):
         """Induces and removes a fault as the simulation runs as per user defined settings. 

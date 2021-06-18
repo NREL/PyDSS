@@ -10,9 +10,6 @@ from bokeh.models import ColumnDataSource, HoverTool, BoxSelectTool, BoxZoomTool
 from  PyDSS.pyPlots.pyPlotAbstract import PlotAbstract
 import matplotlib.colors as colors
 import opendssdirect as dss
-import logging
-
-logger = logging.getLogger(__name__)
 
 class NetworkGraph(PlotAbstract):
 
@@ -37,7 +34,7 @@ class NetworkGraph(PlotAbstract):
                     Dict[PptyValue] = i
                     i += 1
             else:
-                logger.warning(Property + ' is not a valid property for nodes')
+                print(Property + ' is not a valid property for nodes')
                 break
         return Dict
 
@@ -53,7 +50,7 @@ class NetworkGraph(PlotAbstract):
                     Dict[PptyValue] = i
                     i += 1
             else:
-                logger.warning(Property + ' is not a valid property for edges')
+                print(Property + ' is not a valid property for edges')
                 break
         return Dict
 
@@ -216,6 +213,7 @@ class NetworkGraph(PlotAbstract):
         return
 
     def __ExtendPCElementDict(self, Dict):
+        #print(self.__dssInstance.CktElement.AllPropertyNames())
         NumberOfProperties = len(self.__dssInstance.Element.AllPropertyNames())
         for i in range(NumberOfProperties):
             try:

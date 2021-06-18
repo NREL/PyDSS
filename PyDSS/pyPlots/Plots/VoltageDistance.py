@@ -20,6 +20,8 @@ class VoltageDistance(PlotAbstract):
 		self.__dssObjectsByClass = dssObjectsbyClass
 
 		self.VoltagePhase = PlotProperties['Phase']
+		#for BusName in dssBuses:
+		#	print(dssBuses[BusName].Distance)
 
 		self.BusData = self.GetBusData()
 		self.LineData = self.GetLineData()

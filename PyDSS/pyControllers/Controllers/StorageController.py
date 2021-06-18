@@ -21,12 +21,12 @@ class StorageController(ControllerAbstract):
     """
     def __init__(self, StorageObj, Settings, dssInstance, ElmObjectList, dssSolver):
         self.Time = -1
-        super(StorageController, self).__init__(StorageObj, Settings, dssInstance, ElmObjectList, dssSolver)
+        super(StorageController).__init__()
 
         self.__ControlledElm = StorageObj
-        self.ceClass, self.ceName = self.__ControlledElm.GetInfo()
-        assert (self.ceClass.lower() == 'storage'), 'StorageController works only with an OpenDSS Storage element'
-        self.__Name = 'pyCont_' + self.ceClass + '_' + self.ceName
+        Class, Name = self.__ControlledElm.GetInfo()
+        assert (Class.lower() == 'storage'), 'StorageController works only with an OpenDSS Storage element'
+        self.__Name = 'pyCont_' + Class + '_' + Name
 
         self.Time = (-1, 0)
         self.__Pin = 0
@@ -38,7 +38,7 @@ class StorageController(ControllerAbstract):
         self.__ElmObjectList = ElmObjectList
 
         self.ControlDict = {
-            'None'   : lambda: 0,
+            'None'   : lambda : 0,
             'PS'     : self.PeakShavingControl,
             'CF'     : self.CapacityFirmimgControl,
             'TT'     : self.TimeTriggeredControl,
@@ -59,22 +59,15 @@ class StorageController(ControllerAbstract):
         self.__dssInstance = dssInstance
         self.__dssSolver = dssSolver
         self.__Settings = Settings
-
         self.__Srated = float(StorageObj.GetParameter('kVA'))
         self.__Prated = float(StorageObj.GetParameter('kWrated'))
         self.__Pbatt = float(StorageObj.GetParameter('kW'))
         self.__dampCoef = Settings['DampCoef']
         self.update = [self.ControlDict[Settings['Control' + str(i)]] for i in [1, 2, 3]]
+        #Class, Name = self.__ControlledElm.GetInfo()
+        #self.__Name = 'pyCont_' + Class + '_' + Name
+        #self.__Convergance = np.zeros((1440,10))
         return
-
-    def Name(self):
-        return self.__Name
-
-    def ControlledElement(self):
-        return "{}.{}".format(self.ceClass, self.ceName)
-
-    def debugInfo(self):
-        return [self.__Settings['Control{}'.format(i+1)] for i in range(3)]
 
     def Update(self, Priority, Time, Update):
         self.TimeChange = self.Time != (Time, Priority)
@@ -132,7 +125,7 @@ class StorageController(ControllerAbstract):
         if isTOU:
             if Pin > Pub:
                 dP = Pin - Pub
-                Pbatt = Pbatt + dP * self.__a - (Pbatt - self.PbattOld) * self.__b
+                Pbatt = Pbatt + (dP) * self.__a - (Pbatt - self.PbattOld) * self.__b
             else:
                 Pbatt = 0
         else:
@@ -183,6 +176,7 @@ class StorageController(ControllerAbstract):
             self.Demand = sum(self.__EnergyCounter) / (60 / self.__dssSolver.GetStepResolutionMinutes())
 
             if self.Demand >= 0.9 * DemandChgThreh:
+                print('Mitigating demand charge: ', self.Demand)
                 if Pin > Pub:
                     dP = Pin - Pub
                     Pbatt = Pbatt + (dP) * self.__a - (Pbatt - self.PbattOld) * self.__b
@@ -239,6 +233,7 @@ class StorageController(ControllerAbstract):
         # self.dPold = 0
         dP = 0
         Plb = self.__Settings['BaseLoadLim']
+        # perDischarge = self.__Settings['%DischargeRate']
         sTime = self.__Settings['ExpWindowStart']
         eTime = self.__Settings['ExpWindowEnd']
         KWHrated = float(self.__ControlledElm.GetParameter('kWhrated'))
@@ -266,6 +261,9 @@ class StorageController(ControllerAbstract):
             perKWHstored = float(self.__ControlledElm.GetParameter('%stored'))
             kWhrem = KWHrated * (perKWHstored / 100)
             self.Pbatt = kWhrem / (Twindow) * effDchg / 100 - perIdle * self.__Prated / 100
+            #print(perKWHstored, kWhrem, self.Pbatt)
+
+        # print(self.__ControlledElm.GetParameter('%stored'))
         self.ExportOld = Export
 
         if Export:
@@ -282,10 +280,16 @@ class StorageController(ControllerAbstract):
                 Sin = self.__ElmObjectList[self.__Settings['PowerMeaElem']].GetVariable('Powers')
                 Sin2 = Sin[:int(len(Sin) / 2)]
                 Pin = sum(Sin2[0::2])
+            # Pbatt = -float(self.__ControlledElm.GetVariable('Powers')[0])*3 + IdlingkW
+            # #Does not work as well as KW parameter for some reason
             Pbatt = float(self.__ControlledElm.GetParameter('kw'))
             if Pin < Plb:
                 dP = Plb - Pin
+                # Pbatt = Pbatt + Pin - Plb
                 Pbatt = Pbatt - (dP) * self.__a - (Pbatt - self.PbattOld) * self.__b
+
+                # dP = Pin - Plb
+                # Pbatt = Pbatt + dP * self.__Settings['DampCoef']
             else:
                 Pbatt = 0
 
@@ -318,6 +322,8 @@ class StorageController(ControllerAbstract):
             Sin = self.__ElmObjectList[self.__Settings['PowerMeaElem']].GetVariable('Powers')
             Pin = sum(Sin[0:int(len(Sin)/2):2])
 
+        #Pbatt = -float(self.__ControlledElm.GetVariable('Powers')[0])*3 + IdlingkW
+        #Does not work as well as KW parameter for some reason
         Pbatt = float(self.__ControlledElm.GetParameter('kw'))
 
         if Pin > Pub:
@@ -330,7 +336,7 @@ class StorageController(ControllerAbstract):
             Pbatt = Pbatt * self.__dampCoef
 
         if Pbatt >= 0:
-            pctdischarge = min(100, Pbatt / self.__Prated* 100)
+            pctdischarge = min(100, Pbatt/ (self.__Prated)* 100)
             pctdischarge = 100 if pctdischarge > 100 else pctdischarge
             self.__ControlledElm.SetParameter('State', 'DISCHARGING')
             self.__ControlledElm.SetParameter('%Discharge', str(pctdischarge))
@@ -341,8 +347,11 @@ class StorageController(ControllerAbstract):
             self.__ControlledElm.SetParameter('State', 'CHARGING')
             self.__ControlledElm.SetParameter('%charge', str(pctcharge))
 
+
         Error = abs(Pbatt - self.PbattOld) / self.__Srated
         self.PbattOld = Pbatt
+        # if Error > 0.2:
+        #     print((self.__Name, Pbatt, self.PbattOld, self.__Prated, Pin, Plb, Pub, dP))
         return Error
 
     def RealTimeControl(self):
@@ -386,7 +395,7 @@ class StorageController(ControllerAbstract):
 
         if self.Time[0] == 0:
             self.__PinOld = self.__Pin
-
+        #print(self.Time[0], self.__PinOld, self.__Pin)
         if self.__Settings['PowerMeaElem'] == 'Total':
             Sin = self.__dssInstance.Circuit.TotalPower()
             Pin = -sum(Sin[0:5:2])
@@ -474,6 +483,7 @@ class StorageController(ControllerAbstract):
                 PF = Pcalc * m + c
         else:
             PF = pfMax
+        #print (Pcalc,PF)
 
         Qcalc =  (Pcalc / PF) * math.sin(math.acos(PF))
 
@@ -549,5 +559,7 @@ class StorageController(ControllerAbstract):
             dQ = 0
 
         Error = abs(dQ)
+        # if Error > 0.1 or math.isnan(Error):
+        #     print((self.__Name, uIn, Qcalc, Qpv, self.oldQcalc, dQ, Ppv, Pcalc, pct, pf, self.__ControlledElm.GetVariable('Powers')))
         self.oldQcalc = Qcalc
         return Error
