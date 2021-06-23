@@ -515,14 +515,6 @@ class ValueByLabel(ValueStorageBase):
 class ValueContainer:
     """Container for a sequence of instances of ValueStorageBase."""
 
-    # These could potentially be reduced in bit lengths. Compression probably
-    # makes that unnecessary.
-    _TYPE_MAPPING = {
-        float: np.float,
-        int: np.int,
-        complex: np.complex,
-    }
-
     def __init__(self, values, hdf_store, path, max_size, elem_names,
                  dataset_property_type, max_chunk_bytes=None, store_time_step=False):
         group_name = os.path.dirname(path)
@@ -534,8 +526,7 @@ class ValueContainer:
             # Don't bother checking each sub path.
             pass
 
-        dtype = self._TYPE_MAPPING.get(values[0].value_type)
-        assert dtype is not None
+        dtype = values[0].value_type
         scaleoffset = None
         # There is no np.float128 on Windows.
         if dtype in (np.float, np.float32, np.float64, np.longdouble):
