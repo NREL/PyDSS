@@ -338,7 +338,7 @@ class PyDssProject:
             self._dump_simulation_settings()
 
         driver = None
-        if self._simulation_config["Exports"].get("Export Data In Memory", True):
+        if self._simulation_config["Exports"].get("Export Data In Memory", False):
             driver = "core"
         if os.path.exists(store_filename):
             os.remove(store_filename)
