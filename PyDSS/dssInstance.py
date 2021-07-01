@@ -111,7 +111,6 @@ class OpenDSS:
         self._CreateBusObjects()
         self._dssSolver.reSolve()
 
-
         if params['Profiles']["Use profile manager"]:
             #TODO: disable internal profiles
             self._Logger.info('Disabling internal yearly and duty-cycle profiles.')
@@ -339,7 +338,7 @@ class OpenDSS:
             self._Logger.info(f'PyDSS datetime - {self._dssSolver.GetDateTime()}')
             self._Logger.info(f'OpenDSS time [h] - {self._dssSolver.GetOpenDSSTime()}')
         if self._Options['Profiles']["Use profile manager"]:
-             self.profileStore.update()
+            self.profileStore.update()
 
         if self._Options['Helics']['Co-simulation Mode']:
             self._HI.updateHelicsSubscriptions()
