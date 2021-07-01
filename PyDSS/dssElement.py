@@ -146,7 +146,7 @@ class dssElement(dssObjectBase):
     def SetParameter(self, Param, Value):
         reply = self._dssInstance.utils.run_command(self._FullName + '.' + Param + ' = ' + str(Value))
         if reply != "":
-            print(f"SetParameter failed: {reply}")
+            raise Exception(f"SetParameter failed: {reply}")
         return self.GetParameter(Param)
 
     def GetParameter(self, Param):
@@ -189,5 +189,3 @@ class dssElement(dssObjectBase):
     @property
     def Terminals(self):
         return list(range(1, self._NumTerminals + 1))
-
-
