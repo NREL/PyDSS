@@ -214,9 +214,7 @@ class ResultData:
             yield metric
 
     def UpdateResults(self, store_nan=False):
-        update_start = time.time()
         current_results = {}
-
 
         # Get the number of seconds since the Epoch without any timezone conversions.
         timestamp = (self._dss_solver.GetDateTime() - datetime.utcfromtimestamp(0)).total_seconds()
