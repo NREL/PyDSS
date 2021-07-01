@@ -1,7 +1,5 @@
 import os
-from collections import defaultdict
 from datetime import timedelta
-from pathlib import Path
 import logging
 
 import numpy as np

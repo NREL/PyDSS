@@ -10,7 +10,11 @@ logger = logging.getLogger(__name__)
 
 
 class RegControlTapNumberChangeReport(ReportBase):
-    """Reports the tap number changes per RegControl."""
+    """Reports the tap number changes per RegControl.
+
+    TODO: This is an experimental report. Outputs have not been validated.
+
+    """
 
     FILENAME = "reg_control_tap_value_changes.json"
     NAME = "RegControl Tap Number Change Counts"

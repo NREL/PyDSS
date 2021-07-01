@@ -87,6 +87,8 @@ class PvClippingReport(PvReportBase):
     the output file will be .csv or .h5, depending on 'Export Format.'
     Otherwise, the output file will be .json.
 
+    TODO: This is an experimental report. Outputs have not been validated.
+
     """
 
     PER_TIME_POINT_FILENAME = "pv_clipping.h5"
@@ -227,10 +229,6 @@ class PvClippingReport(PvReportBase):
             return
 
         granularity = ReportGranularity(self._simulation_config["Reports"]["Granularity"])
-        per_time_point = (
-            ReportGranularity.PER_ELEMENT_PER_TIME_POINT,
-            ReportGranularity.ALL_ELEMENTS_PER_TIME_POINT,
-        )
         if granularity == ReportGranularity.PER_ELEMENT_PER_TIME_POINT:
             self._generate_per_pv_system_per_time_point(output_dir)
         elif granularity == ReportGranularity.PER_ELEMENT_TOTAL:
@@ -250,6 +248,8 @@ class PvCurtailmentReport(PvReportBase):
     depends on the input parameters. If the data was collected at every time
     point then the output file will be .csv or .h5, depending on 'Export
     Format.' Otherwise, the output file will be .json.
+
+    TODO: This is an experimental report. Outputs have not been validated.
 
     """
 

@@ -1,3 +1,4 @@
+###############
 HDF Data Format
 ###############
 This page describes the format PyDSS uses to export data in an HDF file. PyDSS
@@ -9,6 +10,7 @@ Refer to :class:`PyDSS.pydss_results.PyDssResults` and
 :class:`PyDSS.pydss_results.PyDssScenarioResults` for user-friendly interfaces.
 They are also described in :ref:`tutorial:Analyze results`.
 
+******
 Layout
 ******
 Each PyDSS project creates ``<project-path>/store.h5`` to store exported data
@@ -92,6 +94,7 @@ contents of this dataset would be::
 
     [[90, 4], [90, 5]]
 
+********
 Examples
 ********
 The HDF Group provides graphical and command-line tools to browse HDF files.

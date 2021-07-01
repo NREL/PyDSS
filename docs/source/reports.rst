@@ -1,3 +1,4 @@
+#######
 Reports
 #######
 This page describes how to generate PyDSS reports from exported simulation data.
@@ -5,17 +6,18 @@ This page describes how to generate PyDSS reports from exported simulation data.
 The following reports can be enabled in the project's ``simulation.toml``
 ``Reports`` section.
 
-- Capacitor State Change Counts: Reports the state changes per Capacitor.
+- Capacitor State Change Counts (``EXPERIMENTAL``): Reports the state changes per Capacitor.
 - Feeder Losses: Reports the feeder losses.
-- PV Clipping: Reports PV Clipping for the simulation.
-- PV Curtailment: Reports PV Curtailment at every time point in the simulation.
-- RegControl Tap Number Change Counts: Reports the tap number changes per RegControl.
+- PV Clipping (``EXPERIMENTAL``): Reports PV Clipping for the simulation.
+- PV Curtailment (``EXPERIMENTAL``): Reports PV Curtailment at every time point in the simulation.
+- RegControl Tap Number Change Counts (``EXPERIMENTAL``): Reports the tap number changes per RegControl.
 - Thermal Metrics: Reports thermal metrics.
 - Voltage Metrics: Reports voltage metrics. 
 
 The ``Reports`` section contains global settings that may apply to any report.
 Each report may contain its own specific settings.
 
+***************
 Global settings
 ***************
 
@@ -55,6 +57,7 @@ consumes 8 bytes.
 
   Storage required: 1 element * 1 number = 8 bytes
 
+*****************
 Export Parameters
 *****************
 Each report configures its own export parameters. PyDSS will serialize the
@@ -63,10 +66,12 @@ export parameters used in a simulation to
 
 This can be useful for debugging purposes when you develop your own reports.
 
+***********
 Output Data
 ***********
 PyDSS stores generated reports in ``<project-path>/Reports``.
 
+******************
 Adding New Reports
 ******************
 Here's how to create a new report in PyDSS.
@@ -80,8 +85,8 @@ Here's how to create a new report in PyDSS.
    - ``get_required_exports``:  Defines the export parameters at runtime. Refer
      to :ref:`tutorial:Pre-filtering Export Data`.
 
+********
 Examples
 ********
-Refer to this `simulation settings file
-<https://github.com/daniel-thom/PyDSS/blob/opendss-export-metrics/tests/data/pv_reports_project/simulation.toml#L97>`_
+Refer to the simulation settings in ``tests/data/pv_reports_project/simulation.toml``
 for an example configuration that enables these reports.

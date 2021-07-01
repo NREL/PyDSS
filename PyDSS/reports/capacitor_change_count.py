@@ -15,6 +15,8 @@ class CapacitorStateChangeReport(ReportBase):
 
     The report generates a capacitor_state_changes.json output file.
 
+    TODO: This is an experimental report. Outputs have not been validated.
+
     """
 
     FILENAME = "capacitor_state_changes.json"
