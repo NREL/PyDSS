@@ -217,6 +217,7 @@ class ResultData:
         update_start = time.time()
         current_results = {}
 
+
         # Get the number of seconds since the Epoch without any timezone conversions.
         timestamp = (self._dss_solver.GetDateTime() - datetime.utcfromtimestamp(0)).total_seconds()
         self._time_dataset.write_value([timestamp])
@@ -345,6 +346,7 @@ class ResultData:
         fname = filename + ".json"
         relpath = os.path.join(self._export_relative_dir, fname)
         filepath = os.path.join(self._export_dir, fname)
+
         #write_dataframe(df, filepath)
         dump_data(df_dict, filepath)
         metadata["feeder_head_info_files"].append(relpath)

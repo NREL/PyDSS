@@ -24,10 +24,11 @@ def find_version(*file_paths):
     version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
                               version_file, re.M)
     if version_match:
-        return version_match.group(1)
+        ver =  version_match.group(1)
+        return ".".join(ver.split(".")[:-1])
     raise RuntimeError("Unable to find version string.")
 
-setup(name='PyDSS',
+setup(name='dsspy',
       version=find_version("PyDSS", "__init__.py"),
       description='A high-level python interface for OpenDSS',
       author='Aadil Latif',
@@ -35,6 +36,7 @@ setup(name='PyDSS',
       url='http://www.github.com/nrel/pydss',
       packages=find_packages(),
       install_requires=requirements,
+      include_package_data=True,
       package_data={'PyDSS': ['*.toml']},
         entry_points={
             "console_scripts": [

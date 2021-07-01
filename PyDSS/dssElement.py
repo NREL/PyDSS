@@ -150,15 +150,15 @@ class dssElement(dssObjectBase):
         return self.GetParameter(Param)
 
     def GetParameter(self, Param):
-        self._dssInstance.Circuit.SetActiveElement(self._FullName)
-        if self._dssInstance.Element.Name() == (self._FullName):
+        if self._dssInstance.Element.Name() != self._FullName:
+            self._dssInstance.Circuit.SetActiveElement(self._FullName)
+        if self._dssInstance.Element.Name() == self._FullName:
             x = self._dssInstance.Properties.Value(Param)
             try:
                 return float(x)
             except:
                 return x
         else:
-            print('Could not set ' + self._FullName + ' as active element.')
             return None
 
     @property
