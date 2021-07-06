@@ -319,7 +319,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                         d=reg_delay
                     )
                     dss.run_command(command_string)
-                    # self.dssSolver.Solve()
+                    self.dssSolver.Solve()
                     self._simulation.RunStep(self._step)
                     # add this to a dss_upgrades.dss file
                     self.write_dss_file(command_string)
@@ -415,7 +415,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                                     d=reg_delay
                                 )
                                 dss.run_command(command_string)
-                                # self.dssSolver.Solve()
+                                self.dssSolver.Solve()
                                 self._simulation.RunStep(self._step)
                                 # add this to a dss_upgrades.dss file
                                 self.write_dss_file(command_string)
@@ -585,7 +585,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         check_redirect(thermal_dss_file)
         upgrades_file = os.path.join(self.config["Outputs"], "voltage_upgrades.dss")
         check_redirect(upgrades_file)
-        # self.dssSolver.Solve()
+        self.dssSolver.Solve()
         self._simulation.RunStep(self._step)
 
         self.new_reg_controls = {x["name"]: x for x in iter_elements(dss.RegControls, get_reg_control_info)}
@@ -672,7 +672,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
     def get_load_pv_mults_individual_object(self):
         self.orig_loads = {}
         self.orig_pvs = {}
-        # self.dssSolver.Solve()
+        self.dssSolver.Solve()
         self._simulation.RunStep(self._step)
         if dss.Loads.Count() > 0:
             dss.Loads.First()
@@ -736,7 +736,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
 
     def get_load_mults(self):
         self.orig_loads = {}
-        # self.dssSolver.Solve()
+        self.dssSolver.Solve()
         self._simulation.RunStep(self._step)
         dss.Loads.First()
         while True:
@@ -1078,7 +1078,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     dss.Loads.kW(new_kw)
                     if not dss.Loads.Next() > 0:
                         break
-            # self.dssSolver.Solve()
+            self.dssSolver.Solve()
             self._simulation.RunStep(self._step)
             if not dss.Solution.Converged():
                 self.logger.info("Write upgrades till this step in debug_upgrades.dss")
@@ -1153,7 +1153,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                         dss.Loads.kW(new_kw)
                         if not dss.Loads.Next()>0:
                             break
-                    # self.dssSolver.Solve()
+                    self.dssSolver.Solve()
                     self._simulation.RunStep(self._step)
                     if not dss.Solution.Converged():
                         self.logger.info("Write upgrades before Convergence Error in debug_upgrades.dss")
@@ -1174,7 +1174,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                         dss.Loads.kW(new_kw)
                         if not dss.Loads.Next() > 0:
                             break
-                    # self.dssSolver.Solve()
+                    self.dssSolver.Solve()
                     self._simulation.RunStep(self._step)
                     if not dss.Solution.Converged():
                         self.logger.info("Write upgrades before Convergence Error in debug_upgrades.dss")
@@ -1235,7 +1235,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 if tp_cnt == 0 or tp_cnt == 1:
                     dss.run_command("BatchEdit PVSystem..* Enabled=False")
                     dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
-                    # self.dssSolver.Solve()
+                    self.dssSolver.Solve()
                     self._simulation.RunStep(self._step)
                     if not dss.Solution.Converged():
                         self.logger.info("Write upgrades before Convergence Error in debug_upgrades.dss")
@@ -1248,7 +1248,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 if tp_cnt == 2 or tp_cnt == 3:
                     dss.run_command("BatchEdit PVSystem..* Enabled=True")
                     dss.run_command("set LoadMult = {LM}".format(LM=self.config["tps_to_test"][tp_cnt]))
-                    # self.dssSolver.Solve()
+                    self.dssSolver.Solve()
                     self._simulation.RunStep(self._step)
                     if not dss.Solution.Converged():
                         self.logger.info("Write upgrades before Convergence Error in debug_upgrades.dss")
@@ -1377,7 +1377,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 control_command = control_command + orig_sett
                 cap_on_settings_check[cap_name] = self.capON
                 dss.run_command(control_command)
-                # self.dssSolver.Solve()
+                self.dssSolver.Solve()
                 self._simulation.RunStep(self._step)
 
                 pass_flag = True
@@ -1388,7 +1388,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     # change command
                     new_control_command = self.edit_capacitor_settings_for_convergence(control_command)
                     dss.run_command(new_control_command)
-                    # self.dssSolver.Solve()
+                    self.dssSolver.Solve()
                     self._simulation.RunStep(self._step)
                     self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit, lower_limit=self.lower_limit,
                                                             raise_exception=True)
@@ -1433,7 +1433,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                         self.cap_initial_settings[cap_name] = [self.capON, self.capOFF]
                     dss.run_command(control_command)
                     cap_on_settings_check[cap_name] = self.capON
-                    # self.dssSolver.Solve()
+                    self.dssSolver.Solve()
                     self._simulation.RunStep(self._step)
 
                     pass_flag = True
@@ -1445,7 +1445,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                         # change command
                         new_control_command = self.edit_capacitor_settings_for_convergence(control_command)
                         dss.run_command(new_control_command)
-                        # self.dssSolver.Solve()
+                        self.dssSolver.Solve()
                         self._simulation.RunStep(self._step)
                         self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
                                                                 lower_limit=self.lower_limit,
@@ -1457,7 +1457,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 if not dss.Capacitors.Next() > 0:
                     break
 
-        # self.dssSolver.Solve()
+        self.dssSolver.Solve()
         self._simulation.RunStep(self._step)
 
         # Check whether settings have been applied or not
@@ -1511,7 +1511,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     o=self.cap_on_setting,
                     of=self.cap_off_setting
                 ))
-                # self.dssSolver.Solve()
+                self.dssSolver.Solve()
                 self._simulation.RunStep(self._step)
                 if not dss.CapControls.Next() > 0:
                     break
@@ -1573,7 +1573,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 ))
                 dss.run_command(command_string)
                 self.write_dss_file(command_string)
-                # self.dssSolver.Solve()
+                self.dssSolver.Solve()
                 self._simulation.RunStep(self._step)
                 if not dss.CapControls.Next() > 0:
                     break
@@ -1648,7 +1648,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                         b=bandw
                     )
                     dss.run_command(command_string)
-                    # self.dssSolver.Solve()
+                    self.dssSolver.Solve()
                     self._simulation.RunStep(self._step)
                     if not dss.RegControls.Next() > 0:
                         break
@@ -1697,7 +1697,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     b=self.reg_band,
                 )
                 dss.run_command(command_string)
-                # self.dssSolver.Solve()
+                self.dssSolver.Solve()
                 self._simulation.RunStep(self._step)
                 if self.write_flag == 1:
                     self.write_dss_file(command_string)
@@ -1715,7 +1715,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 b=vals[1],
             )
             dss.run_command(command_string)
-            # self.dssSolver.Solve()
+            self.dssSolver.Solve()
             self._simulation.RunStep(self._step)
             if self.write_flag == 1:
                 self.write_dss_file(command_string)
@@ -1828,7 +1828,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     dss.Bus.Y(y)
                     if self.write_flag == 1:
                         self.write_dss_file("//{},{},{}".format(new_node.split(".")[0], x, y))
-                    # self.dssSolver.Solve()
+                    self.dssSolver.Solve()
                     self._simulation.RunStep(self._step)
                     self.generate_nx_representation()
                     dss.Circuit.SetActiveElement("Line." + line_name)
@@ -1889,7 +1889,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                     dss.Bus.Y(y)
                     if self.write_flag == 1:
                         self.write_dss_file("//{},{},{}".format(new_node.split(".")[0], x, y))
-                    # self.dssSolver.Solve()
+                    self.dssSolver.Solve()
                     self._simulation.RunStep(self._step)
                     self.generate_nx_representation()
                     dss.Circuit.SetActiveElement("Line." + line_name)
@@ -1942,7 +1942,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                                     d=reg_delay
                                 )
                                 dss.run_command(command_string)
-                                # self.dssSolver.Solve()
+                                self.dssSolver.Solve()
                                 self._simulation.RunStep(self._step)
                                 dss.run_command("Calcvoltagebases")
                                 # add this to a dss_upgrades.dss file
@@ -1969,7 +1969,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                             d=reg_delay
                         )
                         dss.run_command(command_string)
-                        # self.dssSolver.Solve()
+                        self.dssSolver.Solve()
                         self._simulation.RunStep(self._step)
                         dss.run_command("CalcVoltageBases")
                         # add this to a dss_upgrades.dss file
@@ -2014,7 +2014,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                             b=bandw
                         )
                         dss.run_command(command_string)
-                        # self.dssSolver.Solve()
+                        self.dssSolver.Solve()
                         self._simulation.RunStep(self._step)
                         pass_flag = True
                         pass_flag = self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
@@ -2072,7 +2072,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                         b=reg_band,
                     )
                     dss.run_command(command_string)
-                    # self.dssSolver.Solve()
+                    self.dssSolver.Solve()
                     self._simulation.RunStep(self._step)
                     pass_flag = True
                     pass_flag = self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
@@ -2099,7 +2099,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 b=vals[1],
             )
             dss.run_command(command_string)
-            # self.dssSolver.Solve()
+            self.dssSolver.Solve()
             self._simulation.RunStep(self._step)
             self.write_dss_file(command_string)
 
@@ -2254,7 +2254,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                             self.write_dss_file(command_string)
                         # Update system admittance matrix
                         dss.run_command("CalcVoltageBases")
-                        # self.dssSolver.Solve()
+                        self.dssSolver.Solve()
                         self._simulation.RunStep(self._step)
                         self.generate_nx_representation()
                         break
@@ -2341,7 +2341,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
                 rn="New_regctrl_" + min_node
             )
             dss.run_command(command_string)
-            # self.dssSolver.Solve()
+            self.dssSolver.Solve()
             self._simulation.RunStep(self._step)
             self.check_voltage_violations_multi_tps(upper_limit=self.upper_limit,
                                                     lower_limit=self.lower_limit)
