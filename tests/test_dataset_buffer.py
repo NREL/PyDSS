@@ -14,18 +14,18 @@ def test_dataset_buffer__compute_chunk_count():
     assert DatasetBuffer.compute_chunk_count(
         num_columns=4,
         max_size=96,
-        dtype=np.float
+        dtype=float
     ) == 96
     assert DatasetBuffer.compute_chunk_count(
         num_columns=4,
         max_size=one_year_at_5_minutes,
-        dtype=np.float,
+        dtype=float,
         max_chunk_bytes=128 * 1024,
     ) == 4096
     assert DatasetBuffer.compute_chunk_count(
         num_columns=6,
         max_size=one_year_at_5_minutes,
-        dtype=np.complex,
+        dtype=complex,
         max_chunk_bytes=128 * 1024,
     ) == 1365
 
@@ -35,7 +35,7 @@ def test_dataset_buffer__max_num_bytes():
     try:
         with h5py.File(filename, "w") as store:
             columns = ("1", "2", "3", "4")
-            dataset = DatasetBuffer(store, "data", 100, np.float, columns)
+            dataset = DatasetBuffer(store, "data", 100, float, columns)
             assert dataset.max_num_bytes() == 3200
     finally:
         if os.path.exists(filename):
@@ -48,7 +48,7 @@ def test_dataset_buffer__write_value():
         with h5py.File(filename, "w") as store:
             columns = ("1", "2", "3", "4")
             max_size = 5000
-            dataset = DatasetBuffer(store, "data", max_size, np.float, columns,
+            dataset = DatasetBuffer(store, "data", max_size, float, columns,
                                     max_chunk_bytes=128 * 1024)
             assert dataset._chunk_size == 4096
             for i in range(max_size):

@@ -529,7 +529,7 @@ class ValueContainer:
         dtype = values[0].value_type
         scaleoffset = None
         # There is no np.float128 on Windows.
-        if dtype in (np.float, np.float32, np.float64, np.longdouble):
+        if dtype in (float, np.float32, np.float64, np.longdouble):
             scaleoffset = 4
         time_step_path = None
         max_size = max_size * len(values) if store_time_step else max_size
@@ -544,7 +544,7 @@ class ValueContainer:
                 hdf_store,
                 time_step_path,
                 max_size,
-                np.int,
+                int,
                 ["Time", "Name"],
                 scaleoffset=0,
                 max_chunk_bytes=max_chunk_bytes,
