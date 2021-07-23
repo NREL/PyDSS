@@ -12,7 +12,7 @@ from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
 from PyDSS.metrics import (
     NodeVoltageMetric, TrackCapacitorChangeCounts,
     TrackRegControlTapNumberChanges, ExportLoadingsMetric, OverloadsMetricInMemory,
-    ExportPowersMetric
+    ExportPowersMetric, FeederHeadMetrics
 )
 
 
@@ -21,6 +21,7 @@ CUSTOM_METRICS = {
     "CktElement.ExportLoadingsMetric": ExportLoadingsMetric,
     "CktElement.OverloadsMetricInMemory": OverloadsMetricInMemory,
     "CktElement.ExportPowersMetric": ExportPowersMetric,
+    "FeederHead.FeederHeadMetrics": FeederHeadMetrics,
     #"Lines.LoadingPercent": LineLoadingPercent,
     "Nodes.VoltageMetric": NodeVoltageMetric,
     "RegControls.TrackTapNumberChanges": TrackRegControlTapNumberChanges,

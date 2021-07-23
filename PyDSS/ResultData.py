@@ -117,6 +117,8 @@ class ResultData:
                 objs = self._buses
             elif elem_class in self._objects_by_class:
                 objs = self._objects_by_class[elem_class]
+            elif elem_class == "FeederHead":
+                objs = self._objects_by_class["Circuits"]
             elif elem_class != "CktElement":  # TODO
                 continue
             for prop in self._export_list.iter_export_properties(elem_class=elem_class):
