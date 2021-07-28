@@ -399,8 +399,7 @@ class FeederHeadMetrics(MetricBase):
             if "line" in dss.Topology.BranchName().lower():
                 feeder_head_line = dss.Topology.BranchName()
                 break
-            else:
-                flag = dss.Topology.Next()
+            flag = dss.Topology.Next()
 
         assert feeder_head_line is not None
         return feeder_head_line
@@ -1070,8 +1069,6 @@ def convert_data(name, prop_name, value, conversion):
 _OPEN_DSS_CLASS_FOR_ITERATION = {
     "Capacitor": dss.Capacitors,
     "Fuse": dss.Fuses,
-    "Fuse": dss.Fuses,
-    "Generator": dss.Generators,
     "Generator": dss.Generators,
     "Isource": dss.Isource,
     "Line": dss.Lines,
