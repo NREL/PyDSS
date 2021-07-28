@@ -4,15 +4,14 @@ import logging
 import os
 import shutil
 import tempfile
-from datetime import datetime, timedelta
+from collections import namedtuple
+from datetime import timedelta
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 import opendssdirect as dss
 
-from PyDSS.common import DataConversion, DatasetPropertyType, StoreValuesType
-from PyDSS.dataset_buffer import DatasetBuffer
+from PyDSS.common import DataConversion, StoreValuesType
 from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
 from PyDSS.reports.reports import ReportBase
 from PyDSS.storage_filters import STORAGE_TYPE_MAP, StorageFilterBase
@@ -350,6 +349,113 @@ class OpenDssPropertyMetric(MultiValueTypeMetricBase):
 #        current = max([abs(x) for x in currents])
 #        loading = current / normal_amps * 100
 #        return ValueByNumber(transformer.Name, "TransformerLoading", loading)
+
+
+FeederHeadValues = namedtuple("FeederHeadValues", ["load_kvar", "load_kw", "loading", "reverse_power_flow"])
+
+
+class FeederHeadMetrics(MetricBase):
+    """Calculates loading at the feeder head at each time point"""
+
+    def __init__(self, prop, dss_objs, options):
+        super().__init__(prop, dss_objs, options)
+        # dss_objs contains the Circuit, but we won't use it.
+        assert len(dss_objs) == 1, dss_objs
+        self._prop = prop
+        self._containers = {}
+        self._feeder_head_line = None
+        self._values = {}
+
+    def _initialize_containers(self):
+        assert len(self._properties) == 1, self._properties
+        self._feeder_head_line = self._find_feeder_head_line()
+        values = self._get_values()
+        self._values = {
+            "load_kvar": ValueByNumber("FeederHead", "load_kvar", values.load_kvar),
+            "load_kw": ValueByNumber("FeederHead", "load_kw", values.load_kw),
+            "loading": ValueByNumber("FeederHead", "loading", values.loading),
+            "reverse_power_flow": ValueByNumber("FeederHead", "reverse_power_flow", values.reverse_power_flow),
+        }
+
+        for name in self._values:
+            path = f"{self._base_path}/{self._prop.elem_class}/ElementProperties/{name}"
+            self._containers[name] = self.make_storage_container(
+                path,
+                self._prop,
+                self._num_steps,
+                self._max_chunk_bytes,
+                [self._values[name]],
+            )
+
+    @staticmethod
+    def is_circuit_wide():
+        return True
+
+    @staticmethod
+    def _find_feeder_head_line():
+        feeder_head_line = None
+        flag = dss.Topology.First()
+        while flag > 0:
+            if "line" in dss.Topology.BranchName().lower():
+                feeder_head_line = dss.Topology.BranchName()
+                break
+            flag = dss.Topology.Next()
+
+        assert feeder_head_line is not None
+        return feeder_head_line
+
+    def _get_values(self):
+        total_power = dss.Circuit.TotalPower()
+        return FeederHeadValues(
+            load_kvar=total_power[1],
+            load_kw=total_power[0],
+            loading=self._get_feeder_head_loading(),
+            reverse_power_flow=self._reverse_power_flow(),
+        )
+
+    def _get_feeder_head_loading(self):
+        flag = dss.Circuit.SetActiveElement(self._feeder_head_line)
+        if not flag > 0:
+            raise Exception("Failed to set the feeder head line")
+        n_phases = dss.CktElement.NumPhases()
+        max_amps = dss.CktElement.NormalAmps()
+        currents = dss.CktElement.CurrentsMagAng()[:2*n_phases]
+        current_magnitude = currents[::2]
+
+        max_flow = max(max(current_magnitude), 1e-10)
+        loading = max_flow / max_amps
+        return loading
+
+    @staticmethod
+    def _reverse_power_flow():
+        # total substation power is an injection(-) or a consumption(+)
+        reverse_pf = max(dss.Circuit.TotalPower()) > 0
+        # Storing NaN with bools is not working correctly.
+        return int(reverse_pf)
+
+    def append_values(self, time_step, store_nan=False):
+        if not self._containers:
+            self._initialize_containers()
+
+        if store_nan:
+            for val in self._values.values():
+                val.set_nan()
+        else:
+            values = self._get_values()
+            for name, value in self._values.items():
+                value.set_value(getattr(values, name))
+
+        vals = []
+        for name, container in self._containers.items():
+            value = self._values[name]
+            vals.append(value)
+            container.append_values([value], time_step)
+
+        return vals
+
+    def iter_containers(self):
+        for container in self._containers.values():
+            yield container
 
 
 class SummedElementsOpenDssPropertyMetric(MetricBase):
@@ -963,8 +1069,6 @@ def convert_data(name, prop_name, value, conversion):
 _OPEN_DSS_CLASS_FOR_ITERATION = {
     "Capacitor": dss.Capacitors,
     "Fuse": dss.Fuses,
-    "Fuse": dss.Fuses,
-    "Generator": dss.Generators,
     "Generator": dss.Generators,
     "Isource": dss.Isource,
     "Line": dss.Lines,
