@@ -48,7 +48,7 @@ class OpenDSS:
         self.BokehSessionID = None
         self._Options = params
         self._convergenceErrors = 0
-        self._maxConvergenceErrorCount = 0
+        self._maxConvergenceErrorCount = None
         self._maxConvergenceError = 0.0
         self._controller_iteration_counts = {}
         self._stats = TimerStatsCollector()
@@ -404,7 +404,7 @@ class OpenDSS:
             self._Logger.error("Convergence error %s exceeded max value %s at step %s", error, self._maxConvergenceError, step)
             raise PyDssConvergenceMaxError(f"Exceeded max convergence error {error}")
 
-        if self._maxConvergenceErrorCount != 0 and self._convergenceErrors > self._maxConvergenceErrorCount:
+        if self._maxConvergenceErrorCount is not None and self._convergenceErrors > self._maxConvergenceErrorCount:
             self._Logger.error("Exceeded convergence error count threshold at step %s", step)
             raise PyDssConvergenceErrorCountExceeded(f"{self._convergenceErrors} errors occurred")
 
@@ -432,7 +432,8 @@ class OpenDSS:
         startTime = time.time()
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
         threshold = self._Options['Project']['Convergence error percent threshold']
-        self._maxConvergenceErrorCount = round(threshold * .01 * Steps)
+        if threshold > 0:
+            self._maxConvergenceErrorCount = round(threshold * .01 * Steps)
         self._maxConvergenceError = self._Options['Project']['Max error tolerance']
         dss.Solution.Convergence(self._Options['Project']['Error tolerance'])
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
