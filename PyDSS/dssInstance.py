@@ -5,7 +5,7 @@ from PyDSS.pyContrReader import pyContrReader as pcr
 from PyDSS.pyPlotReader import pyPlotReader as ppr
 from PyDSS.exceptions import (
     InvalidConfiguration, PyDssConvergenceError, PyDssConvergenceErrorCountExceeded,
-    PyDssConvergenceMaxError, OpenDssModelError
+    PyDssConvergenceMaxError, OpenDssModelError, OpenDssConvergenceErrorCountExceeded
 )
 from PyDSS.ProfileManager import ProfileInterface
 from PyDSS.pyPostprocessor import pyPostprocess
@@ -48,6 +48,7 @@ class OpenDSS:
         self.BokehSessionID = None
         self._Options = params
         self._convergenceErrors = 0
+        self._convergenceErrorsOpenDSS = 0
         self._maxConvergenceErrorCount = None
         self._maxConvergenceError = 0.0
         self._controller_iteration_counts = {}
@@ -333,7 +334,7 @@ class OpenDSS:
         return ObjectList
 
     def RunStep(self, step, updateObjects=None):
-        # updating parameters bebore simulation run
+        # updating parameters before simulation run
         if self._Options["Logging"]["Log time step updates"]:
             self._Logger.info(f'PyDSS datetime - {self._dssSolver.GetDateTime()}')
             self._Logger.info(f'OpenDSS time [h] - {self._dssSolver.GetOpenDSSTime()}')
@@ -408,6 +409,13 @@ class OpenDSS:
             self._Logger.error("Exceeded convergence error count threshold at step %s", step)
             raise PyDssConvergenceErrorCountExceeded(f"{self._convergenceErrors} errors occurred")
 
+    def _HandleOpenDSSConvergenceErrorChecks(self, step):
+        self._convergenceErrorsOpenDSS += 1
+
+        if self._maxConvergenceErrorCount is not None and self._convergenceErrorsOpenDSS > self._maxConvergenceErrorCount:
+            self._Logger.error("Exceeded OpenDSS convergence error count threshold at step %s", step)
+            raise OpenDssConvergenceErrorCountExceeded(f"{self._convergenceErrorsOpenDSS} errors occurred")
+
     def DryRunSimulation(self, project, scenario):
         """Run one time point for getting estimated space."""
         if not self._Options['Exports']['Log Results']:
@@ -469,8 +477,9 @@ class OpenDSS:
                         pydss_has_converged = self.RunStep(step)
                         opendss_has_converged = dss.Solution.Converged()
                         if not opendss_has_converged:
-                            self._Logger.info("OpenDSS did not converge at step=%s pydss_converged=%s",
-                                              step, pydss_has_converged)
+                            self._Logger.error("OpenDSS did not converge at step=%s pydss_converged=%s",
+                                               step, pydss_has_converged)
+                            self._HandleOpenDSSConvergenceErrorChecks(step)
                 has_converged = pydss_has_converged and opendss_has_converged
                 if step == 0 and self.ResultContainer is not None:
                     size = make_human_readable_size(self.ResultContainer.max_num_bytes())
