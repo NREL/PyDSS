@@ -60,6 +60,15 @@ class PyDSS:
                         "UUID": self.uuid
                     })
                     return
+
+            else:
+                self.project_folder = parameters['powerflow_options']['pydss_project']
+                if 'sub_id' in parameters['powerflow_options']:
+                    sub_id = parameters['powerflow_options'].pop('sub_id')
+                    path_to_sub_file = os.path.join(self.project_folder, parameters['powerflow_options']['active_project'], 
+                        'Scenarios', parameters['powerflow_options']['active_scenario'], 'ExportLists')
+                    self.update_subscription_publications_in_toml_file(sub_id, path_to_sub_file)
+
             params = restructure_dictionary(parameters)
             
             self.time_resolution = params['Project']['Step resolution (sec)']/60
@@ -106,6 +115,44 @@ class PyDSS:
         self.notifier.notify(self.cosim_uuid, self.federate_service, msg, 
                              timestep, log_level)
 
+    def update_subscription_publications_in_toml_file(self, sub_id, path_to_sub_file):
+
+        if os.path.exists(path_to_sub_file):
+            if 'Subscriptions.toml' in os.listdir(path_to_sub_file):
+                os.remove(os.path.join(path_to_sub_file, 'Subscriptions.toml'))
+            
+        sub_dict = {
+                "Vsource.source": {
+                    "Property" : "pu",
+                    "Subscription ID": sub_id,
+                    "Unit" : "",
+                    "Subscribe" : True,
+                    "Data type" : "double",
+                    "Multiplier" : 1 
+                }
+            }
+        with open(os.path.join(path_to_sub_file, 'Subscriptions.toml'), "w") as f:
+            toml.dump(sub_dict, f)
+
+        pub_dict = {
+            "Circuits": {
+                "Publish": ["TotalPower"],
+                "NoPublish": []
+            },
+            "PVSystems": {
+                "Publish" : [],
+                "NoPublish" : ["Powers"]
+            },
+            "Generators": {
+                "Publish" : [],
+                "NoPublish" : ["Powers"]
+            }
+        }
+        with open(os.path.join(path_to_sub_file, "ExportMode-byClass.toml"), "w") as f:
+            toml.dump(pub_dict, f)
+        logger.info('ExportMode-byClass.toml file changed')
+        
+
     def update_project_params(self,params):
 
         """ Grab file and metadata info of case file """
@@ -122,19 +169,12 @@ class PyDSS:
 
         """ Creating a project folder and removing if already exists"""
         self.project_folder = os.path.join(self.tmp_folder, folder_name)
-        self.dss_dump = os.path.join(self.tmp_folder, "dss_dump")
         if not os.path.exists(self.project_folder):
             os.mkdir(self.project_folder)
         else:
             shutil.rmtree(self.project_folder)
             os.mkdir(self.project_folder)
-
-        if not os.path.exists(self.dss_dump):
-            os.mkdir(self.dss_dump)
-        else:
-            shutil.rmtree(self.dss_dump)
-            os.mkdir(self.dss_dump)
-
+        
         """ Retrieve the file url from the BES Data API """
         self.notify(f"URL for PYDSS case file {case_file_url}")
         file_response = send_sync_request(case_file_url, 'GET', body=None)
@@ -144,110 +184,45 @@ class PyDSS:
             file_url = file_data['file_url']
             self.notify(f"URL to download the file> {file_url}")
             file_format = file_data['format']
-            
 
             """ Retrieve the file from AWS and store in the tmp directory """
             data_response = send_sync_request(file_url, 'GET')
             if data_response.status == HTTPStatus.OK:
-                file = os.path.join(self.dss_dump, f'{file_uuid}.{file_format}')
+                file = os.path.join(self.project_folder, f'{file_uuid}.{file_format}')
                 with open(file, 'wb') as f:
                     f.write(data_response.data)
 
                 """ Unzip the files """
-                zip_path = os.path.join(self.dss_dump, f'{file_uuid}.{file_format}')
+                zip_path = os.path.join(self.project_folder, f'{file_uuid}.{file_format}')
                 if zip_path.endswith('.zip'):
                     with ZipFile(zip_path, 'r') as zipObj:
-                        zipObj.extractall(path=self.dss_dump)
+                        zipObj.extractall(path=self.project_folder)
+                    
                     os.remove(zip_path)
-
-                    """ create a new PyDSS project here"""
-                    #print(params)
-                    #print(file_data.keys())
-                    self.scenario = "scenario1"
-                    self.project = "project1"
-                    try:
-                        self.create_project(self.dss_dump, self.project_folder, file_data)
-                        
-
-                        """ update the model with new settings """
-                        model_modifier = PyDSS_Model(os.path.join(self.project_folder,self.project))
-                        model_modifier.create_new_scenario(
-                            self.scenario, #file_data['case']['active_scenario']
-                            {
-                                "Lp": params["psse"]["Lp"],
-                                "Lq": params["psse"]["Lq"],
-                                "PVp": params["psse"]["PVp"],
-                                "PVq": params["psse"]["PVq"],
-                                "Mtr": params["psse"]["Mtr"]
-                            },
-                            {
-                                "new_master": "new_" + file_data['case']['master_file'],
-                                "master": file_data['case']['master_file'],
-                                "load": 'Loads.dss', # TODO: needs to come from metadata
-                                "motor": 'Motors_new.dss',
-                                "PVsystem": 'PVSystems_new.dss',
-                            },
-                            isSubstation=True, # needs to come from metadata
-                            PVstandard="1547-2018", # needs to come from cosim-input
-                            PVcategory="Mix" # needs to come from from cosim-input
-                        )
-
-                        params['powerflow_options'].update({
-                            'pydss_project': self.project_folder,
-                            'active_project': self.project,
-                            'active_scenario': self.scenario,
-                            'master_dss_file': file_data['case']['master_file']
-                        })
-                        print(params)
-                    except Exception as e:
-                        print(f"Error> {str(e)}")
+                
+                    params['powerflow_options'].update({
+                        'pydss_project' : self.project_folder,
+                        'active_project' : file_data['case']['active_project'],
+                        'active_scenario' : file_data['case']['active_scenario'],
+                        'master_dss_file' : file_data['case']['dss_file']
+                    })
+                    print(params)
                     #TODO: validate pydss project skeleton
 
                     # Update subscriptions.toml file with sub id if sub_id exists
                     if 'sub_id' in params['powerflow_options']:
                         sub_id = params['powerflow_options'].pop('sub_id')
-                        path_to_sub_file = os.path.join(self.project_folder, self.project, 
-                                'Scenarios', self.scenario, 'ExportLists')
+                        path_to_sub_file = os.path.join(self.project_folder, file_data['case']['active_project'], 
+                                'Scenarios', file_data['case']['active_scenario'], 'ExportLists')
 
-                        if os.path.exists(path_to_sub_file):
-                            if 'Subscriptions.toml' in os.listdir(path_to_sub_file):
-                                os.remove(os.path.join(path_to_sub_file, 'Subscriptions.toml'))
-                            
-                        sub_dict = {
-                                "Vsource.source": {
-                                    "Property" : "pu",
-                                    "Subscription ID": sub_id,
-                                    "Unit" : "",
-                                    "Subscribe" : True,
-                                    "Data type" : "double",
-                                    "Multiplier" : 1 
-                                }
-                            }
-                        with open(os.path.join(path_to_sub_file, 'Subscriptions.toml'), "w") as f:
-                            toml.dump(sub_dict, f)
-
-                        pub_dict = {
-                            "Circuits": {
-                                "Publish": ["TotalPower"],
-                                "NoPublish": []
-                            },
-                            "PVSystems": {
-                                "Publish" : [],
-                                "NoPublish" : ["Powers"]
-                            },
-                            "Generators": {
-                                "Publish" : [],
-                                "NoPublish" : ["Powers"]
-                            }
-                        }
-                        with open(os.path.join(path_to_sub_file, "ExportMode-byClass.toml"), "w") as f:
-                            toml.dump(pub_dict, f)
-                        logger.info('ExportMode-byClass.toml file changed')
+                        
+                        self.update_subscription_publications_in_toml_file(sub_id, path_to_sub_file)
+                        
                     
                     """ create log folder if not present """
-                    # log_folder  = os.path.join(self.project_folder, self.project, 'Logs')
-                    # if not os.path.exists(log_folder):
-                    #     os.mkdir(log_folder)
+                    log_folder  = os.path.join(self.project_folder, file_data['case']['active_project'], 'Logs')
+                    if not os.path.exists(log_folder):
+                        os.mkdir(log_folder)
 
                     return params
                 else:
@@ -264,15 +239,149 @@ class PyDSS:
             self.notify(f"Error fetching PyDSS project!", log_level=logging.ERROR)
             return None
 
-    def create_project(self, dss_path, project_path, project_info):
+    def update_project(self, 
+                file_uuid,
+                load_mw,
+                load_mvar,
+                der_mw,
+                der_mvar,
+                motor_d: 0,
+                pvcategory= {"ieee-2018-catI": 0, "ieee-2018-catII": 0, "ieee-2018-catIII": 0, "ieee-2003": 0},
+                dynamic= True,
+                update_model=True
+                ):
+
+        """ Grab file and metadata info of case file """
+        tmp_folder = os.path.join(os.path.dirname(__name__), '..', 'tmp')
+
+        """ If folder does not exist, create a temporary folder"""
+        if not os.path.exists(self.tmp_folder):
+            os.mkdir(tmp_folder)
+
+        folder_name = file_uuid + 'distribution_federate'
+        case_file_url = f'{self.data_service_url}/case_files/uuid/{file_uuid}'
+
+        """ Creating a project folder and removing if already exists"""
+        dss_dump = os.path.join(tmp_folder, folder_name)
+
+        if not os.path.exists(dss_dump):
+            os.mkdir(dss_dump)
+        else:
+            shutil.rmtree(dss_dump)
+            os.mkdir(dss_dump)
+
+        """ Retrieve the file url from the BES Data API """
+        self.notify(f"URL for PYDSS case file {case_file_url}")
+        file_response = send_sync_request(case_file_url, 'GET', body=None)
+        file_data = json.loads(file_response.data.decode('utf-8'))
+
+        if file_response.status == HTTPStatus.OK:
+            file_url = file_data['file_url']
+            self.notify(f"URL to download the file> {file_url}")
+            file_format = file_data['format']
+            
+
+            """ Retrieve the file from AWS and store in the tmp directory """
+            data_response = send_sync_request(file_url, 'GET')
+            if data_response.status == HTTPStatus.OK:
+                file = os.path.join(dss_dump, f'{file_uuid}.{file_format}')
+                with open(file, 'wb') as f:
+                    f.write(data_response.data)
+
+                """ Unzip the files """
+                zip_path = os.path.join(dss_dump, f'{file_uuid}.{file_format}')
+                if zip_path.endswith('.zip'):
+                    with ZipFile(zip_path, 'r') as zipObj:
+                        zipObj.extractall(path=dss_dump)
+                    os.remove(zip_path)
+
+                    """ create a new PyDSS project here"""
+        
+                    scenario = "scenario1"
+                    project = "project1"
+
+                    try:
+                        self.create_project(
+                            dss_dump,
+                            project,
+                            scenario,
+                            dss_dump,
+                            file_data['case']['master_file']
+                        )
+                        
+
+                        """ update the model with new settings """
+                        model_modifier = PyDSS_Model(os.path.join(dss_dump,project))
+                        pmult, qmult = model_modifier.create_new_scenario(
+                            scenario, 
+                            {
+                                "Lp": load_mw,
+                                "Lq": load_mvar,
+                                "PVp": der_mw,
+                                "PVq": der_mvar,
+                                "Mtr": motor_d
+                            },
+                            {
+                                "new_master": "new_" + file_data['case']['master_file'],
+                                "master": file_data['case']['master_file'],
+                                "load": 'Loads.dss', # TODO: needs to come from metadata
+                                "motor": 'Motors_new.dss',
+                                "PVsystem": 'PVSystems_new.dss',
+                            },
+                            isSubstation=True, # TODO: needs to come from metadata
+                            pvstandards = pvcategory,
+                            dynamic = True
+                        )
+
+                        powerflow_options = {
+                            'pydss_project': dss_dump,
+                            'active_project': project,
+                            'active_scenario': scenario,
+                            'master_dss_file': file_data['case']['master_file']
+                        }
+
+                     
+                    except Exception as e:
+                        logger.error(f'Error updating the PyDSS project >> {e}')
+                        self.notify(f"Error updating the PyDSS project >> {e}", log_level=logging.ERROR)
+                        return {}
+                    
+                    #TODO: validate pydss project skeleton
+
+                    return {
+                        "powerflow_options": powerflow_options,
+                        "mw_multiplier": pmult,
+                        "mvar_multiplier": qmult
+                    }
+                else:
+                    logger.error(f'OpenDSS model is not a zip file')
+                    self.notify(f"OpenDSS model is not a zip file", log_level=logging.ERROR)
+                    return {}
+            else:
+                logger.error(f'Error fetching data from AWS S3')
+                self.notify(f"Error fetching data from AWS S3", log_level=logging.ERROR)
+                return {}
+
+        else:
+            logger.error(f'Error fetching distribution models!')
+            self.notify(f"Error fetching distribution models!", log_level=logging.ERROR)
+            return {}
+
+    def create_project(self, 
+        project_path,
+        project_name,
+        scenario_name,
+        dss_path,
+        master_file
+        ):
 
         #activate pydss_api && 
         cmd = "activate pydss_api &&  pydss create-project -P {} -p {} -s {} -F {} -m {} -c {}".format(
             project_path,
-            self.project,
-            "base_case",
+            project_name,
+            scenario_name,
             dss_path,
-            project_info['case']['master_file'],
+            master_file,
             "PvVoltageRideThru,MotorStall"
         )
         os.system(cmd)

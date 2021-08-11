@@ -82,6 +82,7 @@ class Handler:
                                                 active_project: project1
                                                 active_scenario: std-2003
                                                 master_dss_file: "Master_2.dss"
+                                                sub_id : "wecc_federate/bus/10050/voltage/pu"
                                             name: der_fed
 
                 responses:
