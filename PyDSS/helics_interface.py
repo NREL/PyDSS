@@ -85,8 +85,8 @@ class helics_interface:
         self.fedinfo = helics.helicsCreateFederateInfo()
         helics.helicsFederateInfoSetCoreName(self.fedinfo, self._options['Helics']['Federate name'])
         helics.helicsFederateInfoSetCoreTypeFromString(self.fedinfo, self._options['Helics']['Core type'])
-        helics.helicsFederateInfoSetCoreInitString(self.fedinfo, f"--federates=1 --timeout=60min --broker_address {self._options['Helics']['Broker']} --port {self._options['Helics']['Broker port']} --maxsize=32768")
-        helics.helicsFederateInfoSetFlagOption(self.fedinfo, 72, 0) # set terminate_on_error to false
+        helics.helicsFederateInfoSetCoreInitString(self.fedinfo, f"--federates=1 --networktimeout=60min --timeout=60min --broker_address {self._options['Helics']['Broker']} --maxsize=32768 --slowresponding --port {self._options['Helics']['Broker port']}")
+        helics.helicsFederateInfoSetFlagOption(self.fedinfo, helics.helics_flag_terminate_on_error, 0) # set terminate_on_error to false
         if 'Broker' in self._options['Helics']:
             helics.helicsFederateInfoSetBroker(self.fedinfo, self._options['Helics']['Broker'])
         helics.helicsFederateInfoSetTimeProperty(self.fedinfo, helics.helics_property_time_delta,
@@ -117,6 +117,7 @@ class helics_interface:
                 ),
             )
             SubscriptionList = self._sub_file_reader.SubscriptionList
+        print(SubscriptionList)
         self._subscriptions = {}
         self._subscription_dState = {}
         print('Registering federate subscriptions')
@@ -245,7 +246,7 @@ class helics_interface:
             value = obj.GetValue(ppty_name)
             if isinstance(value, list):
                 helics.helicsPublicationPublishVector(pub, value)
-                print(f'{obj_name}, {ppty_name} published as list {value}')
+                #print(f'{obj_name}, {ppty_name} published as list {value}')
             elif isinstance(value, float):
                 helics.helicsPublicationPublishDouble(pub, value)
             elif isinstance(value, str):

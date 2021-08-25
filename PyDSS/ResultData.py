@@ -424,7 +424,7 @@ class ElementData:
                     cached_values[value_key] = value
             if not self._should_store_by_type[prop.store_values_type](prop, prop_key, value):
                 continue
-            if len(value.make_columns()) > 1:
+            if len(value.make_columns()) > 1 or isinstance(value.value, list):
                 for column, val in zip(value.make_columns(), value.value):
                     curr_data[column] = val
             else:

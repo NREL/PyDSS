@@ -48,7 +48,7 @@ class DatasetBuffer:
             dtype,
             max_chunk_bytes,
         )
-        if num_columns == 1:
+        if num_columns == 1 and not isinstance(columns, list):
             shape = (self._max_size,)
             chunks = (self._chunk_size,)
         else:
