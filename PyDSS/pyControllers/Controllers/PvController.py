@@ -26,6 +26,7 @@ class PvController(ControllerAbstract):
         self.TimeChange = False
         self.Time = (-1, 0)
 
+        self.oldQpv = 0
         self.oldPcalc = 0
         self.oldQcalc = 0
 
@@ -292,7 +293,7 @@ class PvController(ControllerAbstract):
         elif uIn >= uMax:
             Qcalc = -self.QlimPU
 
-        Qcalc = Qpv + (Qcalc - Qpv) * 0.5 / self.__dampCoef + (Qpv - self.oldQcalc) * 0.1 / self.__dampCoef
+        Qcalc = Qpv + (Qcalc - Qpv) * 0.5 / self.__dampCoef + (Qpv - self.oldQpv) * 0.1 / self.__dampCoef
         dQ = abs(Qcalc - Qpv)
 
         if Pcalc > 0:
@@ -303,6 +304,8 @@ class PvController(ControllerAbstract):
         else:
             pass
 
-        Error = abs(dQ)
-        self.oldQcalc = Qpv
+        Error = abs(Qpv- self.oldQpv)
+        self.oldQpv = Qpv
+        self.oldQcalc = Qcalc
+
         return Error
