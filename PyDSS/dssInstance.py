@@ -20,6 +20,7 @@ from PyDSS import SolveMode
 from PyDSS import pyLogger
 from PyDSS.utils.simulation_utils import SimulationFilteredTimeRange
 from PyDSS.utils.timing_utils import TimerStatsCollector, Timer
+from PyDSS.get_snapshot_timepoints import get_snapshot_timepoint
 
 import opendssdirect as dss
 import numpy as np
@@ -92,6 +93,8 @@ class OpenDSS:
 
         with Timer(self._stats, "CompileModel"):
             self._CompileModel()
+
+        timepoints = get_snapshot_timepoint(dss, self._Options)
 
         #run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
         self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(params['Frequency']['Fundamental frequency']) + ' Hz')
