@@ -28,7 +28,6 @@ class PvController(ControllerAbstract):
 
         self.oldQpv = 0
         self.oldPcalc = 0
-        self.oldQcalc = 0
 
         self.__vDisconnected = False
         self.__pDisconnected = False
@@ -294,7 +293,6 @@ class PvController(ControllerAbstract):
             Qcalc = -self.QlimPU
 
         Qcalc = Qpv + (Qcalc - Qpv) * 0.5 / self.__dampCoef + (Qpv - self.oldQpv) * 0.1 / self.__dampCoef
-        dQ = abs(Qcalc - Qpv)
 
         if Pcalc > 0:
             if self.__ControlledElm.NumPhases == 2:
@@ -306,6 +304,5 @@ class PvController(ControllerAbstract):
 
         Error = abs(Qpv- self.oldQpv)
         self.oldQpv = Qpv
-        self.oldQcalc = Qcalc
 
         return Error
