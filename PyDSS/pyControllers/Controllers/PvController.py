@@ -26,8 +26,8 @@ class PvController(ControllerAbstract):
         self.TimeChange = False
         self.Time = (-1, 0)
 
+        self.oldQpv = 0
         self.oldPcalc = 0
-        self.oldQcalc = 0
 
         self.__vDisconnected = False
         self.__pDisconnected = False
@@ -292,8 +292,7 @@ class PvController(ControllerAbstract):
         elif uIn >= uMax:
             Qcalc = -self.QlimPU
 
-        Qcalc = Qpv + (Qcalc - Qpv) * 0.5 / self.__dampCoef + (Qpv - self.oldQcalc) * 0.1 / self.__dampCoef
-        dQ = abs(Qcalc - Qpv)
+        Qcalc = Qpv + (Qcalc - Qpv) * 0.5 / self.__dampCoef + (Qpv - self.oldQpv) * 0.1 / self.__dampCoef
 
         if Pcalc > 0:
             if self.__ControlledElm.NumPhases == 2:
@@ -303,6 +302,7 @@ class PvController(ControllerAbstract):
         else:
             pass
 
-        Error = abs(dQ)
-        self.oldQcalc = Qpv
+        Error = abs(Qpv- self.oldQpv)
+        self.oldQpv = Qpv
+
         return Error
