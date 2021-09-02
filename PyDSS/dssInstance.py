@@ -157,6 +157,7 @@ class OpenDSS:
         self._dssInstance.utils.run_command('Log=NO')
         run_command('Clear')
         self._Logger.info('Loading OpenDSS model')
+        reply = ""
         try:
             orig_dir = os.getcwd()
             reply = run_command('compile ' + self._dssPath['dssFilePath'])
