@@ -81,8 +81,7 @@ class ResultData:
         self._export_relative_dir = "Exports/" + options["Project"]["Active Scenario"]
         self._store_frequency = False
         self._store_mode = False
-        if options["Project"]["Simulation Type"] == "Dynamic" or \
-                 options["Frequency"]["Enable frequency sweep"]:
+        if options["Frequency"]["Enable frequency sweep"]:
             self._store_frequency = True
             self._store_mode = True
 
@@ -320,7 +319,7 @@ class ResultData:
             return None
 
     def _reverse_powerflow(self):
-        reverse_pf = max(dss.Circuit.TotalPower()) > 0 # total substation power is an injection(-) or a consumption(+)
+        reverse_pf = max(dss.Circuit.TotalPower()[0]) > 0 # total substation power is an injection(-) or a consumption(+)
         return reverse_pf
 
     def _export_feeder_head_info(self, metadata):
