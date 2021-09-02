@@ -5,7 +5,7 @@ import pandas as pd
 
 def get_snapshot_timepoint(dss, options):
     pv_systems = dss.PVsystems.AllNames()
-    if pv_systems is None:
+    if not pv_systems:
         logger.info("No PVSystems are present")
     pv_profiles_df = pd.DataFrame()
     for pv_name in pv_systems:
@@ -16,7 +16,7 @@ def get_snapshot_timepoint(dss, options):
         pv_profiles_df[pv_name] = create_loadshape_pmult_dataframe_for_simulation(options) * pmpp
 
     loads = dss.Loads.AllNames()
-    if loads is None:
+    if not loads:
         logger.info("No Loads are present")
     load_profiles_df = pd.DataFrame()
     for load_name in loads:
