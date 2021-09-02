@@ -39,6 +39,7 @@ class PyDSS:
         self.data_service_url = services['bes_data']
         notifications_uri = services['notifications_data']
         self.notifier = Notifier(notifications_uri)
+        
         try:
             parameters['Broker'] = helics_['broker']['host']
             parameters['Broker port'] = helics_['broker']['port']
@@ -48,6 +49,7 @@ class PyDSS:
             self.federate_service = 'der_federate_service'
             self.fed_name = parameters['name']
             self.parameters = parameters
+            self.notify('Starting to initialize PyDSS ...........')
             
             """ If the project path is uuid, grab content from AWS S3"""
             if not os.path.exists(parameters["powerflow_options"]["pydss_project"]):

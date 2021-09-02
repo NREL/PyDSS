@@ -40,11 +40,14 @@ class Handler:
         self.pool = ThreadPoolExecutor(max_workers=cpu_count()-1)
         self.loop = loop
 
-    async def post_pydss_project(self, request):
-        return
+    # async def post_pydss_project(self, request):
+    #     return
 
-    async def get_pydss_project(self, request):
-        return
+    # async def get_pydss_project(self, request):
+    #     return
+
+    async def get_health(self, request):
+        return web.json_response({ "success": True})
 
     async def post_pydss(self, request):
         """
