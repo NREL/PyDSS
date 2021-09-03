@@ -319,7 +319,7 @@ class ResultData:
             return None
 
     def _reverse_powerflow(self):
-        reverse_pf = max(dss.Circuit.TotalPower()[0]) > 0 # total substation power is an injection(-) or a consumption(+)
+        reverse_pf = dss.Circuit.TotalPower()[0] > 0 # total substation power is an injection(-) or a consumption(+)
         return reverse_pf
 
     def _export_feeder_head_info(self, metadata):

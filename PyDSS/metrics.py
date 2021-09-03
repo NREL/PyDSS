@@ -429,7 +429,7 @@ class FeederHeadMetrics(MetricBase):
     @staticmethod
     def _reverse_power_flow():
         # total substation power is an injection(-) or a consumption(+)
-        reverse_pf = max(dss.Circuit.TotalPower()[0]) > 0
+        reverse_pf = dss.Circuit.TotalPower()[0] > 0
         # Storing NaN with bools is not working correctly.
         return int(reverse_pf)
 
