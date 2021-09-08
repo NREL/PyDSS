@@ -5,7 +5,7 @@ import json
 import logging
 import os
 import re
-import time
+from pathlib import Path
 
 import h5py
 import numpy as np
@@ -121,6 +121,17 @@ class PyDssResults:
                     return read_dataframe(path)
 
         raise InvalidParameter(f"did not find report {report_name} in {reports_dir}")
+
+    @property
+    def project(self):
+        """Return the PyDssProject instance.
+
+        Returns
+        -------
+        PyDssProject
+
+        """
+        return self._project
 
     @property
     def scenarios(self):

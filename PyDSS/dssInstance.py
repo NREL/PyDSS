@@ -15,6 +15,7 @@ from PyDSS import helics_interface as HI
 from PyDSS.ResultData import ResultData
 from PyDSS.dssCircuit import dssCircuit
 import PyDSS.pyPlots as pyPlots
+from PyDSS.common import SimulationTimeMode, DATE_FORMAT
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
@@ -94,14 +95,15 @@ class OpenDSS:
         with Timer(self._stats, "CompileModel"):
             self._CompileModel()
 
-        timepoints = get_snapshot_timepoint(dss, self._Options)
-
         #run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
         self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(params['Frequency']['Fundamental frequency']) + ' Hz')
 
         #run_command('Set %SeriesRL={}'.format(params['Frequency']['Percentage load in series']))
         if params['Frequency']['Neglect shunt admittance']:
             run_command('Set NeglectLoadY=Yes')
+
+        if params['Project']['Auto snapshot start time config']['mode'] != SimulationTimeMode.NONE:
+            self._set_simulation_time_based_on_mode()
 
         self._dssCircuit = self._dssInstance.Circuit
         self._dssElement = self._dssInstance.Element
@@ -561,6 +563,30 @@ class OpenDSS:
         for Plot in self._pyPlotObjects:
             self._pyPlotObjects[Plot].UpdatePlot()
         return
+
+    def _set_simulation_time_based_on_mode(self):
+        """Adjusts the time parameters based on the mode."""
+        p_settings = self._Options["Project"]
+        config = p_settings["Auto snapshot start time config"]
+        mode = config["mode"]
+        assert mode != SimulationTimeMode.NONE, mode
+
+        if mode == SimulationTimeMode.MAX_PV_LOAD_RATIO:
+            if p_settings["Simulation Type"] != "QSTS":
+                raise InvalidConfiguration(f"{mode} is only supported with QSTS simulations")
+
+            # This duration has to be temporarily overridden because of the underlying implementation.
+            orig = p_settings["Simulation duration (min)"]
+            if orig != p_settings["Step resolution (sec)"] / 60:
+                raise InvalidConfiguration(f"Simulation duration must be the same as resolution")
+            try:
+                p_settings["Simulation duration (min)"] = config["search_duration_min"]
+                p_settings["Start time"] = get_snapshot_timepoint(self._Options).strftime(DATE_FORMAT)
+                self._Logger.info("Changed simulation start time to %s", p_settings["Start time"])
+            finally:
+                p_settings["Simulation duration (min)"] = orig
+        else:
+            assert False, f"unsupported mode {mode}"
 
     # def __del__(self):
     #     self._Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')

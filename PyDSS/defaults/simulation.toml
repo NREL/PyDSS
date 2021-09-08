@@ -20,6 +20,7 @@
 "Loadshape start time" = "2020-7-15 00:00:00.0"
 "Step resolution (sec)" = 900.0
 "Simulation range" = {start = "00:00:00", end = "11:59:59"}
+"Auto snapshot start time config" = {mode = "none", search_duration_min = 43200.0}
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
 "Max error tolerance" = 0.0

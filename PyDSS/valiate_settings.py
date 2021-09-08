@@ -1,8 +1,11 @@
 from PyDSS.common import DATE_FORMAT
 from datetime import datetime
+import copy
+import enum
 import os
 
 from PyDSS.exceptions import InvalidConfiguration
+from PyDSS.common import SimulationTimeMode
 from PyDSS.reports.reports import ReportGranularity
 
 
@@ -65,6 +68,7 @@ settings_dict = {
             'Step resolution (sec)': {'type': float},
             'Loadshape start time': {'type': str},
             'Simulation range': {'type': dict},
+            'Auto snapshot start time config': {'type': dict},
             'Max Control Iterations' : {'type': int},
             'Convergence error percent threshold': {'type': float},
             'Skip export on convergence error': {'type': float},
@@ -122,6 +126,10 @@ def validate_settings(dss_args):
                             min(valid_settings[key]['Options']),
                             max(valid_settings[key]['Options'])
                         )
+            elif 'Enum' in valid_settings[key]:
+                options = [x.value for x in valid_settings[key]['Enum']]
+                assert ctype in options, "Invalid argument value '{}'. Possible values are {}".format(ctype, options)
+                params[key] = valid_settings[key]['Enum'](ctype)
 
     for category, params in settings_dict.items():
         for key, ctype in params.items():
@@ -162,8 +170,39 @@ def validate_settings(dss_args):
                                         dss_args['Project']['DSS File']))), \
         "Master DSS file '{}' does not exist.".format(dss_args['Project']['DSS File'])
 
+    auto_snap_settings = dss_args["Project"]["Auto snapshot start time config"]
+    auto_snap_settings["mode"] = SimulationTimeMode(auto_snap_settings["mode"])
+
     if "Reports" in dss_args:
         if [x for x in dss_args["Reports"]["Types"] if x["enabled"]]:
             if not dss_args["Exports"]["Log Results"]:
                 raise InvalidConfiguration("Reports are only supported with Log Results")
     return
+
+
+def serialize_settings(settings):
+    """Serialize the settings into a dict suitable for writing in TOML or JSON formats.
+
+    Parameters
+    ----------
+    settings : dict
+        A dict that may contain non-serializable instances like enums.
+
+    Returns
+    -------
+    dict
+
+    """
+    data = copy.deepcopy(settings)
+    _serialize_settings(data)
+    return data
+
+
+def _serialize_settings(data):
+    for key, val in data.items():
+        if isinstance(val, enum.Enum):
+            data[key] = val.value
+        elif isinstance(val, dict):
+            # Recurse.
+            _serialize_settings(val)
+        # list is not handled but could be
