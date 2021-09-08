@@ -27,7 +27,7 @@ def read_pv_systems_from_dss_file(filename):
     """
     New PVSystem.pv_1114018 bus1=133294_xfmr.1.2 phases=2
     """
-    regex = re.compile(r"New (PVSystem\.)(\w+)\s", re.I)
+    regex = re.compile(r"New (PVSystem\.)([\S]+)\s", re.I)
 
     with open(filename) as fp_in:
         for line in fp_in:
