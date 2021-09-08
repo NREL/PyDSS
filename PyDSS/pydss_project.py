@@ -600,7 +600,6 @@ class PyDssProject:
             "Simulation duration (min)",
             "Loadshape start time",
             "Step resolution (sec)",
-            "Auto snapshot start time config",
         ):
             data[key] = settings[key]
         return data

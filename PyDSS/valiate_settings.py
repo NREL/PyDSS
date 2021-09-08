@@ -68,7 +68,6 @@ settings_dict = {
             'Step resolution (sec)': {'type': float},
             'Loadshape start time': {'type': str},
             'Simulation range': {'type': dict},
-            'Auto snapshot start time config': {'type': dict},
             'Max Control Iterations' : {'type': int},
             'Convergence error percent threshold': {'type': float},
             'Skip export on convergence error': {'type': float},
@@ -170,8 +169,15 @@ def validate_settings(dss_args):
                                         dss_args['Project']['DSS File']))), \
         "Master DSS file '{}' does not exist.".format(dss_args['Project']['DSS File'])
 
-    auto_snap_settings = dss_args["Project"]["Auto snapshot start time config"]
-    auto_snap_settings["mode"] = SimulationTimeMode(auto_snap_settings["mode"])
+    for scenario in dss_args["Project"]["Scenarios"]:
+        auto_snap_settings = scenario.get("Auto snapshot start time config")
+        if auto_snap_settings is None:
+            scenario["Auto snapshot start time config"] = {
+                "mode": SimulationTimeMode.NONE,
+                "search_duration_min": 0.0,
+            }
+        else:
+            auto_snap_settings["mode"] = SimulationTimeMode(auto_snap_settings["mode"])
 
     if "Reports" in dss_args:
         if [x for x in dss_args["Reports"]["Types"] if x["enabled"]]:

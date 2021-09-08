@@ -3,7 +3,6 @@
 "Simulation duration (min)" = 15.0
 "Loadshape start time" = "2020-1-1 00:00:00.0"
 "Step resolution (sec)" = 900.0
-"Auto snapshot start time config" = {mode = "max_pv_load_ratio", search_duration_min = 1440.0}
 "Max Control Iterations" = 15
 "Error tolerance" = 0.0001
 "Max error tolerance" = 0.0
@@ -18,9 +17,11 @@
 "DSS File" = "Master.dss"
 "Return Results" = false
 "Use Controller Registry" = true
+
 [[Project.Scenarios]]
 name = "control_mode"
 post_process_infos = []
+"Auto snapshot start time config" = {mode = "max_pv_load_ratio", search_duration_min = 1440.0}
 
 # Export Mode- [Str] - Possible options "byClass" and "byElement"
 # Export Style- [Str] - possible options "Single_file" and "Separate_files"

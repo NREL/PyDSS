@@ -102,8 +102,9 @@ class OpenDSS:
         if params['Frequency']['Neglect shunt admittance']:
             run_command('Set NeglectLoadY=Yes')
 
-        if params['Project']['Auto snapshot start time config']['mode'] != SimulationTimeMode.NONE:
-            self._set_simulation_time_based_on_mode()
+        active_scenario = self._GetActiveScenario()
+        if active_scenario['Auto snapshot start time config']['mode'] != SimulationTimeMode.NONE:
+            self._SetSimulationTimeBasedOnMode(active_scenario)
 
         self._dssCircuit = self._dssInstance.Circuit
         self._dssElement = self._dssInstance.Element
@@ -564,10 +565,17 @@ class OpenDSS:
             self._pyPlotObjects[Plot].UpdatePlot()
         return
 
-    def _set_simulation_time_based_on_mode(self):
+    def _GetActiveScenario(self):
+        active_scenario = self._Options["Project"]["Active Scenario"]
+        for scenario in self._Options["Project"]["Scenarios"]:
+            if scenario["name"] == active_scenario:
+                return scenario
+        raise InvalidConfiguration(f"Active Scenario {active_scenario} is not present")
+
+    def _SetSimulationTimeBasedOnMode(self, scenario):
         """Adjusts the time parameters based on the mode."""
         p_settings = self._Options["Project"]
-        config = p_settings["Auto snapshot start time config"]
+        config = scenario["Auto snapshot start time config"]
         mode = config["mode"]
         assert mode != SimulationTimeMode.NONE, mode
 
