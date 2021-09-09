@@ -583,16 +583,26 @@ class OpenDSS:
             if p_settings["Simulation Type"] != "QSTS":
                 raise InvalidConfiguration(f"{mode} is only supported with QSTS simulations")
 
-            # This duration has to be temporarily overridden because of the underlying implementation.
-            orig = p_settings["Simulation duration (min)"]
-            if orig != p_settings["Step resolution (sec)"] / 60:
-                raise InvalidConfiguration(f"Simulation duration must be the same as resolution")
+            # These settings have to be temporarily overridden because of the underlying
+            # implementation to create a load shape dataframes..
+            orig_start = p_settings["Start time"]
+            orig_duration = p_settings["Simulation duration (min)"]
+            if orig_duration != p_settings["Step resolution (sec)"] / 60:
+                raise InvalidConfiguration("Simulation duration must be the same as resolution")
             try:
+                p_settings["Start time"] = config["start_time"]
                 p_settings["Simulation duration (min)"] = config["search_duration_min"]
-                p_settings["Start time"] = get_snapshot_timepoint(self._Options).strftime(DATE_FORMAT)
-                self._Logger.info("Changed simulation start time to %s", p_settings["Start time"])
+                new_start = get_snapshot_timepoint(self._Options).strftime(DATE_FORMAT)
+                p_settings["Start time"] = new_start
+                self._Logger.info("Changed simulation start time from %s to %s",
+                    orig_start,
+                    new_start,
+                )
+            except Exception:
+                p_settings["Start time"] = orig_start
+                raise
             finally:
-                p_settings["Simulation duration (min)"] = orig
+                p_settings["Simulation duration (min)"] = orig_duration
         else:
             assert False, f"unsupported mode {mode}"
 

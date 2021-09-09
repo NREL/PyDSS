@@ -21,7 +21,7 @@
 [[Project.Scenarios]]
 name = "control_mode"
 post_process_infos = []
-"Auto snapshot start time config" = {mode = "max_pv_load_ratio", search_duration_min = 1440.0}
+"Auto snapshot start time config" = {mode = "max_pv_load_ratio", start_time = "2020-1-1 00:00:00.0", search_duration_min = 1440.0}
 
 # Export Mode- [Str] - Possible options "byClass" and "byElement"
 # Export Style- [Str] - possible options "Single_file" and "Separate_files"

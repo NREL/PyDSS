@@ -1,20 +1,20 @@
 """Utility functions for the jade package."""
 
 from datetime import datetime, timedelta
+import enum
 import gzip
-import logging
 import json
+import logging
 import os
+import re
 import shutil
 import sys
-import time
-import yaml
-import re
 
 import numpy as np
 import opendssdirect as dss
 import pandas as pd
 import toml
+import yaml
 
 from PyDSS.exceptions import InvalidParameter
 
@@ -22,6 +22,15 @@ MAX_PATH_LENGTH = 255
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S.%f' # '%Y-%m-%d %H:%M:%S.%f', "%m/%d/%Y %H:%M:%S"
 
 logger = logging.getLogger(__name__)
+
+
+class TomlEnumEncoder(toml.TomlEncoder):
+    """Encodes Enum values instead of Enum objects."""
+
+    def dump_value(self, v):
+        if isinstance(v, enum.Enum):
+            return v.value
+        return super().dump_value(v)
 
 
 def check_redirect(file_name):

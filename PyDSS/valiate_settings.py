@@ -1,12 +1,14 @@
 from PyDSS.common import DATE_FORMAT
 from datetime import datetime
-import copy
 import enum
 import os
+
+import toml
 
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.common import SimulationTimeMode
 from PyDSS.reports.reports import ReportGranularity
+from PyDSS.utils.utils import TomlEnumEncoder
 
 
 settings_dict = {
@@ -174,6 +176,7 @@ def validate_settings(dss_args):
         if auto_snap_settings is None:
             scenario["Auto snapshot start time config"] = {
                 "mode": SimulationTimeMode.NONE,
+                "start_time": "2020-1-1 00:00:00.0",
                 "search_duration_min": 0.0,
             }
         else:
@@ -186,8 +189,8 @@ def validate_settings(dss_args):
     return
 
 
-def serialize_settings(settings):
-    """Serialize the settings into a dict suitable for writing in TOML or JSON formats.
+def dump_settings(settings, filename):
+    """Dump the settings into a TOML file.
 
     Parameters
     ----------
@@ -199,16 +202,5 @@ def serialize_settings(settings):
     dict
 
     """
-    data = copy.deepcopy(settings)
-    _serialize_settings(data)
-    return data
-
-
-def _serialize_settings(data):
-    for key, val in data.items():
-        if isinstance(val, enum.Enum):
-            data[key] = val.value
-        elif isinstance(val, dict):
-            # Recurse.
-            _serialize_settings(val)
-        # list is not handled but could be
+    with open(filename, "w") as f_out:
+        toml.dump(settings, f_out, encoder=TomlEnumEncoder(settings.__class__))

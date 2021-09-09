@@ -30,7 +30,7 @@ from PyDSS.reports.reports import REPORTS_DIR
 from PyDSS.registry import Registry
 from PyDSS.utils.dss_utils import read_pv_systems_from_dss_file
 from PyDSS.utils.utils import dump_data, load_data
-from PyDSS.valiate_settings import serialize_settings
+from PyDSS.valiate_settings import dump_settings
 
 from distutils.dir_util import copy_tree
 logger = logging.getLogger(__name__)
@@ -235,8 +235,8 @@ class PyDssProject:
             dest = os.path.join(self._project_dir, PROJECT_DIRECTORIES[0])
             copy_tree(opendss_project_folder, dest)
         self._serialize_scenarios()
-        dump_data(
-            serialize_settings(self._simulation_config),
+        dump_settings(
+            self._simulation_config,
             os.path.join(self._project_dir, self._simulation_file),
         )
         logger.info("Initialized directories in %s", self._project_dir)
@@ -387,7 +387,7 @@ class PyDssProject:
     def _dump_simulation_settings(self):
         # Various settings may have been updated. Write the actual settings to a file.
         filename = os.path.join( self._project_dir, RUN_SIMULATION_FILENAME)
-        dump_data(serialize_settings(self._simulation_config), filename)
+        dump_settings(self._simulation_config, filename)
 
     def _serialize_scenarios(self):
         self._simulation_config["Project"]["Scenarios"] = []

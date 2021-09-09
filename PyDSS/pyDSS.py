@@ -9,7 +9,7 @@ from PyDSS.common import RUN_SIMULATION_FILENAME
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS import dssInstance
 from PyDSS.utils.utils import dump_data, load_data
-from PyDSS.valiate_settings import validate_settings, serialize_settings
+from PyDSS.valiate_settings import validate_settings, dump_settings
 
 __author__ = "Aadil Latif"
 __copyright__ = """
@@ -117,4 +117,4 @@ class instance(object):
             dss_args["Project"]["Active Scenario"],
             RUN_SIMULATION_FILENAME,
         )
-        dump_data(serialize_settings(dss_args), scenario_simulation_filename)
+        dump_settings(dss_args, scenario_simulation_filename)
