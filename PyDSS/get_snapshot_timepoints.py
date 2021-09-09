@@ -14,10 +14,10 @@ logger = logging.getLogger(__name__)
 
 
 def get_snapshot_timepoint(options, mode: SimulationTimeMode):
-    daytime_hours = {'start_time': '6:30', 'end_time': '18:00'}
+    pv_generation_hours = {'start_time': '8:00', 'end_time': '17:00'}
     pv_systems = dss.PVsystems.AllNames()
     if not pv_systems:
-        logger.info("No PVSystems are present. Max loading condition is chosen by default.")
+        logger.info("No PVSystems are present.")
         if mode != SimulationTimeMode.MAX_LOAD:
             mode = SimulationTimeMode.MAX_LOAD
             logger.info("Changed mode to %s", SimulationTimeMode.MAX_LOAD.value)
@@ -53,14 +53,18 @@ def get_snapshot_timepoint(options, mode: SimulationTimeMode):
     aggregate_profiles['PV to Load Ratio'] = aggregate_profiles['PV'] / aggregate_profiles['Load']
     aggregate_profiles['PV minus Load'] = aggregate_profiles['PV'] - aggregate_profiles['Load']
 
-    timepoints = pd.DataFrame({'Timepoints': aggregate_profiles.idxmax().T})
-    timepoints.index = 'Max ' + timepoints.index
+    timepoints = pd.DataFrame(columns=['Timepoints'])
+    timepoints.loc['Max Load'] = aggregate_profiles['Load'].idxmax()
+    timepoints.loc['Max PV to Load Ratio'] = aggregate_profiles.between_time(pv_generation_hours['start_time'],
+                                                                             pv_generation_hours['end_time'])['PV to Load Ratio'].idxmax()
+    timepoints.loc['Max PV minus Load'] = aggregate_profiles.between_time(pv_generation_hours['start_time'],
+                                                                          pv_generation_hours['end_time'])['PV minus Load'].idxmax()
+    timepoints.loc['Max PV'] = aggregate_profiles.between_time(pv_generation_hours['start_time'],
+                                                               pv_generation_hours['end_time'])['PV'].idxmax()
     timepoints.loc['Min Load'] = aggregate_profiles['Load'].idxmin()
-    timepoints.loc['Min Daytime Load'] = aggregate_profiles.between_time(daytime_hours['start_time'],
-                                                                         daytime_hours['end_time'])['Load'].idxmin()
-
+    timepoints.loc['Min Daytime Load'] = aggregate_profiles.between_time(pv_generation_hours['start_time'],
+                                                                         pv_generation_hours['end_time'])['Load'].idxmin()
     logger.info("Time points: %s", {k: str(v) for k, v in timepoints.to_records()})
-
     if mode == SimulationTimeMode.MAX_LOAD:
         column = "Max Load"
     elif mode == SimulationTimeMode.MAX_PV_LOAD_RATIO:
