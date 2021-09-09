@@ -170,6 +170,7 @@ class SimulationTimeMode(enum.Enum):
     """Defines methods by which to snapshot time points can be calculated."""
 
     MAX_PV_LOAD_RATIO = "max_pv_load_ratio"
+    MAX_LOAD = "max_load"
     NONE = "none"
 
 

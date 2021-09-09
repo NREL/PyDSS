@@ -2,6 +2,7 @@
 
 import logging
 
+from PyDSS.common import SimulationTimeMode
 from PyDSS.utils.simulation_utils import create_loadshape_pmult_dataframe_for_simulation
 from PyDSS.reports.reports import logger
 
@@ -12,10 +13,13 @@ import opendssdirect as dss
 logger = logging.getLogger(__name__)
 
 
-def get_snapshot_timepoint(options):
+def get_snapshot_timepoint(options, mode: SimulationTimeMode):
     pv_systems = dss.PVsystems.AllNames()
     if not pv_systems:
-        logger.info("No PVSystems are present")
+        logger.info("No PVSystems are present.")
+        if mode != SimulationTimeMode.MAX_LOAD:
+            mode = SimulationTimeMode.MAX_LOAD
+            logger.info("Changed mode to %s", SimulationTimeMode.MAX_LOAD.value)
     pv_profiles = {}
     index = None
     for pv_name in pv_systems:
@@ -53,5 +57,10 @@ def get_snapshot_timepoint(options):
     timepoints.loc['Min Load'] = aggregate_profiles['Load'].idxmin()
     logger.info("Time points: %s", {k: str(v) for k, v in timepoints.to_records()})
 
-    return timepoints.loc["Max PV to Load Ratio"][0].to_pydatetime()
-
+    if mode == SimulationTimeMode.MAX_LOAD:
+        column = "Max Load"
+    elif mode == SimulationTimeMode.MAX_PV_LOAD_RATIO:
+        column = "Max PV to Load Ratio"
+    else:
+        assert False, f"{mode} is not supported"
+    return timepoints.loc[column][0].to_pydatetime()

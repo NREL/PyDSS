@@ -172,9 +172,9 @@ def validate_settings(dss_args):
         "Master DSS file '{}' does not exist.".format(dss_args['Project']['DSS File'])
 
     for scenario in dss_args["Project"]["Scenarios"]:
-        auto_snap_settings = scenario.get("Auto snapshot start time config")
+        auto_snap_settings = scenario.get("auto_snapshot_start_time_config")
         if auto_snap_settings is None:
-            scenario["Auto snapshot start time config"] = {
+            scenario["auto_snapshot_start_time_config"] = {
                 "mode": SimulationTimeMode.NONE,
                 "start_time": "2020-1-1 00:00:00.0",
                 "search_duration_min": 0.0,

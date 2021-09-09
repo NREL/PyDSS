@@ -103,7 +103,7 @@ class OpenDSS:
             run_command('Set NeglectLoadY=Yes')
 
         active_scenario = self._GetActiveScenario()
-        if active_scenario['Auto snapshot start time config']['mode'] != SimulationTimeMode.NONE:
+        if active_scenario['auto_snapshot_start_time_config']['mode'] != SimulationTimeMode.NONE:
             self._SetSimulationTimeBasedOnMode(active_scenario)
 
         self._dssCircuit = self._dssInstance.Circuit
@@ -575,11 +575,11 @@ class OpenDSS:
     def _SetSimulationTimeBasedOnMode(self, scenario):
         """Adjusts the time parameters based on the mode."""
         p_settings = self._Options["Project"]
-        config = scenario["Auto snapshot start time config"]
+        config = scenario["auto_snapshot_start_time_config"]
         mode = config["mode"]
         assert mode != SimulationTimeMode.NONE, mode
 
-        if mode == SimulationTimeMode.MAX_PV_LOAD_RATIO:
+        if mode in (SimulationTimeMode.MAX_PV_LOAD_RATIO, SimulationTimeMode.MAX_LOAD):
             if p_settings["Simulation Type"] != "QSTS":
                 raise InvalidConfiguration(f"{mode} is only supported with QSTS simulations")
 
@@ -592,7 +592,7 @@ class OpenDSS:
             try:
                 p_settings["Start time"] = config["start_time"]
                 p_settings["Simulation duration (min)"] = config["search_duration_min"]
-                new_start = get_snapshot_timepoint(self._Options).strftime(DATE_FORMAT)
+                new_start = get_snapshot_timepoint(self._Options, mode).strftime(DATE_FORMAT)
                 p_settings["Start time"] = new_start
                 self._Logger.info("Changed simulation start time from %s to %s",
                     orig_start,
