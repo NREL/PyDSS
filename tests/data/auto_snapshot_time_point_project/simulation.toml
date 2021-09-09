@@ -19,9 +19,24 @@
 "Use Controller Registry" = true
 
 [[Project.Scenarios]]
-name = "control_mode"
+name = "max_pv_load_ratio"
 post_process_infos = []
-"auto_snapshot_start_time_config" = {mode = "max_pv_load_ratio", start_time = "2020-1-1 00:00:00.0", search_duration_min = 1440.0}
+"snapshot_time_point_selection_config" = {mode = "max_pv_load_ratio", start_time = "2020-1-1 00:00:00.0", search_duration_min = 1440.0}
+
+[[Project.Scenarios]]
+name = "daytime_min_load"
+post_process_infos = []
+"snapshot_time_point_selection_config" = {mode = "daytime_min_load", start_time = "2020-1-1 00:00:00.0", search_duration_min = 1440.0}
+
+[[Project.Scenarios]]
+name = "pv_minus_load"
+post_process_infos = []
+"snapshot_time_point_selection_config" = {mode = "pv_minus_load", start_time = "2020-1-1 00:00:00.0", search_duration_min = 1440.0}
+
+[[Project.Scenarios]]
+name = "max_load"
+post_process_infos = []
+"snapshot_time_point_selection_config" = {mode = "max_load", start_time = "2020-1-1 00:00:00.0", search_duration_min = 1440.0}
 
 # Export Mode- [Str] - Possible options "byClass" and "byElement"
 # Export Style- [Str] - possible options "Single_file" and "Separate_files"

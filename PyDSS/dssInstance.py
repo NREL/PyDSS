@@ -15,7 +15,7 @@ from PyDSS import helics_interface as HI
 from PyDSS.ResultData import ResultData
 from PyDSS.dssCircuit import dssCircuit
 import PyDSS.pyPlots as pyPlots
-from PyDSS.common import SimulationTimeMode, DATE_FORMAT
+from PyDSS.common import SnapshotTimePointSelectionMode, DATE_FORMAT
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
@@ -103,7 +103,7 @@ class OpenDSS:
             run_command('Set NeglectLoadY=Yes')
 
         active_scenario = self._GetActiveScenario()
-        if active_scenario['auto_snapshot_start_time_config']['mode'] != SimulationTimeMode.NONE:
+        if active_scenario['snapshot_time_point_selection_config']['mode'] != SnapshotTimePointSelectionMode.NONE:
             self._SetSimulationTimeBasedOnMode(active_scenario)
 
         self._dssCircuit = self._dssInstance.Circuit
@@ -575,11 +575,11 @@ class OpenDSS:
     def _SetSimulationTimeBasedOnMode(self, scenario):
         """Adjusts the time parameters based on the mode."""
         p_settings = self._Options["Project"]
-        config = scenario["auto_snapshot_start_time_config"]
+        config = scenario["snapshot_time_point_selection_config"]
         mode = config["mode"]
-        assert mode != SimulationTimeMode.NONE, mode
+        assert mode != SnapshotTimePointSelectionMode.NONE, mode
 
-        if mode in (SimulationTimeMode.MAX_PV_LOAD_RATIO, SimulationTimeMode.MAX_LOAD):
+        if mode != SnapshotTimePointSelectionMode.NONE:
             if p_settings["Simulation Type"] != "QSTS":
                 raise InvalidConfiguration(f"{mode} is only supported with QSTS simulations")
 

@@ -15,7 +15,7 @@ import pandas as pd
 import PyDSS
 from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, CONTROLLER_TYPES, \
     SIMULATION_SETTINGS_FILENAME, DEFAULT_SIMULATION_SETTINGS_FILE, \
-    ControllerType, ExportMode, SimulationTimeMode, MONTE_CARLO_SETTINGS_FILENAME,\
+    ControllerType, ExportMode, SnapshotTimePointSelectionMode, MONTE_CARLO_SETTINGS_FILENAME,\
     filename_from_enum, VisualizationType, DEFAULT_MONTE_CARLO_SETTINGS_FILE,\
     SUBSCRIPTIONS_FILENAME, DEFAULT_SUBSCRIPTIONS_FILE, OPENDSS_MASTER_FILENAME, \
     RUN_SIMULATION_FILENAME
@@ -131,7 +131,7 @@ class PyDssProject:
         """
         filename = os.path.join(self._project_dir, STORE_FILENAME)
         if not os.path.exists(filename):
-            raise InvalidConfiguration(f"HDFStore does not exist")
+            raise InvalidConfiguration(f"HDFStore does not exist: {filename}")
 
         return filename
 
@@ -395,7 +395,7 @@ class PyDssProject:
             data = {
                 "name": scenario.name,
                 "post_process_infos": [],
-                "auto_snapshot_start_time_config": scenario.auto_snapshot_start_time_config,
+                "snapshot_time_point_selection_config": scenario.snapshot_time_point_selection_config,
             }
             for pp_info in scenario.post_process_infos:
                 data["post_process_infos"].append(
@@ -627,10 +627,10 @@ class PyDssScenario:
     def __init__(self, name, controller_types=None, controllers=None,
                  export_modes=None, exports=None, visualizations=None,
                  post_process_infos=None, visualization_types=None,
-                 auto_snapshot_start_time_config=None):
+                 snapshot_time_point_selection_config=None):
         self.name = name
         self.post_process_infos = []
-        self.auto_snapshot_start_time_config = None
+        self.snapshot_time_point_selection_config = None
 
         if visualization_types is None and visualizations is None:
             self.visualizations = {
@@ -687,8 +687,10 @@ class PyDssScenario:
             for pp_info in post_process_infos:
                 self.add_post_process(pp_info)
 
-        if auto_snapshot_start_time_config is not None:
-            self.add_auto_snapshot_start_time_config(auto_snapshot_start_time_config)
+        if snapshot_time_point_selection_config is not None:
+            # Ensure the mode is valid.
+            SnapshotTimePointSelectionMode(snapshot_time_point_selection_config["mode"])
+            self.snapshot_time_point_selection_config = snapshot_time_point_selection_config
 
     @classmethod
     def deserialize(cls, fs_intf, name, post_process_infos):
@@ -851,18 +853,6 @@ class PyDssScenario:
             raise InvalidParameter(f"{config_file} does not exist")
 
         self.post_process_infos.append(post_process_info)
-
-    def add_auto_snapshot_start_time_config(self, config):
-        """Add auto_snapshot_start_time_config to the scenario.
-
-        Parameters
-        ----------
-        config : dict
-
-        """
-        # Ensure the mode is valid.
-        SimulationTimeMode(config["mode"])
-        self.auto_snapshot_start_time_config = config
 
 
 def load_config(path):

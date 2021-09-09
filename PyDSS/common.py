@@ -166,11 +166,13 @@ class StoreValuesType(enum.Enum):
     SUM = "sum"
 
 
-class SimulationTimeMode(enum.Enum):
-    """Defines methods by which to snapshot time points can be calculated."""
+class SnapshotTimePointSelectionMode(enum.Enum):
+    """Defines methods by which snapshot time points can be calculated."""
 
     MAX_PV_LOAD_RATIO = "max_pv_load_ratio"
     MAX_LOAD = "max_load"
+    DAYTIME_MIN_LOAD = "daytime_min_load"
+    MAX_PV_MINUS_LOAD = "pv_minus_load"
     NONE = "none"
 
 
