@@ -14,9 +14,10 @@ logger = logging.getLogger(__name__)
 
 
 def get_snapshot_timepoint(options, mode: SimulationTimeMode):
+    daytime_hours = {'start_time': '6:30', 'end_time': '18:00'}
     pv_systems = dss.PVsystems.AllNames()
     if not pv_systems:
-        logger.info("No PVSystems are present.")
+        logger.info("No PVSystems are present. Max loading condition is chosen by default.")
         if mode != SimulationTimeMode.MAX_LOAD:
             mode = SimulationTimeMode.MAX_LOAD
             logger.info("Changed mode to %s", SimulationTimeMode.MAX_LOAD.value)
@@ -55,6 +56,9 @@ def get_snapshot_timepoint(options, mode: SimulationTimeMode):
     timepoints = pd.DataFrame({'Timepoints': aggregate_profiles.idxmax().T})
     timepoints.index = 'Max ' + timepoints.index
     timepoints.loc['Min Load'] = aggregate_profiles['Load'].idxmin()
+    timepoints.loc['Min Daytime Load'] = aggregate_profiles.between_time(daytime_hours['start_time'],
+                                                                         daytime_hours['end_time'])['Load'].idxmin()
+
     logger.info("Time points: %s", {k: str(v) for k, v in timepoints.to_records()})
 
     if mode == SimulationTimeMode.MAX_LOAD:
