@@ -98,7 +98,7 @@ class FeederLossesReport(ReportBase):
 
     def _generate_from_in_memory_metrics(self, scenario):
         total_losses_dict = scenario.get_summed_element_total("Circuits", "LossesSum")
-        total_losses = abs(next(iter(total_losses_dict.values())))
+        total_losses = abs(next(iter(total_losses_dict.values()))) / 1000 # OpenDSS reports total losses in Watts
         line_losses_dict = scenario.get_summed_element_total("Circuits", "LineLossesSum")
         line_losses = abs(next(iter(line_losses_dict.values())))
         transformer_losses = total_losses - line_losses
