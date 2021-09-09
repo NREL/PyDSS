@@ -133,7 +133,7 @@ class FeederLossesReport(ReportBase):
         df_line_losses = scenario.get_full_dataframe("Circuits", "LineLosses")
         assert len(df_line_losses.columns) == 1
         df_loads_powers = scenario.get_full_dataframe("Loads", "Powers")
-        total_losses = abs(df_losses.sum().sum())
+        total_losses = abs(df_losses.sum().sum()) / 1000 # OpenDSS reports total losses in Watts
         line_losses = abs(df_line_losses.sum().sum())
         transformer_losses = total_losses - line_losses
         return FeederLossesMetricsModel(
