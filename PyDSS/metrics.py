@@ -4,15 +4,14 @@ import logging
 import os
 import shutil
 import tempfile
-from datetime import datetime, timedelta
+from collections import namedtuple
+from datetime import timedelta
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 import opendssdirect as dss
 
-from PyDSS.common import DataConversion, DatasetPropertyType, StoreValuesType
-from PyDSS.dataset_buffer import DatasetBuffer
+from PyDSS.common import DataConversion, StoreValuesType
 from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
 from PyDSS.reports.reports import ReportBase
 from PyDSS.storage_filters import STORAGE_TYPE_MAP, StorageFilterBase
@@ -218,15 +217,13 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
         self._containers = {}  # StoreValuesType to StorageFilterBase
 
     @abc.abstractmethod
-    def _get_value(self, dss_obj, time_step, set_active):
+    def _get_value(self, dss_obj, time_step):
         """Get a value at the current time step.
 
         Parameters
         ----------
         dss_obj : dssObjBase
         time_step : int
-        set_active : bool
-            Set to True if the element is not already set to Active.
 
         """
 
@@ -259,10 +256,10 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
             values = []
             for _ in range(self._elem_class.Count()):
                 dss_obj = self._name_to_dss_obj[self._elem_class.Name()]
-                values.append(self._get_value(dss_obj, time_step, False))
+                values.append(self._get_value(dss_obj, time_step))
                 self._elem_class.Next()
         else:
-            values = [self._get_value(x, time_step, True) for x in self._dss_objs]
+            values = [self._get_value(x, time_step) for x in self._dss_objs]
 
         if not self._containers:
             self._initialize_containers(values)
@@ -296,8 +293,8 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
 class OpenDssPropertyMetric(MultiValueTypeMetricBase):
     """Stores metrics for any OpenDSS element property."""
 
-    def _get_value(self, dss_obj, _time_step, set_active):
-        return dss_obj.UpdateValue(self._name, set_active)
+    def _get_value(self, dss_obj, _time_step):
+        return dss_obj.UpdateValue(self._name)
 
     def append_values(self, time_step, store_nan=False):
         curr_data = {}
@@ -321,14 +318,14 @@ class OpenDssPropertyMetric(MultiValueTypeMetricBase):
 #        super().__init__(prop, dss_objs, options)
 #        self._normal_amps = {}  # Name to normal_amps value
 #
-#    def _get_value(self, dss_obj, _time_step, set_active):
+#    def _get_value(self, dss_obj, _time_step):
 #        line = dss_obj
 #        normal_amps = self._normal_amps.get(line.Name)
 #        if normal_amps is None:
 #            normal_amps = line.GetValue("NormalAmps", convert=True).value
 #            self._normal_amps[line.Name] = normal_amps
 #
-#        currents = line.UpdateValue("Currents", set_active).value
+#        currents = line.UpdateValue("Currents").value
 #        current = max([abs(x) for x in currents])
 #        loading = current / normal_amps * 100
 #        return ValueByNumber(line.Name, "LineLoading", loading)
@@ -341,17 +338,124 @@ class OpenDssPropertyMetric(MultiValueTypeMetricBase):
 #        super().__init__(prop, dss_objs, options)
 #        self._normal_amps = {}  # Name to normal_amps value
 #
-#    def _get_value(self, dss_obj, _time_step, set_active):
+#    def _get_value(self, dss_obj, _time_step):
 #        transformer = dss_obj
 #        normal_amps = self._normal_amps.get(transformer.Name)
 #        if normal_amps is None:
 #            normal_amps = transformer.GetValue("NormalAmps", convert=True).value
 #            self._normal_amps[transformer.Name] = normal_amps
 #
-#        currents = transformer.UpdateValue("Currents", set_active).value
+#        currents = transformer.UpdateValue("Currents").value
 #        current = max([abs(x) for x in currents])
 #        loading = current / normal_amps * 100
 #        return ValueByNumber(transformer.Name, "TransformerLoading", loading)
+
+
+FeederHeadValues = namedtuple("FeederHeadValues", ["load_kvar", "load_kw", "loading", "reverse_power_flow"])
+
+
+class FeederHeadMetrics(MetricBase):
+    """Calculates loading at the feeder head at each time point"""
+
+    def __init__(self, prop, dss_objs, options):
+        super().__init__(prop, dss_objs, options)
+        # dss_objs contains the Circuit, but we won't use it.
+        assert len(dss_objs) == 1, dss_objs
+        self._prop = prop
+        self._containers = {}
+        self._feeder_head_line = None
+        self._values = {}
+
+    def _initialize_containers(self):
+        assert len(self._properties) == 1, self._properties
+        self._feeder_head_line = self._find_feeder_head_line()
+        values = self._get_values()
+        self._values = {
+            "load_kvar": ValueByNumber("FeederHead", "load_kvar", values.load_kvar),
+            "load_kw": ValueByNumber("FeederHead", "load_kw", values.load_kw),
+            "loading": ValueByNumber("FeederHead", "loading", values.loading),
+            "reverse_power_flow": ValueByNumber("FeederHead", "reverse_power_flow", values.reverse_power_flow),
+        }
+
+        for name in self._values:
+            path = f"{self._base_path}/{self._prop.elem_class}/ElementProperties/{name}"
+            self._containers[name] = self.make_storage_container(
+                path,
+                self._prop,
+                self._num_steps,
+                self._max_chunk_bytes,
+                [self._values[name]],
+            )
+
+    @staticmethod
+    def is_circuit_wide():
+        return True
+
+    @staticmethod
+    def _find_feeder_head_line():
+        feeder_head_line = None
+        flag = dss.Topology.First()
+        while flag > 0:
+            if "line" in dss.Topology.BranchName().lower():
+                feeder_head_line = dss.Topology.BranchName()
+                break
+            flag = dss.Topology.Next()
+
+        assert feeder_head_line is not None
+        return feeder_head_line
+
+    def _get_values(self):
+        total_power = dss.Circuit.TotalPower()
+        return FeederHeadValues(
+            load_kvar=total_power[1],
+            load_kw=total_power[0],
+            loading=self._get_feeder_head_loading(),
+            reverse_power_flow=self._reverse_power_flow(),
+        )
+
+    def _get_feeder_head_loading(self):
+        flag = dss.Circuit.SetActiveElement(self._feeder_head_line)
+        if not flag > 0:
+            raise Exception("Failed to set the feeder head line")
+        n_phases = dss.CktElement.NumPhases()
+        max_amps = dss.CktElement.NormalAmps()
+        currents = dss.CktElement.CurrentsMagAng()[:2*n_phases]
+        current_magnitude = currents[::2]
+
+        max_flow = max(max(current_magnitude), 1e-10)
+        loading = max_flow / max_amps
+        return loading
+
+    @staticmethod
+    def _reverse_power_flow():
+        # total substation power is an injection(-) or a consumption(+)
+        reverse_pf = dss.Circuit.TotalPower()[0] > 0
+        # Storing NaN with bools is not working correctly.
+        return int(reverse_pf)
+
+    def append_values(self, time_step, store_nan=False):
+        if not self._containers:
+            self._initialize_containers()
+
+        if store_nan:
+            for val in self._values.values():
+                val.set_nan()
+        else:
+            values = self._get_values()
+            for name, value in self._values.items():
+                value.set_value(getattr(values, name))
+
+        vals = []
+        for name, container in self._containers.items():
+            value = self._values[name]
+            vals.append(value)
+            container.append_values([value], time_step)
+
+        return vals
+
+    def iter_containers(self):
+        for container in self._containers.values():
+            yield container
 
 
 class SummedElementsOpenDssPropertyMetric(MetricBase):
@@ -362,8 +466,8 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
         self._container = None
         self._data_conversion = prop.data_conversion
 
-    def _get_value(self, obj, set_active):
-        value = obj.UpdateValue(self._name, set_active)
+    def _get_value(self, obj):
+        value = obj.UpdateValue(self._name)
         if self._data_conversion != DataConversion.NONE:
             value = convert_data(
                 "Total",
@@ -377,9 +481,9 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
         if store_nan:
             if self._can_use_native_iteration():
                 self._elem_class.First()
-                total = self._get_value(self._dss_objs[0], False)
+                total = self._get_value(self._dss_objs[0])
             else:
-                total = self._get_value(self._dss_objs[0], True)
+                total = self._get_value(self._dss_objs[0])
             total.set_nan()
         else:
             total = None
@@ -387,7 +491,7 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
                 self._elem_class.First()
                 for _ in range(self._elem_class.Count()):
                     dss_obj = self._name_to_dss_obj[self._elem_class.Name()]
-                    value = self._get_value(dss_obj, False)
+                    value = self._get_value(dss_obj)
                     if total is None:
                         total = value
                     else:
@@ -395,7 +499,7 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
                     self._elem_class.Next()
             else:
                 for dss_obj in self._dss_objs:
-                    value = self._get_value(dss_obj, True)
+                    value = self._get_value(dss_obj)
                     if total is None:
                         total = value
                     else:
@@ -427,6 +531,8 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
 class NodeVoltageMetric(MetricBase):
     """Stores metrics for node voltages."""
 
+    PRIMARY_BUS_THRESHOLD_KV = 1.0
+
     def __init__(self, prop, dss_obj, options):
         super().__init__(prop, dss_obj, options)
         props = list(self._properties)
@@ -444,20 +550,41 @@ class NodeVoltageMetric(MetricBase):
         self._voltage_metrics = NodeVoltageMetrics(
             prop, start_time, sim_resolution, window_size
         )
+        self._primary_node_names = []
+        self._primary_indices = []
+        self._secondary_node_names = []
+        self._secondary_indices = []
 
     def _make_elem_names(self):
         return self._node_names
+
+    def _identify_primary_v_secondary(self):
+        for i, name in enumerate(self._node_names):
+            dss.Circuit.SetActiveBus(name)
+            kv_base = dss.Bus.kVBase()
+            if kv_base > self.PRIMARY_BUS_THRESHOLD_KV:
+                self._primary_node_names.append(name)
+                self._primary_indices.append(i)
+            else:
+                self._secondary_node_names.append(name)
+                self._secondary_indices.append(i)
 
     def append_values(self, time_step, store_nan=False):
         voltages = dss.Circuit.AllBusMagPu()
         if self._voltages is None:
             # TODO: limit to objects that have been added
             self._node_names = dss.Circuit.AllNodeNames()
+            self._identify_primary_v_secondary()
             self._voltages = [
                 ValueByNumber(x, "Voltage", y)
                 for x, y in zip(self._node_names, voltages)
             ]
-            self._voltage_metrics.node_names = self._node_names
+            self._voltage_metrics.set_node_info(
+                self._primary_node_names,
+                self._primary_indices,
+                self._secondary_node_names,
+                self._secondary_indices,
+            )
         else:
             for i, voltage in enumerate(voltages):
                 self._voltages[i].set_value_from_raw(voltage)
@@ -942,8 +1069,6 @@ def convert_data(name, prop_name, value, conversion):
 _OPEN_DSS_CLASS_FOR_ITERATION = {
     "Capacitor": dss.Capacitors,
     "Fuse": dss.Fuses,
-    "Fuse": dss.Fuses,
-    "Generator": dss.Generators,
     "Generator": dss.Generators,
     "Isource": dss.Isource,
     "Line": dss.Lines,

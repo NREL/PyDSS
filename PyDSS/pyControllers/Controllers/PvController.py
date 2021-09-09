@@ -26,8 +26,8 @@ class PvController(ControllerAbstract):
         self.TimeChange = False
         self.Time = (-1, 0)
 
+        self.oldQpv = 0
         self.oldPcalc = 0
-        self.oldQcalc = 0
 
         self.__vDisconnected = False
         self.__pDisconnected = False
@@ -186,8 +186,8 @@ class PvController(ControllerAbstract):
         """
         PFset = self.__Settings['pf']
         PFact = self.__ControlledElm.GetParameter('pf')
-        Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))/ self.__Srated
-        Qpv = -sum(self.__ControlledElm.GetVariable('Powers')[1::2])/ self.__Srated
+        Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2])) / self.__Srated
+        Qpv = -sum(self.__ControlledElm.GetVariable('Powers')[1::2]) / self.__Srated
 
         if self.__Settings['cpf-priority'] == 'PF':
            # if self.TimeChange:
@@ -217,7 +217,7 @@ class PvController(ControllerAbstract):
         PFmin = self.__Settings['pfMin']
         PFmax = self.__Settings['pfMax']
         self.__dssSolver.reSolve()
-        Pcalc = abs(sum(-(float(x)) for x in self.__ControlledElm.GetVariable('Powers')[0::2]) )/ self.__Srated
+        Pcalc = abs(sum(-(float(x)) for x in self.__ControlledElm.GetVariable('Powers')[0::2]) ) / self.__Srated
         if Pcalc > 0:
             if Pcalc < Pmin:
                 PF = PFmax
@@ -292,8 +292,7 @@ class PvController(ControllerAbstract):
         elif uIn >= uMax:
             Qcalc = -self.QlimPU
 
-        Qcalc = Qpv + (Qcalc - Qpv) * 0.5 / self.__dampCoef + (Qpv - self.oldQcalc) * 0.1 / self.__dampCoef
-        dQ = abs(Qcalc - Qpv)
+        Qcalc = Qpv + (Qcalc - Qpv) * 0.5 / self.__dampCoef + (Qpv - self.oldQpv) * 0.1 / self.__dampCoef
 
         if Pcalc > 0:
             if self.__ControlledElm.NumPhases == 2:
@@ -303,6 +302,7 @@ class PvController(ControllerAbstract):
         else:
             pass
 
-        Error = abs(dQ)
-        self.oldQcalc = Qpv
+        Error = abs(Qpv- self.oldQpv)
+        self.oldQpv = Qpv
+
         return Error

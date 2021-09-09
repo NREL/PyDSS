@@ -118,8 +118,7 @@ def string_attribute_parser(att, line):
 def parse_pv_scenario(file_path, min_lifo_pv_size):
     """
     Extracts from a PV deployment scenario, parameter information into a dataframe.
-    Sample syntax:
-            PV_dict, PV_dataframe = parse_pv_scenario(deployment_path + deployment_name)
+    Sample syntax: PV_dict, PV_dataframe = parse_pv_scenario(deployment_path + deployment_name)
     """
 
     PVsys_dict = dict()
@@ -647,7 +646,7 @@ class EdLiFoControl(AbstractPostprocess):
         self.error = sol.Convergence()
         # This error is fake for now, find how to get this from Opendssdirect
 
-    def run(self, step, stepMax):
+    def run(self, step, stepMax, simulation=None):
         """
         Runs edLiFo
         """

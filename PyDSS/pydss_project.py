@@ -231,8 +231,6 @@ class PyDssProject:
             os.makedirs(os.path.join(self._project_dir, name), exist_ok=True)
         if opendss_project_folder:
             dest = os.path.join(self._project_dir, PROJECT_DIRECTORIES[0])
-            print("OpenDSS project: ", opendss_project_folder)
-            print("Destination: ", dest)
             copy_tree(opendss_project_folder, dest)
         self._serialize_scenarios()
         dump_data(
@@ -338,7 +336,7 @@ class PyDssProject:
             self._dump_simulation_settings()
 
         driver = None
-        if self._simulation_config["Exports"].get("Export Data In Memory", True):
+        if self._simulation_config["Exports"].get("Export Data In Memory", False):
             driver = "core"
         if os.path.exists(store_filename):
             os.remove(store_filename)
@@ -375,6 +373,7 @@ class PyDssProject:
             raise
 
         finally:
+            logging.shutdown()
             if tar_project:
                 self._tar_project_files()
             elif zip_project:
@@ -429,7 +428,6 @@ class PyDssProject:
                     shutil.rmtree(name)
 
             path = os.path.join(self._project_dir, filename)
-            logger.info("Created project tar file: %s", path)
         finally:
             os.chdir(orig)
 
@@ -459,7 +457,6 @@ class PyDssProject:
                     shutil.rmtree(name)
 
             path = os.path.join(self._project_dir, filename)
-            logger.info("Created project zip file: %s", path)
         finally:
             os.chdir(orig)
 
@@ -798,8 +795,6 @@ class PyDssScenario:
             raise InvalidParameter(f"{config_file} does not exist")
 
         self.post_process_infos.append(post_process_info)
-        logger.info("Appended post-process script %s to %s",
-                    post_process_info["script"], self.name)
 
 def load_config(path):
     """Return a configuration from files.

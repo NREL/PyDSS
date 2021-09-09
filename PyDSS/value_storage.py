@@ -77,7 +77,7 @@ class ValueStorageBase(abc.ABC):
                 columns.append(column)
 
         if not columns:
-            raise InvalidParameter(f"{name} does not exist in DataFrame")
+            raise InvalidParameter(f"{names} does not exist in DataFrame")
 
         return columns
 
@@ -515,14 +515,6 @@ class ValueByLabel(ValueStorageBase):
 class ValueContainer:
     """Container for a sequence of instances of ValueStorageBase."""
 
-    # These could potentially be reduced in bit lengths. Compression probably
-    # makes that unnecessary.
-    _TYPE_MAPPING = {
-        float: np.float,
-        int: np.int,
-        complex: np.complex,
-    }
-
     def __init__(self, values, hdf_store, path, max_size, elem_names,
                  dataset_property_type, max_chunk_bytes=None, store_time_step=False):
         group_name = os.path.dirname(path)
@@ -534,11 +526,10 @@ class ValueContainer:
             # Don't bother checking each sub path.
             pass
 
-        dtype = self._TYPE_MAPPING.get(values[0].value_type)
-        assert dtype is not None
+        dtype = values[0].value_type
         scaleoffset = None
         # There is no np.float128 on Windows.
-        if dtype in (np.float, np.float32, np.float64, np.longdouble):
+        if dtype in (float, np.float32, np.float64, np.longdouble):
             scaleoffset = 4
         time_step_path = None
         max_size = max_size * len(values) if store_time_step else max_size
@@ -553,7 +544,7 @@ class ValueContainer:
                 hdf_store,
                 time_step_path,
                 max_size,
-                np.int,
+                int,
                 ["Time", "Name"],
                 scaleoffset=0,
                 max_chunk_bytes=max_chunk_bytes,

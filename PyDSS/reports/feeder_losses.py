@@ -2,11 +2,12 @@
 import logging
 import math
 import os
+from datetime import timedelta
+from typing import Dict
 
 from pydantic import BaseModel, Field
 
 from PyDSS.reports.reports import ReportBase
-from PyDSS.utils.utils import dump_data
 
 
 logger = logging.getLogger(__name__)
@@ -23,27 +24,34 @@ class FeederLossesMetricsModel(BaseModel):
         extra = "forbid"
         use_enum_values = False
 
-    total_losses: float = Field(
-        title="total_losses",
+    total_losses_kwh: float = Field(
+        title="total_losses_kwh",
         description="Total losses in the circuit",
     )
-    line_losses: float = Field(
-        title="line_losses",
+    line_losses_kwh: float = Field(
+        title="line_losses_kwh",
         description="Total line losses",
     )
-    transformer_losses: float = Field(
-        title="transformer_losses",
+    transformer_losses_kwh: float = Field(
+        title="transformer_losses_kwh",
         description="Total transformer losses",
     )
-    total_load_demand: float = Field(
-        title="total_load_demand",
+    total_load_demand_kwh: float = Field(
+        title="total_load_demand_kwh",
         description="Total power output of loads",
     )
 
 
+class SimulationFeederLossesMetricsModel(BaseModel):
+    scenarios: Dict[str, FeederLossesMetricsModel] = Field(
+        title="scenarios",
+        description="Feeder losses by PyDSS scenario name",
+    )
+
+
 def compare_feeder_losses(
-        metrics1: FeederLossesMetricsModel,
-        metrics2: FeederLossesMetricsModel,
+        metrics1: SimulationFeederLossesMetricsModel,
+        metrics2: SimulationFeederLossesMetricsModel,
         rel_tol=0.000001,
 ):
     """Compares the values of two instances of FeederLossesMetricsModel.
@@ -55,12 +63,13 @@ def compare_feeder_losses(
 
     """
     match = True
-    for field in FeederLossesMetricsModel.__fields__:
-        val1 = getattr(metrics1, field)
-        val2 = getattr(metrics2, field)
-        if not math.isclose(val1, val2, rel_tol=rel_tol):
-            logger.error("field=%s mismatch %s : %s", field, val1, val2)
-            match = False
+    for scenario in metrics1.scenarios:
+        for field in FeederLossesMetricsModel.__fields__:
+            val1 = getattr(metrics1.scenarios[scenario], field)
+            val2 = getattr(metrics2.scenarios[scenario], field)
+            if not math.isclose(val1, val2, rel_tol=rel_tol):
+                logger.error("field=%s mismatch %s : %s", field, val1, val2)
+                match = False
 
     return match
 
@@ -79,16 +88,18 @@ class FeederLossesReport(ReportBase):
     }
 
     def generate(self, output_dir):
+        resolution = self._get_simulation_resolution()
+        to_kwh = resolution / timedelta(hours=1)
         assert len(self._results.scenarios) >= 1
-        scenario = self._results.scenarios[0]
-        assert scenario.name == "control_mode"
+        scenarios = {}
+        for scenario in self._results.scenarios:
+            inputs = FeederLossesReport.get_inputs_from_defaults(self._simulation_config, self.NAME)
+            if inputs["store_all_time_points"]:
+                scenarios[scenario.name] = self._generate_from_all_time_points(scenario, to_kwh)
+            else:
+                scenarios[scenario.name] = self._generate_from_in_memory_metrics(scenario, to_kwh)
 
-        inputs = FeederLossesReport.get_inputs_from_defaults(self._simulation_config, self.NAME)
-        if inputs["store_all_time_points"]:
-            model = self._generate_from_all_time_points(scenario)
-        else:
-            model = self._generate_from_in_memory_metrics(scenario)
-
+        model = SimulationFeederLossesMetricsModel(scenarios=scenarios)
         filename = os.path.join(output_dir, self.FILENAME)
         with open(filename, "w") as f_out:
             f_out.write(model.json(indent=2))
@@ -96,12 +107,12 @@ class FeederLossesReport(ReportBase):
         logger.info("Generated %s", filename)
         return filename
 
-    def _generate_from_in_memory_metrics(self, scenario):
+    def _generate_from_in_memory_metrics(self, scenario, to_kwh):
         total_losses_dict = scenario.get_summed_element_total("Circuits", "LossesSum")
         total_losses = abs(next(iter(total_losses_dict.values()))) / 1000 # OpenDSS reports total losses in Watts
         line_losses_dict = scenario.get_summed_element_total("Circuits", "LineLossesSum")
         line_losses = abs(next(iter(line_losses_dict.values())))
-        transformer_losses = total_losses - line_losses
+        transformer_losses = (total_losses - line_losses)
         total_load_power_dict = scenario.get_summed_element_total("Loads", "PowersSum")
         total_load_power = 0
         for val in total_load_power_dict.values():
@@ -109,13 +120,13 @@ class FeederLossesReport(ReportBase):
 
         # TODO: total losses as a percentage of total load demand?
         return FeederLossesMetricsModel(
-            total_losses=total_losses,
-            line_losses=line_losses,
-            transformer_losses=transformer_losses,
-            total_load_demand=total_load_power,
+            total_losses_kwh=total_losses * to_kwh,
+            line_losses_kwh=line_losses * to_kwh,
+            transformer_losses_kwh=transformer_losses * to_kwh,
+            total_load_demand_kwh=total_load_power * to_kwh,
         )
 
-    def _generate_from_all_time_points(self, scenario):
+    def _generate_from_all_time_points(self, scenario, to_kwh):
         df_losses = scenario.get_full_dataframe("Circuits", "Losses")
         assert len(df_losses.columns) == 1
 
@@ -126,10 +137,10 @@ class FeederLossesReport(ReportBase):
         line_losses = abs(df_line_losses.sum().sum())
         transformer_losses = total_losses - line_losses
         return FeederLossesMetricsModel(
-            total_losses=total_losses,
-            line_losses=line_losses,
-            transformer_losses=transformer_losses,
-            total_load_demand=df_loads_powers.sum().sum(),
+            total_losses_kwh=total_losses * to_kwh,
+            line_losses_kwh=line_losses * to_kwh,
+            transformer_losses_kwh=transformer_losses * to_kwh,
+            total_load_demand_kwh=df_loads_powers.sum().sum() * to_kwh,
         )
 
     @staticmethod
@@ -183,4 +194,4 @@ class FeederLossesReport(ReportBase):
 
     @staticmethod
     def get_required_scenario_names():
-        return set(["control_mode"])
+        return set()

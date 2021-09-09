@@ -56,7 +56,6 @@ Finally, the minimal example below shows how to retrive data from the sockets an
 	for i in range(2):
 		s = socket.socket()
 		s.bind(('127.0.0.1', 5001 + i))
-		print("socket binded to %s" % (5001 + i))
 		s.listen(5)
 		sockets.append(s)
 	while True: 
@@ -65,7 +64,6 @@ Finally, the minimal example below shows how to retrive data from the sockets an
 		for s in sockets: 
 			c, addr = s.accept()
 			conns.append(c)
-			print('Got connection from', addr)
 		while True:
 			for c in conns: #Reading data from all ports
 				Data = c.recv(1024)
@@ -73,8 +71,6 @@ Finally, the minimal example below shows how to retrive data from the sockets an
 					numDoubles = int(len(Data) / 8)
 					tag = str(numDoubles) + 'd'
 					Data = list(struct.unpack(tag, Data))
-					print(Data)
-
 			for c , v in zip(conns, [5, 3]): #Writing data to all ports
 				values = [v]
 				c.sendall(struct.pack('%sd' % len(values), *values))
@@ -128,19 +124,11 @@ For a helics example a minimal dummy federate has been defined using the HELICS 
 
 	helicsversion = h.helicsGetVersion()
 
-	print("PI SENDER: Helics version = {}".format(helicsversion))
 
 	# Create broker #
-	print("Creating Broker")
 	broker = h.helicsCreateBroker("zmq", "", initstring)
-	print("Created Broker")
 
-	print("Checking if Broker is connected")
 	isconnected = h.helicsBrokerIsConnected(broker)
-	print("Checked if Broker is connected")
-
-	if isconnected == 1:
-		print("Broker created and connected")
 
 	# Create Federate Info object that describes the federate properties #
 	fedinfo = h.helicsCreateFederateInfo()
@@ -164,19 +152,14 @@ For a helics example a minimal dummy federate has been defined using the HELICS 
 
 	# Create value federate #
 	vfed = h.helicsCreateValueFederate("Test Federate", fedinfo)
-	print("PI SENDER: Value federate created")
 
 	# Register the publication #
 	pub1 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.load1.power", "double", "kW")
-	print("PI SENDER: Publication registered")
 	pub2 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.load2.power", "double", "kW")
-	print("PI SENDER: Publication registered")
 	pub3 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.load3.power", "double", "kW")
-	print("PI SENDER: Publication registered")
 	sub1 = h.helicsFederateRegisterSubscription(vfed, "Circuit.heco19021.TotalPower.E", "kW")
 	# Enter execution mode #
 	h.helicsFederateEnterExecutingMode(vfed)
-	print("PI SENDER: Entering execution mode")
 
 	# This federate will be publishing deltat*pi for numsteps steps #
 
@@ -185,26 +168,15 @@ For a helics example a minimal dummy federate has been defined using the HELICS 
 		h.helicsPublicationPublishDouble(pub1, 5.0)
 		h.helicsPublicationPublishDouble(pub2, -1.0)
 		h.helicsPublicationPublishDouble(pub3, random.random() * 12)
-
 		value = h.helicsInputGetString(sub1)
-		print(
-			"Circuit active power demand: {} kW @ time: {}".format(
-				value, currenttime
-			)
-		)
-
 		time.sleep(0.01)
 
 	h.helicsFederateFinalize(vfed)
-	print("PI SENDER: Federate finalized")
-
 	while h.helicsBrokerIsConnected(broker):
 		time.sleep(1)
 
 	h.helicsFederateFree(vfed)
 	h.helicsCloseLibrary()
-
-	print("PI SENDER: Broker disconnected")
 
 The API interface
 ^^^^^^^^^^^^^^^^^
@@ -247,7 +219,6 @@ A minimal HELICS interfacing example has been provided as a PyDSS project in ~Py
 		for t in range(5): # Run simulation for five time steps
 			x = {'Load.mpx000635970':{'kW':7.28}} 
 			results = dssInstance.RunStep(t, x) # Update the value of a load
-			print(results['Load.mpx000635970']['Powers']['E']['value'])  Update the new value of the load
 		dssInstance.ResultContainer.ExportResults() # Export the results
 		dssInstance.DeleteInstance()
 		del a

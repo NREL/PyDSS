@@ -12,7 +12,6 @@ for file in pythonFiles:
     exec('from PyDSS.pyPlots.Plots import {}'.format(file))
     exec('PlotTypes["{}"] = {}.{}'.format(file, file, file))
 
-#print(PlotTypes)
 
 def Create(PlotType, PlotPropertyDict, dssBuses, dssObjectsByClass, dssCircuit, dssSolver):
     assert (PlotType in PlotTypes), "Defination for '{}' pyPlot not found. \n " \

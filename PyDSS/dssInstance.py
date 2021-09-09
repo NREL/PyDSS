@@ -1,14 +1,13 @@
 from PyDSS.pyContrReader import read_controller_settings_from_registry
-from PyDSS.ProfileManager.ProfileStore import ProfileManager
 from PyDSS.dssElementFactory import create_dss_element
 from PyDSS.utils.utils import make_human_readable_size
 from PyDSS.pyContrReader import pyContrReader as pcr
 from PyDSS.pyPlotReader import pyPlotReader as ppr
 from PyDSS.exceptions import (
     InvalidConfiguration, PyDssConvergenceError, PyDssConvergenceErrorCountExceeded,
-    PyDssConvergenceMaxError, OpenDssModelError
+    PyDssConvergenceMaxError, OpenDssModelError, OpenDssConvergenceErrorCountExceeded
 )
-
+from PyDSS.ProfileManager import ProfileInterface
 from PyDSS.pyPostprocessor import pyPostprocess
 import PyDSS.pyControllers as pyControllers
 from PyDSS.NetworkModifier import Modifier
@@ -49,7 +48,8 @@ class OpenDSS:
         self.BokehSessionID = None
         self._Options = params
         self._convergenceErrors = 0
-        self._maxConvergenceErrorCount = 0
+        self._convergenceErrorsOpenDSS = 0
+        self._maxConvergenceErrorCount = None
         self._maxConvergenceError = 0.0
         self._controller_iteration_counts = {}
         self._stats = TimerStatsCollector()
@@ -117,8 +117,11 @@ class OpenDSS:
             self._Logger.info('Disabling internal yearly and duty-cycle profiles.')
             for m in ["Loads", "PVSystem", "Generator", "Storage"]:
                 run_command(f'BatchEdit {m}..* yearly=NONE duty=None')
-            self.profileStore = ProfileManager(self._dssObjects, self._dssSolver, params)
-            self.profileStore.setup_profiles()
+            profileSettings = self._Options["Profiles"]["settings"]
+            profileSettings["objects"] = self._dssObjects
+            self.profileStore = ProfileInterface.Create(
+                self._dssInstance, self._dssSolver, self._Options, self._Logger, **profileSettings
+            )
 
         self.ResultContainer = ResultData(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
                                           self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance,
@@ -154,6 +157,7 @@ class OpenDSS:
         self._dssInstance.utils.run_command('Log=NO')
         run_command('Clear')
         self._Logger.info('Loading OpenDSS model')
+        reply = ""
         try:
             orig_dir = os.getcwd()
             reply = run_command('compile ' + self._dssPath['dssFilePath'])
@@ -164,6 +168,16 @@ class OpenDSS:
         if reply != "":
             raise OpenDssModelError(f"Error compiling OpenDSS model: {reply}")
 
+    def _ReadControllerDefinitions(self):
+        controllers = None
+        mappings = os.path.join(os.path.dirname(self._dssPath['pyControllers']), "ControllerMappings")
+        if os.path.exists(mappings):
+            ctrl_mapping_files = os.listdir(self._dssPath["ControllerMappings"])
+            for filename in ctrl_mapping_files: 
+                data = load_data(os.path.join(self._dssPath["ControllerMappings"], filename))
+
+        return controllers
+
     def _ModifyNetwork(self):
         # self._Modifier.Add_Elements('Storage', {'bus' : ['storagebus'], 'kWRated' : ['2000'], 'kWhRated'  : ['2000']},
         #                              True, self._dssObjects)
@@ -173,13 +187,17 @@ class OpenDSS:
 
     def _CreateControllers(self, ControllerDict):
         self._pyControls = {}
-
+        self._pyControls_types = {}
         for ControllerType, ElementsDict in ControllerDict.items():
             for ElmName, SettingsDict in ElementsDict.items():
                 Controller = pyControllers.pyController.Create(ElmName, ControllerType, SettingsDict, self._dssObjects,
                                                   self._dssInstance, self._dssSolver)
                 if Controller != -1:
-                    self._pyControls['Controller.' + ElmName] = Controller
+                    controller_name = 'Controller.' + ElmName
+                    self._pyControls[controller_name] = Controller
+                    class_name, element_name = Controller.ControlledElement().split(".")
+                    if controller_name not in self._pyControls_types:
+                        self._pyControls_types[controller_name] = class_name
                     self._Logger.info('Created pyController -> Controller.' + ElmName)
         return
 
@@ -240,23 +258,33 @@ class OpenDSS:
     def _UpdateControllers(self, Priority, Time, Iteration, UpdateResults):
         errors = []
         maxError = 0
-        for controller in self._pyControls.values():
-            error = controller.Update(Priority, Time, UpdateResults)
-            maxError = error if error > maxError else maxError
-            if Iteration == self._Options['Project']['Max Control Iterations'] - 1:
-                if error > self._Options['Project']['Error tolerance']:
-                    errorTag = {
-                            "Report": "Convergence",
-                            "Scenario": self._Options["Project"]["Active Scenario"],
-                            "Time": self._dssSolver.GetTotalSeconds(),
-                            "DateTime": str(self._dssSolver.GetDateTime()),
-                            "Controller": controller.Name(),
-                            "Controlled element": controller.ControlledElement(),
-                            "Error": error,
-                            "Control algorithm": controller.debugInfo()[Priority],
-                    }
-                    json_object = json.dumps(errorTag)
-                    self._reportsLogger.warning(json_object)
+        _pyControls_types = set(self._pyControls_types.values())
+
+        for class_name in _pyControls_types:
+            self._dssInstance.Basic.SetActiveClass(class_name)
+            elm = self._dssInstance.ActiveClass.First()
+            while elm:
+                element_name = self._dssInstance.CktElement.Name()
+                controller_name = 'Controller.' + element_name
+                if controller_name in self._pyControls:
+                    controller = self._pyControls[controller_name]
+                    error = controller.Update(Priority, Time, UpdateResults)
+                    maxError = error if error > maxError else maxError
+                    if Iteration == self._Options['Project']['Max Control Iterations'] - 1:
+                        if error > self._Options['Project']['Error tolerance']:
+                            errorTag = {
+                                "Report": "Convergence",
+                                "Scenario": self._Options["Project"]["Active Scenario"],
+                                "Time": self._dssSolver.GetTotalSeconds(),
+                                "DateTime": str(self._dssSolver.GetDateTime()),
+                                "Controller": controller.Name(),
+                                "Controlled element": controller.ControlledElement(),
+                                "Error": error,
+                                "Control algorithm": controller.debugInfo()[Priority],
+                            }
+                            json_object = json.dumps(errorTag)
+                            self._reportsLogger.warning(json_object)
+                elm = self._dssInstance.ActiveClass.Next()
         return maxError < self._Options['Project']['Error tolerance'], maxError
 
     def _CreateBusObjects(self):
@@ -292,6 +320,7 @@ class OpenDSS:
             'Circuit.' + self._dssCircuit.Name(): self._dssObjects['Circuit.' + self._dssCircuit.Name()]
         }
         self._dssObjectsByClass['Buses'] = self._dssBuses
+
         return
 
     def _GetRelaventObjectDict(self, key):
@@ -306,8 +335,7 @@ class OpenDSS:
         return ObjectList
 
     def RunStep(self, step, updateObjects=None):
-        # updating parameters bebore simulation run
-        start = time.time()
+        # updating parameters before simulation run
         if self._Options["Logging"]["Log time step updates"]:
             self._Logger.info(f'PyDSS datetime - {self._dssSolver.GetDateTime()}')
             self._Logger.info(f'OpenDSS time [h] - {self._dssSolver.GetOpenDSSTime()}')
@@ -378,9 +406,16 @@ class OpenDSS:
             self._Logger.error("Convergence error %s exceeded max value %s at step %s", error, self._maxConvergenceError, step)
             raise PyDssConvergenceMaxError(f"Exceeded max convergence error {error}")
 
-        if self._maxConvergenceErrorCount != 0 and self._convergenceErrors > self._maxConvergenceErrorCount:
+        if self._maxConvergenceErrorCount is not None and self._convergenceErrors > self._maxConvergenceErrorCount:
             self._Logger.error("Exceeded convergence error count threshold at step %s", step)
             raise PyDssConvergenceErrorCountExceeded(f"{self._convergenceErrors} errors occurred")
+
+    def _HandleOpenDSSConvergenceErrorChecks(self, step):
+        self._convergenceErrorsOpenDSS += 1
+
+        if self._maxConvergenceErrorCount is not None and self._convergenceErrorsOpenDSS > self._maxConvergenceErrorCount:
+            self._Logger.error("Exceeded OpenDSS convergence error count threshold at step %s", step)
+            raise OpenDssConvergenceErrorCountExceeded(f"{self._convergenceErrorsOpenDSS} errors occurred")
 
     def DryRunSimulation(self, project, scenario):
         """Run one time point for getting estimated space."""
@@ -406,7 +441,8 @@ class OpenDSS:
         startTime = time.time()
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
         threshold = self._Options['Project']['Convergence error percent threshold']
-        self._maxConvergenceErrorCount = round(threshold * .01 * Steps)
+        if threshold > 0:
+            self._maxConvergenceErrorCount = round(threshold * .01 * Steps)
         self._maxConvergenceError = self._Options['Project']['Max error tolerance']
         dss.Solution.Convergence(self._Options['Project']['Error tolerance'])
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
@@ -415,7 +451,6 @@ class OpenDSS:
         self._Logger.info('Max convergence error count {}.'.format(self._maxConvergenceErrorCount))
         self._Logger.info("initializing store")
         self.ResultContainer.InitializeDataStore(project.hdf_store, Steps, MC_scenario_number)
-
         postprocessors = [
             pyPostprocess.Create(
                 project,
@@ -443,8 +478,9 @@ class OpenDSS:
                         pydss_has_converged = self.RunStep(step)
                         opendss_has_converged = dss.Solution.Converged()
                         if not opendss_has_converged:
-                            self._Logger.info("OpenDSS did not converge at step=%s pydss_converged=%s",
-                                              step, pydss_has_converged)
+                            self._Logger.error("OpenDSS did not converge at step=%s pydss_converged=%s",
+                                               step, pydss_has_converged)
+                            self._HandleOpenDSSConvergenceErrorChecks(step)
                 has_converged = pydss_has_converged and opendss_has_converged
                 if step == 0 and self.ResultContainer is not None:
                     size = make_human_readable_size(self.ResultContainer.max_num_bytes())
@@ -501,7 +537,7 @@ class OpenDSS:
     def _RunPostProcessors(self, step, Steps, postprocessors):
         for postprocessor in postprocessors:
             orig_step = step
-            step, has_converged, error = postprocessor.run(step, Steps)
+            step, has_converged, error = postprocessor.run(step, Steps, simulation=self)
             assert step <= orig_step, "step cannot increment in postprocessor"
             if not has_converged:
                 name = postprocessor.__class__.__name__

@@ -630,11 +630,11 @@ class PyDssScenarioResults:
 
         if real_only:
             for column in df.columns:
-                if df[column].dtype == np.complex:
+                if df[column].dtype == complex:
                     df[column] = [x.real for x in df[column]]
         elif abs_val:
             for column in df.columns:
-                if df[column].dtype == np.complex:
+                if df[column].dtype == complex:
                     df[column] = [abs(x) for x in df[column]]
 
         return df
@@ -912,11 +912,11 @@ class PyDssScenarioResults:
 
         if real_only:
             for column in df.columns:
-                if df[column].dtype == np.complex:
+                if df[column].dtype == complex:
                     df[column] = [x.real for x in df[column]]
         elif abs_val:
             for column in df.columns:
-                if df[column].dtype == np.complex:
+                if df[column].dtype == complex:
                     df[column] = [abs(x) for x in df[column]]
 
     @staticmethod

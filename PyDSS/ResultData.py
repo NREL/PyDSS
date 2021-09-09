@@ -13,8 +13,14 @@ import opendssdirect as dss
 
 from PyDSS.pyLogger import getLoggerTag
 from PyDSS.unitDefinations import unit_info
-from PyDSS.common import PV_LOAD_SHAPE_FILENAME, PV_PROFILES_FILENAME, DatasetPropertyType
+from PyDSS.common import (
+    PV_LOAD_SHAPE_FILENAME,
+    PV_PROFILES_FILENAME,
+    NODE_NAMES_BY_TYPE_FILENAME,
+    DatasetPropertyType,
+)
 from PyDSS.dataset_buffer import DatasetBuffer
+from PyDSS.utils.dss_utils import get_node_names_by_type
 from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
 from PyDSS.export_list_reader import ExportListReader, StoreValuesType
 from PyDSS.reports.reports import Reports, ReportGranularity
@@ -75,8 +81,7 @@ class ResultData:
         self._export_relative_dir = "Exports/" + options["Project"]["Active Scenario"]
         self._store_frequency = False
         self._store_mode = False
-        if options["Project"]["Simulation Type"] == "Dynamic" or \
-                 options["Frequency"]["Enable frequency sweep"]:
+        if options["Frequency"]["Enable frequency sweep"]:
             self._store_frequency = True
             self._store_mode = True
 
@@ -111,6 +116,8 @@ class ResultData:
                 objs = self._buses
             elif elem_class in self._objects_by_class:
                 objs = self._objects_by_class[elem_class]
+            elif elem_class == "FeederHead":
+                objs = self._objects_by_class["Circuits"]
             elif elem_class != "CktElement":  # TODO
                 continue
             for prop in self._export_list.iter_export_properties(elem_class=elem_class):
@@ -208,7 +215,6 @@ class ResultData:
             yield metric
 
     def UpdateResults(self, store_nan=False):
-        update_start = time.time()
         current_results = {}
 
         # Get the number of seconds since the Epoch without any timezone conversions.
@@ -243,6 +249,8 @@ class ResultData:
             self._export_feeder_head_info(metadata)
         if self._options["Exports"]["Export PV Profiles"]:
             self._export_pv_profiles()
+        if self._options["Exports"]["Export Node Names By Type"]:
+            self._export_node_names_by_type()
 
         filename = os.path.join(self._export_dir, self.METADATA_FILENAME)
         dump_data(metadata, filename, indent=4)
@@ -311,7 +319,7 @@ class ResultData:
             return None
 
     def _reverse_powerflow(self):
-        reverse_pf = max(dss.Circuit.TotalPower()) > 0 # total substation power is an injection(-) or a consumption(+)
+        reverse_pf = dss.Circuit.TotalPower()[0] > 0 # total substation power is an injection(-) or a consumption(+)
         return reverse_pf
 
     def _export_feeder_head_info(self, metadata):
@@ -325,9 +333,11 @@ class ResultData:
         if not "feeder_head_info_files" in metadata.keys():
             metadata["feeder_head_info_files"] = []
 
+        total_power = dss.Circuit.TotalPower()
         df_dict = {"FeederHeadLine": self._find_feeder_head_line(),
                    "FeederHeadLoading": self._get_feeder_head_loading(),
-                   "FeederHeadLoad": dss.Circuit.TotalPower(),
+                   "FeederHeadLoadKW": total_power[0],
+                   "FeederHeadLoadKVar": total_power[1],
                    "ReversePowerFlow": self._reverse_powerflow()
                   }
 
@@ -335,6 +345,7 @@ class ResultData:
         fname = filename + ".json"
         relpath = os.path.join(self._export_relative_dir, fname)
         filepath = os.path.join(self._export_dir, fname)
+
         #write_dataframe(df, filepath)
         dump_data(df_dict, filepath)
         metadata["feeder_head_info_files"].append(relpath)
@@ -481,6 +492,12 @@ class ResultData:
         filename = os.path.join(self._export_dir, PV_PROFILES_FILENAME)
         dump_data(data, filename, indent=2)
         self._logger.info("Exported PV profile information to %s", filename)
+
+    def _export_node_names_by_type(self):
+        data = get_node_names_by_type()
+        filename = os.path.join(self._export_dir, NODE_NAMES_BY_TYPE_FILENAME)
+        dump_data(data, filename, indent=2)
+        self._logger.info("Exported node names by type to %s", filename)
 
     @staticmethod
     def get_units(prop, index=None):

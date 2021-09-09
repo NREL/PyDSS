@@ -1,8 +1,8 @@
 [Project]
-"Start time" = "2020-1-1 00:00:00.0"
-"Simulation duration (min)" = 1440.0
-"Loadshape start time" = "2020-1-1 00:00:00.0"
-"Step resolution (sec)" = 900.0
+"Start time" = "2020-07-13 00:00:00.0"
+"Simulation duration (min)" = 10
+"Loadshape start time" = "2020-07-13 00:00:00.0"
+"Step resolution (sec)" = 60.0
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
 "Control mode" = "Static"
@@ -15,30 +15,30 @@
 "DSS File Absolute Path" = false
 "Return Results" = false
 
-[[Project.Scenarios]]
-name = "base_case"
-post_process_infos = []
+#[[Project.Scenarios]]
+#name = "base_case"
+#post_process_infos = []
 
 [[Project.Scenarios]]
 name = "multiple_controls"
 post_process_infos = []
 
-[[Project.Scenarios]]
-name = "self_consumption"
-post_process_infos = []
+#[[Project.Scenarios]]
+#name = "self_consumption"
+#post_process_infos = []
 
-[[Project.Scenarios]]
-name = "volt_var"
-post_process_infos = []
+#[[Project.Scenarios]]
+#name = "volt_var"
+#post_process_infos = []
 
 [Exports]
 "Export Mode" = "byClass"
 "Export Style" = "Single file"
-"Export Format" = "h5"
+"Export Format" = "csv"
 "Export Compression" = false
 "Export Elements" = false
-"Export Data Tables" = true
-"Export Data In Memory" = true
+"Export Data Tables" = false
+"Export Data In Memory" = false
 "HDF Max Chunk Bytes" = 32768
 "Export Event Log" = true
 "Log Results" = true
@@ -77,16 +77,28 @@ Uninterruptible = true
 Format = "h5"
 [[Reports.Types]]
 name = "Capacitor State Change Counts"
-enabled = true
+enabled = false
 
 [[Reports.Types]]
 name = "PV Clipping"
-enabled = true
+enabled = false
 
 [[Reports.Types]]
 name = "PV Curtailment"
-enabled = true
+enabled = false
 
 [[Reports.Types]]
 name = "RegControl Tap Number Change Counts"
-enabled = true
+enabled = false
+
+[Profiles]
+"Use profile manager" = true
+source_type = "HDF5"
+source = "profiles.hdf5"
+"Profile mapping" = ""
+is_relative_path = true
+[Profiles.settings]
+bufferSize =  10
+neglectYear = false
+
+

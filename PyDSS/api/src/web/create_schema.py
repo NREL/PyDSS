@@ -6,7 +6,6 @@ def getJSONschema(ip, port, path):
     url = base_url + "/docs/swagger.json"
 
     response = requests.get(url)
-    print(response.text)
     with open(path, 'w') as outfile:
         json.dump(response.json(), outfile)
 

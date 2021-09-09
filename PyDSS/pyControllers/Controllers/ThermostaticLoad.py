@@ -13,8 +13,8 @@ class ThermostaticLoad(ControllerAbstract):
         self.__ControlledElm = LoadObj
         self.dssSolver = dssSolver
 
-        Class, Name = self.__ControlledElm.GetInfo()
-        self.__Name = 'pyCont_' + Class + '_' + Name
+        self.eClass, self.eName = self.__ControlledElm.GetInfo()
+        self.__Name = 'pyCont_' + self.eClass + '_' + self.eName
         self.Tmax = Settings["Tmax"]
         self.Tmin = Settings["Tmin"]
         self.T = random.random() * (self.Tmax - self.Tmin) + self.Tmin
@@ -39,7 +39,7 @@ class ThermostaticLoad(ControllerAbstract):
 
     @property
     def ControlledElement(self):
-        return "{}.{}".format(self.Class, self.Name)
+        return "{}.{}".format(self.eClass, self.eName)
 
     def Update(self, Priority, Time, UpdateResults):
         self.TimeChange = self.Time != (Priority, Time)

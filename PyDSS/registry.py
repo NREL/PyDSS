@@ -168,7 +168,7 @@ class Registry:
                     filename = controller["filename"]
                     print(f"  {name}:  {filename}")
             else:
-                print(f"  None")
+                print("  None")
 
     def unregister_controller(self, controller_type, name):
         """Unregisters a controller.

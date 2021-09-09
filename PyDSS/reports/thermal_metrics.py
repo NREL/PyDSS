@@ -117,10 +117,10 @@ class ThermalMetrics(ReportBase):
         max_instantaneous = self._get_max_values(df)
         max_mavg = self._get_max_values(df_mavg)
         return ThermalMetricsModel(
-            max_instantaneous_loadings=max_instantaneous,
-            max_instantaneous_loading=max(max_instantaneous.values()),
-            max_moving_average_loadings=max_mavg,
-            max_moving_average_loading=max(max_mavg.values()),
+            max_instantaneous_loadings_pct=max_instantaneous,
+            max_instantaneous_loading_pct=max(max_instantaneous.values()),
+            max_moving_average_loadings_pct=max_mavg,
+            max_moving_average_loading_pct=max(max_mavg.values()),
             window_size_hours=window_size_hours,
             num_time_points_with_instantaneous_violations=self._get_num_time_points_with_violations(df, inst_threshold),
             num_time_points_with_moving_average_violations=self._get_num_time_points_with_violations(df_mavg, mavg_threshold),
@@ -182,4 +182,4 @@ class ThermalMetrics(ReportBase):
 
     @staticmethod
     def get_required_scenario_names():
-        return set(["control_mode"])
+        return set()

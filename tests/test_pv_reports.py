@@ -15,7 +15,7 @@ from PyDSS.common import SIMULATION_SETTINGS_FILENAME
 from PyDSS.node_voltage_metrics import SimulationVoltageMetricsModel, compare_voltage_metrics
 from PyDSS.pydss_project import PyDssProject
 from PyDSS.pydss_results import PyDssResults
-from PyDSS.reports.feeder_losses import FeederLossesMetricsModel, compare_feeder_losses
+from PyDSS.reports.feeder_losses import SimulationFeederLossesMetricsModel, compare_feeder_losses
 from PyDSS.reports.reports import ReportGranularity
 from PyDSS.thermal_metrics import SimulationThermalMetricsModel, compare_thermal_metrics
 from PyDSS.utils.dataframe_utils import read_dataframe
@@ -48,7 +48,7 @@ def test_pv_reports_per_element_per_time_point(cleanup_project):
     baseline_voltage = SimulationVoltageMetricsModel(
         **load_data(Path(PV_REPORTS_PROJECT_STORE_ALL_PATH) / "Reports" / "voltage_metrics.json")
     )
-    baseline_feeder_losses = FeederLossesMetricsModel(
+    baseline_feeder_losses = SimulationFeederLossesMetricsModel(
         **load_data( Path(PV_REPORTS_PROJECT_STORE_ALL_PATH) / "Reports" / "feeder_losses.json")
     )
 
@@ -68,11 +68,13 @@ def test_pv_reports_per_element_per_time_point(cleanup_project):
                 assert verify_voltage_metrics(baseline_voltage)
                 assert verify_feeder_losses(baseline_feeder_losses)
             verify_pv_reports(granularity)
+            verify_feeder_head_metrics()
         finally:
             os.remove(TEST_FILENAME)
             for artifact in ARTIFACTS:
                 if os.path.exists(artifact):
                     os.remove(artifact)
+
 
 def verify_pv_reports(granularity):
     results = PyDssResults(PV_REPORTS_PROJECT_PATH)
@@ -162,7 +164,7 @@ def verify_voltage_metrics(baseline_metrics):
 
 def verify_feeder_losses(baseline_metrics):
     filename = Path(PV_REPORTS_PROJECT_PATH) / "Reports" / "feeder_losses.json"
-    metrics = FeederLossesMetricsModel(**load_data(filename))
+    metrics = SimulationFeederLossesMetricsModel(**load_data(filename))
     return compare_feeder_losses(baseline_metrics, metrics)
 
 
@@ -181,3 +183,21 @@ def verify_skip_night():
     for i in range(90, 96):
         for val in df.iloc[i, :]:
             assert np.isnan(val)
+
+
+def verify_feeder_head_metrics():
+    results = PyDssResults(PV_REPORTS_PROJECT_PATH)
+    scenario = results.scenarios[0]
+    df = scenario.get_full_dataframe("FeederHead", "load_kvar")
+    assert len(df) == 96
+    assert np.isnan(df.values[0])
+    df = scenario.get_full_dataframe("FeederHead", "load_kw")
+    assert len(df) == 96
+    assert np.isnan(df.values[0])
+    df = scenario.get_full_dataframe("FeederHead", "loading")
+    assert len(df) == 96
+    assert np.isnan(df.values[0])
+    df = scenario.get_full_dataframe("FeederHead", "reverse_power_flow")
+    assert len(df) == 96
+    # TODO: figure out why this doesn't come back as NaN
+    assert df.values[0] == -9999

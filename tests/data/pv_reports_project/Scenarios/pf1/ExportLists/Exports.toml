@@ -1,0 +1,5 @@
+[[FeederHead]]
+property = "FeederHeadMetrics"
+sample_interval = 1
+publish = false
+store_values_type = "all"

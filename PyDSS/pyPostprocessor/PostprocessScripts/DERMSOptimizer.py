@@ -104,7 +104,6 @@ class DERMSOptimizer(AbstractPostprocess):
             "Loads",
             ["Name", "kV", "kW", "pf", "phase", "bus", "phases", "VoltagesMagAng", "Powers", "conn"]
         )
-        #print(pd.DataFrame(loadData))
         total_load = sum([L["kW"] for L in loadData])
         #Do we want profile implementation here or a dedicatied profile manager?
 
@@ -112,10 +111,8 @@ class DERMSOptimizer(AbstractPostprocess):
             "Generators",
             ["Name", "bus", "busFull", "phase", "kVA", "kW", "phases", "conn"]
         )
-        print("PVSystem ", len(self.PVSystem))
         self.PVSystem_1phase = self.convert_3phasePV_to_1phasePV(self.PVSystem)
         self.PVSystem_1phaseDF = pd.DataFrame(self.PVSystem_1phase)
-        print("PVSystem_1phase ", len(self.PVSystem_1phase))
         if self.Options["control_flag"]:
             PVlocation = []
             NPV = len(self.PVSystem_1phase)
@@ -337,7 +334,7 @@ class DERMSOptimizer(AbstractPostprocess):
             bus += ["1", "2", "3"]
         return [f"{bus[0]}.{i}" for i in bus[1:]]
 
-    def run(self, step, stepMax):
+    def run(self, step, stepMax, simulation=None):
         """Induces and removes a fault as the simulation runs as per user defined settings.
         """
         self.logger.info('Running DERMS optimization module')
