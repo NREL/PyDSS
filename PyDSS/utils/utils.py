@@ -29,7 +29,7 @@ class TomlEnumEncoder(toml.TomlEncoder):
 
     def dump_value(self, v):
         if isinstance(v, enum.Enum):
-            return v.value
+            return f"\"{v.value}\""
         return super().dump_value(v)
 
 
