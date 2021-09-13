@@ -22,6 +22,7 @@ plt.rcParams.update({'font.size': 14})
 
 
 # Post process thermal upgrades dss files to create network plots and also to create easier post processing files
+# TODO: make function to post process orig and new objects (instead of text parsing file)
 class postprocess_thermal_upgrades():
     def __init__(self, Settings, dss, logger):
         self.Settings = Settings
@@ -31,39 +32,40 @@ class postprocess_thermal_upgrades():
         self.orig_lines = self.Settings["orig_lines"]
         self.new_xfmrs = self.Settings["new_xfmrs"]
         self.orig_xfmrs = self.Settings["orig_xfmrs"]
+        self.orig_lc_parameters = self.Settings["orig_lc_parameters"]
+        # TODO - next two lines to be used when we move to object comparison instead of text parsing
+        # self.orig_line_parameters = self.Settings["orig_line_parameters"]
+        # self.orig_DT_parameters = self.Settings["orig_DT_parameters"]
         dss.Vsources.First()
         self.source = dss.CktElement.BusNames()[0].split(".")[0]
         if self.Settings["Create_plots"]:
             self.create_op_plots()
         self.get_orig_line_DT_params()
         self.process_thermal_upgrades()
-        # convert pen_level_upgrades to dataframe - to compute parallel lines and transformers
-        # self.processed_upgrades_df = pd.DataFrame.from_dict(self.pen_level_upgrades)
         try:
             self.get_all_parallel()  # save csv of parallel lines and transformers
         except:
             self.logger.info("Parallel line and transformer computation failed")
 
-    # TODO make function to post process orig and new objects
-
     def get_orig_line_DT_params(self):
         self.orig_line_parameters = {}
         self.orig_DT_parameters = {}
-        self.orig_lc_parameters = {}
-        f = open(os.path.join(self.Settings["Outputs"], "Original_linecodes_parameters.json"), "r")
+        # NEED TO CHECK WHY THIS IS COMMENTED OUT
+        # self.orig_lc_parameters = {}
+        # f = open(os.path.join(self.Settings["Outputs"], "Original_linecodes_parameters.json"), "r")
+        # data = json.load(f)
+        # for lc, params in data.items():
+        #     self.orig_lc_parameters[lc.lower()] = params
+        f = open(os.path.join(self.Settings["Outputs"], "Original_line_parameters.json"), "r")
         data = json.load(f)
-        for lc, params in data.items():
-            self.orig_lc_parameters[lc.lower()] = params
-        f = open(os.path.join(self.Settings["Outputs"],"Original_line_parameters.json"),"r")
-        data = json.load(f)
-        for line,params in data.items():
+        for line, params in data.items():
             try:
-                for ln_par,ln_par_val in params.items():
+                for ln_par, ln_par_val in params.items():
                     if ln_par.lower()=="linecode":
                         ln_ampacity = self.orig_lc_parameters[ln_par_val]["Ampacity"]
                 params["Ampacity"] = ln_ampacity
             except:
-                self.logger.info("No linecode for line: ",line)
+                self.logger.info("No linecode for line: {} ".format(line))
                 pass
             self.orig_line_parameters["line."+line.lower()] = params
         f = open(os.path.join(self.Settings["Outputs"], "Original_xfmr_parameters.json"), "r")
@@ -72,7 +74,6 @@ class postprocess_thermal_upgrades():
             self.orig_DT_parameters["transformer."+xfmr.lower()] = params
 
     def process_thermal_upgrades(self):
-        # for self.pen_level in range(self.init_pen, self.end_pen + 1, self.pen_step):
         self.pen_level_upgrades = {}
         with open(os.path.join(self.Settings["Outputs"], "thermal_upgrades.dss")) as datafile:
             for line in datafile:
@@ -114,7 +115,7 @@ class postprocess_thermal_upgrades():
                                 self.pen_level_upgrades[dt_name]["upgrade"][1].append(dt_params)
         self.pen_level_upgrades["feederhead_name"] = self.Settings["feederhead_name"]
         self.pen_level_upgrades["feederhead_basekV"] = self.Settings["feederhead_basekV"]
-        self.write_to_json(self.pen_level_upgrades, "Processed_upgrades")
+        self.write_to_json(self.pen_level_upgrades, "Processed_thermal_upgrades")
         if self.Settings["Create_plots"]:
             self.create_edge_node_dicts()
             self.plot_feeder()
@@ -124,11 +125,16 @@ class postprocess_thermal_upgrades():
             json.dump(dict, fp, indent=4)
 
     def get_line_upgrade_params(self, new_line):
+        lc_name = ''
+        line_name = [string for string in new_line if 'Line.' in string][0]
+        line_name = line_name.split(".")[1]
         for parameters in new_line:
             if parameters.lower().startswith("linecode"):
                 lc_name = parameters.split("=")[1]
             elif parameters.lower().startswith("geometry"):
                 lc_name = parameters.split("=")[1]
+            else:
+                lc_name = line_name  # i.e. if the line parameters are defined in line definition itself
         return lc_name
 
     def get_xfmr_upgrade_params(self, new_line):

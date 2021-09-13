@@ -10,10 +10,7 @@ from PyDSS.modes.QSTS import QSTS
 
 
 def GetSolver(SimulationSettings, dssInstance):
-    if SimulationSettings["Logging"]["Pre-configured logging"]:
-        LoggerTag = __name__
-    else:
-        LoggerTag = getLoggerTag(SimulationSettings)
+    LoggerTag = getLoggerTag(SimulationSettings)
     pyLogger = logging.getLogger(LoggerTag)
 
     pyLogger.info('Setting solver to ' + SimulationSettings['Project']['Simulation Type'] + ' mode.')

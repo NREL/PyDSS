@@ -3,10 +3,6 @@
 Publish = [ "Powers",]
 NoPublish = [ ]
 
-[PVSystems]
-Publish = []
-NoPublish = [ "Pmpp"]
-
 [Storages]
 Publish = ["Powers"]
 NoPublish = [ ]

@@ -1,7 +1,9 @@
+########
 Tutorial
 ########
 This page describes how to run simulations with PyDSS.
 
+************
 Installation
 ************
 There are two ways to install PyDSS.
@@ -10,15 +12,14 @@ There are two ways to install PyDSS.
 
 ::
 
-    pip install -i https://test.pypi.org/simple/ PyDSS==0.0.1
+    pip install dsspy
 
 2. Clone the repository.
 
 ::
 
    git clone https://github.com/NREL/PyDSS
-   cd PyDSS
-   pip install -e .
+   pip install -e PyDSS
 
 
 Confirm the installation with this command. It should print the available
@@ -26,6 +27,7 @@ commands::
 
     pydss --help
 
+********************
 Create a new project
 ********************
 PyDSS requires a specific directory layout.  Use this command to create an
@@ -55,8 +57,8 @@ Next, configure the project.
 - Customize data to be exported for each scenario in
   <project-name>/Scenarios/<scenario-name>/ExportLists
 
-Data Format
------------
+Exporting Data
+==============
 These configuration customizations exist for data exported using the new
 "ResultData" container:
 
@@ -80,7 +82,7 @@ These configuration customizations exist for data exported using the new
 - ``Export Event Log``:  Set to true to export the OpenDSS event log.
 
 Pre-filtering Export Data
--------------------------
+=========================
 There are several options to limit the amount of data exported. These can be
 set in ``Exports.toml`` on a per-property basis.
 
@@ -113,6 +115,7 @@ set in ``Exports.toml`` on a per-property basis.
   available.
 
 
+*************
 Run a project
 *************
 Run this command to run all scenarios in the project.  ::
@@ -120,15 +123,16 @@ Run this command to run all scenarios in the project.  ::
     pydss run <path-to-project>
 
 
+***************
 Analyze results
 ***************
-If the default export behavior is used then the raw output is written to CSV
+If ``Export Data Tables`` is set to true then the raw output is written to CSV
 files in <project-path>/<project-name>/Export/<scenario-name>. These can be
 converted to pandas DataFrames. It is up to the user to interpret what each
 column represents.  This can very by element.
 
-If the "ResultData" export method is configured then data can be loaded as
-shown by this example code::
+You can also access the results programmatically as shown in the following
+example code.
 
 Load element classes and properties
 ===================================
@@ -248,6 +252,7 @@ You may want to get data for all elements at once.
     df = scenario.get_full_dataframe("Lines", "Currents")
 
 
+**************************
 Performance Considerations
 **************************
 If your dataset is small enough to fit in your system's memory then you can

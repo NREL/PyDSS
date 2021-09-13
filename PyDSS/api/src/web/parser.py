@@ -38,8 +38,7 @@ master_dict = {
     "Helics" : ["Co-simulation Mode", "Federate name", "Time delta", "Core type", "Uninterruptible",
                 "Helics logging level", "Iterative Mode", 'Max co-iterations', "Error tolerance", 'Broker',
                 "Broker port"],
-    "Logging" : ["Logging Level", "Log to external file", "Display on screen", "Clear old log file",
-                 "Pre-configured logging"],
+    "Logging" : ["Logging Level", "Log to external file", "Display on screen", "Clear old log file"],
     "MonteCarlo" : ["Number of Monte Carlo scenarios"],
     "Plots" : ["Create dynamic plots", "Open plots in browser"],
 }

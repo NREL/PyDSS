@@ -3,6 +3,9 @@ from PyDSS.dssObjectBase import dssObjectBase
 class dssCircuit(dssObjectBase):
 
     VARIABLE_OUTPUTS_BY_LABEL = {}
+    VARIABLE_OUTPUTS_BY_LIST = (
+        "AllBusMagPu",
+    )
     VARIABLE_OUTPUTS_COMPLEX = (
         "LineLosses",
         "Losses",

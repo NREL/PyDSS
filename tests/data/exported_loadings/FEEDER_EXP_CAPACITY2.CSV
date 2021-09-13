@@ -1,0 +1,5 @@
+Name, Imax, %normal, %emergency, kW, kvar, NumCustomers, TotalCustomers, NumPhases, kVBase
+Line.ONE,    3.15934,     2.75,     0.53,   0.713657,    0.31743, 0, 0, 2, 0.12 
+Line.TWO,    1.33277,     1.16,     0.22,   0.291393,   0.153806, 0, 0, 2, 0.12 
+Transformer.ONE,   0.165213,     4.33,     3.17,    1.13038,   0.472106, 0, 0, 1, 7.2 
+Transformer.TWO,   0.477778,    12.51,     9.17,    3.39645,    1.00819, 0, 0, 1, 7.2 

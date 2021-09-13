@@ -12,10 +12,7 @@ from PyDSS.utils import utils
 class MonteCarloSim:
 
     def __init__(self, SimulationSettings, dssPaths, dssObjects, dssObjectsByClass):
-        if SimulationSettings["Logging"]["Pre-configured logging"]:
-            LoggerTag = __name__
-        else:
-            LoggerTag = getLoggerTag(SimulationSettings)
+        LoggerTag = getLoggerTag(SimulationSettings)
         self.pyLogger = logging.getLogger(LoggerTag)
         self.__dssPaths = dssPaths
         self.__dssObjects = dssObjects

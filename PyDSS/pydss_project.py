@@ -18,12 +18,13 @@ from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, CONTROLLER_TYPES, \
     filename_from_enum, VisualizationType, DEFAULT_MONTE_CARLO_SETTINGS_FILE,\
     SUBSCRIPTIONS_FILENAME, DEFAULT_SUBSCRIPTIONS_FILE, OPENDSS_MASTER_FILENAME
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
+from PyDSS.loggers import setup_logging
 from PyDSS.pyDSS import instance
 from PyDSS.pydss_fs_interface import PyDssDirectoryInterface, \
     PyDssArchiveFileInterfaceBase, PyDssTarFileInterface, \
     PyDssZipFileInterface, PROJECT_DIRECTORIES, \
     SCENARIOS, STORE_FILENAME
-from PyDSS.reports import REPORTS_DIR
+from PyDSS.reports.reports import REPORTS_DIR
 from PyDSS.registry import Registry
 from PyDSS.utils.dss_utils import read_pv_systems_from_dss_file
 from PyDSS.utils.utils import dump_data, load_data
@@ -32,7 +33,8 @@ from distutils.dir_util import copy_tree
 logger = logging.getLogger(__name__)
 
 
-DATA_FORMAT_VERSION = "1.0.1"
+DATA_FORMAT_VERSION = "1.0.2"
+RUN_SIMULATION_FILENAME = "simulation-run.toml"
 
 READ_CONTROLLER_FUNCTIONS = {
     ControllerType.PV_CONTROLLER.value: read_pv_systems_from_dss_file,
@@ -311,30 +313,51 @@ class PyDssProject:
             raise InvalidConfiguration("a valid opendss file needs to be passed")
 
         inst = instance()
-        self._simulation_config["Logging"]["Pre-configured logging"] = logging_configured
+        if not logging_configured:
+            if self._simulation_config["Logging"]["Display on screen"]:
+                console_level = logging.INFO
+            else:
+                console_level = logging.ERROR
+            if self._simulation_config["Logging"]["Log to external file"]:
+                filename = os.path.join(self._project_dir, "Logs", "pydss.log")
+            else:
+                filename = None
+            file_level = logging.INFO
+            setup_logging(
+                "PyDSS",
+                filename=filename,
+                console_level=console_level,
+                file_level=file_level,
+            )
         if dry_run:
             store_filename = os.path.join(tempfile.gettempdir(), STORE_FILENAME)
         else:
             store_filename = os.path.join(self._project_dir, STORE_FILENAME)
+            self._dump_simulation_settings()
 
         driver = None
-        if self._simulation_config["Exports"].get("Export Data In Memory", True):
+        if self._simulation_config["Exports"].get("Export Data In Memory", False):
             driver = "core"
-        with h5py.File(store_filename, mode="w", driver=driver) as hdf_store:
-            self._hdf_store = hdf_store
-            self._hdf_store.attrs["version"] = DATA_FORMAT_VERSION
-            for scenario in self._scenarios:
-                self._simulation_config["Project"]["Active Scenario"] = scenario.name
-                inst.run(self._simulation_config, self, scenario, dry_run=dry_run)
-                self._estimated_space[scenario.name] = inst.get_estimated_space()
+        if os.path.exists(store_filename):
+            os.remove(store_filename)
 
-        if not dry_run:
-            results = None
+        try:
+            # This ensures that all datasets are flushed and closed after each
+            # scenario. If there is an unexpected crash in a later scenario then
+            # the file will still be valid for completed scenarios.
+            for scenario in self._scenarios:
+                with h5py.File(store_filename, mode="a", driver=driver) as hdf_store:
+                    self._hdf_store = hdf_store
+                    self._hdf_store.attrs["version"] = DATA_FORMAT_VERSION
+                    self._simulation_config["Project"]["Active Scenario"] = scenario.name
+                    inst.run(self._simulation_config, self, scenario, dry_run=dry_run)
+                    self._estimated_space[scenario.name] = inst.get_estimated_space()
+
             export_tables = self._simulation_config["Exports"].get(
                 "Export Data Tables", False
             )
             generate_reports = self._simulation_config.get("Reports", False)
-            if export_tables or generate_reports:
+            if not dry_run and (export_tables or generate_reports):
                 # Hack. Have to import here. Need to re-organize to fix.
                 from PyDSS.pydss_results import PyDssResults
                 results = PyDssResults(self._project_dir)
@@ -345,13 +368,24 @@ class PyDssProject:
                 if generate_reports:
                     results.generate_reports()
 
-        if tar_project:
-            self._tar_project_files()
-        elif zip_project:
-            self._zip_project_files()
+        except Exception:
+            logger.exception("Simulation failed")
+            raise
 
-        if dry_run and os.path.exists(store_filename):
-            os.remove(store_filename)
+        finally:
+            logging.shutdown()
+            if tar_project:
+                self._tar_project_files()
+            elif zip_project:
+                self._zip_project_files()
+
+            if dry_run and os.path.exists(store_filename):
+                os.remove(store_filename)
+
+    def _dump_simulation_settings(self):
+        # Various settings may have been updated. Write the actual settings to a file.
+        filename = os.path.join( self._project_dir, RUN_SIMULATION_FILENAME)
+        dump_data(self._simulation_config, filename)
 
     def _serialize_scenarios(self):
         self._simulation_config["Project"]["Scenarios"] = []
@@ -394,7 +428,6 @@ class PyDssProject:
                     shutil.rmtree(name)
 
             path = os.path.join(self._project_dir, filename)
-            logger.info("Created project tar file: %s", path)
         finally:
             os.chdir(orig)
 
@@ -424,7 +457,6 @@ class PyDssProject:
                     shutil.rmtree(name)
 
             path = os.path.join(self._project_dir, filename)
-            logger.info("Created project zip file: %s", path)
         finally:
             os.chdir(orig)
 
@@ -763,8 +795,6 @@ class PyDssScenario:
             raise InvalidParameter(f"{config_file} does not exist")
 
         self.post_process_infos.append(post_process_info)
-        logger.info("Appended post-process script %s to %s",
-                    post_process_info["script"], self.name)
 
 def load_config(path):
     """Return a configuration from files.
@@ -803,18 +833,18 @@ def update_pydss_controllers(project_path, scenario, controller_type,
     """
     if controller_type not in READ_CONTROLLER_FUNCTIONS:
         supported_types = list(READ_CONTROLLER_FUNCTIONS.keys())
-        logger.error(f"Currently only {supported_types} types are supported")
+        print(f"Invalid controller_type={controller_type}, supported: {supported_types}")
         sys.exit(1)
 
     sim_file = os.path.join(project_path, SIMULATION_SETTINGS_FILENAME)
     config = load_data(sim_file)
     if not config["Project"].get("Use Controller Registry", False):
-        logger.error(f"'Use Controller Registry' must be set to true in {sim_file}")
+        print(f"'Use Controller Registry' must be set to true in {sim_file}")
         sys.exit(1)
 
     registry = Registry()
     if not registry.is_controller_registered(controller_type, controller):
-        logger.error(f"{controller_type} / {controller} is not registered")
+        print(f"{controller_type} / {controller} is not registered")
         sys.exit(1)
 
     data = {}
@@ -823,7 +853,7 @@ def update_pydss_controllers(project_path, scenario, controller_type,
         data = load_data(filename)
         for val in data.values():
             if not isinstance(val, list):
-                logger.error(f"{filename} has an invalid format")
+                print(f"{filename} has an invalid format")
                 sys.exit(1)
 
     element_names = READ_CONTROLLER_FUNCTIONS[controller_type](dss_file)
@@ -849,4 +879,4 @@ def update_pydss_controllers(project_path, scenario, controller_type,
             data[_controller] = final_list
 
     dump_data(data, filename)
-    logger.info(f"Added {num_added} names to {filename}")
+    print(f"Added {num_added} names to {filename}")

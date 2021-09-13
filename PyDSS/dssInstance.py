@@ -3,7 +3,10 @@ from PyDSS.dssElementFactory import create_dss_element
 from PyDSS.utils.utils import make_human_readable_size
 from PyDSS.pyContrReader import pyContrReader as pcr
 from PyDSS.pyPlotReader import pyPlotReader as ppr
-from PyDSS.exceptions import InvalidConfiguration
+from PyDSS.exceptions import (
+    InvalidConfiguration, PyDssConvergenceError, PyDssConvergenceErrorCountExceeded,
+    PyDssConvergenceMaxError, OpenDssModelError, OpenDssConvergenceErrorCountExceeded
+)
 from PyDSS.ProfileManager import ProfileInterface
 from PyDSS.pyPostprocessor import pyPostprocess
 import PyDSS.pyControllers as pyControllers
@@ -15,6 +18,8 @@ import PyDSS.pyPlots as pyPlots
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
+from PyDSS.utils.simulation_utils import SimulationFilteredTimeRange
+from PyDSS.utils.timing_utils import TimerStatsCollector, Timer
 
 import opendssdirect as dss
 import numpy as np
@@ -42,6 +47,13 @@ class OpenDSS:
         self._pyPlotObjects = {}
         self.BokehSessionID = None
         self._Options = params
+        self._convergenceErrors = 0
+        self._convergenceErrorsOpenDSS = 0
+        self._maxConvergenceErrorCount = None
+        self._maxConvergenceError = 0.0
+        self._controller_iteration_counts = {}
+        self._stats = TimerStatsCollector()
+        self._simulation_range = SimulationFilteredTimeRange.from_settings(params)
 
         rootPath = params['Project']['Project Path']
         self._ActiveProject = params['Project']['Active Project']
@@ -78,18 +90,8 @@ class OpenDSS:
         for key, path in self._dssPath.items():
             assert (os.path.exists(path)), '{} path: {} does not exist!'.format(key, path)
 
-        self._dssInstance.Basic.ClearAll()
-        self._dssInstance.utils.run_command('Log=NO')
-        run_command('Clear')
-        self._Logger.info('Loading OpenDSS model')
-        try:
-            orig_dir = os.getcwd()
-            reply = run_command('compile ' + self._dssPath['dssFilePath'])
-        finally:
-            os.chdir(orig_dir)
-        self._Logger.info('OpenDSS:  ' + reply)
-
-        assert ('error ' not in reply.lower()), 'Error compiling OpenDSS model.\n{}'.format(reply)
+        with Timer(self._stats, "CompileModel"):
+            self._CompileModel()
 
         #run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
         self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(params['Frequency']['Fundamental frequency']) + ' Hz')
@@ -110,7 +112,6 @@ class OpenDSS:
         self._CreateBusObjects()
         self._dssSolver.reSolve()
 
-
         if params['Profiles']["Use profile manager"]:
             #TODO: disable internal profiles
             self._Logger.info('Disabling internal yearly and duty-cycle profiles.')
@@ -123,7 +124,8 @@ class OpenDSS:
             )
 
         self.ResultContainer = ResultData(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
-                                            self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance)
+                                          self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance,
+                                          self._stats)
 
         if params['Project']['Use Controller Registry']:
             ControllerList = read_controller_settings_from_registry(self._dssPath['pyControllers'])
@@ -149,6 +151,22 @@ class OpenDSS:
                                            self._dssPath)
         self._Logger.info("Simulation initialization complete")
         return
+
+    def _CompileModel(self):
+        self._dssInstance.Basic.ClearAll()
+        self._dssInstance.utils.run_command('Log=NO')
+        run_command('Clear')
+        self._Logger.info('Loading OpenDSS model')
+        reply = ""
+        try:
+            orig_dir = os.getcwd()
+            reply = run_command('compile ' + self._dssPath['dssFilePath'])
+        finally:
+            os.chdir(orig_dir)
+
+        self._Logger.info('OpenDSS:  ' + reply)
+        if reply != "":
+            raise OpenDssModelError(f"Error compiling OpenDSS model: {reply}")
 
     def _ReadControllerDefinitions(self):
         controllers = None
@@ -256,7 +274,9 @@ class OpenDSS:
                         if error > self._Options['Project']['Error tolerance']:
                             errorTag = {
                                 "Report": "Convergence",
+                                "Scenario": self._Options["Project"]["Active Scenario"],
                                 "Time": self._dssSolver.GetTotalSeconds(),
+                                "DateTime": str(self._dssSolver.GetDateTime()),
                                 "Controller": controller.Name(),
                                 "Controlled element": controller.ControlledElement(),
                                 "Error": error,
@@ -315,11 +335,12 @@ class OpenDSS:
         return ObjectList
 
     def RunStep(self, step, updateObjects=None):
-        # updating parameters bebore simulation run
-        self._Logger.info(f'PyDSS datetime - {self._dssSolver.GetDateTime()}')
-        self._Logger.info(f'OpenDSS time [h] - {self._dssSolver.GetOpenDSSTime()}')
+        # updating parameters before simulation run
+        if self._Options["Logging"]["Log time step updates"]:
+            self._Logger.info(f'PyDSS datetime - {self._dssSolver.GetDateTime()}')
+            self._Logger.info(f'OpenDSS time [h] - {self._dssSolver.GetOpenDSSTime()}')
         if self._Options['Profiles']["Use profile manager"]:
-             self.profileStore.update()
+            self.profileStore.update()
 
         if self._Options['Helics']['Co-simulation Mode']:
             self._HI.updateHelicsSubscriptions()
@@ -330,19 +351,31 @@ class OpenDSS:
                     self._Modifier.Edit_Element(cl, name, params)
 
         # run simulation time step and get results
+        time_step_has_converged = True
         if not self._Options['Project']['Disable PyDSS controllers']:
-            for priority in range(CONTROLLER_PRIORITIES):
-                for i in range(self._Options['Project']['Max Control Iterations']):
-                    has_converged, error = self._UpdateControllers(priority, step, i, UpdateResults=False)
-                    self._Logger.debug('Control Loop {} convergence error: {}'.format(priority, error))
-                    if has_converged or i == self._Options['Project']['Max Control Iterations'] - 1:
-                        if not has_converged:
-                            self._Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
-                        break
-                    self._dssSolver.reSolve()
+            with Timer(self._stats, "UpdateControllers"):
+                for priority in range(CONTROLLER_PRIORITIES):
+                    priority_has_converged = False
+                    for i in range(self._Options['Project']['Max Control Iterations']):
+                        has_converged, error = self._UpdateControllers(priority, step, i, UpdateResults=False)
+                        self._Logger.debug('Control Loop {} convergence error: {}'.format(priority, error))
+                        if has_converged:
+                            priority_has_converged = True
+                            break
+                        self._dssSolver.reSolve()
+                    if i == 0:
+                        # Don't track 0.
+                        pass
+                    elif i not in self._controller_iteration_counts:
+                        self._controller_iteration_counts[i] = 1
+                    else:
+                        self._controller_iteration_counts[i] += 1
+                    if not priority_has_converged:
+                        time_step_has_converged = False
+                        self._Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
+                        self._HandleConvergenceErrorChecks(step, error)
+
             self._UpdatePlots()
-            if self._Options['Exports']['Log Results']:
-                self.ResultContainer.UpdateResults()
 
         if self._Options['Frequency']['Enable frequency sweep'] and \
                 self._Options['Project']['Simulation Type'].lower() != 'dynamic':
@@ -361,19 +394,28 @@ class OpenDSS:
                 self._dssSolver.setMode('Yearly')
 
         if self._Options['Helics']['Co-simulation Mode']:
-            if self._increment_flag:
-                self._dssSolver.IncStep()
-            else:
-                self._dssSolver.reSolve()
-        else:
-            self._dssSolver.IncStep()
-
-        if self._Options['Helics']['Co-simulation Mode']:
             self._HI.updateHelicsPublications()
             self._increment_flag, helics_time = self._HI.request_time_increment()
 
-        if self.ResultContainer:
-            return self.ResultContainer.CurrentResults
+        return time_step_has_converged
+
+    def _HandleConvergenceErrorChecks(self, step, error):
+        self._convergenceErrors += 1
+
+        if self._maxConvergenceError != 0.0 and error > self._maxConvergenceError:
+            self._Logger.error("Convergence error %s exceeded max value %s at step %s", error, self._maxConvergenceError, step)
+            raise PyDssConvergenceMaxError(f"Exceeded max convergence error {error}")
+
+        if self._maxConvergenceErrorCount is not None and self._convergenceErrors > self._maxConvergenceErrorCount:
+            self._Logger.error("Exceeded convergence error count threshold at step %s", step)
+            raise PyDssConvergenceErrorCountExceeded(f"{self._convergenceErrors} errors occurred")
+
+    def _HandleOpenDSSConvergenceErrorChecks(self, step):
+        self._convergenceErrorsOpenDSS += 1
+
+        if self._maxConvergenceErrorCount is not None and self._convergenceErrorsOpenDSS > self._maxConvergenceErrorCount:
+            self._Logger.error("Exceeded OpenDSS convergence error count threshold at step %s", step)
+            raise OpenDssConvergenceErrorCountExceeded(f"{self._convergenceErrorsOpenDSS} errors occurred")
 
     def DryRunSimulation(self, project, scenario):
         """Run one time point for getting estimated space."""
@@ -386,8 +428,9 @@ class OpenDSS:
 
         try:
             self.RunStep(0)
+            self.ResultContainer.UpdateResults()
         finally:
-            self.ResultContainer.FlushData()
+            self.ResultContainer.Close()
 
         return self.ResultContainer.max_num_bytes()
 
@@ -397,8 +440,15 @@ class OpenDSS:
     def RunSimulation(self, project, scenario, MC_scenario_number=None):
         startTime = time.time()
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
+        threshold = self._Options['Project']['Convergence error percent threshold']
+        if threshold > 0:
+            self._maxConvergenceErrorCount = round(threshold * .01 * Steps)
+        self._maxConvergenceError = self._Options['Project']['Max error tolerance']
+        dss.Solution.Convergence(self._Options['Project']['Error tolerance'])
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
         self._Logger.info('Simulation time step {}.'.format(Steps))
+        self._Logger.info("Set OpenDSS convergence to %s", dss.Solution.Convergence())
+        self._Logger.info('Max convergence error count {}.'.format(self._maxConvergenceErrorCount))
         self._Logger.info("initializing store")
         self.ResultContainer.InitializeDataStore(project.hdf_store, Steps, MC_scenario_number)
         postprocessors = [
@@ -420,30 +470,81 @@ class OpenDSS:
         try:
             step = 0
             while step < Steps:
-                self.RunStep(step)
-
+                pydss_has_converged = True
+                opendss_has_converged = True
+                within_range = self._simulation_range.is_within_range(self._dssSolver.GetDateTime())
+                if within_range:
+                    with Timer(self._stats, "RunStep"):
+                        pydss_has_converged = self.RunStep(step)
+                        opendss_has_converged = dss.Solution.Converged()
+                        if not opendss_has_converged:
+                            self._Logger.error("OpenDSS did not converge at step=%s pydss_converged=%s",
+                                               step, pydss_has_converged)
+                            self._HandleOpenDSSConvergenceErrorChecks(step)
+                has_converged = pydss_has_converged and opendss_has_converged
                 if step == 0 and self.ResultContainer is not None:
                     size = make_human_readable_size(self.ResultContainer.max_num_bytes())
                     self._Logger.info('Storage requirement estimation: %s, estimated based on first time step run.', size)
-
-                for postprocessor in postprocessors:
-                    step = postprocessor.run(step, Steps)
+                if postprocessors and within_range:
+                    step, has_converged = self._RunPostProcessors(step, Steps, postprocessors)
                 if self._increment_flag:
                     step += 1
+
+                # NOTE for review by Aadil:
+                # I moved the next two code blocks here because UpdateResults needs to happen
+                # after the postprocessors.
+                # the Helics update needs to happen after that.
+                if self._Options['Exports']['Log Results']:
+                    store_nan = (
+                        not within_range or
+                        (not has_converged and
+                         self._Options['Project']['Skip export on convergence error'])
+                    )
+                    self.ResultContainer.UpdateResults(store_nan=store_nan)
+
+                if self._Options['Helics']['Co-simulation Mode']:
+                    if self._increment_flag:
+                        self._dssSolver.IncStep()
+                    else:
+                        self._dssSolver.reSolve()
+                else:
+                    self._dssSolver.IncStep()
 
         finally:
             if self._Options and self._Options['Exports']['Log Results']:
                 # This is here to guarantee that DatasetBuffers aren't left
                 # with any data in memory.
-                self.ResultContainer.FlushData()
+                self.ResultContainer.Close()
+
+            for postprocessor in postprocessors:
+                postprocessor.finalize()
 
         if self._Options and self._Options['Exports']['Log Results']:
-            self.ResultContainer.ExportResults(
-                fileprefix="",
-            )
+            self.ResultContainer.ExportResults()
+
+        self._stats.log_stats(clear=True)
+        if self._controller_iteration_counts:
+            data = {
+                "Report": "ControllerIterationCounts",
+                "Scenario": self._Options["Project"]["Active Scenario"],
+                "Counts": self._controller_iteration_counts,
+            }
+            self._reportsLogger.warning(json.dumps(data))
 
         self._Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
         self._Logger.info('End of simulation')
+
+    def _RunPostProcessors(self, step, Steps, postprocessors):
+        for postprocessor in postprocessors:
+            orig_step = step
+            step, has_converged, error = postprocessor.run(step, Steps, simulation=self)
+            assert step <= orig_step, "step cannot increment in postprocessor"
+            if not has_converged:
+                name = postprocessor.__class__.__name__
+                self._Logger.warn("postprocessor %s reported a convergence error at step %s", name, step)
+                self._HandleConvergenceErrorChecks(step, error)
+
+        return step, has_converged
 
     def RunMCsimulation(self, project, scenario, samples):
         from PyDSS.Extensions.MonteCarlo import MonteCarloSim

@@ -38,7 +38,6 @@ extensions = [
     'sphinx.ext.inheritance_diagram', 'sphinx.ext.imgmath',
     'sphinx.ext.autosectionlabel', 'sphinx.ext.githubpages', 'sphinx.ext.todo',
     'sphinx.ext.napoleon', 'sphinx.ext.ifconfig'
-              
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -49,9 +48,6 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
-
-imgmath_latex = r"C:\Users\alatif\AppData\Local\Programs\MiKTeX 2.9\miktex\bin\x64\latex.exe"
-imgmath_dvipng = r'C:\Users\alatif\AppData\Local\Programs\MiKTeX 2.9\miktex\bin\x64\dvipng.exe' 
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -72,3 +68,5 @@ html_theme_options = {
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+autosectionlabel_prefix_document = True

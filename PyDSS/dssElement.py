@@ -138,7 +138,6 @@ class dssElement(dssObjectBase):
             return None
         return VarValue
 
-
     def SetActiveObject(self):
         self._dssInstance.Circuit.SetActiveElement(self._FullName)
         if self._dssInstance.CktElement.Name() != self._dssInstance.Element.Name():
@@ -146,6 +145,8 @@ class dssElement(dssObjectBase):
 
     def SetParameter(self, Param, Value):
         reply = self._dssInstance.utils.run_command(self._FullName + '.' + Param + ' = ' + str(Value))
+        if reply != "":
+            raise Exception(f"SetParameter failed: {reply}")
         return self.GetParameter(Param)
 
     def GetParameter(self, Param):
@@ -188,5 +189,3 @@ class dssElement(dssObjectBase):
     @property
     def Terminals(self):
         return list(range(1, self._NumTerminals + 1))
-
-

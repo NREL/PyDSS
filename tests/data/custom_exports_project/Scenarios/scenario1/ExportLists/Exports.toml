@@ -27,7 +27,6 @@ property = "Distance"
 sample_interval = 1
 publish = false
 store_values_type = "moving_average"
-moving_average_store_interval = 5
 window_size = 10
 
 [[Capacitors]]
@@ -86,30 +85,22 @@ sample_interval = 1
 publish = false
 store_values_type = "all"
 
-[[Lines]]
-property = "LoadingPercent"
-sample_interval = 1
-publish = false
-store_values_type = "all"
-limits = [ 0.0, 20.0,]
-limits_filter = "outside"
+#[[Lines]]
+#property = "LoadingPercent"
+#sample_interval = 1
+#publish = false
+#store_values_type = "all"
+#limits = [ 0.0, 20.0,]
+#limits_filter = "outside"
 
-[[Lines]]
-property = "LoadingPercent"
-sample_interval = 1
-publish = false
-store_values_type = "moving_average"
-window_size = 10
-limits = [ 0.0, 20.0]
-limits_filter = "outside"
-
-[[Transformers]]
-property = "Currents"
-sample_interval = 1
-publish = false
-store_values_type = "moving_average"
-moving_average_store_interval = 10
-window_size = 10
+#[[Lines]]
+#property = "LoadingPercent"
+#sample_interval = 1
+#publish = false
+#store_values_type = "moving_average"
+#window_size = 10
+#limits = [ 0.0, 20.0]
+#limits_filter = "outside"
 
 [[Transformers]]
 property = "NormalAmps"
@@ -117,22 +108,22 @@ sample_interval = 1
 publish = false
 store_values_type = "all"
 
-[[Transformers]]
-property = "LoadingPercent"
-sample_interval = 1
-publish = false
-store_values_type = "all"
-limits = [ 0.0, 0.2,]
-limits_filter = "outside"
-
-[[Transformers]]
-property = "LoadingPercent"
-sample_interval = 1
-publish = false
-store_values_type = "moving_average"
-window_size = 10
-limits = [ 0.0, 1.0]
-limits_filter = "outside"
+#[[Transformers]]
+#property = "LoadingPercent"
+#sample_interval = 1
+#publish = false
+#store_values_type = "all"
+#limits = [ 0.0, 0.2,]
+#limits_filter = "outside"
+#
+#[[Transformers]]
+#property = "LoadingPercent"
+#sample_interval = 1
+#publish = false
+#store_values_type = "moving_average"
+#window_size = 10
+#limits = [ 0.0, 1.0]
+#limits_filter = "outside"
 
 [[RegControls]]
 property = "TrackTapNumberChanges"
@@ -140,3 +131,12 @@ sample_interval = 1
 publish = false
 store_values_type = "change_count"
 
+[[Nodes]]
+property = "VoltageMetric"
+sample_interval = 1
+publish = false
+store_values_type = "all"
+limits = [1.02, 1.04]
+limits_filter = "outside"
+limits_b = [1.01, 1.05]
+limits_filter_b = "outside"

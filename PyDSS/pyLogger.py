@@ -34,6 +34,10 @@ def getReportLogger(LoggerTag, path, LoggerOptions):
     logger = logging.getLogger("Reports")
     logger.handlers = []
 
+    if LoggerOptions['Clear old log file']:
+        if os.path.exists(log_filename):
+            os.remove(log_filename)
+
     handler = logging.FileHandler(filename=log_filename)
     handler.setLevel(logging.INFO)
     formatter = logging.Formatter("%(message)s")

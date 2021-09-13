@@ -12,6 +12,9 @@ class Snapshot(solver_base):
         self._dssSolution.SolveNoControl()
         return self._dssSolution.Converged()
 
+    def SimulationSteps(self):
+        return 1, self._StartTime, self._EndTime
+
     def Solve(self):
         self._dssSolution.Solve()
         return self._dssSolution.Converged()

@@ -1,6 +1,11 @@
 """Stores the options available for element classes and properties."""
 
+import logging
+
 from PyDSS.element_fields import ELEMENT_FIELDS
+
+
+logger = logging.getLogger(__name__)
 
 
 class ElementOptions:
@@ -36,9 +41,9 @@ class ElementOptions:
 
         """
         if element_class not in self._element_classes:
-            raise Exception(f"class={element_class} is not stored")
+            logger.debug("class=%s is not stored", element_class)
+            return []
         if prop not in self._element_classes[element_class]:
-            raise Exception(
-                f"class={element_class} property={prop} is not stored"
-            )
+            logger.debug("class=%s property=%s is not stored", element_class, prop)
+            return []
         return self._element_classes[element_class][prop][:]

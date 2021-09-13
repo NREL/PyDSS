@@ -3,10 +3,12 @@ import os
 import shutil
 import tarfile
 import zipfile
+from pathlib import Path
 
+import opendssdirect as dss
 import pytest
 
-from PyDSS.common import PROJECT_TAR, PROJECT_ZIP
+from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, SIMULATION_SETTINGS_FILENAME
 from PyDSS.pydss_fs_interface import STORE_FILENAME
 from PyDSS.pydss_project import PyDssProject
 from PyDSS.utils.utils import dump_data
@@ -19,20 +21,46 @@ CUSTOM_EXPORTS_PROJECT_PATH = os.path.join(
 PV_REPORTS_PROJECT_PATH = os.path.join(
     "tests", "data", "pv_reports_project"
 )
+PV_REPORTS_PROJECT_STORE_ALL_PATH = os.path.join(
+    "tests", "data", "pv_reports_project_store_all"
+)
+
+AUTOMATED_UPGRADES_PROJECT_PATH = os.path.join(
+    "tests", "data", "automated_upgrades_project")
+
+EDLIFO_PROJECT_PATH = os.path.join(
+    "tests", "data", "edlifo-project")
+
 SCENARIO_NAME = "scenario1"
+
+
+class FakeElement:
+    """Fake that behaves like an OpenDSS element"""
+    def __init__(self, full_name, name):
+        self.FullName = full_name
+        self.Name = NameError
+        self._Class = dss.PVsystems
 
 
 @pytest.fixture
 def cleanup_project():
-    for project_path in (RUN_PROJECT_PATH, CUSTOM_EXPORTS_PROJECT_PATH):
-        export_path = os.path.join(project_path, "Exports", "scenario1")
+    projects = (
+        RUN_PROJECT_PATH,
+        CUSTOM_EXPORTS_PROJECT_PATH,
+        PV_REPORTS_PROJECT_PATH,
+        PV_REPORTS_PROJECT_STORE_ALL_PATH,
+        EDLIFO_PROJECT_PATH,
+    )
+    for project_path in projects:
+        export_path = os.path.join(project_path, "Exports")
+        reports_path = os.path.join(project_path, "Reports")
         logs_path = os.path.join(project_path, "Logs")
-        for path in (logs_path, export_path):
+        for path in (logs_path, export_path, reports_path):
             os.makedirs(path, exist_ok=True)
 
     yield
 
-    for project_path in (RUN_PROJECT_PATH, CUSTOM_EXPORTS_PROJECT_PATH):
+    for project_path in projects:
         orig = os.getcwd()
         try:
             os.chdir(project_path)
@@ -49,24 +77,21 @@ def cleanup_project():
         finally:
             os.chdir(orig)
 
-        for path in (logs_path, export_path):
+        export_path = os.path.join(project_path, "Exports")
+        reports_path = os.path.join(project_path, "Reports")
+        logs_path = os.path.join(project_path, "Logs")
+        for path in (logs_path, export_path, reports_path):
             if os.path.exists(path):
                 os.chmod(path, 0o777)
                 shutil.rmtree(path)
-                pass
             os.mkdir(path)
 
         store_filename = os.path.join(project_path, STORE_FILENAME)
         if os.path.exists(store_filename):
             os.remove(store_filename)
-            pass
 
-        scenario_config_file = os.path.join(
-            project_path, "Scenarios", "scenario1", "simulation-run.toml"
-        )
-        if os.path.exists(scenario_config_file):
-            os.remove(scenario_config_file)
-            pass
+        for path in Path(project_path).rglob("simulation-run.toml"):
+            os.remove(path)
 
 
 def run_project_with_custom_exports(path, scenario, sim_file, data):

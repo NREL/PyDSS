@@ -26,7 +26,6 @@ post_process_infos = []
 "Export Style" = "Single file"
 "Export Format" = "h5"
 "Export Compression" = false
-"Export Iteration Order" = "ValuesByPropertyAcrossElements"
 "Export Elements" = false
 "Export Data Tables" = true
 "Export Data In Memory" = true
@@ -56,7 +55,6 @@ Uninterruptible = true
 "Log to external file" = true
 "Display on screen" = true
 "Clear old log file" = false
-"Pre-configured logging" = true
 
 [MonteCarlo]
 "Number of Monte Carlo scenarios" = -1

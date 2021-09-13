@@ -1,11 +1,13 @@
 
 import enum
 import os
+from collections import namedtuple
 
 import PyDSS
 from PyDSS.utils.utils import load_data
 
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S.%f' # '%Y-%m-%d %H:%M:%S.%f', "%m/%d/%Y %H:%M:%S"
+TIME_FORMAT = '%H:%M:%S'
 
 PLOTS_FILENAME = "plots.toml"
 SIMULATION_SETTINGS_FILENAME = "simulation.toml"
@@ -16,6 +18,10 @@ PROJECT_TAR = "project.tar"
 PROJECT_ZIP = "project.zip"
 PROFILE_MAPPING = "mapping.toml"
 PROFILE_SRC_H5 = "profiles.h5"
+PV_LOAD_SHAPE_FILENAME = "pv_load_shape_data.h5"
+PV_PROFILES_FILENAME = "pv_profiles.json"
+NODE_NAMES_BY_TYPE_FILENAME = "node_names_by_type.json"
+INTEGER_NAN = -9999
 
 class VisualizationType(enum.Enum):
     FREQUENCY_PLOT = "FrequencySweep"
@@ -126,3 +132,39 @@ DEFAULT_MONTE_CARLO_SETTINGS_FILE = os.path.join(
     "Monte_Carlo",
     MONTE_CARLO_SETTINGS_FILENAME,
 )
+
+
+class DataConversion(enum.Enum):
+    NONE = "none"
+    ABS = "abs"
+    ABS_SUM = "abs_sum"
+    SUM = "sum"
+    SUM_ABS_REAL = "sum_abs_real"
+
+
+class DatasetPropertyType(enum.Enum):
+    PER_TIME_POINT = "per_time_point"  # data is stored at every time point
+    FILTERED = "filtered"  # data is stored after being filtered
+    METADATA = "metadata"  # metadata for another dataset
+    TIME_STEP = "time_step"  # data are time indices, tied to FILTERED
+    VALUE = "value"  # Only a single value is written for each element
+
+
+class LimitsFilter(enum.Enum):
+    INSIDE = "inside"
+    OUTSIDE = "outside"
+
+
+class StoreValuesType(enum.Enum):
+    ALL = "all"
+    CHANGE_COUNT = "change_count"
+    MAX = "max"
+    MIN = "min"
+    MOVING_AVERAGE = "moving_average"
+    MOVING_AVERAGE_MAX = "moving_average_max"
+    SUM = "sum"
+
+
+MinMax = namedtuple("MinMax", "min, max")
+
+

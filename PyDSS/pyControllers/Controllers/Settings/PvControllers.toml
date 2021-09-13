@@ -27,8 +27,8 @@ Priority = "Var"
 DampCoef = 0.8
 
 [volt-var]
-Control1 = "None"
-Control2 = "VVar"
+Control1 = "VVar"
+Control2 = "None"
 Control3 = "None"
 pf = 1
 pfMin = 0.8

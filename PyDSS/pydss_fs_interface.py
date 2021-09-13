@@ -5,6 +5,7 @@ import io
 import json
 import logging
 import os
+import sys
 import tarfile
 import zipfile
 
@@ -274,6 +275,8 @@ class PyDssDirectoryInterface(PyDssFileSystemInterface):
             scenario_name,
             "pv_profiles.json",
         )
+        if not os.path.exists(filename):
+            return {}
         return load_data(filename)
 
     @property
@@ -320,6 +323,10 @@ class PyDssArchiveFileInterfaceBase(PyDssFileSystemInterface):
             scenarios.sort()
         return scenarios
 
+    @staticmethod
+    def normalize_path(path):
+        return os.path.normpath(path).replace("\\", "/")
+
     @property
     def simulation_config(self):
         return self._simulation_config
@@ -360,7 +367,11 @@ class PyDssArchiveFileInterfaceBase(PyDssFileSystemInterface):
             scenario_name,
             "pv_profiles.json",
         )
-        return self._load_data(filename)
+        try:
+            return self._load_data(filename)
+        except KeyError:
+            # The file isn't stored in the archive.
+            return {}
 
 
 class PyDssTarFileInterface(PyDssArchiveFileInterfaceBase):
@@ -374,10 +385,12 @@ class PyDssTarFileInterface(PyDssArchiveFileInterfaceBase):
             self._tar.close()
 
     def read_file(self, path):
+        if sys.platform == "win32":
+            path = self.normalize_path(path)
         return self._tar.extractfile(path).read().decode("utf-8")
 
     def read_csv(self, path):
-        return pd.read_csv(self._tar.extractfile(path))
+        return pd.read_csv(self._tar.extractfile(os.path.normpath(path).replace("\\", "/")))
 
 
 class PyDssZipFileInterface(PyDssArchiveFileInterfaceBase):
@@ -390,6 +403,8 @@ class PyDssZipFileInterface(PyDssArchiveFileInterfaceBase):
         self._zip.close()
 
     def read_file(self, path):
+        if sys.platform == "win32":
+            path = self.normalize_path(path)
         data = self._zip.read(path)
         ext = os.path.splitext(path)[1]
         if ext not in (".h5", ".feather"):
@@ -397,4 +412,6 @@ class PyDssZipFileInterface(PyDssArchiveFileInterfaceBase):
         return data
 
     def read_csv(self, path):
+        if sys.platform == "win32":
+            path = self.normalize_path(path)
         return pd.read_csv(io.BytesIO(self._zip.read(path)))

@@ -1,66 +1,204 @@
 
 import logging
-import math
+import time
+from collections import deque
+from datetime import datetime, timedelta
 
-from PyDSS.exceptions import InvalidParameter
-from PyDSS.value_storage import ValueContainer, ValueByNumber
+import numpy as np
+import opendssdirect as dss
+import pandas as pd
+
+from PyDSS.common import DATE_FORMAT, TIME_FORMAT
 
 
 logger = logging.getLogger(__name__)
 
 
-def calculate_line_loading_percent(line, timestamp, step_number, options):
-    normal_amps = line.GetValue("NormalAmps", convert=True).value
-    currents = line.GetValue("Currents", convert=True).value
-    current = max([math.sqrt(x.real**2 + x.imag**2) for x in currents])
-    loading = current / normal_amps * 100
-    return ValueByNumber(line.Name, "LineLoading", loading)
+class CircularBufferHelper:
+    def __init__(self, window_size):
+        self._buf = deque(maxlen=window_size)
+        self._window_size = window_size
+
+    def __len__(self):
+        return len(self._buf)
+
+    def append(self, val):
+        self._buf.append(val)
+
+    def average(self):
+        if len(self._buf) < self._window_size:
+            return np.NaN
+        return sum(self._buf) / len(self._buf)
 
 
-def calculate_transformer_loading_percent(
-        transformer, timestamp, step_number, options
-    ):
-    normal_amps = transformer.GetValue("NormalAmps", convert=True).value
-    currents = transformer.GetValue("Currents", convert=True).value
-    current = max([math.sqrt(x.real**2 + x.imag**2) for x in currents])
-    loading = current / normal_amps * 100
-    return ValueByNumber(transformer.Name, "TransformerLoading", loading)
+class SimulationFilteredTimeRange:
+    """Provides filtering in a time range."""
+    def __init__(self, start, end):
+        self._start = start
+        self._end = end
+        default_start = time.strptime("00:00:00", TIME_FORMAT)
+        default_end = time.strptime("11:59:59", TIME_FORMAT)
+        self._no_filtering = start == default_start and end == default_end
+
+    @classmethod
+    def from_settings(cls, settings):
+        """Return SimulationFilteredTimeRange from the simulation settings.
+
+        Parameters
+        ----------
+        settings : dict
+            settings from project simulation.toml
+
+        Returns
+        -------
+        SimulationFilteredTimeRange
+
+        """
+        start = time.strptime(settings["Project"]["Simulation range"]["start"], TIME_FORMAT)
+        end = time.strptime(settings["Project"]["Simulation range"]["end"], TIME_FORMAT)
+        return cls(start=start, end=end)
+
+    def is_within_range(self, timestamp):
+        """Return True if the timestamp is within the filtered range.
+
+        Parameters
+        ----------
+        timestamp : datetime
+
+        Returns
+        -------
+        bool
+
+        """
+        if self._no_filtering:
+            return True
+
+        ts = time.struct_time((
+            self._start.tm_year, self._start.tm_mon, self._start.tm_mday, timestamp.hour,
+            timestamp.minute, timestamp.second, self._start.tm_wday, self._start.tm_yday,
+            self._start.tm_isdst
+        ))
+        return ts >= self._start and ts <=self._end
 
 
-def track_capacitor_state_changes(
-        capacitor, timestamp, step_number, options, last_value, count
-    ):
-    capacitor.dss.Capacitors.Name(capacitor.Name)
-    if capacitor.dss.CktElement.Name() != capacitor.dss.Element.Name():
-        raise InvalidParameter(
-            f"Object is not a circuit element {capacitor.Name}"
-        )
-    states = capacitor._dssInstance.Capacitors.States()
-    if states == -1:
-        raise Exception(
-            f"failed to get Capacitors.States() for {capacitor.Name}"
-        )
+def get_start_time(settings):
+    """Return the start time of the simulation.
 
-    cur_value = sum(states)
-    if last_value is None and cur_value != last_value:
-        logger.debug("%s changed state old=%s new=%s", capacitor.Name,
-                     last_value, cur_value)
-        count += 1
+    Parameters
+    ----------
+    settings : dict
+        settings from project simulation.toml
 
-    return cur_value, count
+    Returns
+    -------
+    datetime
+
+    """
+    return datetime.strptime(settings['Project']["Start time"], DATE_FORMAT)
 
 
-def track_reg_control_tap_number_changes(
-        reg_control, timestamp, step_number, options, last_value, count
-    ):
-    reg_control.dss.RegControls.Name(reg_control.Name)
-    if reg_control.dss.CktElement.Name() != reg_control.dss.Element.Name():
-        raise InvalidParameter(
-            f"Object is not a circuit element {reg_control.Name()}"
-        )
-    tap_number = reg_control.dss.RegControls.TapNumber()
-    if last_value is not None:
-        count += abs(tap_number - last_value)
-    logger.debug("%s changed count from %s to %s count=%s", reg_control.Name,
-                 last_value, tap_number, count)
-    return tap_number, count
+def get_simulation_resolution(settings):
+    """Return the simulation of the resolution
+
+    Parameters
+    ----------
+    settings : dict
+        settings from project simulation.toml
+
+    Returns
+    -------
+    datetime
+
+    """
+    return timedelta(seconds=settings["Project"]["Step resolution (sec)"])
+
+
+def create_time_range_from_settings(settings):
+    """Return the start time, step time, and end time from the settings.
+
+    Parameters
+    ----------
+    settings : dict
+        settings from project simulation.toml
+
+    Returns
+    -------
+    tuple
+        (start, end, step)
+
+    """
+    start_time = get_start_time(settings)
+    end_time = start_time + timedelta(minutes=settings["Project"]["Simulation duration (min)"])
+    step_time = get_simulation_resolution(settings)
+    return start_time, end_time, step_time
+
+
+def create_datetime_index_from_settings(settings):
+    """Return time indices created from the simulation settings.
+
+    Parameters
+    ----------
+    settings : dict
+        settings from project simulation.toml
+
+    Returns
+    -------
+    pd.DatetimeIndex
+
+    """
+    start_time, end_time, step_time = create_time_range_from_settings(settings)
+    data = []
+    cur_time = start_time
+    while cur_time < end_time:
+        data.append(cur_time)
+        cur_time += step_time
+
+    return pd.DatetimeIndex(data)
+
+
+def create_loadshape_pmult_dataframe(settings):
+    """Return a loadshape dataframe representing all available data.
+    This assumes that a loadshape has been selected in OpenDSS.
+
+    Parameters
+    ----------
+    settings : dict
+        settings from project simulation.toml
+
+    Returns
+    -------
+    pd.DatetimeIndex
+
+    """
+    start_time = datetime.strptime(settings['Project']['Loadshape start time'], DATE_FORMAT)
+    data = dss.LoadShape.PMult()
+    interval = timedelta(seconds=dss.LoadShape.SInterval())
+    npts = dss.LoadShape.Npts()
+
+    indices = []
+    cur_time = start_time
+    for _ in range(npts):
+        indices.append(cur_time)
+        cur_time += interval
+
+    return pd.DataFrame(data, index=pd.DatetimeIndex(indices))
+
+
+def create_loadshape_pmult_dataframe_for_simulation(settings):
+    """Return a loadshape pmult dataframe that only contains time points used
+    by the simulation.
+    This assumes that a loadshape has been selected in OpenDSS.
+
+    Parameters
+    ----------
+    settings : dict
+        settings from project simulation.toml
+
+    Returns
+    -------
+    pd.DataFrame
+
+    """
+    df = create_loadshape_pmult_dataframe(settings)
+    simulation_index = create_datetime_index_from_settings(settings)
+    return df.loc[simulation_index]
