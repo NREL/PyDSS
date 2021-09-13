@@ -24,8 +24,8 @@ github: html
 	rm -rf source/PyDSS
 	sphinx-apidoc -o source/PyDSS ../PyDSS
 	-git branch -D gh-pages
-	-git push dthom --delete gh-pages
+	-git push origin --delete gh-pages
 	ghp-import -n -b gh-pages -m "Update documentation" ./build/html
 	git checkout gh-pages
-	git push --set-upstream dthom gh-pages
+	git push --set-upstream origin gh-pages
 	git checkout ${BRANCH}
