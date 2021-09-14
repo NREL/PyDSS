@@ -104,7 +104,8 @@ class OpenDSS:
 
         active_scenario = self._GetActiveScenario()
         if active_scenario['snapshot_time_point_selection_config']['mode'] != SnapshotTimePointSelectionMode.NONE:
-            self._SetSimulationTimeBasedOnMode(active_scenario)
+            with Timer(self._stats, "SetSnapshotTimePoint"):
+                self._SetSnapshotTimePoint(active_scenario)
 
         self._dssCircuit = self._dssInstance.Circuit
         self._dssElement = self._dssInstance.Element
@@ -572,7 +573,7 @@ class OpenDSS:
                 return scenario
         raise InvalidConfiguration(f"Active Scenario {active_scenario} is not present")
 
-    def _SetSimulationTimeBasedOnMode(self, scenario):
+    def _SetSnapshotTimePoint(self, scenario):
         """Adjusts the time parameters based on the mode."""
         p_settings = self._Options["Project"]
         config = scenario["snapshot_time_point_selection_config"]
