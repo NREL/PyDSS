@@ -1,9 +1,14 @@
 from PyDSS.common import DATE_FORMAT
 from datetime import datetime
+import enum
 import os
 
+import toml
+
 from PyDSS.exceptions import InvalidConfiguration
+from PyDSS.common import SnapshotTimePointSelectionMode
 from PyDSS.reports.reports import ReportGranularity
+from PyDSS.utils.utils import TomlEnumEncoder
 
 
 settings_dict = {
@@ -122,6 +127,10 @@ def validate_settings(dss_args):
                             min(valid_settings[key]['Options']),
                             max(valid_settings[key]['Options'])
                         )
+            elif 'Enum' in valid_settings[key]:
+                options = [x.value for x in valid_settings[key]['Enum']]
+                assert ctype in options, "Invalid argument value '{}'. Possible values are {}".format(ctype, options)
+                params[key] = valid_settings[key]['Enum'](ctype)
 
     for category, params in settings_dict.items():
         for key, ctype in params.items():
@@ -162,8 +171,36 @@ def validate_settings(dss_args):
                                         dss_args['Project']['DSS File']))), \
         "Master DSS file '{}' does not exist.".format(dss_args['Project']['DSS File'])
 
+    for scenario in dss_args["Project"]["Scenarios"]:
+        auto_snap_settings = scenario.get("snapshot_time_point_selection_config")
+        if auto_snap_settings is None:
+            scenario["snapshot_time_point_selection_config"] = {
+                "mode": SnapshotTimePointSelectionMode.NONE,
+                "start_time": "2020-1-1 00:00:00.0",
+                "search_duration_min": 0.0,
+            }
+        else:
+            auto_snap_settings["mode"] = SnapshotTimePointSelectionMode(auto_snap_settings["mode"])
+
     if "Reports" in dss_args:
         if [x for x in dss_args["Reports"]["Types"] if x["enabled"]]:
             if not dss_args["Exports"]["Log Results"]:
                 raise InvalidConfiguration("Reports are only supported with Log Results")
     return
+
+
+def dump_settings(settings, filename):
+    """Dump the settings into a TOML file.
+
+    Parameters
+    ----------
+    settings : dict
+        A dict that may contain non-serializable instances like enums.
+
+    Returns
+    -------
+    dict
+
+    """
+    with open(filename, "w") as f_out:
+        toml.dump(settings, f_out, encoder=TomlEnumEncoder(settings.__class__))

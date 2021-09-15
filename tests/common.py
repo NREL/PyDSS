@@ -8,7 +8,7 @@ from pathlib import Path
 import opendssdirect as dss
 import pytest
 
-from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, SIMULATION_SETTINGS_FILENAME
+from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, RUN_SIMULATION_FILENAME
 from PyDSS.pydss_fs_interface import STORE_FILENAME
 from PyDSS.pydss_project import PyDssProject
 from PyDSS.utils.utils import dump_data
@@ -23,6 +23,9 @@ PV_REPORTS_PROJECT_PATH = os.path.join(
 )
 PV_REPORTS_PROJECT_STORE_ALL_PATH = os.path.join(
     "tests", "data", "pv_reports_project_store_all"
+)
+AUTO_SNAPSHOT_TIME_POINT_PROJECT_PATH = os.path.join(
+    "tests", "data", "auto_snapshot_time_point_project"
 )
 
 AUTOMATED_UPGRADES_PROJECT_PATH = os.path.join(
@@ -90,7 +93,7 @@ def cleanup_project():
         if os.path.exists(store_filename):
             os.remove(store_filename)
 
-        for path in Path(project_path).rglob("simulation-run.toml"):
+        for path in Path(project_path).rglob(RUN_SIMULATION_FILENAME):
             os.remove(path)
 
 

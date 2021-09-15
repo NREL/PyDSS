@@ -5,10 +5,11 @@ import toml
 import os
 import logging
 
+from PyDSS.common import RUN_SIMULATION_FILENAME
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS import dssInstance
 from PyDSS.utils.utils import dump_data, load_data
-from PyDSS.valiate_settings import validate_settings
+from PyDSS.valiate_settings import validate_settings, dump_settings
 
 __author__ = "Aadil Latif"
 __copyright__ = """
@@ -82,10 +83,10 @@ class instance(object):
 
     def run_scenario(self, project, scenario, simulation_config, dry_run=False):
         dss_args = self.update_scenario_settings(simulation_config)
-        self._dump_scenario_simulation_settings(dss_args)
 
         if dry_run:
             dss = dssInstance.OpenDSS(dss_args)
+            self._dump_scenario_simulation_settings(dss_args)
             #dss.init(dss_args)
             logger.info('Dry run scenario: %s', dss_args["Project"]["Active Scenario"])
             if dss_args["MonteCarlo"]["Number of Monte Carlo scenarios"] > 0:
@@ -95,6 +96,7 @@ class instance(object):
             return None, None
 
         dss = dssInstance.OpenDSS(dss_args)
+        self._dump_scenario_simulation_settings(dss_args)
         #dss.init(dss_args)
         logger.info('Running scenario: %s', dss_args["Project"]["Active Scenario"])
         if dss_args["MonteCarlo"]["Number of Monte Carlo scenarios"] > 0:
@@ -113,6 +115,6 @@ class instance(object):
             dss_args["Project"]["Active Project"],
             "Scenarios",
             dss_args["Project"]["Active Scenario"],
-            "simulation-run.toml"
+            RUN_SIMULATION_FILENAME,
         )
-        dump_data(dss_args, scenario_simulation_filename)
+        dump_settings(dss_args, scenario_simulation_filename)

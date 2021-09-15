@@ -3,6 +3,7 @@ import os
 import shutil
 import pytest
 
+from PyDSS.common import RUN_SIMULATION_FILENAME
 from PyDSS.pydss_project import PyDssProject
 from tests.common import AUTOMATED_UPGRADES_PROJECT_PATH
 from PyDSS.common import SIMULATION_SETTINGS_FILENAME
@@ -19,7 +20,7 @@ def clean_upgrades_results():
     # delete files in Exports directory, logs in 'Logs' directory
     export_path = os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, "Exports")
     logs_path = os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, "Logs")
-    simulation_run_file = os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, 'simulation-run.toml')
+    simulation_run_file = os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, RUN_SIMULATION_FILENAME)
     store_file = os.path.join(AUTOMATED_UPGRADES_PROJECT_PATH, 'store.h5')
 
     for path in (logs_path, export_path):

@@ -7,6 +7,7 @@ import sys
 import tarfile
 import tempfile
 import zipfile
+from pathlib import Path
 
 import h5py
 import pandas as pd
@@ -14,9 +15,10 @@ import pandas as pd
 import PyDSS
 from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, CONTROLLER_TYPES, \
     SIMULATION_SETTINGS_FILENAME, DEFAULT_SIMULATION_SETTINGS_FILE, \
-    ControllerType, ExportMode, MONTE_CARLO_SETTINGS_FILENAME,\
+    ControllerType, ExportMode, SnapshotTimePointSelectionMode, MONTE_CARLO_SETTINGS_FILENAME,\
     filename_from_enum, VisualizationType, DEFAULT_MONTE_CARLO_SETTINGS_FILE,\
-    SUBSCRIPTIONS_FILENAME, DEFAULT_SUBSCRIPTIONS_FILE, OPENDSS_MASTER_FILENAME
+    SUBSCRIPTIONS_FILENAME, DEFAULT_SUBSCRIPTIONS_FILE, OPENDSS_MASTER_FILENAME, \
+    RUN_SIMULATION_FILENAME
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 from PyDSS.loggers import setup_logging
 from PyDSS.pyDSS import instance
@@ -28,13 +30,13 @@ from PyDSS.reports.reports import REPORTS_DIR
 from PyDSS.registry import Registry
 from PyDSS.utils.dss_utils import read_pv_systems_from_dss_file
 from PyDSS.utils.utils import dump_data, load_data
+from PyDSS.valiate_settings import dump_settings
 
 from distutils.dir_util import copy_tree
 logger = logging.getLogger(__name__)
 
 
 DATA_FORMAT_VERSION = "1.0.2"
-RUN_SIMULATION_FILENAME = "simulation-run.toml"
 
 READ_CONTROLLER_FUNCTIONS = {
     ControllerType.PV_CONTROLLER.value: read_pv_systems_from_dss_file,
@@ -129,7 +131,7 @@ class PyDssProject:
         """
         filename = os.path.join(self._project_dir, STORE_FILENAME)
         if not os.path.exists(filename):
-            raise InvalidConfiguration(f"HDFStore does not exist")
+            raise InvalidConfiguration(f"HDFStore does not exist: {filename}")
 
         return filename
 
@@ -233,7 +235,7 @@ class PyDssProject:
             dest = os.path.join(self._project_dir, PROJECT_DIRECTORIES[0])
             copy_tree(opendss_project_folder, dest)
         self._serialize_scenarios()
-        dump_data(
+        dump_settings(
             self._simulation_config,
             os.path.join(self._project_dir, self._simulation_file),
         )
@@ -385,7 +387,7 @@ class PyDssProject:
     def _dump_simulation_settings(self):
         # Various settings may have been updated. Write the actual settings to a file.
         filename = os.path.join( self._project_dir, RUN_SIMULATION_FILENAME)
-        dump_data(self._simulation_config, filename)
+        dump_settings(self._simulation_config, filename)
 
     def _serialize_scenarios(self):
         self._simulation_config["Project"]["Scenarios"] = []
@@ -393,6 +395,7 @@ class PyDssProject:
             data = {
                 "name": scenario.name,
                 "post_process_infos": [],
+                "snapshot_time_point_selection_config": scenario.snapshot_time_point_selection_config,
             }
             for pp_info in scenario.post_process_infos:
                 data["post_process_infos"].append(
@@ -555,6 +558,54 @@ class PyDssProject:
         project = cls.load_project(path, options=options, simulation_file=simulation_file)
         return project.run(tar_project=tar_project, zip_project=zip_project, dry_run=dry_run)
 
+    def read_scenario_settings(self, scenario):
+        """Read the simulation settings file for the scenario.
+
+        Parameters
+        ----------
+        scenario : str
+            Scenario name
+
+        Returns
+        -------
+        dict
+
+        """
+        scenario_path = Path(self._project_dir) / "Scenarios" / scenario
+        if not scenario_path.exists():
+            raise InvalidParameter(f"scenario={scenario} is not present")
+
+        settings_file = scenario_path / RUN_SIMULATION_FILENAME
+        if not settings_file.exists():
+            raise InvalidConfiguration(f"{RUN_SIMULATION_FILENAME} does not exist. Was the scenario run?")
+
+        return load_data(settings_file)
+
+    def read_scenario_time_settings(self, scenario):
+        """Return the simulation time-related settings for the scenario.
+
+        Parameters
+        ----------
+        scenario : str
+            Scenario name
+
+        Returns
+        -------
+        dict
+
+        """
+        settings = self.read_scenario_settings(scenario)["Project"]
+        data = {}
+        for key in (
+            "Start time",
+            "Simulation duration (min)",
+            "Loadshape start time",
+            "Step resolution (sec)",
+        ):
+            data[key] = settings[key]
+        return data
+
+
 class PyDssScenario:
     """Represents a PyDSS Scenario."""
 
@@ -575,9 +626,11 @@ class PyDssScenario:
 
     def __init__(self, name, controller_types=None, controllers=None,
                  export_modes=None, exports=None, visualizations=None,
-                 post_process_infos=None, visualization_types=None):
+                 post_process_infos=None, visualization_types=None,
+                 snapshot_time_point_selection_config=None):
         self.name = name
         self.post_process_infos = []
+        self.snapshot_time_point_selection_config = None
 
         if visualization_types is None and visualizations is None:
             self.visualizations = {
@@ -633,6 +686,11 @@ class PyDssScenario:
         if post_process_infos is not None:
             for pp_info in post_process_infos:
                 self.add_post_process(pp_info)
+
+        if snapshot_time_point_selection_config is not None:
+            # Ensure the mode is valid.
+            SnapshotTimePointSelectionMode(snapshot_time_point_selection_config["mode"])
+            self.snapshot_time_point_selection_config = snapshot_time_point_selection_config
 
     @classmethod
     def deserialize(cls, fs_intf, name, post_process_infos):
@@ -795,6 +853,7 @@ class PyDssScenario:
             raise InvalidParameter(f"{config_file} does not exist")
 
         self.post_process_infos.append(post_process_info)
+
 
 def load_config(path):
     """Return a configuration from files.

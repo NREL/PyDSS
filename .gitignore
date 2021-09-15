@@ -8,8 +8,7 @@ __pycache__
 docs/build/*
 tags
 cscope.files
-tests/data/project/Exports/*
-tests/data/project/Scenarios/scenario1/simulation.toml
+tests/data/*/Exports/*
 .idea/*
 .vscode/*
 store.h5

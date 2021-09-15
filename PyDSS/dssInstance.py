@@ -15,11 +15,13 @@ from PyDSS import helics_interface as HI
 from PyDSS.ResultData import ResultData
 from PyDSS.dssCircuit import dssCircuit
 import PyDSS.pyPlots as pyPlots
+from PyDSS.common import SnapshotTimePointSelectionMode, DATE_FORMAT
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
 from PyDSS.utils.simulation_utils import SimulationFilteredTimeRange
 from PyDSS.utils.timing_utils import TimerStatsCollector, Timer
+from PyDSS.get_snapshot_timepoints import get_snapshot_timepoint
 
 import opendssdirect as dss
 import numpy as np
@@ -99,6 +101,11 @@ class OpenDSS:
         #run_command('Set %SeriesRL={}'.format(params['Frequency']['Percentage load in series']))
         if params['Frequency']['Neglect shunt admittance']:
             run_command('Set NeglectLoadY=Yes')
+
+        active_scenario = self._GetActiveScenario()
+        if active_scenario['snapshot_time_point_selection_config']['mode'] != SnapshotTimePointSelectionMode.NONE:
+            with Timer(self._stats, "SetSnapshotTimePoint"):
+                self._SetSnapshotTimePoint(active_scenario)
 
         self._dssCircuit = self._dssInstance.Circuit
         self._dssElement = self._dssInstance.Element
@@ -558,6 +565,47 @@ class OpenDSS:
         for Plot in self._pyPlotObjects:
             self._pyPlotObjects[Plot].UpdatePlot()
         return
+
+    def _GetActiveScenario(self):
+        active_scenario = self._Options["Project"]["Active Scenario"]
+        for scenario in self._Options["Project"]["Scenarios"]:
+            if scenario["name"] == active_scenario:
+                return scenario
+        raise InvalidConfiguration(f"Active Scenario {active_scenario} is not present")
+
+    def _SetSnapshotTimePoint(self, scenario):
+        """Adjusts the time parameters based on the mode."""
+        p_settings = self._Options["Project"]
+        config = scenario["snapshot_time_point_selection_config"]
+        mode = config["mode"]
+        assert mode != SnapshotTimePointSelectionMode.NONE, mode
+
+        if mode != SnapshotTimePointSelectionMode.NONE:
+            if p_settings["Simulation Type"] != "QSTS":
+                raise InvalidConfiguration(f"{mode} is only supported with QSTS simulations")
+
+            # These settings have to be temporarily overridden because of the underlying
+            # implementation to create a load shape dataframes..
+            orig_start = p_settings["Start time"]
+            orig_duration = p_settings["Simulation duration (min)"]
+            if orig_duration != p_settings["Step resolution (sec)"] / 60:
+                raise InvalidConfiguration("Simulation duration must be the same as resolution")
+            try:
+                p_settings["Start time"] = config["start_time"]
+                p_settings["Simulation duration (min)"] = config["search_duration_min"]
+                new_start = get_snapshot_timepoint(self._Options, mode).strftime(DATE_FORMAT)
+                p_settings["Start time"] = new_start
+                self._Logger.info("Changed simulation start time from %s to %s",
+                    orig_start,
+                    new_start,
+                )
+            except Exception:
+                p_settings["Start time"] = orig_start
+                raise
+            finally:
+                p_settings["Simulation duration (min)"] = orig_duration
+        else:
+            assert False, f"unsupported mode {mode}"
 
     # def __del__(self):
     #     self._Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')

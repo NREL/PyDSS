@@ -11,6 +11,7 @@ TIME_FORMAT = '%H:%M:%S'
 
 PLOTS_FILENAME = "plots.toml"
 SIMULATION_SETTINGS_FILENAME = "simulation.toml"
+RUN_SIMULATION_FILENAME = "simulation-run.toml"
 MONTE_CARLO_SETTINGS_FILENAME = "MonteCarloSettings.toml"
 OPENDSS_MASTER_FILENAME = "Master.dss"
 SUBSCRIPTIONS_FILENAME = "Subscriptions.toml"
@@ -163,6 +164,16 @@ class StoreValuesType(enum.Enum):
     MOVING_AVERAGE = "moving_average"
     MOVING_AVERAGE_MAX = "moving_average_max"
     SUM = "sum"
+
+
+class SnapshotTimePointSelectionMode(enum.Enum):
+    """Defines methods by which snapshot time points can be calculated."""
+
+    MAX_PV_LOAD_RATIO = "max_pv_load_ratio"
+    MAX_LOAD = "max_load"
+    DAYTIME_MIN_LOAD = "daytime_min_load"
+    MAX_PV_MINUS_LOAD = "pv_minus_load"
+    NONE = "none"
 
 
 MinMax = namedtuple("MinMax", "min, max")
