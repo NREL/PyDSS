@@ -1,6 +1,7 @@
 """Logic to determine snapshot time point by mode"""
 
 import logging
+import os
 from pathlib import Path
 import pandas as pd
 import opendssdirect as dss
@@ -32,9 +33,12 @@ def get_snapshot_timepoint(options, mode: SnapshotTimePointSelectionMode):
     else:
         assert False, f"{mode} is not supported"
 
-    filename = Path(options['Project']['Project Path']) / options["Project"]["Active Project"] / "Exports" / "snapshot_time_points.json"
-    if filename.exists():
-        timepoints = pd.read_json(filename)
+    temp_filename = Path(options['Project']['Project Path']) / options["Project"]["Active Project"] / "Exports" / ".snapshot_time_points.json"
+    final_filename = Path(options['Project']['Project Path']) / options["Project"]["Active Project"] / "Exports" / "snapshot_time_points.json"
+    if temp_filename.exists():
+        timepoints = pd.read_json(temp_filename)
+        if options["Project"]["Active Scenario"] == options["Project"]["Scenarios"][-1]["name"]:
+            os.rename(temp_filename, final_filename)
         return pd.to_datetime(timepoints[column][0]).to_pydatetime()
     pv_generation_hours = {'start_time': '8:00', 'end_time': '17:00'}
     aggregate_profiles = pd.DataFrame(columns=['Load', 'PV'])
@@ -46,9 +50,12 @@ def get_snapshot_timepoint(options, mode: SnapshotTimePointSelectionMode):
         dss.LoadShape.Name(profile_name)
         if profile_name not in pv_shapes.keys():
             pv_shapes[profile_name] = create_loadshape_pmult_dataframe_for_simulation(options)
-        aggregate_profiles['PV'] = aggregate_profiles['PV'].replace(np.nan, 0) + (pv_shapes[profile_name] * pmpp)[0]
+        if len(aggregate_profiles) == 0:
+            aggregate_profiles['PV'] = (pv_shapes[profile_name] * pmpp)[0]
+            aggregate_profiles = aggregate_profiles.replace(np.nan, 0)
+        else:
+            aggregate_profiles['PV'] = aggregate_profiles['PV'] + (pv_shapes[profile_name] * pmpp)[0]
     del pv_shapes
-
     loads = dss.Loads.AllNames()
     if not loads:
         logger.info("No Loads are present")
@@ -60,7 +67,10 @@ def get_snapshot_timepoint(options, mode: SnapshotTimePointSelectionMode):
         dss.LoadShape.Name(profile_name)
         if profile_name not in load_shapes.keys():
             load_shapes[profile_name] = create_loadshape_pmult_dataframe_for_simulation(options)
-        aggregate_profiles['Load'] = aggregate_profiles['Load'].replace(np.nan, 0) + (load_shapes[profile_name] * kw)[0]
+        if len(aggregate_profiles) == 0:
+            aggregate_profiles['Load'] = (load_shapes[profile_name] * kw)[0]
+        else:
+            aggregate_profiles['Load'] = aggregate_profiles['Load'] + (load_shapes[profile_name] * kw)[0]
     del load_shapes
     if pv_systems:
         aggregate_profiles['PV to Load Ratio'] = aggregate_profiles['PV'] / aggregate_profiles['Load']
@@ -79,5 +89,7 @@ def get_snapshot_timepoint(options, mode: SnapshotTimePointSelectionMode):
     timepoints.loc['Min Daytime Load'] = aggregate_profiles.between_time(pv_generation_hours['start_time'],
                                                                          pv_generation_hours['end_time'])['Load'].idxmin()
     logger.info("Time points: %s", {k: str(v) for k, v in timepoints.to_records()})
-    dump_data(timepoints.astype(str).to_dict(orient='index'), filename, indent=2)
+    dump_data(timepoints.astype(str).to_dict(orient='index'), temp_filename, indent=2)
+    if options["Project"]["Active Scenario"] == options["Project"]["Scenarios"][-1]["name"]:
+        os.rename(temp_filename, final_filename)
     return timepoints.loc[column][0].to_pydatetime()
