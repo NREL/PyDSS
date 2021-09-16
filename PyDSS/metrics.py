@@ -658,7 +658,7 @@ class TrackRegControlTapNumberChanges(ChangeCountMetricBase):
         tap_number = dss.RegControls.TapNumber()
         last_value = self._last_values[reg_control.FullName]
         if last_value is not None:
-            self._change_counts[reg_control.FullName] += abs(tap_number - last_value)
+            self._change_counts[reg_control.FullName] += 1
             logger.debug(
                 "%s changed count from %s to %s count=%s",
                 reg_control.Name,
