@@ -632,7 +632,7 @@ class TrackCapacitorChangeCounts(ChangeCountMetricBase):
 
         cur_value = sum(states)
         last_value = self._last_values[capacitor.FullName]
-        if last_value is None and cur_value != last_value:
+        if last_value is not None and cur_value != last_value:
             logger.debug(
                 "%s changed state old=%s new=%s", capacitor.Name, last_value, cur_value
             )
