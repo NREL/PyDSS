@@ -134,7 +134,7 @@ def run_example(example_name, scenarios):
         sim_file = S["TOML"]
         sup_file = S["file"]
 
-        logger(f'Running scenario {example_name} for example {sim_file}')
+        logger.info('Running scenario %s for example %s', example_name, sim_file)
         if sup_file != None:
             sup_file_path = os.path.join(base_projects_path, sup_file)
             assert os.path.exists(sup_file_path)
