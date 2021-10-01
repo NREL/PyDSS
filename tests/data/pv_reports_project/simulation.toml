@@ -132,6 +132,7 @@ transformer_loading_percent_moving_average_threshold = 60
 line_window_size_hours = 1
 line_loading_percent_threshold = 107
 line_loading_percent_moving_average_threshold = 100
+store_per_element_data = true
 
 [[Reports.Types]]
 name = "Voltage Metrics"
@@ -139,3 +140,4 @@ enabled = true
 window_size_minutes = 60
 range_a_limits = [1.025, 1.05]
 range_b_limits = [1.020, 1.054]
+store_per_element_data = true
