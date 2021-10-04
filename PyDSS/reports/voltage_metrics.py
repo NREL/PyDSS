@@ -66,6 +66,7 @@ class VoltageMetrics(ReportBase):
         "range_b_limits": [0.90, 1.0583],
         "window_size_minutes": 10,
         "store_all_time_points": False,
+        "store_per_element_data": True,
     }
     FILENAME = "voltage_metrics.json"
     NAME = "Voltage Metrics"
@@ -87,6 +88,7 @@ class VoltageMetrics(ReportBase):
         inputs = self.get_inputs_from_defaults(self._simulation_config, self.NAME)
         self._window_size = timedelta(minutes=inputs["window_size_minutes"]) // self._resolution
         self._moving_window_minutes = inputs["window_size_minutes"]
+        self._files_to_delete = []
 
     def generate(self, output_dir):
         inputs = VoltageMetrics.get_inputs_from_defaults(self._simulation_config, self.NAME)
@@ -102,6 +104,8 @@ class VoltageMetrics(ReportBase):
             f_out.write("\n")
 
         logger.info("Generated %s", filename)
+        for filename in self._files_to_delete:
+            os.remove(filename)
 
     def _generate_from_in_memory_metrics(self):
         scenarios = {}
@@ -114,6 +118,8 @@ class VoltageMetrics(ReportBase):
                 self.FILENAME,
             )
             scenarios[scenario.name] = VoltageMetricsByBusTypeModel(**load_data(filename))
+            # We won't need this file after we write the consolidated file.
+            self._files_to_delete.append(filename)
 
         return scenarios
 
@@ -266,6 +272,10 @@ class VoltageMetrics(ReportBase):
 
     @staticmethod
     def set_required_project_settings(simulation_config):
-        if not simulation_config["Exports"]["Export Node Names By Type"]:
-            simulation_config["Exports"]["Export Node Names By Type"] = True
+        inputs = VoltageMetrics.get_inputs_from_defaults(
+            simulation_config, VoltageMetrics.NAME
+        )
+        exports = simulation_config["Exports"]
+        if inputs["store_all_time_points"] and not exports["Export Node Names By Type"]:
+            exports["Export Node Names By Type"] = True
             logger.info("Enabled Export Node Names By Type")

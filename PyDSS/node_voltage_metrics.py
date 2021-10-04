@@ -309,7 +309,7 @@ class NodeVoltageMetricsByType:
             total_simulation_duration=num_time_points * resolution,
         )
 
-    def generate(self):
+    def generate(self, store_per_element_data):
         if self._num_time_points == 0:
             logger.error("Cannot generate report with no time points")
             return
@@ -366,6 +366,14 @@ class NodeVoltageMetricsByType:
                 moving_window_minutes,
             )
         )
+
+        if not store_per_element_data:
+            metrics.metric_1.time_points.clear()
+            metrics.metric_2.clear()
+            metrics.metric_3.time_points.clear()
+            metrics.metric_4.percent_node_ansi_a_violations.clear()
+            metrics.metric_5.min_voltages.clear()
+            metrics.metric_5.max_voltages.clear()
 
         return metrics
 
@@ -442,7 +450,7 @@ class NodeVoltageMetrics:
 
     FILENAME = "voltage_metrics.json"
 
-    def __init__(self, prop, start_time, resolution, window_size):
+    def __init__(self, prop, start_time, resolution, window_size, store_per_element_data):
         self._start_time = start_time
         self._resolution = resolution
         self._window_size = window_size
@@ -451,6 +459,7 @@ class NodeVoltageMetrics:
             "primary": NodeVoltageMetricsByType(prop, start_time, resolution, window_size),
             "secondary": NodeVoltageMetricsByType(prop, start_time, resolution, window_size),
         }
+        self._store_per_element_data = store_per_element_data
 
     def generate_report(self, path):
         """Create a summary file containing all metrics.
@@ -470,8 +479,8 @@ class NodeVoltageMetrics:
             return
 
         metrics = VoltageMetricsByBusTypeModel(
-            primaries=self._metrics["primary"].generate(),
-            secondaries=self._metrics["secondary"].generate(),
+            primaries=self._metrics["primary"].generate(self._store_per_element_data),
+            secondaries=self._metrics["secondary"].generate(self._store_per_element_data),
         )
 
         filename = Path(path) / self.FILENAME

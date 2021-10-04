@@ -183,6 +183,7 @@ class ThermalMetrics:
         line_loading_percent_moving_average_threshold,
         transformer_loading_percent_threshold,
         transformer_loading_percent_moving_average_threshold,
+        store_per_element_data,
     ):
         self._prop = prop
         self._start_time = start_time
@@ -208,6 +209,7 @@ class ThermalMetrics:
         self._num_time_points = 0
         self._line_names = None
         self._transformer_names = None
+        self._store_per_element_data = store_per_element_data
 
     def generate_report(self, path):
         """Create a summary file containing all metrics.
@@ -262,6 +264,12 @@ class ThermalMetrics:
             instantaneous_threshold=self._transformer_loading_percent_threshold,
             moving_average_threshold=self._transformer_loading_percent_mavg_threshold,
         )
+
+        if not self._store_per_element_data:
+            line_metric.max_instantaneous_loadings_pct.clear()
+            line_metric.max_moving_average_loadings_pct.clear()
+            transformer_metric.max_instantaneous_loadings_pct.clear()
+            transformer_metric.max_moving_average_loadings_pct.clear()
 
         summary = ThermalMetricsSummaryModel(
             line_loadings=line_metric,

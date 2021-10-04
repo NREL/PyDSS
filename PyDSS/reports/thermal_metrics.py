@@ -35,6 +35,7 @@ class ThermalMetrics(ReportBase):
         "transformer_window_size_hours": 2,
         "transformer_loading_percent_moving_average_threshold": 120,
         "store_all_time_points": False,
+        "store_per_element_data": True,
     }
     FILENAME = "thermal_metrics.json"
     NAME = "Thermal Metrics"
@@ -45,6 +46,7 @@ class ThermalMetrics(ReportBase):
         self._num_lines = 0
         self._num_transformers = 0
         self._resolution = self._get_simulation_resolution()
+        self._files_to_delete = []
 
     def generate(self, output_dir):
         inputs = ThermalMetrics.get_inputs_from_defaults(self._simulation_config, self.NAME)
@@ -60,6 +62,8 @@ class ThermalMetrics(ReportBase):
             f_out.write("\n")
 
         logger.info("Generated %s", filename)
+        for filename in self._files_to_delete:
+            os.remove(filename)
 
     def _generate_from_in_memory_metrics(self):
         scenarios = {}
@@ -72,6 +76,8 @@ class ThermalMetrics(ReportBase):
                 self.FILENAME,
             )
             scenarios[scenario.name] = ThermalMetricsSummaryModel(**load_data(filename))
+            # We won't need this file after we write the consolidated file.
+            self._files_to_delete.append(filename)
 
         return scenarios
 

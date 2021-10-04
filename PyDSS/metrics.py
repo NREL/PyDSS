@@ -548,7 +548,7 @@ class NodeVoltageMetric(MetricBase):
             timedelta(minutes=inputs["window_size_minutes"]) / sim_resolution
         )
         self._voltage_metrics = NodeVoltageMetrics(
-            prop, start_time, sim_resolution, window_size
+            prop, start_time, sim_resolution, window_size, inputs["store_per_element_data"]
         )
         self._primary_node_names = []
         self._primary_indices = []
@@ -955,6 +955,7 @@ class OverloadsMetricInMemory(OpenDssExportMetric):
             line_loading_percent_moving_average_threshold=inputs["line_loading_percent_moving_average_threshold"],
             transformer_loading_percent_threshold=inputs["transformer_loading_percent_threshold"],
             transformer_loading_percent_moving_average_threshold=inputs["transformer_loading_percent_moving_average_threshold"],
+            store_per_element_data=inputs["store_per_element_data"],
         )
 
     def _append_values(self, time_step, store_nan=False):
