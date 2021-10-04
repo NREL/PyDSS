@@ -82,11 +82,11 @@ enabled = true
 
 [[Reports.Types]]
 name = "PV Clipping"
-enabled = true
+enabled = false
 
 [[Reports.Types]]
 name = "PV Curtailment"
-enabled = true
+enabled = false
 
 [[Reports.Types]]
 name = "RegControl Tap Number Change Counts"
