@@ -19,6 +19,7 @@ settings_dict = {
             'Export Format': {'type': str, 'Options': ["csv", "h5"]},
             'Export Compression': {'type': bool, 'Options': [True, False]},
             'Export Elements': {'type': bool, 'Options': [True, False]},
+            'Export Element Types': {'type': list},
             'Export Event Log': {'type': bool, 'Options': [True, False]},
             'Export Data Tables': {'type': bool, 'Options': [True, False]},
             'Export Data In Memory': {'type': bool, 'Options': [True, False]},

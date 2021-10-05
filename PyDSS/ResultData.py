@@ -245,7 +245,7 @@ class ResultData:
         if self._options["Exports"]["Export Event Log"]:
             self._export_event_log(metadata)
         if self._options["Exports"]["Export Elements"]:
-            self._export_elements(metadata)
+            self._export_elements(metadata, set(self._options["Exports"]["Export Element Types"]))
             self._export_feeder_head_info(metadata)
         if self._options["Exports"]["Export PV Profiles"]:
             self._export_pv_profiles()
@@ -351,29 +351,31 @@ class ResultData:
         metadata["feeder_head_info_files"].append(relpath)
         self._logger.info("Exported %s information to %s.", filename, filepath)
 
-    def _export_elements(self, metadata):
-        exports = (
+    def _export_elements(self, metadata, element_types):
+        exports = [
             # TODO: opendssdirect does not provide a function to export Bus information.
-            ("CapacitorsInfo", dss.Capacitors.Count, dss.utils.capacitors_to_dataframe),
-            ("FusesInfo", dss.Fuses.Count, dss.utils.fuses_to_dataframe),
-            ("GeneratorsInfo", dss.Generators.Count, dss.utils.generators_to_dataframe),
-            ("IsourceInfo", dss.Isource.Count, dss.utils.isource_to_dataframe),
-            ("LinesInfo", dss.Lines.Count, dss.utils.lines_to_dataframe),
-            ("LoadsInfo", dss.Loads.Count, dss.utils.loads_to_dataframe),
-            ("MetersInfo", dss.Meters.Count, dss.utils.meters_to_dataframe),
-            ("MonitorsInfo", dss.Monitors.Count, dss.utils.monitors_to_dataframe),
-            ("ReclosersInfo", dss.Reclosers.Count, dss.utils.reclosers_to_dataframe),
-            ("RegControlsInfo", dss.RegControls.Count, dss.utils.regcontrols_to_dataframe),
-            ("RelaysInfo", dss.Relays.Count, dss.utils.relays_to_dataframe),
-            ("SensorsInfo", dss.Sensors.Count, dss.utils.sensors_to_dataframe),
-            ("TransformersInfo", dss.Transformers.Count, dss.utils.transformers_to_dataframe),
-            ("VsourcesInfo", dss.Vsources.Count, dss.utils.vsources_to_dataframe),
-            ("XYCurvesInfo", dss.XYCurves.Count, dss.utils.xycurves_to_dataframe),
+            ("Capacitors", "CapacitorsInfo", dss.Capacitors.Count, dss.utils.capacitors_to_dataframe),
+            ("Fuses", "FusesInfo", dss.Fuses.Count, dss.utils.fuses_to_dataframe),
+            ("Generators", "GeneratorsInfo", dss.Generators.Count, dss.utils.generators_to_dataframe),
+            ("Isource", "IsourceInfo", dss.Isource.Count, dss.utils.isource_to_dataframe),
+            ("Lines", "LinesInfo", dss.Lines.Count, dss.utils.lines_to_dataframe),
+            ("Loads", "LoadsInfo", dss.Loads.Count, dss.utils.loads_to_dataframe),
+            ("Meters", "MetersInfo", dss.Meters.Count, dss.utils.meters_to_dataframe),
+            ("Monitors", "MonitorsInfo", dss.Monitors.Count, dss.utils.monitors_to_dataframe),
+            ("Reclosers", "ReclosersInfo", dss.Reclosers.Count, dss.utils.reclosers_to_dataframe),
+            ("RegControls", "RegControlsInfo", dss.RegControls.Count, dss.utils.regcontrols_to_dataframe),
+            ("Relays", "RelaysInfo", dss.Relays.Count, dss.utils.relays_to_dataframe),
+            ("Sensors", "SensorsInfo", dss.Sensors.Count, dss.utils.sensors_to_dataframe),
+            ("Transformers", "TransformersInfo", dss.Transformers.Count, dss.utils.transformers_to_dataframe),
+            ("Vsources", "VsourcesInfo", dss.Vsources.Count, dss.utils.vsources_to_dataframe),
+            ("XYCurves", "XYCurvesInfo", dss.XYCurves.Count, dss.utils.xycurves_to_dataframe),
             # TODO This can be very large. Consider making it configurable.
-            #("LoadShapeInfo", dss.LoadShape.Count, dss.utils.loadshape_to_dataframe),
-        )
+            #("LoadShapes", "LoadShapeInfo", dss.LoadShape.Count, dss.utils.loadshape_to_dataframe),
+        ]
+        if element_types:
+            exports = [x for x in exports if x[0] in element_types]
 
-        for filename, count_func, get_func in exports:
+        for _, filename, count_func, get_func in exports:
             if count_func() > 0:
                 df = get_func()
                 # Always record in CSV format for readability.
@@ -386,8 +388,10 @@ class ResultData:
                 metadata["element_info_files"].append(relpath)
                 self._logger.info("Exported %s information to %s.", filename, filepath)
 
-        self._export_pv_systems(metadata)
-        self._export_transformers(metadata)
+        if not element_types or "PVSystems" in element_types:
+            self._export_pv_systems(metadata)
+        if not element_types or "Transformers" in element_types:
+            self._export_transformers(metadata)
 
     def _export_pv_systems(self, metadata):
         df = dss.utils.pvsystems_to_dataframe()

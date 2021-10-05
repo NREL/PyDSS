@@ -33,6 +33,7 @@ post_process_infos = []
 "Export Mode" = "byClass"
 "Export Style" = "Single file"
 "Export Elements" = true
+"Export Element Types" = ["Loads", "PVSystems"]
 "Export Data Tables" = true
 "Export PV Profiles" = true
 "Export Data In Memory" = true
