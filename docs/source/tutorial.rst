@@ -63,6 +63,8 @@ These configuration customizations exist for data exported using the new
 "ResultData" container:
 
 - ``Export Elements``:  Set to true to export static element parameters.
+- ``Export Element Types``:  Limit ``Export Elements`` to these types. Default
+  is all.
 - ``Export Data Tables``:  Set to true to export data tables for each element
   property.  Note that this duplicates data. Enable this to preserve a
   human-readable dataset that does not require PyDSS to interpret.

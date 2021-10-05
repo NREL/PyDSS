@@ -236,6 +236,8 @@ class PyDssDirectoryInterface(PyDssFileSystemInterface):
     def read_controller_config(self, scenario):
         controllers = {}
         path = os.path.join(self._project_dir, SCENARIOS, scenario, "pyControllerList")
+        if not os.path.exists(path):
+            return controllers
         for filename in os.listdir(path):
             base, ext = os.path.splitext(filename)
             if ext == ".toml":

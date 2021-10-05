@@ -49,6 +49,7 @@
 "Export Format" = "h5"
 "Export Compression" = false
 "Export Elements" = true
+"Export Element Types" = []
 "Export PV Profiles" = false
 "Export Data Tables" = true
 "Export Data In Memory" = false
