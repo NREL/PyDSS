@@ -9,6 +9,7 @@ import os
 import re
 import shutil
 import sys
+from pathlib import Path
 
 import numpy as np
 import opendssdirect as dss
@@ -55,7 +56,10 @@ def check_redirect(file_name):
 
 
 def _get_module_from_extension(filename, **kwargs):
-    ext = os.path.splitext(filename)[1].lower()
+    if isinstance(filename, Path):
+        ext = filename.suffix.lower()
+    else:
+        ext = os.path.splitext(filename)[1].lower()
     if ext == ".json":
         mod = json
     elif ext == ".toml":

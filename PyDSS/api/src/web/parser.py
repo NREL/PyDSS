@@ -58,6 +58,8 @@ def bytestream_decode(s):
                 result[l] = val
     return result
 
+# TODO DT: It does not appear that this function is used. Can it be deleted?
+# If not, it needs to be updated.
 def restructure_dictionary(d):
     global master_dict
     pydss_settings = {}

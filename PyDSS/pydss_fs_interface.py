@@ -15,6 +15,7 @@ import toml
 from PyDSS.common import PLOTS_FILENAME, PROJECT_TAR, PROJECT_ZIP, \
     ControllerType, ExportMode, SIMULATION_SETTINGS_FILENAME,VisualizationType
 from PyDSS.exceptions import InvalidConfiguration
+from PyDSS.simulation_input_models import SimulationSettingsModel, load_simulation_settings
 from PyDSS.utils.utils import load_data
 
 
@@ -151,7 +152,7 @@ class PyDssFileSystemInterface(abc.ABC):
         list
 
         """
-        return [x["name"] for x in self.simulation_config["Project"]["Scenarios"]]
+        return [x.name for x in self._settings.project.scenarios]
 
     @property
     @abc.abstractmethod
@@ -197,7 +198,7 @@ class PyDssDirectoryInterface(PyDssFileSystemInterface):
         self._scenarios_dir = os.path.join(self._project_dir, SCENARIOS)
         self._dss_dir = os.path.join(self._project_dir, "DSSfiles")
 
-        self._simulation_config = load_data(
+        self._settings = load_simulation_settings(
             os.path.join(self._project_dir, simulation_file)
         )
 
@@ -283,14 +284,15 @@ class PyDssDirectoryInterface(PyDssFileSystemInterface):
 
     @property
     def simulation_config(self):
-        return self._simulation_config
+        return self._settings
 
 
 class PyDssArchiveFileInterfaceBase(PyDssFileSystemInterface):
     """Base class for archive types."""
     def __init__(self, project_dir):
         self._project_dir = project_dir
-        self._simulation_config = self._load_data(SIMULATION_SETTINGS_FILENAME)
+        data = self._load_data(SIMULATION_SETTINGS_FILENAME)
+        self._settings = SimulationSettingsModel(**data)
         self._check_scenarios()
 
     def _load_data(self, path):
@@ -331,7 +333,7 @@ class PyDssArchiveFileInterfaceBase(PyDssFileSystemInterface):
 
     @property
     def simulation_config(self):
-        return self._simulation_config
+        return self._settings
 
     def read_controller_config(self, scenario):
         # Not currently needed for reading projects.

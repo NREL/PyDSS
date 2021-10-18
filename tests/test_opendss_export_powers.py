@@ -1,16 +1,22 @@
 import logging
 import os
+import shutil
 import tempfile
+from pathlib import Path
 
 import h5py
 import mock
 import numpy as np
 import pandas as pd
+import pytest
 
 from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.export_list_reader import ExportListProperty
 from PyDSS.metrics import ExportPowersMetric, OpenDssExportMetric
 import PyDSS.metrics
+from PyDSS.simulation_input_models import (
+    SimulationSettingsModel, create_simulation_settings, load_simulation_settings
+)
 from PyDSS.utils.utils import load_data
 from tests.common import FakeElement
 
@@ -27,7 +33,6 @@ OBJS = [
     FakeElement("Transformer.ONE", "one"),
     FakeElement("Transformer.TWO", "two"),
 ]
-OPTIONS = load_data("PyDSS/defaults/simulation.toml")
 STORE_FILENAME = os.path.join(tempfile.gettempdir(), "store.h5")
 EXPORTED_POWERS_BASE_FILENAME = "tests/data/exported_powers/FEEDER_EXP_POWERS"
 NUM_POWERS_FILES = 3
@@ -37,6 +42,21 @@ PV_SYSTEM_1_VALUES = [10.1, 11.5, 11.1]
 PV_SYSTEM_2_VALUES = [7.4, 7.9, 7.7]
 
 
+@pytest.fixture
+def simulation_settings():
+    project_path = Path(tempfile.gettempdir()) / "pydss_projects"
+    if project_path.exists():
+        shutil.rmtree(project_path)
+    project_name = "test_project"
+    project_path.mkdir()
+    filename = create_simulation_settings(project_path, project_name, ["s1"])
+    yield load_simulation_settings(filename)
+    if os.path.exists(STORE_FILENAME):
+        os.remove(STORE_FILENAME)
+    if project_path.exists():
+        shutil.rmtree(project_path)
+
+
 powers_file_id = 1
 def mock_run_command():
     filename = f"{EXPORTED_POWERS_BASE_FILENAME}{powers_file_id}.CSV"
@@ -44,7 +64,7 @@ def mock_run_command():
 
 
 @mock.patch("PyDSS.metrics.OpenDssExportMetric._run_command", side_effect=mock_run_command)
-def test_export_powers(mocked_func):
+def test_export_powers(mocked_func, simulation_settings):
     data1 = {
         "property": "ExportPowersMetric",
         "store_values_type": "all",
@@ -64,7 +84,7 @@ def test_export_powers(mocked_func):
     }
     prop3 = ExportListProperty("CktElement", data3)
     num_time_steps = NUM_POWERS_FILES
-    metric = ExportPowersMetric(prop1, OBJS, OPTIONS)
+    metric = ExportPowersMetric(prop1, OBJS, simulation_settings)
     metric.add_property(prop2)
     metric.add_property(prop3)
     with h5py.File(STORE_FILENAME, mode="w", driver="core") as hdf_store:

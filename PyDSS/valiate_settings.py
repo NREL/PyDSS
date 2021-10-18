@@ -1,3 +1,4 @@
+from PyDSS.simulation_input_models import SimulationSettingsModel
 from PyDSS.common import DATE_FORMAT
 from datetime import datetime
 import enum
@@ -188,20 +189,3 @@ def validate_settings(dss_args):
             if not dss_args["Exports"]["Log Results"]:
                 raise InvalidConfiguration("Reports are only supported with Log Results")
     return
-
-
-def dump_settings(settings, filename):
-    """Dump the settings into a TOML file.
-
-    Parameters
-    ----------
-    settings : dict
-        A dict that may contain non-serializable instances like enums.
-
-    Returns
-    -------
-    dict
-
-    """
-    with open(filename, "w") as f_out:
-        toml.dump(settings, f_out, encoder=TomlEnumEncoder(settings.__class__))

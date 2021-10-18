@@ -74,24 +74,24 @@ class VoltageMetrics(ReportBase):
     def __init__(self, name, results, simulation_config):
         super().__init__(name, results, simulation_config)
         self._granularity = ReportGranularity(
-            self._report_global_options["Granularity"]
+            self._report_global_settings.granularity
         )
         self._range_a_limits = MinMax(
-            min=self._report_options["range_a_limits"][0],
-            max=self._report_options["range_a_limits"][1],
+            min=self._report_settings.range_a_limits[0],
+            max=self._report_settings.range_a_limits[1],
         )
         self._range_b_limits = MinMax(
-            min=self._report_options["range_b_limits"][0],
-            max=self._report_options["range_b_limits"][1],
+            min=self._report_settings.range_b_limits[0],
+            max=self._report_settings.range_b_limits[1],
         )
         self._resolution = self._get_simulation_resolution()
-        inputs = self.get_inputs_from_defaults(self._simulation_config, self.NAME)
+        inputs = self.get_inputs_from_defaults(self._settings, self.NAME)
         self._window_size = timedelta(minutes=inputs["window_size_minutes"]) // self._resolution
         self._moving_window_minutes = inputs["window_size_minutes"]
         self._files_to_delete = []
 
     def generate(self, output_dir):
-        inputs = VoltageMetrics.get_inputs_from_defaults(self._simulation_config, self.NAME)
+        inputs = VoltageMetrics.get_inputs_from_defaults(self._settings, self.NAME)
         if inputs["store_all_time_points"]:
             scenarios = self._generate_from_all_time_points()
         else:
@@ -111,8 +111,7 @@ class VoltageMetrics(ReportBase):
         scenarios = {}
         for scenario in self._results.scenarios:
             filename = os.path.join(
-                self._simulation_config["Project"]["Project Path"],
-                self._simulation_config["Project"]["Active Project"],
+                str(self._settings.project.active_project_path),
                 "Exports",
                 scenario.name,
                 self.FILENAME,
@@ -127,8 +126,7 @@ class VoltageMetrics(ReportBase):
         scenarios = {}
         for scenario in self._results.scenarios:
             filename = os.path.join(
-                self._simulation_config["Project"]["Project Path"],
-                self._simulation_config["Project"]["Active Project"],
+                str(self._settings.project.active_project_path),
                 "Exports",
                 scenario.name,
                 NODE_NAMES_BY_TYPE_FILENAME,
@@ -271,11 +269,11 @@ class VoltageMetrics(ReportBase):
         return set()
 
     @staticmethod
-    def set_required_project_settings(simulation_config):
+    def set_required_project_settings(settings):
         inputs = VoltageMetrics.get_inputs_from_defaults(
-            simulation_config, VoltageMetrics.NAME
+            settings, VoltageMetrics.NAME
         )
-        exports = simulation_config["Exports"]
-        if inputs["store_all_time_points"] and not exports["Export Node Names By Type"]:
-            exports["Export Node Names By Type"] = True
+        exports = settings.exports
+        if inputs["store_all_time_points"] and not exports.export_node_names_by_type:
+            exports.export_node_names_by_type = True
             logger.info("Enabled Export Node Names By Type")

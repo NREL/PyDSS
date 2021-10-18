@@ -135,6 +135,12 @@ DEFAULT_MONTE_CARLO_SETTINGS_FILE = os.path.join(
 )
 
 
+class ControlMode(enum.Enum):
+    """Supported control modes"""
+    STATIC = "Static"
+    TIME = "Time"
+
+
 class DataConversion(enum.Enum):
     NONE = "none"
     ABS = "abs"
@@ -151,19 +157,38 @@ class DatasetPropertyType(enum.Enum):
     VALUE = "value"  # Only a single value is written for each element
 
 
+class FileFormat(enum.Enum):
+    """Supported file formats"""
+    CSV = "csv"
+    HDF5 = "h5"
+
+
 class LimitsFilter(enum.Enum):
     INSIDE = "inside"
     OUTSIDE = "outside"
 
 
-class StoreValuesType(enum.Enum):
-    ALL = "all"
-    CHANGE_COUNT = "change_count"
-    MAX = "max"
-    MIN = "min"
-    MOVING_AVERAGE = "moving_average"
-    MOVING_AVERAGE_MAX = "moving_average_max"
-    SUM = "sum"
+class LoggingLevel(enum.Enum):
+    """Supported logging levels"""
+    DEBUG = "debug"
+    INFO = "info"
+    WARNING = "warning"
+    ERROR = "error"
+
+
+class ReportGranularity(enum.Enum):
+    """Specifies the granularity on which data is collected."""
+    PER_ELEMENT_PER_TIME_POINT = "per_element_per_time_point"
+    PER_ELEMENT_TOTAL = "per_element_total"
+    ALL_ELEMENTS_PER_TIME_POINT = "all_elements_per_time_point"
+    ALL_ELEMENTS_TOTAL = "all_elements_total"
+
+
+class SimulationType(enum.Enum):
+    """Supported simulation types"""
+    DYNAMIC = "dynamic"
+    QSTS = "qsts"
+    SNAPSHOT = "snapshot"
 
 
 class SnapshotTimePointSelectionMode(enum.Enum):
@@ -176,6 +201,14 @@ class SnapshotTimePointSelectionMode(enum.Enum):
     NONE = "none"
 
 
+class StoreValuesType(enum.Enum):
+    ALL = "all"
+    CHANGE_COUNT = "change_count"
+    MAX = "max"
+    MIN = "min"
+    MOVING_AVERAGE = "moving_average"
+    MOVING_AVERAGE_MAX = "moving_average_max"
+    SUM = "sum"
+
+
 MinMax = namedtuple("MinMax", "min, max")
-
-

@@ -33,10 +33,10 @@ class AbstractPostprocess(abc.ABC):
         """
         self.project = project
         self.scenario = scenario
-        if inputs["config_file"] == "":
+        if inputs.config_file == "":
             self.config = {}
         else:
-            self.config = load_data(inputs["config_file"])
+            self.config = load_data(inputs.config_file)
         self.config["Outputs"] = project.get_post_process_directory(scenario.name)
         os.makedirs(self.config["Outputs"], exist_ok=True)
         self.Settings = simulationSettings

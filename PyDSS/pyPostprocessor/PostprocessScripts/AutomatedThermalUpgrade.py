@@ -1,6 +1,7 @@
 #**Authors:**
 # Akshay Kumar Jain; Akshay.Jain@nrel.gov
 
+from PyDSS.common import SimulationType
 from PyDSS.pyPostprocessor.pyPostprocessAbstract import AbstractPostprocess
 from PyDSS.exceptions import InvalidParameter, OpenDssConvergenceError
 # Additional packages
@@ -76,7 +77,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
         dss = dssInstance
         self.dssSolver = dssSolver
 
-        if simulationSettings["Project"]["Simulation Type"] != "Snapshot":
+        if simulationSettings.project.simulation_type != SimulationType.SNAPSHOT:
             raise InvalidParameter("Upgrade post-processors are only supported on Snapshot simulations")
 
     def _run(self):
@@ -250,7 +251,7 @@ class AutomatedThermalUpgrade(AbstractPostprocess):
 
         # clear and redirect dss file - to compute final violations, and get new elements
         dss.run_command("Clear")
-        base_dss = os.path.join(self.config["project_dss_files_path"], self.Settings["Project"]["DSS File"])
+        base_dss = os.path.join(self.config["project_dss_files_path"], self.Settings.project.dss_file)
         check_redirect(base_dss)
         upgrades_file = os.path.join(self.config["Outputs"], "thermal_upgrades.dss")
         check_redirect(upgrades_file)

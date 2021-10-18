@@ -1,3 +1,5 @@
+from PyDSS.common import SimulationType
+from PyDSS.simulation_input_models import SimulationSettingsModel
 from PyDSS.pyContrReader import read_controller_settings_from_registry
 from PyDSS.dssElementFactory import create_dss_element
 from PyDSS.utils.utils import make_human_readable_size
@@ -19,6 +21,7 @@ from PyDSS.common import SnapshotTimePointSelectionMode, DATE_FORMAT
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
 from PyDSS import pyLogger
+from PyDSS.simulation_input_models import SimulationSettingsModel
 from PyDSS.utils.simulation_utils import SimulationFilteredTimeRange
 from PyDSS.utils.timing_utils import TimerStatsCollector, Timer
 from PyDSS.get_snapshot_timepoints import get_snapshot_timepoint
@@ -39,7 +42,7 @@ from opendssdirect.utils import run_command
 CONTROLLER_PRIORITIES = 3
 
 class OpenDSS:
-    def __init__(self, params):
+    def __init__(self, settings: SimulationSettingsModel):
         self._dssInstance = dss
         self._TempResultList = []
         self._dssBuses = {}
@@ -48,45 +51,39 @@ class OpenDSS:
         self._DelFlag = 0
         self._pyPlotObjects = {}
         self.BokehSessionID = None
-        self._Options = params
+        self._settings = settings
         self._convergenceErrors = 0
         self._convergenceErrorsOpenDSS = 0
         self._maxConvergenceErrorCount = None
         self._maxConvergenceError = 0.0
         self._controller_iteration_counts = {}
         self._stats = TimerStatsCollector()
-        self._simulation_range = SimulationFilteredTimeRange.from_settings(params)
+        self._simulation_range = SimulationFilteredTimeRange.from_settings(settings)
 
-        rootPath = params['Project']['Project Path']
-        self._ActiveProject = params['Project']['Active Project']
-        importPath = os.path.join(rootPath, params['Project']['Active Project'], 'Scenarios')
+        root_path = settings.project.project_path
+        active_project_path = root_path / settings.project.active_project
+        import_path = active_project_path / 'Scenarios'
+        active_scenario_path = import_path / settings.project.active_scenario
+        self._ActiveProject = settings.project.active_project
 
         self._dssPath = {
-            'root': rootPath,
-            'Import': importPath,
-            'pyPlots': os.path.join(importPath, params['Project']['Active Scenario'], 'pyPlotList'),
-            'ExportLists': os.path.join(importPath, params['Project']['Active Scenario'], 'ExportLists'),
-            'pyControllers': os.path.join(importPath, params['Project']['Active Scenario'], 'pyControllerList'),
-            'Export': os.path.join(rootPath, params['Project']['Active Project'], 'Exports'),
-            'Log': os.path.join(rootPath, params['Project']['Active Project'], 'Logs'),
-            'dssFiles': os.path.join(rootPath, params['Project']['Active Project'], 'DSSfiles'),
-            'dssFilePath': os.path.join(
-                rootPath, params['Project']['Active Project'], 'DSSfiles', params['Project']['DSS File']
-            ),
+            'root': root_path,
+            'Import': import_path,
+            'pyPlots': active_scenario_path / 'pyPlotList',
+            'ExportLists': active_scenario_path / 'ExportLists',
+            'pyControllers': active_scenario_path / 'pyControllerList',
+            'Export': active_project_path /  'Exports',
+            'Log': active_project_path / 'Logs',
+            'dssFiles': active_project_path / 'DSSfiles',
+            'dssFilePath': active_project_path / 'DSSfiles' / settings.project.dss_file,
         }
 
-        if params['Project']['DSS File Absolute Path']:
-            self._dssPath['dssFilePath'] = params['Project']['DSS File']
-        else:
-            self._dssPath['dssFilePath'] = os.path.join(
-                rootPath,
-                params['Project']['Active Project'],
-                'DSSfiles',
-                params['Project']['DSS File']
-            )
-        LoggerTag = pyLogger.getLoggerTag(params)
+        if settings.project.dss_file_absolute_path:
+            self._dssPath['dssFilePath'] = settings.project.dss_file
+
+        LoggerTag = pyLogger.getLoggerTag(settings)
         self._Logger = logging.getLogger(__name__)
-        self._reportsLogger = pyLogger.getReportLogger(LoggerTag, self._dssPath["Log"], params["Logging"])
+        self._reportsLogger = pyLogger.getReportLogger(LoggerTag, self._dssPath["Log"], settings.logging)
         self._Logger.info('An instance of OpenDSS version ' + self._dssInstance.__version__ + ' has been created.')
 
         for key, path in self._dssPath.items():
@@ -95,15 +92,15 @@ class OpenDSS:
         with Timer(self._stats, "CompileModel"):
             self._CompileModel()
 
-        #run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
-        self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(params['Frequency']['Fundamental frequency']) + ' Hz')
+        #run_command('Set DefaultBaseFrequency={}'.format(settings.frequency.fundamental_frequency))
+        self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(settings.frequency.fundamental_frequency) + ' Hz')
 
-        #run_command('Set %SeriesRL={}'.format(params['Frequency']['Percentage load in series']))
-        if params['Frequency']['Neglect shunt admittance']:
+        #run_command('Set %SeriesRL={}'.format(settings.frequency.percentage_load_in_series))
+        if settings.frequency.neglect_shunt_admittance:
             run_command('Set NeglectLoadY=Yes')
 
         active_scenario = self._GetActiveScenario()
-        if active_scenario['snapshot_time_point_selection_config']['mode'] != SnapshotTimePointSelectionMode.NONE:
+        if active_scenario.snapshot_time_point_selection_config.mode != SnapshotTimePointSelectionMode.NONE:
             with Timer(self._stats, "SetSnapshotTimePoint"):
                 self._SetSnapshotTimePoint(active_scenario)
 
@@ -113,28 +110,28 @@ class OpenDSS:
         self._dssClass = self._dssInstance.ActiveClass
         self._dssCommand = run_command
         self._dssSolution = self._dssInstance.Solution
-        self._dssSolver = SolveMode.GetSolver(SimulationSettings=params, dssInstance=self._dssInstance)
-        self._Modifier = Modifier(self._dssInstance, run_command, params)
+        self._dssSolver = SolveMode.GetSolver(settings=settings, dssInstance=self._dssInstance)
+        self._Modifier = Modifier(self._dssInstance, run_command, settings)
         self._UpdateDictionary()
         self._CreateBusObjects()
         self._dssSolver.reSolve()
 
-        if params['Profiles']["Use profile manager"]:
+        if settings.profiles.use_profile_manager:
             #TODO: disable internal profiles
             self._Logger.info('Disabling internal yearly and duty-cycle profiles.')
             for m in ["Loads", "PVSystem", "Generator", "Storage"]:
                 run_command(f'BatchEdit {m}..* yearly=NONE duty=None')
-            profileSettings = self._Options["Profiles"]["settings"]
+            profileSettings = self._settings.profiles.settings
             profileSettings["objects"] = self._dssObjects
             self.profileStore = ProfileInterface.Create(
-                self._dssInstance, self._dssSolver, self._Options, self._Logger, **profileSettings
+                self._dssInstance, self._dssSolver, self._settings, self._Logger, **profileSettings
             )
 
-        self.ResultContainer = ResultData(params, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
+        self.ResultContainer = ResultData(settings, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
                                           self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance,
                                           self._stats)
 
-        if params['Project']['Use Controller Registry']:
+        if settings.project.use_controller_registry:
             ControllerList = read_controller_settings_from_registry(self._dssPath['pyControllers'])
         else:
             pyCtrlReader = pcr(self._dssPath['pyControllers'])
@@ -143,18 +140,18 @@ class OpenDSS:
         if ControllerList is not None:
             self._CreateControllers(ControllerList)
 
-        if params['Plots']['Create dynamic plots']:
+        if settings.plots.create_dynamic_plots:
             pyPlotReader = ppr(self._dssPath['pyPlots'])
             PlotList = pyPlotReader.pyPlots
             self._CreatePlots(PlotList)
             for Plot in self._pyPlotObjects:
                 self.BokehSessionID = self._pyPlotObjects[Plot].GetSessionID()
-                if params['Plots']['Open plots in browser']:
+                if settings.plots.open_plots_in_browser:
                     self._pyPlotObjects[Plot].session.show()
                 break
         self._increment_flag = True
-        if params['Helics']["Co-simulation Mode"]:
-            self._HI = HI.helics_interface(self._dssSolver, self._dssObjects, self._dssObjectsByClass, params,
+        if settings.helics.co_simulation_mode:
+            self._HI = HI.helics_interface(self._dssSolver, self._dssObjects, self._dssObjectsByClass, settings,
                                            self._dssPath)
         self._Logger.info("Simulation initialization complete")
         return
@@ -167,7 +164,7 @@ class OpenDSS:
         reply = ""
         try:
             orig_dir = os.getcwd()
-            reply = run_command('compile ' + self._dssPath['dssFilePath'])
+            reply = run_command('compile ' + str(self._dssPath['dssFilePath']))
         finally:
             os.chdir(orig_dir)
 
@@ -277,11 +274,11 @@ class OpenDSS:
                     controller = self._pyControls[controller_name]
                     error = controller.Update(Priority, Time, UpdateResults)
                     maxError = error if error > maxError else maxError
-                    if Iteration == self._Options['Project']['Max Control Iterations'] - 1:
-                        if error > self._Options['Project']['Error tolerance']:
+                    if Iteration == self._settings.project.max_control_iterations - 1:
+                        if error > self._settings.project.error_tolerance:
                             errorTag = {
                                 "Report": "Convergence",
-                                "Scenario": self._Options["Project"]["Active Scenario"],
+                                "Scenario": self._settings.project.active_scenario,
                                 "Time": self._dssSolver.GetTotalSeconds(),
                                 "DateTime": str(self._dssSolver.GetDateTime()),
                                 "Controller": controller.Name(),
@@ -292,7 +289,7 @@ class OpenDSS:
                             json_object = json.dumps(errorTag)
                             self._reportsLogger.warning(json_object)
                 elm = self._dssInstance.ActiveClass.Next()
-        return maxError < self._Options['Project']['Error tolerance'], maxError
+        return maxError < self._settings.project.error_tolerance, maxError
 
     def _CreateBusObjects(self):
         BusNames = self._dssCircuit.AllBusNames()
@@ -343,13 +340,13 @@ class OpenDSS:
 
     def RunStep(self, step, updateObjects=None):
         # updating parameters before simulation run
-        if self._Options["Logging"]["Log time step updates"]:
+        if self._settings.logging.log_time_step_updates:
             self._Logger.info(f'PyDSS datetime - {self._dssSolver.GetDateTime()}')
             self._Logger.info(f'OpenDSS time [h] - {self._dssSolver.GetOpenDSSTime()}')
-        if self._Options['Profiles']["Use profile manager"]:
+        if self._settings.profiles.use_profile_manager:
             self.profileStore.update()
 
-        if self._Options['Helics']['Co-simulation Mode']:
+        if self._settings.helics.co_simulation_mode:
             self._HI.updateHelicsSubscriptions()
         else:
             if updateObjects:
@@ -359,11 +356,11 @@ class OpenDSS:
 
         # run simulation time step and get results
         time_step_has_converged = True
-        if not self._Options['Project']['Disable PyDSS controllers']:
+        if not self._settings.project.disable_pydss_controllers:
             with Timer(self._stats, "UpdateControllers"):
                 for priority in range(CONTROLLER_PRIORITIES):
                     priority_has_converged = False
-                    for i in range(self._Options['Project']['Max Control Iterations']):
+                    for i in range(self._settings.project.max_control_iterations):
                         has_converged, error = self._UpdateControllers(priority, step, i, UpdateResults=False)
                         self._Logger.debug('Control Loop {} convergence error: {}'.format(priority, error))
                         if has_converged:
@@ -384,23 +381,23 @@ class OpenDSS:
 
             self._UpdatePlots()
 
-        if self._Options['Frequency']['Enable frequency sweep'] and \
-                self._Options['Project']['Simulation Type'].lower() != 'dynamic':
+        if self._settings.frequency.enable_frequency_sweep and \
+                self._settings.project.simulation_type != SimulationType.DYNAMIC:
             self._dssSolver.setMode('Harmonic')
-            for freqency in np.arange(self._Options['Frequency']['Start frequency'],
-                                      self._Options['Frequency']['End frequency'] + 1,
-                                      self._Options['Frequency']['frequency increment']):
-                self._dssSolver.setFrequency(freqency * self._Options['Frequency']['Fundamental frequency'])
+            for frequency in np.arange(self._settings.frequency.start_frequency,
+                                      self._settings.frequency.end_frequency + 1,
+                                      self._settings.frequency.frequency_increment):
+                self._dssSolver.setFrequency(frequency * self._settings.frequency.fundamental_frequency)
                 self._dssSolver.reSolve()
                 self._UpdatePlots()
-                if self._Options['Exports']['Log Results']:
+                if self._settings.exports.export_results:
                     self.ResultContainer.UpdateResults()
-            if self._Options['Project']['Simulation Type'].lower() == 'snapshot':
+            if self._settings.project.simulation_type != SimulationType.SNAPSHOT:
                 self._dssSolver.setMode('Snapshot')
             else:
                 self._dssSolver.setMode('Yearly')
 
-        if self._Options['Helics']['Co-simulation Mode']:
+        if self._settings.helics.co_simulation_mode:
             self._HI.updateHelicsPublications()
             self._increment_flag, helics_time = self._HI.request_time_increment()
 
@@ -426,7 +423,7 @@ class OpenDSS:
 
     def DryRunSimulation(self, project, scenario):
         """Run one time point for getting estimated space."""
-        if not self._Options['Exports']['Log Results']:
+        if not self._settings.exports.export_results:
             raise InvalidConfiguration("Log Reults must set to be True.")
 
         Steps, _, _ = self._dssSolver.SimulationSteps()
@@ -447,11 +444,11 @@ class OpenDSS:
     def RunSimulation(self, project, scenario, MC_scenario_number=None):
         startTime = time.time()
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
-        threshold = self._Options['Project']['Convergence error percent threshold']
+        threshold = self._settings.project.convergence_error_percent_threshold
         if threshold > 0:
             self._maxConvergenceErrorCount = round(threshold * .01 * Steps)
-        self._maxConvergenceError = self._Options['Project']['Max error tolerance']
-        dss.Solution.Convergence(self._Options['Project']['Error tolerance'])
+        self._maxConvergenceError = self._settings.project.max_error_tolerance
+        dss.Solution.Convergence(self._settings.project.error_tolerance)
         self._Logger.info('Running simulation from {} till {}.'.format(sTime, eTime))
         self._Logger.info('Simulation time step {}.'.format(Steps))
         self._Logger.info("Set OpenDSS convergence to %s", dss.Solution.Convergence())
@@ -467,7 +464,7 @@ class OpenDSS:
                 self._dssSolver,
                 self._dssObjects,
                 self._dssObjectsByClass,
-                self._Options,
+                self._settings,
                 self._Logger,
             ) for ppInfo in scenario.post_process_infos
         ]
@@ -501,15 +498,15 @@ class OpenDSS:
                 # I moved the next two code blocks here because UpdateResults needs to happen
                 # after the postprocessors.
                 # the Helics update needs to happen after that.
-                if self._Options['Exports']['Log Results']:
+                if self._settings.exports.export_results:
                     store_nan = (
                         not within_range or
                         (not has_converged and
-                         self._Options['Project']['Skip export on convergence error'])
+                         self._settings.project.skip_export_on_convergence_error)
                     )
                     self.ResultContainer.UpdateResults(store_nan=store_nan)
 
-                if self._Options['Helics']['Co-simulation Mode']:
+                if self._settings.helics.co_simulation_mode:
                     if self._increment_flag:
                         self._dssSolver.IncStep()
                     else:
@@ -518,7 +515,7 @@ class OpenDSS:
                     self._dssSolver.IncStep()
 
         finally:
-            if self._Options and self._Options['Exports']['Log Results']:
+            if self._settings and self._settings.exports.export_results:
                 # This is here to guarantee that DatasetBuffers aren't left
                 # with any data in memory.
                 self.ResultContainer.Close()
@@ -526,19 +523,19 @@ class OpenDSS:
             for postprocessor in postprocessors:
                 postprocessor.finalize()
 
-        if self._Options and self._Options['Exports']['Log Results']:
+        if self._settings and self._settings.exports.export_results:
             self.ResultContainer.ExportResults()
 
         self._stats.log_stats(clear=True)
         if self._controller_iteration_counts:
             data = {
                 "Report": "ControllerIterationCounts",
-                "Scenario": self._Options["Project"]["Active Scenario"],
+                "Scenario": self._settings.project.active_scenario,
                 "Counts": self._controller_iteration_counts,
             }
             self._reportsLogger.warning(json.dumps(data))
 
-        self._Logger.info('Simulation completed in ' + str(time.time() - startTime) + ' seconds')
+        self._Logger.info('Simulation completed in %s seconds', time.time() - startTime)
         self._Logger.info('End of simulation')
 
     def _RunPostProcessors(self, step, Steps, postprocessors):
@@ -555,7 +552,7 @@ class OpenDSS:
 
     def RunMCsimulation(self, project, scenario, samples):
         from PyDSS.Extensions.MonteCarlo import MonteCarloSim
-        MC = MonteCarloSim(self._Options, self._dssPath, self._dssObjects, self._dssObjectsByClass)
+        MC = MonteCarloSim(self._settings, self._dssPath, self._dssObjects, self._dssObjectsByClass)
         for i in range(samples):
             MC.Create_Scenario()
             self.RunSimulation(project, scenario, i)
@@ -567,50 +564,50 @@ class OpenDSS:
         return
 
     def _GetActiveScenario(self):
-        active_scenario = self._Options["Project"]["Active Scenario"]
-        for scenario in self._Options["Project"]["Scenarios"]:
-            if scenario["name"] == active_scenario:
+        active_scenario = self._settings.project.active_scenario
+        for scenario in self._settings.project.scenarios:
+            if scenario.name == active_scenario:
                 return scenario
         raise InvalidConfiguration(f"Active Scenario {active_scenario} is not present")
 
     def _SetSnapshotTimePoint(self, scenario):
         """Adjusts the time parameters based on the mode."""
-        p_settings = self._Options["Project"]
-        config = scenario["snapshot_time_point_selection_config"]
-        mode = config["mode"]
+        p_settings = self._settings.project
+        config = scenario.snapshot_time_point_selection_config
+        mode = config.mode
         assert mode != SnapshotTimePointSelectionMode.NONE, mode
 
         if mode != SnapshotTimePointSelectionMode.NONE:
-            if p_settings["Simulation Type"] != "QSTS":
+            if p_settings.simulation_type != SimulationType.QSTS:
                 raise InvalidConfiguration(f"{mode} is only supported with QSTS simulations")
 
             # These settings have to be temporarily overridden because of the underlying
             # implementation to create a load shape dataframes..
-            orig_start = p_settings["Start time"]
-            orig_duration = p_settings["Simulation duration (min)"]
-            if orig_duration != p_settings["Step resolution (sec)"] / 60:
+            orig_start = p_settings.start_time
+            orig_duration = p_settings.simulation_duration_min
+            if orig_duration != p_settings.step_resolution_sec / 60:
                 raise InvalidConfiguration("Simulation duration must be the same as resolution")
             try:
-                p_settings["Start time"] = config["start_time"]
-                p_settings["Simulation duration (min)"] = config["search_duration_min"]
-                new_start = get_snapshot_timepoint(self._Options, mode).strftime(DATE_FORMAT)
-                p_settings["Start time"] = new_start
+                p_settings.start_time = config.start_time
+                p_settings.simulation_duration_min = config.search_duration_min
+                new_start = get_snapshot_timepoint(self._settings, mode).strftime(DATE_FORMAT)
+                p_settings.start_time = new_start
                 self._Logger.info("Changed simulation start time from %s to %s",
                     orig_start,
                     new_start,
                 )
             except Exception:
-                p_settings["Start time"] = orig_start
+                p_settings.start_time = orig_start
                 raise
             finally:
-                p_settings["Simulation duration (min)"] = orig_duration
+                p_settings.simulation_duration_min = orig_duration
         else:
             assert False, f"unsupported mode {mode}"
 
     # def __del__(self):
     #     self._Logger.info('An instance of OpenDSS (' + str(self) + ') has been deleted.')
     #     loggers = [self._Logger, self._reportsLogger]
-    #     if self._Options["Logging"]["Log to external file"]:
+    #     if self._settings["Logging"]["Log to external file"]:
     #         for L in loggers:
     #             handlers = list(L.handlers)
     #             for filehandler in handlers:

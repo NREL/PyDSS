@@ -145,7 +145,7 @@ def run_test_project_by_property(tar_project, zip_project):
     assert isinstance(df, pd.DataFrame)
     assert len(df) == 96
     assert len(df.columns) == 1
-    step = datetime.timedelta(seconds=project.simulation_config["Project"]["Step resolution (sec)"])
+    step = datetime.timedelta(seconds=project.simulation_config.project.step_resolution_sec)
     assert df.index[1] - df.index[0] == step
 
     df = scenario.get_dataframe("Lines", "CurrentsMagAng", "Line.sw0", phase_terminal="A1", mag_ang="mag")

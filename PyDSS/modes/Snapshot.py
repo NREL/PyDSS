@@ -1,11 +1,13 @@
 from PyDSS.modes.solver_base import solver_base
+from PyDSS.simulation_input_models import SimulationSettingsModel
+
 
 class Snapshot(solver_base):
-    def __init__(self, dssInstance, SimulationSettings, Logger):
-        super().__init__(dssInstance, SimulationSettings, Logger)
+    def __init__(self, dssInstance, settings: SimulationSettingsModel, Logger):
+        super().__init__(dssInstance, settings, Logger)
         self._dssSolution.Mode(0)
-        self._dssInstance.utils.run_command('Set ControlMode={}'.format(SimulationSettings['Project']['Control mode']))
-        self._dssSolution.MaxControlIterations(SimulationSettings['Project']['Max Control Iterations'])
+        self._dssInstance.utils.run_command('Set ControlMode={}'.format(settings.project.control_mode))
+        self._dssSolution.MaxControlIterations(settings.project.max_control_iterations)
         return
 
     def reSolve(self):

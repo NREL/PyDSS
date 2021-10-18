@@ -12,6 +12,8 @@ import re
 from sklearn.cluster import AgglomerativeClustering
 import json
 import math
+
+from PyDSS.common import SimulationType
 from PyDSS.exceptions import InvalidParameter, OpenDssConvergenceError
 from PyDSS.pyPostprocessor.pyPostprocessAbstract import AbstractPostprocess
 from PyDSS.pyPostprocessor.PostprocessScripts.postprocess_voltage_upgrades import postprocess_voltage_upgrades
@@ -125,7 +127,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.config["project_dss_files_path"] = project.dss_files_path
         self.config["thermal_scenario_path"] = project.get_post_process_directory(self.config["thermal_scenario_name"])
 
-        if simulationSettings["Project"]["Simulation Type"] != "Snapshot":
+        if simulationSettings.project.simulation_type != SimulationType.SNAPSHOT:
             raise InvalidParameter("Upgrade post-processors are only supported on Snapshot simulations")
 
     def _run(self):
@@ -580,7 +582,7 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
 
         self.logger.info("Checking impact of redirected upgrades file")
         dss.run_command("Clear")
-        base_dss = os.path.join(project_path, self.Settings["Project"]["DSS File"])
+        base_dss = os.path.join(project_path, self.Settings.project.dss_file)
         check_redirect(base_dss)
         check_redirect(thermal_dss_file)
         upgrades_file = os.path.join(self.config["Outputs"], "voltage_upgrades.dss")

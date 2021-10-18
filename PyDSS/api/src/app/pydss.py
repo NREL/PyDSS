@@ -8,6 +8,7 @@ from PyDSS.valiate_settings import validate_settings
 from PyDSS.api.src.web.parser import restructure_dictionary
 # from PyDSS.api.src.app.arrow_writer import ArrowWriter
 from PyDSS.api.src.app.JSON_writer import JSONwriter
+from PyDSS.simulation_input_models import SimulationSettingsModel
 
 logger = logging.getLogger(__name__)
 
@@ -30,9 +31,9 @@ class PyDSS:
         self.queue = queue
 
         try:
-            params = restructure_dictionary(parameters['parameters'])
-            self.pydss_obj = OpenDSS(params)
-            export_path = os.path.join(self.pydss_obj._dssPath['Export'], params['Project']['Active Scenario'])
+            settings = SimulationSettingsModel(**parameters['parameters'])
+            self.pydss_obj = OpenDSS(settings)
+            export_path = os.path.join(self.pydss_obj._dssPath['Export'], settings.project.active_scenario)
             Steps, sTime, eTime = self.pydss_obj._dssSolver.SimulationSteps()
             self.a_writer = JSONwriter(export_path, Steps)
             self.initalized = True

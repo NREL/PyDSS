@@ -93,7 +93,7 @@ class FeederLossesReport(ReportBase):
         assert len(self._results.scenarios) >= 1
         scenarios = {}
         for scenario in self._results.scenarios:
-            inputs = FeederLossesReport.get_inputs_from_defaults(self._simulation_config, self.NAME)
+            inputs = FeederLossesReport.get_inputs_from_defaults(self._settings, self.NAME)
             if inputs["store_all_time_points"]:
                 scenarios[scenario.name] = self._generate_from_all_time_points(scenario, to_kwh)
             else:

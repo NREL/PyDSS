@@ -1,14 +1,17 @@
-from PyDSS.modes.solver_base import solver_base
 from datetime import timedelta
 import math
 
+from PyDSS.modes.solver_base import solver_base
+from PyDSS.simulation_input_models import SimulationSettingsModel
+
+
 class Dynamic(solver_base):
-    def __init__(self, dssInstance, SimulationSettings, Logger):
-        super().__init__(dssInstance, SimulationSettings, Logger)
+    def __init__(self, dssInstance, settings: SimulationSettingsModel, Logger):
+        super().__init__(dssInstance, settings, Logger)
         self.setMode('Dynamic')
         self._dssSolution.Number(1)
         self._dssSolution.StepSize(self._sStepRes)
-        self._dssSolution.MaxControlIterations(SimulationSettings['Project']['Max Control Iterations'])
+        self._dssSolution.MaxControlIterations(settings.project.max_control_iterations)
         self._dssSolution.DblHour(self._Hour + self._Second / 3600.0)
         return
 
@@ -33,7 +36,7 @@ class Dynamic(solver_base):
         self._dssSolution.Seconds(self._Second)
         self._dssSolution.Number(1)
         self._dssSolution.StepSize(self._sStepRes)
-        self._dssSolution.MaxControlIterations(self.Settings['Project']['Max Control Iterations'])
+        self._dssSolution.MaxControlIterations(self._settings.project.max_control_iterations)
         return
 
     def SolveFor(self, mStartTime, mTimeStep):

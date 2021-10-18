@@ -17,6 +17,7 @@ from PyDSS.reports.reports import ReportBase
 from PyDSS.storage_filters import STORAGE_TYPE_MAP, StorageFilterBase
 from PyDSS.value_storage import ValueByNumber
 from PyDSS.node_voltage_metrics import NodeVoltageMetrics
+from PyDSS.simulation_input_models import SimulationSettingsModel
 from PyDSS.thermal_metrics import ThermalMetrics
 from PyDSS.utils.simulation_utils import get_start_time, get_simulation_resolution
 
@@ -27,17 +28,17 @@ logger = logging.getLogger(__name__)
 class MetricBase(abc.ABC):
     """Base class for all metrics"""
 
-    def __init__(self, prop, dss_objs, options):
+    def __init__(self, prop, dss_objs, settings: SimulationSettingsModel):
         self._name = prop.name
         self._base_path = None
         self._hdf_store = None
-        self._max_chunk_bytes = options["Exports"]["HDF Max Chunk Bytes"]
+        self._max_chunk_bytes = settings.exports.hdf_max_chunk_bytes
         self._num_steps = None
         self._properties = {}  # StoreValuesType to ExportListProperty
         self._dss_objs = dss_objs
         self._name_to_dss_obj = {x.Name: x for x in dss_objs}
         self._elem_class = _OPEN_DSS_CLASS_FOR_ITERATION.get(dss_objs[0]._Class)
-        self._options = options
+        self._settings = settings
         self._are_names_filtered = prop.are_names_filtered
 
         self.add_property(prop)
@@ -167,8 +168,8 @@ class MetricBase(abc.ABC):
 class ChangeCountMetricBase(MetricBase, abc.ABC):
     """Base class for any metric that only tracks number of changes."""
 
-    def __init__(self, prop, dss_objs, options):
-        super().__init__(prop, dss_objs, options)
+    def __init__(self, prop, dss_objs, settings: SimulationSettingsModel):
+        super().__init__(prop, dss_objs, settings)
         self._container = None
         self._last_values = {x.FullName: None for x in dss_objs}
         self._change_counts = {x.FullName: 0 for x in dss_objs}
@@ -212,8 +213,8 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
 
     """
 
-    def __init__(self, prop, dss_objs, options):
-        super().__init__(prop, dss_objs, options)
+    def __init__(self, prop, dss_objs, settings):
+        super().__init__(prop, dss_objs, settings)
         self._containers = {}  # StoreValuesType to StorageFilterBase
 
     @abc.abstractmethod
@@ -314,8 +315,8 @@ class OpenDssPropertyMetric(MultiValueTypeMetricBase):
 #class LineLoadingPercent(MultiValueTypeMetricBase):
 #    """Calculates line loading percent at every time point."""
 #
-#    def __init__(self, prop, dss_objs, options):
-#        super().__init__(prop, dss_objs, options)
+#    def __init__(self, prop, dss_objs, settings):
+#        super().__init__(prop, dss_objs, settings)
 #        self._normal_amps = {}  # Name to normal_amps value
 #
 #    def _get_value(self, dss_obj, _time_step):
@@ -334,8 +335,8 @@ class OpenDssPropertyMetric(MultiValueTypeMetricBase):
 #class TransformerLoadingPercent(MultiValueTypeMetricBase):
 #    """Calculates transformer loading percent at every time point."""
 #
-#    def __init__(self, prop, dss_objs, options):
-#        super().__init__(prop, dss_objs, options)
+#    def __init__(self, prop, dss_objs, settings):
+#        super().__init__(prop, dss_objs, settings)
 #        self._normal_amps = {}  # Name to normal_amps value
 #
 #    def _get_value(self, dss_obj, _time_step):
@@ -357,8 +358,8 @@ FeederHeadValues = namedtuple("FeederHeadValues", ["load_kvar", "load_kw", "load
 class FeederHeadMetrics(MetricBase):
     """Calculates loading at the feeder head at each time point"""
 
-    def __init__(self, prop, dss_objs, options):
-        super().__init__(prop, dss_objs, options)
+    def __init__(self, prop, dss_objs, settings):
+        super().__init__(prop, dss_objs, settings)
         # dss_objs contains the Circuit, but we won't use it.
         assert len(dss_objs) == 1, dss_objs
         self._prop = prop
@@ -461,8 +462,8 @@ class FeederHeadMetrics(MetricBase):
 class SummedElementsOpenDssPropertyMetric(MetricBase):
     """Sums all elements' values for a given property at each time point."""
 
-    def __init__(self, prop, dss_objs, options):
-        super().__init__(prop, dss_objs, options)
+    def __init__(self, prop, dss_objs, settings):
+        super().__init__(prop, dss_objs, settings)
         self._container = None
         self._data_conversion = prop.data_conversion
 
@@ -533,17 +534,17 @@ class NodeVoltageMetric(MetricBase):
 
     PRIMARY_BUS_THRESHOLD_KV = 1.0
 
-    def __init__(self, prop, dss_obj, options):
-        super().__init__(prop, dss_obj, options)
+    def __init__(self, prop, dss_obj, settings):
+        super().__init__(prop, dss_obj, settings)
         props = list(self._properties)
         assert len(props) == 1
         self._prop = props[0]
         # Indices for node names are tied to indices for node voltages.
         self._node_names = None
         self._voltages = None
-        start_time = get_start_time(options)
-        sim_resolution = get_simulation_resolution(options)
-        inputs = ReportBase.get_inputs_from_defaults(options, "Voltage Metrics")
+        start_time = get_start_time(settings)
+        sim_resolution = get_simulation_resolution(settings)
+        inputs = ReportBase.get_inputs_from_defaults(settings, "Voltage Metrics")
         window_size = int(
             timedelta(minutes=inputs["window_size_minutes"]) / sim_resolution
         )
@@ -596,10 +597,9 @@ class NodeVoltageMetric(MetricBase):
 
     def close(self):
         path = os.path.join(
-            self._options["Project"]["Project Path"],
-            self._options["Project"]["Active Project"],
+            str(self._settings.project.active_project_path),
             "Exports",
-            self._options["Project"]["Active Scenario"],
+            self._settings.project.active_scenario,
         )
         self._voltage_metrics.generate_report(path)
 
@@ -671,8 +671,8 @@ class TrackRegControlTapNumberChanges(ChangeCountMetricBase):
 
 
 class OpenDssExportMetric(MetricBase):
-    def __init__(self, prop, dss_objs, options):
-        super().__init__(prop, dss_objs, options)
+    def __init__(self, prop, dss_objs, settings):
+        super().__init__(prop, dss_objs, settings)
         self._tmp_dir = tempfile.mkdtemp()
         self._containers = {}
         self._sum_elements = prop.sum_elements
@@ -935,13 +935,13 @@ class ExportPowersMetric(OpenDssExportMetric):
 
 class OverloadsMetricInMemory(OpenDssExportMetric):
     """Stores line and transformer loading percentages in memory."""
-    def __init__(self, prop, dss_objs, options):
-        super().__init__(prop, dss_objs, options)
+    def __init__(self, prop, dss_objs, settings):
+        super().__init__(prop, dss_objs, settings)
         # Indices for node names are tied to indices for node voltages.
         self._transformer_index = None
-        start_time = get_start_time(options)
-        sim_resolution = get_simulation_resolution(options)
-        inputs = ReportBase.get_inputs_from_defaults(options, "Thermal Metrics")
+        start_time = get_start_time(settings)
+        sim_resolution = get_simulation_resolution(settings)
+        inputs = ReportBase.get_inputs_from_defaults(settings, "Thermal Metrics")
         line_window_size, transformer_window_size = self._get_window_sizes(inputs, sim_resolution)
         self._thermal_metrics = ThermalMetrics(
             prop,
@@ -1001,10 +1001,9 @@ class OverloadsMetricInMemory(OpenDssExportMetric):
 
     def close(self):
         path = os.path.join(
-            self._options["Project"]["Project Path"],
-            self._options["Project"]["Active Project"],
+            str(self._settings.project.active_project_path),
             "Exports",
-            self._options["Project"]["Active Scenario"],
+            self._settings.project.active_scenario,
         )
         self._thermal_metrics.generate_report(path)
 

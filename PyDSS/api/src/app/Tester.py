@@ -2,25 +2,25 @@ from PyDSS.dssInstance import OpenDSS
 from PyDSS.valiate_settings import validate_settings
 from PyDSS.api.src.web.parser import restructure_dictionary
 from PyDSS.api.src.app.DataWriter import DataWriter
+from PyDSS.simulation_input_models import SimulationSettingsModel, load_simulation_settings
+
 import logging
 import toml
 import time
 import os
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 def run_test(tomlpath):
-    pydss_obj = OpenDSS()
-    with open(tomlpath) as f_in:
-        args = toml.load(f_in)
     try:
-        validate_settings(args)
+        settings = load_simulation_settings(Path(tomlpath))
     except Exception as e:
         logger.error(f"Invalid simulation settings passed, {e}")
         return
 
-    pydss_obj.init(args)
-    export_path = os.path.join(pydss_obj._dssPath['Export'], args['Project']['Active Scenario'])
+    pydss_obj = OpenDSS(settings)
+    export_path = os.path.join(pydss_obj._dssPath['Export'], settings.project.active_scenario)
     Steps, sTime, eTime = pydss_obj._dssSolver.SimulationSteps()
     writer = DataWriter(export_path, format="json", columnLength=Steps)
 
@@ -47,4 +47,4 @@ def run_test(tomlpath):
         )
     logger.debug("{} seconds".format(time.time() - st))
 
-run_test(r"C:\Users\alatif\Desktop\PyDSS_tests\IEEE123\simulation.toml")
+#run_test(r"C:\Users\alatif\Desktop\PyDSS_tests\IEEE123\simulation.toml")

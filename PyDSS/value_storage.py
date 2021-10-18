@@ -460,6 +460,7 @@ class ValueByLabel(ValueStorageBase):
 
     @staticmethod
     def chunk_list(values, nLists):
+        # TODO DT: this breaks for Bus.puVmagAngle in monte carlo example test
         return  [values[i * nLists:(i + 1) * nLists] for i in range((len(values) + nLists - 1) // nLists)]
 
     def _fix_value(self, value):

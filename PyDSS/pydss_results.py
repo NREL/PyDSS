@@ -66,7 +66,7 @@ class PyDssResults:
         driver = "core" if in_memory else None
         self._hdf_store = h5py.File(filename, "r", driver=driver)
 
-        if self._project.simulation_config["Exports"]["Log Results"]:
+        if self._project.simulation_config.exports.export_results:
             for name in self._project.list_scenario_names():
                 metadata = self._project.read_scenario_export_metadata(name)
                 scenario_result = PyDssScenarioResults(

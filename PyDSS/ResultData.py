@@ -24,6 +24,7 @@ from PyDSS.utils.dss_utils import get_node_names_by_type
 from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
 from PyDSS.export_list_reader import ExportListReader, StoreValuesType
 from PyDSS.reports.reports import Reports, ReportGranularity
+from PyDSS.simulation_input_models import SimulationSettingsModel
 from PyDSS.utils.dataframe_utils import write_dataframe
 from PyDSS.utils.utils import dump_data
 from PyDSS.utils.simulation_utils import (
@@ -44,7 +45,7 @@ class ResultData:
     METADATA_FILENAME = "metadata.json"
     INDICES_BASENAME = "indices"
 
-    def __init__(self, options, system_paths, dss_objects,
+    def __init__(self, settings: SimulationSettingsModel, system_paths, dss_objects,
                  dss_objects_by_class, dss_buses, dss_solver, dss_command,
                  dss_instance, timer_stats):
         self._logger = logger
@@ -56,7 +57,7 @@ class ResultData:
         self.system_paths = system_paths
         self._element_metrics = {}  # (elem_class, prop_name) to OpenDssPropertyMetric
         self._summed_element_metrics = {}
-        self._options = options
+        self._settings = settings
         self._cur_step = 0
         self._stats = timer_stats
 
@@ -68,27 +69,22 @@ class ResultData:
         self._mode_dataset = None
         self._simulation_mode = []
         self._hdf_store = None
-        self._scenario = options["Project"]["Active Scenario"]
-        self._base_scenario = options["Project"]["Active Scenario"]
-        self._export_format = options["Exports"]["Export Format"]
-        self._export_compression = options["Exports"]["Export Compression"]
-        self._max_chunk_bytes = options["Exports"]["HDF Max Chunk Bytes"]
+        self._scenario = settings.project.active_scenario
+        self._base_scenario = settings.project.active_scenario
+        self._export_format = settings.exports.export_format
+        self._export_compression = settings.exports.export_compression
+        self._max_chunk_bytes = settings.exports.hdf_max_chunk_bytes
         self._export_dir = os.path.join(
             self.system_paths["Export"],
-            options["Project"]["Active Scenario"],
+            settings.project.active_scenario,
         )
         # Use / because this is used in HDFStore
-        self._export_relative_dir = "Exports/" + options["Project"]["Active Scenario"]
+        self._export_relative_dir = "Exports/" + settings.project.active_scenario
         self._store_frequency = False
         self._store_mode = False
-        if options["Frequency"]["Enable frequency sweep"]:
+        if settings.frequency.enable_frequency_sweep:
             self._store_frequency = True
             self._store_mode = True
-
-        if options["Exports"]["Export Mode"] == "byElement":
-            raise InvalidParameter(
-                "Export Mode 'byElement' is not supported by ResultData"
-            )
 
         pathlib.Path(self._export_dir).mkdir(parents=True, exist_ok=True)
 
@@ -102,7 +98,7 @@ class ResultData:
                 "ExportMode-byClass.toml",
             )
         self._export_list = ExportListReader(export_list_filename)
-        Reports.append_required_exports(self._export_list, options)
+        Reports.append_required_exports(self._export_list, settings)
         dump_data(
             self._export_list.serialize(),
             os.path.join(self._export_dir, "ExportsActual.toml"),
@@ -142,14 +138,14 @@ class ResultData:
         if prop.sum_elements:
             metric = self._summed_element_metrics.get(key)
             if metric is None:
-                metric = SummedElementsOpenDssPropertyMetric(prop, dss_objs, self._options)
+                metric = SummedElementsOpenDssPropertyMetric(prop, dss_objs, self._settings)
                 self._summed_element_metrics[key] = metric
             else:
                 metric.add_dss_obj(obj)
         else:
             metric = self._element_metrics.get(key)
             if metric is None:
-                metric = OpenDssPropertyMetric(prop, dss_objs, self._options)
+                metric = OpenDssPropertyMetric(prop, dss_objs, self._settings)
                 self._element_metrics[key] = metric
             else:
                 metric.add_property(prop)
@@ -159,7 +155,7 @@ class ResultData:
         if cls.is_circuit_wide():
             metric = self._circuit_metrics.get(cls)
             if metric is None:
-                metric = cls(prop, dss_objs, self._options)
+                metric = cls(prop, dss_objs, self._settings)
                 self._circuit_metrics[cls] = metric
             else:
                 metric.add_property(prop)
@@ -167,7 +163,7 @@ class ResultData:
             key = (prop.elem_class, prop.name)
             metric = self._element_metrics.get(key)
             if metric is None:
-                metric = cls(prop, dss_objs, self._options)
+                metric = cls(prop, dss_objs, self._settings)
                 self._element_metrics[key] = metric
             else:
                 metric.add_property(prop)
@@ -242,14 +238,14 @@ class ResultData:
             "element_info_files": [],
         }
 
-        if self._options["Exports"]["Export Event Log"]:
+        if self._settings.exports.export_event_log:
             self._export_event_log(metadata)
-        if self._options["Exports"]["Export Elements"]:
-            self._export_elements(metadata, set(self._options["Exports"]["Export Element Types"]))
+        if self._settings.exports.export_elements:
+            self._export_elements(metadata, set(self._settings.exports.export_element_types))
             self._export_feeder_head_info(metadata)
-        if self._options["Exports"]["Export PV Profiles"]:
+        if self._settings.exports.export_pv_profiles:
             self._export_pv_profiles()
-        if self._options["Exports"]["Export Node Names By Type"]:
+        if self._settings.exports.export_node_names_by_type:
             self._export_node_names_by_type()
 
         filename = os.path.join(self._export_dir, self.METADATA_FILENAME)
@@ -434,7 +430,7 @@ class ResultData:
         self._logger.info("Exported transformer phase information to %s", filepath)
 
     def _export_pv_profiles(self):
-        granularity = ReportGranularity(self._options["Reports"]["Granularity"])
+        granularity = self._settings.reports.granularity
         pv_systems = self._objects_by_class.get("PVSystems")
         if pv_systems is None:
             logger.info("No PVSystems are present")
@@ -458,7 +454,7 @@ class ResultData:
             self._logger.warning("There are no load shapes.")
             return
 
-        sim_resolution = self._options["Project"]["Step resolution (sec)"]
+        sim_resolution = self._settings.project.step_resolution_sec
         per_time_point = (
             ReportGranularity.PER_ELEMENT_PER_TIME_POINT,
             ReportGranularity.ALL_ELEMENTS_PER_TIME_POINT,
@@ -469,7 +465,7 @@ class ResultData:
             if name in profiles:
                 sinterval = dss.LoadShape.SInterval()
                 assert sim_resolution >= sinterval, f"{sim_resolution} >= {sinterval}"
-                df = create_loadshape_pmult_dataframe_for_simulation(self._options)
+                df = create_loadshape_pmult_dataframe_for_simulation(self._settings)
                 sum_values = df.iloc[:, 0].sum()
                 if granularity in per_time_point:
                     load_shape_data[name] = df.iloc[:, 0].values
@@ -481,7 +477,7 @@ class ResultData:
 
         if load_shape_data and granularity in per_time_point:
             filename = os.path.join(self._export_dir, PV_LOAD_SHAPE_FILENAME)
-            index = create_datetime_index_from_settings(self._options)
+            index = create_datetime_index_from_settings(self._settings)
             df = pd.DataFrame(load_shape_data, index=index)
             write_dataframe(df, filename, compress=True)
 
