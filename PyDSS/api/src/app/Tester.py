@@ -1,5 +1,4 @@
 from PyDSS.dssInstance import OpenDSS
-from PyDSS.valiate_settings import validate_settings
 from PyDSS.api.src.web.parser import restructure_dictionary
 from PyDSS.api.src.app.DataWriter import DataWriter
 from PyDSS.simulation_input_models import SimulationSettingsModel, load_simulation_settings
