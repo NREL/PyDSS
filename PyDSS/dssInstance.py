@@ -94,13 +94,14 @@ class OpenDSS:
         self._Logger.info('OpenDSS:  ' + reply)
 
         assert ('error ' not in reply.lower()), 'Error compiling OpenDSS model.\n{}'.format(reply)
-        run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
+        #run_command('Set DefaultBaseFrequency={}'.format(params['Frequency']['Fundamental frequency']))
         self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(params['Frequency']['Fundamental frequency']) + ' Hz')
 
-        run_command('Set %SeriesRL={}'.format(params['Frequency']['Percentage load in series']))
+        #run_command('Set %SeriesRL={}'.format(params['Frequency']['Percentage load in series']))
         if params['Frequency']['Neglect shunt admittance']:
             run_command('Set NeglectLoadY=Yes')
 
+        print('in dssInstance initializing model')
         self._dssCircuit = dss.Circuit
         self._dssElement = dss.Element
         self._dssBus = dss.Bus
@@ -109,8 +110,11 @@ class OpenDSS:
         self._dssSolution = dss.Solution
         self._dssSolver = SolveMode.GetSolver(SimulationSettings=params, dssInstance=self._dssInstance)
         self._Modifier = Modifier(dss, run_command, params)
+        print('updating dictionary')
         self._UpdateDictionary()
+        print('creating buses')
         self._CreateBusObjects()
+        print('solving')
         self._dssSolver.reSolve()
 
         if params and params['Exports']['Log Results']:
@@ -297,7 +301,7 @@ class OpenDSS:
 
     def RunStep(self, step, updateObjects=None):
         # updating paramters bebore simulation ru
-        self._HI.updateHelicsPublications()
+        #self._HI.updateHelicsPublications()
         if self._Options['Helics']['Co-simulation Mode']:
             #self._HI.updateHelicsPublications()
             if self._increment_flag:
@@ -315,7 +319,7 @@ class OpenDSS:
                 self._dssSolver.reSolve()
             print('timestep solved, updating subscriptions')
             self._HI.updateHelicsSubscriptions()
-            #print('updating publications')
+            print('updating publications')
             #self._HI.updateHelicsPublications()
         else:
             self._dssSolver.IncStep()
