@@ -79,7 +79,10 @@ class OpenDSS:
         }
 
         if settings.project.dss_file_absolute_path:
-            self._dssPath['dssFilePath'] = settings.project.dss_file
+            self._dssPath['dssFilePath'] = Path(settings.project.dss_file)
+
+        if not self._dssPath['dssFilePath'].exists():
+            raise InvalidConfiguration(f"DSS file {self._dssPath['dssFilePath']} does not exist")
 
         LoggerTag = pyLogger.getLoggerTag(settings)
         self._Logger = logging.getLogger(__name__)
