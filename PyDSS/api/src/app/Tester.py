@@ -45,5 +45,3 @@ def run_test(tomlpath):
             i
         )
     logger.debug("{} seconds".format(time.time() - st))
-
-#run_test(r"C:\Users\alatif\Desktop\PyDSS_tests\IEEE123\simulation.toml")
