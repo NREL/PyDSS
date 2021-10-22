@@ -177,7 +177,7 @@ class helics_interface:
                     if element_name == "Vsource.source" and self._options['Helics']['Iterative Mode'] and (value[0]<0.01 or math.isnan(value[0]) or value[0]=='nan'):
                         self._logger.debug('Feed-in voltage {value} at time {self.c_seconds} iteration {self.itr}, continuing with nominal voltage.')
                         print(f'voltage {value} continuing with nominal')
-                        value = [1.01]*len(sub_property)
+                        value = [1.00]*len(sub_property)
                         skip_multiplier = True
                     elif element_name.startswith('Load.load') and self._options['Helics']['Iterative Mode'] and (abs(value[0])>10e20 or math.isnan(value[0]) or value[0]=='nan'):
                         new_value = [0.0]*len(sub_property) #0.2/(self.itr+1)
