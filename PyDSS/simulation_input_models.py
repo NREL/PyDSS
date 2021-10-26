@@ -95,7 +95,6 @@ class ScenarioModel(InputsBaseModel):
     )
     snapshot_time_point_selection_config: SnapshotTimePointSelectionConfigModel = Field(
         title="snapshot_time_point_selection_config",
-        # TODO DT: checker for snapshot mode
         description="Descriptor for auto-selecting snapshot time points",
         default=SnapshotTimePointSelectionConfigModel(),
     )
