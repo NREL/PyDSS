@@ -120,6 +120,10 @@ class ResultData:
                 if prop.opendss_classes:
                     dss_objs = []
                     for cls in prop.opendss_classes:
+                        if cls not in self._objects_by_class:
+                            logger.warning("Export class=%s is not present in the circuit", cls)
+                            continue
+
                         for obj in self._objects_by_class[cls].values():
                             if obj.Enabled and prop.should_store_name(obj.FullName):
                                 dss_objs.append(obj)

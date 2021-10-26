@@ -4,7 +4,7 @@ import os
 from collections import defaultdict
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from pydantic import BaseModel, Field
 
@@ -113,7 +113,7 @@ class ThermalMetricsSummaryModel(ThermalMetricsBaseModel):
         title="line_loadings",
         description="line loading metrics",
     )
-    transformer_loadings: ThermalMetricsModel = Field(
+    transformer_loadings: Union[ThermalMetricsModel, None] = Field(
         title="transformer_loadings",
         description="transformer loading metrics",
     )
@@ -151,6 +151,8 @@ def create_summary_from_dict(data):
     for scenario in summary.scenarios:
         for model, elem_type in zip(("line_loadings", "transformer_loadings"), ("line", "transformer")):
             model = getattr(summary.scenarios[scenario], model)
+            if model is None:
+                continue
             for column in model.__fields__:
                 val = getattr(model, column)
                 if not isinstance(val, dict):
@@ -253,23 +255,27 @@ class ThermalMetrics:
         for i in range(len(self._max_mavg_transformer_violations)):
             mavg_violations_by_transformer[self._transformer_names[i]] = self._max_mavg_transformer_violations[i]
 
-        transformer_metric = ThermalMetricsModel(
-            max_instantaneous_loadings_pct=inst_violations_by_transformer,
-            max_instantaneous_loading_pct=max(inst_violations_by_transformer.values()),
-            max_moving_average_loadings_pct=mavg_violations_by_transformer,
-            max_moving_average_loading_pct=max(mavg_violations_by_transformer.values()),
-            window_size_hours=self._transformer_window_size_hours,
-            num_time_points_with_instantaneous_violations=self._num_time_points_inst_transformer_violations,
-            num_time_points_with_moving_average_violations=self._num_time_points_mavg_transformer_violations,
-            instantaneous_threshold=self._transformer_loading_percent_threshold,
-            moving_average_threshold=self._transformer_loading_percent_mavg_threshold,
-        )
+        if self.has_transformers():
+            transformer_metric = ThermalMetricsModel(
+                max_instantaneous_loadings_pct=inst_violations_by_transformer,
+                max_instantaneous_loading_pct=max(inst_violations_by_transformer.values()),
+                max_moving_average_loadings_pct=mavg_violations_by_transformer,
+                max_moving_average_loading_pct=max(mavg_violations_by_transformer.values()),
+                window_size_hours=self._transformer_window_size_hours,
+                num_time_points_with_instantaneous_violations=self._num_time_points_inst_transformer_violations,
+                num_time_points_with_moving_average_violations=self._num_time_points_mavg_transformer_violations,
+                instantaneous_threshold=self._transformer_loading_percent_threshold,
+                moving_average_threshold=self._transformer_loading_percent_mavg_threshold,
+            )
+        else:
+            transformer_metric = None
 
         if not self._store_per_element_data:
             line_metric.max_instantaneous_loadings_pct.clear()
             line_metric.max_moving_average_loadings_pct.clear()
-            transformer_metric.max_instantaneous_loadings_pct.clear()
-            transformer_metric.max_moving_average_loadings_pct.clear()
+            if self.has_transformers():
+                transformer_metric.max_instantaneous_loadings_pct.clear()
+                transformer_metric.max_moving_average_loadings_pct.clear()
 
         summary = ThermalMetricsSummaryModel(
             line_loadings=line_metric,
@@ -281,6 +287,9 @@ class ThermalMetrics:
             f_out.write(summary.json(indent=2))
             f_out.write("\n")
         logger.info("Generated thermal metric report in %s", filename)
+
+    def has_transformers(self):
+        return bool(self._transformer_names)
 
     @property
     def line_names(self):
