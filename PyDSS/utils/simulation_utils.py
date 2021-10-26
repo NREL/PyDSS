@@ -9,6 +9,7 @@ import opendssdirect as dss
 import pandas as pd
 
 from PyDSS.common import DATE_FORMAT, TIME_FORMAT
+from PyDSS.simulation_input_models import SimulationSettingsModel
 
 
 logger = logging.getLogger(__name__)
@@ -34,14 +35,14 @@ class CircularBufferHelper:
 class SimulationFilteredTimeRange:
     """Provides filtering in a time range."""
     def __init__(self, start, end):
-        self._start = start
-        self._end = end
+        self._start = time.strptime(start, TIME_FORMAT)
+        self._end = time.strptime(end, TIME_FORMAT)
         default_start = time.strptime("00:00:00", TIME_FORMAT)
         default_end = time.strptime("11:59:59", TIME_FORMAT)
         self._no_filtering = start == default_start and end == default_end
 
     @classmethod
-    def from_settings(cls, settings):
+    def from_settings(cls, settings: SimulationSettingsModel):
         """Return SimulationFilteredTimeRange from the simulation settings.
 
         Parameters
@@ -54,9 +55,10 @@ class SimulationFilteredTimeRange:
         SimulationFilteredTimeRange
 
         """
-        start = time.strptime(settings["Project"]["Simulation range"]["start"], TIME_FORMAT)
-        end = time.strptime(settings["Project"]["Simulation range"]["end"], TIME_FORMAT)
-        return cls(start=start, end=end)
+        return cls(
+            start=settings.project.simulation_range.start,
+            end=settings.project.simulation_range.end,
+        )
 
     def is_within_range(self, timestamp):
         """Return True if the timestamp is within the filtered range.
@@ -81,45 +83,42 @@ class SimulationFilteredTimeRange:
         return ts >= self._start and ts <=self._end
 
 
-def get_start_time(settings):
+def get_start_time(settings: SimulationSettingsModel):
     """Return the start time of the simulation.
 
     Parameters
     ----------
-    settings : dict
-        settings from project simulation.toml
+    settings : SimulationSettingsModel
 
     Returns
     -------
     datetime
 
     """
-    return datetime.strptime(settings['Project']["Start time"], DATE_FORMAT)
+    return settings.project.start_time
 
 
-def get_simulation_resolution(settings):
+def get_simulation_resolution(settings: SimulationSettingsModel):
     """Return the simulation of the resolution
 
     Parameters
     ----------
-    settings : dict
-        settings from project simulation.toml
+    settings : SimulationSettingsModel
 
     Returns
     -------
     datetime
 
     """
-    return timedelta(seconds=settings["Project"]["Step resolution (sec)"])
+    return timedelta(seconds=settings.project.step_resolution_sec)
 
 
-def create_time_range_from_settings(settings):
+def create_time_range_from_settings(settings: SimulationSettingsModel):
     """Return the start time, step time, and end time from the settings.
 
     Parameters
     ----------
-    settings : dict
-        settings from project simulation.toml
+    settings : SimulationSettingsModel
 
     Returns
     -------
@@ -128,18 +127,17 @@ def create_time_range_from_settings(settings):
 
     """
     start_time = get_start_time(settings)
-    end_time = start_time + timedelta(minutes=settings["Project"]["Simulation duration (min)"])
+    end_time = start_time + timedelta(minutes=settings.project.simulation_duration_min)
     step_time = get_simulation_resolution(settings)
     return start_time, end_time, step_time
 
 
-def create_datetime_index_from_settings(settings):
+def create_datetime_index_from_settings(settings: SimulationSettingsModel):
     """Return time indices created from the simulation settings.
 
     Parameters
     ----------
-    settings : dict
-        settings from project simulation.toml
+    settings : SimulationSettingsModel
 
     Returns
     -------
@@ -156,21 +154,20 @@ def create_datetime_index_from_settings(settings):
     return pd.DatetimeIndex(data)
 
 
-def create_loadshape_pmult_dataframe(settings):
+def create_loadshape_pmult_dataframe(settings: SimulationSettingsModel):
     """Return a loadshape dataframe representing all available data.
     This assumes that a loadshape has been selected in OpenDSS.
 
     Parameters
     ----------
-    settings : dict
-        settings from project simulation.toml
+    settings : SimulationSettingsModel
 
     Returns
     -------
     pd.DatetimeIndex
 
     """
-    start_time = datetime.strptime(settings['Project']['Loadshape start time'], DATE_FORMAT)
+    start_time = settings.project.loadshape_start_time
     data = dss.LoadShape.PMult()
     interval = timedelta(seconds=dss.LoadShape.SInterval())
     npts = dss.LoadShape.Npts()
@@ -184,15 +181,14 @@ def create_loadshape_pmult_dataframe(settings):
     return pd.DataFrame(data, index=pd.DatetimeIndex(indices))
 
 
-def create_loadshape_pmult_dataframe_for_simulation(settings):
+def create_loadshape_pmult_dataframe_for_simulation(settings: SimulationSettingsModel):
     """Return a loadshape pmult dataframe that only contains time points used
     by the simulation.
     This assumes that a loadshape has been selected in OpenDSS.
 
     Parameters
     ----------
-    settings : dict
-        settings from project simulation.toml
+    settings : SimulationSettingsModel
 
     Returns
     -------

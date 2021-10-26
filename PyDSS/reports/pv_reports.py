@@ -54,8 +54,8 @@ class PvReportBase(ReportBase, abc.ABC):
         return len(self._pv_system_names) > 0
 
     @staticmethod
-    def get_required_exports(simulation_config):
-        granularity = ReportGranularity(simulation_config["Reports"]["Granularity"])
+    def get_required_exports(settings):
+        granularity = ReportGranularity(settings.reports.granularity)
         _type, sum_elements = ReportBase._params_from_granularity(granularity)
         return {
             "PVSystems": [
@@ -73,9 +73,9 @@ class PvReportBase(ReportBase, abc.ABC):
         return set(["pf1", "control_mode"])
 
     @staticmethod
-    def set_required_project_settings(simulation_config):
-        if not simulation_config["Exports"]["Export PV Profiles"]:
-            simulation_config["Exports"]["Export PV Profiles"] = True
+    def set_required_project_settings(settings):
+        if not settings.exports.export_pv_profiles:
+            settings.exports.export_pv_profiles = True
             logger.info("Enabled Export PV Profiles")
 
 
@@ -100,8 +100,8 @@ class PvClippingReport(PvReportBase):
         if not self._has_pv_systems():
             return
 
-        diff_tolerance = self._report_options["diff_tolerance_percent_pmpp"] * .01
-        denominator_tolerance = self._report_options["denominator_tolerance_percent_pmpp"] * .01
+        diff_tolerance = self._report_settings.diff_tolerance_percent_pmpp * .01
+        denominator_tolerance = self._report_settings.denominator_tolerance_percent_pmpp * .01
         logger.debug("tolerances: diff=%s denominator=%s", diff_tolerance, denominator_tolerance)
         self._diff_tolerances = {}
         self._denominator_tolerances = {}
@@ -216,8 +216,7 @@ class PvClippingReport(PvReportBase):
 
     def _read_pv_load_shapes(self):
         path = os.path.join(
-            self._simulation_config["Project"]["Project Path"],
-            self._simulation_config["Project"]["Active Project"],
+            str(self._settings.project.active_project_path),
             "Exports",
             CONTROL_MODE_SCENARIO,
             PV_LOAD_SHAPE_FILENAME,
@@ -228,7 +227,7 @@ class PvClippingReport(PvReportBase):
         if not self._has_pv_systems():
             return
 
-        granularity = ReportGranularity(self._simulation_config["Reports"]["Granularity"])
+        granularity = self._settings.reports.granularity
         if granularity == ReportGranularity.PER_ELEMENT_PER_TIME_POINT:
             self._generate_per_pv_system_per_time_point(output_dir)
         elif granularity == ReportGranularity.PER_ELEMENT_TOTAL:
@@ -262,8 +261,8 @@ class PvCurtailmentReport(PvReportBase):
         if not self._has_pv_systems():
             return
 
-        diff_tolerance = self._report_options["diff_tolerance_percent_pmpp"] * .01
-        denominator_tolerance = self._report_options["denominator_tolerance_percent_pmpp"] * .01
+        diff_tolerance = self._report_settings.diff_tolerance_percent_pmpp * .01
+        denominator_tolerance = self._report_settings.denominator_tolerance_percent_pmpp * .01
         logger.debug("tolerances: diff=%s denominator=%s", diff_tolerance, denominator_tolerance)
         self._diff_tolerances = {}
         self._denominator_tolerances = {}
@@ -338,7 +337,7 @@ class PvCurtailmentReport(PvReportBase):
         if not self._has_pv_systems():
             return
 
-        granularity = ReportGranularity(self._simulation_config["Reports"]["Granularity"])
+        granularity = ReportGranularity(self._settings.reports.granularity)
         if granularity == ReportGranularity.PER_ELEMENT_PER_TIME_POINT:
             self._generate_per_pv_system_per_time_point(output_dir)
         elif granularity == ReportGranularity.PER_ELEMENT_TOTAL:

@@ -62,3 +62,15 @@ Uninterruptible = true
 
 [MonteCarlo]
 "Number of Monte Carlo scenarios" = 0
+
+[Reports]
+Format = "h5"
+Granularity = "per_element_per_time_point"
+
+[[Reports.Types]]
+name = "Voltage Metrics"
+enabled = true
+window_size_minutes = 60
+range_a_limits = [1.025, 1.05]
+range_b_limits = [1.020, 1.054]
+store_per_element_data = true

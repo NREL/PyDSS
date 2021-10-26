@@ -72,10 +72,17 @@ logger = logging.getLogger(__name__)
     help="dict-formatted simulation settings that override the config file. " \
          "Example:  pydss run ./project --options \"{\\\"Simulation Type\\\": \\\"QSTS\\\"}\"",
 )
+@click.option(
+    "--force",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Overwrite directory if it already exists.",
+)
 @click.command()
 def create_project(path=None, project=None, scenarios=None, simulation_file=None, simulation_config=None,
                    controller_types=None, export_modes=None, options=None, visualization_types=None,
-                   opendss_project_folder=None, master_dss_file=None):
+                   opendss_project_folder=None, master_dss_file=None, force=False):
     """Create PyDSS project."""
     setup_logging("PyDSS", console_level=logging.INFO)
     if controller_types is not None:
@@ -107,5 +114,6 @@ def create_project(path=None, project=None, scenarios=None, simulation_file=None
         options=options,
         simulation_file=simulation_file,
         master_dss_file=master_dss_file,
-        opendss_project_folder = opendss_project_folder
+        opendss_project_folder = opendss_project_folder,
+        force=force,
     )

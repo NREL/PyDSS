@@ -301,8 +301,7 @@ class Utilidata_Interface(AbstractPostprocess):
 
     def get_feeder(self, elm_name):
         dss_path = os.path.join(
-            self.Settings['Project']['Project Path'],
-            self.Settings['Project']["Active Project"],
+            str(self.Settings.project.active_project_path),
             "DSSfiles"
         )
         feeders = [x for x in os.listdir(dss_path) if os.path.isdir(os.path.join(dss_path, x))]

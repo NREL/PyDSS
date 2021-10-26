@@ -42,14 +42,13 @@ class ThermalMetrics(ReportBase):
 
     def __init__(self, name, results, simulation_config):
         super().__init__(name, results, simulation_config)
-        self._options = self._report_options
         self._num_lines = 0
         self._num_transformers = 0
         self._resolution = self._get_simulation_resolution()
         self._files_to_delete = []
 
     def generate(self, output_dir):
-        inputs = ThermalMetrics.get_inputs_from_defaults(self._simulation_config, self.NAME)
+        inputs = ThermalMetrics.get_inputs_from_defaults(self._settings, self.NAME)
         if inputs["store_all_time_points"]:
             scenarios = self._generate_from_all_time_points()
         else:
@@ -69,8 +68,7 @@ class ThermalMetrics(ReportBase):
         scenarios = {}
         for scenario in self._results.scenarios:
             filename = os.path.join(
-                self._simulation_config["Project"]["Project Path"],
-                self._simulation_config["Project"]["Active Project"],
+                str(self._settings.project.active_project_path),
                 "Exports",
                 scenario.name,
                 self.FILENAME,
@@ -82,7 +80,7 @@ class ThermalMetrics(ReportBase):
         return scenarios
 
     def _generate_from_all_time_points(self):
-        inputs = self.get_inputs_from_defaults(self._simulation_config, self.NAME)
+        inputs = self.get_inputs_from_defaults(self._settings, self.NAME)
         line_window_size, transformer_window_size = self._get_window_sizes(inputs, self._resolution)
         scenarios = {}
         for scenario in self._results.scenarios:

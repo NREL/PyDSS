@@ -1,25 +1,26 @@
 from datetime import datetime, timedelta
-from PyDSS.common import DATE_FORMAT
 import math
 
-class solver_base:
-    def __init__(self, dssInstance, SimulationSettings, Logger):
+from PyDSS.common import DATE_FORMAT
+from PyDSS.simulation_input_models import SimulationSettingsModel
 
-        self.Settings = SimulationSettings
+class solver_base:
+    def __init__(self, dssInstance, settings: SimulationSettingsModel, Logger):
+
+        self._settings = settings
         self.pyLogger = Logger
 
-        self._Time = datetime.strptime(SimulationSettings['Project']["Start time"], DATE_FORMAT)
-        self._Loadshape_init_time = datetime.strptime(SimulationSettings['Project']["Loadshape start time"],
-                                                      DATE_FORMAT)
+        self._Time = settings.project.start_time
+        self._Loadshape_init_time = settings.project.loadshape_start_time
         time_offset_days = (self._Time - self._Loadshape_init_time).days
         time_offset_seconds = (self._Time - self._Loadshape_init_time).seconds
 
         self._StartTime = self._Time
-        self._EndTime = self._Time + timedelta(minutes=SimulationSettings['Project']["Simulation duration (min)"])
+        self._EndTime = self._Time + timedelta(minutes=settings.project.simulation_duration_min)
 
         StartDay = time_offset_days
         StartTimeMin = time_offset_seconds / 60.0
-        sStepResolution = SimulationSettings['Project']['Step resolution (sec)']
+        sStepResolution = settings.project.step_resolution_sec
 
         self.StartDay = self._StartTime.timetuple().tm_yday
         self.EndDay = self._EndTime.timetuple().tm_yday
@@ -33,9 +34,7 @@ class solver_base:
 
         #self._dssSolution.DblHour()
         self.reSolve()
-        self.pyLogger.info("{} solver setup complete".format(SimulationSettings['Project']["Simulation Type"]))
-
-
+        self.pyLogger.info("%s solver setup complete", settings.project.simulation_type)
 
     def setFrequency(self, frequency):
         self._dssSolution.Frequency(frequency)
@@ -72,7 +71,7 @@ class solver_base:
 
     @property
     def MaxIterations(self):
-        return self.Settings['Project']['Max Control Iterations']
+        return self._settings.project.max_control_iterations
 
     def SolveFor(self, mStartTime, mTimeStep):
         raise Exception("Implement the 'SolveFor' function in the child class")

@@ -8,6 +8,7 @@ SPHINXBUILD   = sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = build
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
+INPUT_MODELS = $(BUILDDIR)/model_tables/input_models.rst
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -17,8 +18,15 @@ help:
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
-%: Makefile
+%: Makefile model_tables
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+clean:
+	rm -rf build
+
+# TODO: make make_model_tables.py a dependency so that it doesn't always run.
+model_tables:
+	python make_model_tables.py -o $(BUILDDIR)/model_tables
 
 github: html
 	rm -rf source/PyDSS

@@ -1,7 +1,9 @@
 
 import logging
 import os
+import shutil
 import tempfile
+from pathlib import Path
 
 import h5py
 import numpy as np
@@ -12,12 +14,14 @@ from PyDSS.common import LimitsFilter
 from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.export_list_reader import ExportListProperty
 from PyDSS.metrics import MultiValueTypeMetricBase
+from PyDSS.simulation_input_models import (
+    SimulationSettingsModel, create_simulation_settings, load_simulation_settings
+)
 from PyDSS.value_storage import ValueByNumber, ValueByList
 from PyDSS.utils.utils import load_data
 from tests.common import FakeElement
 
 
-OPTIONS = load_data("PyDSS/defaults/simulation.toml")
 STORE_FILENAME = os.path.join(tempfile.gettempdir(), "store.h5")
 FLOATS = (1.0, 2.0, 3.0, 4.0, 5.0)
 COMPLEX_NUMS = (
@@ -41,12 +45,18 @@ OBJS = [
 
 
 @pytest.fixture
-def cleanup():
+def simulation_settings():
+    project_path = Path(tempfile.gettempdir()) / "pydss_projects"
+    if project_path.exists():
+        shutil.rmtree(project_path)
+    project_name = "test_project"
+    project_path.mkdir()
+    filename = create_simulation_settings(project_path, project_name, ["s1"])
+    yield load_simulation_settings(filename)
     if os.path.exists(STORE_FILENAME):
         os.remove(STORE_FILENAME)
-    yield
-    if os.path.exists(STORE_FILENAME):
-        os.remove(STORE_FILENAME)
+    if project_path.exists():
+        shutil.rmtree(project_path)
 
 
 class FakeMetric(MultiValueTypeMetricBase):
@@ -74,14 +84,14 @@ class FakeMetric(MultiValueTypeMetricBase):
         return val
 
 
-def test_metrics_store_all(cleanup):
+def test_metrics_store_all(simulation_settings):
     data = {
         "property": "Property",
         "store_values_type": "all",
     }
     values = FLOATS
     prop = ExportListProperty("Fake", data)
-    metric = FakeMetric(prop, OBJS, OPTIONS, values)
+    metric = FakeMetric(prop, OBJS, simulation_settings, values)
     with h5py.File(STORE_FILENAME, mode="w", driver="core") as hdf_store:
         metric.initialize_data_store(hdf_store, "", len(values))
         for i in range(len(values)):
@@ -100,7 +110,7 @@ def test_metrics_store_all(cleanup):
         assert metric.max_num_bytes() == len(values) * len(OBJS) * 8 
 
 
-def test_metrics_store_all_complex_abs(cleanup):
+def test_metrics_store_all_complex_abs(simulation_settings):
     data = {
         "property": "Property",
         "store_values_type": "all",
@@ -108,7 +118,7 @@ def test_metrics_store_all_complex_abs(cleanup):
     }
     values = COMPLEX_NUMS
     prop = ExportListProperty("Fake", data)
-    metric = FakeMetric(prop, OBJS, OPTIONS, values)
+    metric = FakeMetric(prop, OBJS, simulation_settings, values)
     with h5py.File(STORE_FILENAME, mode="w", driver="core") as hdf_store:
         metric.initialize_data_store(hdf_store, "", len(values))
         for i in range(len(values)):
@@ -126,7 +136,7 @@ def test_metrics_store_all_complex_abs(cleanup):
                 assert val1 == abs(val2)
 
 
-def test_metrics_store_all_complex_sum(cleanup):
+def test_metrics_store_all_complex_sum(simulation_settings):
     data = {
         "property": "Property",
         "store_values_type": "all",
@@ -134,7 +144,7 @@ def test_metrics_store_all_complex_sum(cleanup):
     }
     values = LIST_COMPLEX_NUMS
     prop = ExportListProperty("Fake", data)
-    metric = FakeMetric(prop, OBJS, OPTIONS, values)
+    metric = FakeMetric(prop, OBJS, simulation_settings, values)
     with h5py.File(STORE_FILENAME, mode="w", driver="core") as hdf_store:
         metric.initialize_data_store(hdf_store, "", len(values))
         for i in range(len(values)):
@@ -152,7 +162,7 @@ def test_metrics_store_all_complex_sum(cleanup):
                 assert val1 == sum(val2)
 
 
-def test_metrics_store_all_complex_abs_sum(cleanup):
+def test_metrics_store_all_complex_abs_sum(simulation_settings):
     data = {
         "property": "Property",
         "store_values_type": "all",
@@ -160,7 +170,7 @@ def test_metrics_store_all_complex_abs_sum(cleanup):
     }
     values = LIST_COMPLEX_NUMS
     prop = ExportListProperty("Fake", data)
-    metric = FakeMetric(prop, OBJS, OPTIONS, values)
+    metric = FakeMetric(prop, OBJS, simulation_settings, values)
     with h5py.File(STORE_FILENAME, mode="w", driver="core") as hdf_store:
         metric.initialize_data_store(hdf_store, "", len(values))
         for i in range(len(values)):
@@ -178,7 +188,7 @@ def test_metrics_store_all_complex_abs_sum(cleanup):
                 assert val1 == abs(sum(val2))
 
 
-def test_metrics_store_all_filtered(cleanup):
+def test_metrics_store_all_filtered(simulation_settings):
     data = {
         "property": "Property",
         "store_values_type": "all",
@@ -187,7 +197,7 @@ def test_metrics_store_all_filtered(cleanup):
     }
     values = FLOATS
     prop = ExportListProperty("Fake", data)
-    metric = FakeMetric(prop, OBJS, OPTIONS, values)
+    metric = FakeMetric(prop, OBJS, simulation_settings, values)
     with h5py.File(STORE_FILENAME, mode="w", driver="core") as hdf_store:
         metric.initialize_data_store(hdf_store, "", len(values))
         for i in range(len(values)):
@@ -207,7 +217,7 @@ def test_metrics_store_all_filtered(cleanup):
         assert [x for x in time_step_dataset[3]] == [4, 1]
 
 
-def test_metrics_store_moving_average_and_max(cleanup):
+def test_metrics_store_moving_average_and_max(simulation_settings):
     window_size = 10
     values = [float(i) for i in range(50)] + [float(i) for i in range(25)]
     data1 = {
@@ -221,7 +231,7 @@ def test_metrics_store_moving_average_and_max(cleanup):
     }
     prop1 = ExportListProperty("Fake", data1)
     prop2 = ExportListProperty("Fake", data2)
-    metric = FakeMetric(prop1, OBJS, OPTIONS, values)
+    metric = FakeMetric(prop1, OBJS, simulation_settings, values)
     metric.add_property(prop2)
 
     base_df = pd.DataFrame(values)
@@ -253,7 +263,7 @@ def test_metrics_store_moving_average_and_max(cleanup):
                     assert val1 == val2
 
 
-def test_metrics_store_moving_average_with_limits(cleanup):
+def test_metrics_store_moving_average_with_limits(simulation_settings):
     limits = [1.0, 50.0]
     window_size = 10
     data = {
@@ -270,7 +280,7 @@ def test_metrics_store_moving_average_with_limits(cleanup):
     base_rm = base_series.rolling(window_size).mean()
     expected = [x for x in base_rm.values if x < limits[0] or x > limits[1]]
     prop = ExportListProperty("Fake", data)
-    metric = FakeMetric(prop, OBJS, OPTIONS, values)
+    metric = FakeMetric(prop, OBJS, simulation_settings, values)
     with h5py.File(STORE_FILENAME, mode="w", driver="core") as hdf_store:
         metric.initialize_data_store(hdf_store, "", len(values))
         for i in range(len(values)):
@@ -288,7 +298,7 @@ def test_metrics_store_moving_average_with_limits(cleanup):
             assert dataset[i * 2 + 1] == expected_val
 
 
-def test_metrics_store_moving_average_max(cleanup):
+def test_metrics_store_moving_average_max(simulation_settings):
     window_size = 10
     data = {
         "property": "Property",
@@ -300,7 +310,7 @@ def test_metrics_store_moving_average_max(cleanup):
     base_series = base_df.iloc[:, 0]
     base_rm = base_series.rolling(window_size).mean()
     prop = ExportListProperty("Fake", data)
-    metric = FakeMetric(prop, OBJS, OPTIONS, values)
+    metric = FakeMetric(prop, OBJS, simulation_settings, values)
     with h5py.File(STORE_FILENAME, mode="w", driver="core") as hdf_store:
         metric.initialize_data_store(hdf_store, "", len(values))
         for i in range(len(values)):
@@ -315,14 +325,14 @@ def test_metrics_store_moving_average_max(cleanup):
         assert metric.max_num_bytes() == 8 * len(OBJS)
 
 
-def test_metrics_store_sum(cleanup):
+def test_metrics_store_sum(simulation_settings):
     data = {
         "property": "Property",
         "store_values_type": "sum",
     }
     values = FLOATS
     prop = ExportListProperty("Fake", data)
-    metric = FakeMetric(prop, OBJS, OPTIONS, values)
+    metric = FakeMetric(prop, OBJS, simulation_settings, values)
     with h5py.File(STORE_FILENAME, mode="w", driver="core") as hdf_store:
         metric.initialize_data_store(hdf_store, "", len(values))
         for i in range(len(values)):
@@ -338,14 +348,14 @@ def test_metrics_store_sum(cleanup):
         assert metric.max_num_bytes() == 8 * len(OBJS)
 
 
-def test_metrics_store_max(cleanup):
+def test_metrics_store_max(simulation_settings):
     data = {
         "property": "Property",
         "store_values_type": "max",
     }
     values = FLOATS
     prop = ExportListProperty("Fake", data)
-    metric = FakeMetric(prop, OBJS, OPTIONS, values)
+    metric = FakeMetric(prop, OBJS, simulation_settings, values)
     with h5py.File(STORE_FILENAME, mode="w", driver="core") as hdf_store:
         metric.initialize_data_store(hdf_store, "", len(values))
         for i in range(len(values)):
@@ -361,14 +371,14 @@ def test_metrics_store_max(cleanup):
         assert metric.max_num_bytes() == 8 * len(OBJS)
 
 
-def test_metrics_store_min(cleanup):
+def test_metrics_store_min(simulation_settings):
     data = {
         "property": "Property",
         "store_values_type": "min",
     }
     values = FLOATS
     prop = ExportListProperty("Fake", data)
-    metric = FakeMetric(prop, OBJS, OPTIONS, values)
+    metric = FakeMetric(prop, OBJS, simulation_settings, values)
     with h5py.File(STORE_FILENAME, mode="w", driver="core") as hdf_store:
         metric.initialize_data_store(hdf_store, "", len(values))
         for i in range(len(values)):

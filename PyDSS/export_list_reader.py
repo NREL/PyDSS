@@ -335,7 +335,7 @@ class ExportListReader:
                 elem_class, data
             ))
 
-        # TODO DT: verify that multiple instances of the same property have
+        # TODO: verify that multiple instances of the same property have
         # the same names.
 
     @staticmethod

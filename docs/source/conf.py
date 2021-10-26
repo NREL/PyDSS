@@ -16,6 +16,10 @@ import sys
 
 import sphinx_rtd_theme
 
+import PyDSS
+import PyDSS.simulation_input_models
+#from PyDSS.simulation_input_models import SimulationSettingsModel, ProjectModel
+
 # -- Project information -----------------------------------------------------
 
 project = 'PyDSS'

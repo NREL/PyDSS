@@ -7,9 +7,10 @@ import logging
 
 from PyDSS.common import RUN_SIMULATION_FILENAME
 from PyDSS.exceptions import InvalidConfiguration
-from PyDSS import dssInstance
+from PyDSS.dssInstance import OpenDSS
+from PyDSS.simulation_input_models import SimulationSettingsModel, dump_settings
 from PyDSS.utils.utils import dump_data, load_data
-from PyDSS.valiate_settings import validate_settings, dump_settings
+
 
 __author__ = "Aadil Latif"
 __copyright__ = """
@@ -50,71 +51,56 @@ class instance(object):
     def __init__(self):
         self._estimated_space = None
 
-    def run(self, simulation_config, project, scenario, dry_run=False):
+    def run(self, settings: SimulationSettingsModel, project, scenario, dry_run=False):
         bokeh_server_proc = None
-        if simulation_config['Plots']['Create dynamic plots']:
+        if settings.plots.create_dynamic_plots:
             bokeh_server_proc = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
         try:
             self.run_scenario(
                 project,
                 scenario,
-                simulation_config,
+                settings,
                 dry_run=dry_run,
             )
         finally:
-            if simulation_config['Plots']['Create dynamic plots']:
+            if settings.plots.create_dynamic_plots:
                 bokeh_server_proc.terminate()
 
         return
 
-    def update_scenario_settings(self, simulation_config):
-        path = os.path.dirname(PyDSS.__file__)
-        dss_args = load_data(os.path.join(path, 'defaults', 'simulation.toml'))
-        for category, params in dss_args.items():
-            if category in simulation_config:
-                params.update(simulation_config[category])
-        validate_settings(dss_args)
-        return dss_args
-
     def create_dss_instance(self, dss_args):
-        dss = dssInstance.OpenDSS(dss_args)
-        #dss.init(dss_args)
-        return dss
+        return OpenDSS(dss_args)
 
-    def run_scenario(self, project, scenario, simulation_config, dry_run=False):
-        dss_args = self.update_scenario_settings(simulation_config)
-
+    def run_scenario(self, project, scenario, settings: SimulationSettingsModel, dry_run=False):
         if dry_run:
-            dss = dssInstance.OpenDSS(dss_args)
-            self._dump_scenario_simulation_settings(dss_args)
+            dss = OpenDSS(settings)
+            self._dump_scenario_simulation_settings(settings)
             #dss.init(dss_args)
-            logger.info('Dry run scenario: %s', dss_args["Project"]["Active Scenario"])
-            if dss_args["MonteCarlo"]["Number of Monte Carlo scenarios"] > 0:
+            logger.info('Dry run scenario: %s', settings.project.active_scenario)
+            if settings.monte_carlo.num_scenarios > 0:
                 raise InvalidConfiguration("Dry run does not support MonteCarlo simulation.")
             else:
                 self._estimated_space = dss.DryRunSimulation(project, scenario)
             return None, None
 
-        dss = dssInstance.OpenDSS(dss_args)
-        self._dump_scenario_simulation_settings(dss_args)
-        #dss.init(dss_args)
-        logger.info('Running scenario: %s', dss_args["Project"]["Active Scenario"])
-        if dss_args["MonteCarlo"]["Number of Monte Carlo scenarios"] > 0:
-            dss.RunMCsimulation(project, scenario, samples=dss_args["MonteCarlo"]['Number of Monte Carlo scenarios'])
+        opendss = OpenDSS(settings)
+        self._dump_scenario_simulation_settings(settings)
+        logger.info('Running scenario: %s', settings.project.active_scenario)
+        if settings.monte_carlo.num_scenarios > 0:
+            opendss.RunMCsimulation(project, scenario, samples=settings.monte_carlo.num_scenarios)
         else:
-            dss.RunSimulation(project, scenario)
-        return dss_args
+            opendss.RunSimulation(project, scenario)
 
     def get_estimated_space(self):
         return self._estimated_space
 
-    def _dump_scenario_simulation_settings(self, dss_args):
+    def _dump_scenario_simulation_settings(self, settings: SimulationSettingsModel):
         # Various settings may have been updated. Write the actual settings to a file.
         scenario_simulation_filename = os.path.join(
-            dss_args["Project"]["Project Path"],
-            dss_args["Project"]["Active Project"],
+            settings.project.project_path,
+            settings.project.active_project,
             "Scenarios",
-            dss_args["Project"]["Active Scenario"],
+            settings.project.active_scenario,
             RUN_SIMULATION_FILENAME,
         )
-        dump_settings(dss_args, scenario_simulation_filename)
+        dump_settings(settings, scenario_simulation_filename)

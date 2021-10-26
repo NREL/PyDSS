@@ -28,9 +28,17 @@ from PyDSS.pydss_fs_interface import PyDssDirectoryInterface, \
     SCENARIOS, STORE_FILENAME
 from PyDSS.reports.reports import REPORTS_DIR
 from PyDSS.registry import Registry
+from PyDSS.simulation_input_models import (
+    ScenarioModel,
+    ScenarioPostProcessModel,
+    SimulationSettingsModel,
+    SnapshotTimePointSelectionConfigModel,
+    create_simulation_settings,
+    load_simulation_settings,
+    dump_settings,
+)
 from PyDSS.utils.dss_utils import read_pv_systems_from_dss_file
 from PyDSS.utils.utils import dump_data, load_data
-from PyDSS.valiate_settings import dump_settings
 
 from distutils.dir_util import copy_tree
 logger = logging.getLogger(__name__)
@@ -48,11 +56,11 @@ class PyDssProject:
 
     _SKIP_ARCHIVE = (PROJECT_ZIP, PROJECT_TAR, STORE_FILENAME, REPORTS_DIR)
 
-    def __init__(self, path, name, scenarios, simulation_config, fs_intf=None,
+    def __init__(self, path, name, scenarios, settings: SimulationSettingsModel, fs_intf=None,
                  simulation_file=SIMULATION_SETTINGS_FILENAME):
         self._name = name
         self._scenarios = scenarios
-        self._simulation_config = simulation_config
+        self._settings = settings
         self._project_dir = os.path.join(path, self._name)
         if simulation_file is None:
             self._simulation_file = os.path.join(self._project_dir, SIMULATION_SETTINGS_FILENAME)
@@ -214,7 +222,7 @@ class PyDssProject:
         dict
 
         """
-        return self._simulation_config
+        return self._settings
 
     @property
     def estimated_space(self):
@@ -236,7 +244,7 @@ class PyDssProject:
             copy_tree(opendss_project_folder, dest)
         self._serialize_scenarios()
         dump_settings(
-            self._simulation_config,
+            self._settings,
             os.path.join(self._project_dir, self._simulation_file),
         )
         logger.info("Initialized directories in %s", self._project_dir)
@@ -245,7 +253,7 @@ class PyDssProject:
 
     def create_project(cls, path, name, scenarios, simulation_config=None, options=None,
                        simulation_file=SIMULATION_SETTINGS_FILENAME, opendss_project_folder=None,
-                       master_dss_file=OPENDSS_MASTER_FILENAME):
+                       master_dss_file=OPENDSS_MASTER_FILENAME, force=False):
         """Create a new PyDssProject on the filesystem.
 
         Parameters
@@ -261,19 +269,22 @@ class PyDssProject:
 
         """
         if simulation_config is None:
-            simulation_config = DEFAULT_SIMULATION_SETTINGS_FILE
+            scenario_names = [x.name for x in scenarios]
+            simulation_config = create_simulation_settings(path, name, scenario_names, force=force)
         simulation_config = load_data(simulation_config)
         if options is not None:
-            simulation_config.update(options)
+            for category, category_options in options.items():
+                simulation_config[category].update(category_options)
         if master_dss_file:
-            simulation_config["Project"]["DSS File"] = master_dss_file
-        simulation_config["Project"]["Project Path"] = path
-        simulation_config["Project"]["Active Project"] = name
+            simulation_config["project"]["dss_file"] = master_dss_file
+        simulation_config["project"]["project_path"] = path
+        simulation_config["project"]["active_project"] = name
+        settings = SimulationSettingsModel(**simulation_config)
         project = cls(
             path=path,
             name=name,
             scenarios=scenarios,
-            simulation_config=simulation_config,
+            settings=settings,
             simulation_file=simulation_file,
         )
         project.serialize(opendss_project_folder=opendss_project_folder)
@@ -311,16 +322,16 @@ class PyDssProject:
             raise InvalidConfiguration("cannot run from an archived project")
         if tar_project and zip_project:
             raise InvalidParameter("tar_project and zip_project cannot both be True")
-        if self._simulation_config['Project']['DSS File'] == "":
+        if self._settings.project.dss_file == "":
             raise InvalidConfiguration("a valid opendss file needs to be passed")
 
         inst = instance()
         if not logging_configured:
-            if self._simulation_config["Logging"]["Display on screen"]:
+            if self._settings.logging.enable_console:
                 console_level = logging.INFO
             else:
                 console_level = logging.ERROR
-            if self._simulation_config["Logging"]["Log to external file"]:
+            if self._settings.logging.enable_file:
                 filename = os.path.join(self._project_dir, "Logs", "pydss.log")
             else:
                 filename = None
@@ -338,7 +349,7 @@ class PyDssProject:
             self._dump_simulation_settings()
 
         driver = None
-        if self._simulation_config["Exports"].get("Export Data In Memory", False):
+        if self._settings.exports.export_data_in_memory:
             driver = "core"
         if os.path.exists(store_filename):
             os.remove(store_filename)
@@ -351,14 +362,12 @@ class PyDssProject:
                 with h5py.File(store_filename, mode="a", driver=driver) as hdf_store:
                     self._hdf_store = hdf_store
                     self._hdf_store.attrs["version"] = DATA_FORMAT_VERSION
-                    self._simulation_config["Project"]["Active Scenario"] = scenario.name
-                    inst.run(self._simulation_config, self, scenario, dry_run=dry_run)
+                    self._settings.project.active_scenario = scenario.name
+                    inst.run(self._settings, self, scenario, dry_run=dry_run)
                     self._estimated_space[scenario.name] = inst.get_estimated_space()
 
-            export_tables = self._simulation_config["Exports"].get(
-                "Export Data Tables", False
-            )
-            generate_reports = self._simulation_config.get("Reports", False)
+            export_tables = self._settings.exports.export_data_tables
+            generate_reports = bool(self._settings.reports)
             if not dry_run and (export_tables or generate_reports):
                 # Hack. Have to import here. Need to re-organize to fix.
                 from PyDSS.pydss_results import PyDssResults
@@ -387,27 +396,24 @@ class PyDssProject:
     def _dump_simulation_settings(self):
         # Various settings may have been updated. Write the actual settings to a file.
         filename = os.path.join( self._project_dir, RUN_SIMULATION_FILENAME)
-        dump_settings(self._simulation_config, filename)
+        dump_settings(self._settings, filename)
 
     def _serialize_scenarios(self):
-        self._simulation_config["Project"]["Scenarios"] = []
+        scenarios = []
         for scenario in self._scenarios:
-            data = {
-                "name": scenario.name,
-                "post_process_infos": [],
-                "snapshot_time_point_selection_config": scenario.snapshot_time_point_selection_config,
-            }
-            for pp_info in scenario.post_process_infos:
-                data["post_process_infos"].append(
-                    {
-                        "script": pp_info["script"],
-                        "config_file": pp_info["config_file"],
-                    }
-                )
-            self._simulation_config["Project"]["Scenarios"].append(data)
+            cfg = scenario.snapshot_time_point_selection_config or SnapshotTimePointSelectionConfigModel()
+            model = ScenarioModel(
+                name=scenario.name,
+                post_process_infos=[],
+                snapshot_time_point_selection_config=cfg,
+            )
+            model.post_process_infos = scenario.post_process_infos
+            scenarios.append(model)
             scenario.serialize(
                 os.path.join(self._scenarios_dir, scenario.name)
             )
+
+        self._settings.project.scenarios = scenarios
 
     def _tar_project_files(self, delete=True):
         orig = os.getcwd()
@@ -464,30 +470,33 @@ class PyDssProject:
             os.chdir(orig)
 
     @staticmethod
-    def load_simulation_config(project_path, simulations_file):
+    def load_simulation_settings(project_path, simulations_file):
         """Return the simulation settings for a project, using defaults if the
         file is not defined.
 
         Parameters
         ----------
-        project_path : str
+        project_path : Path
 
         Returns
         -------
-        dict
+        SimulationSettingsModel
 
         """
-        filename = os.path.join(project_path, simulations_file)
-        if not os.path.exists(filename):
-            filename = os.path.join(
-                project_path,
-                DEFAULT_SIMULATION_SETTINGS_FILE,
-            )
-            assert os.path.exists(filename)
-        return load_data(filename)
+        filename = project_path / simulations_file
+        if not filename.exists():
+            filename = project_path / DEFAULT_SIMULATION_SETTINGS_FILE
+            assert filename.exists()
+        return load_simulation_settings(filename)
 
     @classmethod
-    def load_project(cls, path, options=None, in_memory=False, simulation_file=SIMULATION_SETTINGS_FILENAME):
+    def load_project(
+        cls,
+        path,
+        options=None,
+        in_memory=False,
+        simulation_file=SIMULATION_SETTINGS_FILENAME,
+    ):
         """Load a PyDssProject from directory.
 
         Parameters
@@ -511,7 +520,7 @@ class PyDssProject:
         else:
             fs_intf = PyDssDirectoryInterface(path, simulation_file)
 
-        simulation_config = fs_intf.simulation_config
+        simulation_config = fs_intf.simulation_config.dict(by_alias=False)
         if options is not None:
             for category, params in options.items():
                 if category not in simulation_config:
@@ -519,20 +528,21 @@ class PyDssProject:
                 simulation_config[category].update(params)
             logger.info("Overrode config options: %s", options)
 
+        settings = SimulationSettingsModel(**simulation_config)
         scenarios = [
             PyDssScenario.deserialize(
                 fs_intf,
-                x["name"],
-                post_process_infos=x["post_process_infos"],
+                x.name,
+                post_process_infos=x.post_process_infos,
             )
-            for x in simulation_config["Project"]["Scenarios"]
+            for x in settings.project.scenarios
         ]
 
         return PyDssProject(
             os.path.dirname(path),
             name,
             scenarios,
-            simulation_config,
+            settings,
             fs_intf=fs_intf,
         )
 
@@ -568,7 +578,7 @@ class PyDssProject:
 
         Returns
         -------
-        dict
+        SimulationSettingsModel
 
         """
         scenario_path = Path(self._project_dir) / "Scenarios" / scenario
@@ -579,7 +589,7 @@ class PyDssProject:
         if not settings_file.exists():
             raise InvalidConfiguration(f"{RUN_SIMULATION_FILENAME} does not exist. Was the scenario run?")
 
-        return load_data(settings_file)
+        return load_simulation_settings(settings_file)
 
     def read_scenario_time_settings(self, scenario):
         """Return the simulation time-related settings for the scenario.
@@ -594,15 +604,15 @@ class PyDssProject:
         dict
 
         """
-        settings = self.read_scenario_settings(scenario)["Project"]
+        settings = self.read_scenario_settings(scenario).project
         data = {}
         for key in (
-            "Start time",
-            "Simulation duration (min)",
-            "Loadshape start time",
-            "Step resolution (sec)",
+            "start_time",
+            "simulation_duration_min",
+            "loadshape_start_time",
+            "step_resolution_sec",
         ):
-            data[key] = settings[key]
+            data[key] = getattr(settings, key)
         return data
 
 
@@ -685,6 +695,8 @@ class PyDssScenario:
 
         if post_process_infos is not None:
             for pp_info in post_process_infos:
+                if isinstance(pp_info, dict):
+                    pp_info = ScenarioPostProcessModel(**pp_info)
                 self.add_post_process(pp_info)
 
         if snapshot_time_point_selection_config is not None:
@@ -843,12 +855,7 @@ class PyDssScenario:
             Must define all fields in PyDssScenario.REQUIRED_POST_PROCESS_FIELDS
 
         """
-        for field in self.REQUIRED_POST_PROCESS_FIELDS:
-            if field not in post_process_info:
-                raise InvalidParameter(
-                    f"missing post-process field={field}"
-                )
-        config_file = post_process_info["config_file"]
+        config_file = post_process_info.config_file
         if config_file and not os.path.exists(config_file):
             raise InvalidParameter(f"{config_file} does not exist")
 
@@ -896,8 +903,8 @@ def update_pydss_controllers(project_path, scenario, controller_type,
         sys.exit(1)
 
     sim_file = os.path.join(project_path, SIMULATION_SETTINGS_FILENAME)
-    config = load_data(sim_file)
-    if not config["Project"].get("Use Controller Registry", False):
+    settings = load_simulation_settings(sim_file)
+    if not settings.project.use_controller_registry:
         print(f"'Use Controller Registry' must be set to true in {sim_file}")
         sys.exit(1)
 
