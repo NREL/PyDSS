@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from pydantic import BaseModel, Field
 
@@ -177,7 +177,7 @@ class VoltageMetricsModel(VoltageMetricsBaseModel):
         title="metric_6",
         description="metric 6",
     )
-    summary: VoltageMetricsSummaryModel = Field(
+    summary: Union[VoltageMetricsSummaryModel, None] = Field(
         title="summary",
         description="summary of metrics",
     )
@@ -269,6 +269,10 @@ class NodeVoltageMetricsByType:
     def create_summary(metric_1, metric_2, metric_3, metric_5, metric_6, node_names,
                        num_time_points, resolution, range_a_limits, range_b_limits,
                        moving_window_minutes):
+        if not node_names:
+            # There may not be any secondary nodes.
+            return None
+
         max_pnvdoaa = max((x.duration for x in metric_2.values())).total_seconds()
         vdbaab = metric_1.duration.total_seconds()
         mmavdoa = metric_3.duration.total_seconds()

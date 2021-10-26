@@ -232,7 +232,7 @@ class VoltageMetrics(ReportBase):
             metric_5=vmetric_5,
             metric_6=vmetric_6,
             summary=NodeVoltageMetricsByType.create_summary(
-                vmetric_1, vmetric_2, vmetric_3, vmetric_5, vmetric_6, df.columns,
+                vmetric_1, vmetric_2, vmetric_3, vmetric_5, vmetric_6, list(df.columns),
                 len(df), self._resolution, self._range_a_limits, self._range_b_limits,
                 self._moving_window_minutes
             )

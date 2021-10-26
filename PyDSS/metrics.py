@@ -939,6 +939,7 @@ class OverloadsMetricInMemory(OpenDssExportMetric):
         super().__init__(prop, dss_objs, settings)
         # Indices for node names are tied to indices for node voltages.
         self._transformer_index = None
+        self._discovered_elements = False
         start_time = get_start_time(settings)
         sim_resolution = get_simulation_resolution(settings)
         inputs = ReportBase.get_inputs_from_defaults(settings, "Thermal Metrics")
@@ -959,7 +960,7 @@ class OverloadsMetricInMemory(OpenDssExportMetric):
         )
 
     def _append_values(self, time_step, store_nan=False):
-        if self._transformer_index is None:
+        if not self._discovered_elements:
             line_names = []
             transformer_names = []
             for i, val in enumerate(self._values):
@@ -974,9 +975,15 @@ class OverloadsMetricInMemory(OpenDssExportMetric):
                     assert False, val.name
             self._thermal_metrics.line_names = line_names
             self._thermal_metrics.transformer_names = transformer_names
+            self._discovered_elements = True
 
-        line_loadings = self._values[:self._transformer_index]
-        transformer_loadings = self._values[self._transformer_index:]
+        if self._transformer_index is None:
+            # There are no transformers.
+            line_loadings = self._values[:]
+            transformer_loadings = []
+        else:
+            line_loadings = self._values[:self._transformer_index]
+            transformer_loadings = self._values[self._transformer_index:]
 
         if not store_nan:
             self._thermal_metrics.update(time_step, line_loadings, transformer_loadings)
