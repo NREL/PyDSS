@@ -53,9 +53,6 @@ class helics_interface:
         self.c_seconds = 0.1
         self.c_seconds_old = -1
         self._logger = logging.getLogger(LoggerTag)
-        # TODO DT: Why was the Gemini code doing this? If it is needed, it should be done at
-        # initialization time.
-        # self._logger.propogate = True
         self._settings = settings
         self._co_convergance_error_tolerance = settings.helics.error_tolerance
         self._co_convergance_max_iterations = self._settings.helics.max_co_iterations
@@ -87,12 +84,11 @@ class helics_interface:
         helics.helicsFederateInfoSetCoreTypeFromString(self.fedinfo, self._settings.helics.core_type)
         helics.helicsFederateInfoSetCoreInitString(self.fedinfo, f"--federates=1 --networktimeout=60min --timeout=60min --broker_address {self._options['Helics']['Broker']} --port {self._options['Helics']['Broker port']} --maxsize=32768 --slowresponding") 
         helics.helicsFederateInfoSetFlagOption(self.fedinfo, helics.helics_flag_terminate_on_error, 0) # set terminate_on_error to false
-        IP = self._settings.helics.broker
-        Port = self._settings.helics.broker_port
-        self._logger.info("Connecting to broker @ {}".format(f"{IP}:{Port}" if Port else IP))
         if self._settings.helics.broker:
+            self._logger.info("Connecting to broker @ %s", self._settings.helics.broker)
             helics.helicsFederateInfoSetBroker(self.fedinfo, self._settings.helics.broker)
         if self._settings.helics.broker_port:
+            self._logger.info("Connecting to broker @ %s", self._settings.helics.broker_port)
             helics.helicsFederateInfoSetBrokerPort(self.fedinfo, self._settings.helics.broker_port)
         helics.helicsFederateInfoSetTimeProperty(self.fedinfo, helics.helics_property_time_delta,
                                                  self._settings.helics.time_delta)
