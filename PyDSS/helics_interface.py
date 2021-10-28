@@ -157,7 +157,7 @@ class helics_interface:
                         sub_multiplier = sub_info['Multiplier']
                         last_sub_index = sub_info['index'][-1]
                     if isinstance(value, list):
-                        if len(value)<last_sub_index+1 and self._options['Helics']['Iterative Mode'] and abs(value[0]) > 10e20:
+                        if len(value)<last_sub_index+1 and self._settings.helics.iterative_mode and abs(value[0]) > 10e20:
                              value = [value[0] for i in range(last_sub_index+1)]
                         #value = value[last_sub_index]
                 elif sub_info['Data type'].lower() == 'string':
@@ -171,12 +171,12 @@ class helics_interface:
                     #value = value * sub_info['Multiplier']
                     skip_multiplier = False
                     # if you are iterating and the feedin voltage is close to 0, log the time and iteration, but continue with nominal so that you can continue
-                    if element_name == "Vsource.source" and self._options['Helics']['Iterative Mode'] and (value[0]<0.01 or math.isnan(value[0]) or value[0]=='nan'):
+                    if element_name == "Vsource.source" and self._settings.helics.iterative_mode and (value[0]<0.01 or math.isnan(value[0]) or value[0]=='nan'):
                         self._logger.debug('Feed-in voltage {value} at time {self.c_seconds} iteration {self.itr}, continuing with nominal voltage.')
                         print(f'voltage {value} continuing with nominal')
                         value = [1.00]*len(sub_property)
                         skip_multiplier = True
-                    elif element_name.startswith('Load.load') and self._options['Helics']['Iterative Mode'] and (abs(value[0])>10e20 or math.isnan(value[0]) or value[0]=='nan'):
+                    elif element_name.startswith('Load.load') and self._settings.helics.iterative_mode and (abs(value[0])>10e20 or math.isnan(value[0]) or value[0]=='nan'):
                         new_value = [0.0]*len(sub_property) #0.2/(self.itr+1)
                         self._logger.debug('load {value} at time {self.c_seconds} iterationi {self.itr}, continuing with new_value load.')
                         print(f'load {element_name} = {value}, waiting for updated value, solving with 0.0.') 
