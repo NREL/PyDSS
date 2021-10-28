@@ -109,7 +109,7 @@ class helics_interface:
         if subs is not None:
             SubscriptionList = subs
         else:
-            self._logger('reading subscription file at: %s', self._system_paths["ExportLists"])
+            self._logger.info('reading subscription file at: %s', self._system_paths["ExportLists"])
             self._sub_file_reader = pySubscriptionReader(
                 os.path.join(
                     self._system_paths["ExportLists"],
@@ -119,7 +119,7 @@ class helics_interface:
             SubscriptionList = self._sub_file_reader.SubscriptionList
         self._subscriptions = {}
         self._subscription_dState = {}
-        self._logger('Registering federate subscriptions')
+        self._logger.info('Registering federate subscriptions')
         for element, subscription in SubscriptionList.items():
             assert element in self._objects_by_element, '"{}" listed in the subscription file not '.format(element) +\
                                                      "available in PyDSS's master object dictionary."
@@ -142,7 +142,7 @@ class helics_interface:
     def updateHelicsSubscriptions(self):
 
         for element_name, sub_info in self._subscriptions.items():
-            self._logger('getting subscription: %s', element_name)
+            self._logger.info('getting subscription: %s', element_name)
             if 'Subscription' in sub_info:
                 value = None
                 sub_property = [sub_info['Property']]
