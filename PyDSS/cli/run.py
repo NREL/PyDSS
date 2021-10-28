@@ -6,6 +6,7 @@ import ast
 import logging
 import os
 import sys
+from pathlib import Path
 
 import click
 
@@ -18,9 +19,7 @@ from PyDSS.common import SIMULATION_SETTINGS_FILENAME
 logger = logging.getLogger(__name__)
 
 
-@click.argument(
-    "project-path",
-)
+@click.argument("project-path", type=click.Path(exists=True))
 @click.option(
     "-o", "--options",
     help="dict-formatted simulation settings that override the config file. " \
@@ -67,33 +66,26 @@ logger = logging.getLogger(__name__)
 
 def run(project_path, options=None, tar_project=False, zip_project=False, verbose=False, simulations_file=None, dry_run=False):
     """Run a PyDSS simulation."""
-    if not os.path.exists(project_path):
-        print(f"project-path={project_path} does not exist")
-        sys.exit(1)
-
-    config = PyDssProject.load_simulation_config(project_path, simulations_file)
+    project_path = Path(project_path)
+    settings = PyDssProject.load_simulation_settings(project_path, simulations_file)
     if verbose:
         # Override the config file.
-        config["Logging"]["Logging Level"] = logging.DEBUG
+        settings.logging.logging_level = logging.DEBUG
 
     filename = None
     console_level = logging.INFO
     file_level = logging.INFO
-    if not config["Logging"]["Display on screen"]:
+    if not settings.logging.enable_console:
         console_level = logging.ERROR
     if verbose:
         console_level = logging.DEBUG
         file_level = logging.DEBUG
-    if config["Logging"]["Log to external file"]:
-        logs_path = os.path.join(project_path, "Logs")
-        filename = os.path.join(
-            logs_path,
-            os.path.basename(project_path) + ".log",
-        )
-
-    if not os.path.exists(logs_path):
-        print("Logs path does not exist. 'run' is not supported on a tarred project.")
-        sys.exit(1)
+    if settings.logging.enable_file:
+        logs_path = project_path / "Logs"
+        if not logs_path.exists():
+            logger.error("Logs path %s does not exist", logs_path)
+            sys.exit(1)
+        filename = logs_path / "pydss.log"
 
     setup_logging(
         "PyDSS",
@@ -106,7 +98,7 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
     if options is not None:
         options = ast.literal_eval(options)
         if not isinstance(options, dict):
-            print(f"options must be of type dict; received {type(options)}")
+            logger.error("options are invalid: %s", options)
             sys.exit(1)
 
     project = PyDssProject.load_project(project_path, options=options, simulation_file=simulations_file)

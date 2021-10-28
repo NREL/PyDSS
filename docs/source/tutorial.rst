@@ -1,88 +1,48 @@
+.. _tutorial_label:
+
+********
 Tutorial
-########
-This page describes how to run simulations with PyDSS.
+********
+This page describes how to run simulations with PyDSS. If you have not already installed PyDSS,
+please follow the instructions at :ref:`installation_label`.
 
-Installation
-************
-There are two ways to install PyDSS.
+Create a project
+================
+PyDSS requires a specific directory structure with configuration files that specify how to run a
+simulation. Run this command to create an empty project.
 
-1. Install via pip.
+.. code-block:: bash
 
-::
-
-    pip install -i https://test.pypi.org/simple/ PyDSS==0.0.1
-
-2. Clone the repository.
-
-::
-
-   git clone https://github.com/NREL/PyDSS
-   cd PyDSS
-   pip install -e .
-
-
-Confirm the installation with this command. It should print the available
-commands::
-
-    pydss --help
-
-Create a new project
-********************
-PyDSS requires a specific directory layout.  Use this command to create an
-empty project. ::
-
-    pydss create-project --project=my_project \
-        --scenarios="scenario1,scenario2" \
-        --path=~/pydss-projects
+    $ pydss create-project --project=my-project --scenarios="scenario1,scenario2" --path=./pydss-projects
 
 Refer to ``pydss create-project --help`` to see additional options.
 
 Next, configure the project.
 
-- Copy OpenDSS files to <project-name>/DSSfiles
-- Customize the simulation settings in <project-name>/simulation.toml.
-  In particular, set the value for "DSS File" to the master file in the
-  DSSfiles directory.
-- Set "Use Controller Registry" = true in <project-name>/simulation.toml in
-  order to use the new, simplified controller management feature.
-- Add controllers to your local registry as needed.  Refer to
-  ``pydss controllers --help``. 
+- Copy OpenDSS files to ``<project-name>/DSSfiles``.
+- Customize the simulation settings in ``<project-name>/simulation.toml``.
+- Set the field ``dss_file`` in ``simulation.toml`` to the OpenDSS entry point filename (e.g., Master.dss).
+- Set ``"Use Controller Registry" = true`` in ``<project-name>/simulation.toml`` in
+  order to use the simplified controller management feature.
+- Add controllers to your local registry as needed.  Refer to ``pydss controllers --help``. 
 - Assign element names to controllers. This example will add all PVSystems
   defined in an OpenDSS input file to the default Volt-Var PvController.
   ``pydss edit-scenario -p ./project -s scenario1 update-controllers -t PvController -f ./project/DSSfiles/PVGenerators_existing_VV.dss -c volt-var``
-- Customize the the plots to be generated in
-  <project-name>/Scenarios/<scenario-name>/pyPlotList
+- Customize the plots settings in ``<project-name>/Scenarios/<scenario-name>/pyPlotList``.
 - Customize data to be exported for each scenario in
-  <project-name>/Scenarios/<scenario-name>/ExportLists
+  ``<project-name>/Scenarios/<scenario-name>/ExportLists``
 
-Data Format
------------
-These configuration customizations exist for data exported using the new
-"ResultData" container:
+Refer to :ref:`pydss_project_layout` for more information about the project layout.
 
-- ``Export Elements``:  Set to true to export static element parameters.
-- ``Export Data Tables``:  Set to true to export data tables for each element
-  property.  Note that this duplicates data. Enable this to preserve a
-  human-readable dataset that does not require PyDSS to interpret.
-- ``Export Format``:  Set to ``csv`` or ``h5``. Only applicable when
-  ``Export Data Tables`` is set to true.
-- ``Export Compression``:  Set to true or false. Only applicable when
-  ``Export Data Tables`` is set to true.
-- ``Export Data In Memory``:  Set to true to keep exported data in memory.
-  Otherwise, it is flushed to disk periodically.
-- ``Export PV Profiles``: Set to true to export load shape profile information
-  for PV Systems.
-- ``HDF Max Chunk Bytes``: PyDSS uses the h5py library to write exported data to
-  disk. Inline compression is always used, so chunking is enabled. This
-  parameter will control the maximum size of dataset chunks. Refer to
-  http://docs.h5py.org/en/stable/high/dataset.html#chunked-storage for more
-  information.
-- ``Export Event Log``:  Set to true to export the OpenDSS event log.
+Exporting Data
+==============
+Customize data export for all scenarios with the simulation settings described in
+:ref:`ExportsModel`.
 
 Pre-filtering Export Data
--------------------------
+=========================
 There are several options to limit the amount of data exported. These can be
-set in ``Exports.toml`` on a per-property basis.
+set in each scenario's ``Exports.toml`` on a per-property basis.
 
 - Set ``names = ["name1", "name2", "name3"]`` to only export data for these
   element names. By default PyDSS exports data for all elements.
@@ -114,24 +74,24 @@ set in ``Exports.toml`` on a per-property basis.
 
 
 Run a project
-*************
+=============
 Run this command to run all scenarios in the project.  ::
 
     pydss run <path-to-project>
 
 
 Analyze results
-***************
-If the default export behavior is used then the raw output is written to CSV
-files in <project-path>/<project-name>/Export/<scenario-name>. These can be
+===============
+If ``Export Data Tables`` is set to true then the raw output is written to CSV
+files in ``<project-path>/<project-name>/Export/<scenario-name>``. These can be
 converted to pandas DataFrames. It is up to the user to interpret what each
 column represents.  This can very by element.
 
-If the "ResultData" export method is configured then data can be loaded as
-shown by this example code::
+You can also access the results programmatically as shown in the following
+example code.
 
 Load element classes and properties
-===================================
+-----------------------------------
 
 .. code-block:: python
 
@@ -147,7 +107,7 @@ Load element classes and properties
                 print(elem_class, prop, name)
 
 Read a dataframe for one element
-================================
+--------------------------------
 
 ::
 
@@ -163,7 +123,7 @@ Read a dataframe for one element
     2017-01-01 01:15:00   (3.356035449542105e-08+1.3810414088766265e-05j)  (-3.637978807091713e-12+1.1368683772161603e-13j)
 
 Read a dataframe for one element with a specific option
-=======================================================
+-------------------------------------------------------
 Some element properties contain multiple values.  For example, the OpenDSS
 CktElement objects report ``Currents`` into each phase/terminal.
 Here is how you can get the data for a single phase/terminal::
@@ -191,7 +151,7 @@ Here is how you can get the data for a single phase/terminal::
     2017-01-01 01:15:00                  6.347553
 
 Read a dataframe for one element with an option matching a regular expression
-=============================================================================
+-----------------------------------------------------------------------------
 
 ::
 
@@ -210,7 +170,7 @@ Read a dataframe for one element with an option matching a regular expression
     2017-01-01 01:15:00   (3.356035449542105e-08+1.3810414088766265e-05j)
 
 Read the total value for a property stored with ``store_values_type = "sum"``
-=============================================================================
+-----------------------------------------------------------------------------
 
 ::
 
@@ -218,7 +178,7 @@ Read the total value for a property stored with ``store_values_type = "sum"``
     (48337.88149479975+14128.296734762534j)
 
 Find out all options available for a property
-=============================================
+---------------------------------------------
 
 ::
 
@@ -232,7 +192,7 @@ Find out all options available for a property
     []
 
 Find out what option values are present for a property
-======================================================
+------------------------------------------------------
 
 ::
 
@@ -240,7 +200,7 @@ Find out what option values are present for a property
     ["A1", "A2"]
 
 Read a dataframe for all elements
-=================================
+---------------------------------
 You may want to get data for all elements at once.
 
 .. code-block:: python
@@ -248,13 +208,14 @@ You may want to get data for all elements at once.
     df = scenario.get_full_dataframe("Lines", "Currents")
 
 
+==========================
 Performance Considerations
-**************************
+==========================
 If your dataset is small enough to fit in your system's memory then you can
 load it all into memory by passing ``in_memory=True`` to ``PyDssResults``.
 
 Estimate space required by PyDSS simulation
-===========================================
+-------------------------------------------
 To estimate the storage space required by PyDSS simulation *before compression*.
 
 If use ``pydss`` CLI, please enable ``dry_run`` flag provided in ``run``,
@@ -265,7 +226,7 @@ If use ``pydss`` CLI, please enable ``dry_run`` flag provided in ``run``,
 
 .. note::
 
-  Please notice that the space caculated here is just an estimation, not an exact requirement.
+  Please notice that the space caculated here is just an estimation.
   Basically, ``estimated space = (space required at first step) * nSteps``.
 
 Based on test data - 10 days timeseries with 10 sec step resolution (86394 steps), the test results show below:

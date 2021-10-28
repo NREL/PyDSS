@@ -74,7 +74,6 @@ class dssTransformer(dssElement):
                     if len(VarValue) < self.NumWindings:
                         for extra_nan in range(self.NumWindings - len(VarValue)):
                             VarValue.append(999999.9)
-                    #print(f'values: {VarValue} for {VarName} with {self.NumWindings} windings')
                     VarValue = ValueByList(
                         self._FullName, VarName, VarValue, ['wdg{}'.format(i+1) for i in range(self.NumWindings)]
                     )

@@ -1,16 +1,21 @@
 """Utility functions for the jade package."""
 
-from datetime import datetime
+from datetime import datetime, timedelta
+import enum
 import gzip
-import logging
 import json
+import logging
 import os
+import re
 import shutil
 import sys
-import yaml
+from pathlib import Path
 
+import numpy as np
 import opendssdirect as dss
+import pandas as pd
 import toml
+import yaml
 
 from PyDSS.exceptions import InvalidParameter
 
@@ -18,6 +23,15 @@ from PyDSS.exceptions import InvalidParameter
 MAX_PATH_LENGTH = 255
 
 logger = logging.getLogger(__name__)
+
+
+class TomlEnumEncoder(toml.TomlEncoder):
+    """Encodes Enum values instead of Enum objects."""
+
+    def dump_value(self, v):
+        if isinstance(v, enum.Enum):
+            return f"\"{v.value}\""
+        return super().dump_value(v)
 
 
 def check_redirect(file_name):
@@ -42,7 +56,10 @@ def check_redirect(file_name):
 
 
 def _get_module_from_extension(filename, **kwargs):
-    ext = os.path.splitext(filename)[1].lower()
+    if isinstance(filename, Path):
+        ext = filename.suffix.lower()
+    else:
+        ext = os.path.splitext(filename)[1].lower()
     if ext == ".json":
         mod = json
     elif ext == ".toml":
@@ -148,6 +165,11 @@ def interpret_datetime(timestamp):
 
     """
     formats = (
+        "%Y-%m-%dT%H:%M:%S",
+        "%Y-%m-%d %H:%M:%S",
+        "%Y-%m-%dT%H:%M:%SZ",
+        "%Y-%m-%dT%H:%M:%S.%f",
+        "%Y-%m-%d %H:%M:%S.%f",
         "%Y-%m-%d_%H:%M:%S.%f",
         "%Y-%m-%d_%H-%M-%S-%f",
     )
@@ -188,7 +210,7 @@ def iter_elements(element_class, element_func):
 
     >>> for reg_control in iter_elements(opendssdirect.RegControls, get_reg_control_info):
         print(reg_control["name"])
-        
+
     """
     element_class.First()
     for _ in range(element_class.Count()):
@@ -216,3 +238,34 @@ def make_human_readable_size(size, decimals=2):
             break
         size /= 1024.0
     return f"{size:.{decimals}f} {unit}"
+
+
+def make_json_serializable(obj):
+    if isinstance(obj, np.int64):
+        obj = int(obj)
+    elif isinstance(obj, complex):
+        obj = str(obj)
+    elif isinstance(obj, np.ndarray):
+        if len(obj) > 0 and isinstance(obj[0], complex):
+            obj = [str(x) for x in obj]
+        else:
+            obj = [x for x in obj]
+    return obj
+
+
+def make_timestamps(data):
+    return pd.to_datetime(data, unit="s")
+
+
+def serialize_timedelta(timedelta_object):
+    return f"days={timedelta_object.days}, seconds={timedelta_object.seconds}"
+
+
+def deserialize_timedelta(text):
+    regex = re.compile(r"days=(\d+), seconds=(\d+)")
+    match = regex.search(text)
+    if match:
+        days = int(match.group(1))
+        seconds = int(match.group(2))
+        return timedelta(days=days, seconds=seconds)
+    raise Exception(f"invalid time string: {text}")

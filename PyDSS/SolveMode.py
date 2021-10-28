@@ -1,29 +1,24 @@
-from datetime import datetime, timedelta
 import logging
-import math
-import abc
+
+from PyDSS.common import SimulationType
 from PyDSS.pyLogger import getLoggerTag
 from PyDSS.modes.Dynamic import Dynamic
 from PyDSS.modes.Snapshot import Snapshot
 from PyDSS.modes.QSTS import QSTS
+from PyDSS.simulation_input_models import SimulationSettingsModel
 
 
-def GetSolver(SimulationSettings, dssInstance):
-    if SimulationSettings["Logging"]["Pre-configured logging"]:
-        LoggerTag = __name__
-    else:
-        LoggerTag = getLoggerTag(SimulationSettings)
+def GetSolver(settings, dssInstance):
+    LoggerTag = getLoggerTag(settings)
     pyLogger = logging.getLogger(LoggerTag)
 
-    pyLogger.info('Setting solver to ' + SimulationSettings['Project']['Simulation Type'] + ' mode.')
-    if SimulationSettings['Project']['Simulation Type'].lower() == 'snapshot':
-        return Snapshot(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger)
-    elif SimulationSettings['Project']['Simulation Type'].lower() == 'qsts':
-        return QSTS(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger)
-    elif SimulationSettings['Project']['Simulation Type'].lower() == 'dynamic':
-        return Dynamic(dssInstance=dssInstance, SimulationSettings=SimulationSettings, Logger=pyLogger)
+    pyLogger.info('Setting solver to %s mode.', settings.project.simulation_type.value)
+    if settings.project.simulation_type == SimulationType.SNAPSHOT:
+        return Snapshot(dssInstance=dssInstance, settings=settings, Logger=pyLogger)
+    elif settings.project.simulation_type == SimulationType.QSTS:
+        return QSTS(dssInstance=dssInstance, settings=settings, Logger=pyLogger)
+    elif settings.project.simulation_type == SimulationType.DYNAMIC:
+        return Dynamic(dssInstance=dssInstance, settings=settings, Logger=pyLogger)
     else:
-        pyLogger.error('Invalid solver mode chosen')
+        pyLogger.error('Invalid solver mode chosen %s', settings.project.simulation_type)
         return -1
-
-

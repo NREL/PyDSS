@@ -1,19 +1,28 @@
 
 import enum
 import os
+from collections import namedtuple
 
 import PyDSS
 from PyDSS.utils.utils import load_data
 
+DATE_FORMAT = '%Y-%m-%d %H:%M:%S.%f' # '%Y-%m-%d %H:%M:%S.%f', "%m/%d/%Y %H:%M:%S"
+TIME_FORMAT = '%H:%M:%S'
 
 PLOTS_FILENAME = "plots.toml"
 SIMULATION_SETTINGS_FILENAME = "simulation.toml"
+RUN_SIMULATION_FILENAME = "simulation-run.toml"
 MONTE_CARLO_SETTINGS_FILENAME = "MonteCarloSettings.toml"
 OPENDSS_MASTER_FILENAME = "Master.dss"
 SUBSCRIPTIONS_FILENAME = "Subscriptions.toml"
 PROJECT_TAR = "project.tar"
 PROJECT_ZIP = "project.zip"
-
+PROFILE_MAPPING = "mapping.toml"
+PROFILE_SRC_H5 = "profiles.h5"
+PV_LOAD_SHAPE_FILENAME = "pv_load_shape_data.h5"
+PV_PROFILES_FILENAME = "pv_profiles.json"
+NODE_NAMES_BY_TYPE_FILENAME = "node_names_by_type.json"
+INTEGER_NAN = -9999
 
 class VisualizationType(enum.Enum):
     FREQUENCY_PLOT = "FrequencySweep"
@@ -34,6 +43,8 @@ class ControllerType(enum.Enum):
     MOTOR_STALL = "MotorStall"
     PV_VOLTAGE_RIDETHROUGH = "PvVoltageRideThru"
     FAULT_CONTROLLER = "FaultController"
+    THERMOSTATIC_LOAD_CONTROLLER = "ThermostaticLoad"
+    GENERATOR_CONTROLLER = "GenController"
 
 
 CONTROLLER_TYPES = tuple(x.value for x in ControllerType)
@@ -122,3 +133,82 @@ DEFAULT_MONTE_CARLO_SETTINGS_FILE = os.path.join(
     "Monte_Carlo",
     MONTE_CARLO_SETTINGS_FILENAME,
 )
+
+
+class ControlMode(enum.Enum):
+    """Supported control modes"""
+    STATIC = "Static"
+    TIME = "Time"
+
+
+class DataConversion(enum.Enum):
+    NONE = "none"
+    ABS = "abs"
+    ABS_SUM = "abs_sum"
+    SUM = "sum"
+    SUM_ABS_REAL = "sum_abs_real"
+
+
+class DatasetPropertyType(enum.Enum):
+    PER_TIME_POINT = "per_time_point"  # data is stored at every time point
+    FILTERED = "filtered"  # data is stored after being filtered
+    METADATA = "metadata"  # metadata for another dataset
+    TIME_STEP = "time_step"  # data are time indices, tied to FILTERED
+    VALUE = "value"  # Only a single value is written for each element
+
+
+class FileFormat(enum.Enum):
+    """Supported file formats"""
+    CSV = "csv"
+    HDF5 = "h5"
+
+
+class LimitsFilter(enum.Enum):
+    INSIDE = "inside"
+    OUTSIDE = "outside"
+
+
+class LoggingLevel(enum.Enum):
+    """Supported logging levels"""
+    DEBUG = "debug"
+    INFO = "info"
+    WARNING = "warning"
+    ERROR = "error"
+
+
+class ReportGranularity(enum.Enum):
+    """Specifies the granularity on which data is collected."""
+    PER_ELEMENT_PER_TIME_POINT = "per_element_per_time_point"
+    PER_ELEMENT_TOTAL = "per_element_total"
+    ALL_ELEMENTS_PER_TIME_POINT = "all_elements_per_time_point"
+    ALL_ELEMENTS_TOTAL = "all_elements_total"
+
+
+class SimulationType(enum.Enum):
+    """Supported simulation types"""
+    DYNAMIC = "dynamic"
+    QSTS = "qsts"
+    SNAPSHOT = "snapshot"
+
+
+class SnapshotTimePointSelectionMode(enum.Enum):
+    """Defines methods by which snapshot time points can be calculated."""
+
+    MAX_PV_LOAD_RATIO = "max_pv_load_ratio"
+    MAX_LOAD = "max_load"
+    DAYTIME_MIN_LOAD = "daytime_min_load"
+    MAX_PV_MINUS_LOAD = "pv_minus_load"
+    NONE = "none"
+
+
+class StoreValuesType(enum.Enum):
+    ALL = "all"
+    CHANGE_COUNT = "change_count"
+    MAX = "max"
+    MIN = "min"
+    MOVING_AVERAGE = "moving_average"
+    MOVING_AVERAGE_MAX = "moving_average_max"
+    SUM = "sum"
+
+
+MinMax = namedtuple("MinMax", "min, max")

@@ -5,6 +5,7 @@ import io
 import json
 import logging
 import os
+import sys
 import tarfile
 import zipfile
 
@@ -14,6 +15,7 @@ import toml
 from PyDSS.common import PLOTS_FILENAME, PROJECT_TAR, PROJECT_ZIP, \
     ControllerType, ExportMode, SIMULATION_SETTINGS_FILENAME,VisualizationType
 from PyDSS.exceptions import InvalidConfiguration
+from PyDSS.simulation_input_models import SimulationSettingsModel, load_simulation_settings
 from PyDSS.utils.utils import load_data
 
 
@@ -150,7 +152,7 @@ class PyDssFileSystemInterface(abc.ABC):
         list
 
         """
-        return [x["name"] for x in self.simulation_config["Project"]["Scenarios"]]
+        return [x.name for x in self._settings.project.scenarios]
 
     @property
     @abc.abstractmethod
@@ -196,7 +198,7 @@ class PyDssDirectoryInterface(PyDssFileSystemInterface):
         self._scenarios_dir = os.path.join(self._project_dir, SCENARIOS)
         self._dss_dir = os.path.join(self._project_dir, "DSSfiles")
 
-        self._simulation_config = load_data(
+        self._settings = load_simulation_settings(
             os.path.join(self._project_dir, simulation_file)
         )
 
@@ -235,6 +237,8 @@ class PyDssDirectoryInterface(PyDssFileSystemInterface):
     def read_controller_config(self, scenario):
         controllers = {}
         path = os.path.join(self._project_dir, SCENARIOS, scenario, "pyControllerList")
+        if not os.path.exists(path):
+            return controllers
         for filename in os.listdir(path):
             base, ext = os.path.splitext(filename)
             if ext == ".toml":
@@ -274,18 +278,21 @@ class PyDssDirectoryInterface(PyDssFileSystemInterface):
             scenario_name,
             "pv_profiles.json",
         )
+        if not os.path.exists(filename):
+            return {}
         return load_data(filename)
 
     @property
     def simulation_config(self):
-        return self._simulation_config
+        return self._settings
 
 
 class PyDssArchiveFileInterfaceBase(PyDssFileSystemInterface):
     """Base class for archive types."""
     def __init__(self, project_dir):
         self._project_dir = project_dir
-        self._simulation_config = self._load_data(SIMULATION_SETTINGS_FILENAME)
+        data = self._load_data(SIMULATION_SETTINGS_FILENAME)
+        self._settings = SimulationSettingsModel(**data)
         self._check_scenarios()
 
     def _load_data(self, path):
@@ -320,9 +327,13 @@ class PyDssArchiveFileInterfaceBase(PyDssFileSystemInterface):
             scenarios.sort()
         return scenarios
 
+    @staticmethod
+    def normalize_path(path):
+        return os.path.normpath(path).replace("\\", "/")
+
     @property
     def simulation_config(self):
-        return self._simulation_config
+        return self._settings
 
     def read_controller_config(self, scenario):
         # Not currently needed for reading projects.
@@ -360,7 +371,11 @@ class PyDssArchiveFileInterfaceBase(PyDssFileSystemInterface):
             scenario_name,
             "pv_profiles.json",
         )
-        return self._load_data(filename)
+        try:
+            return self._load_data(filename)
+        except KeyError:
+            # The file isn't stored in the archive.
+            return {}
 
 
 class PyDssTarFileInterface(PyDssArchiveFileInterfaceBase):
@@ -374,10 +389,12 @@ class PyDssTarFileInterface(PyDssArchiveFileInterfaceBase):
             self._tar.close()
 
     def read_file(self, path):
+        if sys.platform == "win32":
+            path = self.normalize_path(path)
         return self._tar.extractfile(path).read().decode("utf-8")
 
     def read_csv(self, path):
-        return pd.read_csv(self._tar.extractfile(path))
+        return pd.read_csv(self._tar.extractfile(os.path.normpath(path).replace("\\", "/")))
 
 
 class PyDssZipFileInterface(PyDssArchiveFileInterfaceBase):
@@ -390,6 +407,8 @@ class PyDssZipFileInterface(PyDssArchiveFileInterfaceBase):
         self._zip.close()
 
     def read_file(self, path):
+        if sys.platform == "win32":
+            path = self.normalize_path(path)
         data = self._zip.read(path)
         ext = os.path.splitext(path)[1]
         if ext not in (".h5", ".feather"):
@@ -397,4 +416,6 @@ class PyDssZipFileInterface(PyDssArchiveFileInterfaceBase):
         return data
 
     def read_csv(self, path):
+        if sys.platform == "win32":
+            path = self.normalize_path(path)
         return pd.read_csv(io.BytesIO(self._zip.read(path)))

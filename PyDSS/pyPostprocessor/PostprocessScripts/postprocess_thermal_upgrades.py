@@ -22,45 +22,50 @@ plt.rcParams.update({'font.size': 14})
 
 
 # Post process thermal upgrades dss files to create network plots and also to create easier post processing files
+# TODO: make function to post process orig and new objects (instead of text parsing file)
 class postprocess_thermal_upgrades():
     def __init__(self, Settings, dss, logger):
         self.Settings = Settings
         self.logger = logger
         self.sol = dss.Solution
-        self.init_pen = self.Settings["DPV_penetration_HClimit"]
-        self.end_pen = self.Settings["DPV_penetration_target"]
-        self.pen_step = self.Settings["DPV_penetration_step"]
         self.new_lines = self.Settings["new_lines"]
         self.orig_lines = self.Settings["orig_lines"]
         self.new_xfmrs = self.Settings["new_xfmrs"]
         self.orig_xfmrs = self.Settings["orig_xfmrs"]
+        self.orig_lc_parameters = self.Settings["orig_lc_parameters"]
+        # TODO - next two lines to be used when we move to object comparison instead of text parsing
+        # self.orig_line_parameters = self.Settings["orig_line_parameters"]
+        # self.orig_DT_parameters = self.Settings["orig_DT_parameters"]
         dss.Vsources.First()
         self.source = dss.CktElement.BusNames()[0].split(".")[0]
         if self.Settings["Create_plots"]:
             self.create_op_plots()
         self.get_orig_line_DT_params()
         self.process_thermal_upgrades()
-
-    # TODO make function to post process orig and new objects
+        try:
+            self.get_all_parallel()  # save csv of parallel lines and transformers
+        except:
+            self.logger.info("Parallel line and transformer computation failed")
 
     def get_orig_line_DT_params(self):
         self.orig_line_parameters = {}
         self.orig_DT_parameters = {}
-        self.orig_lc_parameters = {}
-        f = open(os.path.join(self.Settings["Outputs"], "Original_linecodes_parameters.json"), "r")
+        # NEED TO CHECK WHY THIS IS COMMENTED OUT
+        # self.orig_lc_parameters = {}
+        # f = open(os.path.join(self.Settings["Outputs"], "Original_linecodes_parameters.json"), "r")
+        # data = json.load(f)
+        # for lc, params in data.items():
+        #     self.orig_lc_parameters[lc.lower()] = params
+        f = open(os.path.join(self.Settings["Outputs"], "Original_line_parameters.json"), "r")
         data = json.load(f)
-        for lc, params in data.items():
-            self.orig_lc_parameters[lc.lower()] = params
-        f = open(os.path.join(self.Settings["Outputs"],"Original_line_parameters.json"),"r")
-        data = json.load(f)
-        for line,params in data.items():
+        for line, params in data.items():
             try:
-                for ln_par,ln_par_val in params.items():
+                for ln_par, ln_par_val in params.items():
                     if ln_par.lower()=="linecode":
                         ln_ampacity = self.orig_lc_parameters[ln_par_val]["Ampacity"]
                 params["Ampacity"] = ln_ampacity
             except:
-                self.logger.info("No linecode for line: ",line)
+                self.logger.info("No linecode for line: {} ".format(line))
                 pass
             self.orig_line_parameters["line."+line.lower()] = params
         f = open(os.path.join(self.Settings["Outputs"], "Original_xfmr_parameters.json"), "r")
@@ -68,65 +73,68 @@ class postprocess_thermal_upgrades():
         for xfmr, params in data.items():
             self.orig_DT_parameters["transformer."+xfmr.lower()] = params
 
-
     def process_thermal_upgrades(self):
-        for self.pen_level in range(self.init_pen, self.end_pen + 1, self.pen_step):
-            self.pen_level_upgrades = {}
-            with open(os.path.join(self.Settings["Outputs"], "thermal_upgrades.dss")) as datafile:
-                for line in datafile:
-                    new_line = line.split()
-                    for parameters in new_line:
-                        if parameters.lower().startswith("line."):
-                            ln_name = parameters.split("_upgrade")[0]
-                            if ln_name not in self.pen_level_upgrades:
-                                if line.lower().startswith("new"):
-                                    self.pen_level_upgrades[ln_name] = {"new":[1,self.orig_line_parameters[ln_name.lower()]],"upgrade":[0,[]]}
-                                elif line.lower().startswith("edit"):
-                                    lc_name = self.get_line_upgrade_params(new_line)
-                                    lc_ampacity = self.orig_lc_parameters[lc_name]["Ampacity"]
-                                    ln_params = {"Linecode": lc_name, "Ampacity": lc_ampacity}
-                                    self.pen_level_upgrades[ln_name] = {"new":[0,self.orig_line_parameters[ln_name.lower()]],"upgrade":[1,[ln_params]]}
-                            elif ln_name in self.pen_level_upgrades:
-                                if line.lower().startswith("new"):
-                                    self.pen_level_upgrades[ln_name]["new"][0]+=1
-                                elif line.lower().startswith("edit"):
-                                    lc_name = self.get_line_upgrade_params(new_line)
-                                    lc_ampacity = self.orig_lc_parameters[lc_name]["Ampacity"]
-                                    ln_params = {"Linecode":lc_name,"Ampacity":lc_ampacity}
-                                    self.pen_level_upgrades[ln_name]["upgrade"][0]+=1
-                                    self.pen_level_upgrades[ln_name]["upgrade"][1].append(ln_params)
-                        if parameters.lower().startswith("transformer."):
-                            dt_name = parameters.split("_upgrade")[0]
-                            if dt_name not in self.pen_level_upgrades:
-                                if line.lower().startswith("new"):
-                                    self.pen_level_upgrades[dt_name] = {"new":[1,self.orig_DT_parameters[dt_name.lower()]],"upgrade":[0,[]]}
-                                elif line.lower().startswith("edit"):
-                                    dt_params = self.get_xfmr_upgrade_params(new_line)
-                                    self.pen_level_upgrades[dt_name] = {"new":[0,self.orig_DT_parameters[dt_name.lower()]],"upgrade":[1,[dt_params]]}
-                            elif dt_name in self.pen_level_upgrades:
-                                if line.lower().startswith("new"):
-                                    self.pen_level_upgrades[dt_name]["new"][0]+=1
-                                elif line.lower().startswith("edit"):
-                                    dt_params = self.get_xfmr_upgrade_params(new_line)
-                                    self.pen_level_upgrades[dt_name]["upgrade"][0]+=1
-                                    self.pen_level_upgrades[dt_name]["upgrade"][1].append(dt_params)
-            self.pen_level_upgrades["feederhead_name"] = self.Settings["feederhead_name"]
-            self.pen_level_upgrades["feederhead_basekV"] = self.Settings["feederhead_basekV"]
-            self.write_to_json(self.pen_level_upgrades, "Processed_upgrades")
-            if self.Settings["Create_plots"]:
-                self.create_edge_node_dicts()
-                self.plot_feeder()
+        self.pen_level_upgrades = {}
+        with open(os.path.join(self.Settings["Outputs"], "thermal_upgrades.dss")) as datafile:
+            for line in datafile:
+                new_line = line.split()
+                for parameters in new_line:
+                    if parameters.lower().startswith("line."):
+                        ln_name = parameters.split("_upgrade")[0]
+                        if ln_name not in self.pen_level_upgrades:
+                            if line.lower().startswith("new"):
+                                self.pen_level_upgrades[ln_name] = {"new":[1,self.orig_line_parameters[ln_name.lower()]],"upgrade":[0,[]]}
+                            elif line.lower().startswith("edit"):
+                                lc_name = self.get_line_upgrade_params(new_line)
+                                lc_ampacity = self.orig_lc_parameters[lc_name]["Ampacity"]
+                                ln_params = {"Linecode": lc_name, "Ampacity": lc_ampacity}
+                                self.pen_level_upgrades[ln_name] = {"new":[0,self.orig_line_parameters[ln_name.lower()]],"upgrade":[1,[ln_params]]}
+                        elif ln_name in self.pen_level_upgrades:
+                            if line.lower().startswith("new"):
+                                self.pen_level_upgrades[ln_name]["new"][0]+=1
+                            elif line.lower().startswith("edit"):
+                                lc_name = self.get_line_upgrade_params(new_line)
+                                lc_ampacity = self.orig_lc_parameters[lc_name]["Ampacity"]
+                                ln_params = {"Linecode":lc_name,"Ampacity":lc_ampacity}
+                                self.pen_level_upgrades[ln_name]["upgrade"][0]+=1
+                                self.pen_level_upgrades[ln_name]["upgrade"][1].append(ln_params)
+                    if parameters.lower().startswith("transformer."):
+                        dt_name = parameters.split("_upgrade")[0]
+                        if dt_name not in self.pen_level_upgrades:
+                            if line.lower().startswith("new"):
+                                self.pen_level_upgrades[dt_name] = {"new":[1,self.orig_DT_parameters[dt_name.lower()]],"upgrade":[0,[]]}
+                            elif line.lower().startswith("edit"):
+                                dt_params = self.get_xfmr_upgrade_params(new_line)
+                                self.pen_level_upgrades[dt_name] = {"new":[0,self.orig_DT_parameters[dt_name.lower()]],"upgrade":[1,[dt_params]]}
+                        elif dt_name in self.pen_level_upgrades:
+                            if line.lower().startswith("new"):
+                                self.pen_level_upgrades[dt_name]["new"][0]+=1
+                            elif line.lower().startswith("edit"):
+                                dt_params = self.get_xfmr_upgrade_params(new_line)
+                                self.pen_level_upgrades[dt_name]["upgrade"][0]+=1
+                                self.pen_level_upgrades[dt_name]["upgrade"][1].append(dt_params)
+        self.pen_level_upgrades["feederhead_name"] = self.Settings["feederhead_name"]
+        self.pen_level_upgrades["feederhead_basekV"] = self.Settings["feederhead_basekV"]
+        self.write_to_json(self.pen_level_upgrades, "Processed_thermal_upgrades")
+        if self.Settings["Create_plots"]:
+            self.create_edge_node_dicts()
+            self.plot_feeder()
 
     def write_to_json(self, dict, file_name):
         with open(os.path.join(self.Settings["Outputs"],"{}.json".format(file_name)), "w") as fp:
             json.dump(dict, fp, indent=4)
 
     def get_line_upgrade_params(self, new_line):
+        lc_name = ''
+        line_name = [string for string in new_line if 'Line.' in string][0]
+        line_name = line_name.split(".")[1]
         for parameters in new_line:
             if parameters.lower().startswith("linecode"):
                 lc_name = parameters.split("=")[1]
             elif parameters.lower().startswith("geometry"):
                 lc_name = parameters.split("=")[1]
+            else:
+                lc_name = line_name  # i.e. if the line parameters are defined in line definition itself
         return lc_name
 
     def get_xfmr_upgrade_params(self, new_line):
@@ -277,14 +285,46 @@ class postprocess_thermal_upgrades():
         plt.axis("off")
         plt.savefig(os.path.join(self.Settings["Outputs"],"Thermal_upgrades.pdf"))
 
+    def parallel_upgrades(self, equipment_type):
+        '''upgrade_df is a dataframe version of the processed_thermal_upgrades.json
+        file produced by Akshay's upgrade codeself.
+        equipment_type is a string equal to either "Transformer" or "Line" '''
+        parallel_equip_df = pd.DataFrame()
+        parallel_equip_ids = []
+        parallel_equip_counts = []
+
+        for k in self.pen_level_upgrades.keys():
+            equip_str = equipment_type + '.'
+            if equip_str in k:
+                # count of new lines added to address overload. Often 1, but could be > 1 with severe overloads
+                parallel_count = self.pen_level_upgrades[k]['new'][0]
+
+                if parallel_count > 1:
+                    parallel_equip_ids.append(k)
+                    parallel_equip_counts.append(parallel_count)
+
+        parallel_equip_df['element_id'] = parallel_equip_ids
+        parallel_equip_df['count_of_equipment_in_parallel'] = parallel_equip_counts
+
+        return parallel_equip_df
+
+    def get_all_parallel(self):
+        ''' processed_upgrade_file is the name of the json file written out from
+        Akshay's thermal upgrades code'''
+
+        xfmr_parallel_df = self.parallel_upgrades('Transformer')
+        line_parallel_df = self.parallel_upgrades('Line')
+
+        xfmr_parallel_df.to_csv(os.path.join(self.Settings["Outputs"], 'summary_of_parallel_transformer_upgrades.csv'))
+        line_parallel_df.to_csv(os.path.join(self.Settings["Outputs"], 'summary_of_parallel_line_upgrades.csv'))
+        return
+
+
 # Test Disco feeder
 if __name__ == "__main__":
     Settings = {
         "Feeder"                    : "../Test_Feeder_J1",
         "master file"               : "Master.dss",
-        "DPV_penetration_HClimit"   : 120,
-        "DPV_penetration_target"    : 160,
-        "DPV_penetration_step"      : 10,
         "Outputs"                   : "../Outputs",
         "Create_plots"              : True
     }

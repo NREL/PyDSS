@@ -1,20 +1,39 @@
 
-from collections import deque
+import copy
 import logging
 import os
 import pathlib
+import time
+from collections import defaultdict
+from datetime import datetime
 
+import opendssdirect as dss
 import pandas as pd
+import opendssdirect as dss
 
 from PyDSS.pyLogger import getLoggerTag
 from PyDSS.unitDefinations import unit_info
+from PyDSS.common import (
+    PV_LOAD_SHAPE_FILENAME,
+    PV_PROFILES_FILENAME,
+    NODE_NAMES_BY_TYPE_FILENAME,
+    DatasetPropertyType,
+)
 from PyDSS.dataset_buffer import DatasetBuffer
+from PyDSS.utils.dss_utils import get_node_names_by_type
 from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
 from PyDSS.export_list_reader import ExportListReader, StoreValuesType
-from PyDSS.reports import Reports
+from PyDSS.reports.reports import Reports, ReportGranularity
+from PyDSS.simulation_input_models import SimulationSettingsModel
 from PyDSS.utils.dataframe_utils import write_dataframe
 from PyDSS.utils.utils import dump_data
-from PyDSS.value_storage import ValueContainer, ValueByNumber, DatasetPropertyType
+from PyDSS.utils.simulation_utils import (
+    create_datetime_index_from_settings,
+    create_loadshape_pmult_dataframe_for_simulation,
+)
+from PyDSS.utils.timing_utils import Timer
+from PyDSS.value_storage import ValueContainer, ValueByNumber
+from PyDSS.metrics import OpenDssPropertyMetric, SummedElementsOpenDssPropertyMetric
 
 
 logger = logging.getLogger(__name__)
@@ -26,56 +45,46 @@ class ResultData:
     METADATA_FILENAME = "metadata.json"
     INDICES_BASENAME = "indices"
 
-    def __init__(self, options, system_paths, dss_objects,
+    def __init__(self, settings: SimulationSettingsModel, system_paths, dss_objects,
                  dss_objects_by_class, dss_buses, dss_solver, dss_command,
-                 dss_instance):
-        if options["Logging"]["Pre-configured logging"]:
-            logger_tag = __name__
-        else:
-            logger_tag = getLoggerTag(options)
-        self._logger = logging.getLogger(logger_tag)
+                 dss_instance, timer_stats):
+        self._logger = logger
         self._dss_solver = dss_solver
         self._results = {}
         self._buses = dss_buses
         self._objects_by_element = dss_objects
         self._objects_by_class = dss_objects_by_class
         self.system_paths = system_paths
-        self._elements = []
-        self._options = options
+        self._element_metrics = {}  # (elem_class, prop_name) to OpenDssPropertyMetric
+        self._summed_element_metrics = {}
+        self._settings = settings
+        self._cur_step = 0
+        self._stats = timer_stats
 
         self._dss_command = dss_command
-        self._dss_instance = dss_instance
-        self._start_day = options["Project"]["Start Day"]
-        self._end_day = options["Project"]["End Day"]
+        self._start_day = dss_solver.StartDay
+        self._end_day = dss_solver.EndDay
         self._time_dataset = None
         self._frequency_dataset = None
         self._mode_dataset = None
         self._simulation_mode = []
         self._hdf_store = None
-        self._scenario = options["Project"]["Active Scenario"]
-        self._base_scenario = options["Project"]["Active Scenario"]
-        self._export_format = options["Exports"]["Export Format"]
-        self._export_compression = options["Exports"]["Export Compression"]
-        self._export_iteration_order = options["Exports"]["Export Iteration Order"]
-        self._max_chunk_bytes = options["Exports"]["HDF Max Chunk Bytes"]
+        self._scenario = settings.project.active_scenario
+        self._base_scenario = settings.project.active_scenario
+        self._export_format = settings.exports.export_format
+        self._export_compression = settings.exports.export_compression
+        self._max_chunk_bytes = settings.exports.hdf_max_chunk_bytes
         self._export_dir = os.path.join(
             self.system_paths["Export"],
-            options["Project"]["Active Scenario"],
+            settings.project.active_scenario,
         )
         # Use / because this is used in HDFStore
-        self._export_relative_dir = f"Exports/" + options["Project"]["Active Scenario"]
+        self._export_relative_dir = "Exports/" + settings.project.active_scenario
         self._store_frequency = False
         self._store_mode = False
-        self.CurrentResults = {}
-        if options["Project"]["Simulation Type"] == "Dynamic" or \
-                options["Frequency"]["Enable frequency sweep"]:
+        if settings.frequency.enable_frequency_sweep:
             self._store_frequency = True
             self._store_mode = True
-
-        if options["Exports"]["Export Mode"] == "byElement":
-            raise InvalidParameter(
-                "Export Mode 'byElement' is not supported by ResultData"
-            )
 
         pathlib.Path(self._export_dir).mkdir(parents=True, exist_ok=True)
 
@@ -89,36 +98,79 @@ class ResultData:
                 "ExportMode-byClass.toml",
             )
         self._export_list = ExportListReader(export_list_filename)
-        Reports.append_required_exports(self._export_list, options)
+        Reports.append_required_exports(self._export_list, settings)
+        dump_data(
+            self._export_list.serialize(),
+            os.path.join(self._export_dir, "ExportsActual.toml"),
+        )
+        self._circuit_metrics = {}
         self._create_exports()
 
     def _create_exports(self):
-        elements = {}  # element name to ElementData
         for elem_class in self._export_list.list_element_classes():
-            if elem_class == "Buses":
+            if elem_class in ("Buses", "Nodes"):
                 objs = self._buses
             elif elem_class in self._objects_by_class:
                 objs = self._objects_by_class[elem_class]
-            else:
+            elif elem_class == "FeederHead":
+                objs = self._objects_by_class["Circuits"]
+            elif elem_class != "CktElement":  # TODO
                 continue
-            for name, obj in objs.items():
-                if not obj.Enabled:
-                    continue
-                for prop in self._export_list.iter_export_properties(elem_class=elem_class):
-                    if prop.custom_function is None and not obj.IsValidAttribute(prop.name):
-                        raise InvalidParameter(f"{name} / {prop.name} cannot be exported")
-                    if prop.should_store_name(name):
-                        if name not in elements:
-                            elements[name] = ElementData(
-                                name,
-                                obj,
-                                max_chunk_bytes=self._max_chunk_bytes,
-                                options=self._options
-                            )
-                        elements[name].append_property(prop)
-                        self._logger.debug("Store %s %s name=%s", elem_class, prop.name, name)
+            for prop in self._export_list.iter_export_properties(elem_class=elem_class):
+                if prop.opendss_classes:
+                    dss_objs = []
+                    for cls in prop.opendss_classes:
+                        if cls not in self._objects_by_class:
+                            logger.warning("Export class=%s is not present in the circuit", cls)
+                            continue
 
-        self._elements = elements.values()
+                        for obj in self._objects_by_class[cls].values():
+                            if obj.Enabled and prop.should_store_name(obj.FullName):
+                                dss_objs.append(obj)
+                else:
+                    dss_objs = [x for x in objs.values() if x.Enabled and prop.should_store_name(x.FullName)]
+                if prop.custom_metric is None:
+                    self._add_opendss_metric(prop, dss_objs)
+                else:
+                    self._add_custom_metric(prop, dss_objs)
+
+    def _add_opendss_metric(self, prop, dss_objs):
+        obj = dss_objs[0]
+        if not obj.IsValidAttribute(prop.name):
+            raise InvalidParameter(f"{obj.FullName} / {prop.name} cannot be exported")
+        key = (prop.elem_class, prop.name)
+        if prop.sum_elements:
+            metric = self._summed_element_metrics.get(key)
+            if metric is None:
+                metric = SummedElementsOpenDssPropertyMetric(prop, dss_objs, self._settings)
+                self._summed_element_metrics[key] = metric
+            else:
+                metric.add_dss_obj(obj)
+        else:
+            metric = self._element_metrics.get(key)
+            if metric is None:
+                metric = OpenDssPropertyMetric(prop, dss_objs, self._settings)
+                self._element_metrics[key] = metric
+            else:
+                metric.add_property(prop)
+
+    def _add_custom_metric(self, prop, dss_objs):
+        cls = prop.custom_metric
+        if cls.is_circuit_wide():
+            metric = self._circuit_metrics.get(cls)
+            if metric is None:
+                metric = cls(prop, dss_objs, self._settings)
+                self._circuit_metrics[cls] = metric
+            else:
+                metric.add_property(prop)
+        else:
+            key = (prop.elem_class, prop.name)
+            metric = self._element_metrics.get(key)
+            if metric is None:
+                metric = cls(prop, dss_objs, self._settings)
+                self._element_metrics[key] = metric
+            else:
+                metric.add_property(prop)
 
     def InitializeDataStore(self, hdf_store, num_steps, MC_scenario_number=None):
         if MC_scenario_number is not None:
@@ -148,54 +200,70 @@ class ResultData:
             columns=("Mode",),
             max_chunk_bytes=self._max_chunk_bytes
         )
+        self._cur_step = 0
 
-        for element in self._elements:
-            element.initialize_data_store(hdf_store, self._scenario, num_steps)
+        base_path = "Exports/" + self._scenario
+        for metric in self._iter_metrics():
+            metric.initialize_data_store(hdf_store, base_path, num_steps)
 
-    def UpdateResults(self):
-        self.CurrentResults.clear()
+    def _iter_metrics(self):
+        for metric in self._element_metrics.values():
+            yield metric
+        for metric in self._summed_element_metrics.values():
+            yield metric
+        for metric in self._circuit_metrics.values():
+            yield metric
 
-        timestamp = self._dss_solver.GetDateTime().timestamp()
-        self._time_dataset.write_value(timestamp)
-        self._frequency_dataset.write_value(self._dss_solver.getFrequency())
-        self._mode_dataset.write_value(self._dss_solver.getMode())
+    def UpdateResults(self, store_nan=False):
+        current_results = {}
 
-        for elem in self._elements:
-            data = elem.append_values(timestamp)
-            self.CurrentResults.update(data)
-        return self.CurrentResults
+        # Get the number of seconds since the Epoch without any timezone conversions.
+        timestamp = (self._dss_solver.GetDateTime() - datetime.utcfromtimestamp(0)).total_seconds()
+        self._time_dataset.write_value([timestamp])
+        self._frequency_dataset.write_value([self._dss_solver.getFrequency()])
+        self._mode_dataset.write_value([self._dss_solver.getMode()])
 
-    def ExportResults(self, fileprefix=""):
-        self.FlushData()
-        for element in self._elements:
-            element.export_change_counts()
-            element.export_sums()
+        with Timer(self._stats, "Total"):
+            for metric in self._iter_metrics():
+                with Timer(self._stats, metric.label()):
+                    data = metric.append_values(self._cur_step, store_nan=store_nan)
 
+                if isinstance(data, dict):
+                    # TODO: reconsider
+                    # Something is only returned for OpenDSS properties
+                    current_results.update(data)
+
+        self._cur_step += 1
+        return current_results
+
+    def ExportResults(self):
         metadata = {
             "event_log": None,
             "element_info_files": [],
         }
 
-        if self._options["Exports"]["Export Event Log"]:
+        if self._settings.exports.export_event_log:
             self._export_event_log(metadata)
-        if self._options["Exports"]["Export Elements"]:
-            self._export_elements(metadata)
-        if self._options["Exports"]["Export PV Profiles"]:
+        if self._settings.exports.export_elements:
+            self._export_elements(metadata, set(self._settings.exports.export_element_types))
+            self._export_feeder_head_info(metadata)
+        if self._settings.exports.export_pv_profiles:
             self._export_pv_profiles()
+        if self._settings.exports.export_node_names_by_type:
+            self._export_node_names_by_type()
 
         filename = os.path.join(self._export_dir, self.METADATA_FILENAME)
         dump_data(metadata, filename, indent=4)
         self._logger.info("Exported metadata to %s", filename)
         self._hdf_store = None
 
-    def FlushData(self):
+    def Close(self):
         for dataset in (self._time_dataset, self._frequency_dataset, self._mode_dataset):
             dataset.flush_data()
-        for element in self._elements:
-            element.flush_data()
+        for metric in self._iter_metrics():
+            metric.close()
 
     def _export_event_log(self, metadata):
-        # TODO: move to a base class
         event_log = "event_log.csv"
         file_path = os.path.join(self._export_dir, event_log)
         if os.path.exists(file_path):
@@ -213,31 +281,101 @@ class ResultData:
         finally:
             os.chdir(orig)
 
-    def _export_elements(self, metadata):
-        dss = self._dss_instance
-        exports = (
-            # TODO: opendssdirect does not provide a function to export Bus information.
-            ("CapacitorsInfo", dss.Capacitors.Count, dss.utils.capacitors_to_dataframe),
-            ("FusesInfo", dss.Fuses.Count, dss.utils.fuses_to_dataframe),
-            ("GeneratorsInfo", dss.Generators.Count, dss.utils.generators_to_dataframe),
-            ("IsourceInfo", dss.Isource.Count, dss.utils.isource_to_dataframe),
-            ("LinesInfo", dss.Lines.Count, dss.utils.lines_to_dataframe),
-            ("LoadsInfo", dss.Loads.Count, dss.utils.loads_to_dataframe),
-            ("MetersInfo", dss.Meters.Count, dss.utils.meters_to_dataframe),
-            ("MonitorsInfo", dss.Monitors.Count, dss.utils.monitors_to_dataframe),
-            ("PVSystemsInfo", dss.PVsystems.Count, dss.utils.pvsystems_to_dataframe),
-            ("ReclosersInfo", dss.Reclosers.Count, dss.utils.reclosers_to_dataframe),
-            ("RegControlsInfo", dss.RegControls.Count, dss.utils.regcontrols_to_dataframe),
-            ("RelaysInfo", dss.Relays.Count, dss.utils.relays_to_dataframe),
-            ("SensorsInfo", dss.Sensors.Count, dss.utils.sensors_to_dataframe),
-            ("TransformersInfo", dss.Transformers.Count, dss.utils.transformers_to_dataframe),
-            ("VsourcesInfo", dss.Vsources.Count, dss.utils.vsources_to_dataframe),
-            ("XYCurvesInfo", dss.XYCurves.Count, dss.utils.xycurves_to_dataframe),
-            # TODO This can be very large. Consider making it configurable.
-            #("LoadShapeInfo", dss.LoadShape.Count, dss.utils.loadshape_to_dataframe),
-        )
+    def _export_dataframe(self, df, basename):
+        filename = basename + "." + self._export_format
+        write_dataframe(df, filename, compress=self._export_compression)
+        self._logger.info("Exported %s", filename)
 
-        for filename, count_func, get_func in exports:
+    def _find_feeder_head_line(self):
+        feeder_head_line = None
+        flag = dss.Topology.First()
+        while flag > 0:
+            if 'line' in dss.Topology.BranchName().lower():
+                feeder_head_line = dss.Topology.BranchName()
+                break
+            else:
+                flag = dss.Topology.Next()
+
+        return feeder_head_line
+
+    def _get_feeder_head_loading(self):
+        head_line = self._find_feeder_head_line()
+        if head_line is not None:
+            flag = dss.Circuit.SetActiveElement(head_line)
+
+            if flag>0:
+                n_phases = dss.CktElement.NumPhases()
+                max_amp = dss.CktElement.NormalAmps()
+                Currents = dss.CktElement.CurrentsMagAng()[:2*n_phases]
+                Current_magnitude = Currents[::2]
+
+                max_flow = max(max(Current_magnitude), 1e-10)
+                loading = max_flow/max_amp
+
+                return loading
+            else:
+                return None
+        else:
+            return None
+
+    def _reverse_powerflow(self):
+        reverse_pf = dss.Circuit.TotalPower()[0] > 0 # total substation power is an injection(-) or a consumption(+)
+        return reverse_pf
+
+    def _export_feeder_head_info(self, metadata):
+        """
+        Gets feeder head information comprising:
+        1- The name of the feeder head line
+        2- The feeder head loading in per unit
+        3- The feeder head load in (kW, kVar). Negative in case of power injection
+        4- The reverse power flow flag. True if power is flowing back to the feeder head, False otherwise
+        """
+        if not "feeder_head_info_files" in metadata.keys():
+            metadata["feeder_head_info_files"] = []
+
+        total_power = dss.Circuit.TotalPower()
+        df_dict = {"FeederHeadLine": self._find_feeder_head_line(),
+                   "FeederHeadLoading": self._get_feeder_head_loading(),
+                   "FeederHeadLoadKW": total_power[0],
+                   "FeederHeadLoadKVar": total_power[1],
+                   "ReversePowerFlow": self._reverse_powerflow()
+                  }
+
+        filename = "FeederHeadInfo"
+        fname = filename + ".json"
+        relpath = os.path.join(self._export_relative_dir, fname)
+        filepath = os.path.join(self._export_dir, fname)
+
+        #write_dataframe(df, filepath)
+        dump_data(df_dict, filepath)
+        metadata["feeder_head_info_files"].append(relpath)
+        self._logger.info("Exported %s information to %s.", filename, filepath)
+
+    def _export_elements(self, metadata, element_types):
+        exports = [
+            # TODO: opendssdirect does not provide a function to export Bus information.
+            ("Capacitors", "CapacitorsInfo", dss.Capacitors.Count, dss.utils.capacitors_to_dataframe),
+            ("Fuses", "FusesInfo", dss.Fuses.Count, dss.utils.fuses_to_dataframe),
+            ("Generators", "GeneratorsInfo", dss.Generators.Count, dss.utils.generators_to_dataframe),
+            ("Isource", "IsourceInfo", dss.Isource.Count, dss.utils.isource_to_dataframe),
+            ("Lines", "LinesInfo", dss.Lines.Count, dss.utils.lines_to_dataframe),
+            ("Loads", "LoadsInfo", dss.Loads.Count, dss.utils.loads_to_dataframe),
+            ("Meters", "MetersInfo", dss.Meters.Count, dss.utils.meters_to_dataframe),
+            ("Monitors", "MonitorsInfo", dss.Monitors.Count, dss.utils.monitors_to_dataframe),
+            ("Reclosers", "ReclosersInfo", dss.Reclosers.Count, dss.utils.reclosers_to_dataframe),
+            ("RegControls", "RegControlsInfo", dss.RegControls.Count, dss.utils.regcontrols_to_dataframe),
+            ("Relays", "RelaysInfo", dss.Relays.Count, dss.utils.relays_to_dataframe),
+            ("Sensors", "SensorsInfo", dss.Sensors.Count, dss.utils.sensors_to_dataframe),
+            ("Transformers", "TransformersInfo", dss.Transformers.Count, dss.utils.transformers_to_dataframe),
+            ("Vsources", "VsourcesInfo", dss.Vsources.Count, dss.utils.vsources_to_dataframe),
+            ("XYCurves", "XYCurvesInfo", dss.XYCurves.Count, dss.utils.xycurves_to_dataframe),
+            # TODO This can be very large. Consider making it configurable.
+            #("LoadShapes", "LoadShapeInfo", dss.LoadShape.Count, dss.utils.loadshape_to_dataframe),
+        ]
+        if element_types:
+            exports = [x for x in exports if x[0] in element_types]
+
+        for _, filename, count_func, get_func in exports:
             if count_func() > 0:
                 df = get_func()
                 # Always record in CSV format for readability.
@@ -250,10 +388,32 @@ class ResultData:
                 metadata["element_info_files"].append(relpath)
                 self._logger.info("Exported %s information to %s.", filename, filepath)
 
-        self._export_transformers(metadata)
+        if not element_types or "PVSystems" in element_types:
+            self._export_pv_systems(metadata)
+        if not element_types or "Transformers" in element_types:
+            self._export_transformers(metadata)
+
+    def _export_pv_systems(self, metadata):
+        df = dss.utils.pvsystems_to_dataframe()
+        if dss.PVsystems.Count() > 0:
+            records = df.to_dict(orient="records")
+            pv_systems = {}
+            flag = dss.PVsystems.First()
+            while flag > 0:
+                pv_systems[dss.PVsystems.Name()] = dss.Properties.Value("Pmpp")
+                flag = dss.PVsystems.Next()
+
+            for record in records:
+                record["Pmpp"] = pv_systems[record["Name"]]
+            df = pd.DataFrame.from_records(records)
+
+        relpath = os.path.join(self._export_relative_dir, "PVSystemsInfo.csv")
+        filepath = os.path.join(self._export_dir, "PVSystemsInfo.csv")
+        write_dataframe(df, filepath)
+        metadata["element_info_files"].append(relpath)
+        self._logger.info("Exported PVSystem information to %s", filepath)
 
     def _export_transformers(self, metadata):
-        dss = self._dss_instance
         df_dict = {"Transformer": [], "HighSideConnection": [], "NumPhases": []}
 
         dss.Circuit.SetActiveClass("Transformer")
@@ -274,10 +434,11 @@ class ResultData:
         self._logger.info("Exported transformer phase information to %s", filepath)
 
     def _export_pv_profiles(self):
-        dss = self._dss_instance
+        granularity = self._settings.reports.granularity
         pv_systems = self._objects_by_class.get("PVSystems")
         if pv_systems is None:
-            raise InvalidConfiguration("PVSystems are not exported")
+            logger.info("No PVSystems are present")
+            return
 
         pv_infos = []
         profiles = set()
@@ -293,17 +454,36 @@ class ResultData:
             })
 
         pmult_sums = {}
-        dss.LoadShape.First()
-        sim_resolution = self._options["Project"]["Step resolution (sec)"]
+        if dss.LoadShape.First() == 0:
+            self._logger.warning("There are no load shapes.")
+            return
+
+        sim_resolution = self._settings.project.step_resolution_sec
+        per_time_point = (
+            ReportGranularity.PER_ELEMENT_PER_TIME_POINT,
+            ReportGranularity.ALL_ELEMENTS_PER_TIME_POINT,
+        )
+        load_shape_data = {}
         while True:
             name = dss.LoadShape.Name().lower()
             if name in profiles:
                 sinterval = dss.LoadShape.SInterval()
-                assert sim_resolution >= sinterval
-                offset = int(sim_resolution / dss.LoadShape.SInterval())
-                pmult_sums[name] = sum(dss.LoadShape.PMult()[::offset])
+                assert sim_resolution >= sinterval, f"{sim_resolution} >= {sinterval}"
+                df = create_loadshape_pmult_dataframe_for_simulation(self._settings)
+                sum_values = df.iloc[:, 0].sum()
+                if granularity in per_time_point:
+                    load_shape_data[name] = df.iloc[:, 0].values
+                    pmult_sums[name] = sum_values
+                else:
+                    pmult_sums[name] = sum_values
             if dss.LoadShape.Next() == 0:
                 break
+
+        if load_shape_data and granularity in per_time_point:
+            filename = os.path.join(self._export_dir, PV_LOAD_SHAPE_FILENAME)
+            index = create_datetime_index_from_settings(self._settings)
+            df = pd.DataFrame(load_shape_data, index=index)
+            write_dataframe(df, filename, compress=True)
 
         for pv_info in pv_infos:
             profile = pv_info["load_shape_profile"]
@@ -313,9 +493,15 @@ class ResultData:
                 pv_info["load_shape_pmult_sum"] = pmult_sums[profile]
 
         data = {"pv_systems": pv_infos}
-        filename = os.path.join(self._export_dir, "pv_profiles.json")
+        filename = os.path.join(self._export_dir, PV_PROFILES_FILENAME)
         dump_data(data, filename, indent=2)
         self._logger.info("Exported PV profile information to %s", filename)
+
+    def _export_node_names_by_type(self):
+        data = get_node_names_by_type()
+        filename = os.path.join(self._export_dir, NODE_NAMES_BY_TYPE_FILENAME)
+        dump_data(data, filename, indent=2)
+        self._logger.info("Exported node names by type to %s", filename)
 
     @staticmethod
     def get_units(prop, index=None):
@@ -343,230 +529,6 @@ class ResultData:
 
         """
         total = 0
-        for element in self._elements:
-            total += element.max_num_bytes()
+        for metric in self._iter_metrics():
+            total += metric.max_num_bytes()
         return total
-
-
-class ElementData:
-    """Stores all property data for an element."""
-    def __init__(self, name, obj, max_chunk_bytes, options, scenario=None, hdf_store=None):
-        self._properties = []
-        self._name = name
-        self._obj = obj
-        self._data = {}  # Containers for properties per time point on disk.
-        self._circular_buf = {}  # Keeps last n values in memory for averages.
-        self._sums = {}  # Keeps running sums in memory.
-        self._change_counts = {}  # Keeps change counts of properties.
-        self._num_steps = None
-        self._scenario = scenario
-        self._hdf_store = hdf_store
-        self._max_chunk_bytes = max_chunk_bytes
-        self._options = options
-        self._step_number = 1
-
-        self._get_value_func_by_type = {
-            StoreValuesType.ALL: self._get_value,
-            StoreValuesType.CHANGE_COUNT: self._get_value_type_change_count,
-            StoreValuesType.MOVING_AVERAGE: self._get_value,
-            StoreValuesType.SUM: self._get_value,
-        }
-
-        self._should_store_by_type = {
-            StoreValuesType.ALL: self._should_store_type_all,
-            StoreValuesType.CHANGE_COUNT: lambda _, __, ___: False,
-            StoreValuesType.MOVING_AVERAGE: self._should_store_type_moving_average,
-            StoreValuesType.SUM: self._should_store_type_sum,
-        }
-
-    @staticmethod
-    def _prop_key(prop):
-        return (prop.elem_class, prop.storage_name)
-
-    @staticmethod
-    def _value_key(prop):
-        return (prop.elem_class, prop.name)
-
-    def initialize_data_store(self, hdf_store, scenario, num_steps):
-        self._hdf_store = hdf_store
-        self._num_steps = num_steps
-        self._scenario = scenario
-        # Reset these for MonteCarlo simulations.
-        for key in self._data:
-            self._data[key] = None
-        self._step_number = 1
-
-    def append_property(self, prop):
-        self._properties.append(prop)
-        key = self._prop_key(prop)
-        self._data[key] = None
-        if prop.store_values_type == StoreValuesType.SUM:
-            self._sums[key] = None
-        elif prop.store_values_type == StoreValuesType.MOVING_AVERAGE:
-            self._circular_buf[key] = _CircularBufferHelper(prop)
-        elif prop.store_values_type == StoreValuesType.CHANGE_COUNT:
-            self._change_counts[key] = (None, 0)
-
-    def append_values(self, timestamp):
-        curr_data = {}
-        cached_values = {}
-        for prop in self._properties:
-            if not prop.should_sample_value(self._step_number):
-                continue
-            prop_key = self._prop_key(prop)
-            value_key = self._value_key(prop)
-            # Don't re-read the same value multiple times.
-            if value_key in cached_values:
-                value = cached_values[value_key]
-            else:
-                value = self._get_value_func_by_type[prop.store_values_type](prop, prop_key, timestamp)
-                if value is not None:
-                    cached_values[value_key] = value
-            if not self._should_store_by_type[prop.store_values_type](prop, prop_key, value):
-                continue
-            if len(value.make_columns()) > 1 or isinstance(value.value, list):
-                for column, val in zip(value.make_columns(), value.value):
-                    curr_data[column] = val
-            else:
-                curr_data[value.make_columns()[0]] = value.value
-            if self._data[prop_key] is None:
-                path = f"Exports/{self._scenario}/{prop.elem_class}/{self._name}/{prop.storage_name}"
-                self._data[prop_key] = ValueContainer(
-                    value,
-                    self._hdf_store,
-                    path,
-                    prop.get_max_size(self._num_steps),
-                    dataset_property_type=prop.get_dataset_property_type(),
-                    max_chunk_bytes=self._max_chunk_bytes,
-                    store_timestamp=prop.should_store_timestamp(),
-                )
-
-            self._data[prop_key].append(value, timestamp=timestamp)
-        self._step_number += 1
-        return curr_data
-
-    def _get_value(self, prop, prop_key, timestamp):
-        if prop.custom_function is None:
-            value = self._obj.GetValue(prop.name, convert=True)
-        else:
-            value = prop.custom_function(self._obj, timestamp, self._step_number, self._options)
-
-        return value
-
-    def _get_value_type_change_count(self, prop, prop_key, timestamp):
-        last_value, count = self._change_counts[prop_key]
-        assert prop.custom_function is not None
-        self._change_counts[prop_key] = prop.custom_function(
-            self._obj, timestamp, self._step_number, self._options, last_value, count
-        )
-
-        return None
-
-    def _should_store_type_all(self, prop, _, value):
-        return prop.should_store_value(value.value)
-
-    def _should_store_type_moving_average(self, prop, key, value):
-        # Store every value in the circular buffer. Apply limits to the
-        # moving average.
-        buf = self._circular_buf[key]
-        buf.append(value.value)
-        if buf.should_store():
-            suffix = "Avg"
-            value.set_element_property(prop.storage_name)
-            value.set_value(buf.average())
-            return prop.should_store_value(value.value)
-        return False
-
-    def _should_store_type_sum(self, prop, key, value):
-        if self._sums[key] is None:
-            self._sums[key] = value
-        else:
-            self._sums[key] += value
-        # These values are not written to disk until the end.
-        return False
-
-    def export_change_counts(self):
-        """Export properties stored as change counts to disk."""
-        for key, val in self._change_counts.items():
-            elem_class = key[0]
-            prop = key[1]
-            value = ValueByNumber(self._name, prop, val[1])
-            path = f"Exports/{self._scenario}/{elem_class}/{self._name}/{prop}"
-            container = ValueContainer(
-                value,
-                self._hdf_store,
-                path,
-                1,
-                max_chunk_bytes=self._max_chunk_bytes,
-                dataset_property_type=DatasetPropertyType.NUMBER,
-            )
-            container.append(value)
-            container.flush_data()
-
-    def export_sums(self):
-        """Export properties stored as sums to disk."""
-        for key, value in self._sums.items():
-            path = f"Exports/{self._scenario}/{key[0]}/{self._name}/{key[1]}"
-            container = ValueContainer(
-                value,
-                self._hdf_store,
-                path,
-                1,
-                max_chunk_bytes=self._max_chunk_bytes,
-                dataset_property_type=DatasetPropertyType.NUMBER,
-            )
-            container.append(value)
-            container.flush_data()
-
-    def flush_data(self):
-        """Flush any outstanding data to disk."""
-        for container in self._data.values():
-            if container is None:
-                continue
-            container.flush_data()
-
-    def max_num_bytes(self):
-        """Return the maximum number of bytes the element could store.
-
-        Returns
-        -------
-        int
-
-        """
-        total = 0
-        for container in self._data.values():
-            if container is None:
-                logger.debug("max_num_bytes is unknown; no value has been collected yet")
-                continue
-            total += container.max_num_bytes()
-        return total
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def properties(self):
-        return self._properties[:]
-
-
-class _CircularBufferHelper:
-    def __init__(self, prop):
-        self._buf = deque(maxlen=prop.window_size)
-        self._count = 0
-        self._store_interval = prop.moving_average_store_interval
-
-    def append(self, val):
-        self._buf.append(val)
-        self._count += 1
-        if self._count == self._store_interval:
-            self._count = 0
-
-    def average(self):
-        assert self._buf
-        if isinstance(self._buf[0], list):
-            return pd.DataFrame(self._buf).mean().values
-        return sum(self._buf) / len(self._buf)
-
-    def should_store(self):
-        return self._count == 0

@@ -1,62 +1,25 @@
-from datetime import datetime, timedelta
-from PyDSS.modes.abstract_solver import abstact_solver
-import math
+from PyDSS.modes.solver_base import solver_base
+from PyDSS.simulation_input_models import SimulationSettingsModel
 
-class Snapshot(abstact_solver):
-    def __init__(self, dssInstance, SimulationSettings, Logger):
-        super().__init__(dssInstance, SimulationSettings, Logger)
-        self.Settings = SimulationSettings
-        self.pyLogger = Logger
-        StartTimeMin = SimulationSettings['Project']['Start Time (min)']
-        self._Time = datetime.strptime(
-            '{} {}'.format(SimulationSettings['Project']['Start Year'], SimulationSettings['Project']['Start Day'] +
-                           SimulationSettings['Project']['Date offset']), '%Y %j'
-        )
 
-        self._Time = self._Time + timedelta(minutes=StartTimeMin)
-        self._StartTime = self._Time
-        self._EndTime = self._Time
-        self._sStepRes = 1
-        self._dssInstance = dssInstance
-        self._dssSolution = dssInstance.Solution
+class Snapshot(solver_base):
+    def __init__(self, dssInstance, settings: SimulationSettingsModel, Logger):
+        super().__init__(dssInstance, settings, Logger)
         self._dssSolution.Mode(0)
-        self._dssInstance.utils.run_command('Set ControlMode={}'.format(SimulationSettings['Project']['Control mode']))
-        self._dssSolution.MaxControlIterations(SimulationSettings['Project']['Max Control Iterations'])
+        self._dssInstance.utils.run_command('Set ControlMode={}'.format(settings.project.control_mode))
+        self._dssSolution.MaxControlIterations(settings.project.max_control_iterations)
         return
+
+    def reSolve(self):
+        self._dssSolution.SolveNoControl()
+        return self._dssSolution.Converged()
 
     def SimulationSteps(self):
         return 1, self._StartTime, self._EndTime
 
-    def GetDateTime(self):
-        return self._Time
-
-    def GetTotalSeconds(self):
-        return (self._Time - self._StartTime).total_seconds()
-
-    def GetStepResolutionSeconds(self):
-        return self._sStepRes
-
-    def GetStepSizeSec(self):
-        return self._sStepRes
-
-    def reSolve(self):
-        return self._dssSolution.SolveNoControl()
-
     def Solve(self):
         self._dssSolution.Solve()
+        return self._dssSolution.Converged()
 
     def IncStep(self):
         return self._dssSolution.Solve()
-
-    def setFrequency(self, frequency):
-        self._dssSolution.Frequency(frequency)
-        return
-
-    def getFrequency(self):
-        return  self._dssSolution.Frequency()
-
-    def setMode(self, mode):
-        return self._dssInstance.utils.run_command('Set Mode={}'.format(mode))
-
-    def getMode(self):
-        return self._dssSolution.ModeID()

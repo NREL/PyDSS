@@ -7,7 +7,6 @@ class pyContrReader:
         self.pyControllers = {}
         filenames = os.listdir(Path)
         for filename in filenames:
-            print(filename)
             if filename.endswith('.xlsx') and not filename.startswith('~$'):
                 pyControllerType  = filename.split('.')[0]
                 filepath = os.path.join(Path, filename)

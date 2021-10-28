@@ -7,23 +7,21 @@ import numpy as np
 import logging
 
 from PyDSS.pyLogger import getLoggerTag
+from PyDSS.simulation_input_models import SimulationSettingsModel
 from PyDSS.utils import utils
 
 class MonteCarloSim:
 
-    def __init__(self, SimulationSettings, dssPaths, dssObjects, dssObjectsByClass):
-        if SimulationSettings["Logging"]["Pre-configured logging"]:
-            LoggerTag = __name__
-        else:
-            LoggerTag = getLoggerTag(SimulationSettings)
+    def __init__(self, settings: SimulationSettingsModel, dssPaths, dssObjects, dssObjectsByClass):
+        LoggerTag = getLoggerTag(settings)
         self.pyLogger = logging.getLogger(LoggerTag)
         self.__dssPaths = dssPaths
         self.__dssObjects = dssObjects
-        self.__Settings = SimulationSettings
+        self._settings = settings
         self.__dssObjectsByClass = dssObjectsByClass
 
         try:
-            MCfile = os.path.join(self.__Settings['Project']['Active Scenario'], 'Monte_Carlo', 'MonteCarloSettings.toml')
+            MCfile = os.path.join(self._settings.project.active_scenario, 'Monte_Carlo', 'MonteCarloSettings.toml')
             MCfilePath = os.path.join(self.__dssPaths['Import'], MCfile)
 
             self.pyLogger.info('Reading monte carlo scenario settings file from ' + MCfilePath)

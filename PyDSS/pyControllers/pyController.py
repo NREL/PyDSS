@@ -21,6 +21,7 @@ def Create(ElmName, ControllerType, Settings, ElmObjectList, dssInstance, dssSol
     )
     # try:
         #print(ElmObjectList)
+    if ElmName not in ElmObjectList:breakpoint()
     assert (ElmName in ElmObjectList), "'{}' does not exist in the PyDSS master object dictionary.".format(ElmName)
     relObject = ElmObjectList[ElmName]
     # except:

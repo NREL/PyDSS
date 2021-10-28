@@ -1,20 +1,18 @@
 
 import abc
 import enum
+import logging
 import os
 import re
 
 import numpy as np
 
+from PyDSS.common import DatasetPropertyType, INTEGER_NAN
 from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
 
 
-class DatasetPropertyType(enum.Enum):
-    ELEMENT_PROPERTY = "elem_prop"  # data is stored at every time point
-    FILTERED = "filtered"  # data is stored after being filtered
-    NUMBER = "number"  # Only a single value is written
-    TIMESTAMP = "timestamp"  # data are timestamps, tied to FILTERED
+logger = logging.getLogger(__name__)
 
 
 class ValueStorageBase(abc.ABC):
@@ -25,21 +23,28 @@ class ValueStorageBase(abc.ABC):
         self._dataset = None
 
     @staticmethod
-    def get_columns(df, name, options, **kwargs):
-        """Return the column names in the dataframe that match name and kwargs.
+    def get_columns(df, names, options, **kwargs):
+        """Return the column names in the dataframe that match names and kwargs.
 
         Parameters
         ----------
         df : pd.DataFrame
-        name : str
-        kwargs : **kwargs
-            Filter on options. Option values can be strings or regular expressions.
+        names : str | list
+            single name or list of names
+        kwargs : dict
+            Filter on options; values can be strings or regular expressions.
 
         Returns
         -------
         list
 
         """
+        if isinstance(names, str):
+            names = set([names])
+        elif isinstance(names, set):
+            pass
+        else:
+            names = set(names)
         field_indices = {option: i + 1 for i, option in enumerate(options)}
         columns = []
         for column in df.columns:
@@ -48,11 +53,11 @@ class ValueStorageBase(abc.ABC):
             if index != -1:
                 col = column[:index]
             # [name, option1, option2, ...]
-            fields = col.split(ValueStorageBase.DELIMITER)
+            fields = ValueStorageBase.get_fields(col, next(iter(names)))
             if options and kwargs:
                 assert len(fields) == 1 + len(options), f"fields={fields} options={options}"
             _name = fields[0]
-            if _name != name:
+            if _name not in names:
                 continue
             match = True
             for key, val in kwargs.items():
@@ -72,7 +77,7 @@ class ValueStorageBase(abc.ABC):
                 columns.append(column)
 
         if not columns:
-            raise InvalidParameter(f"{name} does not exist in DataFrame")
+            raise InvalidParameter(f"{names} does not exist in DataFrame")
 
         return columns
 
@@ -97,7 +102,7 @@ class ValueStorageBase(abc.ABC):
             if index != -1:
                 col = column[:index]
             # [name, option1, option2, ...]
-            fields = col.split(ValueStorageBase.DELIMITER)
+            fields = ValueStorageBase.get_fields(col, name)
             _name = fields[0]
             if _name != name:
                 continue
@@ -108,6 +113,24 @@ class ValueStorageBase(abc.ABC):
 
         return values
 
+    @staticmethod
+    def get_fields(col, name):
+        # Handle case where the name ends with part of the DELIMITER.
+        col_tmp = col.replace(name, "", 1)
+        fields = col_tmp.split(ValueStorageBase.DELIMITER)[1:]
+        fields.insert(0, name)
+        return fields
+
+    @abc.abstractmethod
+    def is_nan(self):
+        """Return True if the value is NaN.
+
+        Returns
+        -------
+        bool
+
+        """
+
     @abc.abstractmethod
     def make_columns(self):
         """Return a list of column names
@@ -117,6 +140,10 @@ class ValueStorageBase(abc.ABC):
         list
 
         """
+
+    @property
+    def name(self):
+        return self._name
 
     @property
     @abc.abstractmethod
@@ -140,8 +167,32 @@ class ValueStorageBase(abc.ABC):
         """
 
     @abc.abstractmethod
+    def set_name(self, name):
+        """Set the name.
+
+        Parameters
+        ----------
+        name : str
+
+        """
+
+    @abc.abstractmethod
+    def set_nan(self):
+        """Set the value to NaN or equivalent."""
+
+    @abc.abstractmethod
     def set_value(self, value):
-        """Set the value.
+        """Set the value from another instance.
+
+        Parameters
+        ----------
+        value : ValueStorageBase
+
+        """
+
+    @abc.abstractmethod
+    def set_value_from_raw(self, value):
+        """Set the value from a new raw value from opendssdirect.
 
         Parameters
         ----------
@@ -213,6 +264,15 @@ class ValueByList(ValueStorageBase):
             self._value[i] += other.value[i]
         return self
 
+    def __gt__(self, other):
+        # TODO
+        return sum(self._value) > sum(other.value)
+
+    def is_nan(self):
+        if np.issubdtype(self._value_type, np.int64):
+            return self._value[0] == INTEGER_NAN
+        return np.isnan(self._value[0])
+
     def make_columns(self):
         return [
             self.DELIMITER.join((self._name, f"{x}")) for x in self._labels
@@ -226,13 +286,25 @@ class ValueByList(ValueStorageBase):
         self._prop = prop
 
         # Update the property inside each label.
-        for i, label in self._labels:
+        for i, label in enumerate(self._labels):
             fields = label.split(self.DELIMITER)
             assert len(fields) == 2
             fields[0] = prop
             self._labels[i] = self.DELIMITER.join(fields)
 
+    def set_name(self, name):
+        self._name = name
+
+    def set_nan(self):
+        for i in range(len(self._value)):
+            self._value[i] = np.NaN
+
     def set_value(self, value):
+        self._value = value
+        if not isinstance(value[0], self._value_type):
+            self._value_type = type(value[0])
+
+    def set_value_from_raw(self, value):
         self._value = value
 
     @property
@@ -257,10 +329,22 @@ class ValueByNumber(ValueStorageBase):
                 f"Data export feature does not support strings: name={name} prop={prop} value={value}"
             )
         self._value = value
+        self._is_complex = isinstance(self._value_type, complex)
 
     def __iadd__(self, other):
         self._value += other.value
         return self
+
+    def __gt__(self, other):
+        return self._value > other.value
+
+    def is_nan(self):
+        if np.issubdtype(self._value_type, np.int64):
+            return self._value == INTEGER_NAN
+        return np.isnan(self._value)
+
+    def make_columns(self):
+        return [ValueStorageBase.DELIMITER.join((self._name, self._prop))]
 
     @property
     def num_columns(self):
@@ -269,11 +353,22 @@ class ValueByNumber(ValueStorageBase):
     def set_element_property(self, prop):
         self._prop = prop
 
+    def set_name(self, name):
+        self._name = name
+
+    def set_nan(self):
+        if np.issubdtype(self._value_type, np.int64):
+            self._value = INTEGER_NAN
+        else:
+            self._value = np.NaN
+
     def set_value(self, value):
         self._value = value
+        if not isinstance(value, self._value_type):
+            self._value_type = type(value)
 
-    def make_columns(self):
-        return [ValueStorageBase.DELIMITER.join((self._name, self._prop))]
+    def set_value_from_raw(self, value):
+        self._value = value
 
     @property
     def value(self):
@@ -314,14 +409,18 @@ class ValueByLabel(ValueStorageBase):
 
         self._name = name
         self._prop = prop
+        self._nodes = Nodes
         self._labels = []
         self._value = []
         self._value_type = complex if is_complex else float
+        self._is_complex = is_complex
 
         n = 2
         m = int(len(value) / (len(Nodes)*n))
-        value = self.chunk_list(value, n)
-        value = self.chunk_list(value, m)
+
+        self._m = m
+        self._n = n
+        value = self._fix_value(value)
 
         # Chunk_list example
         # X = list(range(12)) , nList= 2
@@ -332,18 +431,17 @@ class ValueByLabel(ValueStorageBase):
         #                            [[6, 7], [8, 9], [10, 11]] Terminal two complex pairs
         #                            ]
 
-        for i, node_val in enumerate(zip(Nodes, value)):
+        for i, node_val in enumerate(zip(self._nodes, value)):
             node, val = node_val
             for v, x in zip(node, val):
                 label = '{}{}'.format(phs[v], str(i+1))
-                if is_complex:
+                # Note that the value logic is duplicated in set_value_from_raw
+                if self._is_complex:
                     label += " " + units[0]
                     self._labels.append(label)
                     self._value += [complex(x[0], x[1])]
                 #elif units[0] == '[pu]'
                 else:
-                    # TODO: only generate labels once.
-                    # Should be able to do that with an existing instance.
                     label_mag = label + self.DELIMITER + "mag" + ' ' + units[0]
                     label_ang = label + self.DELIMITER + "ang" + ' ' + units[1]
                     self._labels.extend([label_mag, label_ang])
@@ -354,13 +452,33 @@ class ValueByLabel(ValueStorageBase):
             self._value[i] += other.value[i]
         return self
 
+    def __gt__(self, other):
+        # TODO
+        return sum(self._value) > sum(other.value)
+
     @property
     def value(self):
         return self._value
 
     @staticmethod
     def chunk_list(values, nLists):
+        # TODO: this breaks for Bus.puVmagAngle in monte carlo example test
         return  [values[i * nLists:(i + 1) * nLists] for i in range((len(values) + nLists - 1) // nLists)]
+
+    def _fix_value(self, value):
+        value = self.chunk_list(value, self._n)
+        value = self.chunk_list(value, self._m)
+        return value
+
+    def is_nan(self):
+        if np.issubdtype(self._value_type, np.int64):
+            return self._value[0] == INTEGER_NAN
+        return np.isnan(self._value[0])
+
+    def make_columns(self):
+        return [
+            self.DELIMITER.join((self._name, f"{x}")) for x in self._labels
+        ]
 
     @property
     def num_columns(self):
@@ -369,13 +487,28 @@ class ValueByLabel(ValueStorageBase):
     def set_element_property(self, prop):
         self._prop = prop
 
+    def set_name(self, name):
+        self._name = name
+
+    def set_nan(self):
+        for i in range(len(self._value)):
+            self._value[i] = np.NaN
+
     def set_value(self, value):
         self._value = value
+        if not isinstance(value[0], self._value_type):
+            self._value_type = type(value[0])
 
-    def make_columns(self):
-        return [
-            self.DELIMITER.join((self._name, f"{x}")) for x in self._labels
-        ]
+    def set_value_from_raw(self, value):
+        value = self._fix_value(value)
+        self._value.clear()
+        for i, node_val in enumerate(zip(self._nodes, value)):
+            node, val = node_val
+            for v, x in zip(node, val):
+                if self._is_complex:
+                    self._value += [complex(x[0], x[1])]
+                else:
+                    self._value += [x[0], x[1]]
 
     @property
     def value_type(self):
@@ -385,85 +518,121 @@ class ValueByLabel(ValueStorageBase):
 class ValueContainer:
     """Container for a sequence of instances of ValueStorageBase."""
 
-    # These could potentially be reduced in bit lengths. Compression probably
-    # makes that unnecessary.
-    _TYPE_MAPPING = {
-        float: np.float,
-        int: np.int,
-        complex: np.complex,
-    }
-
-    def __init__(self, value, hdf_store, path, max_size, dataset_property_type, max_chunk_bytes=None,
-                 store_timestamp=False):
+    def __init__(self, values, hdf_store, path, max_size, elem_names,
+                 dataset_property_type, max_chunk_bytes=None, store_time_step=False):
         group_name = os.path.dirname(path)
         basename = os.path.basename(path)
         try:
-            if basename in hdf_store[group_name].keys():
+            if basename in hdf_store[group_name]:
                 raise InvalidParameter(f"duplicate dataset name {basename}")
         except KeyError:
             # Don't bother checking each sub path.
             pass
 
-        dtype = self._TYPE_MAPPING.get(value.value_type)
-        assert dtype is not None
+        dtype = values[0].value_type
         scaleoffset = None
-        if dtype == np.float:
+        # There is no np.float128 on Windows.
+        if dtype in (float, np.float32, np.float64, np.longdouble):
             scaleoffset = 4
-        elif dtype == np.int:
-            scaleoffset = 0
-        attributes = {"type": dataset_property_type.value}
-        timestamp_path = None
+        time_step_path = None
+        max_size = max_size * len(values) if store_time_step else max_size
 
-        if store_timestamp:
-            timestamp_path = self.timestamp_path(path)
-            self._timestamps = DatasetBuffer(
+        if store_time_step:
+            # Store indices for time step and element.
+            # Each row of this dataset corresponds to a row in the data.
+            # This will be required to interpret the raw data.
+            attributes = {"type": DatasetPropertyType.TIME_STEP.value}
+            time_step_path = self.time_step_path(path)
+            self._time_steps = DatasetBuffer(
                 hdf_store,
-                timestamp_path,
+                time_step_path,
                 max_size,
-                np.float,
-                ["Timestamp"],
-                scaleoffset=scaleoffset,
+                int,
+                ["Time", "Name"],
+                scaleoffset=0,
                 max_chunk_bytes=max_chunk_bytes,
-                attributes={"type": DatasetPropertyType.TIMESTAMP.value},
+                attributes=attributes,
             )
-            attributes["timestamp_path"] = timestamp_path
+            columns = []
+            tmp_columns = values[0].make_columns()
+            for column in tmp_columns:
+                fields = column.split(ValueStorageBase.DELIMITER)
+                fields[0] = "AllNames"
+                columns.append(ValueStorageBase.DELIMITER.join(fields))
+            column_ranges = [0, len(tmp_columns)]
         else:
-            self._timestamps = None
+            columns = []
+            column_ranges = []
+            col_index = 0
+            for value in values:
+                tmp_columns = value.make_columns()
+                col_range = (col_index, len(tmp_columns))
+                column_ranges.append(col_range)
+                for column in tmp_columns:
+                    columns.append(column)
+                    col_index += 1
+            self._time_steps = None
+
+        attributes = {"type": dataset_property_type.value}
+        if store_time_step:
+            attributes["time_step_path"] = time_step_path
 
         self._dataset = DatasetBuffer(
             hdf_store,
             path,
             max_size,
             dtype,
-            value.make_columns(),
+            columns,
             scaleoffset=scaleoffset,
             max_chunk_bytes=max_chunk_bytes,
             attributes=attributes,
+            names=elem_names,
+            column_ranges_per_name=column_ranges,
         )
 
     @staticmethod
-    def timestamp_path(path):
-        return path + "Timestamp"
+    def time_step_path(path):
+        return path + "TimeStep"
 
-    def append(self, value, timestamp=None):
+    def append(self, values):
+        """Append a value to the container.
+
+        Parameters
+        ----------
+        value : list
+            list of ValueStorageBase
+
+        """
+        if isinstance(values[0].value, list):
+            vals = [x for y in values for x in y.value]
+        else:
+            vals = [x.value for x in values]
+
+        self._dataset.write_value(vals)
+
+    def append_by_time_step(self, value, time_step, elem_index):
         """Append a value to the container.
 
         Parameters
         ----------
         value : ValueStorageBase
-        timestamp : float | None
+        time_step : int
+        elem_index : int
 
         """
-        self._dataset.write_value(value.value)
-        if self._timestamps is not None:
-            assert timestamp is not None
-            self._timestamps.write_value(timestamp)
+        if isinstance(value.value, list):
+            vals = [x for x in value.value]
+        else:
+            vals = value.value
+
+        self._dataset.write_value(vals)
+        self._time_steps.write_value([time_step, elem_index])
 
     def flush_data(self):
         """Flush any outstanding data to disk."""
         self._dataset.flush_data()
-        if self._timestamps is not None:
-            self._timestamps.flush_data()
+        if self._time_steps is not None:
+            self._time_steps.flush_data()
 
     def max_num_bytes(self):
         """Return the maximum number of bytes the container could hold.
@@ -487,12 +656,12 @@ def get_dataset_property_type(dataset):
     return DatasetPropertyType(dataset.attrs["type"])
 
 
-def get_timestamp_path(dataset):
-    """Return the path to the timestamps for this dataset.
+def get_time_step_path(dataset):
+    """Return the path to the time_steps for this dataset.
 
     Returns
     -------
-    pd.DatetimeIndex
+    str
 
     """
-    return dataset.attrs["timestamp_path"]
+    return dataset.attrs["time_step_path"]

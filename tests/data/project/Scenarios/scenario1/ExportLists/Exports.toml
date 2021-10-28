@@ -2,10 +2,6 @@
 publish = true
 store_values_type = "all"
 
-[PVSystems.Pmpp]
-publish = false
-store_values_type = "all"
-
 [Storages.Powers]
 publish = true
 store_values_type = "all"

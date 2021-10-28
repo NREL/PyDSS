@@ -14,18 +14,20 @@ def test_dataset_buffer__compute_chunk_count():
     assert DatasetBuffer.compute_chunk_count(
         num_columns=4,
         max_size=96,
-        dtype=np.float
+        dtype=float
     ) == 96
     assert DatasetBuffer.compute_chunk_count(
         num_columns=4,
         max_size=one_year_at_5_minutes,
-        dtype=np.float
-    ) == 1024
+        dtype=float,
+        max_chunk_bytes=128 * 1024,
+    ) == 4096
     assert DatasetBuffer.compute_chunk_count(
         num_columns=6,
         max_size=one_year_at_5_minutes,
-        dtype=np.complex
-    ) == 341
+        dtype=complex,
+        max_chunk_bytes=128 * 1024,
+    ) == 1365
 
 
 def test_dataset_buffer__max_num_bytes():
@@ -33,7 +35,7 @@ def test_dataset_buffer__max_num_bytes():
     try:
         with h5py.File(filename, "w") as store:
             columns = ("1", "2", "3", "4")
-            dataset = DatasetBuffer(store, "data", 100, np.float, columns)
+            dataset = DatasetBuffer(store, "data", 100, float, columns)
             assert dataset.max_num_bytes() == 3200
     finally:
         if os.path.exists(filename):
@@ -45,20 +47,22 @@ def test_dataset_buffer__write_value():
     try:
         with h5py.File(filename, "w") as store:
             columns = ("1", "2", "3", "4")
-            max_size = 2000
-            dataset = DatasetBuffer(store, "data", max_size, np.float, columns)
-            assert dataset._chunk_size == 1024
+            max_size = 5000
+            dataset = DatasetBuffer(store, "data", max_size, float, columns,
+                                    max_chunk_bytes=128 * 1024)
+            assert dataset._chunk_size == 4096
             for i in range(max_size):
                 data = np.ones(4)
                 dataset.write_value(data)
-            assert dataset._buf_index == 2000 - dataset._chunk_size
+            assert dataset._buf_index == max_size - dataset._chunk_size
             dataset.flush_data()
             assert dataset._buf_index == 0
 
         with h5py.File(filename, "r") as store:
             data = store["data"][:]
             assert len(data) == max_size
-            assert [x for x in store["data"].attrs["columns"]] == list(columns)
+            actual_columns = DatasetBuffer.get_columns(store["data"])
+            assert [x for x in actual_columns] == list(columns)
             for i in range(max_size):
                 for j in range(4):
                     assert data[i][j] == 1.0

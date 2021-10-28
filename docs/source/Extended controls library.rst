@@ -15,7 +15,7 @@ Although OpenDSS has numerous control implementations in its internal equipment 
 
 Each new controller implementation is a pyController object within PyDSS and controls one or more OpenDSS elements. The architecture allows users to implement there own controllers and add them to the simulation environment with minimal coding effort. Figure below presents a flow chart for a simulation run in PyDSS.
 
-.. figure::  _static/Flow_chart.png
+.. figure::  _static/flow_chart.png
    :scale:   50%
    :align:   center
    
@@ -59,11 +59,6 @@ Controller convergance (and instances of failed convergance) are reported  in th
    :align:   center
 
 Expected definations for each controller can be found here 
-
-.. toctree::
-   :maxdepth: 2 
-  
-   PyDSS controllers
 
    
 Users are able to extend current control implementations by following the tutorial here

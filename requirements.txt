@@ -23,3 +23,4 @@ aiohttp_swagger3==0.4.3
 requests
 pyyaml
 pymongo
+pydantic>=1.8

@@ -6,124 +6,96 @@
 .. figure::  _static/Logo.png
    :align:   center
 
+#####
+PyDSS
+#####
+
+***********
 About PyDSS
-===========
-PyDSS is a high-level Python package that is a wrapper for OpenDSS and aims to expand upon its organizational, analytical, and visualization capabilities. Further, it simplifies co-simulation framework integration and allows the user to develop custom control algorithms and embed them into the simulation environment. PyDSS makes use of opendssdirect.py (https://pypi.org/project/OpenDSSDirect.py/) to provide a high-level Python interface for OpenDSS. PyDSS also provides extension modules to facilitate Monte Carlo studies in distribution system domain and automated post processing of results. Flexible architecture makes PyDSS customizable and easily extendible. 
+***********
+PyDSS is a Python wrapper for OpenDSS that aims to expand upon its
+organizational, analytical, and visualization capabilities with these features:
 
+- Allows the user to develop custom control algorithms for specific circuit elements and run them
+  at each simulation time step.
+- Provides co-simulation integration with HELICS.
+- Provides extension modules to facilitate Monte Carlo studies in distribution system domain and
+  automated post-processing of results.
+- Automates collection and analysis of circuit element results at each simulation time step.
+- Flexible architecture allows users to develop extensions.
+
+PyDSS uses opendssdirect.py (https://pypi.org/project/OpenDSSDirect.py/) to communicate with
+OpenDSS.
+
+.. _installation_label:
+
+************
 Installation
-============
+************
 
-PyDSS can be installed by typing the following command on the command prompt::
+Recommendation: Install PyDSS in an Anaconda virtual environment. Specific dependent
+packages like shapely will only install successfully on Windows with conda.
 
-	pip install -i https://test.pypi.org/simple/ PyDSS==0.0.1
+.. warning:: The latest supported python version is 3.7.
+
+Here is an example conda command:
+
+.. code-block:: bash
+
+    $ conda create -n pydss python=3.7
+
+Install shapely with conda. pip, particularly on Windows, often fails to install its dependent
+libraries.
+
+.. code-block:: bash
+
+    $ conda install shapely
+
+Install the latest supported PyDSS version with this command:
+
+.. code-block:: bash
+
+    $ pip install dsspy
 	
-Alternately, if you choose to clone the git repo from https://github.com/nrel/pydss , use the followiing commands to build the module and install it. ::
+Alternatively, to get the lastest code from the master branch:
 
-	python setup.py -build
-	python setup.py -install
+.. code-block:: bash
 
+    $ git clone https://github.com/NREL/PyDSS
+    $ pip install -e PyDSS
+
+Confirm the installation with this command. It should print the available commands::
+
+    $ pydss --help
+
+
+*************
 Running PyDSS
-=============
+*************
+Refer to the :ref:`quick_start_label` for basic instructions on how to configure PyDSS to run a
+simulation with an existing OpenDSS model.
 
-Running PyDSS requires a valid OpenDSS model to run. Additionally, it requires a development of a project structure detailed  in the following subsections.
+Refer to :ref:`tutorial_label` for in-depth instructions on how to customize a PyDSS project.
 
-Setting up a PyDSS project
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Refer to :ref:`examples_label` for example simulations covering various use cases.
 
-PyDSS requires a specific directory format to define projects detailed below. ::
- 
-	~\PyDSS-Projects (There should be no spaces in the complete base path)
-            |__ \IEEE13node
-            |      |__ \DSSfiles (Should contain OpenDSS files)
-            |      |__ \Scenarios (All scenarios should be defined within this folder)
-            |      |       |__ \Self_consumption (A PyDSS scenario will be defined within this directory)
-            |      |       |       |__ \ExportLists.json (Define export list for the project)
-            |      |       |       |__ \pyControllerList.json (Define a set of custom controls)
-            |      |       |       |__ \pyPlotList.json (Define a set of dynamic plots)
-            |      |       |       |__ \*Scenario_settings*.toml (PyDSS simulation settings)			
-            |      |       |__ \HELICS 
-            |      |       |__ \<Scenario name> 
-            |      |       |__ \*Vis_settings*.toml (The batch toml file is required to run batch simulations)			
-            |      |               :			
-            |      |__ \Exports (All simulation results will be exported to this folder)
-            |      |__ \Logs (PyDSS logs will be exported to this folder)
-            |__ \EPRIJ1feeder
-            |__ \<Project name>
-
-			   
-Running PyDSS is simple. The following code snippet shows how to run a defined simulation scenario.
-
-
-.. code-block:: python
-
-	import click
-	import sys
-	import os
-
-	@click.command()
-	@click.option('--pydss_path',
-				  default=r'C:\\Users\\alatif\\Desktop\\PyDSS')
-	@click.option('--sim_path',
-				  default=r'~PyDSS\\examples\\Custom_controls_example\\Scenarios')
-	@click.option('--sim_file',
-				  default=r'multiple_controllers.toml') #The TOML file contains simulation settings for the particular scenario
-	@click.option('--vis_file',
-				  default=r'automated_comparison.toml') #The TOML file contains visualization settings 
-	def run_pyDSS(pydss_path, sim_path, sim_file, vis_file):
-		# Should not be required if installed using pip command. Only required when working with a cloned copy.
-		sys.path.append(pydss_path) 
-		sys.path.append(os.path.join(pydss_path, 'PyDSS'))
-		from pyDSS import instance as dssInstance
-		# Create an instance of PyDSS
-		a = dssInstance() 
-		#Run the simulation 
-		a.run(sim_file, vis_file) 
-
-	run_pyDSS()
-
-- sim_file [str or list[str]] -  Path to simulation settings toml file. Can be a list of paths. If a list is provided, simulations will be run sequentially.
-- vis_file [str] - Path to visualization settings toml file. Is only required when generating comparativce plots
-
-
-Skeleton for a new project can be created using following lines of code.  
-
-.. code-block:: python
-
-	from PyDSS import PyDSS
-	sucess = PyDSS.create('<Proects path>', '<Project name>', '<Scenario name>')
-	
-After executing the following lines of code, user will be prompted to answer a few questions, that will enable PyDSS to automate creation of a skeleton of a new project. 
-
-Validity of the PyDSS project can be tested using the following command.  	
-
-.. code-block:: python
-
-	from PyDSS import PyDSS
-	sucess = PyDSS.test('<Proects path>', '<Project name>')
-
-Within the installation folder, several examples have been provided.
-	
-Default values for the simulation settings and visualization settigs can be found here.
-	
-.. toctree::
-   :maxdepth: 2
    
-   Sample TOML files  
-   
+************************
 Additional Documentation
-========================
+************************
 
 .. toctree::
    :maxdepth: 1
 
-   Simulation modes
-   Project management
+   quickstart
+   tutorial
+   project_layout
+   simulation_settings
+   examples
    Result management
-   Dynamic visualization capabilities
-   Extended controls library
-   External interfaces for cosimulation
-   Automated comparison of scenarios
-   
+   reports
+   hdf-data-format
+   PyDSS
    
 License
 =======
@@ -147,10 +119,9 @@ Contact
 =======
 Questions? Please send an email to aadil.latif@nrel.gov or aadil.latif@gmail.com
 
-   
 
 Indices and tables
-^^^^^^^^^^^^^^^^^^
+==================
 
 * :ref:`genindex`
 * :ref:`modindex`

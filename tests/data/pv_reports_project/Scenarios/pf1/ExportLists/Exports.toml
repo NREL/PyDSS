@@ -1,6 +1,5 @@
-[[Circuits]]
-property = "Losses"
+[[FeederHead]]
+property = "FeederHeadMetrics"
 sample_interval = 1
 publish = false
-store_values_type = "sum"
-
+store_values_type = "all"

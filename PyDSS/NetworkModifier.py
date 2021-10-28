@@ -18,10 +18,7 @@ class Modifier():
      }
 
     def __init__(self, dss, run_command, SimulationSettings):
-        if SimulationSettings["Logging"]["Pre-configured logging"]:
-            LoggerTag = __name__
-        else:
-            LoggerTag = getLoggerTag(SimulationSettings)
+        LoggerTag = getLoggerTag(SimulationSettings)
         self.pyLogger = logging.getLogger(LoggerTag)
         self.__dssInstance = dss
         self.__dssCircuit = dss.Circuit
