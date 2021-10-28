@@ -82,7 +82,7 @@ class helics_interface:
         self.fedinfo = helics.helicsCreateFederateInfo()
         helics.helicsFederateInfoSetCoreName(self.fedinfo, self._settings.helics.federate_name)
         helics.helicsFederateInfoSetCoreTypeFromString(self.fedinfo, self._settings.helics.core_type)
-        helics.helicsFederateInfoSetCoreInitString(self.fedinfo, f"--federates=1 --networktimeout=60min --timeout=60min --broker_address {self._options['Helics']['Broker']} --port {self._options['Helics']['Broker port']} --maxsize=32768 --slowresponding") 
+        helics.helicsFederateInfoSetCoreInitString(self.fedinfo, f"--federates=1 --networktimeout=60min --timeout=60min --maxsize=32768 --slowresponding") 
         helics.helicsFederateInfoSetFlagOption(self.fedinfo, helics.helics_flag_terminate_on_error, 0) # set terminate_on_error to false
         if self._settings.helics.broker:
             self._logger.info("Connecting to broker @ %s", self._settings.helics.broker)
