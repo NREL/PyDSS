@@ -94,7 +94,7 @@ def create_project(path=None, project=None, scenarios=None, simulation_file=None
     if options is not None:
         options = ast.literal_eval(options)
         if not isinstance(options, dict):
-            print(f"options must be of type dict; received {type(options)}")
+            logger.error(f"options must be of type dict; received {type(options)}")
             sys.exit(1)
 
     scenarios = [

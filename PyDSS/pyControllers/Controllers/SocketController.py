@@ -20,7 +20,7 @@ class SocketController(ControllerAbstract):
     """
 
     def __init__(self, ElmObject, Settings, dssInstance, ElmObjectList,dssSolver):
-        super(SocketController).__init__()
+        super(SocketController).__init__(ElmObject, Settings, dssInstance, ElmObjectList,dssSolver)
         self.Time = -1
         self.__ControlledElm = ElmObject
         Class, Name = self.__ControlledElm.GetInfo()

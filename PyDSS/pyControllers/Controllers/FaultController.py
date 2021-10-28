@@ -20,7 +20,7 @@ class FaultController(ControllerAbstract):
         """Constructor method
         """
 
-        super(FaultController).__init__()    
+        super(FaultController, self).__init__(FaultObj, Settings, dssInstance, ElmObjectList, dssSolver)
         self.P_old = 0
         self.Time = -1
         self.__Locked = False
@@ -33,7 +33,6 @@ class FaultController(ControllerAbstract):
         FaultObj.SetParameter('bus2', Settings['Bus2'])
         FaultObj.SetParameter('phases', nPhases)
         FaultObj.SetParameter('r', Settings['Fault resistance'])
-        print(FaultObj, Settings, nPhases)
         Class, Name = self.__FaultObj.GetInfo()
         assert (Class.lower() == 'fault'), 'FaultController works only with an OpenDSS Fault element'
         self.__Name = 'pyCont_' + Class + '_' + Name
@@ -51,11 +50,19 @@ class FaultController(ControllerAbstract):
             self.__FaultEnabled==False:
             self.__FaultObj.SetParameter('enabled', 'yes')
             self.__FaultEnabled = True
-            print(f"Fault enabled at time: {time}")
         elif time >= self.__Settings['Fault end time (sec)'] and self.__FaultEnabled==True:
             self.__FaultObj.SetParameter('enabled', 'no')
-            print(f"Fault disabled at time: {time}")
             self.__FaultEnabled = False
         return 0
+        
+    def Name(self):
+        return self.__Name
+
+    def ControlledElement(self):
+        return "{}.{}".format(self.ceClass, self.ceName)
+
+    def debugInfo(self):
+        return [self.__Settings['Control{}'.format(i+1)] for i in range(3)]
+
 
 
