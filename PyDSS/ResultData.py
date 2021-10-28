@@ -82,6 +82,7 @@ class ResultData:
         self._export_relative_dir = "Exports/" + settings.project.active_scenario
         self._store_frequency = False
         self._store_mode = False
+        # TODO DT: Is this correct for Gemini?
         if settings.frequency.enable_frequency_sweep:
             self._store_frequency = True
             self._store_mode = True
