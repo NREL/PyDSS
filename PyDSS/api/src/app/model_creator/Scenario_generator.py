@@ -5,6 +5,7 @@ from PyDSS.common import ControllerType
 import opendssdirect as dss
 import distutils.dir_util
 import pandas as pd
+import numpy as np
 import random
 import shutil
 import toml
@@ -84,7 +85,7 @@ class PyDSS_Model:
         dss.Basic.ClearAll()
         return Pl/1000.0, Ql/1000.0, SPLn, SPLn_P/1000.0, SPLn_Q/1000.0
 
-    def create_new_scenario(self, scenaio_name, transInfo, files, isSubstation, PVstandard, PVcategory):
+    def create_new_scenario(self, scenaio_name, transInfo, files, isSubstation, PVstandards, dymanic_simulation):
         tP, tQ, nLoads, lP, lQ = self.get_init_model_info(files["master"])
         self.Files = files
         penPV_P = transInfo['PVp'] / transInfo['Lp']
@@ -120,7 +121,7 @@ class PyDSS_Model:
         PVsystems = []
         for k, v in self.Model.PVsystems.items():
             PVsystems.extend(v)
-        PVsettings = self.createPVdict(PVsystems, PVstandard, PVcategory)
+        PVsettings = self.createPVdict(PVsystems, PVstandards)
 
         self.Scenario.controllers[ControllerType.PV_VOLTAGE_RIDETHROUGH] = PVsettings
         self.Scenario.controllers[ControllerType.MOTOR_STALL] = MotorSettings
@@ -171,7 +172,15 @@ class PyDSS_Model:
                 allMotors[MotorName] = settings
         return allMotors
 
-    def createPVdict(self, PVsystems, PVstandard, PVcategory):
+    def createPVdict(self, PVsystems, PVcategory):
+        #{"ieee-2018-catI": 0, "ieee-2018-catII": 0, "ieee-2018-catIII": 0, "ieee-2003": 0},
+        
+        total_pv = 0
+        for standard , penetration in PVsystems.items():
+            total_pv += penetration
+            PVsystems[standard] = total_pv
+        
+
         allPVsystems = {}
         for PV in PVsystems:
             settings = {**self.PVsettings}

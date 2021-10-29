@@ -15,3 +15,5 @@ tests/data/project/Scenarios/scenario1/simulation.toml
 store.h5
 simulation-run.toml
 *.log
+PyDSS/api/src/tmp/**
+PyDSS/api/src/tmp_pydss_project/**

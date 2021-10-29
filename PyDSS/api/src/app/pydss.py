@@ -323,7 +323,6 @@ class PyDSS:
                        pvcategory={"ieee-2018-catI": 0, "ieee-2018-catII": 0, "ieee-2018-catIII": 0, "ieee-2003": 0},
                        dynamic= True,
                        update_model=True,
-
                        ):
 
         """ Grab file and metadata info of case file """
@@ -336,7 +335,7 @@ class PyDSS:
         feeder_folders = []
         for file_uuid in file_uuids:
 
-            folder_name = file_uuid + 'distribution_federate'
+            folder_name = file_uuid + '_distribution_federate'
             case_file_url = f'{self.data_service_url}/case_files/uuid/{file_uuid}'
 
             """ Creating a project folder and removing if already exists"""
@@ -420,9 +419,9 @@ class PyDSS:
                     "motor": 'Motors_new.dss',
                     "PVsystem": 'PVSystems_new.dss',
                 },
-                isSubstation=True,  # TODO: needs to come from metadata
-                pvstandards=pvcategory,
-                dynamic=True
+                True,  # TODO: needs to come from metadata
+                pvcategory,
+                dynamic
             )
 
             powerflow_options = {
@@ -445,8 +444,6 @@ class PyDSS:
             "mw_multiplier": pmult,
             "mvar_multiplier": qmult
         }
-
-
 
     def create_project(self, 
         project_path,
