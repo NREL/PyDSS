@@ -33,9 +33,9 @@ class FaultController(ControllerAbstract):
         FaultObj.SetParameter('bus2', Settings['Bus2'])
         FaultObj.SetParameter('phases', nPhases)
         FaultObj.SetParameter('r', Settings['Fault resistance'])
-        Class, Name = self.__FaultObj.GetInfo()
-        assert (Class.lower() == 'fault'), 'FaultController works only with an OpenDSS Fault element'
-        self.__Name = 'pyCont_' + Class + '_' + Name
+        self.__Class, Name = self.__FaultObj.GetInfo()
+        assert (self.__Class.lower() == 'fault'), 'FaultController works only with an OpenDSS Fault element'
+        self.__Name = 'pyCont_' + self.__Class + '_' + Name
         self.__init_time = dssSolver.GetDateTime()
         self.__Settings['Fault end time (sec)'] = self.__Settings['Fault start time (sec)'] + \
                                                   self.__Settings['Fault duration (sec)']
@@ -59,7 +59,7 @@ class FaultController(ControllerAbstract):
         return self.__Name
 
     def ControlledElement(self):
-        return "{}.{}".format(self.ceClass, self.ceName)
+        return "{}.{}".format(self.__Class, self.__Name)
 
     def debugInfo(self):
         return [self.__Settings['Control{}'.format(i+1)] for i in range(3)]

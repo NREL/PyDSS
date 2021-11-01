@@ -93,7 +93,7 @@ enabled = false
 
 [Profiles]
 "Use profile manager" = true
-source_type = "HDF5"
+source_type = "h5"
 source = "profiles.hdf5"
 "Profile mapping" = ""
 is_relative_path = true
