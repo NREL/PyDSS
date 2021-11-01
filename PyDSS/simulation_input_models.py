@@ -644,6 +644,12 @@ class ProfilesModel(InputsBaseModel):
         default={},
     )
 
+    @root_validator(pre=True)
+    def pre_process(cls, values):
+        if values.get("source_type") == "HDF5":
+            valus["source_type"] = "h5"
+        return values
+
 
 class ReportBaseModel(InputsBaseModel):
     """Defines the base model for all report-specific user inputs."""
