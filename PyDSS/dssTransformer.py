@@ -70,7 +70,6 @@ class dssTransformer(dssElement):
             VarValue = self.GetParameter(VarName)
             if convert:
                 if VarName in self.VARIABLE_OUTPUTS_BY_LIST:
-                    VarValue = ast.literal_eval(VarValue)
                     VarValue = VarValue[:self.NumWindings]
                     VarValue = ValueByList(
                         self._FullName, VarName, VarValue, ['wdg{}'.format(i+1) for i in range(self.NumWindings)]
