@@ -51,7 +51,7 @@ def create_substation(base_path, feeder_models, source_voltage):
         for line in lines:
 
             if "voltagebases=" in line.lower():
-                redirect_lines.append(line)
+                # redirect_lines.append(line)
                 # sStrings = line.split(" ")
                 sStrings = line.lower()
                 sStrings = sStrings.split("voltagebases=")[1]
@@ -118,7 +118,7 @@ def update_project(
                     source_voltage,
                     data_service_url,  # @KAPIL NEED TO GET THIS INFORMATION FROM COSIM LAUNCHER
                     motor_d= 0,
-                    pvcategory={"ieee-2018-catI": 0, "ieee-2018-catII": 0, "ieee-2018-catIII": 0, "ieee-2003": 0},
+                    pvcategory={"ieee-2018-catI": 5, "ieee-2018-catII": 10, "ieee-2018-catIII": 15, "ieee-2003": 20},
                     dynamic= True,
                     update_model=True,
                     ):
@@ -223,7 +223,7 @@ def update_project(
                 "PVsystem": 'PVSystems_new.dss',
             },
             isSubstation=True,  # TODO: needs to come from metadata
-            pvstandards=pvcategory,
+            PVstandards=pvcategory,
             dynamic=True
         )
 
@@ -258,7 +258,7 @@ def create_project(
     ):
 
     #activate pydss_api && 
-    cmd = "activate naerm_bes_env &&  pydss create-project -P {} -p {} -s {} -F {} -m {} -c {}".format(
+    cmd = "activate pydss &&  pydss create-project -P {} -p {} -s {} -F {} -m {} -c {}".format(
         project_path,
         project_name,
         scenario_name,

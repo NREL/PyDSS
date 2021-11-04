@@ -85,7 +85,7 @@ class PyDSS_Model:
         dss.Basic.ClearAll()
         return Pl/1000.0, Ql/1000.0, SPLn, SPLn_P/1000.0, SPLn_Q/1000.0
 
-    def create_new_scenario(self, scenaio_name, transInfo, files, isSubstation, PVstandards, dymanic_simulation):
+    def create_new_scenario(self, scenaio_name, transInfo, files, isSubstation, PVstandards, dynamic):
         tP, tQ, nLoads, lP, lQ = self.get_init_model_info(files["master"])
         self.Files = files
         penPV_P = transInfo['PVp'] / transInfo['Lp']
@@ -174,17 +174,37 @@ class PyDSS_Model:
 
     def createPVdict(self, PVsystems, PVcategory):
         #{"ieee-2018-catI": 0, "ieee-2018-catII": 0, "ieee-2018-catIII": 0, "ieee-2003": 0},
-        
-        total_pv = 0
-        for standard , penetration in PVsystems.items():
-            total_pv += penetration
-            PVsystems[standard] = total_pv
+        print("PVsystems: ", PVsystems)
+        print("PVcategory: ", PVcategory)
+
+        # total_pv = 0
+        # for standard, penetration in PVsystems.items():
+        #     total_pv += penetration
+        #     PVsystems[standard] = total_pv
         
 
         allPVsystems = {}
+
+        cum_cat1 = PVcategory["ieee-2018-catI"] / 100.0
+        cum_cat2 = cum_cat1 + PVcategory["ieee-2018-catII"] / 100.0
+        cum_cat3 = cum_cat2 + PVcategory["ieee-2018-catIII"] / 100.0
+        cum_cat4 = cum_cat3 + PVcategory["ieee-2003"] / 100.0
         for PV in PVsystems:
             settings = {**self.PVsettings}
-            settings['Follow standard'] = PVstandard
+            inv_type = random.random()
+            if inv_type < cum_cat3:
+                settings['Follow standard'] = "1547-2018"
+                if inv_type < cum_cat1:
+                    PVcategory = "Category I"
+                elif inv_type < cum_cat2 and inv_type >= cum_cat1:
+                    PVcategory = "Category II"
+                elif inv_type < cum_cat3 and inv_type >= cum_cat2:
+                    PVcategory = "Category III"
+                else:
+                    PVcategory = "Category I"
+            else:
+                settings['Follow standard'] = "1547-2003"
+                PVcategory = "Category I"
             if PVcategory in self.Category:
                 settings.update(self.Category[PVcategory])
                 settings['Ride-through Category'] = PVcategory
