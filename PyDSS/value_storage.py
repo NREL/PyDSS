@@ -297,7 +297,10 @@ class ValueByList(ValueStorageBase):
 
     def set_nan(self):
         for i in range(len(self._value)):
-            self._value[i] = np.NaN
+            if isinstance(self._value[i], int) or isinstance(self._value[i], np.int64):
+                self._value[i] = INTEGER_NAN
+            else:
+                self._value[i] = np.NaN
 
     def set_value(self, value):
         self._value = value
@@ -492,7 +495,10 @@ class ValueByLabel(ValueStorageBase):
 
     def set_nan(self):
         for i in range(len(self._value)):
-            self._value[i] = np.NaN
+            if isinstance(self._value[i], int) or isinstance(self._value[i], np.int64):
+                self._value[i] = INTEGER_NAN
+            else: 
+                self._value[i] = np.NaN
 
     def set_value(self, value):
         self._value = value
