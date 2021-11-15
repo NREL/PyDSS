@@ -6,7 +6,7 @@ class Snapshot(solver_base):
     def __init__(self, dssInstance, settings: SimulationSettingsModel, Logger):
         super().__init__(dssInstance, settings, Logger)
         self._dssSolution.Mode(0)
-        self._dssInstance.utils.run_command('Set ControlMode={}'.format(settings.project.control_mode))
+        self._dssInstance.utils.run_command('Set ControlMode={}'.format(settings.project.control_mode.value))
         self._dssSolution.MaxControlIterations(settings.project.max_control_iterations)
         return
 
