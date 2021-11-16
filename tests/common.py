@@ -53,6 +53,7 @@ def cleanup_project():
         PV_REPORTS_PROJECT_PATH,
         PV_REPORTS_PROJECT_STORE_ALL_PATH,
         EDLIFO_PROJECT_PATH,
+        AUTO_SNAPSHOT_TIME_POINT_PROJECT_PATH,
     )
     for project_path in projects:
         export_path = os.path.join(project_path, "Exports")
