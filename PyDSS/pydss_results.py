@@ -228,13 +228,9 @@ class PyDssScenarioResults:
         self._name = name
         self._project_path = project_path
         self._hdf_store = store
-        self._metadata = metadata
+        self._metadata = metadata or {}
         self._options = options
         self._fs_intf = fs_intf
-        self._group = self._hdf_store[f"Exports/{name}"]
-        self._elem_classes = [
-            x for x in self._group if isinstance(self._group[x], h5py.Group)
-        ]
         self._elems_by_class = defaultdict(set)
         self._elem_data_by_prop = defaultdict(dict)
         self._elem_values_by_prop = defaultdict(dict)
@@ -248,6 +244,14 @@ class PyDssScenarioResults:
         self._add_frequency = frequency
         self._add_mode = mode
         self._data_format_version = self._hdf_store.attrs["version"]
+        if name not in self._hdf_store["Exports"]:
+            self._group = None
+            return
+
+        self._group = self._hdf_store[f"Exports/{name}"]
+        self._elem_classes = [
+            x for x in self._group if isinstance(self._group[x], h5py.Group)
+        ]
 
         self._parse_datasets()
 
@@ -778,7 +782,7 @@ class PyDssScenarioResults:
             list of filenames (str)
 
         """
-        return self._metadata["element_info_files"]
+        return self._metadata.get("element_info_files", [])
 
     def list_summed_element_properties(self, element_class):
         """Return the properties stored for a class where the values are a sum
@@ -839,7 +843,7 @@ class PyDssScenarioResults:
             Maps capacitor names to count of state changes.
 
         """
-        text = self.read_file(self._metadata["event_log"])
+        text = self.read_file(self._metadata.get("event_log", ""))
         return _read_capacitor_changes(text)
 
     def read_event_log(self):
@@ -851,7 +855,7 @@ class PyDssScenarioResults:
             list of dictionaries (one dict for each row in the file)
 
         """
-        text = self.read_file(self._metadata["event_log"])
+        text = self.read_file(self._metadata.get("event_log", ""))
         return _read_event_log(text)
 
     def read_pv_profiles(self):

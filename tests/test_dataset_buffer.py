@@ -50,11 +50,11 @@ def test_dataset_buffer__write_value():
             max_size = 5000
             dataset = DatasetBuffer(store, "data", max_size, float, columns,
                                     max_chunk_bytes=128 * 1024)
-            assert dataset._chunk_size == 4096
+            assert dataset.chunk_count == 4096
             for i in range(max_size):
                 data = np.ones(4)
                 dataset.write_value(data)
-            assert dataset._buf_index == max_size - dataset._chunk_size
+            assert dataset._buf_index == max_size - dataset.chunk_count
             dataset.flush_data()
             assert dataset._buf_index == 0
 

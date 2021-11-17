@@ -153,11 +153,16 @@ class dssElement(dssObjectBase):
         if self._dssInstance.Element.Name() != self._FullName:
             self._dssInstance.Circuit.SetActiveElement(self._FullName)
         if self._dssInstance.Element.Name() == self._FullName:
+            # This always returns a string.
+            # The real value could be a number, a list of numbers, or a string.
             x = self._dssInstance.Properties.Value(Param)
             try:
                 return float(x)
-            except:
-                return x
+            except ValueError:
+                try:
+                    return ast.literal_eval(x)
+                except (SyntaxError, ValueError):
+                    return x
         else:
             return None
 
