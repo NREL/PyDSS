@@ -65,6 +65,7 @@ class pydss_server(ApiServer):
             web.get('/cosims/federates/pydss/status/uuid/{uuid}', self.handler.get_instance_status),
             web.post('/cosims/federates/pydss', self.handler.post_pydss),
             web.delete('/cosims/federates/pydss', self.handler.delete_pydss),
+            web.post('/cosims/federates/pydss/create-project', self.handler.create_pydss_project),
             web.get('/healthcheck', self.handler.get_health)
         ])
     

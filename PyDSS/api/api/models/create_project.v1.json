@@ -1,0 +1,120 @@
+{
+  "title": "Create project",
+  "type": "object",
+  "description": "Parameters required to launch a PyDSS federate",
+  "x-examples": {
+    "PyDSS Model Create": {
+      "smartds_feeder_uuids": [
+        "abcd-1099-dfg"
+      ],
+      "bes_load_mw": 20,
+      "bes_load_mvar": 2,
+      "der_mw": 0,
+      "der_mvar": 0,
+      "source_voltage": 33,
+      "motord_penetration": 0,
+      "inverter_standards": {
+        "ieee-2018-catI": 25,
+        "ieee-2018-catII": 25,
+        "ieee-2018-catIII": 25,
+        "ieee-2003": 25
+      }
+    }
+  },
+  "properties": {
+    "smartds_feeder_uuids": {
+      "type": "array",
+      "description": "List of SMARTDS feeder uuids",
+      "format": "uuid",
+      "default": "1234",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      }
+    },
+    "bes_load_mw": {
+      "type": "number",
+      "description": "Load MW from Bulk electric power system lumped load model",
+      "example": 10,
+      "default": 0,
+      "minimum": 0
+    },
+    "bes_load_mvar": {
+      "type": "number",
+      "description": "Load MVAR from bulk electric power system model",
+      "example": 5,
+      "exclusiveMinimum": true,
+      "minimum": 0,
+      "default": 0
+    },
+    "der_mw": {
+      "type": "number",
+      "description": "Total distributed energy resourc MW for the transmission load of interest",
+      "example": 5,
+      "minimum": 0,
+      "default": 0,
+      "exclusiveMinimum": true
+    },
+    "der_mvar": {
+      "type": "number",
+      "description": "Total distributed energy resourc MVar for the transmission load of interest",
+      "example": 0,
+      "default": 0,
+      "minimum": 0
+    },
+    "source_voltage": {
+      "type": "number",
+      "description": "The message bus type used in HELICS (zeromq [\"zmq\"] is recommended)",
+      "default": 33,
+      "example": 0,
+      "minimum": 0
+    },
+    "motord_penetration": {
+      "type": "number",
+      "description": "Percentage of Type D motor D penetration",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "inverter_standards": {
+      "type": "object",
+      "description": "Percentage of each inverter standards",
+      "properties": {
+        "ieee-2018-catI": {
+          "type": "number",
+          "description": "Percentage of IEEE 2018 Category I standard to be included in the distribution models",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "ieee-2018-catII": {
+          "type": "number",
+          "description": "Percentage of IEEE 2018 Category II standard to be included in the distribution models",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "ieee-2018-catIII": {
+          "type": "number",
+          "description": "Percentage of IEEE 2018 Category III standard to be included in the distribution models",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "ieee-2003": {
+          "type": "number",
+          "description": "Percentage of IEEE 2003 standard to be included in the distribution models",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "ieee-2018-catI",
+        "ieee-2018-catII",
+        "ieee-2018-catIII",
+        "ieee-2003"
+      ]
+    }
+  },
+  "required": [
+    "smartds_feeder_uuids",
+    "bes_load_mw",
+    "bes_load_mvar"
+  ]
+}

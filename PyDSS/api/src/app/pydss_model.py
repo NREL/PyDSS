@@ -258,7 +258,7 @@ def create_project(
     ):
 
     #activate pydss_api && 
-    cmd = "activate pydss &&  pydss create-project -P {} -p {} -s {} -F {} -m {} -c {}".format(
+    cmd = "activate naerm_bes_env &&  pydss create-project -P {} -p {} -s {} -F {} -m {} -c {}".format(
         project_path,
         project_name,
         scenario_name,

@@ -174,8 +174,8 @@ class PyDSS_Model:
 
     def createPVdict(self, PVsystems, PVcategory):
         #{"ieee-2018-catI": 0, "ieee-2018-catII": 0, "ieee-2018-catIII": 0, "ieee-2003": 0},
-        print("PVsystems: ", PVsystems)
-        print("PVcategory: ", PVcategory)
+        # print("PVsystems: ", PVsystems)
+        # print("PVcategory: ", PVcategory)
 
         # total_pv = 0
         # for standard, penetration in PVsystems.items():

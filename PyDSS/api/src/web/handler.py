@@ -9,6 +9,7 @@ from PyDSS.api.src.app.pydss import PyDSS
 from multiprocessing import Queue, Process, Event, cpu_count
 from concurrent.futures import ThreadPoolExecutor
 from PyDSS.api.src.web.parser import variable_decode, bytestream_decode
+from PyDSS.api.src.app.pydss_model import update_project
 from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, VisualizationType
 from naerm_core.web import error_responses as error
 from naerm_core.config_reader.config import EndpointsConfig
@@ -33,6 +34,7 @@ class Handler:
         # Initializing pydss_instances dict
         self.pydss_instances = dict()
         self.post_model_name = 'launch_federate'
+        self.create_project_model_name = 'create_project'
 
         # Event flag to control shutdown of background tasks
         self.shutdown_event = Event()
@@ -130,7 +132,7 @@ class Handler:
             data.update({'fed_uuid': pydss_uuid})
 
             # Create a process for PyDSS instance
-            p = Process(target=PyDSS, name=pydss_uuid, args=(self.helics_, self.services, self.shutdown_event, q, data))
+            p = Process(target=PyDSS, name=pydss_uuid, args=(self.helics_, self.services, self.shutdown_event, q, post_request_body))
             # Store queue and process
             self.pydss_instances[pydss_uuid] = {"queue": q, "process": p}
             # Catching data coming from PyDSS
@@ -273,6 +275,36 @@ class Handler:
                 "Message": "No PyDSS instance currently running",
                 "Instances": uuids
             })
+
+    async def create_pydss_project(self, request):
+
+        data = await request.json()
+        logger.info(f"Creating PyDSS project:{data}")
+
+        code, response, post_request_body = validate.parse_request(
+            self.create_project_model_name, data)
+
+        # code = HTTPStatus.OK
+        # post_request_body = data
+
+        if code == HTTPStatus.OK:
+
+            response = update_project(
+                post_request_body['smartds_feeder_uuids'],
+                post_request_body['bes_load_mw'],
+                post_request_body['bes_load_mvar'],
+                post_request_body['der_mw'],
+                post_request_body['der_mvar'],
+                post_request_body['source_voltage'],
+                self.services['bes_data'],
+                post_request_body['motord_penetration'],
+                post_request_body['inverter_standards'],
+                True,
+                True
+            )
+
+        return web.json_response(response, status=code)
+
 
     async def get_instance_status(self, request, uuid: str):
         """
