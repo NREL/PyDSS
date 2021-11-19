@@ -94,14 +94,10 @@ class dssObjectBase(abc.ABC):
             cachedValue = self.GetValue(VarName, convert=True)
             self._CachedValueStorage[VarName] = cachedValue
         else:
-            if VarName.lower()=='taps':
-                value = self.GetValue(VarName, convert=True)# set to true to be able to export taps
-                cachedValue.set_value_from_raw(value.value)
-            else:
-                value = self.GetValue(VarName, convert=False)
-                if isinstance(cachedValue, ValueByNumber) and VarName in self.VARIABLE_OUTPUTS_COMPLEX:
-                    value = complex(value[0], value[1])
-                cachedValue.set_value_from_raw(value)
+            value = self.GetValue(VarName, convert=False)
+            if isinstance(cachedValue, ValueByNumber) and VarName in self.VARIABLE_OUTPUTS_COMPLEX:
+                value = complex(value[0], value[1])
+            cachedValue.set_value_from_raw(value)
 
         return cachedValue
 
