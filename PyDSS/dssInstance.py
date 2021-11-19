@@ -459,7 +459,8 @@ class OpenDSS:
         self._Logger.info('Max convergence error count {}.'.format(self._maxConvergenceErrorCount))
         self._Logger.info("initializing store")
         # make space for Steps*5 to allow for co-iterations
-        self.ResultContainer.InitializeDataStore(project.hdf_store, Steps * 10, MC_scenario_number)
+        print(self._settings.helics.max_co_iterations)
+        self.ResultContainer.InitializeDataStore(project.hdf_store, Steps * self._settings.helics.max_co_iterations, MC_scenario_number)
         postprocessors = [
             pyPostprocess.Create(
                 project,
@@ -496,25 +497,28 @@ class OpenDSS:
                     self._Logger.info('Storage requirement estimation: %s, estimated based on first time step run.', size)
                 if postprocessors and within_range:
                     step, has_converged = self._RunPostProcessors(step, Steps, postprocessors)
-                if self._increment_flag:
-                    step += 1
 
                 # NOTE for review by Aadil:
                 # I moved the next two code blocks here because UpdateResults needs to happen
                 # after the postprocessors.
                 # the Helics update needs to happen after that.
                 if self._settings.exports.export_results:
+                    print('storing results, line 506 in dssInstance.py')
                     store_nan = (
                         not within_range or
                         (not has_converged and
                          self._settings.project.skip_export_on_convergence_error)
                     )
-                    self.ResultContainer.UpdateResults(store_nan=store_nan)
+                    self.ResultContainer.UpdateResults(store_nan=store_nan, step=step)
+                if self._increment_flag:
+                    step += 1
 
                 if self._settings.helics.co_simulation_mode:
                     if self._increment_flag:
+                        print('incrementing step, line 518 in dssInstance.py')
                         self._dssSolver.IncStep()
                     else:
+                        print('resolving step, line 521 in dssInstance.py')
                         self._dssSolver.reSolve()
                 else:
                     self._dssSolver.IncStep()

@@ -171,13 +171,13 @@ class helics_interface:
                     #value = value * sub_info['Multiplier']
                     skip_multiplier = False
                     # if you are iterating and the feedin voltage is close to 0, log the time and iteration, but continue with nominal so that you can continue
-                    if element_name == "Vsource.source" and self._settings.helics.iterative_mode and (value[0]<0.01 or math.isnan(value[0]) or value[0]=='nan'):
+                    if element_name == "Vsource.source" and self._settings.helics.iterative_mode and (value[0]<0.01 or math.isnan(value[0]) or value[0]=='nan'): # and self.c_seconds<300.0:
                         self._logger.debug('Feed-in voltage {value} at time {self.c_seconds} iteration {self.itr}, continuing with nominal voltage.')
                         print(f'voltage {value} continuing with nominal')
-                        value = [1.00]*len(sub_property)
+                        value = [1.01]*len(sub_property)
                         skip_multiplier = True
                     elif element_name.startswith('Load.load') and self._settings.helics.iterative_mode and (abs(value[0])>10e20 or math.isnan(value[0]) or value[0]=='nan'):
-                        new_value = [0.0]*len(sub_property) #0.2/(self.itr+1)
+                        new_value = [1.0]*len(sub_property) #0.2/(self.itr+1)
                         self._logger.debug('load {value} at time {self.c_seconds} iterationi {self.itr}, continuing with new_value load.')
                         print(f'load {element_name} = {value}, waiting for updated value, solving with 0.0.') 
                         value = new_value
@@ -262,21 +262,22 @@ class helics_interface:
 
     def request_time_increment(self, step=1):
         print(f'subscriptions = {self._subscription_dState.items()}')
-        error = sum([abs(x[0] - x[1]) for k, x in self._subscription_dState.items()])
+        error = sum([abs(x[0] - x[1]) + abs(x[1]-x[2]) for k, x in self._subscription_dState.items()]) # require an extra iteration of no change
         r_seconds = self._dss_solver.GetTotalSeconds() - self._dss_solver.GetStepResolutionSeconds() #self._dss_solver.GetTotalSeconds()
         if not self._settings.helics.iterative_mode or error<0.0001 or step==0:   
             self._logger.info('request time: %s with helics federate time %s', r_seconds, self.c_seconds)
             while self.c_seconds < r_seconds:
                 time.sleep(1)
                 self.c_seconds = helics.helicsFederateRequestTime(self._PyDSSfederate, r_seconds)
-                print(f'requesting {r_seconds}, granted {self.c_seconds}')
+                print(f'requesting {r_seconds} non-iterative, granted {self.c_seconds}')
+                self.itr = 0
             self._logger.info('Time requested: {} - time granted: {} '.format(r_seconds, self.c_seconds))
             print(f'advance, not iterative helics time: {self.c_seconds}')
             return True, self.c_seconds
         else:
             iteration_state = 1 #helics.helics_iteration_result_iterating
             #while iteration_state == helics.helics_iteration_result_iterating:
-            print(f'requresting time {r_seconds} with helics time: {self.c_seconds}')
+            print(f'requresting time {r_seconds} iterative with helics time: {self.c_seconds}')
             while r_seconds > self.c_seconds and iteration_state==1:
                 time.sleep(1)
                 self.c_seconds, iteration_state = helics.helicsFederateRequestTimeIterative(self._PyDSSfederate, r_seconds, iterate=iteration_state)#helics.helics_iteration_request_iterate_if_needed)
@@ -288,12 +289,16 @@ class helics_interface:
                 return False, self.c_seconds
             else:
                 print(f'total error {error} after {self.itr} iterations, continuing without update.')
+                while self.c_seconds < r_seconds:
+                    time.sleep(1)
+                    self.c_seconds = helics.helicsFederateRequestTime(self._PyDSSfederate, r_seconds)
+                    print(f'requesting {r_seconds} non-iterative, granted {self.c_seconds}')
                 self.itr = 0
                 return True, self.c_seconds
 
     def __del__(self):
         helics.helicsFederateFinalize(self._PyDSSfederate)
         state = helics.helicsFederateGetState(self._PyDSSfederate)
-        helics.helicsFederateInfoFree(self.fedinfo)
+        #helics.helicsFederateInfoFree(self.fedinfo)
         helics.helicsFederateFree(self._PyDSSfederate)
         self._logger.info('HELICS federate for PyDSS destroyed')

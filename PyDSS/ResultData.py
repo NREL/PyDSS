@@ -215,11 +215,12 @@ class ResultData:
         for metric in self._circuit_metrics.values():
             yield metric
 
-    def UpdateResults(self, store_nan=False):
+    def UpdateResults(self, store_nan=False, step=0):
         current_results = {}
 
         # Get the number of seconds since the Epoch without any timezone conversions.
         timestamp = (self._dss_solver.GetDateTime() - datetime.utcfromtimestamp(0)).total_seconds()
+        print(f'calculated timestamp in line 222 of ResultData.py {timestamp}')
         self._time_dataset.write_value([timestamp])
         self._frequency_dataset.write_value([self._dss_solver.getFrequency()])
         self._mode_dataset.write_value([self._dss_solver.getMode()])
@@ -227,14 +228,15 @@ class ResultData:
         with Timer(self._stats, "Total"):
             for metric in self._iter_metrics():
                 with Timer(self._stats, metric.label()):
-                    data = metric.append_values(self._cur_step, store_nan=store_nan)
+                    data = metric.append_values(step, store_nan=store_nan)
+                    #data = metric.append_values(self._cur_step, store_nan=store_nan)
 
                 if isinstance(data, dict):
                     # TODO: reconsider
                     # Something is only returned for OpenDSS properties
                     current_results.update(data)
 
-        self._cur_step += 1
+        #self._cur_step += 1
         return current_results
 
     def ExportResults(self):
