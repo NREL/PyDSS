@@ -95,10 +95,6 @@ class OpenDSS:
         with Timer(self._stats, "CompileModel"):
             self._CompileModel()
 
-        #run_command('Set DefaultBaseFrequency={}'.format(settings.frequency.fundamental_frequency))
-        #self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(settings.frequency.fundamental_frequency) + ' Hz')
-
-        #run_command('Set %SeriesRL={}'.format(settings.frequency.percentage_load_in_series))
         if settings.frequency.neglect_shunt_admittance:
             run_command('Set NeglectLoadY=Yes')
 
@@ -353,8 +349,6 @@ class OpenDSS:
             self._HI.updateHelicsSubscriptions()
             self._Logger.info('updating publications')
         else:
-            # TODO DT: Why does gemini call IncStep?
-            #self._dssSolver.IncStep()
             if updateObjects:
                 for object, params in updateObjects.items():
                     cl, name = object.split('.')
@@ -397,7 +391,7 @@ class OpenDSS:
                 self._dssSolver.reSolve()
                 self._UpdatePlots()
                 if self._settings.exports.export_results:
-                    self.ResultContainer.UpdateResults()
+                    self.ResultContainer.UpdateResults(step)
             if self._settings.project.simulation_type != SimulationType.SNAPSHOT:
                 self._dssSolver.setMode('Snapshot')
             else:
@@ -438,8 +432,9 @@ class OpenDSS:
         self.ResultContainer.InitializeDataStore(project.hdf_store, Steps)
 
         try:
-            self.RunStep(0)
-            self.ResultContainer.UpdateResults()
+            step = 0
+            self.RunStep(step)
+            self.ResultContainer.UpdateResults(step)
         finally:
             self.ResultContainer.Close()
 
@@ -458,8 +453,11 @@ class OpenDSS:
         self._Logger.info("Set OpenDSS convergence to %s", dss.Solution.Convergence())
         self._Logger.info('Max convergence error count {}.'.format(self._maxConvergenceErrorCount))
         self._Logger.info("initializing store")
-        # make space for Steps*5 to allow for co-iterations
-        self.ResultContainer.InitializeDataStore(project.hdf_store, Steps * 10, MC_scenario_number)
+        if self._settings.helics.co_simulation_mode and self._settings.helics.store_intermediate_values:
+            num_steps = Steps * self._settings.helics.max_co_iterations
+        else:
+            num_steps = Steps
+        self.ResultContainer.InitializeDataStore(project.hdf_store, num_steps, MC_scenario_number)
         postprocessors = [
             pyPostprocess.Create(
                 project,
@@ -496,8 +494,6 @@ class OpenDSS:
                     self._Logger.info('Storage requirement estimation: %s, estimated based on first time step run.', size)
                 if postprocessors and within_range:
                     step, has_converged = self._RunPostProcessors(step, Steps, postprocessors)
-                if self._increment_flag:
-                    step += 1
 
                 # NOTE for review by Aadil:
                 # I moved the next two code blocks here because UpdateResults needs to happen
@@ -509,7 +505,7 @@ class OpenDSS:
                         (not has_converged and
                          self._settings.project.skip_export_on_convergence_error)
                     )
-                    self.ResultContainer.UpdateResults(store_nan=store_nan)
+                    self.ResultContainer.UpdateResults(step, store_nan=store_nan)
 
                 if self._settings.helics.co_simulation_mode:
                     if self._increment_flag:
@@ -518,6 +514,9 @@ class OpenDSS:
                         self._dssSolver.reSolve()
                 else:
                     self._dssSolver.IncStep()
+
+                if self._increment_flag:
+                    step += 1
 
         finally:
             if self._settings and self._settings.exports.export_results:
