@@ -71,7 +71,6 @@ class dssTransformer(dssElement):
             VarValue = self.GetParameter(VarName)
             if convert:
                 if VarName in self.VARIABLE_OUTPUTS_BY_LIST:
-                    VarValue = ast.literal_eval(VarValue)
                     VarValue = VarValue[:self.NumWindings]
                     if len(VarValue) < self.NumWindings:
                         for extra_nan in range(self.NumWindings - len(VarValue)):

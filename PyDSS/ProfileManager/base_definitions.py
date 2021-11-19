@@ -4,26 +4,26 @@ import toml
 import abc
 import os
 
+from PyDSS.simulation_input_models import SimulationSettingsModel
+
 
 class BaseProfileManager(abc.ABC):
-    def __init__(self, sim_instance, solver, options, logger, **kwargs):
+    def __init__(self, sim_instance, solver, settings: SimulationSettingsModel, logger, **kwargs):
         self.sim_instance = sim_instance
-        self.options = options
+        self.settings = settings
         self.solver = solver
         self.logger = logger
         self.kwargs = kwargs
-        if not options["Profiles"]["is_relative_path"]:
-            self.basepath = options["Profiles"]["source"]
+        if not settings.profiles.is_relative_path:
+            self.basepath = settings.profiles.source
         else:
             self.basepath = os.path.join(
-                options["Project"]["Project Path"],
-                options["Project"]["Active Project"],
+                settings.project.active_project_path,
                 "Profiles",
-                options["Profiles"]["source"],
+                settings.profiles.source,
             )
         self.mapping_file = os.path.join(
-            options["Project"]["Project Path"],
-            options["Project"]["Active Project"],
+            settings.project.active_project_path,
             "Profiles",
             PROFILE_MAPPING
         )

@@ -15,11 +15,11 @@ for module, file in pythonFiles:
     spec.loader.exec_module(modules_instances[module])
     ProfileInterfaces[module] = modules_instances[module].ProfileManager
 
-def Create(sim_instance, solver, options, logger, **kwargs):
-    source_type = options["Profiles"]["source_type"]
+def Create(sim_instance, solver, settings, logger, **kwargs):
+    source_type = settings.profiles.source_type.value
     if source_type in ProfileInterfaces:
         PostProcessor = ProfileInterfaces[source_type](
-            sim_instance, solver, options, logger, **kwargs
+            sim_instance, solver, settings, logger, **kwargs
         )
     else:
         raise ModuleNotFoundError(f"{source_type} is not a valid source type. Valid values are {','.join(list(ProfileInterfaces.keys()))}")

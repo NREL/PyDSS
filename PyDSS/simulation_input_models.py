@@ -18,6 +18,7 @@ from PyDSS.common import (
     SnapshotTimePointSelectionMode,
     SIMULATION_SETTINGS_FILENAME,
 )
+from PyDSS.dataset_buffer import DEFAULT_MAX_CHUNK_BYTES
 from PyDSS.utils.utils import dump_data, load_data
 
 
@@ -370,7 +371,7 @@ class ExportsModel(InputsBaseModel):
                     "The value is passed to the h5py package. Refer to "
                     "http://docs.h5py.org/en/stable/high/dataset.html#chunked-storage for more "
                     "information.",
-        default=524288,
+        default=DEFAULT_MAX_CHUNK_BYTES,
         alias="HDF Max Chunk Bytes",
     )
 
@@ -653,6 +654,12 @@ class ProfilesModel(InputsBaseModel):
         description="Profiles settings",
         default={},
     )
+
+    @root_validator(pre=True)
+    def pre_process(cls, values):
+        if values.get("source_type") == "HDF5":
+            valus["source_type"] = "h5"
+        return values
 
 
 class ReportBaseModel(InputsBaseModel):
