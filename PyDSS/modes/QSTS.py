@@ -14,12 +14,13 @@ class QSTS(solver_base):
         self._dssSolution.MaxControlIterations(settings.project.max_control_iterations)
 
         start_time_hours = self._Hour + self._Second / 3600.0
-        load_shape_resolutions_secs = get_load_shape_resolution_secs()
-        #if load_shape_resolutions_secs == self._sStepRes:
-        #    # I don't know why this is needed in this case.
-        #    # The first data point gets skipped without it.
-        #    # FIXME
-        #    #start_time_hours += self._sStepRes / 3600.0
+        if settings.project.use_loadshape_offset_workaround:
+            load_shape_resolutions_secs = get_load_shape_resolution_secs()
+            if load_shape_resolutions_secs == self._sStepRes:
+                # I don't know why this is needed in this case.
+                # The first data point gets skipped without it.
+                # FIXME
+                start_time_hours += self._sStepRes / 3600.0
         self._dssSolution.DblHour(start_time_hours)
         return
 

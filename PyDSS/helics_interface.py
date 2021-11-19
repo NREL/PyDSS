@@ -283,7 +283,7 @@ class helics_interface:
             print(f'time requested {r_seconds}, timegranted {self.c_seconds}')
             self._logger.info('Time requested: {} - time granted: {} error: {} it: {}'.format(
                 r_seconds, self.c_seconds, error, self.itr))
-            if error > 0.0001 and self.itr < self._co_convergance_max_iterations:
+            if error > self._co_convergance_error_tolerance and self.itr < self._co_convergance_max_iterations:
                 self.itr += 1
                 return False, self.c_seconds
             else:

@@ -171,6 +171,11 @@ class ProjectModel(InputsBaseModel):
         alias="Loadshape start time",
         default="2020-01-01 00:00:00.0",
     )
+    use_loadshape_offset_workaround: bool = Field(
+        title="use_loadshape_offset_workaround",
+        description="Attempt to use workaround for loadshape offset issue.",
+        default=False,
+    )
     simulation_range: Optional[SimulationRangeModel] = Field(
         title="simulation_range",
         description="Restrict control algorithms and data collection to these hours. "
@@ -521,6 +526,11 @@ class HelicsModel(InputsBaseModel):
         description="Logging level for the federate. Refer to HELICS documentation.",
         default=5,
         alias="Helics logging level",
+    )
+    store_intermediate_values: bool = Field(
+        title="store_intermediate_values",
+        description="Store intermediate values if co-simulations do not converge.",
+        default=False,
     )
 
     @validator("logging_level")
