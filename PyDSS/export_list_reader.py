@@ -40,6 +40,7 @@ class ExportListProperty:
         self.publish = data.get("publish", False)
         self._data_conversion = DataConversion(data.get("data_conversion", "none"))
         self._sum_elements = data.get("sum_elements", False)
+        self._sum_groups = data.get("sum_groups", {})
         self._limits = self._parse_limits(data, "limits")
         self._limits_filter = LimitsFilter(data.get("limits_filter", "outside"))
         self._limits_b = self._parse_limits(data, "limits_b")
@@ -52,6 +53,9 @@ class ExportListProperty:
         custom_prop = f"{elem_class}.{self.name}"
         self._custom_metric = CUSTOM_METRICS.get(custom_prop)
 
+        if self._sum_groups:
+            self._check_sum_groups()
+
         # Note to devs: any field added here needs to be handled in serialize()
 
         if self._sum_elements and self._store_values_type not in \
@@ -62,6 +66,19 @@ class ExportListProperty:
 
         if self._is_max() and self._limits is not None:
             raise InvalidConfiguration("limits are not allowed with max types")
+
+    def _check_sum_groups(self):
+        self._sum_elements = True  # Ignore the user setting. This must be true.
+        # Ensure that there are no duplicate names.
+        orig_length = 0
+        all_names = set()
+        for group, element_names in self._sum_groups.items():
+            self._sum_groups[group] = set(element_names)
+            orig_length += len(element_names)
+            all_names = all_names.union(self._sum_groups[group])
+        if orig_length != len(all_names):
+            tag = f"{self.elem_class}/{self.name}"
+            raise InvalidConfiguration(f"{tag} has duplicate element names in sum_groups")
 
     def _is_max(self):
         return self._store_values_type in (
@@ -222,6 +239,7 @@ class ExportListProperty:
             "publish": self.publish,
             "store_values_type": self.store_values_type.value,
             "sum_elements": self.sum_elements,
+            "sum_groups": self.sum_groups,
         }
         if self._limits is not None:
             data["limits"] = [self._limits.min, self._limits.max]
@@ -296,6 +314,17 @@ class ExportListProperty:
     def sum_elements(self):
         """Return True if the value is the sum of all elements."""
         return self._sum_elements
+
+    @property
+    def sum_groups(self):
+        """Return the groups of element names to sum.
+
+        Returns
+        -------
+        dict
+
+        """
+        return self._sum_groups
 
     @property
     def window_size(self):

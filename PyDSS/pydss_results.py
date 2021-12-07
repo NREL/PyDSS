@@ -399,13 +399,19 @@ class PyDssScenarioResults:
     def _export_summed_element_timeseries(self, path, fmt, compress):
         for elem_class in self._summed_elem_timeseries_props:
             for prop in self._summed_elem_timeseries_props[elem_class]:
+                fields = prop.split(ValueStorageBase.DELIMITER)
+                if len(fields) == 1:
+                    base = ValueStorageBase.DELIMITER.join([elem_class, prop])
+                else:
+                    assert len(fields) == 2, fields
+                    group = prop.split(ValueStorageBase.DELIMITER)[1]
+                    base = ValueStorageBase.DELIMITER.join([elem_class, prop, group])
+                filename = os.path.join(path, base + "." + fmt.replace(".", ""))
                 dataset = self._group[elem_class]["SummedElementProperties"][prop]
                 prop_type = get_dataset_property_type(dataset)
                 if prop_type == DatasetPropertyType.PER_TIME_POINT:
                     df = DatasetBuffer.to_dataframe(dataset)
                     self._finalize_dataframe(df, dataset)
-                    base = "__".join([elem_class, prop])
-                    filename = os.path.join(path, base + "." + fmt.replace(".", ""))
                     write_dataframe(df, filename, compress=compress)
 
     def _export_summed_element_values(self, path, fmt, compress):
@@ -555,13 +561,15 @@ class PyDssScenarioResults:
         self._finalize_dataframe(df, dataset, real_only=real_only, abs_val=abs_val)
         return df
 
-    def get_summed_element_total(self, element_class, prop):
+    def get_summed_element_total(self, element_class, prop, group=None):
         """Return the total value for a summed element property.
 
         Parameters
         ----------
         element_class : str
         prop : str
+        group : str | None
+            Specify a group name if sum_groups was assigned.
 
         Returns
         -------
@@ -573,6 +581,8 @@ class PyDssScenarioResults:
             Raised if the element class is not stored.
 
         """
+        if group is not None:
+            prop = ValueStorageBase.DELIMITER.join((prop, group))
         if element_class not in self._summed_elem_props:
             raise InvalidParameter(f"{element_class} is not stored")
         if prop not in self._summed_elem_props[element_class]:
@@ -611,13 +621,15 @@ class PyDssScenarioResults:
         df = self.get_dataframe(element_class, prop, element_name)
         return ValueStorageBase.get_option_values(df, element_name)
 
-    def get_summed_element_dataframe(self, element_class, prop, real_only=False, abs_val=False):
+    def get_summed_element_dataframe(self, element_class, prop, real_only=False, abs_val=False, group=None):
         """Return the dataframe for a summed element property.
 
         Parameters
         ----------
         element_class : str
         prop : str
+        group : str | None
+            Specify a group name if sum_groups was assigned.
         real_only : bool
             If dtype of any column is complex, drop the imaginary component.
         abs_val : bool
@@ -633,6 +645,8 @@ class PyDssScenarioResults:
             Raised if the element class is not stored.
 
         """
+        if group is not None:
+            prop = ValueStorageBase.DELIMITER.join((prop, group))
         if element_class not in self._summed_elem_timeseries_props:
             raise InvalidParameter(f"{element_class} is not stored")
         if prop not in self._summed_elem_timeseries_props[element_class]:

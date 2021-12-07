@@ -15,7 +15,7 @@ from PyDSS.common import DataConversion, StoreValuesType
 from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
 from PyDSS.reports.reports import ReportBase
 from PyDSS.storage_filters import STORAGE_TYPE_MAP, StorageFilterBase
-from PyDSS.value_storage import ValueByNumber
+from PyDSS.value_storage import ValueByNumber, ValueStorageBase
 from PyDSS.node_voltage_metrics import NodeVoltageMetrics
 from PyDSS.simulation_input_models import SimulationSettingsModel
 from PyDSS.thermal_metrics import ThermalMetrics
@@ -482,9 +482,7 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
         if store_nan:
             if self._can_use_native_iteration():
                 self._elem_class.First()
-                total = self._get_value(self._dss_objs[0])
-            else:
-                total = self._get_value(self._dss_objs[0])
+            total = self._get_value(self._dss_objs[0])
             total.set_nan()
         else:
             total = None
@@ -527,6 +525,85 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
 
     def iter_containers(self):
         yield self._container
+
+
+class SummedElementsByGroupOpenDssPropertyMetric(MetricBase):
+    """Sums all elements' values for a given property at each time point.
+    Elements are separated into groups by name.
+
+    """
+    def __init__(self, prop, dss_objs, settings):
+        super().__init__(prop, dss_objs, settings)
+        self._containers = {x: None for x in prop.sum_groups}
+        self._name_to_group = {}
+        for group, element_names in prop.sum_groups.items():
+            for element_name in element_names:
+                self._name_to_group[element_name] = group
+        self._data_conversion = prop.data_conversion
+
+    def _get_value(self, obj):
+        value = obj.UpdateValue(self._name)
+        if self._data_conversion != DataConversion.NONE:
+            value = convert_data(
+                "Total",
+                next(iter(self._properties.values())).name,
+                value,
+                self._data_conversion,
+            )
+        return value
+
+    def append_values(self, time_step, store_nan=False):
+        total_by_group = {x: None for x in self._containers}
+        if store_nan:
+            for group in self._containers:
+                if self._can_use_native_iteration():
+                    self._elem_class.First()
+                total_by_group[total] = self._get_value(self._dss_objs[0]).set_nan()
+        else:
+            if self._can_use_native_iteration():
+                self._elem_class.First()
+                for _ in range(self._elem_class.Count()):
+                    name = self._elem_class.Name()
+                    group = self._name_to_group[name]
+                    dss_obj = self._name_to_dss_obj[name]
+                    value = self._get_value(dss_obj)
+                    if total_by_group[group] is None:
+                        total_by_group[group] = value
+                    else:
+                        total_by_group[group] += value
+                    self._elem_class.Next()
+            else:
+                for dss_obj in self._dss_objs:
+                    value = self._get_value(dss_obj)
+                    if total_by_group[group] is None:
+                        total_by_group[group] = value
+                    else:
+                        total_by_group[group] += value
+
+        if next(iter(self._containers.values())) is None:
+            assert len(self._properties) == 1
+            prop = next(iter(self._properties.values()))
+            assert prop.store_values_type in (StoreValuesType.ALL, StoreValuesType.SUM)
+            for group in self._containers:
+                total_by_group[group].set_name("Total")
+                key = ValueStorageBase.DELIMITER.join((prop.storage_name, group))
+                path = f"{self._base_path}/{prop.elem_class}/SummedElementProperties/{key}"
+                self._containers[group] = self.make_storage_container(
+                    path,
+                    prop,
+                    self._num_steps,
+                    self._max_chunk_bytes,
+                    [total_by_group[group]],
+                )
+        for group in self._containers:
+            self._containers[group].append_values([total_by_group[group]], time_step)
+
+    @staticmethod
+    def is_circuit_wide():
+        return True
+
+    def iter_containers(self):
+        return self._containers.values()
 
 
 class NodeVoltageMetric(MetricBase):

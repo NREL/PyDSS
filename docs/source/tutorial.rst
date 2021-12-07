@@ -49,6 +49,10 @@ set in each scenario's ``Exports.toml`` on a per-property basis.
 - Set ``name_regexes = ["foo.*", "bar\\d+"]`` to only export data for elements
   with names that match one of the listed Python regular expressions. Note
   that backslashes must be escaped.
+- Set ``sum_groups = {group1 = ["elem1", "elem2"], group2 = ["elem3", "elem4"]}``
+  to export sums of a value aggregated by element name. Set ``store_values_type``
+  to ``all`` to collect group values at every time point. Set it to ``sum``
+  to collect a running sum for each group.
 - Set ``limits = [min, max]`` to pre-filter values that are inside or outside
   this range. ``min`` and ``max`` must be the same type. Refer to
   ``limits_filter``.

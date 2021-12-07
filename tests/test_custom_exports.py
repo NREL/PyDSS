@@ -1,5 +1,5 @@
-
 import datetime
+import math
 import os
 import re
 import shutil
@@ -9,11 +9,15 @@ import numpy as np
 import pandas as pd
 from pandas.testing import assert_series_equal
 
+from PyDSS.cli.convert import simulation_file
 from PyDSS.utils.utils import load_data, dump_data
 from PyDSS.pydss_project import PyDssProject
 from PyDSS.pydss_results import PyDssResults
-from tests.common import CUSTOM_EXPORTS_PROJECT_PATH, cleanup_project, \
-    run_project_with_custom_exports
+from tests.common import (
+    CUSTOM_EXPORTS_PROJECT_PATH,
+    cleanup_project,
+    run_project_with_custom_exports,
+)
 from PyDSS.common import SIMULATION_SETTINGS_FILENAME
 
 
@@ -116,7 +120,7 @@ def test_export_moving_averages(cleanup_project):
     PyDssProject.run_project(path, simulation_file=sim_file)
 
     # This DataFrame will have values at every time point.
-    df1 = _get_dataframe(path, "Circuits", "LineLosses", circuit)
+    df1 = _get_dataframe(path, "Circuits", "LineLosses", circuit, real_only=True)
     assert len(df1) == 96
     df1_rm = df1.rolling(window_size).mean()
 
@@ -134,7 +138,7 @@ def test_export_moving_averages(cleanup_project):
     scenario = results.scenarios[0]
 
     # This DataFrame will have moving averages.
-    df2 = _get_dataframe(path, "Circuits", "LineLossesAvg", circuit)
+    df2 = _get_dataframe(path, "Circuits", "LineLossesAvg", circuit, real_only=True)
     assert len(df2) == 96
 
     for val1, val2 in zip(df1_rm.iloc[:, 0].values, df2.iloc[:, 0].values):
@@ -144,11 +148,109 @@ def test_export_moving_averages(cleanup_project):
             assert round(val2, 5) == round(val1, 5)
 
 
-def _get_dataframe(path, elem_class, prop, name):
+def test_pv_powers_by_customer_type(cleanup_project):
+    """Verify that PVSystem power output values collected by all variations match."""
+    path = CUSTOM_EXPORTS_PROJECT_PATH
+    PyDssProject.run_project(path, simulation_file=SIMULATION_SETTINGS_FILENAME)
+    com_pv_systems = set(["pvgnem_mpx000635970", "pvgnem_mpx000460267"])
+    res_pv_systems = set(["pvgnem_mpx000594341", "pvgui_mpx000637601", "pvgui_mpx000460267"])
+
+    # Collect power for every PVSystem at every time point.
+    df = _get_full_dataframe(path, "PVSystems", "Powers")
+    com_cols, res_cols = _get_customer_type_columns(df, com_pv_systems, res_pv_systems)
+    com_sum1 = df[com_cols].sum().sum()
+    res_sum1 = df[res_cols].sum().sum()
+    total_sum1 = df.sum().sum()
+    assert total_sum1 == com_sum1 + res_sum1
+
+    # Collect a running sum for all PVSystem power output.
+    data = {
+        "PVSystems": {
+            "Powers": {
+                "store_values_type": "sum",
+                "sum_elements": True,
+            },
+        }
+    }
+    run_project_with_custom_exports(path, "scenario1", SIMULATION_SETTINGS_FILENAME, data)
+    total_sum2 = sum(_get_summed_element_total(path, "PVSystems", "PowersSum").values())
+    assert math.isclose(total_sum1, total_sum2)
+
+    # Collect power for PVSystems aggregated by customer type at every time point.
+    data = {
+        "PVSystems": {
+            "Powers": {
+                "store_values_type": "all",
+                "sum_groups": {
+                    "com": list(com_pv_systems),
+                    "res": list(res_pv_systems),
+                },
+            },
+        }
+    }
+    run_project_with_custom_exports(path, "scenario1", SIMULATION_SETTINGS_FILENAME, data)
+    com_sum3 = _get_summed_element_dataframe(path, "PVSystems", "Powers", group="com").sum().sum()
+    res_sum3 = _get_summed_element_dataframe(path, "PVSystems", "Powers", group="res").sum().sum()
+    assert math.isclose(com_sum1, com_sum3)
+    assert math.isclose(res_sum1, res_sum3)
+
+    # Collect a running sum for all PVSystems by customer type.
+    data = {
+        "PVSystems": {
+            "Powers": {
+                "store_values_type": "sum",
+                "sum_groups": {
+                    "com": list(com_pv_systems),
+                    "res": list(res_pv_systems),
+                },
+            },
+        }
+    }
+    run_project_with_custom_exports(path, "scenario1", SIMULATION_SETTINGS_FILENAME, data)
+    com_sum4 = sum(_get_summed_element_total(path, "PVSystems", "PowersSum", group="com").values())
+    res_sum4 = sum(_get_summed_element_total(path, "PVSystems", "PowersSum", group="res").values())
+    assert math.isclose(com_sum1, com_sum4)
+    assert math.isclose(res_sum1, res_sum4)
+
+
+def _get_customer_type_columns(df, com_pv_systems, res_pv_systems):
+    com_cols = []
+    res_cols = []
+    for col in df.columns:
+        for pv_system in com_pv_systems:
+            if pv_system in col:
+                com_cols.append(col)
+                break
+        for pv_system in res_pv_systems:
+            if pv_system in col:
+                res_cols.append(col)
+                break
+
+    return com_cols, res_cols
+
+
+def _get_dataframe(path, elem_class, prop, name, **kwargs):
+    return _get_data_common("get_dataframe", path, elem_class, prop, name, **kwargs)
+
+
+def _get_full_dataframe(path, elem_class, prop, **kwargs):
+    return _get_data_common("get_full_dataframe", path, elem_class, prop, **kwargs)
+
+
+def _get_summed_element_dataframe(path, elem_class, prop, **kwargs):
+    return _get_data_common("get_summed_element_dataframe", path, elem_class, prop, **kwargs)
+
+
+def _get_summed_element_total(path, elem_class, prop, **kwargs):
+    return _get_data_common("get_summed_element_total", path, elem_class, prop, **kwargs)
+
+
+def _get_data_common(method_name, path, *args, **kwargs):
     results = PyDssResults(path)
     assert len(results.scenarios) == 1
     scenario = results.scenarios[0]
-    return scenario.get_dataframe(elem_class, prop, name, real_only=True)
+    method = getattr(scenario, method_name)
+    return method(*args, **kwargs)
 
 
 def _get_all_node_voltages():
