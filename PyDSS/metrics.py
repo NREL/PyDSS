@@ -534,11 +534,12 @@ class SummedElementsByGroupOpenDssPropertyMetric(MetricBase):
     """
     def __init__(self, prop, dss_objs, settings):
         super().__init__(prop, dss_objs, settings)
-        self._containers = {x: None for x in prop.sum_groups}
+        self._containers = {}
         self._name_to_group = {}
-        for group, element_names in prop.sum_groups.items():
-            for element_name in element_names:
-                self._name_to_group[element_name] = group
+        for group in prop.sum_groups:
+            self._containers[group["name"]] = None
+            for element_name in group["elements"]:
+                self._name_to_group[element_name] = group["name"]
         self._data_conversion = prop.data_conversion
 
     def _get_value(self, obj):

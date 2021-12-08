@@ -181,10 +181,16 @@ def test_pv_powers_by_customer_type(cleanup_project):
         "PVSystems": {
             "Powers": {
                 "store_values_type": "all",
-                "sum_groups": {
-                    "com": list(com_pv_systems),
-                    "res": list(res_pv_systems),
-                },
+                "sum_groups": [
+                    {
+                        "name": "com",
+                        "elements": list(com_pv_systems),
+                    },
+                    {
+                        "name": "res",
+                        "elements": list(res_pv_systems),
+                    }
+                ],
             },
         }
     }
@@ -199,10 +205,16 @@ def test_pv_powers_by_customer_type(cleanup_project):
         "PVSystems": {
             "Powers": {
                 "store_values_type": "sum",
-                "sum_groups": {
-                    "com": list(com_pv_systems),
-                    "res": list(res_pv_systems),
-                },
+                "sum_groups": [
+                    {
+                        "name": "com",
+                        "elements": list(com_pv_systems),
+                    },
+                    {
+                        "name": "res",
+                        "elements": list(res_pv_systems),
+                    }
+                ],
             },
         }
     }
