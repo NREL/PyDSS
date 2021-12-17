@@ -401,7 +401,6 @@ class OpenDSS:
             self._HI.updateHelicsPublications()
             self._increment_flag, helics_time = self._HI.request_time_increment(step=step)
 
-        # TODO DT: This is a potential problem for Gemini because it was returning the results dict.
         return time_step_has_converged
 
     def _HandleConvergenceErrorChecks(self, step, error):
@@ -441,6 +440,14 @@ class OpenDSS:
         return self.ResultContainer.max_num_bytes()
 
     def RunSimulation(self, project, scenario, MC_scenario_number=None):
+        """Yields a tuple of the results of each step.
+
+        Yields
+        ------
+        tuple
+            is_complete, step, has_converged, results
+
+        """
         startTime = time.time()
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
         threshold = self._settings.project.convergence_error_percent_threshold
@@ -474,8 +481,11 @@ class OpenDSS:
         if not postprocessors:
             self._Logger.info('No post processing script selected')
 
+        is_complete = False
+        step = 0
+        has_converged = False
+        current_results = {}
         try:
-            step = 0
             while step < Steps:
                 pydss_has_converged = True
                 opendss_has_converged = True
@@ -495,11 +505,13 @@ class OpenDSS:
                 if postprocessors and within_range:
                     step, has_converged = self._RunPostProcessors(step, Steps, postprocessors)
 
-                # NOTE for review by Aadil:
-                # I moved the next two code blocks here because UpdateResults needs to happen
-                # after the postprocessors.
-                # the Helics update needs to happen after that.
-                if self._settings.exports.export_results:
+                # In the case of a frequency sweep, the code updates results at each frequency.
+                # Doing so again would cause a duplicate result.
+                if (
+                    self._settings.exports.export_results and not
+                    (self._settings.frequency.enable_frequency_sweep and \
+                     self._settings.project.simulation_type != SimulationType.DYNAMIC)
+                ):
                     store_nan = (
                         not within_range or
                         (not has_converged and
@@ -517,6 +529,10 @@ class OpenDSS:
 
                 if self._increment_flag:
                     step += 1
+                if self._settings.exports.export_results:
+                    current_results = self.ResultContainer.CurrentResults
+                yield False, step, has_converged, current_results
+
 
         finally:
             if self._settings and self._settings.exports.export_results:
@@ -541,6 +557,7 @@ class OpenDSS:
 
         self._Logger.info('Simulation completed in %s seconds', time.time() - startTime)
         self._Logger.info('End of simulation')
+        yield True, step, has_converged, current_results
 
     def _RunPostProcessors(self, step, Steps, postprocessors):
         for postprocessor in postprocessors:
@@ -559,7 +576,9 @@ class OpenDSS:
         MC = MonteCarloSim(self._settings, self._dssPath, self._dssObjects, self._dssObjectsByClass)
         for i in range(samples):
             MC.Create_Scenario()
-            self.RunSimulation(project, scenario, i)
+            for is_complete, _, _, _ in self.RunSimulation(project, scenario, i):
+                if is_complete:
+                    break
         return
 
     def _UpdatePlots(self):

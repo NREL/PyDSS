@@ -89,7 +89,9 @@ class instance(object):
         if settings.monte_carlo.num_scenarios > 0:
             opendss.RunMCsimulation(project, scenario, samples=settings.monte_carlo.num_scenarios)
         else:
-            opendss.RunSimulation(project, scenario)
+            for is_complete, _, _, _ in opendss.RunSimulation(project, scenario):
+                if is_complete:
+                    break
 
     def get_estimated_space(self):
         return self._estimated_space
