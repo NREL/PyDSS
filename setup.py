@@ -3,8 +3,10 @@ import io
 import os
 import re
 
+from setuptools import find_packages
+
 try:
-    from setuptools import setup , find_packages
+    from setuptools import setup, find_packages
 except ImportError:
     from distutils.core import setup
 
@@ -28,30 +30,39 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 setup(name='dsspy',
-      version=find_version("PyDSS", "__init__.py"),
-      description='A high-level python interface for OpenDSS',
-      author='Aadil Latif',
-      author_email='Aadil.Latif@nrel.gov',
-      url='http://www.github.com/nrel/pydss',
-      packages=find_packages(),
-      install_requires=requirements,
-      include_package_data=True,
-      package_data={'PyDSS': ['*.toml']},
-        entry_points={
-            "console_scripts": [
-                "pydss=PyDSS.cli.pydss:cli",
-            ],
-        },
-      license='BSD 3 clause',
-      python_requires='>=3.6',
-      classifiers=[
-          'Development Status :: 4 - Beta',
-          'Environment :: Console',
-          'Environment :: Web Environment',
-          'Intended Audience :: Developers',
-          'Intended Audience :: Science/Research',
-          'Operating System :: OS Independent',
-          "Programming Language :: Python :: 3",
-          "License :: OSI Approved :: BSD License",
-          ],
-     )
+    version=find_version("PyDSS", "__init__.py"),
+    description='A high-level python interface for OpenDSS',
+    author='Aadil Latif',
+    author_email='Aadil.Latif@nrel.gov',
+    url='http://www.github.com/nrel/pydss',
+    packages=find_packages(),
+    install_requires=requirements,
+    include_package_data=True,
+    package_data={
+        'PyDSS': [
+            'defaults/*.toml',
+            'defaults/pyControllerList/*.toml',
+            'defaults/pyPlotList/*.toml',
+            'defaults/MonteCarlo/*.toml',
+            'defaults/ExportsLists/*.toml',
+            'pyControllers/Controllers/Settings/*.toml',
+        ]
+    },
+    entry_points={
+        "console_scripts": [
+            "pydss=PyDSS.cli.pydss:cli",
+        ],
+    },
+    license='BSD 3 clause',
+    python_requires='>=3.6',
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
+        'Environment :: Web Environment',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Science/Research',
+        'Operating System :: OS Independent',
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: BSD License",
+    ],
+    )

@@ -60,6 +60,7 @@ class ResultData:
         self._settings = settings
         self._cur_step = 0
         self._stats = timer_stats
+        self._current_results = {}
 
         self._dss_command = dss_command
         self._start_day = dss_solver.StartDay
@@ -214,8 +215,12 @@ class ResultData:
         for metric in self._circuit_metrics.values():
             yield metric
 
+    @property
+    def CurrentResults(self):
+        return self._current_results
+
     def UpdateResults(self, store_nan=False):
-        current_results = {}
+        self._current_results.clear()
 
         # Get the number of seconds since the Epoch without any timezone conversions.
         timestamp = (self._dss_solver.GetDateTime() - datetime.utcfromtimestamp(0)).total_seconds()
@@ -231,10 +236,10 @@ class ResultData:
                 if isinstance(data, dict):
                     # TODO: reconsider
                     # Something is only returned for OpenDSS properties
-                    current_results.update(data)
+                    self._current_results.update(data)
 
         self._cur_step += 1
-        return current_results
+        return self._current_results
 
     def ExportResults(self):
         metadata = {
