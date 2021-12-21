@@ -30,6 +30,11 @@ in an HDF dataset ::
 
     Exports/<scenario-name>/<element-class>/SummedElementProperties/<property-name>
 
+Data stored for an element property across elements of a given type split by
+element name are stored in an HDF dataset ::
+
+    Exports/<scenario-name>/<element-class>/SummedElementProperties/<property-name>__<group>
+
 If a property is configured to compute a moving average, sum, min, or max on
 the data then a suffix is added to the property name.
 

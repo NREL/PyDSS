@@ -33,7 +33,11 @@ from PyDSS.utils.simulation_utils import (
 )
 from PyDSS.utils.timing_utils import Timer
 from PyDSS.value_storage import ValueContainer, ValueByNumber
-from PyDSS.metrics import OpenDssPropertyMetric, SummedElementsOpenDssPropertyMetric
+from PyDSS.metrics import (
+    OpenDssPropertyMetric,
+    SummedElementsByGroupOpenDssPropertyMetric,
+    SummedElementsOpenDssPropertyMetric,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -143,7 +147,11 @@ class ResultData:
         if prop.sum_elements:
             metric = self._summed_element_metrics.get(key)
             if metric is None:
-                metric = SummedElementsOpenDssPropertyMetric(prop, dss_objs, self._settings)
+                if prop.sum_groups:
+                    cls = SummedElementsByGroupOpenDssPropertyMetric
+                else:
+                    cls = SummedElementsOpenDssPropertyMetric
+                metric = cls(prop, dss_objs, self._settings)
                 self._summed_element_metrics[key] = metric
             else:
                 metric.add_dss_obj(obj)

@@ -1,8 +1,9 @@
-from collections import defaultdict
 import enum
 import logging
 import os
 import re
+from collections import defaultdict
+from pathlib import Path
 
 from PyDSS.common import DataConversion, LimitsFilter, StoreValuesType, \
     DatasetPropertyType, MinMax
@@ -40,6 +41,8 @@ class ExportListProperty:
         self.publish = data.get("publish", False)
         self._data_conversion = DataConversion(data.get("data_conversion", "none"))
         self._sum_elements = data.get("sum_elements", False)
+        self._sum_groups = data.get("sum_groups", [])
+        sum_groups_file = data.get("sum_groups_file")
         self._limits = self._parse_limits(data, "limits")
         self._limits_filter = LimitsFilter(data.get("limits_filter", "outside"))
         self._limits_b = self._parse_limits(data, "limits_b")
@@ -52,6 +55,9 @@ class ExportListProperty:
         custom_prop = f"{elem_class}.{self.name}"
         self._custom_metric = CUSTOM_METRICS.get(custom_prop)
 
+        if self._sum_groups or sum_groups_file:
+            self._check_sum_groups(sum_groups_file)
+
         # Note to devs: any field added here needs to be handled in serialize()
 
         if self._sum_elements and self._store_values_type not in \
@@ -62,6 +68,31 @@ class ExportListProperty:
 
         if self._is_max() and self._limits is not None:
             raise InvalidConfiguration("limits are not allowed with max types")
+
+    def _check_sum_groups(self, sum_groups_file):
+        if sum_groups_file is not None:
+            if self._sum_groups:
+                raise InvalidConfiguration(f"Cannot set both sum_groups and sum_groups_file")
+
+            # This path needs to be relative to the current directory, not the Exports.toml.
+            # This might need to be changed.
+            if not Path(sum_groups_file).exists():
+                raise InvalidConfiguration(
+                    f"{sum_groups_file} does not exist. The path must be relative to the current directory."
+                )
+            self._sum_groups = load_data(sum_groups_file)["sum_groups"]
+
+        self._sum_elements = True  # Ignore the user setting. This must be true.
+        # Ensure that there are no duplicate names.
+        orig_length = 0
+        all_names = set()
+        for group in self._sum_groups:
+            orig_length += len(group["elements"])
+            group["elements"] = set(group["elements"])
+            all_names = all_names.union(group["elements"])
+        if orig_length != len(all_names):
+            tag = f"{self.elem_class}/{self.name}"
+            raise InvalidConfiguration(f"{tag} has duplicate element names in sum_groups")
 
     def _is_max(self):
         return self._store_values_type in (
@@ -222,6 +253,7 @@ class ExportListProperty:
             "publish": self.publish,
             "store_values_type": self.store_values_type.value,
             "sum_elements": self.sum_elements,
+            "sum_groups": self.sum_groups,
         }
         if self._limits is not None:
             data["limits"] = [self._limits.min, self._limits.max]
@@ -296,6 +328,17 @@ class ExportListProperty:
     def sum_elements(self):
         """Return True if the value is the sum of all elements."""
         return self._sum_elements
+
+    @property
+    def sum_groups(self):
+        """Return the groups of element names to sum.
+
+        Returns
+        -------
+        list
+
+        """
+        return self._sum_groups
 
     @property
     def window_size(self):
