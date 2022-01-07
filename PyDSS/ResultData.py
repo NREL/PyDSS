@@ -367,64 +367,47 @@ class ResultData:
     def _export_elements(self, metadata, element_types):
         exports = [
             # TODO: opendssdirect does not provide a function to export Bus information.
-            ("Capacitors", "CapacitorsInfo", dss.Capacitors.Count, dss.utils.capacitors_to_dataframe),
-            ("Fuses", "FusesInfo", dss.Fuses.Count, dss.utils.fuses_to_dataframe),
-            ("Generators", "GeneratorsInfo", dss.Generators.Count, dss.utils.generators_to_dataframe),
-            ("Isource", "IsourceInfo", dss.Isource.Count, dss.utils.isource_to_dataframe),
-            ("Lines", "LinesInfo", dss.Lines.Count, dss.utils.lines_to_dataframe),
-            ("Loads", "LoadsInfo", dss.Loads.Count, dss.utils.loads_to_dataframe),
-            ("Meters", "MetersInfo", dss.Meters.Count, dss.utils.meters_to_dataframe),
-            ("Monitors", "MonitorsInfo", dss.Monitors.Count, dss.utils.monitors_to_dataframe),
-            ("Reclosers", "ReclosersInfo", dss.Reclosers.Count, dss.utils.reclosers_to_dataframe),
-            ("RegControls", "RegControlsInfo", dss.RegControls.Count, dss.utils.regcontrols_to_dataframe),
-            ("Relays", "RelaysInfo", dss.Relays.Count, dss.utils.relays_to_dataframe),
-            ("Sensors", "SensorsInfo", dss.Sensors.Count, dss.utils.sensors_to_dataframe),
-            ("Transformers", "TransformersInfo", dss.Transformers.Count, dss.utils.transformers_to_dataframe),
-            ("Vsources", "VsourcesInfo", dss.Vsources.Count, dss.utils.vsources_to_dataframe),
-            ("XYCurves", "XYCurvesInfo", dss.XYCurves.Count, dss.utils.xycurves_to_dataframe),
+            ("Capacitor", "CapacitorsInfo", dss.Capacitors.Count),
+            ("Fuse", "FusesInfo", dss.Fuses.Count),
+            ("Generator", "GeneratorsInfo", dss.Generators.Count),
+            ("Isource", "IsourceInfo", dss.Isource.Count),
+            ("Line", "LinesInfo", dss.Lines.Count),
+            ("Load", "LoadsInfo", dss.Loads.Count),
+            ("Monitor", "MonitorsInfo", dss.Monitors.Count),
+            ("PVSystem", "PVSystemsInfo", dss.PVsystems.Count),
+            ("Recloser", "ReclosersInfo", dss.Reclosers.Count),
+            ("RegControl", "RegControlsInfo", dss.RegControls.Count),
+            ("Relay", "RelaysInfo", dss.Relays.Count),
+            ("Sensor", "SensorsInfo", dss.Sensors.Count),
+            ("Transformer", "TransformersInfo", dss.Transformers.Count),
+            ("Vsource", "VsourcesInfo", dss.Vsources.Count),
+            ("XYCurve", "XYCurvesInfo", dss.XYCurves.Count),
             # TODO This can be very large. Consider making it configurable.
-            #("LoadShapes", "LoadShapeInfo", dss.LoadShape.Count, dss.utils.loadshape_to_dataframe),
+            #("LoadShape", "LoadShapeInfo", dss.LoadShape.Count),
         ]
         if element_types:
-            exports = [x for x in exports if x[0] in element_types]
+            types = set()
+            for elem_type in element_types:
+                if elem_type.endswith("s"):
+                    # Maintain compatibility with old format used plural names.
+                    elem_type = elem_type[:-1]
+                types.add(elem_type)
+            exports = [x for x in exports if x[0] in types]
 
-        for _, filename, count_func, get_func in exports:
-            if count_func() > 0:
-                df = get_func()
-                # Always record in CSV format for readability.
-                # There are also warning messages from PyTables because the
-                # data may contain strings.
-                fname = filename + ".csv"
-                relpath = os.path.join(self._export_relative_dir, fname)
-                filepath = os.path.join(self._export_dir, fname)
-                write_dataframe(df, filepath)
-                metadata["element_info_files"].append(relpath)
-                self._logger.info("Exported %s information to %s.", filename, filepath)
+        for class_name, filename, count_func in exports:
+            df = dss.utils.class_to_dataframe(class_name)
+            # Always record in CSV format for readability.
+            # There are also warning messages from PyTables because the
+            # data may contain strings.
+            fname = filename + ".csv"
+            relpath = os.path.join(self._export_relative_dir, fname)
+            filepath = os.path.join(self._export_dir, fname)
+            write_dataframe(df, filepath)
+            metadata["element_info_files"].append(relpath)
+            self._logger.info("Exported %s information to %s.", filename, filepath)
 
-        if not element_types or "PVSystems" in element_types:
-            self._export_pv_systems(metadata)
-        if not element_types or "Transformers" in element_types:
+        if not element_types or "Transformer" in element_types or "Transformers" in element_types:
             self._export_transformers(metadata)
-
-    def _export_pv_systems(self, metadata):
-        df = dss.utils.pvsystems_to_dataframe()
-        if dss.PVsystems.Count() > 0:
-            records = df.to_dict(orient="records")
-            pv_systems = {}
-            flag = dss.PVsystems.First()
-            while flag > 0:
-                pv_systems[dss.PVsystems.Name()] = dss.Properties.Value("Pmpp")
-                flag = dss.PVsystems.Next()
-
-            for record in records:
-                record["Pmpp"] = pv_systems[record["Name"]]
-            df = pd.DataFrame.from_records(records)
-
-        relpath = os.path.join(self._export_relative_dir, "PVSystemsInfo.csv")
-        filepath = os.path.join(self._export_dir, "PVSystemsInfo.csv")
-        write_dataframe(df, filepath)
-        metadata["element_info_files"].append(relpath)
-        self._logger.info("Exported PVSystem information to %s", filepath)
 
     def _export_transformers(self, metadata):
         df_dict = {"Transformer": [], "HighSideConnection": [], "NumPhases": []}
