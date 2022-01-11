@@ -27,12 +27,9 @@ class CapacitorStateChangeReport(ReportBase):
         for scenario in self._results.scenarios:
             scenario_data = {"name": scenario.name, "capacitors": []}
             for capacitor in scenario.list_element_names("Capacitors"):
-                try:
-                    change_count = int(scenario.get_element_property_value(
-                        "Capacitors", "TrackStateChanges", capacitor
-                    ))
-                except InvalidParameter:
-                    change_count = 0
+                change_count = int(scenario.get_element_property_value(
+                    "Capacitors", "TrackStateChanges", capacitor
+                ))
                 changes = {"name": capacitor, "change_count": change_count}
                 scenario_data["capacitors"].append(changes)
             data["scenarios"].append(scenario_data)

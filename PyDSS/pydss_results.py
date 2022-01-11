@@ -404,8 +404,8 @@ class PyDssScenarioResults:
                     base = ValueStorageBase.DELIMITER.join([elem_class, prop])
                 else:
                     assert len(fields) == 2, fields
-                    group = prop.split(ValueStorageBase.DELIMITER)[1]
-                    base = ValueStorageBase.DELIMITER.join([elem_class, prop, group])
+                    # This will be <elem_class>__<prop>__<group>
+                    base = ValueStorageBase.DELIMITER.join([elem_class, prop])
                 filename = os.path.join(path, base + "." + fmt.replace(".", ""))
                 dataset = self._group[elem_class]["SummedElementProperties"][prop]
                 prop_type = get_dataset_property_type(dataset)

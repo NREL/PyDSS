@@ -536,10 +536,18 @@ class SummedElementsByGroupOpenDssPropertyMetric(MetricBase):
         super().__init__(prop, dss_objs, settings)
         self._containers = {}
         self._name_to_group = {}
+
+        # This allows names to be in the group that aren't in the circuit
+        # in order to reduce having to duplicate the sum_group files many times
+        # in cases where there are many projects/scenarios.
+        elements = {x.Name for x in dss_objs}
         for group in prop.sum_groups:
-            self._containers[group["name"]] = None
-            for element_name in group["elements"]:
-                self._name_to_group[element_name] = group["name"]
+            group_elems = elements.intersection(set(group["elements"]))
+            if group_elems:
+                self._containers[group["name"]] = None
+                for element_name in group_elems:
+                    self._name_to_group[element_name] = group["name"]
+
         self._data_conversion = prop.data_conversion
 
     def _get_value(self, obj):
