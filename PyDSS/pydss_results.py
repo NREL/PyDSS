@@ -299,7 +299,7 @@ class PyDssScenarioResults:
                     self._summed_elem_props[elem_class][prop] = {
                         x: df[x].values[0] for x in df.columns
                     }
-                else:
+                elif dataset_property_type == DatasetPropertyType.PER_TIME_POINT:
                     self._summed_elem_timeseries_props[elem_class].append(prop)
 
     @staticmethod
@@ -819,6 +819,28 @@ class PyDssScenarioResults:
         if element_class not in self._summed_elem_props:
             raise InvalidParameter(f"class={element_class} is not stored")
         return self._summed_elem_props[element_class]
+
+    def list_summed_element_time_series_properties(self, element_class):
+        """Return the properties stored for a class where the values are a sum
+        of all elements.
+
+        Parameters
+        ----------
+        element_class : str
+
+        Returns
+        -------
+        list
+
+        Raises
+        ------
+        InvalidParameter
+            Raised if the element_class is not stored.
+
+        """
+        if element_class not in self._summed_elem_timeseries_props:
+            raise InvalidParameter(f"class={element_class} is not stored")
+        return self._summed_elem_timeseries_props[element_class]
 
     def read_element_info_file(self, filename):
         """Return the contents of file describing an OpenDSS element object.
