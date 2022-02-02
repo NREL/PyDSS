@@ -567,7 +567,8 @@ class SummedElementsByGroupOpenDssPropertyMetric(MetricBase):
             for group in self._containers:
                 if self._can_use_native_iteration():
                     self._elem_class.First()
-                total_by_group[total] = self._get_value(self._dss_objs[0]).set_nan()
+                total_by_group[group] = self._get_value(self._dss_objs[0])
+                total_by_group[group].set_nan()
         else:
             if self._can_use_native_iteration():
                 self._elem_class.First()
