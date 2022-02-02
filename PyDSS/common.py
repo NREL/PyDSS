@@ -146,6 +146,7 @@ class DataConversion(enum.Enum):
     ABS = "abs"
     ABS_SUM = "abs_sum"
     SUM = "sum"
+    SUM_REAL = "sum_real"
     SUM_ABS_REAL = "sum_abs_real"
 
 
