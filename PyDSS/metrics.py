@@ -717,6 +717,8 @@ class TrackCapacitorChangeCounts(ChangeCountMetricBase):
         if states == -1:
             raise Exception(f"failed to get Capacitors.States() for {capacitor.Name}")
 
+        if len(states) != 1:
+            raise Exception(f"length of states greater than 1 is not supported: {states}")
         cur_value = sum(states)
         last_value = self._last_values[capacitor.FullName]
         if last_value is not None and cur_value != last_value:
@@ -744,7 +746,7 @@ class TrackRegControlTapNumberChanges(ChangeCountMetricBase):
     def _update_counts(self, reg_control):
         tap_number = dss.RegControls.TapNumber()
         last_value = self._last_values[reg_control.FullName]
-        if last_value is not None:
+        if last_value is not None and last_value != tap_number:
             self._change_counts[reg_control.FullName] += 1
             logger.debug(
                 "%s changed count from %s to %s count=%s",
