@@ -567,7 +567,8 @@ class SummedElementsByGroupOpenDssPropertyMetric(MetricBase):
             for group in self._containers:
                 if self._can_use_native_iteration():
                     self._elem_class.First()
-                total_by_group[total] = self._get_value(self._dss_objs[0]).set_nan()
+                total_by_group[group] = self._get_value(self._dss_objs[0])
+                total_by_group[group].set_nan()
         else:
             if self._can_use_native_iteration():
                 self._elem_class.First()
@@ -716,6 +717,8 @@ class TrackCapacitorChangeCounts(ChangeCountMetricBase):
         if states == -1:
             raise Exception(f"failed to get Capacitors.States() for {capacitor.Name}")
 
+        if len(states) != 1:
+            raise Exception(f"length of states greater than 1 is not supported: {states}")
         cur_value = sum(states)
         last_value = self._last_values[capacitor.FullName]
         if last_value is not None and cur_value != last_value:
@@ -743,7 +746,7 @@ class TrackRegControlTapNumberChanges(ChangeCountMetricBase):
     def _update_counts(self, reg_control):
         tap_number = dss.RegControls.TapNumber()
         last_value = self._last_values[reg_control.FullName]
-        if last_value is not None:
+        if last_value is not None and last_value != tap_number:
             self._change_counts[reg_control.FullName] += 1
             logger.debug(
                 "%s changed count from %s to %s count=%s",
@@ -1148,6 +1151,10 @@ def convert_data(name, prop_name, value, conversion):
         converted = ValueByNumber(name, prop_name, sum(value.value))
     elif conversion == DataConversion.ABS_SUM:
         converted = ValueByNumber(name, prop_name, abs(sum(value.value)))
+    elif conversion == DataConversion.SUM_REAL:
+        converted = ValueByNumber(
+            name, prop_name, sum((x.real for x in value.value))
+        )
     elif conversion == DataConversion.SUM_ABS_REAL:
         converted = ValueByNumber(
             name, prop_name, sum((abs(x.real) for x in value.value))

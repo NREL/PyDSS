@@ -704,12 +704,12 @@ class PvClippingReportModel(ReportBaseModel):
         default="PV Clipping",
         internal=True,
     )
-    diff_tolerance_percent_pmpp: Optional[float] = Field(
+    diff_tolerance_percent_pmpp: float = Field(
         title="diff_tolerance_percent_pmpp",
         description="TBD",
         default=1.0,
     )
-    denominator_tolerance_percent_pmpp: Optional[float] = Field(
+    denominator_tolerance_percent_pmpp: float = Field(
         title="denominator_tolerance_percent_pmpp",
         description="TBD",
         default=1.0,
