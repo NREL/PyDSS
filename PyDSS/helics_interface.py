@@ -7,7 +7,7 @@ from PyDSS.naerm import *
 
 NAERM_STANDARD = True
 
-class helics_interface:
+class helics_interface():
 
     n_states = 5
     init_state = 1

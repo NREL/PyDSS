@@ -33,16 +33,17 @@
     "simulator_time_resolution": {
       "type": "number",
       "description": "The native timestep of this federate (i.e., with what granularity should the federate step through time?). Must be specified in the the time units given in the global_options object. If this number is set to be larger than the cosimulation period, this will mean that the federate will only be invoked when an event occurs. ",
-      "example": 0.0041664,
+      "example": 5,
       "exclusiveMinimum": true,
       "minimum": 0,
-      "default": 0.0041664
+      "default": 5
     },
     "simulation_duration": {
       "type": "number",
       "description": "The number of time steps that the cosimulation should run for",
-      "example": 0.00166,
+      "example": 5,
       "minimum": 0,
+      "default": 5,
       "exclusiveMinimum": true
     },
     "time_unit": {

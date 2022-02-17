@@ -98,7 +98,8 @@
                                             "active_project": "project1",
                                             "active_scenario": "std-2003",
                                             "master_dss_file": "Master_2.dss",
-                                            "pydss_project": "C:/Users/KDUWADI/Downloads/PyDSS"
+                                            "pydss_project": "C:/Users/KDUWADI/Downloads/PyDSS",
+                                            "sub_id": "wecc_federate/bus/10050/voltage/pu"
                                         },
                                         "simulation_duration": 0.00020832,
                                         "simulator_time_resolution": 6.944e-05,

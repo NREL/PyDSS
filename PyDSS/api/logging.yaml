@@ -32,22 +32,22 @@ handlers:
         backupCount: 3
         when: h
         interval: 1
-    syslog:
-        class: logging.handlers.SysLogHandler
-        level: DEBUG
-        formatter: json
-        # The port number change based on the socktype.
-        address: ['host.docker.internal', 1514] # 514/TCP 1514/UDP
-        socktype: 2 # 1=TCP 2=UDP
-    syslog_notification:
-        # This handlers is used to log notifications to be forwarded to the
-        # visualization tools. 
-        class: logging.handlers.SysLogHandler
-        level: NOTSET
-        formatter: notification
-        # The port number change based on the socktype.
-        address: ['host.docker.internal', 1514] # 514/TCP 1514/UDP
-        socktype: 2 # 1=TCP 2=UDP
+    # syslog:
+    #     class: logging.handlers.SysLogHandler
+    #     level: DEBUG
+    #     formatter: json
+    #     # The port number change based on the socktype.
+    #     address: ['host.docker.internal', 1514] # 514/TCP 1514/UDP
+    #     socktype: 2 # 1=TCP 2=UDP
+    # syslog_notification:
+    #     # This handlers is used to log notifications to be forwarded to the
+    #     # visualization tools. 
+    #     class: logging.handlers.SysLogHandler
+    #     level: NOTSET
+    #     formatter: notification
+    #     # The port number change based on the socktype.
+    #     address: ['host.docker.internal', 1514] # 514/TCP 1514/UDP
+    #     socktype: 2 # 1=TCP 2=UDP
 loggers:
     __main__:
         level: DEBUG
@@ -57,10 +57,10 @@ loggers:
         level: DEBUG
         handlers: [timedRotatingFile]
         propagate: yes
-    core.notifier.notifier:
-        level: NOTSET
-        handlers: [console, rotatingFile, syslog_notification]
-        propagate: no
+    # core.notifier.notifier:
+    #     level: NOTSET
+    #     handlers: [console, rotatingFile, syslog_notification]
+    #     propagate: no
 root:
     level: DEBUG
-    handlers: [console, rotatingFile, syslog]
+    handlers: [console, rotatingFile] # syslog
