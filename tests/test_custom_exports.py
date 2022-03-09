@@ -174,7 +174,7 @@ def test_pv_powers_by_customer_type(cleanup_project):
     }
     run_project_with_custom_exports(path, "scenario1", SIMULATION_SETTINGS_FILENAME, data)
     total_sum2 = sum(_get_summed_element_total(path, "PVSystems", "PowersSum").values())
-    assert math.isclose(total_sum1, total_sum2)
+    assert math.isclose(total_sum1.real, total_sum2.real) and math.isclose(total_sum1.imag, total_sum2.imag)
 
     # Collect power for PVSystems aggregated by customer type at every time point.
     data = {
@@ -197,8 +197,8 @@ def test_pv_powers_by_customer_type(cleanup_project):
     run_project_with_custom_exports(path, "scenario1", SIMULATION_SETTINGS_FILENAME, data)
     com_sum3 = _get_summed_element_dataframe(path, "PVSystems", "Powers", group="com").sum().sum()
     res_sum3 = _get_summed_element_dataframe(path, "PVSystems", "Powers", group="res").sum().sum()
-    assert math.isclose(com_sum1, com_sum3)
-    assert math.isclose(res_sum1, res_sum3)
+    assert math.isclose(com_sum1.real, com_sum3.real) and math.isclose(com_sum1.imag, com_sum3.imag)
+    assert math.isclose(res_sum1.real, res_sum3.real) and math.isclose(res_sum1.imag, res_sum3.imag)
 
     # Collect a running sum for all PVSystems by customer type.
     data = {
@@ -221,8 +221,8 @@ def test_pv_powers_by_customer_type(cleanup_project):
     run_project_with_custom_exports(path, "scenario1", SIMULATION_SETTINGS_FILENAME, data)
     com_sum4 = sum(_get_summed_element_total(path, "PVSystems", "PowersSum", group="com").values())
     res_sum4 = sum(_get_summed_element_total(path, "PVSystems", "PowersSum", group="res").values())
-    assert math.isclose(com_sum1, com_sum4)
-    assert math.isclose(res_sum1, res_sum4)
+    assert math.isclose(com_sum1.real, com_sum4.real) and math.isclose(com_sum1.imag, com_sum4.imag)
+    assert math.isclose(res_sum1.real, res_sum4.real) and math.isclose(res_sum1.imag, res_sum4.imag)
 
 
 def _get_customer_type_columns(df, com_pv_systems, res_pv_systems):
