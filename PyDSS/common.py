@@ -45,7 +45,7 @@ class ControllerType(enum.Enum):
     FAULT_CONTROLLER = "FaultController"
     THERMOSTATIC_LOAD_CONTROLLER = "ThermostaticLoad"
     GENERATOR_CONTROLLER = "GenController"
-
+    PV_DYNAMIC = "PvDynamic"
 
 CONTROLLER_TYPES = tuple(x.value for x in ControllerType)
 CONFIG_EXT = ".toml"
@@ -63,6 +63,7 @@ def filename_from_enum(obj):
 
 
 TIMESERIES_PLOT_FILENAME = filename_from_enum(VisualizationType.TIMESERIES_PLOT)
+PV_DYNAMIC_FILENAME = filename_from_enum(ControllerType.PV_DYNAMIC)
 PV_CONTROLLER_FILENAME = filename_from_enum(ControllerType.PV_CONTROLLER)
 STORAGE_CONTROLLER_FILENAME = filename_from_enum(ControllerType.STORAGE_CONTROLLER)
 SOCKET_CONTROLLER_FILENAME = filename_from_enum(ControllerType.XMFR_CONTROLLER)

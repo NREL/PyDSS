@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 import math
 
+from pytest import Session
+
 from PyDSS.common import DATE_FORMAT
 from PyDSS.simulation_input_models import SimulationSettingsModel
 
@@ -32,6 +34,7 @@ class solver_base:
         self._Hour = StartDay * 24
         self._Second = StartTimeMin * 60.0
 
+        self.curr_step = 0
         #self._dssSolution.DblHour()
         self.reSolve()
         self.pyLogger.info("%s solver setup complete", settings.project.simulation_type)
@@ -45,8 +48,11 @@ class solver_base:
 
     def SimulationSteps(self):
         Seconds = (self._EndTime - self._StartTime).total_seconds()
-        Steps = math.ceil(Seconds / self._sStepRes)
-        return Steps, self._StartTime, self._EndTime
+        self.Steps = math.ceil(Seconds / self._sStepRes)
+        return self.Steps, self._StartTime, self._EndTime
+
+    def GetSimulationEndTimeSeconds(self):
+        return (self._EndTime - self._StartTime).total_seconds()
 
     def GetTotalSeconds(self):
         return (self._Time - self._StartTime).total_seconds()
@@ -87,3 +93,15 @@ class solver_base:
 
     def IncStep(self):
         raise Exception("Implement the 'IncStep' function in the child class")
+    
+    
+    @property
+    def isLastTimestep(self):
+        if self.GetTotalSeconds() + self.GetStepResolutionSeconds() >= self.GetSimulationEndTimeSeconds():
+            return True
+        return False
+    
+    @property
+    def allTimestamps(self):
+         
+        return [self._StartTime + timedelta(seconds= n * self.GetStepResolutionSeconds()) for n in range(self.Steps)]

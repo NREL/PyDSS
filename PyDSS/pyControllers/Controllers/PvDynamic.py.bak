@@ -1,0 +1,44 @@
+from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
+
+class PvDynamic(ControllerAbstract):
+
+    def __init__(self, VSCObj, Settings, dssInstance, ElmObjectList, dssSolver):
+        super(PvDynamic).__init__(VSCObj)
+        self.P_old = 0
+        self.Time = -1
+        self.__Locked = False
+        self.__ControlledElm = VSCObj
+        self.__ElmObjectList = ElmObjectList
+        Class, Name = self.__ControlledElm.GetInfo()
+        self.__Name = 'pyCont_' + Class + '_' + Name
+        return
+
+    @property
+    def Name(self):
+        return self.__Name
+
+    @property
+    def ControlledElement(self):
+        return "{}.{}".format(self.Class, self.Name)
+
+    def Update(self, Priority, Time, UpdateResults):
+        Powers = self.__ConnTransformer.GetVariable('CurrentsMagAng')
+        Powers = Powers[:int(len(Powers)/2)][::2]
+        P_new = sum((float(x)) for x in Powers)
+        if self.__RPFlocking and self.P_old < 0:
+            self.__Locked = self.__EnableLock()
+        elif self.__RPFlocking and self.P_old > 0:
+            self.__Locked = self.__DisableLock()
+        else:
+            pass
+        self.P_old = P_new
+        return 0
+
+    def __EnableLock(self):
+        self.__ControlledElm.SetParameter('enabled','False')
+        return True
+
+    def __DisableLock(self):
+        self.__ControlledElm.SetParameter('enabled', 'True')
+        return False
+
