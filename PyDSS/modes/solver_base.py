@@ -103,5 +103,4 @@ class solver_base:
     
     @property
     def allTimestamps(self):
-         
         return [self._StartTime + timedelta(seconds= n * self.GetStepResolutionSeconds()) for n in range(self.Steps)]

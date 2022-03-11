@@ -14,6 +14,14 @@ import math
 
 class PvDynamic(ControllerAbstract):
 
+    DEBUG_SIMULATION = False
+    DEBUG_VOLTAGES = False
+    DEBUG_CURRENTS = False
+    DEBUG_POWER = False
+    DEBUG_CONTROLLERS = True
+    DEBUG_PLL = False
+    DEBUG_SOLVER = True
+
     def __init__(self, VSCObj, Settings, dssInstance, ElmObjectList, dssSolver):
         super(PvDynamic, self).__init__(VSCObj, Settings, dssInstance, ElmObjectList, dssSolver)
         self.Solver = dssSolver
@@ -100,14 +108,14 @@ class PvDynamic(ControllerAbstract):
         self._pv_model.DER_model.DO_EXTRA_CALCULATIONS = Settings["DO_EXTRA_CALCULATIONS"]
         self._pv_model.DER_model.use_frequency_estimate=Settings["use_frequency_estimate"]
         self.sim1.jacFlag = Settings["jacFlag"]
-        self.sim1.DEBUG_SIMULATION = Settings["DEBUG_SIMULATION"]
-        self.sim1.DEBUG_VOLTAGES = Settings["DEBUG_VOLTAGES"]
-        self.sim1.DEBUG_CURRENTS = Settings["DEBUG_CURRENTS"]
-        self.sim1.DEBUG_POWER = Settings["DEBUG_POWER"]
-        self.sim1.DEBUG_CONTROLLERS  = Settings["DEBUG_CONTROLLERS"]
-        self.sim1.DEBUG_PLL = Settings["DEBUG_PLL"]
-        self.sim1.PER_UNIT = True#Settings["PER_UNIT"]
-        self.sim1.DEBUG_SOLVER  = Settings["DEBUG_SOLVER"]
+        self.sim1.DEBUG_SIMULATION = self.DEBUG_SIMULATION
+        self.sim1.DEBUG_VOLTAGES = self.DEBUG_VOLTAGES
+        self.sim1.DEBUG_CURRENTS = self.DEBUG_CURRENTS
+        self.sim1.DEBUG_POWER = self.DEBUG_POWER
+        self.sim1.DEBUG_CONTROLLERS  = self.DEBUG_CONTROLLERS
+        self.sim1.DEBUG_PLL = self.DEBUG_PLL
+        self.sim1.PER_UNIT = True
+        self.sim1.DEBUG_SOLVER  = self.DEBUG_SOLVER
         self.sim1.tStop = dssSolver.GetSimulationEndTimeSeconds()
         self.sim1.tInc = self.dt
         self._pv_model._del_t_frequency_estimate = self.sim1.tInc 
@@ -117,83 +125,90 @@ class PvDynamic(ControllerAbstract):
         return
 
     def update_model_parameters(self):
-        if self._Settings["UPDATE_PARAMETRS"]:
-            module_parameters = {
-                'Np': self._Settings["Np"],
-                'Ns': self._Settings["Ns"],
-                'Vdcmpp0': self._Settings["Vdcmpp0"],
-                'Vdcmpp_max': self._Settings["Vdcmpp_max"],
-                'Vdcmpp_min': self._Settings["Vdcmpp_min"],
-            }
-            inverter_ratings = {
-                'Vdcrated': self._Settings["Vdcrated"],
-                'Ioverload': self._Settings["Ioverload"],
-                'Vrmsrated': self._Settings["Vrmsrated"],
-                'Iramp_max_gradient_imag': self._Settings["Iramp_max_gradient_imag"],
-                'Iramp_max_gradient_real': self._Settings["Iramp_max_gradient_real"],
-            }   
-            circuit_parameters = {
-                'Rf_actual': self._Settings["Rf_actual"],
-                'Lf_actual': self._Settings["Lf_actual"],
-                'C_actual': self._Settings["C_actual"],
-                'Z1_actual': self._Settings["Z1_actual_real"] +self._Settings["Z1_actual_imag"] *1j,
-                'R1_actual': self._Settings["R1_actual"],
-                'X1_actual': self._Settings["X1_actual"],
-            }
-            controller_gains = {
-                'Kp_GCC': self._Settings["Kp_GCC"],
-                'Ki_GCC': self._Settings["Ki_GCC"],
-                'Kp_DC': self._Settings["Kp_DC"],
-                'Ki_DC': self._Settings["Ki_DC"],
-                'Kp_Q': self._Settings["Kp_Q"],
-                'Ki_Q': self._Settings["Ki_Q"],
-                'wp': self._Settings["wp"]
-            }
-            steadystate_values = {
-                'iaI0': self._Settings["iaI0"],
-                'iaR0': self._Settings["iaR0"],
-                'maI0': self._Settings["maI0"],
-                'maR0': self._Settings["maR0"],
-            }
-                
-            self._pv_model.initialize_parameter_dict(
+        make_changes = any([
+            self._Settings["UPDATE_MODULE_PARAMETRS"],
+            self._Settings["UPDATE_INVERTER_PARAMETRS"],
+            self._Settings["UPDATE_CIRCUIT_PARAMETRS"],
+            self._Settings["UPDATE_CONTROLLER_PARAMETRS"],
+            self._Settings["UPDATE_STEADYSTATE_PARAMETRS"]
+        ])
+  
+        module_parameters = {
+            'Np': self._Settings["Np"],
+            'Ns': self._Settings["Ns"],
+            'Vdcmpp0': self._Settings["Vdcmpp0"],
+            'Vdcmpp_max': self._Settings["Vdcmpp_max"],
+            'Vdcmpp_min': self._Settings["Vdcmpp_min"],
+        }
+        inverter_ratings = {
+            'Vdcrated': self._Settings["Vdcrated"],
+            'Ioverload': self._Settings["Ioverload"],
+            'Vrmsrated': self._Settings["Vrmsrated"],
+            'Iramp_max_gradient_imag': self._Settings["Iramp_max_gradient_imag"],
+            'Iramp_max_gradient_real': self._Settings["Iramp_max_gradient_real"],
+        }   
+        circuit_parameters = {
+            'Rf_actual': self._Settings["Rf_actual"],
+            'Lf_actual': self._Settings["Lf_actual"],
+            'C_actual': self._Settings["C_actual"],
+            'Z1_actual': self._Settings["Z1_actual_real"] +self._Settings["Z1_actual_imag"] *1j,
+            'R1_actual': self._Settings["R1_actual"],
+            'X1_actual': self._Settings["X1_actual"],
+        }
+        controller_gains = {
+            'Kp_GCC': self._Settings["Kp_GCC"],
+            'Ki_GCC': self._Settings["Ki_GCC"],
+            'Kp_DC': self._Settings["Kp_DC"],
+            'Ki_DC': self._Settings["Ki_DC"],
+            'Kp_Q': self._Settings["Kp_Q"],
+            'Ki_Q': self._Settings["Ki_Q"],
+            'wp': self._Settings["wp"]
+        }
+        steadystate_values = {
+            'iaI0': self._Settings["iaI0"],
+            'iaR0': self._Settings["iaR0"],
+            'maI0': self._Settings["maI0"],
+            'maR0': self._Settings["maR0"],
+        }
+        
+        if make_changes:
+            self._pv_model.DER_model.initialize_parameter_dict(
                 parameter_ID=self.ControlledElement(),
                 source_parameter_ID=self._Settings["DER_ID"]
                 )
             
-            # DER_parameters = self._pv_model.get_parameter_dictionary(
-            #     parameter_type='all',
-            #     parameter_ID= self._Settings["DER_ID"]
-            #     )   
-            
-            self._pv_model.update_parameter_dict(
-                parameter_ID=self.ControlledElement(),
-                parameter_type='module_parameters',
-                parameter_dict= module_parameters
-                ) 
-            self._pv_model.update_parameter_dict(
-                parameter_ID=self.ControlledElement(),
-                parameter_type='circuit_parameters',
-                parameter_dict= circuit_parameters
-                )
-            self._pv_model.update_parameter_dict(
-                parameter_ID=self.ControlledElement(),
-                parameter_type='inverter_ratings',
-                parameter_dict= inverter_ratings
-                )
-            self._pv_model.update_parameter_dict(
-                parameter_ID=self.ControlledElement(),
-                parameter_type='controller_gains',
-                parameter_dict= controller_gains
-                )
-            
-            self._pv_model.update_parameter_dict(
-                parameter_ID=self.ControlledElement(),
-                parameter_type='steadystate_values',
-                parameter_dict= steadystate_values
-                )
-            self._pv_model.modify_DER_parameters(parameter_ID=self.ControlledElement())
-            #params = self._pv_model.get_parameter_dictionary(parameter_type='all',parameter_ID=self.ControlledElement())
+            if self._Settings["UPDATE_MODULE_PARAMETRS"]:
+                self._pv_model.DER_model.update_parameter_dict(
+                    parameter_ID=self.ControlledElement(),
+                    parameter_type='module_parameters',
+                    parameter_dict= module_parameters
+                    ) 
+            if self._Settings["UPDATE_INVERTER_PARAMETRS"]:
+                self._pv_model.DER_model.update_parameter_dict(
+                    parameter_ID=self.ControlledElement(),
+                    parameter_type='inverter_ratings',
+                    parameter_dict= inverter_ratings
+                    )
+            if self._Settings["UPDATE_CIRCUIT_PARAMETRS"]:
+                self._pv_model.DER_model.update_parameter_dict(
+                    parameter_ID=self.ControlledElement(),
+                    parameter_type='circuit_parameters',
+                    parameter_dict= circuit_parameters
+                    )
+            if self._Settings["UPDATE_CONTROLLER_PARAMETRS"]:
+                self._pv_model.DER_model.update_parameter_dict(
+                    parameter_ID=self.ControlledElement(),
+                    parameter_type='controller_gains',
+                    parameter_dict= controller_gains
+                    )
+            if self._Settings["UPDATE_STEADYSTATE_PARAMETRS"]:
+                self._pv_model.DER_model.update_parameter_dict(
+                    parameter_ID=self.ControlledElement(),
+                    parameter_type='steadystate_values',
+                    parameter_dict= steadystate_values
+                    )
+            self._pv_model.DER_model.modify_DER_parameters(parameter_ID=self.ControlledElement())
+            params = self._pv_model.DER_model.get_parameter_dictionary(parameter_type='all',parameter_ID=self.ControlledElement())
         return
 
     def Name(self):
@@ -223,6 +238,11 @@ class PvDynamic(ControllerAbstract):
                 t=t_sim
                 )
         
+        S = self._pv_model.DER_model.S * self._pv_model.DER_model.Sbase / 1000
+        S_PCC = self._pv_model.DER_model.S_PCC * self._pv_model.DER_model.Sbase / 1000
+        print(f"kW {S.real}\nkvar {S.imag}")
+        self._ControlledElm.SetParameter("kw", S_PCC.real)
+        self._ControlledElm.SetParameter("kvar", S_PCC.imag)
         self.results.append({
             "Vdc" : self._pv_model.DER_model.Vdc * self._pv_model.DER_model.Vbase,
             "vta" : self._pv_model.DER_model.vta * self._pv_model.DER_model.Vbase,
