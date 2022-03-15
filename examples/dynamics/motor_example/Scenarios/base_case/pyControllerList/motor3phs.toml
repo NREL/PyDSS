@@ -1,0 +1,10 @@
+["Load.test3p"]
+p=3  # [p] = 1, nb of pole pairs
+r_s=17.932e-3  # [r_s] = Ohm, stator resistance
+l_m=0.37e-3  # [l_d] = H, d-axis inductance
+l_sigs=1.2e-3  # [l_q] = H, q-axis inductance
+l_sigr=65.65e-3  # [psi_p] = Vs, magnetic flux of the permanent magnet
+j_rotor =0.0011 # kg/m^2 Moment of inertia of the rotor
+# i = 
+# torque
+# omega
