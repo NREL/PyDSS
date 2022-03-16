@@ -10,6 +10,7 @@ from PyDSS.dssInstance import OpenDSS
 from PyDSS.api.src.app.model_creator.Scenario_generator import PyDSS_Model
 from PyDSS.api.src.web.parser import restructure_dictionary
 from PyDSS.api.src.app.JSON_writer import JSONwriter
+from PyDSS.api.src.app.Optimizer import Optimizer
 from naerm_core.web.client_requests import send_sync_request
 from naerm_core.notification.notifier import Notifier
 import json
@@ -80,7 +81,7 @@ def create_substation(base_path, feeder_models, source_voltage):
                 sStrings = line.split(" ")
                 for sString in sStrings:
                     if "bus1" in sString.lower():
-                        feeder_bus.append(sString.lower().replace("bus1", "").split(".")[0])
+                        feeder_bus.append(sString.lower().replace("bus1=", "").split(".")[0])
                     if "basekv" in sString.lower():
                         feeder_kv.append(sString.lower().replace("basekv=", ""))
 
@@ -111,13 +112,16 @@ def create_substation(base_path, feeder_models, source_voltage):
 
 def update_project(
                     file_uuids,
+                    loadflow_vpu,
+                    loadflow_P,
+                    loadflow_Q,
                     load_mw,
                     load_mvar,
                     der_mw,
                     der_mvar,
                     source_voltage,
                     data_service_url,  # @KAPIL NEED TO GET THIS INFORMATION FROM COSIM LAUNCHER
-                    motor_d= 0,
+                    motor_d= 10,
                     pvcategory={"ieee-2018-catI": 5, "ieee-2018-catII": 10, "ieee-2018-catIII": 15, "ieee-2003": 20},
                     dynamic= True,
                     update_model=True,
@@ -205,7 +209,9 @@ def update_project(
         )
 
         """ update the model with new settings """
-        model_modifier = PyDSS_Model(os.path.join(pydss_model_folder, project))
+        project_path = os.path.join(pydss_model_folder, project)
+        model_modifier = PyDSS_Model(project_path)
+        new_master_file = "new_" + master_file
         pmult, qmult = model_modifier.create_new_scenario(
             scenario,
             {
@@ -216,7 +222,7 @@ def update_project(
                 "Mtr": motor_d
             },
             {
-                "new_master": "new_" + master_file, #file_data['case']['master_file'],
+                "new_master": new_master_file, #file_data['case']['master_file'],
                 "master": master_file, #file_data['case']['master_file'],
                 "load": 'Loads.dss',  # TODO: needs to come from metadata
                 "motor": 'Motors_new.dss',
@@ -227,10 +233,16 @@ def update_project(
             dynamic=True
         )
 
+        O = Optimizer(project_path, new_master_file, new_master_file)
+        pmult, qmult = O.Optimize(loadflow_vpu, loadflow_P, loadflow_Q)
+        print("P multiplier: ", pmult)
+        print("Q multiplier: ", qmult)
+        
         powerflow_options = {
             'pydss_project': pydss_model_folder,
             'active_project': project,
             'active_scenario': scenario,
+            'master_dss_file': master_file, #file_data['case']['master_file']
             'master_dss_file': master_file, #file_data['case']['master_file']
         }
 
@@ -258,7 +270,7 @@ def create_project(
     ):
 
     #activate pydss_api && 
-    cmd = "activate naerm_bes_env &&  pydss create-project -P {} -p {} -s {} -F {} -m {} -c {}".format(
+    cmd = "pydss create-project -P {} -p {} -s {} -F {} -m {} -c {}".format(
         project_path,
         project_name,
         scenario_name,
@@ -274,18 +286,18 @@ if __name__ == '__main__':
 
     a = update_project(
         [
-      "218672ac-d416-4e9f-8578-0d2a531aa33c",
-      "41e17deb-dd30-4fdc-9265-c791677144a4",
-      "d1a88f96-88ef-4c43-929c-c4d2bef283a6",
-      "5c688a26-4c77-44fa-b427-bb0b0595aabf",
-      "a46a7e1c-f28c-42bc-bc71-f3a8e224fbfa",
-      "b9cdc11d-29d5-47e8-bdf4-30e875d95f9b",
-      "315027be-b835-4d3d-8ded-53fe35ed515c",
-      "2a721874-1fa2-4206-ba9b-0a377f6ab3a9",
-      "b3936400-8748-4294-8256-0409b0bedaba",
-      "d709b910-7f2a-4e74-b9b7-3fc7287e821b"
+            "218672ac-d416-4e9f-8578-0d2a531aa33c",
+            "41e17deb-dd30-4fdc-9265-c791677144a4",
+            "d1a88f96-88ef-4c43-929c-c4d2bef283a6",
+            "5c688a26-4c77-44fa-b427-bb0b0595aabf",
+            "a46a7e1c-f28c-42bc-bc71-f3a8e224fbfa",
+            "b9cdc11d-29d5-47e8-bdf4-30e875d95f9b",
+            "315027be-b835-4d3d-8ded-53fe35ed515c",
+            "2a721874-1fa2-4206-ba9b-0a377f6ab3a9",
+            "b3936400-8748-4294-8256-0409b0bedaba",
+            "d709b910-7f2a-4e74-b9b7-3fc7287e821b"
         ],
-        20, 3, 0, 0, 33, 'https://api.naerm.team/data/bes'
+        1.032, 20, 3, 20, 3, 0, 0, 33, 'https://api.naerm.team/data/bes'
     )
     print(a)
 

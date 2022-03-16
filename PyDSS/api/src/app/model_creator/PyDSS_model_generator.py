@@ -40,27 +40,23 @@ class ModelGenerator:
         motorkW = 0
         if len(lineData) > 1:
             phases = self.findPpty("Phases", lineData, int)
-            if phases == 2:
+            if phases != 2:
                 ld = lineData[1].replace("Load.", "")
                 MotorName = f"Load.motor_{ld}"
                 kv = self.findPpty("kV", lineData, float)
-                motorkv = kv / 1.732 * 2
                 conn = self.findPpty("conn", lineData)
                 kW = self.findPpty("kW", lineData, float)
                 loadkW = (1 - MotorSize / 100.0) * kW
                 motorkW = MotorSize / 100.0 * kW
                 kvar = self.findPpty("kvar", lineData, float)
-                loadkvar = kvar - 0.2 * motorkW
                 motorkvar = 0.2 * motorkW
                 bus = self.findPpty("bus1", lineData)
-                mdl = f"New {MotorName} conn={conn} bus1={bus} kV={kv} kW={motorkW} kvar={motorkvar} Phases=2 Vminpu=0.0 Vmaxpu=1.2 model=1\n"
-                self.handleMotorFile.write(mdl)
-                mdl = f"New {lineData[1]} conn={conn} bus1={bus} kV={kv} kW={loadkW} kvar={loadkvar} Phases=2 Vminpu=0.8 Vmaxpu=1.2 model=1\n"
+                mdl = f"New {MotorName} conn={conn} bus1={bus} kV={kv} kW={motorkW} kvar={motorkvar} Phases={phases} Vminpu=0.0 Vmaxpu=1.2 model=1\n"
                 self.handleMotorFile.write(mdl)
                 self.Motors[scenarioName][MotorName] = (motorkW, motorkvar)
-            else:
-                self.handleMotorFile.write(line + "\n")
-                loadkW = self.findPpty("kW", lineData, float)
+            # else:
+            #     self.handleMotorFile.write(line + "\n")
+            #     loadkW = self.findPpty("kW", lineData, float)
         return loadkW + motorkW
 
     def createPVsystem(self, line, PVsize, scenarioName):
@@ -82,8 +78,9 @@ class ModelGenerator:
                 phases = 1
             PVname = f"Generator.pv_{gen}"
             mdl = f"New {PVname} conn={conn} bus1={bus} kV={kv} model=7 kW={pv_kva} kvar={pv_kvar} Phases={phases}\n"
-            self.handlePVsystemFile.write(mdl)
-            self.PVsystems[scenarioName].append(PVname)
+            if pv_kva:
+                #self.handlePVsystemFile.write(mdl)
+                self.PVsystems[scenarioName].append(PVname)
         return pv_kva
 
     def GenerateScenario(self, PV_penetration, PVsize, motor_load_penetration, MotorSize, FileTypes):
