@@ -20,14 +20,8 @@ def Create(ElmName, ControllerType, Settings, ElmObjectList, dssInstance, dssSol
         ControllerType
     )
     assert (ElmName in ElmObjectList), "'{}' does not exist in the PyDSS master object dictionary.".format(ElmName)
+
     relObject = ElmObjectList[ElmName]
-    # except:
-    #     Index = dssInstance.Circuit.SetActiveElement(ElmName)
-    #     if int(Index) >= 0:
-    #         ElmObjectList[ElmName] = dssElement(dssInstance)
-    #         relObject = ElmObjectList[ElmName]
-    # else:
-    #     return -1
 
 
     ObjectController = ControllerTypes[ControllerType](relObject, Settings, dssInstance, ElmObjectList, dssSolver)

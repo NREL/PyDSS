@@ -201,7 +201,9 @@ class OpenDSS:
                                                   self._dssInstance, self._dssSolver)
                 if Controller != -1:
                     controller_name = 'Controller.' + ElmName
+                    
                     self._pyControls[controller_name] = Controller
+                    print(self._pyControls)
                     class_name, element_name = Controller.ControlledElement().split(".")
                     if controller_name not in self._pyControls_types:
                         self._pyControls_types[controller_name] = class_name

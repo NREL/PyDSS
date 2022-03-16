@@ -24,11 +24,34 @@ class motor3phs(ControllerAbstract):
 
     def __init__(self, LoadObj, Settings, dssInstance, ElmObjectList, dssSolver):
         super(motor3phs, self).__init__(LoadObj, Settings, dssInstance, ElmObjectList, dssSolver)
+        self._ControlledElm = LoadObj
+        self._Settings = Settings
         self.Solver = dssSolver     
         self.Time = 0
+        
+        nominal_values = dict(omega=10e3 * np.pi / 30, torque=95.0, i=240, epsilon=np.pi, u=300)
+        self.vBase = self._ControlledElm.sBus[0].GetVariable('kVBase') * 1000
+        motor_rating_default = {
+            'u'      : self.vBase,
+            'i'      : 10, 
+            'torque' : 1, 
+            'omega'  : 1,
+        }
+        
+        motor = {
+            "nominal_values" : nominal_values,
+            "motor_parameter" : self.get_motor_parameters(),
+        }
+        
+
         self.dt = dssSolver.GetStepResolutionSeconds()
-        self._Settings = Settings
-        self._ControlledElm = LoadObj
+       
+        
+        control_type = Settings["control_type"]
+        action_type = Settings["action_type"]
+        
+        
+        
         self._eClass, self._eName = self._ControlledElm.GetInfo()
         self._Name = 'pyCont_' + self._eClass + '_' + self._eName
         self._ElmObjectList = ElmObjectList
@@ -36,15 +59,15 @@ class motor3phs(ControllerAbstract):
         assert self.nPhases == 3, "The model can only be coupled to three phase load models." 
         
         self.FREQ = dssInstance.Solution.Frequency()
-        self.vBase = self._ControlledElm.sBus[0].GetVariable('kVBase') * 1000
+        
         
         self.env = gem.make(
             # Choose the squirrel cage induction motor (SCIM) with continuous-control-set
-            "AbcCont-TC-SCIM-v0",
+            f"{action_type}-{control_type}-SCIM-v0",
 
             # Define the numerical solver for the simulation
             ode_solver="scipy.ode",
-
+            motor = motor,
             # Define which state variables are to be monitored concerning limit violations
             # "()" means, that limit violation will not necessitate an env.reset()
             constraints=(),
@@ -62,8 +85,34 @@ class motor3phs(ControllerAbstract):
         P, Q = self.Power()
         self.P = [P]
         self.Q = [Q]
+        self.V = []
         return
 
+    def get_motor_parameters(self):
+        
+        if not self._Settings["Use default motor parameters"]:
+            parameters = {
+                'p'      : self._Settings["p"],
+                'r_s'    : self._Settings["r_s"],
+                'r_r'    : self._Settings["r_r"],
+                'l_m'    : self._Settings["l_m"],
+                'l_sigs' : self._Settings["l_sigs"],
+                'l_sigr' : self._Settings["l_sigr"],
+                'j_rotor': self._Settings["j_rotor"],
+            }
+        else:
+            parameters = {
+                'p'      : 1, # [p] = 1, nb of pole pairs
+                'r_s'    : 2.9338,  # Ohm, Stator resistance
+                'r_r'    : 1.355,  # Ohm, Rotor resistance
+                'l_m'    : 143.75e-3,  # H, Main inductance
+                'l_sigs' : 5.87e-3,  # H, Stator-side stray inductance
+                'l_sigr' : 5.87e-3,  # H, Rotor-side stray inductance
+                'j_rotor': 0.0011,# kg/m^2 Moment of inertia of the rotor
+            }
+        return parameters
+        
+        
     def Name(self):
         return self.Name
 
@@ -85,7 +134,8 @@ class motor3phs(ControllerAbstract):
     
     def Update(self, Priority, Time, UpdateResults):
         if Priority == 0 :
-            Vt = self.AvgVoltages()
+            Vt = self.Voltages()
+            self.V.append(Vt)
             (state, reference), reward, done, _ = self.env.step(Vt)
             self.STATE = np.append(self.STATE, np.transpose([state * self.limits]), axis=1)
             self.TIME = np.append(self.TIME, Time)
@@ -94,6 +144,7 @@ class motor3phs(ControllerAbstract):
             self.P.append(P)
             self.Q.append(Q)
             
+            print(P, Q)
             self._ControlledElm.SetParameter("kw", P)
             self._ControlledElm.SetParameter("kvar", Q)
 
@@ -102,7 +153,8 @@ class motor3phs(ControllerAbstract):
                 self.STATE.columns = ["omega", "T" , "i_sa", "i_sb" , "i_sc", "i_sd" , "i_sq", "u_sa" , "u_sb", "u_sc" , "u_sd", "u_sq" , "epsilon", "u_dc"]
                 self.STATE["P"] = self.P
                 self.STATE["Q"] = self.Q
-                self.STATE["T x omega"] = (self.STATE["T"] * self.STATE["omega"] /  0.16666666666667) / 9.5488 
+                self.STATE["S_calc"] = np.sqrt(np.square(self.STATE["P"]) + np.square(self.STATE["Q"]))
+                self.STATE["S"] = (self.STATE["T"] * self.STATE["omega"] *  0.16666666666667/ 9.5488) 
                 self.STATE[["omega"]].plot()
                 self.STATE[["T"]].plot()
                 self.STATE[["i_sa", "i_sb" , "i_sc"]].plot()
@@ -110,7 +162,11 @@ class motor3phs(ControllerAbstract):
                 self.STATE[["epsilon"]].plot()
                 self.STATE[["u_dc"]].plot()
                 self.STATE[["P", "Q"]].plot()
-                self.STATE[["T x omega"]].plot()
+                self.STATE[["S", "S_calc"]].plot()
+                
+                self.V = pd.DataFrame(self.V)
+                self.V.columns = ["VinA", "VinB", "VinC"]
+                self.V.plot()
                 plt.show()
         return 0
 
@@ -118,7 +174,7 @@ class motor3phs(ControllerAbstract):
         Vp = self._ControlledElm.GetVariable('VoltagesMagAng', convert=False)[: 2 * self.nPhases]
         Vp = np.array(Vp)
         Vavg = sum(Vp[0::2]) / 3.0
-        print(Vavg)
+        print("Vavg", Vavg)
         Vp = [
             cmath.rect(Vavg, 0),
             cmath.rect(Vavg, -2* cmath.pi /3),

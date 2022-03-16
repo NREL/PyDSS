@@ -1,0 +1,8 @@
+["Transformer.test3p"]
+"FID" = "fault1"
+"bus_index" = 1
+"terminal_a" = [1]
+"terminal_b" = []
+"Fault resistance" = 0.0001
+"Fault start time (sec)" = 0.5
+"Fault duration (sec)" = 0.1

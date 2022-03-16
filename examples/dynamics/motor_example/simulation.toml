@@ -1,13 +1,13 @@
 [Project]
 "Start time" = "2020-07-13 00:00:00.0"
-"Simulation duration (min)" = 0.004
+"Simulation duration (min)" = 0.016667
 "Loadshape start time" = "2020-07-13 00:00:00.0"
-"Step resolution (sec)" = 0.0001
+"Step resolution (sec)" = 0.001
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
 "Control mode" = "Static"
 "Disable PyDSS controllers" = false
-"Simulation Type" = "QSTS"
+"Simulation Type" = "Dynamic"
 "Project Path" = "./examples/dynamics"
 "Active Project" = "motor_example"
 "Active Scenario" = "base_case"
