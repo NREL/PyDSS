@@ -87,15 +87,16 @@ class PyDSS_Model:
 
     def create_new_scenario(self, scenaio_name, transInfo, files, isSubstation, PVstandards, dynamic):
         tP, tQ, nLoads, lP, lQ = self.get_init_model_info(files["master"])
+     
         self.Files = files
         penPV_P = transInfo['PVp'] / transInfo['Lp']
         penPV_Q = transInfo['PVq'] / transInfo['Lq']
         PVtP = penPV_P * tP / nLoads * 1000.0
         PVtQ = penPV_Q * tQ / nLoads * 1000.0
-        mtrSize = transInfo['Mtr']/100.0 * lP / nLoads * 1000.0
+        mtrSize =  lP / nLoads * 1000.0
         controllers = {
-          "PvVoltageRideThru": {"Penetration": 1.0, "Size": [penPV_P, penPV_Q]},
-          "MotorStall": {"Penetration": 1.0, "Size": transInfo['Mtr']},
+          "PvVoltageRideThru": {"Penetration": penPV_P, "Size": [PVtP, PVtQ]},
+          "MotorStall": {"Penetration": transInfo['Mtr'] / 100.0, "Size": mtrSize},
         }
         pubPmult = (transInfo['Lp'] - transInfo['PVp']) / (tP - penPV_P * tP) / -1000.0
         pubQmult = (transInfo['Lq'] - transInfo['PVq']) / (tQ - penPV_Q * tQ) / -1000.0

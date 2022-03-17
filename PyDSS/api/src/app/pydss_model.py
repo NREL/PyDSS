@@ -121,7 +121,7 @@ def update_project(
                     der_mvar,
                     source_voltage,
                     data_service_url,  # @KAPIL NEED TO GET THIS INFORMATION FROM COSIM LAUNCHER
-                    motor_d= 10,
+                    motor_d,
                     pvcategory={"ieee-2018-catI": 5, "ieee-2018-catII": 10, "ieee-2018-catIII": 15, "ieee-2003": 20},
                     dynamic= True,
                     update_model=True,
@@ -227,6 +227,7 @@ def update_project(
                 "load": 'Loads.dss',  # TODO: needs to come from metadata
                 "motor": 'Motors_new.dss',
                 "PVsystem": 'PVSystems_new.dss',
+                "new_loads" : 'Loads_new.dss',
             },
             isSubstation=True,  # TODO: needs to come from metadata
             PVstandards=pvcategory,
@@ -297,7 +298,8 @@ if __name__ == '__main__':
             "b3936400-8748-4294-8256-0409b0bedaba",
             "d709b910-7f2a-4e74-b9b7-3fc7287e821b"
         ],
-        1.032, 20, 3, 20, 3, 0, 0, 33, 'https://api.naerm.team/data/bes'
+        1.032, 20, 3, 20, 3, 4, 0, 33, 'https://api.naerm.team/data/bes', 30,
+        {"ieee-2018-catI": 5, "ieee-2018-catII": 10, "ieee-2018-catIII": 15, "ieee-2003": 20}
     )
     print(a)
 

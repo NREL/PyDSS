@@ -72,7 +72,7 @@ class Optimizer:
 
 
         for file in all_dss_files:
-            if "Loads.dss" in file:
+            if "Loads_new.dss" in file:
                 print(file)
                 lines = open(file, "r").readlines()
                 lines_seen = []

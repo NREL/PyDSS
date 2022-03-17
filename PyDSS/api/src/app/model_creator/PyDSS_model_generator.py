@@ -47,12 +47,11 @@ class ModelGenerator:
                 conn = self.findPpty("conn", lineData)
                 kW = self.findPpty("kW", lineData, float)
                 loadkW = (1 - MotorSize / 100.0) * kW
-                motorkW = MotorSize / 100.0 * kW
-                kvar = self.findPpty("kvar", lineData, float)
-                motorkvar = 0.2 * motorkW
+                MotorSize = MotorSize + random.random() * 0.2 * MotorSize
+                motorkvar = 0.2 * MotorSize
                 bus = self.findPpty("bus1", lineData)
-                mdl = f"New {MotorName} conn={conn} bus1={bus} kV={kv} kW={motorkW} kvar={motorkvar} Phases={phases} Vminpu=0.0 Vmaxpu=1.2 model=1\n"
-                #self.handleMotorFile.write(mdl)
+                mdl = f"New {MotorName} conn={conn} bus1={bus} kV={kv} kW={MotorSize} kvar={motorkvar} Phases={phases} Vminpu=0.0 Vmaxpu=1.2 model=1\n"
+                self.handleMotorFile.write(mdl)
                 self.Motors[scenarioName][MotorName] = (motorkW, motorkvar)
             # else:
             #     self.handleMotorFile.write(line + "\n")
@@ -79,18 +78,23 @@ class ModelGenerator:
             PVname = f"Generator.pv_{gen}"
             mdl = f"New {PVname} conn={conn} bus1={bus} kV={kv} model=7 kW={pv_kva} kvar={pv_kvar} Phases={phases}\n"
             if pv_kva:
-                #self.handlePVsystemFile.write(mdl)
+                self.handlePVsystemFile.write(mdl)
                 self.PVsystems[scenarioName].append(PVname)
         return pv_kva
 
     def GenerateScenario(self, PV_penetration, PVsize, motor_load_penetration, MotorSize, FileTypes):
+     
         for feeder in self.paths:
             scenarioName = feeder.split("\\")[-1]
             self.Motors[scenarioName] = {}
             self.PVsystems[scenarioName] = []
+            new_load_file = os.path.join(feeder, FileTypes["new_loads"])
+            print(new_load_file)
             load_file = os.path.join(feeder, FileTypes["load"])
             motor_file = os.path.join(feeder, FileTypes["motor"])
             PV_file = os.path.join(feeder, FileTypes["PVsystem"])
+            self.handlenewLoadsFile = open(new_load_file, "w")
+            print(new_load_file)
             self.handleMotorFile = open(motor_file, "w")
             self.handlePVsystemFile = open(PV_file, "w")
             totalLoad = 0
@@ -98,8 +102,13 @@ class ModelGenerator:
             with open(load_file, 'r') as f:
                 for line in f:
                     if random.random() < motor_load_penetration:
+                        print("motor_load_penetration: ", motor_load_penetration)
                         Motors = self.createMotor(line, MotorSize, scenarioName)
+                        
                         totalLoad += Motors
+                    else:
+                        self.handlenewLoadsFile.write(line)
+                        
                     if random.random() < PV_penetration:
                         PVsystems = self.createPVsystem(line, PVsize, scenarioName)
                         totalGeneration += PVsystems
@@ -107,6 +116,8 @@ class ModelGenerator:
             self.handleMotorFile.close()
             self.handlePVsystemFile.flush()
             self.handlePVsystemFile.close()
+            self.handlenewLoadsFile.flush()
+            self.handlenewLoadsFile.close()
             self.createMasterFile(feeder, FileTypes)
             if self.subpath:
                 self.createMasterFile(self.subpath, FileTypes)
@@ -120,15 +131,19 @@ class ModelGenerator:
         new_contents = []
         f.close()
         for i, line in enumerate(contents):
-            new_contents.append(line)
+   
             if line.endswith('Loads.dss\n'):
+                new_line = line.replace('Loads.dss', "Loads_new.dss")
+                new_contents.append(new_line)
                 new_line = line.replace('Loads.dss', FileTypes["motor"])
                 new_contents.append(new_line)
                 new_line = line.replace('Loads.dss', FileTypes["PVsystem"])
                 new_contents.append(new_line)
             elif line.startswith('Set Voltagebases'):
+                new_contents.append(line)
                 new_contents.append('BatchEdit Fuse.. enabled = false\n')
-            
+            else:
+                new_contents.append(line)
         # xContents = []
         # for i, line in enumerate(new_contents):
         #     if not ("Loads.dss" in line or "PVSystems.dss" in line):
