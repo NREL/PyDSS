@@ -52,7 +52,7 @@ class ModelGenerator:
                 motorkvar = 0.2 * motorkW
                 bus = self.findPpty("bus1", lineData)
                 mdl = f"New {MotorName} conn={conn} bus1={bus} kV={kv} kW={motorkW} kvar={motorkvar} Phases={phases} Vminpu=0.0 Vmaxpu=1.2 model=1\n"
-                self.handleMotorFile.write(mdl)
+                #self.handleMotorFile.write(mdl)
                 self.Motors[scenarioName][MotorName] = (motorkW, motorkvar)
             # else:
             #     self.handleMotorFile.write(line + "\n")
@@ -117,24 +117,25 @@ class ModelGenerator:
 
         f = open(masterFile, "r")
         contents = f.readlines()
-        new_contents = copy.copy(contents)
+        new_contents = []
         f.close()
         for i, line in enumerate(contents):
+            new_contents.append(line)
             if line.endswith('Loads.dss\n'):
                 new_line = line.replace('Loads.dss', FileTypes["motor"])
-                new_contents.insert(i, new_line)
+                new_contents.append(new_line)
                 new_line = line.replace('Loads.dss', FileTypes["PVsystem"])
-                new_contents.insert(i+1, new_line)
-            if line.startswith('Set Voltagebases'):
-                new_contents.insert(i+2, 'BatchEdit Fuse.. enabled = false\n')
-
-        xContents = []
-        for i, line in enumerate(new_contents):
-            if not ("Loads.dss" in line or "PVSystems.dss" in line):
-                xContents.append(line)
+                new_contents.append(new_line)
+            elif line.startswith('Set Voltagebases'):
+                new_contents.append('BatchEdit Fuse.. enabled = false\n')
+            
+        # xContents = []
+        # for i, line in enumerate(new_contents):
+        #     if not ("Loads.dss" in line or "PVSystems.dss" in line):
+        #         xContents.append(line)
 
         f = open(newMasterFile, "w")
-        new_contents = "".join(xContents)
+        new_contents = "".join(new_contents)
         f.write(new_contents)
         f.close()
 

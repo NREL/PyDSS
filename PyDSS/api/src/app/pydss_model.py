@@ -233,7 +233,7 @@ def update_project(
             dynamic=True
         )
 
-        O = Optimizer(project_path, new_master_file, new_master_file)
+        O = Optimizer(project_path, new_master_file, "test.dss")
         pmult, qmult = O.Optimize(loadflow_vpu, loadflow_P, loadflow_Q)
         print("P multiplier: ", pmult)
         print("Q multiplier: ", qmult)
