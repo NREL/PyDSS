@@ -31,7 +31,7 @@ from PyDSS.utils.simulation_utils import (
     create_datetime_index_from_settings,
     create_loadshape_pmult_dataframe_for_simulation,
 )
-from PyDSS.utils.timing_utils import Timer
+from PyDSS.utils.timing_utils import Timer, timer_stats_collector, track_timing
 from PyDSS.value_storage import ValueContainer, ValueByNumber
 from PyDSS.metrics import (
     OpenDssPropertyMetric,
@@ -51,7 +51,7 @@ class ResultData:
 
     def __init__(self, settings: SimulationSettingsModel, system_paths, dss_objects,
                  dss_objects_by_class, dss_buses, dss_solver, dss_command,
-                 dss_instance, timer_stats):
+                 dss_instance):
         self._logger = logger
         self._dss_solver = dss_solver
         self._results = {}
@@ -63,7 +63,6 @@ class ResultData:
         self._summed_element_metrics = {}
         self._settings = settings
         self._cur_step = 0
-        self._stats = timer_stats
         self._current_results = {}
 
         self._dss_command = dss_command
@@ -227,6 +226,7 @@ class ResultData:
     def CurrentResults(self):
         return self._current_results
 
+    @track_timing(timer_stats_collector)
     def UpdateResults(self, store_nan=False):
         self._current_results.clear()
 
@@ -236,15 +236,14 @@ class ResultData:
         self._frequency_dataset.write_value([self._dss_solver.getFrequency()])
         self._mode_dataset.write_value([self._dss_solver.getMode()])
 
-        with Timer(self._stats, "Total"):
-            for metric in self._iter_metrics():
-                with Timer(self._stats, metric.label()):
-                    data = metric.append_values(self._cur_step, store_nan=store_nan)
+        for metric in self._iter_metrics():
+            with Timer(timer_stats_collector, metric.label()):
+                data = metric.append_values(self._cur_step, store_nan=store_nan)
 
-                if isinstance(data, dict):
-                    # TODO: reconsider
-                    # Something is only returned for OpenDSS properties
-                    self._current_results.update(data)
+            if isinstance(data, dict):
+                # TODO: reconsider
+                # Something is only returned for OpenDSS properties
+                self._current_results.update(data)
 
         self._cur_step += 1
         return self._current_results

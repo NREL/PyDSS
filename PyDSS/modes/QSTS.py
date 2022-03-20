@@ -3,6 +3,7 @@ from datetime import timedelta
 from PyDSS.modes.solver_base import solver_base
 from PyDSS.simulation_input_models import SimulationSettingsModel
 from PyDSS.utils.dss_utils import get_load_shape_resolution_secs
+from PyDSS.utils.timing_utils import timer_stats_collector, track_timing
 
 
 class QSTS(solver_base):
@@ -24,6 +25,7 @@ class QSTS(solver_base):
         self._dssSolution.DblHour(start_time_hours)
         return
 
+    @track_timing(timer_stats_collector)
     def SolveFor(self, mStartTime, mTimeStep):
         Hour = int(mStartTime/60)
         Min = mStartTime%60
@@ -32,6 +34,7 @@ class QSTS(solver_base):
         self._dssSolution.Solve()
         return self._dssSolution.Converged()
 
+    @track_timing(timer_stats_collector)
     def IncStep(self):
         self._dssSolution.StepSize(self._sStepRes)
         self._dssSolution.Solve()
@@ -40,11 +43,13 @@ class QSTS(solver_base):
         self._Second = (self._dssSolution.DblHour() % 1) * 60 * 60
         return self._dssSolution.Converged()
 
+    @track_timing(timer_stats_collector)
     def reSolve(self):
         self._dssSolution.StepSize(0)
         self._dssSolution.SolveNoControl()
         return self._dssSolution.Converged()
 
+    @track_timing(timer_stats_collector)
     def Solve(self):
         self._dssSolution.StepSize(0)
         self._dssSolution.Solve()
