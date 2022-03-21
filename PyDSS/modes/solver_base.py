@@ -1,26 +1,28 @@
 from datetime import datetime, timedelta
+import abc
+import logging
 import math
 
 from PyDSS.common import DATE_FORMAT
-from PyDSS.simulation_input_models import SimulationSettingsModel
+from PyDSS.simulation_input_models import ProjectModel
 
-class solver_base:
-    def __init__(self, dssInstance, settings: SimulationSettingsModel, Logger):
+class solver_base(abc.ABC):
+    def __init__(self, dssInstance, settings: ProjectModel):
 
         self._settings = settings
-        self.pyLogger = Logger
+        self.pyLogger = logging.getLogger(__name__)
 
-        self._Time = settings.project.start_time
-        self._Loadshape_init_time = settings.project.loadshape_start_time
+        self._Time = settings.start_time
+        self._Loadshape_init_time = settings.loadshape_start_time
         time_offset_days = (self._Time - self._Loadshape_init_time).days
         time_offset_seconds = (self._Time - self._Loadshape_init_time).seconds
 
         self._StartTime = self._Time
-        self._EndTime = self._Time + timedelta(minutes=settings.project.simulation_duration_min)
+        self._EndTime = self._Time + timedelta(minutes=settings.simulation_duration_min)
 
         StartDay = time_offset_days
         StartTimeMin = time_offset_seconds / 60.0
-        sStepResolution = settings.project.step_resolution_sec
+        sStepResolution = settings.step_resolution_sec
 
         self.StartDay = self._StartTime.timetuple().tm_yday
         self.EndDay = self._EndTime.timetuple().tm_yday
@@ -34,7 +36,7 @@ class solver_base:
 
         #self._dssSolution.DblHour()
         self.reSolve()
-        self.pyLogger.info("%s solver setup complete", settings.project.simulation_type)
+        self.pyLogger.info("%s solver setup complete", settings.simulation_type)
 
     def setFrequency(self, frequency):
         self._dssSolution.Frequency(frequency)
@@ -71,19 +73,24 @@ class solver_base:
 
     @property
     def MaxIterations(self):
-        return self._settings.project.max_control_iterations
+        return self._settings.max_control_iterations
 
+    @abc.abstractmethod
     def SolveFor(self, mStartTime, mTimeStep):
-        raise Exception("Implement the 'SolveFor' function in the child class")
+        """Run SolveFor"""
 
+    @abc.abstractmethod
     def reset(self):
-        raise Exception("Implement the 'reset' function in the child class")
+        """Reset the solver"""
 
+    @abc.abstractmethod
     def reSolve(self):
-        raise Exception("Implement the 'reSolve' function in the child class")
+        """Run a SolveNoControl"""
 
+    @abc.abstractmethod
     def Solve(self):
-        raise Exception("Implement the 'Solve' function in the child class")
+        """Run a Solve"""
 
+    @abc.abstractmethod
     def IncStep(self):
-        raise Exception("Implement the 'IncStep' function in the child class")
+        """Increment the simulation time step"""

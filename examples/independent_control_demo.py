@@ -15,10 +15,7 @@ def main():
         max_control_iterations=50,
         error_tolerance=0.0001,
     )
-    dss.run_command("compile opendss_models/Master.dss")
-    dss.Solution.Mode(0)
-    dss.utils.run_command("Set ControlMode={}".format(settings.control_mode.value))
-    dss.Solution.MaxControlIterations(settings.max_control_iterations)
+    dss.run_command("compile tests/data/project/DSSfiles/Master_Spohn_existing_VV.dss")
 
     volt_var_model = PvControllerModel(
         Control1="VVar",

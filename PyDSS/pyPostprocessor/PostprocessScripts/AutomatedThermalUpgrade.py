@@ -21,7 +21,7 @@ import scipy.spatial.distance as ssd
 from sklearn.cluster import AgglomerativeClustering
 import matplotlib.image as mpimg
 from PyDSS.pyPostprocessor.PostprocessScripts.postprocess_thermal_upgrades import postprocess_thermal_upgrades
-from PyDSS.utils.utils import iter_elements, check_redirect
+from PyDSS.utils.dss_utils import iter_elements, check_redirect
 plt.rcParams.update({'font.size': 14})
 
 # For an overloaded line if a sensible close enough line code is available then simply change the line code

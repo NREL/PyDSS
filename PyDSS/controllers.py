@@ -13,7 +13,7 @@ from PyDSS.SolveMode import get_solver_from_simulation_type
 from PyDSS.common import SimulationType
 from PyDSS.dssInstance import OpenDSS, CONTROLLER_PRIORITIES
 from PyDSS.exceptions import InvalidConfiguration
-from PyDSS.modes.solver_base import SolverBase
+from PyDSS.modes.solver_base import solver_base
 from PyDSS.pyControllers.Controllers.PvController import PvController
 from PyDSS.pyControllers.Controllers.StorageController import StorageController
 from PyDSS.simulation_input_models import ProjectModel
@@ -241,7 +241,7 @@ class CircuitElementController:
 class ControllerManager:
     """Provides ability to run control algorithms on circuit elements."""
 
-    def __init__(self, controllers: dict, solver: SolverBase, max_control_iterations: int, error_tolerance: float):
+    def __init__(self, controllers: dict, solver: solver_base, max_control_iterations: int, error_tolerance: float):
         self._controllers = controllers
         self._max_control_iterations = max_control_iterations
         self._error_tolerance = error_tolerance
@@ -265,6 +265,7 @@ class ControllerManager:
                 controller = controller_class(
                     element,
                     circuit_element_controller.controller_model.dict(by_alias=True),
+                    dss,
                     elements,
                     solver,
                 )
