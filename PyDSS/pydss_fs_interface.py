@@ -438,7 +438,7 @@ class PyDssZipFileInterface(PyDssArchiveFileInterfaceBase):
             path = self.normalize_path(path)
         data = self._zip.read(path)
         ext = os.path.splitext(path)[1]
-        if ext not in (".h5", ".feather"):
+        if ext != ".h5":
             data = data.decode("utf-8")
         return data
 
