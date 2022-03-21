@@ -3,7 +3,8 @@ import math
 import abc
 from collections import namedtuple
 
-from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
+from PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
+from PyDSS.utils.timing_utils import timer_stats_collector, track_timing
 
 
 VVarSettings = namedtuple("VVarSettings", ["VmeaMethod", "uMin", "uMax", "uDbMin", "uDbMax", "kVBase"])
@@ -114,6 +115,7 @@ class PvController(ControllerAbstract):
     def debugInfo(self):
         return [self.__Settings['Control{}'.format(i+1)] for i in range(3)]
 
+    @track_timing(timer_stats_collector)
     def Update(self, Priority, Time, Update):
         self.TimeChange = self.Time != (Priority, Time)
         self.Time = (Priority, Time)
@@ -136,6 +138,7 @@ class PvController(ControllerAbstract):
                 return 0
         return self.update[Priority]()
 
+    @track_timing(timer_stats_collector)
     def VWcontrol(self):
         """Volt / Watt  control implementation
         """
@@ -179,6 +182,7 @@ class PvController(ControllerAbstract):
         self.oldPcalc = Ppv
         return Error
 
+    @track_timing(timer_stats_collector)
     def CutoffControl(self):
         """Over voltage trip implementation
         """
@@ -201,6 +205,7 @@ class PvController(ControllerAbstract):
 
         return 0
 
+    @track_timing(timer_stats_collector)
     def CPFcontrol(self):
         """Constant power factor implementation
         """
@@ -229,6 +234,7 @@ class PvController(ControllerAbstract):
         self.__ControlledElm.SetParameter('pf', str(-PFset))
         return Error
 
+    @track_timing(timer_stats_collector)
     def VPFcontrol(self):
         """Variable power factor control implementation
         """
@@ -265,6 +271,7 @@ class PvController(ControllerAbstract):
 
         return 0
 
+    @track_timing(timer_stats_collector)
     def VVARcontrol(self):
         """Volt / var control implementation
         """
