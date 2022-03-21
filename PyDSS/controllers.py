@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field, validator
 from PyDSS.SolveMode import get_solver_from_simulation_type
 from PyDSS.common import SimulationType
 from PyDSS.dssInstance import OpenDSS, CONTROLLER_PRIORITIES
-from PyDSS.exceptions import InvalidConfiguration
+from PyDSS.exceptions import InvalidConfiguration, OpenDssConvergenceError
 from PyDSS.modes.solver_base import solver_base
 from PyDSS.pyControllers.Controllers.PvController import PvController
 from PyDSS.pyControllers.Controllers.StorageController import StorageController
@@ -296,7 +296,7 @@ class ControllerManager:
                         priority_has_converged = True
                         break
                     if not self._solver.reSolve():
-                        raise Exception(f"OpenDSS did not converge after update")
+                        raise OpenDssConvergenceError(f"OpenDSS did not converge after update")
                 if not priority_has_converged:
                     has_converged = False
 
