@@ -85,7 +85,7 @@ class HybridController(ControllerAbstract):
             dP = (Ppv - Pcalc) * 0.5 / self.__dampCoef + (self.oldPcalc - Ppv) * 0.1 / self.__dampCoef
             Pcalc = Ppv - dP
             self.Pmppt = min(self.Pmppt * Pcalc / Ppv, 100)
-            self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
+            self.__ControlledElm.SetParameter('%Pmpp', self.Pmppt)
             self.pf = math.cos(math.atan(Qpv / Pcalc))
             if Qpv < 0:
                 self.pf = -self.pf
@@ -101,7 +101,7 @@ class HybridController(ControllerAbstract):
         uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[::2])
         uCut = self.__Settings['%UCutoff']
         if uIn >= uCut:
-            self.__ControlledElm.SetParameter('pctPmpp', 0)
+            self.__ControlledElm.SetParameter('%Pmpp', 0)
             self.__ControlledElm.SetParameter('pf', 1)
             if self.__vDisconnected:
                 return 0
@@ -110,7 +110,7 @@ class HybridController(ControllerAbstract):
                 return self.__Prated
 
         if self.TimeChange and self.__vDisconnected and uIn < uCut:
-            self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
+            self.__ControlledElm.SetParameter('%Pmpp', self.Pmppt)
             self.__ControlledElm.SetParameter('pf', self.pf)
             self.__vDisconnected = False
             return self.__Prated
@@ -210,7 +210,7 @@ class HybridController(ControllerAbstract):
             if Pcalc > Plim and self.TimeChange is False:
                 self.Pmppt = Plim / self.__Prated * self.__Srated * 100
                 Pcalc = Plim
-            self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
+            self.__ControlledElm.SetParameter('%Pmpp', self.Pmppt)
         else:
             pass
 

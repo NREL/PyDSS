@@ -339,7 +339,7 @@ class EdLiFoControl(AbstractPostprocess):
         self.export_path = os.path.join(self.config["Outputs"])
         self.monitored_lines = get_monitored_line_dataframe("all")
         self.pctpmpp_step = 5
-        self.curtail_option = "pctpmpp"  # can be 'kva' or 'pctpmpp', default='pctpmpp'
+        self.curtail_option = "%Pmpp"  # can be 'kva' or '%Pmpp', default='%Pmpp'
 
         self.curtailment_record = {}
         self.pvbus_voltage_record = {}
@@ -438,12 +438,12 @@ class EdLiFoControl(AbstractPostprocess):
                 dss.Circuit.SetActiveElement(f"PVSystem.{pv_sys}")
                 self.init_power_PV = dss.CktElement.Powers()
                 self.init_net_power_PV = sum(self.init_power_PV[::2])
-                if dss.Properties.Value("pctPmpp") == "":
+                if dss.Properties.Value("%Pmpp") == "":
                     self.init_pctpmpp[pv_sys] = 100
                     oldpctpmpp = 100
-                    dss.run_command(f"Edit PVSystem.{pv_sys} pctPmpp=100")
+                    dss.run_command(f"Edit PVSystem.{pv_sys} %Pmpp=100")
                 else:
-                    self.init_pctpmpp[pv_sys] = float(dss.Properties.Value("pctPmpp"))
+                    self.init_pctpmpp[pv_sys] = float(dss.Properties.Value("%Pmpp"))
                     self.init_kVA[pv_sys] = float(dss.Properties.Value("kVA"))
                     oldpctpmpp = self.init_pctpmpp[pv_sys]
 
@@ -459,18 +459,18 @@ class EdLiFoControl(AbstractPostprocess):
 
                 dss.Circuit.SetActiveElement(f"PVSystem.{pv_sys}")
 
-                if self.curtail_option == "pctpmpp":
+                if self.curtail_option == "%Pmpp":
 
-                    self.logger.info(f"Old pctpmpp: {oldpctpmpp}")
+                    self.logger.info(f"Old %Pmpp: {oldpctpmpp}")
                     newpctpmpp = max(oldpctpmpp - self.pctpmpp_step, 0)
 
-                    dss.run_command(f"Edit PVSystem.{pv_sys} pctPmpp={newpctpmpp}")
+                    dss.run_command(f"Edit PVSystem.{pv_sys} %Pmpp={newpctpmpp}")
                     if newpctpmpp == 0:
                         kvarlimit = 0
                         dss.run_command(f"Edit PVSystem.{pv_sys} kvarLimit={kvarlimit}")
-                    npc = float(dss.Properties.Value("pctPmpp"))
-                    self.logger.info(f"New pctpmpp: {npc}")
-                    self.PV_kW_curtailed[pv_sys + "PctPmpp"] = newpctpmpp
+                    npc = float(dss.Properties.Value("%Pmpp"))
+                    self.logger.info(f"New %Pmpp: {npc}")
+                    self.PV_kW_curtailed[pv_sys + "%Pmpp"] = newpctpmpp
                 else:
                     self.PV_curtailed[pv_sys] += min(
                         self.curtailment_size, self.pvs_df.loc[pv_sys, "kVARated"]
@@ -487,7 +487,7 @@ class EdLiFoControl(AbstractPostprocess):
                 )
                 self.pvs_df = dss.utils.pvsystems_to_dataframe()
 
-                if self.curtail_option == "pctpmpp":
+                if self.curtail_option == "%Pmpp":
                     oldpctpmpp = newpctpmpp
                     if self.affected_buses and oldpctpmpp == 0:
                         self.comment = (
@@ -519,7 +519,7 @@ class EdLiFoControl(AbstractPostprocess):
                 inipctpmpp = self.init_pctpmpp[pv_sys]
                 inikva = self.init_kVA[pv_sys]
                 dss.run_command(
-                    f"Edit PVSystem.{pv_sys} pctPmpp={inipctpmpp} kVA={inikva}"
+                    f"Edit PVSystem.{pv_sys} %Pmpp={inipctpmpp} kVA={inikva}"
                 )
 
     def get_curtailment_candidates(self):
@@ -580,7 +580,7 @@ class EdLiFoControl(AbstractPostprocess):
             self.PV_kW_curtailed[pv_sys + "NetCurt"] = 0
             self.PV_kW_curtailed[pv_sys + "kWCurt"] = 0
             self.PV_kW_curtailed[pv_sys + "PctCurt"] = 0
-            self.PV_kW_curtailed[pv_sys + "PctPmpp"] = 100
+            self.PV_kW_curtailed[pv_sys + "%Pmpp"] = 100
 
         self.overloads_df, self.affected_buses = check_line_overloads(
             self.monitored_lines
