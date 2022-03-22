@@ -1,0 +1,74 @@
+[Project]
+"Start time" = "1/1/2020 00:00:00"
+"Simulation duration (min)" = 1440.0
+"Step resolution (sec)" = 0
+"Loadshape start time" = "1/1/2020 00:00:00"
+"Max Control Iterations" = 50
+"Error tolerance" = 0.001
+"Control mode" = "Static"
+"Disable PyDSS controllers" = false
+"Simulation Type" = "QSTS"
+"Project Path" = "C:\\Users\\alatif\\Documents\\GitHub\\PyDSS\\PyDSS\\api\\src\\tmp_pydss_project"
+"Active Project" = "project1"
+"Active Scenario" = "scenario1"
+"DSS File" = "new_Master.dss"
+"DSS File Absolute Path" = false
+"Return Results" = false
+[[Project.Scenarios]]
+name = "scenario1"
+post_process_infos = []
+
+[Exports]
+"Export Mode" = "byClass"
+"Export Style" = "Single file"
+"Export Format" = "h5"
+"Export Compression" = false
+"Export Iteration Order" = "ValuesByPropertyAcrossElements"
+"Export Elements" = true
+"Export Data Tables" = true
+"Export Data In Memory" = true
+"HDF Max Chunk Bytes" = 32768
+"Export Event Log" = true
+"Log Results" = false
+"Result Container" = "ResultData"
+
+[Frequency]
+"Enable frequency sweep" = false
+"Fundamental frequency" = 60
+"Start frequency" = 1.0
+"End frequency" = 15.0
+"frequency increment" = 2.0
+"Neglect shunt admittance" = false
+"Percentage load in series" = 50.0
+
+[Helics]
+"Co-simulation Mode" = true
+"Iterative Mode" = false
+"Error tolerance" = 0.0001
+"Max co-iterations" = 15
+Broker = "mainbroker"
+"Broker port" = 0
+"Federate name" = "PyDSS"
+"Time delta" = 0.01
+"Core type" = "zmq"
+Uninterruptible = true
+"Helics logging level" = 5
+
+[Logging]
+"Logging Level" = "INFO"
+"Log to external file" = true
+"Display on screen" = true
+"Clear old log file" = false
+"Pre-configured logging" = false
+
+[MonteCarlo]
+"Number of Monte Carlo scenarios" = -1
+
+[Plots]
+"Create dynamic plots" = false
+"Open plots in browser" = true
+
+[Profiles]
+"Use profile manager" = false
+"Profile store path" = ""
+"Profile mapping" = ""

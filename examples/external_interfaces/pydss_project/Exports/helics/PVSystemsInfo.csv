@@ -1,0 +1,6 @@
+,phases,bus1,kv,irradiance,Pmpp,pctPmpp,Temperature,pf,conn,kvar,kVA,%Cutin,%Cutout,EffCurve,P-TCurve,%R,%X,model,Vminpu,Vmaxpu,Balanced,LimitCurrent,yearly,daily,duty,Tyearly,Tdaily,Tduty,class,UserModel,UserData,debugtrace,VarFollowInverter,kvarLimit,DutyStart,WattPriority,spectrum,basefreq,enabled,like
+PVSystem.pvgnem_mpx000635970,1,110-PV.1,0.24,1,20,100,25,1,wye,0,20,20,20,,,50,0,1,0.9,1.1,No,No,pv_MPX000635970,,,,,,1,,(),NO,No,20,0,NO,,60,True,
+PVSystem.pvgnem_mpx000460267,1,111-PV.1,0.24,1,8.5,100,25,1,wye,0,8.5,20,20,,,50,0,1,0.9,1.1,No,No,pv_MPX000460267,,,,,,1,,(),NO,No,8.5,0,NO,,60,True,
+PVSystem.pvgnem_mpx000594341,1,113-PV.1,0.24,1,4.6,100,25,1,wye,0,4.6,20,20,,,50,0,1,0.9,1.1,No,No,pv_MPX000594341,,,,,,1,,(),NO,No,4.6,0,NO,,60,True,
+PVSystem.pvgui_mpx000637601,1,112-PV.1,0.24,1.0107,5.5,100,25,1,wye,0,5.5,20,20,,,50,0,1,0.9,1.1,No,No,pv_MPX000637601,,,,,,1,,(),NO,No,5.5,0,NO,,60,True,
+PVSystem.pvgui_mpx000460267,1,111-PV.1,0.24,0.925303,3.9,100,25,1,wye,0,3.9,20,20,,,50,0,1,0.9,1.1,No,No,pv_MPX000460267,,,,,,1,,(),NO,No,3.9,0,NO,,60,True,

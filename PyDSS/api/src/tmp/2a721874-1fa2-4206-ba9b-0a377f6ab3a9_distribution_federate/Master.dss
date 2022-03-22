@@ -1,0 +1,19 @@
+Clear
+
+New Circuit.feeder_p6udt791-p6uhs2_1247x bus1=p6udt791-p6uhs2_1247x pu=1.03 basekV=12.47 R1=1e-05 X1=1e-05 R0=1e-05 X0=1e-05
+
+Redirect LineCodes.dss
+Redirect Lines.dss
+Redirect Transformers.dss
+Redirect Loads.dss
+Redirect Capacitors.dss
+
+Set Voltagebases=[0.12, 0.208, 0.48, 7.2, 12.47]
+
+Calcvoltagebases
+
+Buscoords Buscoords.dss
+set maxcontroliter=50
+
+Solve
+Plot Profile Phases=All

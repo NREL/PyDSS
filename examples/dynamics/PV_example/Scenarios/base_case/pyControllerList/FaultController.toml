@@ -3,6 +3,6 @@
 "bus_index" = 1
 "terminal_a" = [1]
 "terminal_b" = []
-"Fault resistance" = 1.0
-"Fault start time (sec)" = 30.0
+"Fault resistance" = 0.001
+"Fault start time (sec)" = 40.0
 "Fault duration (sec)" = 0.1

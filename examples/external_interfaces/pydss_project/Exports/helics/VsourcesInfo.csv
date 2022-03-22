@@ -1,0 +1,2 @@
+,Daily,Duty,Isc1,Isc3,MVAsc1,MVAsc3,R0,R1,ScanType,Sequence,X0,X1,Yearly,Z0,Z1,Z2,angle,baseMVA,basefreq,basekv,bus1,bus2,enabled,frequency,like,phases,pu,puZ0,puZ1,puZ2,spectrum,x0r0,x1r1
+Vsource.source,,,7.1996E7,7.1996E7,1.555E6,1.555E6,0,0,Pos,Pos,0.0001,0.0001,s_voltage,"['0', '0.0001']","['0', '0.0001']","['0', '0.0001']",0,100,60,12.47,sourcebus.1,sourcebus.0.0.0,True,60,,3,1.0,"['0', '0.000064308309']","['0', '0.000064308309']","['0', '0.000064308309']",defaultvsource,3,4

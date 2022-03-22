@@ -1,0 +1,72 @@
+New Linecode.1P_UG_AL_1/0_Brenau_2 units=km nphases=2 Faultrate=0.1 Rmatrix=(0.9149 0.3744 | 0.3744 0.9149 ) Xmatrix=(0.4972667 0.3969667 | 0.3969667 0.4972667 ) Cmatrix=(36.4998 -16.313099999999995 | -16.313099999999995 36.4998 ) normamps=205.0
+
+New Linecode.1P_UG_AL_2/0_Converse_2 units=km nphases=2 Faultrate=0.1 Rmatrix=(0.7793333 0.3503333 | 0.3503333 0.7793333 ) Xmatrix=(0.4209333 0.3231333 | 0.3231333 0.4209333 ) Cmatrix=(37.42527 -17.11183 | -17.11183 37.42527 ) normamps=233.0
+
+New Linecode.1P_OH_AL_2/0_Rucina_2 units=km nphases=2 Faultrate=0.1 Rmatrix=(0.7166333333333332 0.28753333333333336 | 0.28753333333333336 0.7166333333333332 ) Xmatrix=(0.28883333333333333 0.1932333333333333 | 0.1932333333333333 0.28883333333333333 ) Cmatrix=(39.3595 -19.342100000000002 | -19.342100000000002 39.3595 ) normamps=115.0
+
+New Linecode.1P_OH_AL_4/0_Zuzara_2 units=km nphases=2 Faultrate=0.1 Rmatrix=(0.4728 0.20209999999999997 | 0.20209999999999997 0.4728 ) Xmatrix=(0.21353333333333335 0.12473333333333335 | 0.12473333333333335 0.21353333333333335 ) Cmatrix=(41.3578 -20.447400000000002 | -20.447400000000002 41.3578 ) normamps=115.0
+
+New Linecode.1P_UG_AL_4/0_Sweetbriar_2 units=km nphases=2 Faultrate=0.1 Rmatrix=(0.5462333 0.2755333 | 0.2755333 0.5462333 ) Xmatrix=(0.2976 0.2043 | 0.2043 0.2976 ) Cmatrix=(39.3278 -18.6046 | -18.6046 39.3278 ) normamps=301.0
+
+New Linecode.1P_OH_AL_4_Periwinkle_2 units=km nphases=2 Faultrate=0.1 Rmatrix=(1.7609666666666666 0.3959666666666668 | 0.3959666666666668 1.7609666666666666 ) Xmatrix=(0.6698333333333334 0.5686333333333333 | 0.5686333333333333 0.6698333333333334 ) Cmatrix=(36.92503333333334 -17.558966666666667 | -17.558966666666667 36.92503333333334 ) normamps=115.0
+
+New Linecode.1P_UG_AL_1 units=km nphases=1 Faultrate=0.1 Rmatrix=(0.9176999999999998 ) Xmatrix=(0.9546999999999999 ) Cmatrix=(158.492 ) normamps=151.0
+
+New Linecode.1P_OH_AL_ACSR_#2_Sparrow_1 units=km nphases=1 Faultrate=0.1 Rmatrix=(1.0412 ) Xmatrix=(0.7627 ) Cmatrix=(7.69673 ) normamps=165.0
+
+New Linecode.3P_UG_AL_3 units=km nphases=3 Faultrate=0.1 Rmatrix=(0.3289333 0.05923333 0.05923333 | 0.05923333 0.3289333 0.05923333 | 0.05923333 0.05923333 0.3289333 ) Xmatrix=(0.9076 0.6647 0.6647 | 0.6647 0.9076 0.6647 | 0.6647 0.6647 0.9076 ) Cmatrix=(120.289 -59.026 -59.026 | -59.026 120.289 -59.026 | -59.026 -59.026 120.289 ) normamps=295.0
+
+New Linecode.3P_OH_AL_ACSR_4/0_Penguin_3 units=km nphases=3 Faultrate=0.1 Rmatrix=(0.3635667 0.09006667 0.09006667 | 0.09006667 0.3635667 0.09006667 | 0.09006667 0.09006667 0.3635667 ) Xmatrix=(0.6385333 0.2202333 0.2202333 | 0.2202333 0.6385333 0.2202333 | 0.2202333 0.2202333 0.6385333 ) Cmatrix=(7.448267 -3.1846329999999994 -3.1846329999999994 | -3.1846329999999994 7.448267 -3.1846329999999994 | -3.1846329999999994 -3.1846329999999994 7.448267 ) normamps=325.0
+
+New Linecode.3P_UG_AL_350kcmil_3_1 units=km nphases=3 Faultrate=0.1 Rmatrix=(0.3388667 0.1744667 0.1744667 | 0.1744667 0.3388667 0.1744667 | 0.1744667 0.1744667 0.3388667 ) Xmatrix=(0.5126 0.2912 0.2912 | 0.2912 0.5126 0.2912 | 0.2912 0.2912 0.5126 ) Cmatrix=(164.365 -81.63499999999999 -81.63499999999999 | -81.63499999999999 164.365 -81.63499999999999 | -81.63499999999999 -81.63499999999999 164.365 ) normamps=370.0
+
+New Linecode.padswitch_1 units=km nphases=1 Faultrate=0.1 Rmatrix=(0.001 ) Xmatrix=(0.001 ) Cmatrix=(3.608924 ) normamps=151.0
+
+New Linecode.padswitch_1_2 units=km nphases=1 Faultrate=0.1 Rmatrix=(0.001 ) Xmatrix=(0.001 ) Cmatrix=(3.608924 ) normamps=301.0
+
+New Linecode.padswitch_1_4 units=km nphases=1 Faultrate=0.1 Rmatrix=(0.001 ) Xmatrix=(0.001 ) Cmatrix=(3.608924 ) normamps=165.0
+
+New Linecode.padswitch_1_5 units=km nphases=1 Faultrate=0.1 Rmatrix=(0.001 ) Xmatrix=(0.001 ) Cmatrix=(3.608924 ) normamps=115.0
+
+New Linecode.padswitch_1_1 units=km nphases=1 Faultrate=0.1 Rmatrix=(0.001 ) Xmatrix=(0.001 ) Cmatrix=(3.608924 ) normamps=205.0
+
+New Linecode.padswitch_1_3 units=km nphases=1 Faultrate=0.1 Rmatrix=(0.001 ) Xmatrix=(0.001 ) Cmatrix=(3.608924 ) normamps=233.0
+
+New Linecode.padswitch_3 units=km nphases=3 Faultrate=0.1 Rmatrix=(0.001 0.0 0.0 | 0.0 0.001 0.0 | 0.0 0.0 0.001 ) Xmatrix=(0.001 0.0 0.0 | 0.0 0.001 0.0 | 0.0 0.0 0.001 ) Cmatrix=(3.499563 -0.1093613 -0.1093613 | -0.1093613 3.499563 -0.1093613 | -0.1093613 -0.1093613 3.499563 ) normamps=295.0
+
+New Linecode.padswitch_3_4 units=km nphases=3 Faultrate=0.1 Rmatrix=(0.001 0.0 0.0 | 0.0 0.001 0.0 | 0.0 0.0 0.001 ) Xmatrix=(0.001 0.0 0.0 | 0.0 0.001 0.0 | 0.0 0.0 0.001 ) Cmatrix=(3.499563 -0.1093613 -0.1093613 | -0.1093613 3.499563 -0.1093613 | -0.1093613 -0.1093613 3.499563 ) normamps=205.0
+
+New Linecode.padswitch_3_3 units=km nphases=3 Faultrate=0.1 Rmatrix=(0.001 0.0 0.0 | 0.0 0.001 0.0 | 0.0 0.0 0.001 ) Xmatrix=(0.001 0.0 0.0 | 0.0 0.001 0.0 | 0.0 0.0 0.001 ) Cmatrix=(3.499563 -0.1093613 -0.1093613 | -0.1093613 3.499563 -0.1093613 | -0.1093613 -0.1093613 3.499563 ) normamps=325.0
+
+New Linecode.padswitch_3_1 units=km nphases=3 Faultrate=0.1 Rmatrix=(0.001 0.0 0.0 | 0.0 0.001 0.0 | 0.0 0.0 0.001 ) Xmatrix=(0.001 0.0 0.0 | 0.0 0.001 0.0 | 0.0 0.0 0.001 ) Cmatrix=(3.499563 -0.1093613 -0.1093613 | -0.1093613 3.499563 -0.1093613 | -0.1093613 -0.1093613 3.499563 ) normamps=370.0
+
+New Linecode.padswitch_3_8 units=km nphases=3 Faultrate=0.1 Rmatrix=(0.001 0.0 0.0 | 0.0 0.001 0.0 | 0.0 0.0 0.001 ) Xmatrix=(0.001 0.0 0.0 | 0.0 0.001 0.0 | 0.0 0.0 0.001 ) Cmatrix=(3.499563 -0.1093613 -0.1093613 | -0.1093613 3.499563 -0.1093613 | -0.1093613 -0.1093613 3.499563 ) normamps=165.0
+
+New Linecode.padswitch_3_10 units=km nphases=3 Faultrate=0.1 Rmatrix=(0.001 0.0 0.0 | 0.0 0.001 0.0 | 0.0 0.0 0.001 ) Xmatrix=(0.001 0.0 0.0 | 0.0 0.001 0.0 | 0.0 0.0 0.001 ) Cmatrix=(3.499563 -0.1093613 -0.1093613 | -0.1093613 3.499563 -0.1093613 | -0.1093613 -0.1093613 3.499563 ) normamps=233.0
+
+New Linecode.padswitch_3_9 units=km nphases=3 Faultrate=0.1 Rmatrix=(0.001 0.0 0.0 | 0.0 0.001 0.0 | 0.0 0.0 0.001 ) Xmatrix=(0.001 0.0 0.0 | 0.0 0.001 0.0 | 0.0 0.0 0.001 ) Cmatrix=(3.499563 -0.1093613 -0.1093613 | -0.1093613 3.499563 -0.1093613 | -0.1093613 -0.1093613 3.499563 ) normamps=301.0
+
+New Linecode.padswitch_3_6 units=km nphases=3 Faultrate=0.1 Rmatrix=(0.001 0.0 0.0 | 0.0 0.001 0.0 | 0.0 0.0 0.001 ) Xmatrix=(0.001 0.0 0.0 | 0.0 0.001 0.0 | 0.0 0.0 0.001 ) Cmatrix=(3.499563 -0.1093613 -0.1093613 | -0.1093613 3.499563 -0.1093613 | -0.1093613 -0.1093613 3.499563 ) normamps=115.0
+
+New Linecode.padswitch_3_7 units=km nphases=3 Faultrate=0.1 Rmatrix=(0.001 0.0 0.0 | 0.0 0.001 0.0 | 0.0 0.0 0.001 ) Xmatrix=(0.001 0.0 0.0 | 0.0 0.001 0.0 | 0.0 0.0 0.001 ) Cmatrix=(3.499563 -0.1093613 -0.1093613 | -0.1093613 3.499563 -0.1093613 | -0.1093613 -0.1093613 3.499563 ) normamps=151.0
+
+New Linecode.fuse_1_6 units=km nphases=1 Faultrate=0.1 Rmatrix=(0.001 ) Xmatrix=(0.001 ) Cmatrix=(3.4 ) normamps=295.0
+
+New Linecode.fuse_1_1 units=km nphases=1 Faultrate=0.1 Rmatrix=(0.001 ) Xmatrix=(0.001 ) Cmatrix=(3.4 ) normamps=325.0
+
+New Linecode.fuse_1_7 units=km nphases=1 Faultrate=0.1 Rmatrix=(0.001 ) Xmatrix=(0.001 ) Cmatrix=(3.4 ) normamps=233.0
+
+New Linecode.fuse_1_3 units=km nphases=1 Faultrate=0.1 Rmatrix=(0.001 ) Xmatrix=(0.001 ) Cmatrix=(3.4 ) normamps=165.0
+
+New Linecode.fuse_1_8 units=km nphases=1 Faultrate=0.1 Rmatrix=(0.001 ) Xmatrix=(0.001 ) Cmatrix=(3.4 ) normamps=301.0
+
+New Linecode.fuse_1_5 units=km nphases=1 Faultrate=0.1 Rmatrix=(0.001 ) Xmatrix=(0.001 ) Cmatrix=(3.4 ) normamps=205.0
+
+New Linecode.disswitch_1 units=km nphases=1 Faultrate=0.1 Rmatrix=(0.001 ) Xmatrix=(0.001 ) Cmatrix=(3.608924 ) normamps=165.0
+
+New Linecode.disswitch_1_2 units=km nphases=1 Faultrate=0.1 Rmatrix=(0.001 ) Xmatrix=(0.001 ) Cmatrix=(3.608924 ) normamps=115.0
+
+New Linecode.disswitch_1_3 units=km nphases=1 Faultrate=0.1 Rmatrix=(0.001 ) Xmatrix=(0.001 ) Cmatrix=(3.608924 ) normamps=151.0
+
+New Linecode.disswitch_1_4 units=km nphases=1 Faultrate=0.1 Rmatrix=(0.001 ) Xmatrix=(0.001 ) Cmatrix=(3.608924 ) normamps=205.0
+

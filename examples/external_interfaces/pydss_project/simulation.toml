@@ -15,17 +15,17 @@
 "DSS File Absolute Path" = false
 "Return Results" = false
 
-# [[Project.Scenarios]]
-# name = "helics"
-# post_process_infos = []
+[[Project.Scenarios]]
+name = "helics"
+post_process_infos = []
 
 # [[Project.Scenarios]]
 # name = "python"
 # post_process_infos = []
 
-[[Project.Scenarios]]
-name = "socket"
-post_process_infos = []
+# [[Project.Scenarios]]
+# name = "socket"
+# post_process_infos = []
 
 [Exports]
 "Export Mode" = "byClass"
@@ -48,13 +48,18 @@ post_process_infos = []
 "Neglect shunt admittance" = false
 "Percentage load in series" = 50.0
 
-[Helics]
-"Co-simulation Mode" = false
-"Federate name" = "PyDSS"
-"Time delta" = 0.01
-"Core type" = "zmq"
-Uninterruptible = true
-"Helics logging level" = 5
+[helics]
+co_simulation_mode = true
+iterative_mode = false
+error_tolerance = 0.0001
+max_co_iterations = 15
+broker = "127.0.0.1"
+broker_port = 23404
+federate_name = "PyDSS"
+time_delta = 0.01
+core_type = "zmq"
+uninterruptible = true
+logging_level = 5
 
 [Logging]
 "Logging Level" = "DEBUG"

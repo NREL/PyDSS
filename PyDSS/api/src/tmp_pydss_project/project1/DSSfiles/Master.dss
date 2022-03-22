@@ -1,0 +1,114 @@
+clear
+new circuit.substation basekv=33 pu=1.03 phases=3 bus1=source_bus
+New Transformer.ABC phases=3 Windings=2 xhl=5 wdg=1 bus=source_bus conn=delta kV=33 kva=20502.767077433837 %r=0.1 wdg=2 bus=substation_bus conn=wye kV=12.47 kva=20502.767077433837 %r=0.1
+new reactor.switch_0 phases=3 Bus1=substation_bus Bus2=p1rdt2998-p1rhs6_1247x R=0 X=0.000001 kv=12.47
+new reactor.switch_1 phases=3 Bus1=substation_bus Bus2=p1rdt4002-p1rhs6_1247x R=0 X=0.000001 kv=12.47
+new reactor.switch_2 phases=3 Bus1=substation_bus Bus2=p6udt6500-p6uhs13_1247x R=0 X=0.000001 kv=12.47
+new reactor.switch_3 phases=3 Bus1=substation_bus Bus2=p6udt7057-p6uhs13_1247x R=0 X=0.000001 kv=12.47
+new reactor.switch_4 phases=3 Bus1=substation_bus Bus2=p6udt3922-p6uhs11_1247x R=0 X=0.000001 kv=12.47
+new reactor.switch_5 phases=3 Bus1=substation_bus Bus2=p6udt5293-p6uhs10_1247x R=0 X=0.000001 kv=12.47
+new reactor.switch_6 phases=3 Bus1=substation_bus Bus2=p6udt790-p6uhs2_1247x R=0 X=0.000001 kv=12.47
+new reactor.switch_7 phases=3 Bus1=substation_bus Bus2=p6udt791-p6uhs2_1247x R=0 X=0.000001 kv=12.47
+new reactor.switch_8 phases=3 Bus1=substation_bus Bus2=p6udt4255-p6uhs2_1247x R=0 X=0.000001 kv=12.47
+new reactor.switch_9 phases=3 Bus1=substation_bus Bus2=p6udt2026-p6uhs1_1247x R=0 X=0.000001 kv=12.47
+redirect 218672ac-d416-4e9f-8578-0d2a531aa33c_distribution_federate/LineCodes.dss
+
+redirect 218672ac-d416-4e9f-8578-0d2a531aa33c_distribution_federate/Lines.dss
+
+redirect 218672ac-d416-4e9f-8578-0d2a531aa33c_distribution_federate/Transformers.dss
+
+redirect 218672ac-d416-4e9f-8578-0d2a531aa33c_distribution_federate/Loads.dss
+
+redirect 41e17deb-dd30-4fdc-9265-c791677144a4_distribution_federate/LineCodes.dss
+
+redirect 41e17deb-dd30-4fdc-9265-c791677144a4_distribution_federate/Lines.dss
+
+redirect 41e17deb-dd30-4fdc-9265-c791677144a4_distribution_federate/Transformers.dss
+
+redirect 41e17deb-dd30-4fdc-9265-c791677144a4_distribution_federate/Regulators.dss
+
+redirect 41e17deb-dd30-4fdc-9265-c791677144a4_distribution_federate/Loads.dss
+
+redirect d1a88f96-88ef-4c43-929c-c4d2bef283a6_distribution_federate/LineCodes.dss
+
+redirect d1a88f96-88ef-4c43-929c-c4d2bef283a6_distribution_federate/Lines.dss
+
+redirect d1a88f96-88ef-4c43-929c-c4d2bef283a6_distribution_federate/Transformers.dss
+
+redirect d1a88f96-88ef-4c43-929c-c4d2bef283a6_distribution_federate/Loads.dss
+
+redirect d1a88f96-88ef-4c43-929c-c4d2bef283a6_distribution_federate/Capacitors.dss
+
+redirect 5c688a26-4c77-44fa-b427-bb0b0595aabf_distribution_federate/LineCodes.dss
+
+redirect 5c688a26-4c77-44fa-b427-bb0b0595aabf_distribution_federate/Lines.dss
+
+redirect 5c688a26-4c77-44fa-b427-bb0b0595aabf_distribution_federate/Transformers.dss
+
+redirect 5c688a26-4c77-44fa-b427-bb0b0595aabf_distribution_federate/Loads.dss
+
+redirect 5c688a26-4c77-44fa-b427-bb0b0595aabf_distribution_federate/Capacitors.dss
+
+redirect a46a7e1c-f28c-42bc-bc71-f3a8e224fbfa_distribution_federate/LineCodes.dss
+
+redirect a46a7e1c-f28c-42bc-bc71-f3a8e224fbfa_distribution_federate/Lines.dss
+
+redirect a46a7e1c-f28c-42bc-bc71-f3a8e224fbfa_distribution_federate/Transformers.dss
+
+redirect a46a7e1c-f28c-42bc-bc71-f3a8e224fbfa_distribution_federate/Loads.dss
+
+redirect a46a7e1c-f28c-42bc-bc71-f3a8e224fbfa_distribution_federate/Capacitors.dss
+
+redirect b9cdc11d-29d5-47e8-bdf4-30e875d95f9b_distribution_federate/LineCodes.dss
+
+redirect b9cdc11d-29d5-47e8-bdf4-30e875d95f9b_distribution_federate/Lines.dss
+
+redirect b9cdc11d-29d5-47e8-bdf4-30e875d95f9b_distribution_federate/Transformers.dss
+
+redirect b9cdc11d-29d5-47e8-bdf4-30e875d95f9b_distribution_federate/Loads.dss
+
+redirect b9cdc11d-29d5-47e8-bdf4-30e875d95f9b_distribution_federate/Capacitors.dss
+
+redirect 315027be-b835-4d3d-8ded-53fe35ed515c_distribution_federate/LineCodes.dss
+
+redirect 315027be-b835-4d3d-8ded-53fe35ed515c_distribution_federate/Lines.dss
+
+redirect 315027be-b835-4d3d-8ded-53fe35ed515c_distribution_federate/Transformers.dss
+
+redirect 315027be-b835-4d3d-8ded-53fe35ed515c_distribution_federate/Loads.dss
+
+redirect 315027be-b835-4d3d-8ded-53fe35ed515c_distribution_federate/Capacitors.dss
+
+redirect 2a721874-1fa2-4206-ba9b-0a377f6ab3a9_distribution_federate/LineCodes.dss
+
+redirect 2a721874-1fa2-4206-ba9b-0a377f6ab3a9_distribution_federate/Lines.dss
+
+redirect 2a721874-1fa2-4206-ba9b-0a377f6ab3a9_distribution_federate/Transformers.dss
+
+redirect 2a721874-1fa2-4206-ba9b-0a377f6ab3a9_distribution_federate/Loads.dss
+
+redirect 2a721874-1fa2-4206-ba9b-0a377f6ab3a9_distribution_federate/Capacitors.dss
+
+redirect b3936400-8748-4294-8256-0409b0bedaba_distribution_federate/LineCodes.dss
+
+redirect b3936400-8748-4294-8256-0409b0bedaba_distribution_federate/Lines.dss
+
+redirect b3936400-8748-4294-8256-0409b0bedaba_distribution_federate/Transformers.dss
+
+redirect b3936400-8748-4294-8256-0409b0bedaba_distribution_federate/Loads.dss
+
+redirect b3936400-8748-4294-8256-0409b0bedaba_distribution_federate/Capacitors.dss
+
+redirect d709b910-7f2a-4e74-b9b7-3fc7287e821b_distribution_federate/LineCodes.dss
+
+redirect d709b910-7f2a-4e74-b9b7-3fc7287e821b_distribution_federate/Lines.dss
+
+redirect d709b910-7f2a-4e74-b9b7-3fc7287e821b_distribution_federate/Transformers.dss
+
+redirect d709b910-7f2a-4e74-b9b7-3fc7287e821b_distribution_federate/Loads.dss
+
+redirect d709b910-7f2a-4e74-b9b7-3fc7287e821b_distribution_federate/Capacitors.dss
+
+set voltagebases=[0.12, 0.48, 0.208, 33, 7.2, 12.47]
+calcvoltagebases
+solve

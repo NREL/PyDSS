@@ -1,0 +1,9 @@
+New Generator.pv_load_p6ulv3030 conn=wye bus1=p6ulv3030.1.2.3 kV=0.48 model=7 kW=0.2765315147242521 kvar=-0.0 Phases=3
+New Generator.pv_load_p6ulv22234 conn=wye bus1=p6ulv22234.1.2.3 kV=0.48 model=7 kW=0.26150277507473496 kvar=-0.0 Phases=3
+New Generator.pv_load_p6ulv23846 conn=wye bus1=p6ulv23846.1.2.3 kV=0.48 model=7 kW=0.7574574955794529 kvar=-0.0 Phases=3
+New Generator.pv_load_p6ulv23848 conn=wye bus1=p6ulv23848.1.2.3 kV=0.48 model=7 kW=0.4478594473035403 kvar=-0.0 Phases=3
+New Generator.pv_load_p6ulv23851 conn=wye bus1=p6ulv23851.1.2.3 kV=0.48 model=7 kW=0.444853699373637 kvar=-0.0 Phases=3
+New Generator.pv_load_p6ulv23860 conn=wye bus1=p6ulv23860.1.2.3 kV=0.48 model=7 kW=0.6161843371260619 kvar=-0.0 Phases=3
+New Generator.pv_load_p6ulv23864 conn=wye bus1=p6ulv23864.1.2.3 kV=0.48 model=7 kW=0.29456630287846564 kvar=-0.0 Phases=3
+New Generator.pv_load_p6ulv23867 conn=wye bus1=p6ulv23867.1.2.3 kV=0.48 model=7 kW=0.15930614315884653 kvar=-0.0 Phases=3
+New Generator.pv_load_p6ulv26747 conn=wye bus1=p6ulv26747.1.2.3 kV=0.48 model=7 kW=0.2584970271448315 kvar=-0.0 Phases=3

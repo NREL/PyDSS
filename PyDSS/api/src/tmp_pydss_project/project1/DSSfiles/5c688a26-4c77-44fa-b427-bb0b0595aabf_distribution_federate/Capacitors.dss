@@ -1,0 +1,4 @@
+New Capacitor.p6uc88 bus1=p6udt7058 phases=3 Kv=12.47 conn=Wye Kvar=300.0
+
+New CapControl.p6uc88 Capacitor=p6uc88 Element=Line.l(r:p6udt7057-p6udt7058) Terminal=1 delay=100.0 Type=voltage Vmin=120.5 Vmax=125.0 Ptratio=59.99631547328862 Ctratio=100.0
+
