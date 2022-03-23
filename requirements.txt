@@ -7,7 +7,7 @@ networkx
 toml
 pyproj
 descartes
-OpenDSSDirect.py==0.3.7
+OpenDSSDirect.py>=0.6.0
 Shapely
 Click
 numpy
