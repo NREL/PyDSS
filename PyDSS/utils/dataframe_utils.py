@@ -4,7 +4,6 @@ import logging
 import os
 import shutil
 
-import feather
 import pandas as pd
 
 from PyDSS.exceptions import InvalidParameter
@@ -15,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def read_dataframe(filename, index_col=None, columns=None, parse_dates=False,
                    remove_unnamed=True, strip_column_units=False, **kwargs):
-    """Convert filename to a dataframe. Supports .csv, .json, .feather, .h5.
+    """Convert filename to a dataframe. Supports .csv, .json, .h5.
     Handles compressed files.
 
     Parameters
@@ -61,10 +60,6 @@ def read_dataframe(filename, index_col=None, columns=None, parse_dates=False,
                          parse_dates=parse_dates, **kwargs)
     elif ext == ".json":
         df = pd.read_json(filename, **kwargs)
-    elif ext == ".feather":
-        needs_new_index = True
-        with open_func(filename, "rb") as f_in:
-            df = feather.read_dataframe(f_in, **kwargs)
     elif ext == ".h5":
         # This assumes that the file has a single dataframe, and so the
         # key name is not relevant.
@@ -98,7 +93,7 @@ def write_dataframe(df, file_path, compress=False, keep_original=False,
 
     """Write the dataframe to a file with in a format matching the extension.
 
-    Note that the feather and h5 formats do not support row indices.
+    Note that the h5 format does not support row indices.
     Index columns will be lost for those formats. If the dataframe has an index
     then it should be converted to a column before calling this function.
 
@@ -127,8 +122,6 @@ def write_dataframe(df, file_path, compress=False, keep_original=False,
 
     if ext == ".csv":
         df.to_csv(file_path, **kwargs)
-    elif ext == ".feather":
-        df.to_feather(file_path, **kwargs)
     elif ext == ".h5":
         # HDF5 supports built-in compression, levels 1-9
         if "complevel" in kwargs:

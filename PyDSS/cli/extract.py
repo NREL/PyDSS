@@ -65,7 +65,7 @@ def extract(project_path, file_path, output_dir=None, verbose=False):
 
     os.makedirs(os.path.dirname(path), exist_ok=True)
     ext = os.path.splitext(file_path)[1]
-    mode = "wb" if ext in (".h5", ".feather") else "w"
+    mode = "wb" if ext == ".h5" else "w"
     with open(path, mode) as f_out:
         f_out.write(data)
 

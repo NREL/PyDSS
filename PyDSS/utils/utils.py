@@ -15,9 +15,9 @@ import numpy as np
 import opendssdirect as dss
 import pandas as pd
 import toml
-import yaml
 
 from PyDSS.exceptions import InvalidParameter
+
 
 MAX_PATH_LENGTH = 255
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S.%f' # '%Y-%m-%d %H:%M:%S.%f', "%m/%d/%Y %H:%M:%S"
@@ -64,8 +64,6 @@ def _get_module_from_extension(filename, **kwargs):
         mod = json
     elif ext == ".toml":
         mod = toml
-    elif ext in (".yml", ".yaml"):
-        mod = yaml
     elif "mod" in kwargs:
         mod = kwargs["mod"]
     else:
@@ -106,8 +104,6 @@ def load_data(filename, **kwargs):
     dict
 
     """
-    # TODO:  YAMLLoadWarning: calling yaml.load() without Loader=... is deprecated,
-    #  as the default Loader is unsafe. Please read https://msg.pyyaml.org/load for full details.
     mod = _get_module_from_extension(filename, **kwargs)
     with open(filename) as f_in:
         data = mod.load(f_in)
