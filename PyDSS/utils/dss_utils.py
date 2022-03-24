@@ -5,10 +5,30 @@ import re
 import opendssdirect as dss
 
 from PyDSS.exceptions import InvalidConfiguration
-from PyDSS.utils.utils import iter_elements
 
 
 logger = logging.getLogger(__name__)
+
+
+def check_redirect(file_name):
+    """Runs redirect command for dss file
+    And checks for exception
+
+    Parameters
+    ----------
+    file_name : str
+        dss file to be redirected
+
+    Raises
+    -------
+    Exception
+        Raised if the command fails
+
+    """
+    logger.debug(f"Redirecting DSS file: {file_name}")
+    result = dss.run_command(f"Redirect {file_name}")
+    if result != "":
+        raise Exception(f"Redirect failed for {file_name}, message: {result}")
 
 
 def read_pv_systems_from_dss_file(filename):
@@ -78,3 +98,94 @@ def get_node_names_by_type(kv_base_threshold=1.0):
             names_by_type["secondaries"].append(name)
 
     return names_by_type
+
+
+def list_element_names_by_class_name(class_name):
+    """Return a list of names of all elements of a given element class.
+
+    Parameters
+    ----------
+    class_name : str
+        Subclass of opendssdirect.CktElement
+
+    Returns
+    -------
+    list
+
+    Examples
+    --------
+    >>> names = list_element_names_by_class("Loads")
+
+    """
+    if class_name == "Buses":
+        return dss.Circuit.AllBusNames()
+    elif class_name == "Nodes":
+        return dss.Circuit.AllNodeNames()
+
+    dss.Basic.SetActiveClass(class_name)
+    return dss.ActiveClass.AllNames()
+
+
+def list_element_names_by_class(element_class):
+    """Return a list of names of all elements of a given element class.
+
+    Parameters
+    ----------
+    element_class : class
+        Subclass of opendssdirect.CktElement
+
+    Returns
+    -------
+    list
+
+    Examples
+    --------
+    >>> import opendssdirect as dss
+
+    >>> names = list_element_names_by_class(dss.PVsystems)
+
+    """
+    if element_class is dss.PVsystems:
+        class_name = "PVSystem"
+    else:
+        class_name = element_class.__name__.split('.')[1]
+        # TODO: confirm that this covers everything.
+        if class_name.endswith("s"):
+            class_name = class_name[:-1]
+
+    return [f"{class_name}.{x}" for x in iter_elements(element_class, element_class.Name)]
+
+
+def iter_elements(element_class, element_func):
+    """Yield the return of element_func for each element of type element_class.
+
+    Parameters
+    ----------
+    element_class : class
+        Subclass of opendssdirect.CktElement
+    element_func : function
+        Function to run on each element
+
+    Yields
+    ------
+    Return of element_func
+
+    Examples
+    --------
+    >>> import opendssdirect as dss
+
+    >>> def get_reg_control_info():
+        return {
+            "name": dss.RegControls.Name(),
+            "enabled": dss.CktElement.Enabled(),
+            "transformer": dss.RegControls.Transformer(),
+        }
+
+    >>> for reg_control in iter_elements(opendssdirect.RegControls, get_reg_control_info):
+        print(reg_control["name"])
+
+    """
+    element_class.First()
+    for _ in range(element_class.Count()):
+        yield element_func()
+        element_class.Next()

@@ -1,3 +1,4 @@
+import opendssdirect as dss
 
 from PyDSS.dssObjectBase import dssObjectBase
 
@@ -43,7 +44,9 @@ class dssBus(dssObjectBase):
     }
     VARIABLE_OUTPUTS_COMPLEX = ()
 
-    def __init__(self, dssInstance):
+    def __init__(self, dssInstance=None):
+        if dssInstance is None:
+            dssInstance = dss
         name = dssInstance.Bus.Name()
         super(dssBus, self).__init__(dssInstance, name, name)
         self._Index = None
