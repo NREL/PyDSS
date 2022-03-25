@@ -96,10 +96,6 @@ class OpenDSS:
         with Timer(self._stats, "CompileModel"):
             self._CompileModel()
 
-        #run_command('Set DefaultBaseFrequency={}'.format(settings.frequency.fundamental_frequency))
-        self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(settings.frequency.fundamental_frequency) + ' Hz')
-
-        #run_command('Set %SeriesRL={}'.format(settings.frequency.percentage_load_in_series))
         if settings.frequency.neglect_shunt_admittance:
             run_command('Set NeglectLoadY=Yes')
 
@@ -355,6 +351,7 @@ class OpenDSS:
 
         if self._settings.helics.co_simulation_mode:
             self._HI.updateHelicsSubscriptions()
+            self._Logger.info('updating publications')
         else:
             if updateObjects:
                 for object, params in updateObjects.items():
@@ -398,7 +395,7 @@ class OpenDSS:
                 self._dssSolver.reSolve()
                 self._UpdatePlots()
                 if self._settings.exports.export_results:
-                    self.ResultContainer.UpdateResults()
+                    self.ResultContainer.UpdateResults(step)
             if self._settings.project.simulation_type != SimulationType.SNAPSHOT:
                 self._dssSolver.setMode('Snapshot')
             else:
@@ -406,7 +403,7 @@ class OpenDSS:
 
         if self._settings.helics.co_simulation_mode:
             self._HI.updateHelicsPublications()
-            self._increment_flag, helics_time = self._HI.request_time_increment()
+            self._increment_flag, helics_time = self._HI.request_time_increment(step=step)
 
         return time_step_has_converged
 
@@ -438,15 +435,13 @@ class OpenDSS:
         self.ResultContainer.InitializeDataStore(project.hdf_store, Steps)
 
         try:
-            self.RunStep(0)
-            self.ResultContainer.UpdateResults()
+            step = 0
+            self.RunStep(step)
+            self.ResultContainer.UpdateResults(step)
         finally:
             self.ResultContainer.Close()
 
         return self.ResultContainer.max_num_bytes()
-
-    def initStore(self, hdf_store, Steps, MC_scenario_number=None):
-        self.ResultContainer.InitializeDataStore(hdf_store, Steps, MC_scenario_number)
 
     def RunSimulation(self, project, scenario, MC_scenario_number=None):
         """Yields a tuple of the results of each step.
@@ -469,7 +464,11 @@ class OpenDSS:
         self._Logger.info("Set OpenDSS convergence to %s", dss.Solution.Convergence())
         self._Logger.info('Max convergence error count {}.'.format(self._maxConvergenceErrorCount))
         self._Logger.info("initializing store")
-        self.ResultContainer.InitializeDataStore(project.hdf_store, Steps, MC_scenario_number)
+        if self._settings.helics.co_simulation_mode and self._settings.helics.store_intermediate_values:
+            num_steps = Steps * self._settings.helics.max_co_iterations
+        else:
+            num_steps = Steps
+        self.ResultContainer.InitializeDataStore(project.hdf_store, num_steps, MC_scenario_number)
         postprocessors = [
             pyPostprocess.Create(
                 project,
@@ -509,9 +508,11 @@ class OpenDSS:
                     self._Logger.info('Storage requirement estimation: %s, estimated based on first time step run.', size)
                 if postprocessors and within_range:
                     step, has_converged = self._RunPostProcessors(step, Steps, postprocessors)
-                if self._increment_flag:
-                    step += 1
 
+                # NOTE for review by Aadil:
+                # I moved the next two code blocks here because UpdateResults needs to happen
+                # after the postprocessors.
+                # the Helics update needs to happen after that.
                 # In the case of a frequency sweep, the code updates results at each frequency.
                 # Doing so again would cause a duplicate result.
                 if (
@@ -524,19 +525,26 @@ class OpenDSS:
                         (not has_converged and
                          self._settings.project.skip_export_on_convergence_error)
                     )
-                    self.ResultContainer.UpdateResults(store_nan=store_nan)
+                    self.ResultContainer.UpdateResults(store_nan=store_nan, step=step)
+                if self._increment_flag:
+                    step += 1
 
                 if self._settings.helics.co_simulation_mode:
                     if self._increment_flag:
+                        print('incrementing step, line 518 in dssInstance.py')
                         self._dssSolver.IncStep()
                     else:
+                        print('resolving step, line 521 in dssInstance.py')
                         self._dssSolver.reSolve()
                 else:
                     self._dssSolver.IncStep()
 
+                if self._increment_flag:
+                    step += 1
                 if self._settings.exports.export_results:
                     current_results = self.ResultContainer.CurrentResults
                 yield False, step, has_converged, current_results
+
 
         finally:
             if self._settings and self._settings.exports.export_results:

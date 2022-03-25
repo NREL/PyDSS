@@ -48,6 +48,7 @@ logger = logging.getLogger(__name__)
 def export(project_path, fmt="csv", compress=False, output_dir=None, verbose=False):
     """Export data from a PyDSS project."""
     if not os.path.exists(project_path):
+        print(f"project-path={project_path} does not exist")
         sys.exit(1)
 
     filename = "pydss_export.log"

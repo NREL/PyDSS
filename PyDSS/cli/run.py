@@ -105,6 +105,7 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
     project.run(tar_project=tar_project, zip_project=zip_project, dry_run=dry_run)
 
     if dry_run:
+        print("="*30)
         maxlen = max([len(k) for k in project.estimated_space.keys()])
         if len("ScenarioName") > maxlen:
             maxlen = len("ScenarioName")
@@ -116,9 +117,9 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
             vstr = make_human_readable_size(v)
             template += "{:<{width}} : {}\n".format(k, vstr, width=maxlen)
         template = template.strip()
-        logger.info(template)
-        logger.info("-"*30)
-        logger.info(f"TotalSpace: {make_human_readable_size(total_size)}")
-        logger.info("="*30)
-        logger.info("Note: compression may reduce the size by ~90% depending on the data.")
+        print(template)
+        print("-"*30)
+        print(f"TotalSpace: {make_human_readable_size(total_size)}")
+        print("="*30)
+        print("Note: compression may reduce the size by ~90% depending on the data.")
 

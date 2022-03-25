@@ -11,7 +11,7 @@ from PyDSS.modes.QSTS import QSTS
 from PyDSS.simulation_input_models import ProjectModel, SimulationSettingsModel
 
 
-def GetSolver(settings: SimulationSettingsModel, dssInstance):
+def GetSolver(settings, dssInstance):
     LoggerTag = getLoggerTag(settings)
     pyLogger = logging.getLogger(LoggerTag)
 

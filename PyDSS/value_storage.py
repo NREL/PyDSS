@@ -249,6 +249,7 @@ class ValueByList(ValueStorageBase):
         self._labels = []
         self._value_type = None
         self._value = []
+
         assert (isinstance(values, list) and len(values) == len(label_suffixes)), \
             '"values" and "label_suffixes" should be lists of equal lengths'
         for val, lab_suf in zip(values, label_suffixes):
@@ -296,7 +297,10 @@ class ValueByList(ValueStorageBase):
 
     def set_nan(self):
         for i in range(len(self._value)):
-            self._value[i] = np.NaN
+            if isinstance(self._value[i], int) or isinstance(self._value[i], np.int64):
+                self._value[i] = INTEGER_NAN
+            else:
+                self._value[i] = np.NaN
 
     def set_value(self, value):
         self._value = value
@@ -490,7 +494,10 @@ class ValueByLabel(ValueStorageBase):
 
     def set_nan(self):
         for i in range(len(self._value)):
-            self._value[i] = np.NaN
+            if isinstance(self._value[i], int) or isinstance(self._value[i], np.int64):
+                self._value[i] = INTEGER_NAN
+            else: 
+                self._value[i] = np.NaN
 
     def set_value(self, value):
         self._value = value

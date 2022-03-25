@@ -62,7 +62,6 @@ class ResultData:
         self._element_metrics = {}  # (elem_class, prop_name) to OpenDssPropertyMetric
         self._summed_element_metrics = {}
         self._settings = settings
-        self._cur_step = 0
         self._stats = timer_stats
         self._current_results = {}
 
@@ -209,7 +208,6 @@ class ResultData:
             columns=("Mode",),
             max_chunk_bytes=self._max_chunk_bytes
         )
-        self._cur_step = 0
 
         base_path = "Exports/" + self._scenario
         for metric in self._iter_metrics():
@@ -227,11 +225,12 @@ class ResultData:
     def CurrentResults(self):
         return self._current_results
 
-    def UpdateResults(self, store_nan=False):
+    def UpdateResults(self, step, store_nan=False):
         self._current_results.clear()
 
         # Get the number of seconds since the Epoch without any timezone conversions.
         timestamp = (self._dss_solver.GetDateTime() - datetime.utcfromtimestamp(0)).total_seconds()
+        print(f'calculated timestamp in line 222 of ResultData.py {timestamp}')
         self._time_dataset.write_value([timestamp])
         self._frequency_dataset.write_value([self._dss_solver.getFrequency()])
         self._mode_dataset.write_value([self._dss_solver.getMode()])
@@ -239,14 +238,15 @@ class ResultData:
         with Timer(self._stats, "Total"):
             for metric in self._iter_metrics():
                 with Timer(self._stats, metric.label()):
-                    data = metric.append_values(self._cur_step, store_nan=store_nan)
+                    data = metric.append_values(step, store_nan=store_nan)
+                    #data = metric.append_values(self._cur_step, store_nan=store_nan)
 
                 if isinstance(data, dict):
                     # TODO: reconsider
                     # Something is only returned for OpenDSS properties
                     self._current_results.update(data)
 
-        self._cur_step += 1
+        #self._cur_step += 1
         return self._current_results
 
     def ExportResults(self):

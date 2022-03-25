@@ -62,14 +62,12 @@ class dssElement(dssObjectBase):
         self._Parameters = {}
         self._NumTerminals = dssInstance.CktElement.NumTerminals()
         self._NumConductors = dssInstance.CktElement.NumConductors()
-
         assert self._NumConductors <= self._MAX_CONDUCTORS, str(self._NumConductors)
         self._NumPhases = dssInstance.CktElement.NumPhases()
 
         n = self._NumConductors
         nodes = dssInstance.CktElement.NodeOrder()
         self._Nodes = [nodes[i * n:(i + 1) * n] for i in range((len(nodes) + n - 1) // n)]
-
         assert len(nodes) == self._NumTerminals * self._NumConductors, \
             f"{self._Nodes} {self._NumTerminals} {self._NumConductors}"
 
@@ -164,6 +162,7 @@ class dssElement(dssObjectBase):
                 except (SyntaxError, ValueError):
                     return x
         else:
+            print('Could not set ' + self._FullName + ' as active element.')
             return None
 
     @property
