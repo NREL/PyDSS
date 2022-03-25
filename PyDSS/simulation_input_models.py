@@ -18,6 +18,7 @@ from PyDSS.common import (
     SnapshotTimePointSelectionMode,
     SIMULATION_SETTINGS_FILENAME,
 )
+from PyDSS.dataset_buffer import DEFAULT_MAX_CHUNK_BYTES
 from PyDSS.utils.utils import dump_data, load_data
 
 
@@ -170,6 +171,11 @@ class ProjectModel(InputsBaseModel):
         description="Start time of loadshape profiles",
         alias="Loadshape start time",
         default="2020-01-01 00:00:00.0",
+    )
+    use_loadshape_offset_workaround: bool = Field(
+        title="use_loadshape_offset_workaround",
+        description="Attempt to use workaround for loadshape offset issue.",
+        default=False,
     )
     simulation_range: Optional[SimulationRangeModel] = Field(
         title="simulation_range",
@@ -365,7 +371,7 @@ class ExportsModel(InputsBaseModel):
                     "The value is passed to the h5py package. Refer to "
                     "http://docs.h5py.org/en/stable/high/dataset.html#chunked-storage for more "
                     "information.",
-        default=524288,
+        default=DEFAULT_MAX_CHUNK_BYTES,
         alias="HDF Max Chunk Bytes",
     )
 
@@ -522,6 +528,11 @@ class HelicsModel(InputsBaseModel):
         default=5,
         alias="Helics logging level",
     )
+    store_intermediate_values: bool = Field(
+        title="store_intermediate_values",
+        description="Store intermediate values if co-simulations do not converge.",
+        default=False,
+    )
 
     @validator("logging_level")
     def check_logging_level(cls, val):
@@ -643,6 +654,12 @@ class ProfilesModel(InputsBaseModel):
         description="Profiles settings",
         default={},
     )
+
+    @root_validator(pre=True)
+    def pre_process(cls, values):
+        if values.get("source_type") == "HDF5":
+            valus["source_type"] = "h5"
+        return values
 
 
 class ReportBaseModel(InputsBaseModel):

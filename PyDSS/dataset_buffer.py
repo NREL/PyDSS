@@ -16,8 +16,8 @@ GiB = MiB * MiB
 
 # The optimal number of chunks to store in memory will vary widely.
 # The h5py docs recommend keeping chunk byte sizes between 10 KiB - 1 MiB.
-# It needs to be larger than the biggest possible row and also cover enough of
-# column to compress duplicate values. Since we might store thousands of
+# It needs to be larger than the biggest possible row and also cover enough
+# columns to compress duplicate values. Since we might store thousands of
 # elements in one dataset, make it the max by default.
 # Note that the downside to making this larger is that any read causes the
 # entire chunk to be read.
@@ -47,21 +47,16 @@ class DatasetBuffer:
         self._max_size = max_size
         num_columns = len(columns)
         if data is None:
-            self._chunk_size = self.compute_chunk_count(
+            self.chunk_count = self.compute_chunk_count(
                 num_columns,
                 max_size,
                 dtype,
                 max_chunk_bytes,
             )
-            # TODO DT: Gemini had this code. Find out why.
-            #if num_columns == 1 and not isinstance(columns, list):
-            #    shape = (self._max_size,)
-            #    chunks = (self._chunk_size,)
-            #else:
             shape = (self._max_size, num_columns)
-            chunks = (self._chunk_size, num_columns)
+            chunks = (self.chunk_count, num_columns)
         else:
-            self._chunk_size = None
+            self.chunk_count = None
             shape = None
             chunks = None
 
@@ -150,7 +145,7 @@ class DatasetBuffer:
         """Write the value to the internal buffer, flushing when full."""
         self._buf[self._buf_index] = value
         self._buf_index += 1
-        if self._buf_index == self._chunk_size:
+        if self._buf_index == self.chunk_count:
             self.flush_data()
 
     def write_data(self, values):

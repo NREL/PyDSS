@@ -58,8 +58,8 @@ class ResultData:
         self._element_metrics = {}  # (elem_class, prop_name) to OpenDssPropertyMetric
         self._summed_element_metrics = {}
         self._settings = settings
-        self._cur_step = 0
         self._stats = timer_stats
+        self._current_results = {}
 
         self._dss_command = dss_command
         self._start_day = dss_solver.StartDay
@@ -82,7 +82,6 @@ class ResultData:
         self._export_relative_dir = "Exports/" + settings.project.active_scenario
         self._store_frequency = False
         self._store_mode = False
-        # TODO DT: Is this correct for Gemini?
         if settings.frequency.enable_frequency_sweep:
             self._store_frequency = True
             self._store_mode = True
@@ -201,7 +200,6 @@ class ResultData:
             columns=("Mode",),
             max_chunk_bytes=self._max_chunk_bytes
         )
-        self._cur_step = 0
 
         base_path = "Exports/" + self._scenario
         for metric in self._iter_metrics():
@@ -215,8 +213,12 @@ class ResultData:
         for metric in self._circuit_metrics.values():
             yield metric
 
-    def UpdateResults(self, store_nan=False, step=0):
-        current_results = {}
+    @property
+    def CurrentResults(self):
+        return self._current_results
+
+    def UpdateResults(self, step, store_nan=False):
+        self._current_results.clear()
 
         # Get the number of seconds since the Epoch without any timezone conversions.
         timestamp = (self._dss_solver.GetDateTime() - datetime.utcfromtimestamp(0)).total_seconds()
@@ -234,10 +236,10 @@ class ResultData:
                 if isinstance(data, dict):
                     # TODO: reconsider
                     # Something is only returned for OpenDSS properties
-                    current_results.update(data)
+                    self._current_results.update(data)
 
         #self._cur_step += 1
-        return current_results
+        return self._current_results
 
     def ExportResults(self):
         metadata = {

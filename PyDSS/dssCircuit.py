@@ -2,8 +2,7 @@ from PyDSS.dssObjectBase import dssObjectBase
 
 class dssCircuit(dssObjectBase):
 
-    VARIABLE_OUTPUTS_BY_LABEL = {
-        "AllBusMagPu":{"is_complex": True, "units": ['[pu]']}}
+    VARIABLE_OUTPUTS_BY_LABEL = {}
     VARIABLE_OUTPUTS_BY_LIST = (
         "AllBusMagPu",
     )
@@ -20,11 +19,6 @@ class dssCircuit(dssObjectBase):
         self._Class = 'Circuit'
         super(dssCircuit, self).__init__(dssInstance, name, fullName)
 
-        nodes = dssInstance.CktElement.NodeOrder()
-        self._NumConductors = dssInstance.CktElement.NumConductors()
-        n = self._NumConductors
-        nodes = dssInstance.CktElement.NodeOrder()
-        self._Nodes = [nodes[i * n:(i+1) * n] for i in range((len(nodes) + n -1) // n)]
         CktElmVarDict = dssInstance.Circuit.__dict__
         for key in CktElmVarDict.keys():
             try:

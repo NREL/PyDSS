@@ -4,6 +4,8 @@ from PyDSS.value_storage import ValueByNumber
 from PyDSS.value_storage import ValueByList
 import ast
 
+import numpy as np
+
 
 class dssTransformer(dssElement):
 
@@ -69,11 +71,10 @@ class dssTransformer(dssElement):
             VarValue = self.GetParameter(VarName)
             if convert:
                 if VarName in self.VARIABLE_OUTPUTS_BY_LIST:
-                    VarValue = ast.literal_eval(VarValue)
                     VarValue = VarValue[:self.NumWindings]
                     if len(VarValue) < self.NumWindings:
                         for extra_nan in range(self.NumWindings - len(VarValue)):
-                            VarValue.append(999999.9)
+                            VarValue.append(np.NaN)
                     VarValue = ValueByList(
                         self._FullName, VarName, VarValue, ['wdg{}'.format(i+1) for i in range(self.NumWindings)]
                     )

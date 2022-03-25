@@ -9,17 +9,19 @@ class QSTS(solver_base):
     def __init__(self, dssInstance, settings: SimulationSettingsModel, Logger):
         super().__init__(dssInstance, settings, Logger)
         self._dssSolution.Mode(2)
+        self._dssInstance.utils.run_command('Set ControlMode={}'.format(settings.project.control_mode.value))
         self._dssSolution.Number(1)
         self._dssSolution.StepSize(self._sStepRes)
         self._dssSolution.MaxControlIterations(settings.project.max_control_iterations)
 
         start_time_hours = self._Hour + self._Second / 3600.0
-        load_shape_resolutions_secs = get_load_shape_resolution_secs()
-        #if load_shape_resolutions_secs == self._sStepRes:
-        #    # I don't know why this is needed in this case.
-        #    # The first data point gets skipped without it.
-        #    # FIXME
-        #    #start_time_hours += self._sStepRes / 3600.0
+        if settings.project.use_loadshape_offset_workaround:
+            load_shape_resolutions_secs = get_load_shape_resolution_secs()
+            if load_shape_resolutions_secs == self._sStepRes:
+                # I don't know why this is needed in this case.
+                # The first data point gets skipped without it.
+                # FIXME
+                start_time_hours += self._sStepRes / 3600.0
         self._dssSolution.DblHour(start_time_hours)
         return
 

@@ -30,6 +30,20 @@ class PyDssFileSystemInterface(abc.ABC):
     """Interface to read PyDSS files on differing filesystem structures."""
 
     @abc.abstractmethod
+    def exists(self, filename):
+        """Return True if the filename exists.
+
+        Parameters
+        ----------
+        filename : str
+
+        Returns
+        -------
+        bool
+
+        """
+
+    @abc.abstractmethod
     def read_file(self, path):
         """Return the contents of file.
 
@@ -207,6 +221,9 @@ class PyDssDirectoryInterface(PyDssFileSystemInterface):
     def _get_full_path(self, path):
         return os.path.join(self._project_dir, path)
 
+    def exists(self, filename):
+        return os.path.exists(filename)
+
     def read_file(self, path):
         with open(self._get_full_path(path)) as f_in:
             return f_in.read()
@@ -269,6 +286,8 @@ class PyDssDirectoryInterface(PyDssFileSystemInterface):
             scenario_name,
             "metadata.json",
         )
+        if not self.exists(filename):
+            return {}
         return load_data(filename)
 
     def read_scenario_pv_profiles(self, scenario_name):
@@ -363,6 +382,8 @@ class PyDssArchiveFileInterfaceBase(PyDssFileSystemInterface):
             scenario_name,
             "metadata.json",
         )
+        if not self.exists(filename):
+            return {}
         return self._load_data(filename)
 
     def read_scenario_pv_profiles(self, scenario_name):
@@ -388,6 +409,9 @@ class PyDssTarFileInterface(PyDssArchiveFileInterfaceBase):
         if not self._tar.closed:
             self._tar.close()
 
+    def exists(self, filename):
+        return filename in self._tar.getnames()
+
     def read_file(self, path):
         if sys.platform == "win32":
             path = self.normalize_path(path)
@@ -405,6 +429,9 @@ class PyDssZipFileInterface(PyDssArchiveFileInterfaceBase):
 
     def __del__(self):
         self._zip.close()
+
+    def exists(self, filename):
+        return filename in self._zip.namelist()
 
     def read_file(self, path):
         if sys.platform == "win32":

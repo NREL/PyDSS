@@ -443,7 +443,6 @@ class ValueByLabel(ValueStorageBase):
                     label += " " + units[0]
                     self._labels.append(label)
                     self._value += [complex(x[0], x[1])]
-                #elif units[0] == '[pu]'
                 else:
                     label_mag = label + self.DELIMITER + "mag" + ' ' + units[0]
                     label_ang = label + self.DELIMITER + "ang" + ' ' + units[1]

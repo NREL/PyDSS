@@ -21,6 +21,7 @@ from PyDSS.exceptions import InvalidParameter
 
 
 MAX_PATH_LENGTH = 255
+DATE_FORMAT = '%Y-%m-%d %H:%M:%S.%f' # '%Y-%m-%d %H:%M:%S.%f', "%m/%d/%Y %H:%M:%S"
 
 logger = logging.getLogger(__name__)
 
@@ -172,6 +173,7 @@ def interpret_datetime(timestamp):
         "%Y-%m-%d %H:%M:%S.%f",
         "%Y-%m-%d_%H:%M:%S.%f",
         "%Y-%m-%d_%H-%M-%S-%f",
+        DATE_FORMAT,
     )
 
     for i, fmt in enumerate(formats):

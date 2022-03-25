@@ -95,10 +95,6 @@ class OpenDSS:
         with Timer(self._stats, "CompileModel"):
             self._CompileModel()
 
-        #run_command('Set DefaultBaseFrequency={}'.format(settings.frequency.fundamental_frequency))
-        #self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(settings.frequency.fundamental_frequency) + ' Hz')
-
-        #run_command('Set %SeriesRL={}'.format(settings.frequency.percentage_load_in_series))
         if settings.frequency.neglect_shunt_admittance:
             run_command('Set NeglectLoadY=Yes')
 
@@ -353,8 +349,6 @@ class OpenDSS:
             self._HI.updateHelicsSubscriptions()
             self._Logger.info('updating publications')
         else:
-            # TODO DT: Why does gemini call IncStep?
-            #self._dssSolver.IncStep()
             if updateObjects:
                 for object, params in updateObjects.items():
                     cl, name = object.split('.')
@@ -397,7 +391,7 @@ class OpenDSS:
                 self._dssSolver.reSolve()
                 self._UpdatePlots()
                 if self._settings.exports.export_results:
-                    self.ResultContainer.UpdateResults()
+                    self.ResultContainer.UpdateResults(step)
             if self._settings.project.simulation_type != SimulationType.SNAPSHOT:
                 self._dssSolver.setMode('Snapshot')
             else:
@@ -407,7 +401,6 @@ class OpenDSS:
             self._HI.updateHelicsPublications()
             self._increment_flag, helics_time = self._HI.request_time_increment(step=step)
 
-        # TODO DT: This is a potential problem for Gemini because it was returning the results dict.
         return time_step_has_converged
 
     def _HandleConvergenceErrorChecks(self, step, error):
@@ -438,14 +431,23 @@ class OpenDSS:
         self.ResultContainer.InitializeDataStore(project.hdf_store, Steps)
 
         try:
-            self.RunStep(0)
-            self.ResultContainer.UpdateResults()
+            step = 0
+            self.RunStep(step)
+            self.ResultContainer.UpdateResults(step)
         finally:
             self.ResultContainer.Close()
 
         return self.ResultContainer.max_num_bytes()
 
     def RunSimulation(self, project, scenario, MC_scenario_number=None):
+        """Yields a tuple of the results of each step.
+
+        Yields
+        ------
+        tuple
+            is_complete, step, has_converged, results
+
+        """
         startTime = time.time()
         Steps, sTime, eTime = self._dssSolver.SimulationSteps()
         threshold = self._settings.project.convergence_error_percent_threshold
@@ -458,9 +460,11 @@ class OpenDSS:
         self._Logger.info("Set OpenDSS convergence to %s", dss.Solution.Convergence())
         self._Logger.info('Max convergence error count {}.'.format(self._maxConvergenceErrorCount))
         self._Logger.info("initializing store")
-        # make space for Steps*5 to allow for co-iterations
-        print(self._settings.helics.max_co_iterations)
-        self.ResultContainer.InitializeDataStore(project.hdf_store, Steps * self._settings.helics.max_co_iterations, MC_scenario_number)
+        if self._settings.helics.co_simulation_mode and self._settings.helics.store_intermediate_values:
+            num_steps = Steps * self._settings.helics.max_co_iterations
+        else:
+            num_steps = Steps
+        self.ResultContainer.InitializeDataStore(project.hdf_store, num_steps, MC_scenario_number)
         postprocessors = [
             pyPostprocess.Create(
                 project,
@@ -477,8 +481,11 @@ class OpenDSS:
         if not postprocessors:
             self._Logger.info('No post processing script selected')
 
+        is_complete = False
+        step = 0
+        has_converged = False
+        current_results = {}
         try:
-            step = 0
             while step < Steps:
                 pydss_has_converged = True
                 opendss_has_converged = True
@@ -502,8 +509,13 @@ class OpenDSS:
                 # I moved the next two code blocks here because UpdateResults needs to happen
                 # after the postprocessors.
                 # the Helics update needs to happen after that.
-                if self._settings.exports.export_results:
-                    print('storing results, line 506 in dssInstance.py')
+                # In the case of a frequency sweep, the code updates results at each frequency.
+                # Doing so again would cause a duplicate result.
+                if (
+                    self._settings.exports.export_results and not
+                    (self._settings.frequency.enable_frequency_sweep and \
+                     self._settings.project.simulation_type != SimulationType.DYNAMIC)
+                ):
                     store_nan = (
                         not within_range or
                         (not has_converged and
@@ -522,6 +534,13 @@ class OpenDSS:
                         self._dssSolver.reSolve()
                 else:
                     self._dssSolver.IncStep()
+
+                if self._increment_flag:
+                    step += 1
+                if self._settings.exports.export_results:
+                    current_results = self.ResultContainer.CurrentResults
+                yield False, step, has_converged, current_results
+
 
         finally:
             if self._settings and self._settings.exports.export_results:
@@ -546,6 +565,7 @@ class OpenDSS:
 
         self._Logger.info('Simulation completed in %s seconds', time.time() - startTime)
         self._Logger.info('End of simulation')
+        yield True, step, has_converged, current_results
 
     def _RunPostProcessors(self, step, Steps, postprocessors):
         for postprocessor in postprocessors:
@@ -564,7 +584,9 @@ class OpenDSS:
         MC = MonteCarloSim(self._settings, self._dssPath, self._dssObjects, self._dssObjectsByClass)
         for i in range(samples):
             MC.Create_Scenario()
-            self.RunSimulation(project, scenario, i)
+            for is_complete, _, _, _ in self.RunSimulation(project, scenario, i):
+                if is_complete:
+                    break
         return
 
     def _UpdatePlots(self):
