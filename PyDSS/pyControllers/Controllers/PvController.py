@@ -1,6 +1,14 @@
 from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
 import math
 import abc
+from collections import namedtuple
+
+from PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
+from PyDSS.utils.timing_utils import timer_stats_collector, track_timing
+
+
+VVarSettings = namedtuple("VVarSettings", ["VmeaMethod", "uMin", "uMax", "uDbMin", "uDbMax", "kVBase"])
+
 
 class PvController(ControllerAbstract):
     """Implementation of smart control modes of modern inverter systems. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
@@ -69,19 +77,32 @@ class PvController(ControllerAbstract):
         self.Pmppt = 100
         self.pf = 1
 
-        self.update = [self.ControlDict[Settings['Control' + str(i)]] for i in [1, 2, 3]]
+        self.update = []
+        self._vvar = None
+        if 'VmeaMethod' not in self.__Settings:
+            self.__Settings['VmeaMethod'] = "max"
+        for i in range(1, 4):
+            controller_type = self.__Settings['Control' + str(i)]
+            self.update.append(self.ControlDict[controller_type])
+            if controller_type == "VVar":
+                self._vvar = VVarSettings(
+                    VmeaMethod=self.__Settings["VmeaMethod"].lower(),
+                    uMin=self.__Settings["uMin"],
+                    uMax=self.__Settings["uMax"],
+                    uDbMin=self.__Settings["uDbMin"],
+                    uDbMax=self.__Settings["uDbMax"],
+                    kVBase=self.__ControlledElm.sBus[0].GetVariable('kVBase') * 1000,
+                )
 
-        if Settings["Priority"] == "Var":
+        if self.__Settings["Priority"] == "Var":
             PvObj.SetParameter('WattPriority', "False")
         else:
             PvObj.SetParameter('WattPriority', "True")
         #PvObj.SetParameter('VarFollowInverter', "False")
 
         #self.QlimPU = self.__Qrated / self.__Srated if self.__Qrated < self.__Srated else 1
-        if 'VmeaMethod' not in self.__Settings:
-            self.__Settings['VmeaMethod'] = "max"
 
-        self.QlimPU = min(self.__Qrated / self.__Srated, Settings['QlimPU'], 1.0)
+        self.QlimPU = min(self.__Qrated / self.__Srated, self.__Settings['QlimPU'], 1.0)
         self.itr = 0
         return
 
@@ -94,6 +115,7 @@ class PvController(ControllerAbstract):
     def debugInfo(self):
         return [self.__Settings['Control{}'.format(i+1)] for i in range(3)]
 
+    @track_timing(timer_stats_collector)
     def Update(self, Priority, Time, Update):
         self.TimeChange = self.Time != (Priority, Time)
         self.Time = (Priority, Time)
@@ -116,6 +138,7 @@ class PvController(ControllerAbstract):
                 return 0
         return self.update[Priority]()
 
+    @track_timing(timer_stats_collector)
     def VWcontrol(self):
         """Volt / Watt  control implementation
         """
@@ -159,6 +182,7 @@ class PvController(ControllerAbstract):
         self.oldPcalc = Ppv
         return Error
 
+    @track_timing(timer_stats_collector)
     def CutoffControl(self):
         """Over voltage trip implementation
         """
@@ -181,6 +205,7 @@ class PvController(ControllerAbstract):
 
         return 0
 
+    @track_timing(timer_stats_collector)
     def CPFcontrol(self):
         """Constant power factor implementation
         """
@@ -209,6 +234,7 @@ class PvController(ControllerAbstract):
         self.__ControlledElm.SetParameter('pf', str(-PFset))
         return Error
 
+    @track_timing(timer_stats_collector)
     def VPFcontrol(self):
         """Variable power factor control implementation
         """
@@ -245,35 +271,28 @@ class PvController(ControllerAbstract):
 
         return 0
 
+    @track_timing(timer_stats_collector)
     def VVARcontrol(self):
         """Volt / var control implementation
         """
-        uMin = self.__Settings['uMin']
-        uMax = self.__Settings['uMax']
-        uDbMin = self.__Settings['uDbMin']
-        uDbMax = self.__Settings['uDbMax']
-
-        kVBase =self.__ControlledElm.sBus[0].GetVariable('kVBase') * 1000
 
         Umag = self.__ControlledElm.GetVariable('VoltagesMagAng')[::2]
         Umag = [i for i in Umag if i != 0]
-        if self.__Settings['VmeaMethod'].lower() == "mean":
-            uIn = sum(Umag) / (len(Umag) * kVBase)
-        elif self.__Settings['VmeaMethod'].lower() == "min":
-            uIn = min(Umag) / kVBase
-        elif self.__Settings['VmeaMethod'].lower() == "1":
-            uIn = Umag[0] / kVBase
-        elif self.__Settings['VmeaMethod'].lower() == "2":
-            uIn = Umag[1] / kVBase
-        elif self.__Settings['VmeaMethod'].lower() == "3":
-            uIn = Umag[3] / kVBase
+        vmea = self._vvar.VmeaMethod
+        if vmea == "max":
+            uIn = max(Umag) / self._vvar.kVBase
+        elif vmea.lower() == "mean":
+            uIn = sum(Umag) / (len(Umag) * self._vvar.kVBase)
+        elif vmea == "min":
+            uIn = min(Umag) / self._vvar.kVBase
+        elif vmea == "1":
+            uIn = Umag[0] / self._vvar.kVBase
+        elif vmea == "2":
+            uIn = Umag[1] / self._vvar.kVBase
+        elif vmea == "3":
+            uIn = Umag[3] / self._vvar.kVBase
         else:
-            uIn = max(Umag) / kVBase
-
-        m1 = self.QlimPU / (uMin - uDbMin)
-        m2 = self.QlimPU / (uDbMax - uMax)
-        c1 = self.QlimPU * uDbMin / (uDbMin - uMin)
-        c2 = self.QlimPU * uDbMax / (uMax - uDbMax)
+            uIn = max(Umag) / self._vvar.kVBase
 
         Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))
         Pcalc = Ppv / self.__Srated
@@ -281,15 +300,19 @@ class PvController(ControllerAbstract):
         Qpv = Qpv / self.__Srated
 
         Qcalc = 0
-        if uIn <= uMin:
+        if uIn <= self._vvar.uMin:
             Qcalc = self.QlimPU
-        elif uIn <= uDbMin and uIn > uMin:
+        elif uIn <= self._vvar.uDbMin and uIn > self._vvar.uMin:
+            m1 = self.QlimPU / (self._vvar.uMin - self._vvar.uDbMin)
+            c1 = self.QlimPU * self._vvar.uDbMin / (self._vvar.uDbMin - self._vvar.uMin)
             Qcalc = uIn * m1 + c1
-        elif uIn <= uDbMax and uIn > uDbMin:
+        elif uIn <= self._vvar.uDbMax and uIn > self._vvar.uDbMin:
             Qcalc = 0
-        elif uIn <= uMax and uIn > uDbMax:
+        elif uIn <= self._vvar.uMax and uIn > self._vvar.uDbMax:
+            m2 = self.QlimPU / (self._vvar.uDbMax - self._vvar.uMax)
+            c2 = self.QlimPU * self._vvar.uDbMax / (self._vvar.uMax - self._vvar.uDbMax)
             Qcalc = uIn * m2 + c2
-        elif uIn >= uMax:
+        elif uIn >= self._vvar.uMax:
             Qcalc = -self.QlimPU
 
         Qcalc = Qpv + (Qcalc - Qpv) * 0.5 / self.__dampCoef + (Qpv - self.oldQpv) * 0.1 / self.__dampCoef

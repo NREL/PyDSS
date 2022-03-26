@@ -23,7 +23,7 @@ from PyDSS import SolveMode
 from PyDSS import pyLogger
 from PyDSS.simulation_input_models import SimulationSettingsModel
 from PyDSS.utils.simulation_utils import SimulationFilteredTimeRange
-from PyDSS.utils.timing_utils import TimerStatsCollector, Timer
+from PyDSS.utils.timing_utils import Timer, timer_stats_collector, track_timing
 from PyDSS.get_snapshot_timepoints import get_snapshot_timepoint
 
 import opendssdirect as dss
@@ -58,7 +58,6 @@ class OpenDSS:
         self._maxConvergenceErrorCount = None
         self._maxConvergenceError = 0.0
         self._controller_iteration_counts = {}
-        self._stats = TimerStatsCollector()
         self._simulation_range = SimulationFilteredTimeRange.from_settings(settings)
 
         root_path = settings.project.project_path
@@ -93,8 +92,7 @@ class OpenDSS:
         for key, path in self._dssPath.items():
             assert (os.path.exists(path)), '{} path: {} does not exist!'.format(key, path)
 
-        with Timer(self._stats, "CompileModel"):
-            self._CompileModel()
+        self._CompileModel()
 
         #run_command('Set DefaultBaseFrequency={}'.format(settings.frequency.fundamental_frequency))
         self._Logger.info('OpenDSS fundamental frequency set to :  ' + str(settings.frequency.fundamental_frequency) + ' Hz')
@@ -105,8 +103,7 @@ class OpenDSS:
 
         active_scenario = self._GetActiveScenario()
         if active_scenario.snapshot_time_point_selection_config.mode != SnapshotTimePointSelectionMode.NONE:
-            with Timer(self._stats, "SetSnapshotTimePoint"):
-                self._SetSnapshotTimePoint(active_scenario)
+            self._SetSnapshotTimePoint(active_scenario)
 
         self._dssCircuit = self._dssInstance.Circuit
         self._dssElement = self._dssInstance.Element
@@ -132,8 +129,7 @@ class OpenDSS:
             )
 
         self.ResultContainer = ResultData(settings, self._dssPath,  self._dssObjects, self._dssObjectsByClass,
-                                          self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance,
-                                          self._stats)
+                                          self._dssBuses, self._dssSolver, self._dssCommand, self._dssInstance)
 
         if settings.project.use_controller_registry:
             ControllerList = read_controller_settings_from_registry(self._dssPath['pyControllers'])
@@ -160,6 +156,7 @@ class OpenDSS:
         self._Logger.info("Simulation initialization complete")
         return
 
+    @track_timing(timer_stats_collector)
     def _CompileModel(self):
         self._dssInstance.Basic.ClearAll()
         self._dssInstance.utils.run_command('Log=NO')
@@ -345,6 +342,7 @@ class OpenDSS:
             Elem = ElmCollection.Next()
         return ObjectList
 
+    @track_timing(timer_stats_collector)
     def RunStep(self, step, updateObjects=None):
         # updating parameters before simulation run
         if self._settings.logging.log_time_step_updates:
@@ -364,7 +362,7 @@ class OpenDSS:
         # run simulation time step and get results
         time_step_has_converged = True
         if not self._settings.project.disable_pydss_controllers:
-            with Timer(self._stats, "UpdateControllers"):
+            with Timer(timer_stats_collector, "UpdateControllers"):
                 for priority in range(CONTROLLER_PRIORITIES):
                     priority_has_converged = False
                     for i in range(self._settings.project.max_control_iterations):
@@ -496,13 +494,12 @@ class OpenDSS:
                 opendss_has_converged = True
                 within_range = self._simulation_range.is_within_range(self._dssSolver.GetDateTime())
                 if within_range:
-                    with Timer(self._stats, "RunStep"):
-                        pydss_has_converged = self.RunStep(step)
-                        opendss_has_converged = dss.Solution.Converged()
-                        if not opendss_has_converged:
-                            self._Logger.error("OpenDSS did not converge at step=%s pydss_converged=%s",
-                                               step, pydss_has_converged)
-                            self._HandleOpenDSSConvergenceErrorChecks(step)
+                    pydss_has_converged = self.RunStep(step)
+                    opendss_has_converged = dss.Solution.Converged()
+                    if not opendss_has_converged:
+                        self._Logger.error("OpenDSS did not converge at step=%s pydss_converged=%s",
+                                            step, pydss_has_converged)
+                        self._HandleOpenDSSConvergenceErrorChecks(step)
                 has_converged = pydss_has_converged and opendss_has_converged
                 if step == 0 and self.ResultContainer is not None:
                     size = make_human_readable_size(self.ResultContainer.max_num_bytes())
@@ -550,7 +547,7 @@ class OpenDSS:
         if self._settings and self._settings.exports.export_results:
             self.ResultContainer.ExportResults()
 
-        self._stats.log_stats(clear=True)
+        timer_stats_collector.log_stats(clear=True)
         if self._controller_iteration_counts:
             data = {
                 "Report": "ControllerIterationCounts",
@@ -597,6 +594,7 @@ class OpenDSS:
                 return scenario
         raise InvalidConfiguration(f"Active Scenario {active_scenario} is not present")
 
+    @track_timing(timer_stats_collector)
     def _SetSnapshotTimePoint(self, scenario):
         """Adjusts the time parameters based on the mode."""
         p_settings = self._settings.project
