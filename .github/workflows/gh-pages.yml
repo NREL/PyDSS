@@ -1,0 +1,33 @@
+name: Documentation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  make-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: select python version
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: install dependencies
+        run: |
+          sudo apt-get install plantuml
+          python -m pip install --upgrade pip
+          python -m pip install '.[dev]'
+      - name: build documentation
+        run: |
+          cd docs
+          make clean
+          make html
+      - name: deploy
+        uses: peaceiris/actions-gh-pages@v3.6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/build/html
+          force_orphan: true
+          full_commit_message: ${{ github.event.head_commit.message }}
