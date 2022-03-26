@@ -29,7 +29,14 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
-dev_requires = ["pytest", "setuptools"]
+dev_requires = [
+    "mock",
+    "pytest",
+    "pytest-cov",
+    "setuptools",
+    "sphinx",
+    "sphinx-rtd-theme",
+]
 
 setup(name='dsspy',
     version=find_version("PyDSS", "__init__.py"),
