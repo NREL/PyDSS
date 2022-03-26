@@ -16,7 +16,6 @@ jobs:
           python-version: 3.9
       - name: install dependencies
         run: |
-          sudo apt-get install plantuml
           python -m pip install --upgrade pip
           python -m pip install '.[dev]'
       - name: build documentation
