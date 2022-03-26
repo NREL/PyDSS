@@ -113,7 +113,7 @@ Analyze results
 If ``Export Data Tables`` is set to true then the raw output is written to CSV
 files in ``<project-path>/<project-name>/Export/<scenario-name>``. These can be
 converted to pandas DataFrames. It is up to the user to interpret what each
-column represents.  This can very by element.
+column represents.  This can vary by element.
 
 You can also access the results programmatically as shown in the following
 example code.

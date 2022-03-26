@@ -39,7 +39,7 @@ The installation come with several control listed below.
 - Xfmr controller
 	+ Enables tap lock in reverse power flow conditions.
 
-pyControllers need to be defined within the 'pyControllerList.json' file for a given scenario. All pyController may be disabled by setting the to 'true' in the 'Scenario_settings.TOML' file.
+pyControllers need to be defined in the 'pyControllerList' directory for a given scenario. All pyController may be disabled by setting the to 'true' in the 'Scenario_settings.TOML' file.
 
 .. code-block:: python
 	
@@ -67,5 +67,3 @@ Users are able to extend current control implementations by following the tutori
    :maxdepth: 2 
   
    Creating custom controls
-
-
