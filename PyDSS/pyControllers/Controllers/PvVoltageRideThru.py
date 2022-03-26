@@ -1,7 +1,6 @@
 from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
 from shapely.geometry import MultiPoint, Polygon, Point, MultiPolygon
 from shapely.ops import triangulate, cascaded_union
-from descartes.patch import PolygonPatch
 import datetime
 import math
 import os

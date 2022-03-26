@@ -68,7 +68,7 @@ class PvController(ControllerAbstract):
         self.__BaseKV = float(PvObj.GetParameter('kv'))
         self.__Srated = float(PvObj.GetParameter('kVA'))
         self.__Prated = float(PvObj.GetParameter('Pmpp'))
-        self.__Qrated = float(PvObj.GetParameter('kVARlimit'))
+        self.__Qrated = float(PvObj.GetParameter('kvarMax'))
         self.__cutin = float(PvObj.SetParameter('%cutin', 0)) / 100
         self.__cutout = float(PvObj.SetParameter('%cutout', 0)) / 100
         self.__dampCoef = Settings['DampCoef']
@@ -170,7 +170,7 @@ class PvController(ControllerAbstract):
             dP = (Ppv - Pcalc) * 0.5 / self.__dampCoef + (self.oldPcalc - Ppv) * 0.1 / self.__dampCoef
             Pcalc = Ppv - dP
             self.Pmppt = min(self.Pmppt * Pcalc / Ppv, 100)
-            self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
+            self.__ControlledElm.SetParameter('%Pmpp', self.Pmppt)
             self.pf = math.cos(math.atan(Qpv / Pcalc))
             if Qpv < 0:
                 self.pf = -self.pf
@@ -189,7 +189,7 @@ class PvController(ControllerAbstract):
         uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[::2])
         uCut = self.__Settings['%UCutoff']
         if uIn >= uCut:
-            self.__ControlledElm.SetParameter('pctPmpp', 0)
+            self.__ControlledElm.SetParameter('%Pmpp', 0)
             self.__ControlledElm.SetParameter('pf', 1)
             if self.__vDisconnected:
                 return 0
@@ -198,7 +198,7 @@ class PvController(ControllerAbstract):
                 return self.__Prated
 
         if self.TimeChange and self.__vDisconnected and uIn < uCut:
-            self.__ControlledElm.SetParameter('pctPmpp', self.Pmppt)
+            self.__ControlledElm.SetParameter('%Pmpp', self.Pmppt)
             self.__ControlledElm.SetParameter('pf', self.pf)
             self.__vDisconnected = False
             return self.__Prated
@@ -217,7 +217,7 @@ class PvController(ControllerAbstract):
         if self.__Settings['cpf-priority'] == 'PF':
            # if self.TimeChange:
             Plim = PFset * 100
-            self.__ControlledElm.SetParameter('pctPmpp', Plim)
+            self.__ControlledElm.SetParameter('%Pmpp', Plim)
            # else:
         else:
             if self.__Settings['cpf-priority'] == 'Var':

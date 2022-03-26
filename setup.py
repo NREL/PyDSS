@@ -29,6 +29,8 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
+dev_requires = ["pytest", "setuptools"]
+
 setup(name='dsspy',
     version=find_version("PyDSS", "__init__.py"),
     description='A high-level python interface for OpenDSS',
@@ -54,7 +56,7 @@ setup(name='dsspy',
         ],
     },
     license='BSD 3 clause',
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
@@ -65,4 +67,7 @@ setup(name='dsspy',
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: BSD License",
     ],
+    extras_require={
+        "dev": dev_requires,
+    }
     )

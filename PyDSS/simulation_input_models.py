@@ -122,12 +122,12 @@ class SimulationRangeModel(InputsBaseModel):
 class ProjectModel(InputsBaseModel):
     """Defines the user inputs for the project."""
 
-    project_path: Path = Field(
+    project_path: Optional[Path] = Field(
         title="project_path",
         description="Base path of project. Join with 'active_project' to get full path",
         alias="Project Path",
     )
-    active_project: str = Field(
+    active_project: Optional[str] = Field(
         title="active_project",
         description="Active project name. Join with 'project_path' to get full path",
         alias="Active Project",
@@ -266,6 +266,10 @@ class ProjectModel(InputsBaseModel):
 
     @validator("project_path")
     def check_project_path(cls, val):
+        if val is None:
+            # We are being used in library mode rather than project mode.
+            return val
+
         path = Path(val)
         if not path.exists():
             raise ValueError(f"project_path={val} does not exist")
@@ -273,6 +277,9 @@ class ProjectModel(InputsBaseModel):
 
     @validator("active_project")
     def check_active_project(cls, val, values):
+        if values.get("project_path") is None:
+            return None
+            
         active_project_path = values["project_path"] / val
         if not active_project_path.exists():
             raise ValueError(f"project_path={active_project_path} does not exist")
@@ -280,10 +287,15 @@ class ProjectModel(InputsBaseModel):
 
     @validator("active_project_path")
     def assign_active_project_path(cls, val, values):
+        if values.get("project_path") is None and not val:
+            return val
         return values["project_path"] / values["active_project"]
 
     @validator("scenarios")
     def check_scenarios(cls, val, values):
+        if values.get("project_path") is None:
+            return val
+
         if not val:
             raise ValueError("project['scenarios'] cannot be empty")
         return val

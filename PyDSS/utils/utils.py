@@ -15,9 +15,9 @@ import numpy as np
 import opendssdirect as dss
 import pandas as pd
 import toml
-import yaml
 
 from PyDSS.exceptions import InvalidParameter
+
 
 MAX_PATH_LENGTH = 255
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S.%f' # '%Y-%m-%d %H:%M:%S.%f', "%m/%d/%Y %H:%M:%S"
@@ -34,27 +34,6 @@ class TomlEnumEncoder(toml.TomlEncoder):
         return super().dump_value(v)
 
 
-def check_redirect(file_name):
-    """Runs redirect command for dss file
-    And checks for exception
-
-    Parameters
-    ----------
-    file_name : str
-        dss file to be redirected
-
-    Raises
-    -------
-    Exception
-        Raised if the command fails
-
-    """
-    logger.debug(f"Redirecting DSS file: {file_name}")
-    result = dss.run_command(f"Redirect {file_name}")
-    if result != "":
-        raise Exception(f"Redirect failed for {file_name}, message: {result}")
-
-
 def _get_module_from_extension(filename, **kwargs):
     if isinstance(filename, Path):
         ext = filename.suffix.lower()
@@ -64,8 +43,6 @@ def _get_module_from_extension(filename, **kwargs):
         mod = json
     elif ext == ".toml":
         mod = toml
-    elif ext in (".yml", ".yaml"):
-        mod = yaml
     elif "mod" in kwargs:
         mod = kwargs["mod"]
     else:
@@ -106,8 +83,6 @@ def load_data(filename, **kwargs):
     dict
 
     """
-    # TODO:  YAMLLoadWarning: calling yaml.load() without Loader=... is deprecated,
-    #  as the default Loader is unsafe. Please read https://msg.pyyaml.org/load for full details.
     mod = _get_module_from_extension(filename, **kwargs)
     with open(filename) as f_in:
         data = mod.load(f_in)
@@ -182,41 +157,6 @@ def interpret_datetime(timestamp):
             if i == len(formats) - 1:
                 raise
             continue
-
-
-def iter_elements(element_class, element_func):
-    """Yield the return of element_func for each element of type element_class.
-
-    Parameters
-    ----------
-    element_class : class
-        Subclass of opendssdirect.CktElement
-    element_func : function
-        Function to run on each element
-
-    Yields
-    ------
-    Return of element_func
-
-    Examples
-    --------
-    >>> import opendssdirect as dss
-
-    >>> def get_reg_control_info():
-        return {
-            "name": dss.RegControls.Name(),
-            "enabled": dss.CktElement.Enabled(),
-            "transformer": dss.RegControls.Transformer(),
-        }
-
-    >>> for reg_control in iter_elements(opendssdirect.RegControls, get_reg_control_info):
-        print(reg_control["name"])
-
-    """
-    element_class.First()
-    for _ in range(element_class.Count()):
-        yield element_func()
-        element_class.Next()
 
 
 def make_human_readable_size(size, decimals=2):

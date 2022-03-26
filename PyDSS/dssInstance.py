@@ -32,6 +32,7 @@ import logging
 import json
 import time
 import os
+from collections import defaultdict
 
 from bokeh.client import push_session
 from bokeh.plotting import curdoc
@@ -112,8 +113,8 @@ class OpenDSS:
         self._dssSolution = self._dssInstance.Solution
         self._dssSolver = SolveMode.GetSolver(settings=settings, dssInstance=self._dssInstance)
         self._Modifier = Modifier(self._dssInstance, run_command, settings)
-        self._UpdateDictionary()
-        self._CreateBusObjects()
+        self._dssBuses = self.CreateBusObjects()
+        self._dssObjects, self._dssObjectsByClass = self.CreateDssObjects(self._dssBuses)
         self._dssSolver.reSolve()
 
         if settings.profiles.use_profile_manager:
@@ -291,41 +292,44 @@ class OpenDSS:
                 elm = self._dssInstance.ActiveClass.Next()
         return maxError < self._settings.project.error_tolerance, maxError
 
-    def _CreateBusObjects(self):
-        BusNames = self._dssCircuit.AllBusNames()
-        self._dssInstance.run_command('New  Fault.DEFAULT Bus1={} enabled=no r=0.01'.format(BusNames[0]))
+    @staticmethod
+    def CreateBusObjects():
+        dssBuses = {}
+        BusNames = dss.Circuit.AllBusNames()
+        dss.run_command('New  Fault.DEFAULT Bus1={} enabled=no r=0.01'.format(BusNames[0]))
         for BusName in BusNames:
-            self._dssCircuit.SetActiveBus(BusName)
-            self._dssBuses[BusName] = dssBus(self._dssInstance)
-        return
+            dss.Circuit.SetActiveBus(BusName)
+            dssBuses[BusName] = dssBus()
+        return dssBuses
 
-    def _UpdateDictionary(self):
+    @staticmethod
+    def CreateDssObjects(dssBuses):
+        dssObjects = {}
+        dssObjectsByClass = defaultdict(dict)
+
         InvalidSelection = ['Settings', 'ActiveClass', 'dss', 'utils', 'PDElements', 'XYCurves', 'Bus', 'Properties']
         # TODO: this causes a segmentation fault. Aadil says it may not be needed.
         #self._dssObjectsByClass={'LoadShape': self._GetRelaventObjectDict('LoadShape')}
 
-        for ElmName in self._dssInstance.Circuit.AllElementNames():
+        for ElmName in dss.Circuit.AllElementNames():
             Class, Name =  ElmName.split('.', 1)
-            if Class + 's' not in self._dssObjectsByClass:
-                self._dssObjectsByClass[Class + 's'] = {}
-            self._dssInstance.Circuit.SetActiveElement(ElmName)
-            self._dssObjectsByClass[Class + 's'][ElmName] = create_dss_element(Class, Name, self._dssInstance)
-            self._dssObjects[ElmName] = self._dssObjectsByClass[Class + 's'][ElmName]
+            ClassName = Class + 's'
+            dss.Circuit.SetActiveElement(ElmName)
+            dssObjectsByClass[ClassName][ElmName] = create_dss_element(Class, Name)
+            dssObjects[ElmName] = dssObjectsByClass[ClassName][ElmName]
 
-        for ObjName in self._dssObjects.keys():
-            Class = ObjName.split('.')[0] + 's'
-            if Class not in self._dssObjectsByClass:
-                self._dssObjectsByClass[Class] = {}
-            if  ObjName not in self._dssObjectsByClass[Class]:
-                self._dssObjectsByClass[Class][ObjName] = self._dssObjects[ObjName]
+        for ObjName in dssObjects.keys():
+            ClassName = ObjName.split('.')[0] + 's'
+            if ObjName not in dssObjectsByClass[Class]:
+                dssObjectsByClass[Class][ObjName] = dssObjects[ObjName]
 
-        self._dssObjects['Circuit.' + self._dssCircuit.Name()] = dssCircuit(self._dssInstance)
-        self._dssObjectsByClass['Circuits'] = {
-            'Circuit.' + self._dssCircuit.Name(): self._dssObjects['Circuit.' + self._dssCircuit.Name()]
+        dssObjects['Circuit.' + dss.Circuit.Name()] = dssCircuit()
+        dssObjectsByClass['Circuits'] = {
+            'Circuit.' + dss.Circuit.Name(): dssObjects['Circuit.' + dss.Circuit.Name()]
         }
-        self._dssObjectsByClass['Buses'] = self._dssBuses
+        dssObjectsByClass['Buses'] = dssBuses
 
-        return
+        return dssObjects, dssObjectsByClass
 
     def _GetRelaventObjectDict(self, key):
         ObjectList = {}

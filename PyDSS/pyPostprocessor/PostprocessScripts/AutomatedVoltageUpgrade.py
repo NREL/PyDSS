@@ -17,7 +17,7 @@ from PyDSS.common import SimulationType
 from PyDSS.exceptions import InvalidParameter, OpenDssConvergenceError
 from PyDSS.pyPostprocessor.pyPostprocessAbstract import AbstractPostprocess
 from PyDSS.pyPostprocessor.PostprocessScripts.postprocess_voltage_upgrades import postprocess_voltage_upgrades
-from PyDSS.utils.utils import iter_elements, check_redirect
+from PyDSS.utils.dss_utils import iter_elements, check_redirect
 
 plt.rcParams.update({'font.size': 14})
 

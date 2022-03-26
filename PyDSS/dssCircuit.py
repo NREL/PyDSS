@@ -1,3 +1,5 @@
+import opendssdirect as dss
+
 from PyDSS.dssObjectBase import dssObjectBase
 
 class dssCircuit(dssObjectBase):
@@ -13,7 +15,9 @@ class dssCircuit(dssObjectBase):
         "TotalPower",
     )
 
-    def __init__(self, dssInstance):
+    def __init__(self, dssInstance=None):
+        if dssInstance is None:
+            dssInstance = dss
         name = dssInstance.Circuit.Name()
         fullName = "Circuit." + name
         self._Class = 'Circuit'

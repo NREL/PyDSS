@@ -2,18 +2,18 @@ from datetime import timedelta
 import math
 
 from PyDSS.modes.solver_base import solver_base
-from PyDSS.simulation_input_models import SimulationSettingsModel
+from PyDSS.simulation_input_models import ProjectModel
 from PyDSS.utils.timing_utils import timer_stats_collector, track_timing
 
 
 class Dynamic(solver_base):
-    def __init__(self, dssInstance, settings: SimulationSettingsModel, Logger):
-        super().__init__(dssInstance, settings, Logger)
+    def __init__(self, dssInstance, settings: ProjectModel):
+        super().__init__(dssInstance, settings)
         self.setMode('Dynamic')
-        self._dssInstance.utils.run_command('Set ControlMode={}'.format(settings.project.control_mode.value))
+        self._dssInstance.utils.run_command('Set ControlMode={}'.format(settings.control_mode.value))
         self._dssSolution.Number(1)
         self._dssSolution.StepSize(self._sStepRes)
-        self._dssSolution.MaxControlIterations(settings.project.max_control_iterations)
+        self._dssSolution.MaxControlIterations(settings.max_control_iterations)
         self._dssSolution.DblHour(self._Hour + self._Second / 3600.0)
         return
 
