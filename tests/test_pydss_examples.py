@@ -37,6 +37,7 @@ def copy_examples_to_temp_folder(example_name):
     copy_tree(EXAMPLES_path, base_projects_path)
     return base_projects_path
 
+@pytest.mark.skip
 def test_external_interfaces_example(pydss_project):
     example_name = "external_interfaces/pydss_project"
     scenarios = [
@@ -71,6 +72,7 @@ def test_monte_carlo_example(pydss_project):
     run_example(example_name, scenarios)
     return
 
+@pytest.mark.skip
 def test_dynamic_visualization_example(pydss_project):
     example_name = "dynamic_visualization"
     scenarios = [
@@ -86,6 +88,7 @@ def test_dynamic_visualization_example(pydss_project):
     run_example(example_name, scenarios)
     return
 
+@pytest.mark.skip
 def test_custom_contols_example(pydss_project):
     example_name = "custom_contols"
     scenarios = [
@@ -97,6 +100,7 @@ def test_custom_contols_example(pydss_project):
     run_example(example_name, scenarios)
     return
 
+@pytest.mark.skip
 def test_harmonics_example(pydss_project):
     example_name = "harmonics"
     scenarios = [
