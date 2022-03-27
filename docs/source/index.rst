@@ -36,13 +36,11 @@ Installation
 Recommendation: Install PyDSS in an Anaconda virtual environment. Specific dependent
 packages like shapely will only install successfully on Windows with conda.
 
-.. warning:: The latest supported python version is 3.7.
-
 Here is an example conda command:
 
 .. code-block:: bash
 
-    $ conda create -n pydss python=3.7
+    $ conda create -n pydss python=3.9
 
 Install shapely with conda. pip, particularly on Windows, often fails to install its dependent
 libraries.
