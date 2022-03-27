@@ -14,7 +14,6 @@ import time
 import json
 # from place_new_regs import place_new_regs
 import numpy as np
-import seaborn as sns
 import scipy.spatial.distance as ssd
 from sklearn.cluster import AgglomerativeClustering
 import matplotlib.image as mpimg
@@ -331,4 +330,3 @@ if __name__ == "__main__":
     logging.basicConfig()
     logger = logging.getLogger(__name__)
     data = postprocess_thermal_upgrades(Settings, dss, logger)
-

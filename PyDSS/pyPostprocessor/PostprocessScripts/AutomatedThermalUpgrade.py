@@ -16,7 +16,6 @@ import time
 import json
 # from place_new_regs import place_new_regs
 import numpy as np
-import seaborn as sns
 import scipy.spatial.distance as ssd
 from sklearn.cluster import AgglomerativeClustering
 import matplotlib.image as mpimg
