@@ -6,6 +6,10 @@ NoPublish = [ "VoltagesMagAng",]
 Publish = [ "Powers", "VoltagesMagAng",]
 NoPublish = []
 
+[Generators]
+Publish = [ "Powers", "VoltagesMagAng",]
+NoPublish = []
+
 [Storages]
 Publish = []
 NoPublish = [ "Powers", "VoltagesMagAng", "%stored",]

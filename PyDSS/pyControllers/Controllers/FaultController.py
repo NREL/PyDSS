@@ -24,6 +24,7 @@ class FaultController(ControllerAbstract):
         self.P_old = 0
         self.Time = -1
         self.dssInstance = dssInstance
+        self.ElmObjectList = ElmObjectList
         self._ControlledElm = ctrlObj
         self.__dssSolver = dssSolver
         self.__FaultEnabled = False
@@ -66,7 +67,12 @@ class FaultController(ControllerAbstract):
             elif time >= self.__Settings['Fault end time (sec)'] and self.__FaultEnabled==True:
                 self.disable_fault()
                 self.__FaultEnabled = False
-            print(self.__dssSolver.GetTotalSeconds(), self.__FaultEnabled)
+            
+            if time >= self.__Settings['Fault end time (sec)']:
+                obj = self.ElmObjectList["Vsource.source"]
+                obj.SetParameter("pu", obj.GetParameter("pu") * 0.999)
+                print(f"Voltage: {obj.GetParameter('pu')} pu")
+            
         return 0
 
         

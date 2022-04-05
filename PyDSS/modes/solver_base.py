@@ -51,7 +51,7 @@ class solver_base:
         self.Steps = math.ceil(Seconds / self._sStepRes)
         return self.Steps, self._StartTime, self._EndTime
 
-    def GetSimulationEndTimeSeconds(self):
+    def get_simulation_end_time(self):
         return (self._EndTime - self._StartTime).total_seconds()
 
     def GetTotalSeconds(self):
@@ -96,11 +96,11 @@ class solver_base:
     
     
     @property
-    def isLastTimestep(self):
-        if self.GetTotalSeconds() + self.GetStepResolutionSeconds() >= self.GetSimulationEndTimeSeconds():
+    def is_last_timestep(self):
+        if self.GetTotalSeconds() + self.GetStepResolutionSeconds() >= self.get_simulation_end_time():
             return True
         return False
     
     @property
-    def allTimestamps(self):
+    def all_timestamps(self):
         return [self._StartTime + timedelta(seconds= n * self.GetStepResolutionSeconds()) for n in range(self.Steps)]

@@ -7,8 +7,6 @@ from pvder.grid_components import Grid
 from pvder.DER_wrapper import DERModel
 #from pvder import utility_functions
 
-import matplotlib.pyplot as plt
-import pandas as pd
 import numpy as np
 import math
 
@@ -24,63 +22,65 @@ class PvDynamic(ControllerAbstract):
 
     def __init__(self, VSCObj, Settings, dssInstance, ElmObjectList, dssSolver):
         super(PvDynamic, self).__init__(VSCObj, Settings, dssInstance, ElmObjectList, dssSolver)
-        self.Solver = dssSolver
-        self.P_old = 0
-        self.Time = 0
+        self.solver = dssSolver
+        self.p_old = 0
+        self.time = 0
         self.dt = dssSolver.GetStepResolutionSeconds()
-        self._Settings = Settings
-        self._ControlledElm = VSCObj
-        self._eClass, self._eName = self._ControlledElm.GetInfo()
-        self._Name = 'pyCont_' + self._eClass + '_' + self._eName
-        self._ElmObjectList = ElmObjectList
-        self.nPhases = self._ControlledElm.NumPhases
-        self.FREQ = dssInstance.Solution.Frequency()
+        self._settings = Settings
+        self._controlled_element = VSCObj
+        self._e_class, self._e_name = self._controlled_element.GetInfo()
+        self._name = 'pyCont_' + self._e_class + '_' + self._e_name
+        self.n_phases = self._controlled_element.NumPhases
+        self.freq = dssInstance.Solution.Frequency()
         self.events1 = SimulationEvents(verbosity = 'DEBUG')
-        self.grid1 = Grid(events=self.events1, unbalance_ratio_b=1.0, unbalance_ratio_c=1.0)
-        self.vBase = self._ControlledElm.sBus[0].GetVariable('kVBase') * 1000
-        STAND_ALONE = False
-        STEADY_STATE = Settings["STEADY_STATE"]
-        RATED_POWER_AC_VA = Settings["RATED_POWER_AC_VA"]
-        RATED_POWER_DC_WATTS = Settings["RATED_POWER_DC_WATTS"]
+        #self.grid1 = Grid(events=self.events1, unbalance_ratio_b=1.0, unbalance_ratio_c=1.0)
+        self.voltage_base = self._controlled_element.sBus[0].GetVariable('kVBase') * 1000
+        stand_alone = False
+        steady_state = Settings["STEADY_STATE"]
+        rated_power_ac_va = Settings["RATED_POWER_AC_VA"]
+        rated_power_dc_watts = Settings["RATED_POWER_DC_WATTS"]
         der_verbosity = 'DEBUG'
         config_file = r"C:\Users\alatif\Documents\GitHub\pvder\config_der.json"
-        if self.nPhases == 1:
+        if self.n_phases == 1:
             self._Va = self.Voltages()
             self._Vrms = abs(self._Va )/math.sqrt(2)
-            print(f"\nmodel inputs: \nVa - {self._Va}, \nVrms - {self._Vrms}\nFreq - {self.FREQ}\nvBase - {self.vBase}\n")
+            print(f"\nmodel inputs: \nVa - {self._Va}, \nVrms - {self._Vrms}\nFreq - {self.freq}\nvBase - {self.voltage_base}\n")
             self._pv_model = DERModel(
                 modelType= 'SinglePhase',
+                powerRating = rated_power_ac_va,
                 events=self.events1,
                 configFile=config_file,
                 Vrmsrated = self._Vrms,
                 gridVoltagePhaseA = self._Va,
-                gridFrequency=2 * math.pi * self.FREQ,
+                gridFrequency=2 * math.pi * self.freq,
                 derId=Settings["DER_ID"],
-                standAlone = STAND_ALONE,
-                steadyStateInitialization=STEADY_STATE,
+                standAlone = stand_alone,
+                steadyStateInitialization=steady_state,
                 verbosity = der_verbosity
                 )
             
         elif self.nPhases == 3:
             self._Va, self._Vb, self._Vc = self.Voltages()
+            print(self._Va, self._Vb, self._Vc)
             self._Vrms = abs(self._Va ) / math.sqrt(2)
             self._pv_model = DERModel(
                 modelType= 'ThreePhaseUnbalanced',
-                events=self.events1,
+                powerRating = rated_power_ac_va,
+                vents=self.events1,
                 configFile=config_file,
                 Vrmsrated = self._Vrms,
                 gridVoltagePhaseA = self._Va,
                 gridVoltagePhaseB = self._Vb,
                 gridVoltagePhaseC = self._Vc,
-                gridFrequency=2 * math.pi * self.FREQ,
+                gridFrequency=2 * math.pi * self.freq,
                 derId=Settings["DER_ID"],
-                standAlone = STAND_ALONE,
-                steadyStateInitialization=STEADY_STATE,
+                standAlone = stand_alone,
+                steadyStateInitialization=steady_state,
                 verbosity = der_verbosity
                 )
-            
+        print(self._Vrms)   
+        quit()
         self.sim1 = DynamicSimulation(
-            gridModel=self.grid1,
             PV_model=self._pv_model.DER_model,
             events = self.events1,
             verbosity = 'INFO',
@@ -99,7 +99,7 @@ class PvDynamic(ControllerAbstract):
         
         self.update_model_parameters()
 
-        self._pv_model.DER_model.MPPT_ENABLE=Settings["MPPT_ENABLE"]
+        self._pv_model.DER_model.MPPT_ENABLE = Settings["MPPT_ENABLE"]
         self._pv_model.DER_model.RAMP_ENABLE = Settings["RAMP_ENABLE"]
         self._pv_model.DER_model.VOLT_VAR_ENABLE = Settings["VOLT_VAR_ENABLE"]
         self._pv_model.DER_model.LVRT_ENABLE = Settings["LVRT_ENABLE"]
@@ -116,7 +116,7 @@ class PvDynamic(ControllerAbstract):
         self.sim1.DEBUG_PLL = self.DEBUG_PLL
         self.sim1.PER_UNIT = True
         self.sim1.DEBUG_SOLVER  = self.DEBUG_SOLVER
-        self.sim1.tStop = dssSolver.GetSimulationEndTimeSeconds()
+        self.sim1.tStop = dssSolver.get_simulation_end_time()
         self.sim1.tInc = self.dt
         self._pv_model._del_t_frequency_estimate = self.sim1.tInc 
 
@@ -126,82 +126,82 @@ class PvDynamic(ControllerAbstract):
 
     def update_model_parameters(self):
         make_changes = any([
-            self._Settings["UPDATE_MODULE_PARAMETRS"],
-            self._Settings["UPDATE_INVERTER_PARAMETRS"],
-            self._Settings["UPDATE_CIRCUIT_PARAMETRS"],
-            self._Settings["UPDATE_CONTROLLER_PARAMETRS"],
-            self._Settings["UPDATE_STEADYSTATE_PARAMETRS"]
+            self._settings["UPDATE_MODULE_PARAMETRS"],
+            self._settings["UPDATE_INVERTER_PARAMETRS"],
+            self._settings["UPDATE_CIRCUIT_PARAMETRS"],
+            self._settings["UPDATE_CONTROLLER_PARAMETRS"],
+            self._settings["UPDATE_STEADYSTATE_PARAMETRS"]
         ])
   
         module_parameters = {
-            'Np': self._Settings["Np"],
-            'Ns': self._Settings["Ns"],
-            'Vdcmpp0': self._Settings["Vdcmpp0"],
-            'Vdcmpp_max': self._Settings["Vdcmpp_max"],
-            'Vdcmpp_min': self._Settings["Vdcmpp_min"],
+            'Np': self._settings["Np"],
+            'Ns': self._settings["Ns"],
+            'Vdcmpp0': self._settings["Vdcmpp0"],
+            'Vdcmpp_max': self._settings["Vdcmpp_max"],
+            'Vdcmpp_min': self._settings["Vdcmpp_min"],
         }
         inverter_ratings = {
-            'Vdcrated': self._Settings["Vdcrated"],
-            'Ioverload': self._Settings["Ioverload"],
-            'Vrmsrated': self._Settings["Vrmsrated"],
-            'Iramp_max_gradient_imag': self._Settings["Iramp_max_gradient_imag"],
-            'Iramp_max_gradient_real': self._Settings["Iramp_max_gradient_real"],
+            'Vdcrated': self._settings["Vdcrated"],
+            'Ioverload': self._settings["Ioverload"],
+            'Vrmsrated': self._settings["Vrmsrated"],
+            'Iramp_max_gradient_imag': self._settings["Iramp_max_gradient_imag"],
+            'Iramp_max_gradient_real': self._settings["Iramp_max_gradient_real"],
         }   
         circuit_parameters = {
-            'Rf_actual': self._Settings["Rf_actual"],
-            'Lf_actual': self._Settings["Lf_actual"],
-            'C_actual': self._Settings["C_actual"],
-            'Z1_actual': self._Settings["Z1_actual_real"] +self._Settings["Z1_actual_imag"] *1j,
-            'R1_actual': self._Settings["R1_actual"],
-            'X1_actual': self._Settings["X1_actual"],
+            'Rf_actual': self._settings["Rf_actual"],
+            'Lf_actual': self._settings["Lf_actual"],
+            'C_actual': self._settings["C_actual"],
+            'Z1_actual': self._settings["Z1_actual_real"] +self._settings["Z1_actual_imag"] *1j,
+            'R1_actual': self._settings["R1_actual"],
+            'X1_actual': self._settings["X1_actual"],
         }
         controller_gains = {
-            'Kp_GCC': self._Settings["Kp_GCC"],
-            'Ki_GCC': self._Settings["Ki_GCC"],
-            'Kp_DC': self._Settings["Kp_DC"],
-            'Ki_DC': self._Settings["Ki_DC"],
-            'Kp_Q': self._Settings["Kp_Q"],
-            'Ki_Q': self._Settings["Ki_Q"],
-            'wp': self._Settings["wp"]
+            'Kp_GCC': self._settings["Kp_GCC"],
+            'Ki_GCC': self._settings["Ki_GCC"],
+            'Kp_DC': self._settings["Kp_DC"],
+            'Ki_DC': self._settings["Ki_DC"],
+            'Kp_Q': self._settings["Kp_Q"],
+            'Ki_Q': self._settings["Ki_Q"],
+            'wp': self._settings["wp"]
         }
         steadystate_values = {
-            'iaI0': self._Settings["iaI0"],
-            'iaR0': self._Settings["iaR0"],
-            'maI0': self._Settings["maI0"],
-            'maR0': self._Settings["maR0"],
+            'iaI0': self._settings["iaI0"],
+            'iaR0': self._settings["iaR0"],
+            'maI0': self._settings["maI0"],
+            'maR0': self._settings["maR0"],
         }
         
         if make_changes:
             self._pv_model.DER_model.initialize_parameter_dict(
                 parameter_ID=self.ControlledElement(),
-                source_parameter_ID=self._Settings["DER_ID"]
+                source_parameter_ID=self._settings["DER_ID"]
                 )
             
-            if self._Settings["UPDATE_MODULE_PARAMETRS"]:
+            if self._settings["UPDATE_MODULE_PARAMETRS"]:
                 self._pv_model.DER_model.update_parameter_dict(
                     parameter_ID=self.ControlledElement(),
                     parameter_type='module_parameters',
                     parameter_dict= module_parameters
                     ) 
-            if self._Settings["UPDATE_INVERTER_PARAMETRS"]:
+            if self._settings["UPDATE_INVERTER_PARAMETRS"]:
                 self._pv_model.DER_model.update_parameter_dict(
                     parameter_ID=self.ControlledElement(),
                     parameter_type='inverter_ratings',
                     parameter_dict= inverter_ratings
                     )
-            if self._Settings["UPDATE_CIRCUIT_PARAMETRS"]:
+            if self._settings["UPDATE_CIRCUIT_PARAMETRS"]:
                 self._pv_model.DER_model.update_parameter_dict(
                     parameter_ID=self.ControlledElement(),
                     parameter_type='circuit_parameters',
                     parameter_dict= circuit_parameters
                     )
-            if self._Settings["UPDATE_CONTROLLER_PARAMETRS"]:
+            if self._settings["UPDATE_CONTROLLER_PARAMETRS"]:
                 self._pv_model.DER_model.update_parameter_dict(
                     parameter_ID=self.ControlledElement(),
                     parameter_type='controller_gains',
                     parameter_dict= controller_gains
                     )
-            if self._Settings["UPDATE_STEADYSTATE_PARAMETRS"]:
+            if self._settings["UPDATE_STEADYSTATE_PARAMETRS"]:
                 self._pv_model.DER_model.update_parameter_dict(
                     parameter_ID=self.ControlledElement(),
                     parameter_type='steadystate_values',
@@ -215,25 +215,25 @@ class PvDynamic(ControllerAbstract):
         return self.Name
 
     def ControlledElement(self):
-        return "{}.{}".format(self._eClass, self._eName)
+        return "{}.{}".format(self._e_class, self._e_name)
 
     def run_dynamic_model(self):
-        sim_time_sec = self.Solver.GetTotalSeconds()
+        sim_time_sec = self.solver.GetTotalSeconds()
         t_sim = [sim_time_sec,sim_time_sec + self.dt]
-        if self.nPhases == 1:
+        if self.n_phases == 1:
             self._Va =  self.Voltages()
             print(f"Grid voltage: {self._Va}")
             self.sim1.run_simulation(
-                gridVoltagePhaseA=self._Va / self.vBase, 
+                gridVoltagePhaseA=self._Va / self.voltage_base, 
                 y0= self.sim1.y0 , 
                 t=t_sim
                 )
-        elif self.nPhases == 3:
+        elif self.n_phases == 3:
             self._Va, self._Vb, self._Vc = self.Voltages()
             self.sim1.run_simulation(
-                gridVoltagePhaseA=self._Va / self.vBase, 
-                gridVoltagePhaseB=self._Vb / self.vBase, 
-                gridVoltagePhaseC=self._Vc / self.vBase, 
+                gridVoltagePhaseA=self._Va / self.voltage_base, 
+                gridVoltagePhaseB=self._Vb / self.voltage_base, 
+                gridVoltagePhaseC=self._Vc / self.voltage_base, 
                 y0=self.sim1.y0, 
                 t=t_sim
                 )
@@ -241,8 +241,8 @@ class PvDynamic(ControllerAbstract):
         S = self._pv_model.DER_model.S * self._pv_model.DER_model.Sbase / 1000
         S_PCC = self._pv_model.DER_model.S_PCC * self._pv_model.DER_model.Sbase / 1000
         print(f"kW {S.real}\nkvar {S.imag}")
-        self._ControlledElm.SetParameter("kw", S_PCC.real)
-        self._ControlledElm.SetParameter("kvar", S_PCC.imag)
+        self._controlled_element.SetParameter("kw", S_PCC.real)
+        self._controlled_element.SetParameter("kvar", S_PCC.imag)
         self.results.append({
             "Vdc" : self._pv_model.DER_model.Vdc * self._pv_model.DER_model.Vbase,
             "vta" : self._pv_model.DER_model.vta * self._pv_model.DER_model.Vbase,
@@ -262,11 +262,15 @@ class PvDynamic(ControllerAbstract):
     def Update(self, Priority, Time, UpdateResults):
         if Priority == 0 :
             self.run_dynamic_model()
-            if self.Solver.isLastTimestep:
-                self.results = pd.DataFrame(self.results, index=self.Solver.allTimestamps)
+            if self.solver.is_last_timestep:
+                import matplotlib.pyplot as plt
+                import pandas as pd
+                
+
+                self.results = pd.DataFrame(self.results, index=self.solver.all_timestamps)
                 print(self.results)
                 #self.results["Ppv"].plot()
-                self.results["S"].plot()
+                self.results["Vrms"].plot()
                 plt.show()
                 print(self.results)
         return 0
@@ -275,12 +279,12 @@ class PvDynamic(ControllerAbstract):
         return [self._Settings['Control{}'.format(i+1)] for i in range(3)]
 
     def Voltages(self):
-        self._V0 = self._ControlledElm.GetVariable('Voltages', convert=False)[: 2 * self.nPhases]
+        self._V0 = self._controlled_element.GetVariable('Voltages', convert=False)[: 2 * self.n_phases]
         self._V0 = np.array(self._V0)
         self._V0 = self._V0[0::2] + 1j * self._V0[1::2]
-        if self.nPhases == 1:
+        if self.n_phases == 1:
             return self._V0[0]
-        elif self.nPhases == 3:  
+        elif self.n_phases == 3:  
             return self._V0[0], self._V0[1], self._V0[2]
         else:
             raise Exception("Only single or three phase models can be used")
