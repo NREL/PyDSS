@@ -460,7 +460,7 @@ class OpenDSS:
         self._Logger.info("Set OpenDSS convergence to %s", dss.Solution.Convergence())
         self._Logger.info('Max convergence error count {}.'.format(self._maxConvergenceErrorCount))
         self._Logger.info("initializing store")
-        if self._settings.helics.co_simulation_mode and self._settings.helics.store_intermediate_values:
+        if self._settings.helics.co_simulation_mode: # and self._settings.helics.store_intermediate_values:
             num_steps = Steps * self._settings.helics.max_co_iterations
         else:
             num_steps = Steps
@@ -524,7 +524,7 @@ class OpenDSS:
                     self.ResultContainer.UpdateResults(store_nan=store_nan, step=step)
                 if self._increment_flag:
                     step += 1
-
+                
                 if self._settings.helics.co_simulation_mode:
                     if self._increment_flag:
                         print('incrementing step, line 518 in dssInstance.py')
@@ -535,8 +535,6 @@ class OpenDSS:
                 else:
                     self._dssSolver.IncStep()
 
-                if self._increment_flag:
-                    step += 1
                 if self._settings.exports.export_results:
                     current_results = self.ResultContainer.CurrentResults
                 yield False, step, has_converged, current_results

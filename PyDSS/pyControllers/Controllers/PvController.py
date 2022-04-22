@@ -60,7 +60,10 @@ class PvController(ControllerAbstract):
         self.__BaseKV = float(PvObj.GetParameter('kv'))
         self.__Srated = float(PvObj.GetParameter('kVA'))
         self.__Prated = float(PvObj.GetParameter('Pmpp'))
-        self.__Qrated = float(PvObj.GetParameter('kVARlimit'))
+        qlimit_str=PvObj.GetParameter('kVARlimit')
+        if qlimit_str == '':
+           qlimit_str = str(self.__Srated)
+        self.__Qrated = float(qlimit_str)
         self.__cutin = float(PvObj.SetParameter('%cutin', 0)) / 100
         self.__cutout = float(PvObj.SetParameter('%cutout', 0)) / 100
         self.__dampCoef = Settings['DampCoef']
