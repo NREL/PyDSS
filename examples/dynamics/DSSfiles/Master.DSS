@@ -22,7 +22,7 @@ Redirect Recloser.dss
 Redirect Fuse.dss
 Redirect Monitor.dss
 MakeBusList
-Buscoords buscoords.dat
+Buscoords BusCoords.dat
 
 set voltagebases=(115 12.47 .48)
 
