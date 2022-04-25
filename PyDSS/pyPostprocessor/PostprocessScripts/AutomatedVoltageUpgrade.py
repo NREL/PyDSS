@@ -7,7 +7,11 @@ import opendssdirect as dss
 import networkx as nx
 import time
 import numpy as np
-import seaborn as sns
+try:
+    import seaborn as sns
+    _SEABORN_IMPORTED = True
+except ImportError:
+    _SEABORN_IMPORTED = False
 import re
 from sklearn.cluster import AgglomerativeClustering
 import json
@@ -2161,6 +2165,10 @@ class AutomatedVoltageUpgrade(AbstractPostprocess):
         self.square_array = np.array(ll)
 
     def plot_heatmap_distmatrix(self):
+        # seaborn has been removed from the package because the developers expect that
+        # this code is unused.
+        if not _SEABORN_IMPORTED:
+            raise Exception("seaborn must be installed for this function")
         plt.figure(figsize=(7, 7))
         ax = sns.heatmap(self.square_array, linewidth=0.5)
         plt.title("Distance matrix of nodes with violations")
