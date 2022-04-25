@@ -110,16 +110,58 @@ Run this command to run all scenarios in the project.  ::
 
 Analyze results
 ===============
+
+Exported CSV files
+------------------
 If ``Export Data Tables`` is set to true then the raw output is written to CSV
 files in ``<project-path>/<project-name>/Export/<scenario-name>``. These can be
 converted to pandas DataFrames. It is up to the user to interpret what each
 column represents.  This can vary by element.
 
+Data Viewer
+-----------
+PyDSS includes a simple Jupyter notebook UI that allows you to plot element results.
+Here's how to start it. Note that you must be in the directory where you ran
+``pydss run <my-project>`` when you start the notebook.
+
+.. note:: plotly is required for this application. You may ned to ``pip install plotly``.
+
+.. code-block:: bash
+
+  $ jupyter notebook
+
+Create a new Python notebook and add this to to the first cell:
+
+.. code-block:: python
+
+    from PyDSS.apps.data_viewer import DataViewer
+    from IPython.display import display, HTML, clear_output
+    display(HTML("<style>.container { width:100% !important; }</style>"))
+
+Add this to the second cell:
+
+.. code-block:: python
+
+    app = DataViewer(project_path="<my-project>")
+
+The notebook will present some widgets that allow you to choose exported element properties
+and plot the resulting DataFrames. The currently-selected DataFrame is available in the property
+``app.df``, and so you can customize your own plots or perform other actions in new notebook cells.
+
+.. todo:: Plotting may result in pandas warnings about fragmented dataframes if there are many columns.
+
+Here is an example plot of a time-series simulation that exported Bus voltages with Buses.puVmagAngle.
+Note that only the magnitude is plotted and the buses are filtered with a Python regular expression.
+
+.. image:: images/voltages.png
+
+Access results programmatically
+-------------------------------
 You can also access the results programmatically as shown in the following
 example code.
 
 Load element classes and properties
------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
@@ -135,7 +177,7 @@ Load element classes and properties
                 print(elem_class, prop, name)
 
 Read a dataframe for one element
---------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
@@ -151,7 +193,7 @@ Read a dataframe for one element
     2017-01-01 01:15:00   (3.356035449542105e-08+1.3810414088766265e-05j)  (-3.637978807091713e-12+1.1368683772161603e-13j)
 
 Read a dataframe for one element with a specific option
--------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Some element properties contain multiple values.  For example, the OpenDSS
 CktElement objects report ``Currents`` into each phase/terminal.
 Here is how you can get the data for a single phase/terminal::
@@ -179,7 +221,7 @@ Here is how you can get the data for a single phase/terminal::
     2017-01-01 01:15:00                  6.347553
 
 Read a dataframe for one element with an option matching a regular expression
------------------------------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
@@ -198,7 +240,7 @@ Read a dataframe for one element with an option matching a regular expression
     2017-01-01 01:15:00   (3.356035449542105e-08+1.3810414088766265e-05j)
 
 Read the total value for a property stored with ``store_values_type = "sum"``
------------------------------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
@@ -206,7 +248,7 @@ Read the total value for a property stored with ``store_values_type = "sum"``
     (48337.88149479975+14128.296734762534j)
 
 Find out all options available for a property
----------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
@@ -220,7 +262,7 @@ Find out all options available for a property
     []
 
 Find out what option values are present for a property
-------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
@@ -228,7 +270,7 @@ Find out what option values are present for a property
     ["A1", "A2"]
 
 Read a dataframe for all elements
----------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 You may want to get data for all elements at once.
 
 .. code-block:: python

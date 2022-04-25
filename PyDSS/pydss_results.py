@@ -660,13 +660,17 @@ class PyDssScenarioResults:
         if real_only:
             for column in df.columns:
                 if df[column].dtype == complex:
-                    df[column] = [x.real for x in df[column]]
+                    df[column] = np.real(df[column])
         elif abs_val:
             for column in df.columns:
                 if df[column].dtype == complex:
-                    df[column] = [abs(x) for x in df[column]]
+                    df[column] = df[column].apply(np.absolute)
 
         return df
+
+    def get_timestamps(self):
+        """Return the timestamps of the simulation in a pandas.Series."""
+        return self._get_indices_df()["Timestamp"]
 
     def iterate_dataframes(self, element_class, prop, real_only=False, abs_val=False, **kwargs):
         """Returns a generator over the dataframes by element name.
@@ -964,11 +968,11 @@ class PyDssScenarioResults:
         if real_only:
             for column in df.columns:
                 if df[column].dtype == complex:
-                    df[column] = [x.real for x in df[column]]
+                    df[column] = np.real(df[column])
         elif abs_val:
             for column in df.columns:
                 if df[column].dtype == complex:
-                    df[column] = [abs(x) for x in df[column]]
+                    df[column] = df[column].apply(np.absolute)
 
     @staticmethod
     def _fix_columns(name, columns):
