@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial &mdash; PyDSS 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="PyDSS Project Layout" href="project_layout.html" />
+    <link rel="prev" title="Quick Start Guide" href="quickstart.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> PyDSS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#create-an-empty-project">Create an empty project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#customize-the-simulation-settings">Customize the simulation settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#opendss-models">OpenDSS Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#run-the-simulation">Run the simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#results">Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#create-a-project">Create a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exporting-data">Exporting Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pre-filtering-export-data">Pre-filtering Export Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-a-project">Run a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#analyze-results">Analyze results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#exported-csv-files">Exported CSV files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data-viewer">Data Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#access-results-programmatically">Access results programmatically</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#load-element-classes-and-properties">Load element classes and properties</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#read-a-dataframe-for-one-element">Read a dataframe for one element</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#read-a-dataframe-for-one-element-with-a-specific-option">Read a dataframe for one element with a specific option</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#read-a-dataframe-for-one-element-with-an-option-matching-a-regular-expression">Read a dataframe for one element with an option matching a regular expression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#read-the-total-value-for-a-property-stored-with-store-values-type-sum">Read the total value for a property stored with <code class="docutils literal notranslate"><span class="pre">store_values_type</span> <span class="pre">=</span> <span class="pre">&quot;sum&quot;</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#find-out-all-options-available-for-a-property">Find out all options available for a property</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#find-out-what-option-values-are-present-for-a-property">Find out what option values are present for a property</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#read-a-dataframe-for-all-elements">Read a dataframe for all elements</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#estimate-space-required-by-pydss-simulation">Estimate space required by PyDSS simulation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="project_layout.html">PyDSS Project Layout</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#simulation-settings">Simulation Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#scenarios">Scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#exports">Exports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#reports">Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#example-layout">Example layout</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simulation_settings.html">Simulation Settings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#simulationsettings">SimulationSettings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#project">Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#scenario">Scenario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#scenariopostprocess">ScenarioPostProcess</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#snapshottimepointselectionconfig">SnapshotTimePointSelectionConfig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#exports">Exports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#frequency">Frequency</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#helics">Helics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#logging">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#montecarlo">MonteCarlo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#plots">Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#profiles">Profiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#reports">Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#simulationrange">SimulationRange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#capacitorstatechangecountreport">CapacitorStateChangeCountReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#feederlossesreport">FeederLossesReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#pvclippingreport">PvClippingReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#pvcurtailmentreport">PvCurtailmentReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#regcontroltapnumberchangecountsreport">RegControlTapNumberChangeCountsReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#thermalmetricsreport">ThermalMetricsReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#voltagemetricsreport">VoltageMetricsReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#reportbase">ReportBase</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="default_simulation_settings.html">Default Simulation Settings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Example PyDSS simulations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Dynamic%20visualization%20capabilities.html">Dynamic visualization capabilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html">Frequency sweep plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#gis-plot">GIS plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#histogram-plot">Histogram plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#voltage-sag-plot">Voltage sag plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#time-series-plot">Time series plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#voltage-current-heatmap-plot">Voltage / Current heatmap plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#xy-plots">XY plots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Creating%20custom%20dynamic%20plots.html">Development of custom dynamic plots</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Extended%20controls%20library.html">Extended controls library</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Creating%20custom%20controls.html">Extending PyDSS controllers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="External%20interfaces%20for%20cosimulation.html">External PyDSS interfaces</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="interfaces.html">The socket interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interfaces.html#the-helics-interface">The HELICS interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interfaces.html#the-api-interface">The API interface</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Automated%20comparison%20of%20scenarios.html">Automated scenario comparison</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Result%20management.html">Enhanced result export features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#global-settings">Global settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#format">Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#granularity">Granularity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#export-parameters">Export Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#output-data">Output Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#adding-new-reports">Adding New Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hdf-data-format.html">HDF Data Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hdf-data-format.html#layout">Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hdf-data-format.html#common-metadata">Common Metadata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hdf-data-format.html#dataset-metadata">Dataset Metadata</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hdf-data-format.html#attributes-per-dataset">Attributes per dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hdf-data-format.html#metadata-datasets-per-dataset">Metadata datasets per dataset</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hdf-data-format.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="PyDSS.html">PyDSS</a><ul class="simple">
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyDSS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tutorial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tutorial">
+<span id="tutorial-label"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<p>This page describes how to run simulations with PyDSS. If you have not already installed PyDSS,
+please follow the instructions at <a class="reference internal" href="index.html#installation-label"><span class="std std-ref">Installation</span></a>.</p>
+<section id="create-a-project">
+<h2>Create a project<a class="headerlink" href="#create-a-project" title="Permalink to this headline">¶</a></h2>
+<p>PyDSS requires a specific directory structure with configuration files that specify how to run a
+simulation. Run this command to create an empty project.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pydss create-project --project<span class="o">=</span>my-project --scenarios<span class="o">=</span><span class="s2">&quot;scenario1,scenario2&quot;</span> --path<span class="o">=</span>./pydss-projects
+</pre></div>
+</div>
+<p>Refer to <code class="docutils literal notranslate"><span class="pre">pydss</span> <span class="pre">create-project</span> <span class="pre">--help</span></code> to see additional options.</p>
+<p>Next, configure the project.</p>
+<ul class="simple">
+<li><p>Copy OpenDSS files to <code class="docutils literal notranslate"><span class="pre">&lt;project-name&gt;/DSSfiles</span></code>.</p></li>
+<li><p>Customize the simulation settings in <code class="docutils literal notranslate"><span class="pre">&lt;project-name&gt;/simulation.toml</span></code>.</p></li>
+<li><p>Set the field <code class="docutils literal notranslate"><span class="pre">dss_file</span></code> in <code class="docutils literal notranslate"><span class="pre">simulation.toml</span></code> to the OpenDSS entry point filename (e.g., Master.dss).</p></li>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">&quot;Use</span> <span class="pre">Controller</span> <span class="pre">Registry&quot;</span> <span class="pre">=</span> <span class="pre">true</span></code> in <code class="docutils literal notranslate"><span class="pre">&lt;project-name&gt;/simulation.toml</span></code> in
+order to use the simplified controller management feature.</p></li>
+<li><p>Add controllers to your local registry as needed.  Refer to <code class="docutils literal notranslate"><span class="pre">pydss</span> <span class="pre">controllers</span> <span class="pre">--help</span></code>.</p></li>
+<li><p>Assign element names to controllers. This example will add all PVSystems
+defined in an OpenDSS input file to the default Volt-Var PvController.
+<code class="docutils literal notranslate"><span class="pre">pydss</span> <span class="pre">edit-scenario</span> <span class="pre">-p</span> <span class="pre">./project</span> <span class="pre">-s</span> <span class="pre">scenario1</span> <span class="pre">update-controllers</span> <span class="pre">-t</span> <span class="pre">PvController</span> <span class="pre">-f</span> <span class="pre">./project/DSSfiles/PVGenerators_existing_VV.dss</span> <span class="pre">-c</span> <span class="pre">volt-var</span></code></p></li>
+<li><p>Customize the plots settings in <code class="docutils literal notranslate"><span class="pre">&lt;project-name&gt;/Scenarios/&lt;scenario-name&gt;/pyPlotList</span></code>.</p></li>
+<li><p>Customize data to be exported for each scenario in
+<code class="docutils literal notranslate"><span class="pre">&lt;project-name&gt;/Scenarios/&lt;scenario-name&gt;/ExportLists</span></code></p></li>
+</ul>
+<p>Refer to <a class="reference internal" href="project_layout.html#pydss-project-layout"><span class="std std-ref">PyDSS Project Layout</span></a> for more information about the project layout.</p>
+</section>
+<section id="exporting-data">
+<h2>Exporting Data<a class="headerlink" href="#exporting-data" title="Permalink to this headline">¶</a></h2>
+<p>Customize data export for all scenarios with the simulation settings described in
+<a class="reference internal" href="simulation_settings.html#exportsmodel"><span class="std std-ref">Exports</span></a>.</p>
+</section>
+<section id="pre-filtering-export-data">
+<h2>Pre-filtering Export Data<a class="headerlink" href="#pre-filtering-export-data" title="Permalink to this headline">¶</a></h2>
+<p>There are several options to limit the amount of data exported. These can be
+set in each scenario’s <code class="docutils literal notranslate"><span class="pre">Exports.toml</span></code> on a per-property basis.</p>
+<ul>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">names</span> <span class="pre">=</span> <span class="pre">[&quot;name1&quot;,</span> <span class="pre">&quot;name2&quot;,</span> <span class="pre">&quot;name3&quot;]</span></code> to only export data for these
+element names. By default PyDSS exports data for all elements.</p></li>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">name_regexes</span> <span class="pre">=</span> <span class="pre">[&quot;foo.*&quot;,</span> <span class="pre">&quot;bar\\d+&quot;]</span></code> to only export data for elements
+with names that match one of the listed Python regular expressions. Note
+that backslashes must be escaped.</p></li>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">limits</span> <span class="pre">=</span> <span class="pre">[min,</span> <span class="pre">max]</span></code> to pre-filter values that are inside or outside
+this range. <code class="docutils literal notranslate"><span class="pre">min</span></code> and <code class="docutils literal notranslate"><span class="pre">max</span></code> must be the same type. Refer to
+<code class="docutils literal notranslate"><span class="pre">limits_filter</span></code>.</p></li>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">limits_filter</span></code> to <code class="docutils literal notranslate"><span class="pre">outside</span></code> (default) or <code class="docutils literal notranslate"><span class="pre">inside</span></code>. Applies to
+filtering action on the <code class="docutils literal notranslate"><span class="pre">limits</span></code> parameter.</p></li>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">store_values_type</span></code> to <code class="docutils literal notranslate"><span class="pre">&quot;all&quot;</span></code> (default), <code class="docutils literal notranslate"><span class="pre">&quot;moving_average&quot;</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">&quot;sum&quot;</span></code>. If <code class="docutils literal notranslate"><span class="pre">moving_average</span></code> then PyDSS will store the average of the
+last <code class="docutils literal notranslate"><span class="pre">window_size</span></code> values. If <code class="docutils literal notranslate"><span class="pre">sum</span></code> then PyDSS will keep a
+running sum of values at each time point and only record the total to disk.</p></li>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">window_size</span></code> to an integer to control the moving average window size.
+Defaults to <code class="docutils literal notranslate"><span class="pre">100</span></code>.</p></li>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">moving_average_store_interval</span></code> to control how often the moving average
+is recorded. Defaults to <code class="docutils literal notranslate"><span class="pre">window_size</span></code>.</p></li>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">sample_interval</span></code> to control how often PyDSS reads new values. Defaults
+to <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
+<li><p>If the export key is not <code class="docutils literal notranslate"><span class="pre">ElementType.Property</span></code> but instead a value mapped
+to a custom function then PyDSS will run that function at each time point.
+<code class="docutils literal notranslate"><span class="pre">Line.LoadingPercent</span></code> is an example.  In this case PyDSS will read multiple
+values for a line, compute a loading percentage, and store that. The
+<code class="docutils literal notranslate"><span class="pre">limits</span></code> field can be applied to these values. Refer to
+<code class="docutils literal notranslate"><span class="pre">CUSTOM_FUNCTIONS</span></code> in <code class="docutils literal notranslate"><span class="pre">PyDSS/export_list_reader.py</span></code> to see the options
+available.</p></li>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">sum_group_file</span> <span class="pre">=</span> <span class="pre">file_path</span></code> where file_path is a JSON or TOML file
+relative to the directory from which you will run PyDSS. The contents of the
+file should look like this example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;sum_groups&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;group1&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;elements&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;element1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;element2&quot;</span>
+      <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;group2&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;elements&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;element3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;element4&quot;</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This will export sums of a value aggregated by element name.
+Set <code class="docutils literal notranslate"><span class="pre">store_values_type</span></code> to <code class="docutils literal notranslate"><span class="pre">all</span></code> to collect group values at every time
+point. Set it to <code class="docutils literal notranslate"><span class="pre">sum</span></code> to collect a running sum for each group.</p>
+</li>
+<li><p>Alternate to <code class="docutils literal notranslate"><span class="pre">sum_groups_file</span></code>: Set <code class="docutils literal notranslate"><span class="pre">sum_groups</span></code> to the contents of the
+example above.</p></li>
+</ul>
+</section>
+<section id="run-a-project">
+<h2>Run a project<a class="headerlink" href="#run-a-project" title="Permalink to this headline">¶</a></h2>
+<p>Run this command to run all scenarios in the project.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydss</span> <span class="n">run</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">project</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="analyze-results">
+<h2>Analyze results<a class="headerlink" href="#analyze-results" title="Permalink to this headline">¶</a></h2>
+<section id="exported-csv-files">
+<h3>Exported CSV files<a class="headerlink" href="#exported-csv-files" title="Permalink to this headline">¶</a></h3>
+<p>If <code class="docutils literal notranslate"><span class="pre">Export</span> <span class="pre">Data</span> <span class="pre">Tables</span></code> is set to true then the raw output is written to CSV
+files in <code class="docutils literal notranslate"><span class="pre">&lt;project-path&gt;/&lt;project-name&gt;/Export/&lt;scenario-name&gt;</span></code>. These can be
+converted to pandas DataFrames. It is up to the user to interpret what each
+column represents.  This can vary by element.</p>
+</section>
+<section id="data-viewer">
+<h3>Data Viewer<a class="headerlink" href="#data-viewer" title="Permalink to this headline">¶</a></h3>
+<p>PyDSS includes a simple Jupyter notebook UI that allows you to plot element results.
+Here’s how to start it. Note that you must be in the directory where you ran
+<code class="docutils literal notranslate"><span class="pre">pydss</span> <span class="pre">run</span> <span class="pre">&lt;my-project&gt;</span></code> when you start the notebook.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>plotly is required for this application. You may ned to <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">plotly</span></code>.</p>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ jupyter notebook
+</pre></div>
+</div>
+<p>Create a new Python notebook and add this to to the first cell:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PyDSS.apps.data_viewer</span> <span class="kn">import</span> <span class="n">DataViewer</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span><span class="p">,</span> <span class="n">clear_output</span>
+<span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="s2">&quot;&lt;style&gt;.container { width:100% !important; }&lt;/style&gt;&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Add this to the second cell:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">app</span> <span class="o">=</span> <span class="n">DataViewer</span><span class="p">(</span><span class="n">project_path</span><span class="o">=</span><span class="s2">&quot;&lt;my-project&gt;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The notebook will present some widgets that allow you to choose exported element properties
+and plot the resulting DataFrames. The currently-selected DataFrame is available in the property
+<code class="docutils literal notranslate"><span class="pre">app.df</span></code>, and so you can customize your own plots or perform other actions in new notebook cells.</p>
+<p>Here is an example plot of a time-series simulation that exported Bus voltages with Buses.puVmagAngle.
+Note that only the magnitude is plotted and the buses are filtered with a Python regular expression.</p>
+<img alt="_images/voltages.png" src="_images/voltages.png" />
+</section>
+<section id="access-results-programmatically">
+<h3>Access results programmatically<a class="headerlink" href="#access-results-programmatically" title="Permalink to this headline">¶</a></h3>
+<p>You can also access the results programmatically as shown in the following
+example code.</p>
+<section id="load-element-classes-and-properties">
+<h4>Load element classes and properties<a class="headerlink" href="#load-element-classes-and-properties" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PyDSS.pydss_results</span> <span class="kn">import</span> <span class="n">PyDssResults</span>
+
+<span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">PyDssResults</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="n">scenario</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">scenarios</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="c1"># Show the element classes and properties for which data was collected.</span>
+<span class="k">for</span> <span class="n">elem_class</span> <span class="ow">in</span> <span class="n">scenario</span><span class="o">.</span><span class="n">list_element_classes</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">scenario</span><span class="o">.</span><span class="n">list_element_properties</span><span class="p">(</span><span class="n">elem_class</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">scenario</span><span class="o">.</span><span class="n">list_element_names</span><span class="p">(</span><span class="n">elem_class</span><span class="p">,</span> <span class="n">prop</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">elem_class</span><span class="p">,</span> <span class="n">prop</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="read-a-dataframe-for-one-element">
+<h4>Read a dataframe for one element<a class="headerlink" href="#read-a-dataframe-for-one-element" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">get_dataframe</span><span class="p">(</span><span class="s2">&quot;Lines&quot;</span><span class="p">,</span> <span class="s2">&quot;Currents&quot;</span><span class="p">,</span> <span class="s2">&quot;Line.pvl_112&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+
+                                              <span class="n">Line</span><span class="o">.</span><span class="n">pvl_112__A1</span> <span class="p">[</span><span class="n">Amps</span><span class="p">]</span>                        <span class="n">Line</span><span class="o">.</span><span class="n">pvl_112__A2</span> <span class="p">[</span><span class="n">Amps</span><span class="p">]</span>
+<span class="n">timestamp</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">15</span><span class="p">:</span><span class="mi">00</span>  <span class="p">(</span><span class="mf">3.5710399970412254e-08</span><span class="o">+</span><span class="mf">1.3782673590867489e-05</span><span class="n">j</span><span class="p">)</span>  <span class="p">(</span><span class="o">-</span><span class="mf">3.637978807091713e-12</span><span class="o">+</span><span class="mf">1.1368683772161603e-13</span><span class="n">j</span><span class="p">)</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">30</span><span class="p">:</span><span class="mi">00</span>  <span class="p">(</span><span class="mf">3.3905962482094765e-08</span><span class="o">+</span><span class="mf">1.3793145967611053e-05</span><span class="n">j</span><span class="p">)</span>                           <span class="mf">1.1368683772161603e-13</span><span class="n">j</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="mi">00</span>   <span class="p">(</span><span class="mf">3.381501301191747e-08</span><span class="o">+</span><span class="mf">1.3786106705993006e-05</span><span class="n">j</span><span class="p">)</span>                       <span class="p">(</span><span class="o">-</span><span class="mf">3.637978807091713e-12</span><span class="o">+</span><span class="mi">0</span><span class="n">j</span><span class="p">)</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">01</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>  <span class="p">(</span><span class="mf">3.4120603231713176e-08</span><span class="o">+</span><span class="mf">1.3804576042275585e-05</span><span class="n">j</span><span class="p">)</span>   <span class="p">(</span><span class="mf">3.637978807091713e-12</span><span class="o">+</span><span class="mf">1.1368683772161603e-13</span><span class="n">j</span><span class="p">)</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">01</span><span class="p">:</span><span class="mi">15</span><span class="p">:</span><span class="mi">00</span>   <span class="p">(</span><span class="mf">3.356035449542105e-08</span><span class="o">+</span><span class="mf">1.3810414088766265e-05</span><span class="n">j</span><span class="p">)</span>  <span class="p">(</span><span class="o">-</span><span class="mf">3.637978807091713e-12</span><span class="o">+</span><span class="mf">1.1368683772161603e-13</span><span class="n">j</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="read-a-dataframe-for-one-element-with-a-specific-option">
+<h4>Read a dataframe for one element with a specific option<a class="headerlink" href="#read-a-dataframe-for-one-element-with-a-specific-option" title="Permalink to this headline">¶</a></h4>
+<p>Some element properties contain multiple values.  For example, the OpenDSS
+CktElement objects report <code class="docutils literal notranslate"><span class="pre">Currents</span></code> into each phase/terminal.
+Here is how you can get the data for a single phase/terminal:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">get_dataframe</span><span class="p">(</span><span class="s2">&quot;Lines&quot;</span><span class="p">,</span> <span class="s2">&quot;Currents&quot;</span><span class="p">,</span> <span class="s2">&quot;Line.pvl_112&quot;</span><span class="p">,</span> <span class="n">phase_terminal</span><span class="o">=</span><span class="s2">&quot;A1&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+
+                                               <span class="n">Line</span><span class="o">.</span><span class="n">pvl_112__Currents__A1</span> <span class="p">[</span><span class="n">Amps</span><span class="p">]</span>
+<span class="n">timestamp</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">15</span><span class="p">:</span><span class="mi">00</span>  <span class="p">(</span><span class="mf">3.5710399970412254e-08</span><span class="o">+</span><span class="mf">1.3782673590867489e-05</span><span class="n">j</span><span class="p">)</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">30</span><span class="p">:</span><span class="mi">00</span>  <span class="p">(</span><span class="mf">3.3905962482094765e-08</span><span class="o">+</span><span class="mf">1.3793145967611053e-05</span><span class="n">j</span><span class="p">)</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="mi">00</span>   <span class="p">(</span><span class="mf">3.381501301191747e-08</span><span class="o">+</span><span class="mf">1.3786106705993006e-05</span><span class="n">j</span><span class="p">)</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">01</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>  <span class="p">(</span><span class="mf">3.4120603231713176e-08</span><span class="o">+</span><span class="mf">1.3804576042275585e-05</span><span class="n">j</span><span class="p">)</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">01</span><span class="p">:</span><span class="mi">15</span><span class="p">:</span><span class="mi">00</span>   <span class="p">(</span><span class="mf">3.356035449542105e-08</span><span class="o">+</span><span class="mf">1.3810414088766265e-05</span><span class="n">j</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">get_dataframe</span><span class="p">(</span><span class="s2">&quot;Lines&quot;</span><span class="p">,</span> <span class="s2">&quot;CurrentsMagAng&quot;</span><span class="p">,</span> <span class="s2">&quot;Line.pvl_112&quot;</span><span class="p">,</span> <span class="n">phase_terminal</span><span class="o">=</span><span class="s2">&quot;A1&quot;</span><span class="p">,</span> <span class="n">mag_ang</span><span class="o">=</span><span class="s2">&quot;mag&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+
+                         <span class="n">Line</span><span class="o">.</span><span class="n">sw0__A1__mag</span> <span class="p">[</span><span class="n">Amps</span><span class="p">]</span>
+<span class="n">timestamp</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">15</span><span class="p">:</span><span class="mi">00</span>                  <span class="mf">6.469528</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">30</span><span class="p">:</span><span class="mi">00</span>                  <span class="mf">6.474451</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="mi">00</span>                  <span class="mf">6.461993</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">01</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>                  <span class="mf">6.384335</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">01</span><span class="p">:</span><span class="mi">15</span><span class="p">:</span><span class="mi">00</span>                  <span class="mf">6.347553</span>
+</pre></div>
+</div>
+</section>
+<section id="read-a-dataframe-for-one-element-with-an-option-matching-a-regular-expression">
+<h4>Read a dataframe for one element with an option matching a regular expression<a class="headerlink" href="#read-a-dataframe-for-one-element-with-an-option-matching-a-regular-expression" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="c1"># Get data for all phases but only terminal 1.</span>
+<span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[ABCN]1&quot;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">get_dataframe</span><span class="p">(</span><span class="s2">&quot;Lines&quot;</span><span class="p">,</span> <span class="s2">&quot;Currents&quot;</span><span class="p">,</span> <span class="s2">&quot;Line.pvl_112&quot;</span><span class="p">,</span> <span class="n">phase_terminal</span><span class="o">=</span><span class="n">regex</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+
+                                               <span class="n">Line</span><span class="o">.</span><span class="n">pvl_112__Currents__A1</span> <span class="p">[</span><span class="n">Amps</span><span class="p">]</span>
+<span class="n">timestamp</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">15</span><span class="p">:</span><span class="mi">00</span>  <span class="p">(</span><span class="mf">3.5710399970412254e-08</span><span class="o">+</span><span class="mf">1.3782673590867489e-05</span><span class="n">j</span><span class="p">)</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">30</span><span class="p">:</span><span class="mi">00</span>  <span class="p">(</span><span class="mf">3.3905962482094765e-08</span><span class="o">+</span><span class="mf">1.3793145967611053e-05</span><span class="n">j</span><span class="p">)</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="mi">00</span>   <span class="p">(</span><span class="mf">3.381501301191747e-08</span><span class="o">+</span><span class="mf">1.3786106705993006e-05</span><span class="n">j</span><span class="p">)</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">01</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>  <span class="p">(</span><span class="mf">3.4120603231713176e-08</span><span class="o">+</span><span class="mf">1.3804576042275585e-05</span><span class="n">j</span><span class="p">)</span>
+<span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">01</span><span class="p">:</span><span class="mi">15</span><span class="p">:</span><span class="mi">00</span>   <span class="p">(</span><span class="mf">3.356035449542105e-08</span><span class="o">+</span><span class="mf">1.3810414088766265e-05</span><span class="n">j</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="read-the-total-value-for-a-property-stored-with-store-values-type-sum">
+<h4>Read the total value for a property stored with <code class="docutils literal notranslate"><span class="pre">store_values_type</span> <span class="pre">=</span> <span class="pre">&quot;sum&quot;</span></code><a class="headerlink" href="#read-the-total-value-for-a-property-stored-with-store-values-type-sum" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">get_element_property_sum</span><span class="p">(</span><span class="s2">&quot;Circuit&quot;</span><span class="p">,</span> <span class="s2">&quot;LossesSum&quot;</span><span class="p">,</span> <span class="s2">&quot;Circuit.heco19021&quot;</span><span class="p">)</span>
+<span class="p">(</span><span class="mf">48337.88149479975</span><span class="o">+</span><span class="mf">14128.296734762534</span><span class="n">j</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="find-out-all-options-available-for-a-property">
+<h4>Find out all options available for a property<a class="headerlink" href="#find-out-all-options-available-for-a-property" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">list_element_property_options</span><span class="p">(</span><span class="s2">&quot;Lines&quot;</span><span class="p">,</span> <span class="s2">&quot;Currents&quot;</span><span class="p">)</span>
+<span class="p">[</span><span class="s2">&quot;phase_terminal&quot;</span><span class="p">]</span>
+
+<span class="n">scenario</span><span class="o">.</span><span class="n">list_element_property_options</span><span class="p">(</span><span class="s2">&quot;Lines&quot;</span><span class="p">,</span> <span class="s2">&quot;CurrentsMagAng&quot;</span><span class="p">)</span>
+<span class="p">[</span><span class="s1">&#39;phase_terminal&#39;</span><span class="p">,</span> <span class="s1">&#39;mag_ang&#39;</span><span class="p">]</span>
+
+<span class="n">scenario</span><span class="o">.</span><span class="n">list_element_property_options</span><span class="p">(</span><span class="s2">&quot;Lines&quot;</span><span class="p">,</span> <span class="s2">&quot;NormalAmps&quot;</span><span class="p">)</span>
+<span class="p">[]</span>
+</pre></div>
+</div>
+</section>
+<section id="find-out-what-option-values-are-present-for-a-property">
+<h4>Find out what option values are present for a property<a class="headerlink" href="#find-out-what-option-values-are-present-for-a-property" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">get_option_values</span><span class="p">(</span><span class="s2">&quot;Lines&quot;</span><span class="p">,</span> <span class="s2">&quot;Currents&quot;</span><span class="p">,</span> <span class="s2">&quot;Line.pvl_112&quot;</span><span class="p">)</span>
+<span class="p">[</span><span class="s2">&quot;A1&quot;</span><span class="p">,</span> <span class="s2">&quot;A2&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="read-a-dataframe-for-all-elements">
+<h4>Read a dataframe for all elements<a class="headerlink" href="#read-a-dataframe-for-all-elements" title="Permalink to this headline">¶</a></h4>
+<p>You may want to get data for all elements at once.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">get_full_dataframe</span><span class="p">(</span><span class="s2">&quot;Lines&quot;</span><span class="p">,</span> <span class="s2">&quot;Currents&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="performance-considerations">
+<h5>Performance Considerations<a class="headerlink" href="#performance-considerations" title="Permalink to this headline">¶</a></h5>
+<p>If your dataset is small enough to fit in your system’s memory then you can
+load it all into memory by passing <code class="docutils literal notranslate"><span class="pre">in_memory=True</span></code> to <code class="docutils literal notranslate"><span class="pre">PyDssResults</span></code>.</p>
+</section>
+</section>
+</section>
+<section id="estimate-space-required-by-pydss-simulation">
+<h3>Estimate space required by PyDSS simulation<a class="headerlink" href="#estimate-space-required-by-pydss-simulation" title="Permalink to this headline">¶</a></h3>
+<p>To estimate the storage space required by PyDSS simulation <em>before compression</em>.</p>
+<p>If use <code class="docutils literal notranslate"><span class="pre">pydss</span></code> CLI, please enable <code class="docutils literal notranslate"><span class="pre">dry_run</span></code> flag provided in <code class="docutils literal notranslate"><span class="pre">run</span></code>,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pydss run /data/pydss_project --dry-run
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please notice that the space caculated here is just an estimation.
+Basically, <code class="docutils literal notranslate"><span class="pre">estimated</span> <span class="pre">space</span> <span class="pre">=</span> <span class="pre">(space</span> <span class="pre">required</span> <span class="pre">at</span> <span class="pre">first</span> <span class="pre">step)</span> <span class="pre">*</span> <span class="pre">nSteps</span></code>.</p>
+</div>
+<p>Based on test data - 10 days timeseries with 10 sec step resolution (86394 steps), the test results show below:</p>
+<ul class="simple">
+<li><p>With compression on <code class="docutils literal notranslate"><span class="pre">store.h5</span></code>, the size is <code class="docutils literal notranslate"><span class="pre">3.8</span> <span class="pre">MB</span></code>.</p></li>
+<li><p>Without compression on <code class="docutils literal notranslate"><span class="pre">store.h5</span></code>, the size is <code class="docutils literal notranslate"><span class="pre">403.0</span> <span class="pre">MB</span></code></p></li>
+<li><p>Estimated space based first time step, the size is <code class="docutils literal notranslate"><span class="pre">400.8</span> <span class="pre">MB</span></code></p></li>
+</ul>
+<p>Therefore, the compression ratio is <code class="docutils literal notranslate"><span class="pre">95%</span></code>. Pretty good!</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="quickstart.html" class="btn btn-neutral float-left" title="Quick Start Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="project_layout.html" class="btn btn-neutral float-right" title="PyDSS Project Layout" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Aadil Latif.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

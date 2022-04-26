@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Automated scenario comparison &mdash; PyDSS 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Enhanced result export features" href="Result%20management.html" />
+    <link rel="prev" title="The socket interface" href="interfaces.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> PyDSS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#create-an-empty-project">Create an empty project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#customize-the-simulation-settings">Customize the simulation settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#opendss-models">OpenDSS Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#run-the-simulation">Run the simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#results">Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#create-a-project">Create a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#exporting-data">Exporting Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#pre-filtering-export-data">Pre-filtering Export Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#run-a-project">Run a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#analyze-results">Analyze results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#exported-csv-files">Exported CSV files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#data-viewer">Data Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#access-results-programmatically">Access results programmatically</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#load-element-classes-and-properties">Load element classes and properties</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-one-element">Read a dataframe for one element</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-one-element-with-a-specific-option">Read a dataframe for one element with a specific option</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-one-element-with-an-option-matching-a-regular-expression">Read a dataframe for one element with an option matching a regular expression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-the-total-value-for-a-property-stored-with-store-values-type-sum">Read the total value for a property stored with <code class="docutils literal notranslate"><span class="pre">store_values_type</span> <span class="pre">=</span> <span class="pre">&quot;sum&quot;</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#find-out-all-options-available-for-a-property">Find out all options available for a property</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#find-out-what-option-values-are-present-for-a-property">Find out what option values are present for a property</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-all-elements">Read a dataframe for all elements</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#estimate-space-required-by-pydss-simulation">Estimate space required by PyDSS simulation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="project_layout.html">PyDSS Project Layout</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#simulation-settings">Simulation Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#scenarios">Scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#exports">Exports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#reports">Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#example-layout">Example layout</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simulation_settings.html">Simulation Settings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#simulationsettings">SimulationSettings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#project">Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#scenario">Scenario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#scenariopostprocess">ScenarioPostProcess</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#snapshottimepointselectionconfig">SnapshotTimePointSelectionConfig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#exports">Exports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#frequency">Frequency</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#helics">Helics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#logging">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#montecarlo">MonteCarlo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#plots">Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#profiles">Profiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#reports">Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#simulationrange">SimulationRange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#capacitorstatechangecountreport">CapacitorStateChangeCountReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#feederlossesreport">FeederLossesReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#pvclippingreport">PvClippingReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#pvcurtailmentreport">PvCurtailmentReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#regcontroltapnumberchangecountsreport">RegControlTapNumberChangeCountsReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#thermalmetricsreport">ThermalMetricsReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#voltagemetricsreport">VoltageMetricsReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#reportbase">ReportBase</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="default_simulation_settings.html">Default Simulation Settings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="examples.html">Example PyDSS simulations</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Dynamic%20visualization%20capabilities.html">Dynamic visualization capabilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html">Frequency sweep plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#gis-plot">GIS plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#histogram-plot">Histogram plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#voltage-sag-plot">Voltage sag plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#time-series-plot">Time series plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#voltage-current-heatmap-plot">Voltage / Current heatmap plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#xy-plots">XY plots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Creating%20custom%20dynamic%20plots.html">Development of custom dynamic plots</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Extended%20controls%20library.html">Extended controls library</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Creating%20custom%20controls.html">Extending PyDSS controllers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="External%20interfaces%20for%20cosimulation.html">External PyDSS interfaces</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="interfaces.html">The socket interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interfaces.html#the-helics-interface">The HELICS interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interfaces.html#the-api-interface">The API interface</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Automated scenario comparison</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Result%20management.html">Enhanced result export features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#global-settings">Global settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#format">Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#granularity">Granularity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#export-parameters">Export Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#output-data">Output Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#adding-new-reports">Adding New Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hdf-data-format.html">HDF Data Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hdf-data-format.html#layout">Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hdf-data-format.html#common-metadata">Common Metadata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hdf-data-format.html#dataset-metadata">Dataset Metadata</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hdf-data-format.html#attributes-per-dataset">Attributes per dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hdf-data-format.html#metadata-datasets-per-dataset">Metadata datasets per dataset</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hdf-data-format.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="PyDSS.html">PyDSS</a><ul class="simple">
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyDSS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="examples.html">Example PyDSS simulations</a> &raquo;</li>
+      <li>Automated scenario comparison</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Automated comparison of scenarios.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="automated-scenario-comparison">
+<h1>Automated scenario comparison<a class="headerlink" href="#automated-scenario-comparison" title="Permalink to this headline">¶</a></h1>
+<p>PyDSS enables users to automatically generate high quality plots using the exported simulation resuts. Users both both generate plots for an induvisual scenario or generate plots to compare multiple scenarios. It is important to note that to run to generate these plot users need to define a visualization toml file
+‘Generate_visuals’ should be set to true to enable the feature. Additionally any plot the user requires should also be set to true. A example has been provided on how to setup the comparison feature and can found at ~\PyDSS\examples\Custom_controls_example\Scenarios. ‘automated_comparison.toml’ file contains contains the visualization settings</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">Simulations</span><span class="p">]</span>
+        <span class="n">Run_simulations</span> <span class="o">=</span> <span class="n">true</span>
+        <span class="n">Generate_visuals</span> <span class="o">=</span> <span class="n">false</span>
+        <span class="n">Run_bokeh_server</span> <span class="o">=</span> <span class="n">false</span>
+<span class="p">[</span><span class="n">Plots</span><span class="p">]</span>
+        <span class="n">Frequency_sweep</span> <span class="o">=</span> <span class="n">false</span>
+        <span class="n">XFMR_tap</span> <span class="o">=</span> <span class="n">true</span>
+        <span class="n">Voltage_sag</span> <span class="o">=</span> <span class="n">false</span>
+        <span class="n">Voltage</span> <span class="o">=</span> <span class="n">false</span>
+        <span class="n">Loading</span> <span class="o">=</span> <span class="n">false</span>
+        <span class="n">Voltage_Loading</span> <span class="o">=</span> <span class="n">false</span>
+        <span class="n">Voltage_profiles</span> <span class="o">=</span> <span class="n">false</span>
+        <span class="n">Load</span> <span class="o">=</span> <span class="n">false</span>
+        <span class="n">Generation</span> <span class="o">=</span> <span class="n">false</span>
+        <span class="n">Load_Generation</span> <span class="o">=</span> <span class="n">false</span>
+        <span class="n">Curtailment</span> <span class="o">=</span> <span class="n">false</span>
+        <span class="n">Voltage_imbalance</span> <span class="o">=</span> <span class="n">false</span>
+        <span class="n">Feeder_power</span> <span class="o">=</span> <span class="n">false</span>
+        <span class="n">Feeder_line_losses</span> <span class="o">=</span> <span class="n">false</span>
+        <span class="n">Feeder_losses</span> <span class="o">=</span> <span class="n">false</span>
+        <span class="n">Feeder_substation_losses</span> <span class="o">=</span> <span class="n">false</span>
+<span class="p">[</span><span class="n">Visualization</span><span class="p">]</span>
+        <span class="n">Plotting_mode</span> <span class="o">=</span><span class="s2">&quot;Separate&quot;</span>
+        <span class="n">FileType</span> <span class="o">=</span> <span class="s1">&#39;png&#39;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Simulations.Run_simulations [bool] -  If ‘false’, the simulatiosn will not run the simulation or not.</p></li>
+<li><p>Simulations.Generate_visuals [bool] - If ‘false’, plots will not be generated. Will generate plots if set to ‘true’, even is ‘Run_simulations’ is set to false using results exported from previos simulations. If files required are not available, an assertion error will be raised.</p></li>
+<li><p>Plots [dict] - Within the plots dicionary, all plots user required to be generated can be set to ‘true’. If files required are not available, an assertion error will be raised.</p></li>
+<li><p>Visualization.Plotting_mode [string] - Possible values are  [‘Single’, ‘Separate’]. Allows user to either generate seperate plots or comparative plots.</p></li>
+<li><p>Visualization.FileType [string] - Possible values are  [‘png’, ‘pdf’]. Allows user export plots in multiple formats.</p></li>
+</ul>
+<p>Once the visualization file has been correclty configured, the simulations canbe run using the following code.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">click</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--pydss_path&#39;</span><span class="p">,</span>
+                          <span class="n">default</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;C:\Users\alatif\Desktop\PyDSS&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--sim_path&#39;</span><span class="p">,</span>
+                          <span class="n">default</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;C:\Users\alatif\Desktop\PyDSS\examples\External_interfacing_example\pyDSS_project\Scenarios&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">run_pyDSS</span><span class="p">(</span><span class="n">pydss_path</span><span class="p">,</span> <span class="n">sim_path</span><span class="p">):</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pydss_path</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pydss_path</span><span class="p">,</span> <span class="s1">&#39;PyDSS&#39;</span><span class="p">))</span>
+        <span class="kn">from</span> <span class="nn">pyDSS</span> <span class="kn">import</span> <span class="n">instance</span> <span class="k">as</span> <span class="n">dssInstance</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">dssInstance</span><span class="p">()</span> <span class="c1"># Create an instance of PyDSS</span>
+        <span class="c1"># the run command takes in list of scenrio TOML files and visualization TOML file as function inputs</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;~</span><span class="se">\\</span><span class="s1">PyDSS</span><span class="se">\\</span><span class="s1">examples</span><span class="se">\\</span><span class="s1">Custom_controls_example</span><span class="se">\\</span><span class="s1">Scenarios</span><span class="se">\\</span><span class="s1">base_case.toml&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;~</span><span class="se">\\</span><span class="s1">PyDSS\examples</span><span class="se">\\</span><span class="s1">Custom_controls_example</span><span class="se">\\</span><span class="s1">Scenarios</span><span class="se">\\</span><span class="s1">self_consumption.toml&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;~</span><span class="se">\\</span><span class="s1">PyDSS</span><span class="se">\\</span><span class="s1">examples</span><span class="se">\\</span><span class="s1">Custom_controls_example</span><span class="se">\\</span><span class="s1">Scenarios</span><span class="se">\\</span><span class="s1">volt_var.toml&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;~</span><span class="se">\\</span><span class="s1">PyDSS\examples</span><span class="se">\\</span><span class="s1">Custom_controls_example</span><span class="se">\\</span><span class="s1">Scenarios</span><span class="se">\\</span><span class="s1">multiple_controllers.toml&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;~</span><span class="se">\\</span><span class="s1">PyDSS</span><span class="se">\\</span><span class="s1">examples</span><span class="se">\\</span><span class="s1">Custom_controls_example</span><span class="se">\\</span><span class="s1">Scenarios</span><span class="se">\\</span><span class="s1">automated_comparison.toml&#39;</span>
+        <span class="p">)</span> <span class="c1">#Run the simulation</span>
+
+<span class="n">run_pyDSS</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Loading vs Voltage KDE plot for all transformer (for a QSTS simulation)</p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/voltage-loading.png"><img alt="_images/voltage-loading.png" src="_images/voltage-loading.png" style="width: 420.0px; height: 420.0px;" /></a>
+</figure>
+<p>User have also been provided the option to change plot settiings using the same TOML file. As an example dictionaty for the plot above is shown below. To generate the plot, ‘Generate_visuals’ was set to ture and ‘Plotting_mode’ was set to ‘Single’.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">Visualization</span><span class="o">.</span><span class="n">Voltage_Loading_settings</span><span class="p">]</span>
+        <span class="n">Height</span> <span class="o">=</span> <span class="mi">7</span>
+        <span class="n">DPI</span> <span class="o">=</span> <span class="mi">200</span>
+        <span class="n">Display_limits</span> <span class="o">=</span> <span class="n">true</span>
+        <span class="n">Alpha</span> <span class="o">=</span> <span class="mf">0.05</span>
+        <span class="n">Legend_font_size</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="n">Frequency</span> <span class="o">=</span> <span class="mf">60.0</span>
+        <span class="n">Simulation_mode</span> <span class="o">=</span> <span class="s2">&quot;Yearly&quot;</span>
+        <span class="n">Grid</span> <span class="o">=</span> <span class="n">true</span>
+        <span class="c1"># kind - str - possible options &#39;scatter&#39;, &#39;reg&#39;, &#39;resid&#39;, &#39;kde&#39;, &#39;hex&#39;</span>
+        <span class="n">Kind</span> <span class="o">=</span> <span class="s2">&quot;kde&quot;</span>
+        <span class="c1"># Class - str - possible options &#39;Lines&#39;, &#39;Transformers&#39;</span>
+        <span class="n">Class</span> <span class="o">=</span> <span class="s2">&quot;Transformers&quot;</span>
+</pre></div>
+</div>
+<p>The plot shows the impact of running storage in self consumption on voltage at the PCC.</p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/Voltage-pdf.png"><img alt="_images/Voltage-pdf.png" src="_images/Voltage-pdf.png" style="width: 480.0px; height: 320.0px;" /></a>
+</figure>
+<p>The plots hilghts various voltage regions. Users are able to change the defaults settings using  the TOML file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">Visualization</span><span class="o">.</span><span class="n">Voltage_settings</span><span class="p">]</span>
+        <span class="n">Height</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">Width</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="n">DPI</span> <span class="o">=</span> <span class="mi">200</span>
+        <span class="n">Grid</span> <span class="o">=</span> <span class="n">true</span>
+        <span class="n">Line_width</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">Line_alpha</span> <span class="o">=</span> <span class="mf">0.2</span>
+        <span class="n">Fill_alpha</span> <span class="o">=</span> <span class="mf">0.2</span>
+        <span class="n">Frequency</span> <span class="o">=</span> <span class="mf">60.0</span>
+        <span class="n">Legend_font_size</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="n">Simulation_mode</span> <span class="o">=</span> <span class="s2">&quot;Yearly&quot;</span>
+        <span class="n">Color_template</span> <span class="o">=</span> <span class="s2">&quot;Blues&quot;</span>
+        <span class="n">Show_operation_regions</span> <span class="o">=</span> <span class="n">true</span>
+        <span class="n">Y_ranges</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.90</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">1.05</span><span class="p">,</span> <span class="mf">1.10</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">]</span>
+        <span class="n">Y_range_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;UV trip region&quot;</span><span class="p">,</span> <span class="s2">&quot;UV Voltage control region&quot;</span><span class="p">,</span> <span class="s2">&quot;Normal operation region&quot;</span><span class="p">,</span> <span class="s2">&quot;OV Voltage control region&quot;</span><span class="p">,</span> <span class="s2">&quot;OV trip region&quot;</span><span class="p">]</span>
+        <span class="n">Y_range_colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span> <span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="s2">&quot;darkblue&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="interfaces.html" class="btn btn-neutral float-left" title="The socket interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Result%20management.html" class="btn btn-neutral float-right" title="Enhanced result export features" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Aadil Latif.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

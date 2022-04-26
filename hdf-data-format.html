@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HDF Data Format &mdash; PyDSS 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="PyDSS" href="PyDSS.html" />
+    <link rel="prev" title="Reports" href="reports.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> PyDSS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#create-an-empty-project">Create an empty project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#customize-the-simulation-settings">Customize the simulation settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#opendss-models">OpenDSS Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#run-the-simulation">Run the simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#results">Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#create-a-project">Create a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#exporting-data">Exporting Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#pre-filtering-export-data">Pre-filtering Export Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#run-a-project">Run a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#analyze-results">Analyze results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#exported-csv-files">Exported CSV files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#data-viewer">Data Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#access-results-programmatically">Access results programmatically</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#load-element-classes-and-properties">Load element classes and properties</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-one-element">Read a dataframe for one element</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-one-element-with-a-specific-option">Read a dataframe for one element with a specific option</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-one-element-with-an-option-matching-a-regular-expression">Read a dataframe for one element with an option matching a regular expression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-the-total-value-for-a-property-stored-with-store-values-type-sum">Read the total value for a property stored with <code class="docutils literal notranslate"><span class="pre">store_values_type</span> <span class="pre">=</span> <span class="pre">&quot;sum&quot;</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#find-out-all-options-available-for-a-property">Find out all options available for a property</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#find-out-what-option-values-are-present-for-a-property">Find out what option values are present for a property</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-all-elements">Read a dataframe for all elements</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#estimate-space-required-by-pydss-simulation">Estimate space required by PyDSS simulation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="project_layout.html">PyDSS Project Layout</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#simulation-settings">Simulation Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#scenarios">Scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#exports">Exports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#reports">Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#example-layout">Example layout</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simulation_settings.html">Simulation Settings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#simulationsettings">SimulationSettings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#project">Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#scenario">Scenario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#scenariopostprocess">ScenarioPostProcess</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#snapshottimepointselectionconfig">SnapshotTimePointSelectionConfig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#exports">Exports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#frequency">Frequency</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#helics">Helics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#logging">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#montecarlo">MonteCarlo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#plots">Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#profiles">Profiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#reports">Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#simulationrange">SimulationRange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#capacitorstatechangecountreport">CapacitorStateChangeCountReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#feederlossesreport">FeederLossesReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#pvclippingreport">PvClippingReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#pvcurtailmentreport">PvCurtailmentReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#regcontroltapnumberchangecountsreport">RegControlTapNumberChangeCountsReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#thermalmetricsreport">ThermalMetricsReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#voltagemetricsreport">VoltageMetricsReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#reportbase">ReportBase</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="default_simulation_settings.html">Default Simulation Settings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Example PyDSS simulations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Dynamic%20visualization%20capabilities.html">Dynamic visualization capabilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html">Frequency sweep plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#gis-plot">GIS plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#histogram-plot">Histogram plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#voltage-sag-plot">Voltage sag plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#time-series-plot">Time series plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#voltage-current-heatmap-plot">Voltage / Current heatmap plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#xy-plots">XY plots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Creating%20custom%20dynamic%20plots.html">Development of custom dynamic plots</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Extended%20controls%20library.html">Extended controls library</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Creating%20custom%20controls.html">Extending PyDSS controllers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="External%20interfaces%20for%20cosimulation.html">External PyDSS interfaces</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="interfaces.html">The socket interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interfaces.html#the-helics-interface">The HELICS interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interfaces.html#the-api-interface">The API interface</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Automated%20comparison%20of%20scenarios.html">Automated scenario comparison</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Result%20management.html">Enhanced result export features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#global-settings">Global settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#format">Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#granularity">Granularity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#export-parameters">Export Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#output-data">Output Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#adding-new-reports">Adding New Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">HDF Data Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#layout">Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#common-metadata">Common Metadata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dataset-metadata">Dataset Metadata</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#attributes-per-dataset">Attributes per dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#metadata-datasets-per-dataset">Metadata datasets per dataset</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="PyDSS.html">PyDSS</a><ul class="simple">
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyDSS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>HDF Data Format</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/hdf-data-format.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hdf-data-format">
+<h1>HDF Data Format<a class="headerlink" href="#hdf-data-format" title="Permalink to this headline">¶</a></h1>
+<p>This page describes the format PyDSS uses to export data in an HDF file. PyDSS
+contains code to convert the raw data to pandas.DataFrame objects or Python
+dictionaries, so normal users should not need to write their own tools to
+interpret the data.</p>
+<p>Refer to <code class="xref py py-class docutils literal notranslate"><span class="pre">PyDSS.pydss_results.PyDssResults</span></code> and
+<code class="xref py py-class docutils literal notranslate"><span class="pre">PyDSS.pydss_results.PyDssScenarioResults</span></code> for user-friendly interfaces.
+They are also described in <a class="reference internal" href="tutorial.html#analyze-results"><span class="std std-ref">Analyze results</span></a>.</p>
+<section id="layout">
+<h2>Layout<a class="headerlink" href="#layout" title="Permalink to this headline">¶</a></h2>
+<p>Each PyDSS project creates <code class="docutils literal notranslate"><span class="pre">&lt;project-path&gt;/store.h5</span></code> to store exported data
+for all scenarios.</p>
+<p>Each scenario’s data is stored under <code class="docutils literal notranslate"><span class="pre">Exports/&lt;scenario-name&gt;</span></code>.</p>
+<p>Data stored for an element property for individual elements is stored in an HDF
+dataset.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Exports</span><span class="o">/&lt;</span><span class="n">scenario</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;/&lt;</span><span class="n">element</span><span class="o">-</span><span class="n">class</span><span class="o">&gt;/</span><span class="n">ElementProperties</span><span class="o">/&lt;</span><span class="nb">property</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>This dataset includes columns for each individual element.</p>
+<p>Data stored for an element property across elements of a given type is stored
+in an HDF dataset</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Exports</span><span class="o">/&lt;</span><span class="n">scenario</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;/&lt;</span><span class="n">element</span><span class="o">-</span><span class="n">class</span><span class="o">&gt;/</span><span class="n">SummedElementProperties</span><span class="o">/&lt;</span><span class="nb">property</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Data stored for an element property across elements of a given type split by
+element name are stored in an HDF dataset</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Exports</span><span class="o">/&lt;</span><span class="n">scenario</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;/&lt;</span><span class="n">element</span><span class="o">-</span><span class="n">class</span><span class="o">&gt;/</span><span class="n">SummedElementProperties</span><span class="o">/&lt;</span><span class="nb">property</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="n">__</span><span class="o">&lt;</span><span class="n">group</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>If a property is configured to compute a moving average, sum, min, or max on
+the data then a suffix is added to the property name.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;property-name&gt;/Avg</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;property-name&gt;/Max</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;property-name&gt;/Min</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;property-name&gt;/Sum</span></code></p></li>
+</ul>
+<section id="common-metadata">
+<h3>Common Metadata<a class="headerlink" href="#common-metadata" title="Permalink to this headline">¶</a></h3>
+<p>PyDSS stores metadata that is common to all datasets in the root of the
+scenario group. For example, the <code class="docutils literal notranslate"><span class="pre">Timestamp</span></code> dataset contains the simulation
+timestamps (seconds since epoch) for all datasets that store values at every
+time point.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Exports</span><span class="o">/&lt;</span><span class="n">scenario</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;/</span><span class="n">Timestamp</span>
+<span class="n">Exports</span><span class="o">/&lt;</span><span class="n">scenario</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;/</span><span class="n">Frequency</span>
+<span class="n">Exports</span><span class="o">/&lt;</span><span class="n">scenario</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;/</span><span class="n">Mode</span>
+</pre></div>
+</div>
+</section>
+<section id="dataset-metadata">
+<h3>Dataset Metadata<a class="headerlink" href="#dataset-metadata" title="Permalink to this headline">¶</a></h3>
+<p>PyDSS stores metadata for each dataset in HDF attributes as well as other
+datasets. This metadata describes the contents of datasets.</p>
+<section id="attributes-per-dataset">
+<h4>Attributes per dataset<a class="headerlink" href="#attributes-per-dataset" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: Describes what type of data is stored.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">per_time_point</span></code>:  Data is stored at every time point; indices are
+shared.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code>:  Only a single value is stored for each element.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">filtered</span></code>:  Data is stored after being filtered; indices are stored for
+each element.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">metadata</span></code>:  Metadata for another dataset.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>:  Data are time indices, tied to <code class="docutils literal notranslate"><span class="pre">filtered</span></code>.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">length</span></code>: Number of rows of valid data written to the dataset.</p></li>
+</ul>
+</section>
+<section id="metadata-datasets-per-dataset">
+<h4>Metadata datasets per dataset<a class="headerlink" href="#metadata-datasets-per-dataset" title="Permalink to this headline">¶</a></h4>
+<p>These items are stored in datasets because they exceed the max size for
+attributes when the number of elements is larger than approximately 1000.</p>
+<ul class="simple">
+<li><p>&lt;property-name&gt;ColumnRanges: Range of column indices for each element</p></li>
+<li><p>&lt;property-name&gt;Columns: Column names for element, including units</p></li>
+<li><p>&lt;property-name&gt;Names: Name of each element stored in the dataset. Order is
+the same as in <code class="docutils literal notranslate"><span class="pre">ColumnRanges</span></code> and <code class="docutils literal notranslate"><span class="pre">Columns</span></code>.</p></li>
+</ul>
+<p>If a dataset is <code class="docutils literal notranslate"><span class="pre">filtered</span></code> then then the dataset has a single column that
+includes all elements. Another dataset contains metadata to describe the
+contents. This dataset has <code class="docutils literal notranslate"><span class="pre">TimeStep</span></code> appended to the property name. Each
+row of this dataset is an array where the first item is the
+simulation time step number and the second is the element index. The element
+indices follow the same order as the <code class="docutils literal notranslate"><span class="pre">Names</span></code> and <code class="docutils literal notranslate"><span class="pre">Columns</span></code> datasets described above.</p>
+<p>For example, suppose <code class="docutils literal notranslate"><span class="pre">Nodes.VoltageMetric</span></code> is stored with limits of <code class="docutils literal notranslate"><span class="pre">[0.95,</span>
+<span class="pre">1.05]</span></code> and the only violations are at time step 90 on nodes 4 and 5. The
+contents of this dataset would be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Exports</span><span class="o">/&lt;</span><span class="n">scenario</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;/</span><span class="n">Nodes</span><span class="o">/</span><span class="n">ElementProperties</span><span class="o">/</span><span class="n">VoltageMetricTimeStep</span>
+
+<span class="p">[[</span><span class="mi">90</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">90</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>The HDF Group provides graphical and command-line tools to browse HDF files.
+They can be downloaded from <a class="reference external" href="https://support.hdfgroup.org/products/hdf5_tools/">https://support.hdfgroup.org/products/hdf5_tools/</a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Run a test project.</span>
+<span class="n">pydss</span> <span class="n">run</span> <span class="n">tests</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">custom_exports_project</span>
+
+<span class="c1"># View the raw data in the HDF file.</span>
+
+<span class="n">h5ls</span> <span class="o">-</span><span class="n">r</span> <span class="n">tests</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">custom_exports_project</span><span class="o">/</span><span class="n">store</span><span class="o">.</span><span class="n">h5</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">Timestamp</span>
+
+<span class="o">/</span><span class="n">Exports</span><span class="o">/</span><span class="n">scenario1</span><span class="o">/</span><span class="n">Timestamp</span> <span class="n">Dataset</span> <span class="p">{</span><span class="mi">96</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+<span class="o">/</span><span class="n">Exports</span><span class="o">/</span><span class="n">scenario1</span><span class="o">/</span><span class="n">TimestampColumns</span> <span class="n">Dataset</span> <span class="p">{</span><span class="mi">1</span><span class="p">}</span>
+
+<span class="n">h5ls</span> <span class="o">-</span><span class="n">r</span> <span class="n">tests</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">custom_exports_project</span><span class="o">/</span><span class="n">store</span><span class="o">.</span><span class="n">h5</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">LineLosses</span>
+
+<span class="o">/</span><span class="n">Exports</span><span class="o">/</span><span class="n">scenario1</span><span class="o">/</span><span class="n">Circuits</span><span class="o">/</span><span class="n">ElementProperties</span><span class="o">/</span><span class="n">LineLosses</span> <span class="n">Dataset</span> <span class="p">{</span><span class="mi">96</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+<span class="o">/</span><span class="n">Exports</span><span class="o">/</span><span class="n">scenario1</span><span class="o">/</span><span class="n">Circuits</span><span class="o">/</span><span class="n">ElementProperties</span><span class="o">/</span><span class="n">LineLossesColumnRanges</span> <span class="n">Dataset</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span>
+<span class="o">/</span><span class="n">Exports</span><span class="o">/</span><span class="n">scenario1</span><span class="o">/</span><span class="n">Circuits</span><span class="o">/</span><span class="n">ElementProperties</span><span class="o">/</span><span class="n">LineLossesColumns</span> <span class="n">Dataset</span> <span class="p">{</span><span class="mi">1</span><span class="p">}</span>
+<span class="o">/</span><span class="n">Exports</span><span class="o">/</span><span class="n">scenario1</span><span class="o">/</span><span class="n">Circuits</span><span class="o">/</span><span class="n">ElementProperties</span><span class="o">/</span><span class="n">LineLossesNames</span> <span class="n">Dataset</span> <span class="p">{</span><span class="mi">1</span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reports.html" class="btn btn-neutral float-left" title="Reports" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="PyDSS.html" class="btn btn-neutral float-right" title="PyDSS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Aadil Latif.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

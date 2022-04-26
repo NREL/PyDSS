@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frequency sweep plot &mdash; PyDSS 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Development of custom dynamic plots" href="Creating%20custom%20dynamic%20plots.html" />
+    <link rel="prev" title="Dynamic visualization capabilities" href="Dynamic%20visualization%20capabilities.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> PyDSS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#create-an-empty-project">Create an empty project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#customize-the-simulation-settings">Customize the simulation settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#opendss-models">OpenDSS Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#run-the-simulation">Run the simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#results">Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#create-a-project">Create a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#exporting-data">Exporting Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#pre-filtering-export-data">Pre-filtering Export Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#run-a-project">Run a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#analyze-results">Analyze results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#exported-csv-files">Exported CSV files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#data-viewer">Data Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#access-results-programmatically">Access results programmatically</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#load-element-classes-and-properties">Load element classes and properties</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-one-element">Read a dataframe for one element</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-one-element-with-a-specific-option">Read a dataframe for one element with a specific option</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-one-element-with-an-option-matching-a-regular-expression">Read a dataframe for one element with an option matching a regular expression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-the-total-value-for-a-property-stored-with-store-values-type-sum">Read the total value for a property stored with <code class="docutils literal notranslate"><span class="pre">store_values_type</span> <span class="pre">=</span> <span class="pre">&quot;sum&quot;</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#find-out-all-options-available-for-a-property">Find out all options available for a property</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#find-out-what-option-values-are-present-for-a-property">Find out what option values are present for a property</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-all-elements">Read a dataframe for all elements</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#estimate-space-required-by-pydss-simulation">Estimate space required by PyDSS simulation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="project_layout.html">PyDSS Project Layout</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#simulation-settings">Simulation Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#scenarios">Scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#exports">Exports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#reports">Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#example-layout">Example layout</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simulation_settings.html">Simulation Settings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#simulationsettings">SimulationSettings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#project">Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#scenario">Scenario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#scenariopostprocess">ScenarioPostProcess</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#snapshottimepointselectionconfig">SnapshotTimePointSelectionConfig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#exports">Exports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#frequency">Frequency</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#helics">Helics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#logging">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#montecarlo">MonteCarlo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#plots">Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#profiles">Profiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#reports">Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#simulationrange">SimulationRange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#capacitorstatechangecountreport">CapacitorStateChangeCountReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#feederlossesreport">FeederLossesReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#pvclippingreport">PvClippingReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#pvcurtailmentreport">PvCurtailmentReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#regcontroltapnumberchangecountsreport">RegControlTapNumberChangeCountsReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#thermalmetricsreport">ThermalMetricsReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#voltagemetricsreport">VoltageMetricsReport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#reportbase">ReportBase</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="default_simulation_settings.html">Default Simulation Settings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="examples.html">Example PyDSS simulations</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="Dynamic%20visualization%20capabilities.html">Dynamic visualization capabilities</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Frequency sweep plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gis-plot">GIS plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#histogram-plot">Histogram plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#voltage-sag-plot">Voltage sag plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#time-series-plot">Time series plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#voltage-current-heatmap-plot">Voltage / Current heatmap plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xy-plots">XY plots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Creating%20custom%20dynamic%20plots.html">Development of custom dynamic plots</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Extended%20controls%20library.html">Extended controls library</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Creating%20custom%20controls.html">Extending PyDSS controllers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="External%20interfaces%20for%20cosimulation.html">External PyDSS interfaces</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="interfaces.html">The socket interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interfaces.html#the-helics-interface">The HELICS interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interfaces.html#the-api-interface">The API interface</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Automated%20comparison%20of%20scenarios.html">Automated scenario comparison</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Result%20management.html">Enhanced result export features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#global-settings">Global settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#format">Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#granularity">Granularity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#export-parameters">Export Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#output-data">Output Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#adding-new-reports">Adding New Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hdf-data-format.html">HDF Data Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hdf-data-format.html#layout">Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hdf-data-format.html#common-metadata">Common Metadata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hdf-data-format.html#dataset-metadata">Dataset Metadata</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hdf-data-format.html#attributes-per-dataset">Attributes per dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hdf-data-format.html#metadata-datasets-per-dataset">Metadata datasets per dataset</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hdf-data-format.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="PyDSS.html">PyDSS</a><ul class="simple">
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyDSS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="examples.html">Example PyDSS simulations</a> &raquo;</li>
+          <li><a href="Dynamic%20visualization%20capabilities.html">Dynamic visualization capabilities</a> &raquo;</li>
+      <li>Frequency sweep plot</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Dynamic plots.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <ul class="simple">
+<li><p>PlotProperties is a user defined dictionary genenated from the ‘pyPlotList.json’ file defined for each scenario. Excepted definations for each plot type are detailed below.</p></li>
+</ul>
+<section id="frequency-sweep-plot">
+<h1>Frequency sweep plot<a class="headerlink" href="#frequency-sweep-plot" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="gis-plot">
+<h1>GIS plot<a class="headerlink" href="#gis-plot" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="histogram-plot">
+<h1>Histogram plot<a class="headerlink" href="#histogram-plot" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="voltage-sag-plot">
+<h1>Voltage sag plot<a class="headerlink" href="#voltage-sag-plot" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="time-series-plot">
+<h1>Time series plot<a class="headerlink" href="#time-series-plot" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="voltage-current-heatmap-plot">
+<h1>Voltage / Current heatmap plot<a class="headerlink" href="#voltage-current-heatmap-plot" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="xy-plots">
+<h1>XY plots<a class="headerlink" href="#xy-plots" title="Permalink to this headline">¶</a></h1>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Dynamic%20visualization%20capabilities.html" class="btn btn-neutral float-left" title="Dynamic visualization capabilities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Creating%20custom%20dynamic%20plots.html" class="btn btn-neutral float-right" title="Development of custom dynamic plots" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Aadil Latif.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
