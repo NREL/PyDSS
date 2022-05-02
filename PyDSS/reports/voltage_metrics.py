@@ -132,8 +132,8 @@ class VoltageMetrics(ReportBase):
                 NODE_NAMES_BY_TYPE_FILENAME,
             )
             node_names_by_type = load_data(filename)
-            node_names_by_type["primaries"] = set(node_names_by_type["primaries"])
-            node_names_by_type["secondaries"] = set(node_names_by_type["secondaries"])
+            assert len(set(node_names_by_type["primaries"])) == len(node_names_by_type["primaries"])
+            assert len(set(node_names_by_type["secondaries"])) == len(node_names_by_type["secondaries"])
             df = scenario.get_full_dataframe("Buses", "puVmagAngle", mag_ang="mag")
             columns = []
             for column in df.columns:
@@ -245,6 +245,9 @@ class VoltageMetrics(ReportBase):
         )
         if inputs["store_all_time_points"]:
             return {
+                # TODO: This should use Circuit.AllBusMagPu for performance reasons.
+                # That reads all voltages in one command but tracks them by bus index.
+                # The code would have to map bus index to bus name.
                 "Buses": [
                     {
                         "property": "puVmagAngle",
