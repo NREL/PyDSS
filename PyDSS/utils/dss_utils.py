@@ -40,20 +40,21 @@ def read_pv_systems_from_dss_file(filename):
 
 
 def get_load_shape_resolution_secs():
-    def func():
-        if dss.LoadShape.Name() == "default":
-            return None
-        return dss.LoadShape.SInterval()
+    # def func():
+    #     if dss.LoadShape.Name() == "default":
+    #         return None
+    #     return dss.LoadShape.SInterval()
 
-    res = [x for x in iter_elements(dss.LoadShape, func) if x is not None]
-    if len(res):
-        if len(set(res)) != 1:
-            raise InvalidConfiguration(
-                f"SInterval for all LoadShapes must be the same: {res}"
-            )
-        return res[0]
-    else:
-        return 1
+    # res = [x for x in iter_elements(dss.LoadShape, func) if x is not None]
+    # if len(set(res)):
+    #     if len(set(res)) != 1:
+    #         raise InvalidConfiguration(
+    #             f"SInterval for all LoadShapes must be the same: {res}"
+    #         )
+    #     return res[0]
+    # else:
+    #     return 1
+    return 
 
 
 def get_node_names_by_type(kv_base_threshold=1.0):

@@ -1,22 +1,22 @@
 ["Generator.pvgui_mpx000460267"]
 DER_ID = "1"
-STEADY_STATE  = true
+STEADY_STATE  = false
 RATED_POWER_AC_VA = 1000.0
 RATED_POWER_DC_WATTS = 1000.0
 MPPT_ENABLE = true
 RAMP_ENABLE = true
 VOLT_VAR_ENABLE = true
 LVRT_ENABLE = true
-HVRT_ENABLE = true
+HVRT_ENABLE = false
 LFRT_ENABLE = false
 DO_EXTRA_CALCULATIONS = true
 use_frequency_estimate = false
-jacFlag = false
+jacFlag = true
 UPDATE_MODULE_PARAMETRS = false
 Np = 2
 Ns = 1000
 Vdcmpp0 = 750.0
-Vdcmpp_max = 650.0
+Vdcmpp_max = 850.0
 Vdcmpp_min =  650.0
 UPDATE_INVERTER_PARAMETRS = false
 Vdcrated = 1000.0

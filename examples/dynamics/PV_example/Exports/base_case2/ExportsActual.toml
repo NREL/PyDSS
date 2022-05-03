@@ -218,3 +218,13 @@ store_values_type = "all"
 sum_elements = false
 sum_groups = []
 
+[[Vsources]]
+property = "VoltagesMagAng"
+data_conversion = "none"
+opendss_classes = []
+sample_interval = 1
+publish = false
+store_values_type = "all"
+sum_elements = false
+sum_groups = []
+

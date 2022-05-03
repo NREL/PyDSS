@@ -3,10 +3,11 @@
 Clear
 
 
+New Loadshape.Trans_voltage npts=600 sInterval=0.1 mult = (file=./Vsource_profile_2.csv, col=1, header=no) 
 
 
 // ===== stiff source =====
-New Circuit.HECO19021 bus1=Sourcebus.1 pu=1.000  basekV=12.47 R1=0 X1=0.0001 R0=0 X0=0.0001  ! 1.012 is day time starting voltage to get 1.012 G2020 reading
+New Circuit.HECO19021 bus1=Sourcebus.1 pu=1.000  basekV=12.47 R1=0 X1=0.0001 R0=0 X0=0.0001 yearly=Trans_voltage
 
 !New energymeter.xfm element=Transformer.tsf terminal=1
 
@@ -67,7 +68,7 @@ Redirect SecLines.dss
 Redirect Loadshapes_Sep8to15.dss
 
 // ==== Set Voltage Loadshape ====
-Vsource.Source.yearly=s_voltage  // comment out when using pu=1.025 for source voltage
+!Vsource.Source.yearly=s_voltage  // comment out when using pu=1.025 for source voltage
 
 // ====  Loads ====
 Redirect SecLoads_Timeseries_realloc.dss
@@ -81,8 +82,4 @@ New Energymeter.FeederMeter Transformer.tsf
 Set voltagebases= [12.47, 7.2, .415 .240]  //0.416 is needed to get pu value to display correctly
 Calcvoltagebases     ! This also establishes the bus list
 Solve
-
-// ====  Load in bus coordinates now that bus list is established
-Buscoords buscoords.dss
-
 
