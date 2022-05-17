@@ -28,9 +28,6 @@ AUTO_SNAPSHOT_TIME_POINT_PROJECT_PATH = os.path.join(
     "tests", "data", "auto_snapshot_time_point_project"
 )
 
-AUTOMATED_UPGRADES_PROJECT_PATH = os.path.join(
-    "tests", "data", "automated_upgrades_project")
-
 EDLIFO_PROJECT_PATH = os.path.join(
     "tests", "data", "edlifo-project")
 
