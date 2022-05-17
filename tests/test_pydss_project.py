@@ -18,8 +18,6 @@ from PyDSS.common import SIMULATION_SETTINGS_FILENAME
 
 
 PATH = os.path.join(tempfile.gettempdir(), "pydss-projects")
-THERMAL_CONFIG = "tests/data/thermal_upgrade_config.toml"
-VOLTAGE_CONFIG = "tests/data/voltage_upgrade_config.toml"
 
 
 @pytest.fixture
@@ -34,19 +32,11 @@ def pydss_project():
 def test_create_project(pydss_project):
     project_name = "test-project"
     project_dir = os.path.join(PATH, project_name)
-    thermal_upgrade = {
-        "script": "AutomatedThermalUpgrade",
-        "config_file": THERMAL_CONFIG,
-    }
-    voltage_upgrade = {
-        "script": "AutomatedVoltageUpgrade",
-        "config_file": VOLTAGE_CONFIG,
-    }
     # Intentionally not in alphabetic order so that we verify our designated
     # ordering.
     scenarios = [
-        PyDssScenario("b_scenario1", post_process_infos=[thermal_upgrade]),
-        PyDssScenario("a_scenario2", post_process_infos=[voltage_upgrade]),
+        PyDssScenario("b_scenario1"),
+        PyDssScenario("a_scenario2"),
     ]
     project = PyDssProject.create_project(PATH, project_name, scenarios)
     assert os.path.exists(project_dir)
@@ -71,7 +61,6 @@ def test_create_project(pydss_project):
     for i in range(len(project.scenarios)):
         assert scenarios1[i].name == scenarios2[i].name
         assert scenarios1[i].controllers == scenarios2[i].controllers
-        assert scenarios1[i].post_process_infos == scenarios2[i].post_process_infos
 
 
 EXPECTED_ELEM_CLASSES_PROPERTIES = {
