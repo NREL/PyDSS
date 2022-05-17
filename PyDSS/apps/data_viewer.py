@@ -3,6 +3,7 @@ import copy
 import os
 import re
 import sys
+from collections import defaultdict
 
 import ipywidgets as widgets
 import pandas as pd
@@ -61,26 +62,34 @@ class DataViewer:
 
     def _make_widgets(self):
         self._main_label = widgets.HTML("<b>PyDSS Data Viewer</b>")
-        text_layout = widgets.Layout(width="400px")
+        text_layout_long = widgets.Layout(width="400px")
+        text_layout_med = widgets.Layout(width="200px")
+        text_layout_short = widgets.Layout(width="100px")
         button_layout = widgets.Layout(width="200px")
         path = "" if self._defaults["project_path"] is None else self._defaults["project_path"]
         self._project_path_text = widgets.Text(
             path,
             description="Project Path",
-            layout=text_layout,
+            layout=text_layout_long,
             placeholder="pydss_projects/project1/",
         )
         self._load_project_btn = widgets.Button(description="Load project", layout=button_layout)
         self._load_project_btn.on_click(self._on_load_project_click)
-        text_layout2 = widgets.Layout(width="200px")
-        self._scenario_label = widgets.HTML("Scenario", layout=text_layout2)
-        self._elem_class_label = widgets.HTML("Element Class", layout=text_layout2)
-        self._elem_prop_label = widgets.HTML("Element Property", layout=text_layout2)
+        self._scenario_label = widgets.HTML("Scenario", layout=text_layout_med)
+        self._elem_class_label = widgets.HTML("Element Class", layout=text_layout_med)
+        self._elem_prop_label = widgets.HTML("Element Property", layout=text_layout_med)
         self._prop_available_options_label = widgets.HTML("Options")
-        self._prop_options_label = widgets.HTML("Element Property Options", layout=text_layout2)
-        self._elem_regex_label = widgets.HTML("Element Name Regex", layout=text_layout2)
-        self._start_time_label = widgets.HTML("Start Time", layout=text_layout2)
-        self._end_time_label = widgets.HTML("End Time", layout=text_layout2)
+        self._prop_options_label = widgets.HTML("Element Property Options", layout=text_layout_med)
+        self._num_elems_label = widgets.HTML("Number of Elements", layout=text_layout_med)
+        self._elem_regex_label = widgets.HTML("Element Name Regex", layout=text_layout_med)
+        self._start_time_label = widgets.HTML("Start Time", layout=text_layout_med)
+        self._end_time_label = widgets.HTML("End Time", layout=text_layout_med)
+        self._resolution_label = widgets.HTML("Resolution", layout=text_layout_med)
+        self._moving_avg_cb = widgets.Checkbox(
+            value=False, description="Moving Average", disabled=True
+        )
+        self._window_label = widgets.HTML("Moving Average Window", layout=text_layout_med)
+        self._window_text = widgets.Text(value="4")
         self._scenario_dd = widgets.Dropdown(
             options=self._scenario_names,
             value=self._scenario_names[0],
@@ -101,9 +110,18 @@ class DataViewer:
         self._elem_prop_dd.observe(self._on_elem_prop_change, names="value")
         self._prop_available_options_text = widgets.Text(disabled=True)
         self._prop_options_text = widgets.Text(disabled=True)
+        self._num_elems_text = widgets.Text(disabled=True)
         self._elem_regex_text = widgets.Text(disabled=True, placeholder="p1udt.*")
+        self._elem_names_select = widgets.SelectMultiple(
+            options=[""],
+            value=[""],
+            rows=5,
+            description="Elements",
+            disabled=True,
+        )
         self._start_time_text = widgets.Text(disabled=True)
         self._end_time_text = widgets.Text(disabled=True)
+        self._resolution_text = widgets.Text(disabled=True)
         self._load_dataframe_btn = widgets.Button(
             description="Load DataFrame",
             layout=button_layout,
@@ -113,6 +131,12 @@ class DataViewer:
         self._load_dataframe_btn.on_click(self._on_load_dataframe_click)
         self._plot_btn = widgets.Button(description="Plot", layout=button_layout)
         self._plot_btn.on_click(self._on_plot_click)
+        self._aggregation_label = widgets.HTML("Aggregation", layout=text_layout_short)
+        self._aggregation_dd = widgets.Dropdown(
+            options=["None", "Min/Mean/Max", "Sum"],
+            value="None",
+            disabled=True,
+        )
         self._real_only_cb = widgets.Checkbox(
             value=True, description="Exclude imaginary parts", disabled=True
         )
@@ -136,10 +160,43 @@ class DataViewer:
                     )
                 ),
                 widgets.HBox((self._prop_options_label, self._prop_options_text)),
-                widgets.HBox((self._elem_regex_label, self._elem_regex_text)),
-                widgets.HBox((self._start_time_label, self._start_time_text)),
-                widgets.HBox((self._end_time_label, self._end_time_text)),
-                widgets.HBox((self._plot_btn, self._load_dataframe_btn, self._real_only_cb)),
+                widgets.HBox(
+                    (
+                        widgets.VBox(
+                            (
+                                widgets.HBox((self._num_elems_label, self._num_elems_text)),
+                                widgets.HBox((self._elem_regex_label, self._elem_regex_text)),
+                            )
+                        ),
+                        self._elem_names_select,
+                    )
+                ),
+                widgets.HBox(
+                    (
+                        widgets.VBox(
+                            (
+                                widgets.HBox((self._start_time_label, self._start_time_text)),
+                                widgets.HBox((self._end_time_label, self._end_time_text)),
+                                widgets.HBox((self._resolution_label, self._resolution_text)),
+                            ),
+                        ),
+                        widgets.VBox(
+                            (
+                                self._moving_avg_cb,
+                                widgets.HBox((self._window_label, self._window_text)),
+                            )
+                        ),
+                    )
+                ),
+                widgets.HBox(
+                    (
+                        self._plot_btn,
+                        self._load_dataframe_btn,
+                        self._aggregation_label,
+                        self._aggregation_dd,
+                        self._real_only_cb,
+                    )
+                ),
                 self._reset_btn,
             )
         )
@@ -152,10 +209,13 @@ class DataViewer:
         self._load_dataframe_btn.disabled = False
         self._plot_btn.disabled = False
         self._scenario_dd.disabled = False
+        self._aggregation_dd.disabled = False
         self._real_only_cb.disabled = False
         self._elem_regex_text.disabled = False
+        self._elem_names_select.disabled = False
         self._start_time_text.disabled = False
         self._end_time_text.disabled = False
+        self._moving_avg_cb.disabled = False
         self._assign_widgets()
 
     def _assign_widgets(self):
@@ -179,6 +239,11 @@ class DataViewer:
         self._elem_prop_dd.options = self._element_props
         if self._element_props:
             self._elem_prop_dd.value = self._element_props[0]
+        elem_names = self._scenario.list_element_names(elem_class)
+        elem_names.insert(0, "All")
+        self._elem_names_select.options = elem_names
+        self._elem_names_select.value = [elem_names[0]]
+        self._num_elems_text.value = str(len(elem_names))
 
     def _on_elem_prop_change(self, _):
         elem_class = self._elem_class_dd.value
@@ -199,6 +264,7 @@ class DataViewer:
         self._timestamps = self._results.scenarios[0].get_timestamps()
         self._start_time_text.value = str(self._timestamps.iloc[0])
         self._end_time_text.value = str(self._timestamps.iloc[-1])
+        self._resolution_text.value = str(self._timestamps.iloc[1] - self._timestamps.iloc[0])
         self._enable_project_actions()
 
     def _filter_dataframe_by_time(self):
@@ -227,6 +293,15 @@ class DataViewer:
         if filter_required:
             self._df = self._df.loc[start_time:end_time, :]
 
+    def _filter_dataframe_by_elem_names(self):
+        value = self._elem_names_select.value
+        if value != ("All",):
+            values = set(value)
+            columns = [
+                x for x in self._df.columns if self._scenario.get_name_from_column(x) in values
+            ]
+            self._df = self._df[columns]
+
     def _filter_dataframe_by_elem_regex(self):
         regex_str = self._elem_regex_text.value
         if regex_str != "":
@@ -234,34 +309,62 @@ class DataViewer:
             columns = [x for x in self._df.columns if regex.search(x) is not None]
             self._df = self._df[columns]
 
+    def _get_elem_property_options(self):
+        options = {}
+        options_text = self._prop_options_text.value.strip()
+        if options_text != "":
+            for option_pair in options_text.split(","):
+                fields = option_pair.split("=")
+                if len(fields) != 2:
+                    print(
+                        f"Invalid option pair: '{option_pair}'. Must be 'option=value'",
+                        file=sys.stderr,
+                    )
+                    return
+                key = fields[0].strip()
+                val = fields[1].strip()
+                options[key] = ast.literal_eval(val)
+        return options
+
     def _assign_dataframe(self):
         elem_class = self._elem_class_dd.value
         elem_prop = self._elem_prop_dd.value
         real_only = self._real_only_cb.value
-        options = {}
-        for option_pair in self._prop_options_text.value.strip().split():
-            fields = option_pair.split("=")
-            if len(fields) != 2:
-                print(
-                    f"Invalid option pair: '{option_pair}'. Must be 'option=value'",
-                    file=sys.stderr,
-                )
-                return
-            key = fields[0].strip()
-            val = fields[1].strip()
-            options[key] = ast.literal_eval(val)
+
         self._df = self._scenario.get_full_dataframe(
             elem_class,
             elem_prop,
             real_only=real_only,
-            **options,
+            **self._get_elem_property_options(),
         )
         try:
             self._filter_dataframe_by_time()
         except BadInputError:
             return
 
+        self._filter_dataframe_by_elem_names()
         self._filter_dataframe_by_elem_regex()
+
+        if self._aggregation_dd.value == "Min/Mean/Max":
+            columns = list(self._df.columns)
+            self._df["Max"] = self._df.max(axis=1)
+            self._df["Mean"] = self._df.mean(axis=1)
+            self._df["Min"] = self._df.min(axis=1)
+            self._df.drop(columns=columns, inplace=True)
+        elif self._aggregation_dd.value == "Sum":
+            columns = list(self._df.columns)
+            self._df["Sum"] = self._df.sum(axis=1)
+            self._df.drop(columns=columns, inplace=True)
+        else:
+            assert self._aggregation_dd.value == "None"
+
+        if self._moving_avg_cb.value:
+            try:
+                window = int(self._window_text.value)
+            except Exception:
+                print(f"window size {self._window_text.value} must be an integer")
+                return
+            self._df = self._df.rolling(window=window).mean()
 
     def _on_load_dataframe_click(self, _):
         self._assign_dataframe()
