@@ -90,10 +90,10 @@ def test_export_overloads(mocked_func, simulation_settings):
         assert dataset1.attrs["type"] == "per_time_point"
         df = DatasetBuffer.to_dataframe(dataset1)
         assert isinstance(df, pd.DataFrame)
-        assert [x for x in df["Line.one__Overloads"].values] == LINE_1_VALUES
-        assert [x for x in df["Line.two__Overloads"].values] == LINE_2_VALUES
-        assert [x for x in df["Transformer.one__Overloads"].values] == TRANSFORMER_1_VALUES
-        assert [x for x in df["Transformer.two__Overloads"].values] == TRANSFORMER_2_VALUES
+        assert [x for x in df["Line.one__Loading"].values] == LINE_1_VALUES
+        assert [x for x in df["Line.two__Loading"].values] == LINE_2_VALUES
+        assert [x for x in df["Transformer.one__Loading"].values] == TRANSFORMER_1_VALUES
+        assert [x for x in df["Transformer.two__Loading"].values] == TRANSFORMER_2_VALUES
 
         dataset2 = hdf_store["CktElement/ElementProperties/ExportLoadingsMetricMax"]
         assert dataset2.attrs["length"] == 1

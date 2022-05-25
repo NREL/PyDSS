@@ -956,7 +956,7 @@ class ExportLoadingsMetric(OpenDssExportMetric):
 
     @staticmethod
     def label():
-        return "Overloads"
+        return "Loading"
 
     @staticmethod
     def _get_name_from_line(fields):

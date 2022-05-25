@@ -85,7 +85,8 @@ class ThermalMetrics(ReportBase):
         scenarios = {}
         for scenario in self._results.scenarios:
             df = scenario.get_full_dataframe("CktElement", "ExportLoadingsMetric")
-            df.columns = [x.replace("__Overloads", "") for x in df.columns]
+            # Remove the property label, like "__Loading" from the column.
+            df.columns = [x.split("__")[0] for x in df.columns]
             line_columns = []
             transform_columns = []
             for col in df.columns:
