@@ -65,13 +65,13 @@ def test_export_overloads(mocked_func, simulation_settings):
     data1 = {
         "property": "ExportLoadingsMetric",
         "store_values_type": "all",
-        "opendss_elements": ["Lines", "Transformers"],
+        "opendss_classes": ["Lines", "Transformers"],
     }
     prop1 = ExportListProperty("CktElement", data1)
     data2 = {
         "property": "ExportLoadingsMetric",
         "store_values_type": "max",
-        "opendss_elements": ["Lines", "Transformers"],
+        "opendss_classes": ["Lines", "Transformers"],
     }
     prop2 = ExportListProperty("CktElement", data2)
     num_time_steps = NUM_LOADINGS_FILES

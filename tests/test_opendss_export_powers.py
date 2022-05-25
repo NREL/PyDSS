@@ -68,19 +68,19 @@ def test_export_powers(mocked_func, simulation_settings):
     data1 = {
         "property": "ExportPowersMetric",
         "store_values_type": "all",
-        "opendss_elements": ["Lines", "Loads", "PVSystems", "Transformers"],
+        "opendss_classes": ["Lines", "Loads", "PVSystems", "Transformers"],
     }
     prop1 = ExportListProperty("CktElement", data1)
     data2 = {
         "property": "ExportPowersMetric",
         "store_values_type": "max",
-        "opendss_elements": ["Lines", "Loads", "PVSystems", "Transformers"],
+        "opendss_classes": ["Lines", "Loads", "PVSystems", "Transformers"],
     }
     prop2 = ExportListProperty("CktElement", data2)
     data3 = {
         "property": "ExportPowersMetric",
         "store_values_type": "sum",
-        "opendss_elements": ["Lines", "Loads", "PVSystems", "Transformers"],
+        "opendss_classes": ["Lines", "Loads", "PVSystems", "Transformers"],
     }
     prop3 = ExportListProperty("CktElement", data3)
     num_time_steps = NUM_POWERS_FILES

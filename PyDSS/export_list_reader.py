@@ -69,6 +69,16 @@ class ExportListProperty:
         if self._is_max() and self._limits is not None:
             raise InvalidConfiguration("limits are not allowed with max types")
 
+        requires_opendss_classes = (
+            "ExportLoadingsMetric",
+            "OverloadsMetricInMemory",
+            "ExportPowersMetric",
+        )
+        if elem_class == "CktElement" and self.name in requires_opendss_classes and not self._opendss_classes:
+            raise InvalidConfiguration(
+                f"Exporting {elem_class}.{self.name} requires that opendss_classes be specifed"
+            )
+
     def _check_sum_groups(self, sum_groups_file):
         if sum_groups_file is not None:
             if self._sum_groups:
