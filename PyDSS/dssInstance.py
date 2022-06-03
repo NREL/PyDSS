@@ -91,7 +91,11 @@ class OpenDSS:
         self._Logger.info('An instance of OpenDSS version ' + self._dssInstance.__version__ + ' has been created.')
 
         for key, path in self._dssPath.items():
-            assert (os.path.exists(path)), '{} path: {} does not exist!'.format(key, path)
+            if path.name == "pyControllerList" and not path.exists():
+                # This will happen if a zipped project with no controllers is unzipped and then run.
+                path.mkdir()
+            else:
+                assert path.exists(), '{} path: {} does not exist!'.format(key, path)
 
         self._CompileModel()
 
