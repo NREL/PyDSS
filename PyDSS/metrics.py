@@ -963,6 +963,7 @@ class ExportLoadingsMetric(OpenDssExportMetric):
         return fields[0].strip()
 
     def parse_file(self, filename):
+        count = 0
         with open(filename) as f_in:
             # Skip the header.
             next(f_in)
@@ -973,8 +974,11 @@ class ExportLoadingsMetric(OpenDssExportMetric):
                     index = self._names[name]
                     val = float(fields[2].strip())
                     self._values[index].set_value_from_raw(val)
+                    count += 1
                 else:
-                    assert False, line
+                    # There may be other element types that are not being tracked.
+                    continue
+        assert count == len(self._names), f"count={count} num_names={len(self._names)}"
 
     @staticmethod
     def requires_upper_case():
