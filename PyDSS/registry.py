@@ -1,9 +1,10 @@
 """Manages PyDSS customized modules."""
 
-from collections import defaultdict
+import copy
 import logging
 import os
-import pathlib
+from collections import defaultdict
+from pathlib import Path
 
 import PyDSS
 from PyDSS.common import ControllerType, CONTROLLER_TYPES
@@ -50,21 +51,24 @@ class Registry:
 
     def __init__(self, registry_filename=None):
         if registry_filename is None:
-            self._registry_filename = os.path.join(
-                str(pathlib.Path.home()),
-                self._REGISTRY_FILENAME,
-            )
+            self._registry_filename = Path.home() / self._REGISTRY_FILENAME
         else:
-            self._registry_filename = registry_filename
+            self._registry_filename = Path(registry_filename)
 
         self._controllers = {x: {} for x in CONTROLLER_TYPES}
-        if not os.path.exists(self._registry_filename):
-            self.reset_defaults()
-        else:
-            data = load_data(self._registry_filename)
-            for controller_type in data["Controllers"]:
-                for controller in data["Controllers"][controller_type]:
-                    self._add_controller(controller_type, controller)
+        data = copy.deepcopy(DEFAULT_REGISTRY)
+        # This is written to work with legacy versions where default controllers were
+        # written to the registry.
+        if self._registry_filename.exists():
+            registered = load_data(self._registry_filename)
+            for controller_type, controllers in registered["Controllers"].items():
+                for controller in controllers:
+                    if not self._is_default_controller(controller_type, controller["name"]):
+                        data["Controllers"][controller_type].append(controller)
+
+        for controller_type, controllers in data["Controllers"].items():
+            for controller in controllers:
+                self._add_controller(controller_type, controller)
 
     def _add_controller(self, controller_type, controller):
         name = controller["name"]
@@ -78,15 +82,28 @@ class Registry:
 
         self._controllers[controller_type][name] = controller
 
+    @staticmethod
+    def _is_default_controller(controller_type, name):
+        for controller in DEFAULT_REGISTRY["Controllers"][controller_type]:
+            if controller["name"] == name:
+                return True
+        return False
+
     def _serialize_registry(self):
         data = {"Controllers": defaultdict(list)}
+        has_entries = False
         for controller_type in self._controllers:
             for controller in self._controllers[controller_type].values():
-                data["Controllers"][controller_type].append(controller)
+                # Serializing default controllers is not necessary and causes problems
+                # when the software is upgraded or installed to a new location.
+                if not self._is_default_controller(controller_type, controller["name"]):
+                    data["Controllers"][controller_type].append(controller)
+                    has_entries = True
 
-        filename = self.registry_filename
-        dump_data(data, filename, indent=2)
-        logger.debug("Serialized data to %s", filename)
+        if has_entries:
+            filename = self.registry_filename
+            dump_data(data, filename, indent=2)
+            logger.debug("Serialized data to %s", filename)
 
     def is_controller_registered(self, controller_type, name):
         """Check if the controller is registered"""
@@ -147,12 +164,13 @@ class Registry:
 
     def reset_defaults(self, controllers_only=False):
         """Reset the registry to its default values."""
+        if self._registry_filename.exists():
+            self._registry_filename.unlink()
         for controllers in self._controllers.values():
             controllers.clear()
-        for controller_type in DEFAULT_REGISTRY["Controllers"]:
-            for controller in DEFAULT_REGISTRY["Controllers"][controller_type]:
-                self.register_controller(controller_type, controller)
-        self._serialize_registry()
+        for controller_type, controllers in DEFAULT_REGISTRY["Controllers"].items():
+            for controller in controllers:
+                self._add_controller(controller_type, controller)
 
         logger.debug("Initialized registry to its defaults.")
 
@@ -183,6 +201,8 @@ class Registry:
             raise InvalidParameter(
                 f"{controller_type} / {name} isn't registered"
             )
+        if self._is_default_controller(controller_type, name):
+            raise InvalidParameter(f"Cannot unregister a default controller")
 
         self._controllers[controller_type].pop(name)
         self._serialize_registry()

@@ -1,7 +1,9 @@
 """Test registry."""
 
+import copy
 import os
 import tempfile
+from pathlib import Path
 
 import pytest
 
@@ -10,7 +12,7 @@ from PyDSS.registry import Registry, DEFAULT_REGISTRY
 
 
 # Don't change the user's registry.
-TEST_FILENAME = os.path.join("tests", "pydss_test_registry.json")
+TEST_FILENAME = Path("tests") / "pydss_test_registry.json"
 CTYPE = ControllerType.PV_CONTROLLER.value
 
 
@@ -19,13 +21,6 @@ def registry_fixture():
     yield
     if os.path.exists(TEST_FILENAME):
         os.remove(TEST_FILENAME)
-
-
-def clear_controllers(registry):
-    for controller_type in CONTROLLER_TYPES:
-        for controller in registry.list_controllers(controller_type):
-            registry.unregister_controller(controller_type, controller["name"])
-        assert len(registry.list_controllers(controller_type)) == 0
 
 
 def test_registry__list_controllers(registry_fixture):
@@ -38,11 +33,11 @@ def test_registry__list_controllers(registry_fixture):
 
 def test_registry__register_controllers(registry_fixture):
     registry = Registry(registry_filename=TEST_FILENAME)
-    clear_controllers(registry)
-    controller = DEFAULT_REGISTRY["Controllers"][CTYPE][0]
-    registry.register_controller(CTYPE, controller)
-    controllers = registry.list_controllers(CTYPE)
-    assert len(controllers) == 1
+    registry.reset_defaults()
+    new_controller = copy.deepcopy(DEFAULT_REGISTRY["Controllers"][CTYPE][0])
+    new_name = new_controller["name"] + "_new"
+    new_controller["name"] = new_name
+    registry.register_controller(CTYPE, new_controller)
 
     # Test that the the changes are reflected with a new instance.
     registry2 = Registry(registry_filename=TEST_FILENAME)
@@ -52,12 +47,8 @@ def test_registry__register_controllers(registry_fixture):
         for field in DEFAULT_REGISTRY["Controllers"][CTYPE][0]:
             assert data1[field] == data2[field]
 
-
-def test_registry__unregister_controllers(registry_fixture):
-    registry = Registry(registry_filename=TEST_FILENAME)
-    registry.reset_defaults()
-    assert len(registry.list_controllers(CTYPE)) == len(DEFAULT_REGISTRY["Controllers"][CTYPE])
-    clear_controllers(registry)
+    registry2.unregister_controller(CTYPE, new_name)
+    assert not registry2.is_controller_registered(CTYPE, new_name)
 
 
 def test_registry__is_controller_registered(registry_fixture):
@@ -68,7 +59,6 @@ def test_registry__is_controller_registered(registry_fixture):
 
 def test_registry__reset_defaults(registry_fixture):
     registry = Registry(registry_filename=TEST_FILENAME)
-    clear_controllers(registry)
     registry.reset_defaults()
     assert len(registry.list_controllers(CTYPE)) == len(DEFAULT_REGISTRY["Controllers"][CTYPE])
 
