@@ -29,6 +29,9 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
+with open("Readme.md", encoding="utf-8") as f:
+    readme = f.read()
+
 dev_requires = [
     "mock",
     "pytest",
@@ -41,6 +44,8 @@ dev_requires = [
 setup(name='dsspy',
     version=find_version("PyDSS", "__init__.py"),
     description='A high-level python interface for OpenDSS',
+    long_description=readme,
+    long_description_content_type='text/markdown',
     author='Aadil Latif',
     author_email='Aadil.Latif@nrel.gov',
     url='http://www.github.com/nrel/pydss',
