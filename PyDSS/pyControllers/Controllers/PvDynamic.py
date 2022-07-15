@@ -35,7 +35,7 @@ class PvDynamic(ControllerAbstract):
 
         self.events1 = SimulationEvents(verbosity = 'DEBUG')
         #self.grid1 = Grid(events=self.events1, unbalance_ratio_b=1.0, unbalance_ratio_c=1.0)
-        self.voltage_base = self._controlled_element.sBus[0].GetVariable('kVBase') * 1000
+        self.voltage_base = Grid.Vbase#self._controlled_element.sBus[0].GetVariable('kVBase') * 1000
         stand_alone = False
         steady_state = Settings["STEADY_STATE"]
         rated_power_ac_va = Settings["RATED_POWER_AC_VA"]
@@ -48,7 +48,7 @@ class PvDynamic(ControllerAbstract):
             print(f"\nmodel inputs: \nVa - {self._Va}, \nVrms - {self._Vrms}\nFreq - {self.freq}\nvBase - {self.voltage_base}\n")
             self._pv_model = DERModel(
                 modelType= 'SinglePhase',
-                #powerRating = rated_power_dc_watts,
+                powerRating = rated_power_dc_watts,
                 Sinverter_rated = rated_power_ac_va,
                 events=self.events1,
                 configFile=config_file,
@@ -243,7 +243,7 @@ class PvDynamic(ControllerAbstract):
 
         S_PCC = self._pv_model.DER_model.S_PCC * self._pv_model.DER_model.Sbase / 1000
         print(f"kW {S_PCC.real}\nkvar {S_PCC.imag}")
-        self._controlled_element.SetParameter("kw", S_PCC.real)
+        self._controlled_element.SetParameter("kw", S_PCC.real )
         self._controlled_element.SetParameter("kvar", S_PCC.imag)
         self.results.append({
             "Vdc" : self._pv_model.DER_model.Vdc * self._pv_model.DER_model.Vbase,
@@ -251,9 +251,12 @@ class PvDynamic(ControllerAbstract):
             "Vtrms" : self._pv_model.DER_model.Vtrms * self._pv_model.DER_model.Vbase,
             "Vrms" : self._pv_model.DER_model.Vrms * self._pv_model.DER_model.Vbase,
             "Irms" : self._pv_model.DER_model.Irms * self._pv_model.DER_model.Ibase,
-            "Ppv" : self._pv_model.DER_model.Ppv * self._pv_model.DER_model.Sbase,
+            "Ppv" : self._pv_model.DER_model.Ppv * self._pv_model.DER_model.Sbase  /1000,
             "S" : self._pv_model.DER_model.S * self._pv_model.DER_model.Sbase,
             "S_PCC" : self._pv_model.DER_model.S_PCC * self._pv_model.DER_model.Sbase,
+            "active_power [kVA]": np.real(self._pv_model.DER_model.S_PCC * self._pv_model.DER_model.Sbase) / 1000.0,
+            "reactive_power [kVA]": np.imag(self._pv_model.DER_model.S_PCC * self._pv_model.DER_model.Sbase) / 1000.0,
+            "grid_voltage [p.u.]": self._Va / self.voltage_base,
         })
                   
     def Update(self, Priority, Time, UpdateResults):
@@ -263,14 +266,17 @@ class PvDynamic(ControllerAbstract):
                 import matplotlib.pyplot as plt
                 import pandas as pd
                 
-                fig, axs = plt.subplots(2, 2)
+                fig, axs = plt.subplots(3, 2)
 
                 self.results = pd.DataFrame(self.results, index=self.solver.all_timestamps)
                 print(self.results)
-                self.results[["Ppv"]].plot(ax=axs[0, 0])
+                self.results[["Ppv", "reactive_power [kVA]", "active_power [kVA]"]].plot(ax=axs[0, 0])
                 self.results[["Vdc", "Vrms", "vta", "Vtrms"]].plot(ax=axs[0, 1])
                 self.results[["Irms"]].plot(ax=axs[1, 0])
                 self.results[["S", "S_PCC"]].plot(ax=axs[1, 1])
+                self.results[["grid_voltage [p.u.]"]].plot(ax=axs[2, 0])
+                self.results.plot.scatter(x='grid_voltage [p.u.]',  y='reactive_power [kVA]', c='DarkBlue', ax=axs[2, 1])
+                
                 plt.show()
                 print(self.results)
         return 0
