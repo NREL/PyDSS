@@ -66,8 +66,8 @@ class PvVoltageRideThru(ControllerAbstract):
         self.__cutout = Settings['%PCutout']
         self.__trip_deadtime_sec = Settings['Reconnect deadtime - sec']
         self.__Time_to_Pmax_sec = Settings['Reconnect Pmax time - sec']
-        self.__alpha = Settings['alpha']
-        self.__beta = Settings['beta']
+        # self.__alpha = Settings['alpha']
+        # self.__beta = Settings['beta']
         self.__Prated = Settings['maxKW']
         self.__priority = Settings['Priority']
         self.__enablePFlimit = Settings['Enable PF limit']
@@ -76,17 +76,17 @@ class PvVoltageRideThru(ControllerAbstract):
         #self.__VVtConst = Settings['VVtConst']
         #self.__VWtConst = Settings['VWtConst']
         # Settings for voltvar
-        self.__uMin = self.__Settings['uMin']
-        self.__uMax = self.__Settings['uMax']
-        self.__uDbMin = self.__Settings['uDbMin']
-        self.__uDbMax = self.__Settings['uDbMax']
+        # self.__uMin = self.__Settings['uMin']
+        # self.__uMax = self.__Settings['uMax']
+        # self.__uDbMin = self.__Settings['uDbMin']
+        # self.__uDbMax = self.__Settings['uDbMax']
         # Settings for voltwatt
-        self.__uMinC = self.__Settings['uMinC']
-        self.__uMaxC = self.__Settings['uMaxC']
-        self.__Pmin = self.__Settings['PminVW'] / 100
-        self.__curtailmentMode = self.__Settings['CurtMode']
+        # self.__uMinC = self.__Settings['uMinC']
+        # self.__uMaxC = self.__Settings['uMaxC']
+        # self.__Pmin = self.__Settings['PminVW'] / 100
+        # self.__curtailmentMode = self.__Settings['CurtMode']
         # Update function calls
-        self.update = [self.ControlDict[Settings['Control' + str(i)]] for i in [1, 2, 3]]
+        # self.update = [self.ControlDict[Settings['Control' + str(i)]] for i in [1, 2, 3]]
         # initialize deadtimes and other variables
         self.__initializeRideThroughSettings()
         self.__rVs, self.__rTs = self.__CreateOperationRegions()
