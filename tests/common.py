@@ -38,7 +38,7 @@ class FakeElement:
     """Fake that behaves like an OpenDSS element"""
     def __init__(self, full_name, name):
         self.FullName = full_name
-        self.Name = NameError
+        self.Name = name
         self._Class = dss.PVsystems
 
 

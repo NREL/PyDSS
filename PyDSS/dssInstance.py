@@ -178,6 +178,7 @@ class OpenDSS:
         if reply != "":
             raise OpenDssModelError(f"Error compiling OpenDSS model: {reply}")
 
+    # TODO: This method is broken. Can it be deleted?
     def _ReadControllerDefinitions(self):
         controllers = None
         mappings = os.path.join(os.path.dirname(self._dssPath['pyControllers']), "ControllerMappings")

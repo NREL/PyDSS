@@ -216,6 +216,7 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
     def __init__(self, prop, dss_objs, settings):
         super().__init__(prop, dss_objs, settings)
         self._containers = {}  # StoreValuesType to StorageFilterBase
+        self._name_order = []  # Ensures that name-value ordering will always be consistent.
 
     @abc.abstractmethod
     def _get_value(self, dss_obj, time_step):
@@ -236,9 +237,10 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
             else:
                 assert prop.name == prop_name, f"{prop.name} {prop_name}"
             if prop.data_conversion != DataConversion.NONE:
+                assert self._name_order
                 vals = [
-                    convert_data(x.FullName, prop_name, y, prop.data_conversion)
-                    for x, y in zip(self._dss_objs, values)
+                    convert_data(x, prop_name, y, prop.data_conversion)
+                    for x, y in zip(self._name_order, values)
                 ]
             else:
                 vals = values
@@ -252,15 +254,23 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
             )
 
     def append_values(self, time_step, store_nan=False):
+        values = []
+        collect_names = not self._name_order
         if self._can_use_native_iteration():
-            self._elem_class.First()
-            values = []
-            for _ in range(self._elem_class.Count()):
-                dss_obj = self._name_to_dss_obj[self._elem_class.Name()]
+            flag = self._elem_class.First()
+            while flag > 0:
+                name = self._elem_class.Name()
+                dss_obj = self._name_to_dss_obj[name]
                 values.append(self._get_value(dss_obj, time_step))
-                self._elem_class.Next()
+                if collect_names:
+                    self._name_order.append(dss_obj.FullName)
+                flag = self._elem_class.Next()
+            assert len(values) == len(self._dss_objs)
         else:
-            values = [self._get_value(x, time_step) for x in self._dss_objs]
+            for obj in self._dss_objs:
+                values.append(self._get_value(obj, time_step))
+                if collect_names:
+                    self._name_order.append(obj.Name)
 
         if not self._containers:
             self._initialize_containers(values)
@@ -272,9 +282,10 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
         for value_type, container in self._containers.items():
             prop = self._properties[value_type]
             if prop.data_conversion != DataConversion.NONE:
+                assert len(self._name_order) == len(values)
                 vals = [
-                    convert_data(x.FullName, prop.name, y, prop.data_conversion)
-                    for x, y in zip(self._dss_objs, values)
+                    convert_data(x, prop.name, y, prop.data_conversion)
+                    for x, y in zip(self._name_order, values)
                 ]
             else:
                 vals = values
@@ -487,15 +498,18 @@ class SummedElementsOpenDssPropertyMetric(MetricBase):
         else:
             total = None
             if self._can_use_native_iteration():
-                self._elem_class.First()
-                for _ in range(self._elem_class.Count()):
+                iterations = 0
+                flag = self._elem_class.First()
+                while flag > 0:
                     dss_obj = self._name_to_dss_obj[self._elem_class.Name()]
                     value = self._get_value(dss_obj)
                     if total is None:
                         total = value
                     else:
                         total += value
-                    self._elem_class.Next()
+                    iterations += 1
+                    flag = self._elem_class.Next()
+                assert iterations == len(self._dss_objs)
             else:
                 for dss_obj in self._dss_objs:
                     value = self._get_value(dss_obj)
@@ -571,8 +585,9 @@ class SummedElementsByGroupOpenDssPropertyMetric(MetricBase):
                 total_by_group[group].set_nan()
         else:
             if self._can_use_native_iteration():
-                self._elem_class.First()
-                for _ in range(self._elem_class.Count()):
+                iterations = 0
+                flag = self._elem_class.First()
+                while flag > 0:
                     name = self._elem_class.Name()
                     group = self._name_to_group[name]
                     dss_obj = self._name_to_dss_obj[name]
@@ -581,7 +596,9 @@ class SummedElementsByGroupOpenDssPropertyMetric(MetricBase):
                         total_by_group[group] = value
                     else:
                         total_by_group[group] += value
-                    self._elem_class.Next()
+                    iterations += 1
+                    flag = self._elem_class.Next()
+                assert iterations == len(self._dss_objs)
             else:
                 for dss_obj in self._dss_objs:
                     value = self._get_value(dss_obj)
@@ -706,11 +723,14 @@ class TrackCapacitorChangeCounts(ChangeCountMetricBase):
         if store_nan:
             return
 
-        dss.Capacitors.First()
-        for _ in range(dss.Capacitors.Count()):
+        iterations = 0
+        flag = dss.Capacitors.First()
+        while flag > 0:
             capacitor = self._name_to_dss_obj[dss.Capacitors.Name()]
             self._update_counts(capacitor)
-            dss.Capacitors.Next()
+            iterations += 1
+            flag = dss.Capacitors.Next()
+        assert iterations == len(self._dss_objs)
 
     def _update_counts(self, capacitor):
         states = dss.Capacitors.States()
@@ -737,11 +757,14 @@ class TrackRegControlTapNumberChanges(ChangeCountMetricBase):
         if store_nan:
             return
 
-        dss.RegControls.First()
-        for _ in range(dss.RegControls.Count()):
+        iterations = 0
+        flag = dss.RegControls.First()
+        while flag > 0:
             reg_control = self._name_to_dss_obj[dss.RegControls.Name()]
             self._update_counts(reg_control)
-            dss.RegControls.Next()
+            iterations += 1
+            flag = dss.RegControls.Next()
+        assert iterations == len(self._dss_objs)
 
     def _update_counts(self, reg_control):
         tap_number = dss.RegControls.TapNumber()

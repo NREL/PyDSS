@@ -161,7 +161,7 @@ def test_pv_powers_by_customer_type(cleanup_project):
     com_sum1 = df[com_cols].sum().sum()
     res_sum1 = df[res_cols].sum().sum()
     total_sum1 = df.sum().sum()
-    assert total_sum1 == com_sum1 + res_sum1
+    assert math.isclose(total_sum1, com_sum1 + res_sum1)
 
     # Collect a running sum for all PVSystem power output.
     data = {
