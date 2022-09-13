@@ -1,7 +1,7 @@
 from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
 from shapely.geometry import MultiPoint, Polygon, Point, MultiPolygon
 from shapely.ops import triangulate, cascaded_union
-import datetime
+import datetim
 import math
 import os
 
@@ -55,7 +55,6 @@ class PvVoltageRideThru(ControllerAbstract):
 
         # Initializing the model
         PvObj.SetParameter('kvar', 0)
-        #self.__BaseKV = float(PvObj.SetParameter('kv',Settings['kV']))
         self.__Srated = float(PvObj.SetParameter('kva', Settings['kVA']))
         self.__Prated = float(PvObj.SetParameter('kW', Settings['maxKW']))
         self.__minQ = float(PvObj.SetParameter('minkvar', -Settings['KvarLimit']))
@@ -66,32 +65,16 @@ class PvVoltageRideThru(ControllerAbstract):
         self.__cutout = Settings['%PCutout']
         self.__trip_deadtime_sec = Settings['Reconnect deadtime - sec']
         self.__Time_to_Pmax_sec = Settings['Reconnect Pmax time - sec']
-        # self.__alpha = Settings['alpha']
-        # self.__beta = Settings['beta']
         self.__Prated = Settings['maxKW']
         self.__priority = Settings['Priority']
         self.__enablePFlimit = Settings['Enable PF limit']
         self.__minPF = Settings['pfMin']
         self.__UcalcMode = Settings['UcalcMode']
-        #self.__VVtConst = Settings['VVtConst']
-        #self.__VWtConst = Settings['VWtConst']
-        # Settings for voltvar
-        # self.__uMin = self.__Settings['uMin']
-        # self.__uMax = self.__Settings['uMax']
-        # self.__uDbMin = self.__Settings['uDbMin']
-        # self.__uDbMax = self.__Settings['uDbMax']
-        # Settings for voltwatt
-        # self.__uMinC = self.__Settings['uMinC']
-        # self.__uMaxC = self.__Settings['uMaxC']
-        # self.__Pmin = self.__Settings['PminVW'] / 100
-        # self.__curtailmentMode = self.__Settings['CurtMode']
-        # Update function calls
-        # self.update = [self.ControlDict[Settings['Control' + str(i)]] for i in [1, 2, 3]]
         # initialize deadtimes and other variables
         self.__initializeRideThroughSettings()
         self.__rVs, self.__rTs = self.__CreateOperationRegions()
         # For debugging only
-        self.useAvgVoltage = True
+        self.useAvgVoltage = False
         cycleAvg = 5
         freq = dssSolver.getFrequency()
         step = dssSolver.GetStepSizeSec()
@@ -100,6 +83,14 @@ class PvVoltageRideThru(ControllerAbstract):
         self.reactive_power = [0.0 for i in range(hist_size)]
         self.__VoltVioM = False
         self.__VoltVioP = False
+        
+        self.region = [3, 3, 3]
+        
+        # self.voltage_hist = []
+        # self.power_hist = []
+        # self.timer_hist = []
+        # self.timer_act_hist = []
+        
         return
 
     def Name(self):
@@ -121,7 +112,7 @@ class PvVoltageRideThru(ControllerAbstract):
         self.__TrippedPmaxDelay = 0
         self.__NormOper = True
         self.__NormOperStartTime = self.__dssSolver.GetDateTime()
-        self.__uViolationtime = 999999
+        self.__uViolationtime = 99999
         self.__TrippedStartTime = self.__dssSolver.GetDateTime()
         self.__TrippedDeadtime = 0
         self.__faultCounter = 0
@@ -229,6 +220,9 @@ class PvVoltageRideThru(ControllerAbstract):
                 self.MomentarySucessionRegion = cascaded_union([PermissiveOVRegion, PermissiveUVRegion])
                 self.TripRegion = cascaded_union([OVtripRegion, UVtripRegion, MayTripRegion])
         self.NormalRegion = ContineousRegion
+        
+        
+        
         return V, T
 
     def Update(self, Priority, Time, Update):
@@ -238,8 +232,7 @@ class PvVoltageRideThru(ControllerAbstract):
         self.Time = Time
         if Priority == 0:
             self.__isConnected = self.__Connect()
-        # if self.__isConnected:
-        #     Error = self.update[Priority]()
+  
         if Priority == 2:
             uIn = self.__UpdateViolatonTimers()
             if self.__Settings["Follow standard"] == "1547-2018":
@@ -248,7 +241,44 @@ class PvVoltageRideThru(ControllerAbstract):
                 self.Trip(uIn)
             else:
                 raise Exception("Valid standard setting defined. Options are: 1547-2003, 1547-2018")
+            
+        #     P = -sum(self._ControlledElm.GetVariable('Powers')[::2])
+        #     self.power_hist.append(P)
+        #     self.voltage_hist.append(uIn)
+        #     self.timer_hist.append(self.__uViolationtime)
+        #     self.timer_act_hist.append(self.__dssSolver.GetTotalSeconds())
+        # if self.Time == 59 and Priority==2:
+        #     import matplotlib.pyplot as plt
+        #     fig, (ax1, ax2) = plt.subplots(2,1)
 
+        #     try:
+        #         models = [MultiPolygon([self.CurrLimRegion]), self.MomentarySucessionRegion, self.TripRegion, MultiPolygon([self.NormalRegion])]
+        #     except:
+        #         try:
+        #             models = [self.CurrLimRegion, self.MomentarySucessionRegion, self.TripRegion, MultiPolygon([self.NormalRegion])]
+        #         except:
+        #             try:
+        #                 models = [MultiPolygon([self.CurrLimRegion]), self.MomentarySucessionRegion, self.TripRegion, self.NormalRegion]
+        #             except:
+        #                 models = [self.CurrLimRegion, self.MomentarySucessionRegion, self.TripRegion, self.NormalRegion]
+                    
+        #     models = [i for i in models if i is not None]            
+            
+        #     colors = ["orange", "grey", "red", "green"]
+        #     for m, c in zip(models, colors):
+        #         for geom in m.geoms:    
+        #             xs, ys = geom.exterior.xy    
+        #             ax1.fill(xs, ys, alpha=0.35, fc=c, ec='none')
+        #     ax1.set_xlim(0, 5)
+        #     ax1.set_ylim(0, 1.20)
+        #     ax1.scatter( self.timer_hist, self.voltage_hist)
+        #     ax3 = ax2.twinx()
+        #     ax2.set_ylabel('Power (kW) in green')
+        #     ax3.set_ylabel('Voltage (p.u.) in red')
+        #     ax2.plot(self.timer_act_hist[1:], self.power_hist[1:], c="green")
+        #     ax3.plot(self.timer_act_hist[1:], self.voltage_hist[1:], c="red")
+        #     fig.savefig(f"C:/Users/alatif/Desktop/pr100_opendss_model/Exports/cat1_3/{self.__Name}_{self.__Settings['Ride-through Category']}_0.8pu_short.png")
+  
         return Error
 
     def Trip(self, uIn):
@@ -266,15 +296,25 @@ class PvVoltageRideThru(ControllerAbstract):
 
         Pm = Point(self.__uViolationtime, uIn)
         if Pm.within(self.CurrLimRegion):
+            region = 0
             isinContioeousRegion = False
         elif self.MomentarySucessionRegion and Pm.within(self.MomentarySucessionRegion):
+            region = 1
             isinContioeousRegion = False
             self.__Trip(self.__dssSolver.GetStepSizeSec(), 0.4, False)
         elif Pm.within(self.TripRegion):
+            region = 2
             isinContioeousRegion = False
-            self.__Trip(self.__trip_deadtime_sec, self.__Time_to_Pmax_sec, False)
+            if self.region == [3, 1, 1]:
+                self.__Trip(self.__trip_deadtime_sec, self.__Time_to_Pmax_sec, False, True)
+            else: 
+                self.__Trip(self.__trip_deadtime_sec, self.__Time_to_Pmax_sec, False)
         else:
             isinContioeousRegion = True
+            region = 3
+            
+        self.region = self.region[1:] + self.region[:1]
+        self.region[0] = region
 
         if isinContioeousRegion and not self.__isinContioeousRegion:
             self.__FaultwindowClearingStartTime = self.__dssSolver.GetDateTime()
@@ -316,9 +356,21 @@ class PvVoltageRideThru(ControllerAbstract):
             self._ControlledElm.SetParameter('kw', self.__Plimit)
         return self.__isConnected
 
-    def __Trip(self, Deadtime, Time2Pmax, forceTrip):
+    def __Trip(self, Deadtime, Time2Pmax, forceTrip, permissive_to_trip=False):
+        
         if self.__isConnected or forceTrip:
+
             self._ControlledElm.SetParameter('enabled', False)
+
+            self.__isConnected = False
+            self.__TrippedStartTime = self.__dssSolver.GetDateTime()
+            self.__TrippedPmaxDelay = Time2Pmax
+            self.__TrippedDeadtime = Deadtime
+            
+        elif permissive_to_trip:
+    
+            self._ControlledElm.SetParameter('enabled', False)
+
             self.__isConnected = False
             self.__TrippedStartTime = self.__dssSolver.GetDateTime()
             self.__TrippedPmaxDelay = Time2Pmax
