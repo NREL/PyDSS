@@ -4,6 +4,7 @@ from shapely.ops import triangulate, cascaded_union
 import datetim
 import math
 import os
+from pydantic import BaseModel, validator, conint, confloat
 
 class PvVoltageRideThru(ControllerAbstract):
     """Implementation of IEEE1547-2003 and IEEE1547-2018 voltage ride-through standards using the OpenDSS Generator model. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
@@ -146,18 +147,121 @@ class PvVoltageRideThru(ControllerAbstract):
         UVtripRegion = Polygon([[p.y, p.x] for p in UVtripPoints])
 
         if self.__Settings['Ride-through Category'] == 'Category I':
+
+            #check overvoltage points
+            if self.__Settings['OV2 - p.u.'] != 1.20:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+            if self.__Settings['OV2 CT - sec'] != 0.16:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+            if self.__Settings['OV1 - p.u.'] < 1.1 and self.__Settings['OV1 - p.u.'] > 1.2:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+            if self.__Settings['OV1 CT - sec'] <1 and self.__Settings['OV1 CT - sec'] > 13:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+            #check undervoltage points
+            if self.__Settings['UV2 - p.u.'] < 0.0 and self.__Settings['UV2 - p.u.'] > 0.5:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+            if self.__Settings['UV2 CT - sec'] < 0.16 and self.__Settings['UV2 CT - sec'] > 2:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+            if self.__Settings['UV1 - p.u.'] < 0.0 and self.__Settings['UV1 - p.u.'] > 0.88:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+            if self.__Settings['UV1 CT - sec'] <2 and self.__Settings['UV1 CT - sec'] > 21:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+      
             V = [1.10, 0.88, 0.7, 1.20, 1.175, 1.15, 0.5, 0.5]
             T = [1.5, 0.7, 0.2, 0.5, 1, 0.16, 0.16]
             self.__faultCounterMax = 2
             self.__faultCounterClearingTimeSec = 20
 
         elif self.__Settings['Ride-through Category'] == 'Category II':
+            #check overvoltage points
+            if self.__Settings['OV2 - p.u.'] != 1.20:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+            if self.__Settings['OV2 CT - sec'] != 0.16:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+            if self.__Settings['OV1 - p.u.'] < 1.1 and self.__Settings['OV1 - p.u.'] > 1.2:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+            if self.__Settings['OV1 CT - sec'] <1 and self.__Settings['OV1 CT - sec'] > 13:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+            #check undervoltage points
+            if self.__Settings['UV2 - p.u.'] < 0.0 and self.__Settings['UV2 - p.u.'] > 0.45:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+            if self.__Settings['UV2 CT - sec'] < 0.16 and self.__Settings['UV2 CT - sec'] > 2:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+            if self.__Settings['UV1 - p.u.'] < 0.0 and self.__Settings['UV1 - p.u.'] > 0.88:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+            if self.__Settings['UV1 CT - sec'] <2 and self.__Settings['UV1 CT - sec'] > 21:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+
             V = [1.10, 0.88, 0.65, 1.20, 1.175, 1.15, 0.45, 0.30]
             T = [5, 3, 0.2, 0.5, 1, 0.32, 0.16]
             self.__faultCounterMax = 2
             self.__faultCounterClearingTimeSec = 10
 
         elif self.__Settings['Ride-through Category'] == 'Category III':
+            #check overvoltage points
+            if self.__Settings['OV2 - p.u.'] != 1.20:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+            if self.__Settings['OV2 CT - sec'] != 0.16:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+            if self.__Settings['OV1 - p.u.'] < 1.1 and self.__Settings['OV1 - p.u.'] > 1.2:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+            if self.__Settings['OV1 CT - sec'] <1 and self.__Settings['OV1 CT - sec'] > 13:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+            #check undervoltage points
+            if self.__Settings['UV2 - p.u.'] < 0.0 and self.__Settings['UV2 - p.u.'] > 0.5:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+            if self.__Settings['UV2 CT - sec'] < 2 and self.__Settings['UV2 CT - sec'] > 21:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+            if self.__Settings['UV1 - p.u.'] < 0.0 and self.__Settings['UV1 - p.u.'] > 0.88:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+            if self.__Settings['UV1 CT - sec'] >=21 and self.__Settings['UV1 CT - sec'] <= 50:
+                print("User defined setting outside of IEEE 1547 acceptable range.")
+                assert False
+
+
             V = [1.10, 0.88, 0.5, 1.2, 1.2, 1.2, 0.0, 0.0]
             T = [21, 10, 13, 13, 13, 1, 1]
             self.__faultCounterMax = 3
@@ -323,7 +427,7 @@ class PvVoltageRideThru(ControllerAbstract):
         if self.__isinContioeousRegion and not isinContioeousRegion:
             if  clearingTime <= self.__faultCounterClearingTimeSec:
                 self.__faultCounter += 1
-                if self.__faultCounter >= self.__faultCounterMax:
+                if self.__faultCounter > self.__faultCounterMax:
                     if self.__Settings['Multiple disturbances'] == 'Trip':
                         self.__Trip(self.__trip_deadtime_sec, self.__Time_to_Pmax_sec, True)
                         self.__faultCounter = 0
