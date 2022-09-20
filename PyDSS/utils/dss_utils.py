@@ -185,7 +185,7 @@ def iter_elements(element_class, element_func):
         print(reg_control["name"])
 
     """
-    element_class.First()
-    for _ in range(element_class.Count()):
+    flag = element_class.First()
+    while flag > 0:
         yield element_func()
-        element_class.Next()
+        flag = element_class.Next()
