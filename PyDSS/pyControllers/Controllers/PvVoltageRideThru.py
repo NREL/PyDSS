@@ -1,7 +1,7 @@
 from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
 from shapely.geometry import MultiPoint, Polygon, Point, MultiPolygon
 from shapely.ops import triangulate, cascaded_union
-import datetim
+import datetime
 import math
 import os
 from pydantic import BaseModel, validator, conint, confloat
