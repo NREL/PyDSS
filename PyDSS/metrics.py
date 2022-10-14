@@ -270,7 +270,7 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
         values = []
         objects_changed = False
         for dss_obj, expected_name in zip(self._iter_dss_objs(), self._name_order):
-            if dss_obj.Name != expected_name:
+            if dss_obj.FullName != expected_name:
                 # This can happen if an element is disabled. OpenDSS won't deliver it in .Next()
                 # Need to access the element directly, which breaks the iteration.
                 objects_changed = True
