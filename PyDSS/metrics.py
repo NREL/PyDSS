@@ -649,9 +649,9 @@ class NodeVoltageMetric(MetricBase):
         start_time = get_start_time(settings)
         sim_resolution = get_simulation_resolution(settings)
         inputs = ReportBase.get_inputs_from_defaults(settings, "Voltage Metrics")
-        window_size = int(
+        window_size = max(1, int(
             timedelta(minutes=inputs["window_size_minutes"]) / sim_resolution
-        )
+        ))
         self._voltage_metrics = NodeVoltageMetrics(
             prop, start_time, sim_resolution, window_size, inputs["store_per_element_data"]
         )
