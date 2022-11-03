@@ -76,6 +76,8 @@ Redirect SecLoads_Timeseries_realloc.dss
 // ====  generators  ====
 Redirect PVGenerators_existing_VV.dss
 
+New Fault.fault1 phases=1  Bus1=t5.1 r=0.001
+
 New Energymeter.FeederMeter Transformer.tsf
 
 // ==== estimate the voltage bases ====

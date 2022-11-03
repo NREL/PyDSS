@@ -1,13 +1,13 @@
-["Generator.pvgui_mpx000460267"]
-DER_ID = "10"
+["Generator.pv_1"]
+DER_ID = "250"
 STEADY_STATE  = false
-RATED_POWER_AC_VA = 1000.0
-RATED_POWER_DC_WATTS = 1000.0
-MPPT_ENABLE = false
-RAMP_ENABLE = false
+RATED_POWER_AC_VA = 250000
+RATED_POWER_DC_WATTS = 250000
+MPPT_ENABLE = true
+RAMP_ENABLE = true
 VOLT_VAR_ENABLE = true
-LVRT_ENABLE = false
-HVRT_ENABLE = false
+LVRT_ENABLE = true
+HVRT_ENABLE = true
 LFRT_ENABLE = false
 DO_EXTRA_CALCULATIONS = true
 use_frequency_estimate = true

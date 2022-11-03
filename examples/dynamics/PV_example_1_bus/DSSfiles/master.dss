@@ -1,0 +1,26 @@
+
+Clear
+
+New Loadshape.Trans_voltage npts=600 sInterval=0.1 mult = (file=./source_voltage_default.csv, col=2, header=yes) 
+
+New Circuit.HECO19021 bus1=Sourcebus pu=1.03  basekV=120 R0=0 X0=0.0001 R1=0 X1=0.0001 phases=3 yearly=Trans_voltage
+
+New Transformer.substation phases=3 XHL=2.1 %loadloss=0.7639 %noloadloss=0.0851 
+~ wdg=1 bus=Sourcebus conn=wye kv=120 kVA=20000
+~ wdg=2 bus=bus_1 conn=wye kv=12.47 kVA=20000
+
+New Line.line_1 bus1=bus_1 bus2=bus_2 phases=3 R0=1 X0=1 R1=1 X1=1 length=10 units=mi
+
+
+New Transformer.distribution phases=3 XHL=2.1 %loadloss=0.7639 %noloadloss=0.0851 
+~ wdg=1 bus=bus_2 conn=wye kv=12.47 kVA=2000
+~ wdg=2 bus=bus_3 conn=wye kv=0.416 kVA=2000
+
+
+New Generator.pv_1 phases=3 bus=bus_3  kv=0.416 kw=250.0 kvar=0.0
+New Load.load_1 phases=3 bus=bus_3  kv=0.416 kw=1000.0 kvar=0.0
+
+Set voltagebases= [120, 12.47, 0.416]  
+Calcvoltagebases     
+Solve
+

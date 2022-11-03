@@ -32,4 +32,4 @@ NoPublish = [ "CurrentsMagAng", "normamps", "taps"]
 
 [Vsources]
 Publish = []
-NoPublish = ["pu", "VoltagesMagAng"]
+NoPublish = ["pu"]

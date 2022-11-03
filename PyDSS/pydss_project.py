@@ -486,7 +486,7 @@ class PyDssProject:
         filename = project_path / simulations_file
         if not filename.exists():
             filename = project_path / DEFAULT_SIMULATION_SETTINGS_FILE
-            assert filename.exists()
+            assert filename.exists(), f"The path {filename} does not exist"
         return load_simulation_settings(filename)
 
     @classmethod

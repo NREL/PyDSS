@@ -41,11 +41,11 @@ class FaultController(ControllerAbstract):
         T1 = ".".join([str(x) for x in Settings["terminal_a"]])
         if Settings["terminal_b"]:
             T2 = ".".join([str(x) for x in Settings["terminal_b"]])
-            cmd = f"New Fault.{Settings['FID']} phases={len( Settings['terminal_a'])}  Bus1={self.bus.Name}.{T1} Bus2={self.bus.Name}.{T2} r={Settings['Fault resistance']} enabled=no"
+            cmd = f"edit Fault.{Settings['FID']} phases={len( Settings['terminal_a'])}  Bus1={self.bus.Name}.{T1} Bus2={self.bus.Name}.{T2} r={Settings['Fault resistance']} enabled=no"
         else:
-            cmd = f"New Fault.{Settings['FID']} phases={len( Settings['terminal_a'])}  Bus1={self.bus.Name}.{T1} r={Settings['Fault resistance']} enabled=no"
+            cmd = f"edit Fault.{Settings['FID']} phases={len( Settings['terminal_a'])}  Bus1={self.bus.Name}.{T1} r={Settings['Fault resistance']} enabled=no"
         reply = dssInstance.utils.run_command(cmd)
-        assert not reply, f"Error creating fault object: {reply}"
+        #assert not reply, f"Error creating fault object: {reply}"
         self.fault_name = f"Fault.{Settings['FID']}"
        
         self.__Class = "Fault"

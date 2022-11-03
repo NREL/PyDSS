@@ -10,16 +10,13 @@
 "Simulation Type" = "QSTS"
 "Project Path" = "./examples/dynamics"
 "Active Project" = "PV_example"
-"Active Scenario" = "dynamic_model"
+"Active Scenario" = "base_case"
 "DSS File" = "Master_Spohn_existing_VV.dss"
 "DSS File Absolute Path" = false
 "Return Results" = false
 
 [[Project.Scenarios]]
-name = "dynamic_model"
-post_process_infos = []
-[[Project.Scenarios]]
-name = "qsts_model"
+name = "base_case"
 post_process_infos = []
 
 [Exports]

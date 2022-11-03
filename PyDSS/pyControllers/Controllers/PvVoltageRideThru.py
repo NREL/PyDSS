@@ -243,6 +243,7 @@ class PvVoltageRideThru(ControllerAbstract):
         #     Error = self.update[Priority]()
         if Priority == 2:
             uIn = self.__UpdateViolatonTimers()
+            print("uIn: ", uIn)
             if self.__Settings["Follow standard"] == "1547-2018":
                 self.VoltageRideThrough(uIn)
             elif self.__Settings["Follow standard"] == "1547-2003":

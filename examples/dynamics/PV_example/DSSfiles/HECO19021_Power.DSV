@@ -1,0 +1,11 @@
+SetProp, 1E050,   -1E050, 1E050, -1E050, 16777215, 16777215, 0, 4
+ClickOn
+SetProp, 1E050,   -1E050, 1E050, -1E050, 16777215, 16777215, 1, 0
+Xlabel, "X"
+Ylabel, "Y"
+TxtAlign, 1
+KeyClass, 1
+ChartCaption, "HECO19021:Power, max=2E003 "
+Range, 1.02E050, -1.02E050, 1.0272E050, -3.328E049
+SetProp, 1.02E050, -1.02E050, 1.0272E050, -3.328E049, 16777215, 16777215, 1, 0
+KeepAspect, 1

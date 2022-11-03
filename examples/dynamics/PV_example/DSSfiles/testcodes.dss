@@ -18,7 +18,7 @@ New Linecode.4 nphases=1
 New Linecode.6 nphases=1
 ~ rmatrix=[1.4784] 
 ~ xmatrix=[0.07856808] ! use same as 1/0 since this is Triplex spacing
-~ cmatrix=[15 | -12 15 | -12 -12 15]
+~ cmatrix=[15 ]
 ~ Normamps=65  {65 1.25 *}
 ~ units=kft
 
