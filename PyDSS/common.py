@@ -42,6 +42,7 @@ class ControllerType(enum.Enum):
     XMFR_CONTROLLER = "xmfrController"
     MOTOR_STALL = "MotorStall"
     PV_VOLTAGE_RIDETHROUGH = "PvVoltageRideThru"
+    PV_FREQUENCY_RIDETHROUGH = "PvFrequencyRideThru"
     FAULT_CONTROLLER = "FaultController"
     THERMOSTATIC_LOAD_CONTROLLER = "ThermostaticLoad"
     GENERATOR_CONTROLLER = "GenController"
