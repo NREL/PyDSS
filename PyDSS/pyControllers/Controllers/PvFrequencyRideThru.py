@@ -1,6 +1,8 @@
+from ipaddress import v4_int_to_packed
 from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
 from shapely.geometry import MultiPoint, Polygon, Point, MultiPolygon
 from shapely.ops import triangulate, cascaded_union
+import matplotlib.pyplot as plt
 import datetime
 import math
 import os
@@ -95,6 +97,9 @@ class PvFrequencyRideThru(ControllerAbstract):
         self.timer_act_hist = []
         
         
+        self.u_ang = self._ControlledElm.GetVariable('VoltagesMagAng')[1::2][0]
+        self.df = 0
+        self.freq_hist = []
         return
 
     def Name(self):
@@ -250,56 +255,86 @@ class PvFrequencyRideThru(ControllerAbstract):
         
         return 
 
+    def calculate_frequency(self, u_ang, priority, time):    
+        u_ang = u_ang * math.pi / 180
+        
+        if priority == 2:
+            if time <= 1:
+                bus_freq = self.__dssSolver.getFrequency()
+                self.u_ang = u_ang
+            else:
+                h = self.__dssSolver.GetStepSizeSec()
+                tau = h * 4
+                dphi = (u_ang - self.u_ang) / (2 * math.pi * h)
+                self.df = (dphi + self.df * (tau / h) ) / ( 1 + tau / h )    
+                base_freq = self.__dssSolver.getFrequency()
+                bus_freq = base_freq + self.df 
+                self.u_ang = u_ang
+                print("Time: ", time )
+            self.freq_hist.append(bus_freq)
+            return bus_freq
+
 
     def Update(self, Priority, Time, Update):
         Error = 0
         self.TimeChange = self.Time != (Priority, Time)
         self.Time = Time
+        
+        u_mag = self._ControlledElm.GetVariable('VoltagesMagAng')[::2]
+        u_ang = self._ControlledElm.GetVariable('VoltagesMagAng')[1::2][0]
+        freq = self.calculate_frequency(u_ang, Priority, Time)
+       
+        
         if Priority == 0:
+            if self.Time == 0:
+                self.u_ang = self._ControlledElm.GetVariable('VoltagesMagAng')[1::2][0]
             self.__isConnected = self.__Connect()
   
         if Priority == 2: 
-            fIn = self.__UpdateViolatonTimers()
-            if self.__Settings["Follow standard"] == "1547-2018":
-                self.FrequencyRideThrough(fIn)
-            elif self.__Settings["Follow standard"] == "1547-2003":
-                self.Trip(fIn)
-            else:
-                raise Exception("Valid standard setting defined. Options are: 1547-2003, 1547-2018")
             
-            P = -sum(self._ControlledElm.GetVariable('Powers')[::2])
-            self.power_hist.append(P)
-            self.frequency_hist.append(fIn)
-            self.timer_hist.append(self.__fViolationtime)
-            self.timer_act_hist.append(self.__dssSolver.GetTotalSeconds())
-
-        if self.Time == 39 and Priority==2: # Time is the time step, 
-            import matplotlib.pyplot as plt
-            fig, (ax1, ax2) = plt.subplots(2,1)
-
-
-            models = [self.CurrLimRegion, self.TripRegion, MultiPolygon([self.ContinuousRegion])]
-                    
-            models = [i for i in models if i is not None]      
-
+            if self.Time == 719:
+                fig, ax = plt.subplots()
+                ax.plot(self.freq_hist[:-1])
+                plt.show()
             
-            colors = ["orange", "red", "green"]
-            for m, c in zip(models, colors):
-                for geom in m.geoms:    
-                    xs, ys = geom.exterior.xy    
-                    ax1.fill(xs, ys, alpha=0.35, fc=c, ec='none')
+        #     fIn = self.__UpdateViolatonTimers()
+        #     if self.__Settings["Follow standard"] == "1547-2018":
+        #         self.FrequencyRideThrough(fIn)
+        #     elif self.__Settings["Follow standard"] == "1547-2003":
+        #         self.Trip(fIn)
+        #     else:
+        #         raise Exception("Valid standard setting defined. Options are: 1547-2003, 1547-2018")
+            
+        #     P = -sum(self._ControlledElm.GetVariable('Powers')[::2])
+        #     self.power_hist.append(P)
+        #     self.frequency_hist.append(fIn)
+        #     self.timer_hist.append(self.__fViolationtime)
+        #     self.timer_act_hist.append(self.__dssSolver.GetTotalSeconds())
+
+        # if self.Time == 39 and Priority==2: # Time is the time step, 
+        #     import matplotlib.pyplot as plt
+        #     fig, (ax1, ax2) = plt.subplots(2,1)
+
+        #     models = [self.CurrLimRegion, self.TripRegion, MultiPolygon([self.ContinuousRegion])]                    
+        #     models = [i for i in models if i is not None]      
+            
+        #     colors = ["orange", "red", "green"]
+        #     for m, c in zip(models, colors):
+        #         for geom in m.geoms:    
+        #             xs, ys = geom.exterior.xy    
+        #             ax1.fill(xs, ys, alpha=0.35, fc=c, ec='none')
 
 
-            ax1.set_xlim(0, 2)
-            ax1.set_ylim(55, 65)
-            # ax1.scatter( self.timer_hist, self.frequency_hist)
-            ax1.scatter( self.timer_act_hist, self.frequency_hist)
-            ax3 = ax2.twinx()
-            ax2.set_ylabel('Power (kW) in green')
-            ax3.set_ylabel('Frequency in red')
-            ax2.plot(self.timer_act_hist[1:], self.power_hist[1:], c="green")
-            ax3.plot(self.timer_act_hist[1:], self.frequency_hist[1:], c="red")
-            fig.savefig(f"C:/Users/jkeen/Desktop/{self.__Name}_{self.__Settings['Ride-through Category']}_test.png")
+        #     ax1.set_xlim(0, 2)
+        #     ax1.set_ylim(55, 65)
+        #     # ax1.scatter( self.timer_hist, self.frequency_hist)
+        #     ax1.scatter( self.timer_act_hist, self.frequency_hist)
+        #     ax3 = ax2.twinx()
+        #     ax2.set_ylabel('Power (kW) in green')
+        #     ax3.set_ylabel('Frequency in red')
+        #     ax2.plot(self.timer_act_hist[1:], self.power_hist[1:], c="green")
+        #     ax3.plot(self.timer_act_hist[1:], self.frequency_hist[1:], c="red")
+        #     fig.savefig(f"C:/Users/jkeen/Desktop/{self.__Name}_{self.__Settings['Ride-through Category']}_test.png")
   
         return Error
 

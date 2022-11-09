@@ -150,8 +150,15 @@ class Profile(BaseProfile):
         self.Objects = devices
 
         self.attrs = self.profile.attrs
-        self.sTime = datetime.datetime.strptime(self.attrs["sTime"].decode(), DATE_FORMAT)
-        self.eTime = datetime.datetime.strptime(self.attrs["eTime"].decode(), '%Y-%m-%d %H:%M:%S.%f')
+        try:
+            self.sTime = datetime.datetime.strptime(self.attrs["sTime"], DATE_FORMAT)
+        except:
+            self.sTime = datetime.datetime.strptime(self.attrs["sTime"], "%Y-%m-%d %H:%M:%S")
+        etime = self.attrs["eTime"].split(".")[1]
+        if len(etime) > 6:
+            remove_chars = len(etime) - 6 
+            etime = self.attrs["eTime"][:-remove_chars]
+        self.eTime = datetime.datetime.strptime(etime, DATE_FORMAT)
         self.simRes = solver.GetStepSizeSec()
         self.Time = copy.deepcopy(solver.GetDateTime())
         return
@@ -179,7 +186,7 @@ class Profile(BaseProfile):
                     valueF = value / self.attrs["max"] * mult
                 else:
                     valueF = value * mult
-                obj.SetParameter(self.attrs["units"].decode(), valueF)
+                obj.SetParameter(self.attrs["units"], valueF)
         return value
 
 
