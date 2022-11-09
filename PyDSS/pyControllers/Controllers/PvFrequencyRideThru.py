@@ -38,7 +38,7 @@ class PvFrequencyRideThru(ControllerAbstract):
         self. __vDisconnected = False
         self.__pDisconnected = False
 
-        self.__ElmObjectList = ElmObjectList
+        self._ElmObjectList = ElmObjectList
         self.ControlDict = {
             'None': lambda: 0,
         }
@@ -255,7 +255,9 @@ class PvFrequencyRideThru(ControllerAbstract):
         
         return 
 
-    def calculate_frequency(self, u_ang, priority, time):    
+    def calculate_frequency(self, priority, time):    
+        vsrc = self._ElmObjectList["Vsource.source"]
+        u_ang = vsrc.GetParameter("angle")
         u_ang = u_ang * math.pi / 180
         
         if priority == 2:
@@ -270,7 +272,7 @@ class PvFrequencyRideThru(ControllerAbstract):
                 base_freq = self.__dssSolver.getFrequency()
                 bus_freq = base_freq + self.df 
                 self.u_ang = u_ang
-                print("Time: ", time )
+                print("Time: ", h )
             self.freq_hist.append(bus_freq)
             return bus_freq
 
@@ -280,9 +282,7 @@ class PvFrequencyRideThru(ControllerAbstract):
         self.TimeChange = self.Time != (Priority, Time)
         self.Time = Time
         
-        u_mag = self._ControlledElm.GetVariable('VoltagesMagAng')[::2]
-        u_ang = self._ControlledElm.GetVariable('VoltagesMagAng')[1::2][0]
-        freq = self.calculate_frequency(u_ang, Priority, Time)
+        self.freq = self.calculate_frequency(Priority, Time)
        
         
         if Priority == 0:
@@ -294,7 +294,7 @@ class PvFrequencyRideThru(ControllerAbstract):
             
             if self.Time == 719:
                 fig, ax = plt.subplots()
-                ax.plot(self.freq_hist[:-1])
+                ax.plot(self.freq_hist[:-3])
                 plt.show()
             
         #     fIn = self.__UpdateViolatonTimers()
