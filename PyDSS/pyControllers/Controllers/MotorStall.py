@@ -48,7 +48,7 @@ class MotorStall(ControllerAbstract):
         self.kw = self.__Settings['ratedKW']
         S = self.kw / self.__Settings['ratedPF']
         self.kvar = math.sqrt(S**2 - self.kw**2)
-        mode = 1
+        mode = 2
         
         if mode == 1:
             self.kw_rated = self._ControlledElm.SetParameter('kw', self.kw)
@@ -68,7 +68,7 @@ class MotorStall(ControllerAbstract):
         self.Ibase = 1e3 * self.kva_rated /1e3 * self.kvbase
 
         ######################################### TESTING CODE ###################################################
-        self.f = open(r"C:\Users\alatif\Documents\GitHub\PyDSS\examples\custom_contols\results.csv", "w")
+        self.f = open(r"C:\Users\alatif\Desktop\Simple_cosimulation\PV_example_1_bus\results.csv", "w")
         self.f.write(f"Current,Voltage,Active power,Reactive power,u,t out,y out,Kth,CompLF,CompPF,V_break_adj,V_stall_adj\n")
         ##########################################################################################################
 

@@ -6,6 +6,7 @@ from PyDSS.pyContrReader import pyExportReader, pySubscriptionReader
 from PyDSS.pyLogger import getLoggerTag
 from PyDSS.simulation_input_models import SimulationSettingsModel
 
+logger = logging.getLogger(__name__)
 
 class helics_interface:
 
@@ -44,11 +45,10 @@ class helics_interface:
     }
 
     def __init__(self, dss_solver, objects_by_name, objects_by_class, settings: SimulationSettingsModel, system_paths, default=True):
-        LoggerTag = getLoggerTag(settings)
+        self._logger = logger
         self.itr = 0
         self.c_seconds = 0
         self.c_seconds_old = -1
-        self._logger = logging.getLogger(LoggerTag)
         self._settings = settings
         self._co_convergance_error_tolerance = settings.helics.error_tolerance
         self._co_convergance_max_iterations = self._settings.helics.max_co_iterations
@@ -61,7 +61,6 @@ class helics_interface:
         self._dss_solver = dss_solver
         if default:
             self.registerPubSubTags()
-
 
     def registerPubSubTags(self, pubs=None, subs=None):
 

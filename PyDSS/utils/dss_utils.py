@@ -66,11 +66,14 @@ def get_load_shape_resolution_secs():
         return dss.LoadShape.SInterval()
 
     res = [x for x in iter_elements(dss.LoadShape, func) if x is not None]
-    # if len(set(res)) != 1:
-    #     raise InvalidConfiguration(
-    #         f"SInterval for all LoadShapes must be the same: {res}"
-    #     )
-    return res[0]
+    if res:
+        if len(set(res)) != 1:
+            raise InvalidConfiguration(
+                f"SInterval for all LoadShapes must be the same: {res}"
+            )
+        return res[0]
+    else:
+        return None
 
 
 def get_node_names_by_type(kv_base_threshold=1.0):
