@@ -55,10 +55,14 @@ class PvVoltageRideThru(ControllerAbstract):
             self.Phase = None
 
         # Initializing the model
-        PvObj.SetParameter('kvar', 0)
+        #PvObj.SetParameter('kvar', 0)
         #self.__BaseKV = float(PvObj.SetParameter('kv',Settings['kV']))
         self.__Srated = float(PvObj.SetParameter('kva', Settings['kVA']))
         self.__Prated = float(PvObj.SetParameter('kW', Settings['maxKW']))
+        
+        Q = (self.__Srated**2 - self.__Prated**2)**0.5
+        PvObj.SetParameter('kvar', -Q)
+        
         self.__minQ = float(PvObj.SetParameter('minkvar', -Settings['KvarLimit']))
         self.__maxQ = float(PvObj.SetParameter('maxkvar', Settings['KvarLimit']))
 
@@ -255,6 +259,7 @@ class PvVoltageRideThru(ControllerAbstract):
     def Trip(self, uIn):
         """ Implementation of the IEEE1587-2003 voltage ride-through requirements for inverter systems
         """
+
         if uIn < 0.88:
             if self.__isConnected:
                 self.__Trip(30.0, 0.4, False)

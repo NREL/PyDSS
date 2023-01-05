@@ -149,13 +149,16 @@ class helics_interface:
                 elif sub_info['Data type'].lower() == 'integer':
                     value = helics.helicsInputGetInteger(sub_info['Subscription'])
 
+                if value > 1e6 or value < -1e6:
+                    value = 1.00
+
                 if value and value != 0:
                     value = value * sub_info['Multiplier']
 
                     dssElement = self._objects_by_element[element_name]
                     dssElement.SetParameter(sub_info['Property'], value)
 
-                    self._logger.info('Value for "{}.{}" changed to "{}"'.format(
+                    print('Value for "{}.{}" changed to "{}"'.format(
                         element_name,
                         sub_info['Property'],
                         value * sub_info['Multiplier']
@@ -191,6 +194,7 @@ class helics_interface:
             objects = self._objects_by_class[obj_class]
             for obj_X, obj in objects.items():
                 name = '{}.{}.{}'.format(self._settings.helics.federate_name, obj_X, obj_property)
+                print(name)
                 self._publications[name] = helics.helicsFederateRegisterGlobalTypePublication(
                     self._PyDSSfederate,
                     name,
@@ -206,6 +210,7 @@ class helics_interface:
             obj_name = '{}.{}'.format(class_name, object_name)
             obj = self._objects_by_element[obj_name]
             value = obj.GetValue(ppty_name)
+            #print(pub, value)
             if isinstance(value, list):
                 helics.helicsPublicationPublishVector(pub, value)
             elif isinstance(value, float):

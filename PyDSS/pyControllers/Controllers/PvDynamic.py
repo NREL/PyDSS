@@ -262,23 +262,23 @@ class PvDynamic(ControllerAbstract):
     def Update(self, Priority, Time, UpdateResults):
         if Priority == 0 :
             self.run_dynamic_model()
-            if self.solver.is_last_timestep:
-                import matplotlib.pyplot as plt
-                import pandas as pd
+            # if self.solver.is_last_timestep:
+            #     import matplotlib.pyplot as plt
+            #     import pandas as pd
                 
-                fig, axs = plt.subplots(3, 2)
+            #     fig, axs = plt.subplots(3, 2)
 
-                self.results = pd.DataFrame(self.results, index=self.solver.all_timestamps)
-                print(self.results)
-                self.results[["Ppv", "reactive_power [kVA]", "active_power [kVA]"]].plot(ax=axs[0, 0])
-                self.results[["Vdc", "Vrms", "vta", "Vtrms"]].plot(ax=axs[0, 1])
-                self.results[["Irms"]].plot(ax=axs[1, 0])
-                self.results[["S", "S_PCC"]].plot(ax=axs[1, 1])
-                self.results[["grid_voltage [p.u.]"]].plot(ax=axs[2, 0])
-                self.results.plot.scatter(x='grid_voltage [p.u.]',  y='reactive_power [kVA]', c='DarkBlue', ax=axs[2, 1])
+            #     self.results = pd.DataFrame(self.results, index=self.solver.all_timestamps)
+            #     print(self.results)
+            #     self.results[["Ppv", "reactive_power [kVA]", "active_power [kVA]"]].plot(ax=axs[0, 0])
+            #     self.results[["Vdc", "Vrms", "vta", "Vtrms"]].plot(ax=axs[0, 1])
+            #     self.results[["Irms"]].plot(ax=axs[1, 0])
+            #     self.results[["S", "S_PCC"]].plot(ax=axs[1, 1])
+            #     self.results[["grid_voltage [p.u.]"]].plot(ax=axs[2, 0])
+            #     self.results.plot.scatter(x='grid_voltage [p.u.]',  y='reactive_power [kVA]', c='DarkBlue', ax=axs[2, 1])
                 
-                plt.show()
-                print(self.results)
+            #     plt.show()
+            #     print(self.results)
         return 0
 
     def debugInfo(self):
