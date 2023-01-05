@@ -2,8 +2,7 @@
 !New Loadshapeshape.pvmult npts= 35040 mInterval=15 mult = (file=./PV_Peak_Loadshape.csv )
 
 !______________________________________ Source Voltage Profiles ________________________________________
-New Loadshape.s_voltage npts= 768 mInterval=15 mult = (file=./Vsource_profile.csv, col=6, header=yes) !secondary G20V col =4, testcolumn is col=5 pu=1.03 for entire period, col=6 is primary voltage calc'd from 2% transformer
-
+New Loadshape.s_voltage npts=14000 sInterval=0.05 mult = (file=./source_pu.csv, col=1, header=yes) 
 !______________________________________Load Profiles____________________________________________________
 New Loadshape.lp_MPX000189063 npts= 768 mInterval=15 pmult = (file=./MPX000472455.csv, col=5, header=yes) qmult = (file=./MPX000472455.csv ,col=6, header=yes)
 New Loadshape.lp_MPX000190400 npts= 768 mInterval=15 pmult = (file=./MPX000472455.csv ,col=5, header=yes) qmult = (file=./MPX000472455.csv ,col=6, header=yes)

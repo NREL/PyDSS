@@ -13,6 +13,7 @@ class QSTS(solver_base):
         self._dssInstance.utils.run_command('Set ControlMode={}'.format(settings.control_mode.value))
         self._dssSolution.Number(1)
         self._dssSolution.StepSize(self._sStepRes)
+        self._dssSolution.MaxIterations(settings.max_control_iterations * 5)
         self._dssSolution.MaxControlIterations(settings.max_control_iterations)
 
         start_time_hours = self._Hour + self._Second / 3600.0

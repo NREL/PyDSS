@@ -19,7 +19,7 @@
 
 
 // loads below are known from AMI data
-New Load.MPX000635970 phases=1 kv=0.240 bus1=110_2.1 kw=5.961 kvar=0.960 model=1 conn=wye yearly=lp_MPX000635970
-New Load.MPX000460267 phases=1 kv=0.240 bus1=111_2.1 kw=13.164 kvar=2.253 model=1 conn=wye yearly=lp_MPX000460267
-New Load.MPX000637601 phases=1 kv=0.240 bus1=112_2.1 kw=1.575 kvar=0.801 model=1 conn=wye yearly=lp_MPX000637601
-New Load.MPX000594341 phases=1 kv=0.240 bus1=113_2.1 kw=5.784 kvar=0.901 model=1 conn=wye yearly=lp_MPX000594341
+New Load.MPX000635970 phases=1 kv=0.240 bus1=110_2.1 kw=5.961 kvar=0.960 model=1 conn=wye !yearly=lp_MPX000635970
+New Load.MPX000460267 phases=1 kv=0.240 bus1=111_2.1 kw=13.164 kvar=2.253 model=1 conn=wye !yearly=lp_MPX000460267
+New Load.MPX000637601 phases=1 kv=0.240 bus1=112_2.1 kw=1.575 kvar=0.801 model=1 conn=wye !yearly=lp_MPX000637601
+New Load.MPX000594341 phases=1 kv=0.240 bus1=113_2.1 kw=5.784 kvar=0.901 model=1 conn=wye !yearly=lp_MPX000594341

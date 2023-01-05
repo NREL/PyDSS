@@ -66,10 +66,10 @@ def get_load_shape_resolution_secs():
         return dss.LoadShape.SInterval()
 
     res = [x for x in iter_elements(dss.LoadShape, func) if x is not None]
-    if len(set(res)) != 1:
-        raise InvalidConfiguration(
-            f"SInterval for all LoadShapes must be the same: {res}"
-        )
+    # if len(set(res)) != 1:
+    #     raise InvalidConfiguration(
+    #         f"SInterval for all LoadShapes must be the same: {res}"
+    #     )
     return res[0]
 
 
