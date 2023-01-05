@@ -218,6 +218,17 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
         self._containers = {}  # StoreValuesType to StorageFilterBase
         self._name_order = []  # Ensures that name-value ordering will always be consistent.
 
+    def _iter_dss_objs(self):
+        if self._can_use_native_iteration():
+            flag = self._elem_class.First()
+            while flag > 0:
+                name = self._elem_class.Name()
+                dss_obj = self._name_to_dss_obj[name]
+                yield dss_obj
+                flag = self._elem_class.Next()
+        else:
+            yield from self._dss_objs
+
     @abc.abstractmethod
     def _get_value(self, dss_obj, time_step):
         """Get a value at the current time step.
@@ -237,7 +248,6 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
             else:
                 assert prop.name == prop_name, f"{prop.name} {prop_name}"
             if prop.data_conversion != DataConversion.NONE:
-                assert self._name_order
                 vals = [
                     convert_data(x, prop_name, y, prop.data_conversion)
                     for x, y in zip(self._name_order, values)
@@ -254,23 +264,22 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
             )
 
     def append_values(self, time_step, store_nan=False):
+        if not self._name_order:
+            self._name_order[:] = [x.FullName for x in self._iter_dss_objs()]
+
         values = []
-        collect_names = not self._name_order
-        if self._can_use_native_iteration():
-            flag = self._elem_class.First()
-            while flag > 0:
-                name = self._elem_class.Name()
-                dss_obj = self._name_to_dss_obj[name]
-                values.append(self._get_value(dss_obj, time_step))
-                if collect_names:
-                    self._name_order.append(dss_obj.FullName)
-                flag = self._elem_class.Next()
-            assert len(values) == len(self._dss_objs)
-        else:
-            for obj in self._dss_objs:
-                values.append(self._get_value(obj, time_step))
-                if collect_names:
-                    self._name_order.append(obj.Name)
+        objects_changed = False
+        for dss_obj, expected_name in zip(self._iter_dss_objs(), self._name_order):
+            if dss_obj.FullName != expected_name:
+                # This can happen if an element is disabled. OpenDSS won't deliver it in .Next()
+                # Need to access the element directly, which breaks the iteration.
+                objects_changed = True
+                break
+            values.append(self._get_value(dss_obj, time_step))
+
+        if objects_changed:
+            values = [self._get_value(x, time_step) for x in self._dss_objs]
+        assert len(values) == len(self._dss_objs)
 
         if not self._containers:
             self._initialize_containers(values)
