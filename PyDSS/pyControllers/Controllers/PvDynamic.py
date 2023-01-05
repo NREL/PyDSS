@@ -67,8 +67,8 @@ class PvDynamic(ControllerAbstract):
             self._Vrms = abs(self._Va ) / math.sqrt(2)
             self._pv_model = DERModel(
                 modelType= 'ThreePhaseUnbalanced',
-                powerRating = rated_power_dc_watts,
-                Sinverter_rated = rated_power_ac_va,
+                powerRating = 250000,
+                Sinverter_rated = 250000,
                 events=self.events1,
                 configFile=config_file,
                 Vrmsrated = self._Vrms,

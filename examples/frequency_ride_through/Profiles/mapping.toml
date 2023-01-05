@@ -1,0 +1,7 @@
+[[Voltage.magnitude1]]
+"object" = "Vsource.source" 
+
+[[Voltage.angle1]]
+"object" = "Vsource.source"
+ 
+

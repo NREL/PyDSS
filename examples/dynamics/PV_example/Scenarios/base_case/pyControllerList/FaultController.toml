@@ -1,8 +1,0 @@
-["Line.sl_5"]
-"FID" = "fault1"
-"bus_index" = 1
-"terminal_a" = [1]
-"terminal_b" = []
-"Fault resistance" = 0.001
-"Fault start time (sec)" = 40.0
-"Fault duration (sec)" = 0.1
