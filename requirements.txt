@@ -7,7 +7,7 @@ OpenDSSDirect.py>=0.6.0
 Shapely
 click
 numpy
-sklearn
+scikit-learn
 tables
 h5py
 helics

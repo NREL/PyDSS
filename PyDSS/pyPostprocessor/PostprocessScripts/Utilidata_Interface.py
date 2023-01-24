@@ -389,12 +389,12 @@ class Utilidata_Interface(AbstractPostprocess):
         self.update_training_payload()
 
         if not self.firstBuildComplete:
-            if step * tstep % self.training_period == 0.0 and step is not 0:
+            if step * tstep % self.training_period == 0.0 and step != 0:
                 self.logger.info("Building initial optimization model")
                 self.create_optimization_model()
                 self.firstBuildComplete = True
         else:
-            if step * tstep % self.retraining_period == 0.0 and step is not 0:
+            if step * tstep % self.retraining_period == 0.0 and step != 0:
                 self.logger.info("Rebuilding optimization model")
                 self.create_optimization_model()
                 self.training_complete = True
