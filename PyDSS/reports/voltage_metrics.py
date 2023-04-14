@@ -163,7 +163,7 @@ class VoltageMetrics(ReportBase):
         num_time_points_violate_range_b = 0
         for timestamp, row in df.iterrows():
             num_range_a_violations = 0
-            for name, val in row.iteritems():
+            for name, val in row.items():
                 if val > self._range_a_limits.max or val < self._range_a_limits.min:
                     metric_2[name] += 1
                     num_range_a_violations += 1
