@@ -3,7 +3,7 @@ scipy
 bokeh
 networkx
 toml
-OpenDSSDirect.py>=0.6.0
+OpenDSSDirect.py~=0.7.0
 Shapely
 click
 numpy
