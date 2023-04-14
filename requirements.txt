@@ -12,8 +12,6 @@ tables
 h5py
 helics
 terminaltables
-aiohttp
-aiohttp_swagger3==0.4.3
 requests
 pymongo
 pydantic>=1.8
