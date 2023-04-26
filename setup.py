@@ -41,11 +41,6 @@ dev_requires = [
     "sphinx-rtd-theme",
 ]
 
-http_server_requires = [
-    "aiohttp",
-    "aiohttp_swagger3==0.4.3",
-]
-
 setup(name='dsspy',
     version=find_version("PyDSS", "__init__.py"),
     description='A high-level python interface for OpenDSS',
@@ -86,6 +81,5 @@ setup(name='dsspy',
     ],
     extras_require={
             "dev": dev_requires,
-            "http_server": http_server_requires,
         }
     )
