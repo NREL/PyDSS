@@ -186,7 +186,14 @@ class helics_interface:
                     value = helics.helicsInputGetBoolean(sub_info['Subscription'])
                 elif sub_info['Data type'].lower() == 'integer':
                     value = helics.helicsInputGetInteger(sub_info['Subscription'])
-
+                elif sub_info['Data type'].lower() == 'complex':
+                    value = helics.helicsInputGetComplex(sub_info['Subscription'])
+                
+                #todo: remove teh line below
+                #value = (value[0]**2+ value[1]**2)**0.5
+                print(value)
+                value = 1.02
+                print(element_name, value)
                 if value and value != 0:
                     value = value * sub_info['Multiplier']
 
@@ -283,11 +290,11 @@ class helics_interface:
                     htype = self.get_helics_data_type(value.value)                   
                     names = self.creatPublicationName(obj_name, ppty, value.units)
                     hmap = HELICS_MAPPING(obj, ppty, value, self._settings.helics.federate_name)
-                    print(hmap)
+                    
                     pub_inst = helics.helicsFederateRegisterGlobalTypePublication(
                             self._PyDSSfederate,
                             hmap.pubname,
-                            htype,
+                            "complex",
                             hmap.units
                         ) 
                     for k, v in hmap.tags.items():
@@ -313,7 +320,7 @@ class helics_interface:
                             pub =  helics.helicsFederateRegisterGlobalTypePublication(
                                 self._PyDSSfederate,
                                 n,
-                                pubtype,
+                                "complex",
                                 unit
                             )
                             self._publications[n] = {
@@ -324,6 +331,8 @@ class helics_interface:
                                 "type": pubtype,
                             }
                             self._logger.info(f'Publication registered: {n} with units {unit}')
+        for p in self.sPubs:
+            print(p)
 
     def creatPublicationName(self, obj_name, ppty, units):
         names = []

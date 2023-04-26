@@ -159,7 +159,7 @@ class HELICS_MAPPING:
 
     @property
     def pubname(self):
-        return f"{self.ppty_data['prefix']}.{self.ename}.{self.ppty_data['suffix']}"
+        return f"{self.federate}/{self.ppty_data['prefix']}.{self.ename}.{self.ppty_data['suffix']}"
 
     @property
     def tags(self): 

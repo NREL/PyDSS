@@ -648,7 +648,7 @@ class ProfilesModel(InputsBaseModel):
     @root_validator(pre=True)
     def pre_process(cls, values):
         if values.get("source_type") == "HDF5":
-            valus["source_type"] = "h5"
+            values["source_type"] = "h5"
         return values
 
 
