@@ -601,12 +601,21 @@ class ValueContainer:
             list of ValueStorageBase
 
         """
-        if isinstance(values[0].value, list):
-            vals = [x for y in values for x in y.value]
-        else:
-            vals = [x.value for x in values]
+        print([v.value for v in values])
+        try:
+            if isinstance(values[0].value, list):
+                vals = [x for y in values for x in y.value]
+            else:
+                vals = [x.value for x in values]
+        except:
+            values = self.old_values
+            if isinstance(values[0].value, list):
+                vals = [-1 for y in values for x in y.value]
+            else:
+                vals = [-1 for x in values]
 
         self._dataset.write_value(vals)
+        self.old_values = values
 
     def append_by_time_step(self, value, time_step, elem_index):
         """Append a value to the container.
@@ -618,6 +627,7 @@ class ValueContainer:
         elem_index : int
 
         """
+        
         if isinstance(value.value, list):
             vals = [x for x in value.value]
         else:
@@ -625,7 +635,8 @@ class ValueContainer:
 
         self._dataset.write_value(vals)
         self._time_steps.write_value([time_step, elem_index])
-
+        
+        
     def flush_data(self):
         """Flush any outstanding data to disk."""
         self._dataset.flush_data()
