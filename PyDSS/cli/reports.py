@@ -49,7 +49,7 @@ from os.path import normpath, basename
 @click.command()
 
 def reports(project_path, list_reports=False, scenario=None, report=None, index=0):
-    """Explore and print PyDSS reports."""
+    """Explore and #print PyDSS reports."""
     assert not (list_reports and index), "Both 'list' and 'index' options cannot be set to true at the same time"
     assert os.path.exists(project_path), "The provided project path {} does not exist".format(project_path)
     logsPath = os.path.join(project_path, "Logs")

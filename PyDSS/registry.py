@@ -35,6 +35,7 @@ DEFAULT_REGISTRY = {
         ControllerType.STORAGE_CONTROLLER.value: [],
         ControllerType.XMFR_CONTROLLER.value: [],
         ControllerType.MOTOR_STALL.value: [],
+        ControllerType.MOTOR_STALL_SIMPLE.value: [],
         ControllerType.PV_VOLTAGE_RIDETHROUGH.value: [],
         ControllerType.FAULT_CONTROLLER.value: [],
     },
@@ -204,16 +205,17 @@ class Registry:
 
     def show_controllers(self):
         """Show the registered controllers."""
-        print("PyDSS Controllers:")
+        #print("PyDSS Controllers:")
         for controller_type in self._controllers:
-            print(f"Controller Type:  {controller_type}")
+            #print(f"Controller Type:  {controller_type}")
             controllers = list(self._controllers[controller_type].values())
             if controllers:
                 for controller in controllers:
                     name = controller["name"]
                     filename = controller["filename"]
-                    print(f"  {name}:  {filename}")
+                    #print(f"  {name}:  {filename}")
             else:
+                ...
                 print("  None")
 
     def unregister_controller(self, controller_type, name):

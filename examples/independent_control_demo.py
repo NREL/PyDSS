@@ -50,7 +50,7 @@ def main():
     while not done:
         has_converged = manager.run_controls()
         if has_converged:
-            print("Reached convergence")
+            #print("Reached convergence")
             done = True
         else:
             # TODO: just an example. Real code would have other logic.

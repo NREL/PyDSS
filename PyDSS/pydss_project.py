@@ -899,18 +899,18 @@ def update_pydss_controllers(project_path, scenario, controller_type,
     """
     if controller_type not in READ_CONTROLLER_FUNCTIONS:
         supported_types = list(READ_CONTROLLER_FUNCTIONS.keys())
-        print(f"Invalid controller_type={controller_type}, supported: {supported_types}")
+        #print(f"Invalid controller_type={controller_type}, supported: {supported_types}")
         sys.exit(1)
 
     sim_file = os.path.join(project_path, SIMULATION_SETTINGS_FILENAME)
     settings = load_simulation_settings(sim_file)
     if not settings.project.use_controller_registry:
-        print(f"'Use Controller Registry' must be set to true in {sim_file}")
+        #print(f"'Use Controller Registry' must be set to true in {sim_file}")
         sys.exit(1)
 
     registry = Registry()
     if not registry.is_controller_registered(controller_type, controller):
-        print(f"{controller_type} / {controller} is not registered")
+        #print(f"{controller_type} / {controller} is not registered")
         sys.exit(1)
 
     data = {}
@@ -919,7 +919,7 @@ def update_pydss_controllers(project_path, scenario, controller_type,
         data = load_data(filename)
         for val in data.values():
             if not isinstance(val, list):
-                print(f"{filename} has an invalid format")
+                #print(f"{filename} has an invalid format")
                 sys.exit(1)
 
     element_names = READ_CONTROLLER_FUNCTIONS[controller_type](dss_file)
@@ -945,4 +945,4 @@ def update_pydss_controllers(project_path, scenario, controller_type,
             data[_controller] = final_list
 
     dump_data(data, filename)
-    print(f"Added {num_added} names to {filename}")
+    #print(f"Added {num_added} names to {filename}")

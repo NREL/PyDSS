@@ -107,7 +107,7 @@ def make_tables(output):
     create_simulation_settings(
         output.parent, "ExampleProject", ["scenario1", "scenario2"], force=True
     )
-    print(f"Generated simulation settings tables in {output}")
+    #print(f"Generated simulation settings tables in {output}")
 
 
 def format_description(description, max_width=70):
@@ -190,7 +190,7 @@ def parse_property_types(ordered_names, classes):
                     definition = match.group(1)
                     property_types[name][title] = definition
                 else:
-                    print(f"WARNING: Possible bug: need handling of %s", vals["allOf"])
+                    #print(f"WARNING: Possible bug: need handling of %s", vals["allOf"])
     return property_types
 
 

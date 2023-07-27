@@ -601,7 +601,7 @@ class ValueContainer:
             list of ValueStorageBase
 
         """
-        print([v.value for v in values])
+        #print([v.value for v in values])
         try:
             if isinstance(values[0].value, list):
                 vals = [x for y in values for x in y.value]

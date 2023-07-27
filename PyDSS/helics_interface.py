@@ -151,12 +151,12 @@ class helics_interface:
 
                 if value and value != 0:
                     if value > 1e6 or value < -1e6:
-                        print("YO HERE")
+                        # #print("YO HERE")
                         value = 1.0 
                     
                     value = value * sub_info['Multiplier']
                     dssElement = self._objects_by_element[element_name]
-                    print(sub_info['Property'], value)
+                    # #print(sub_info['Property'], value)
                     dssElement.SetParameter(sub_info['Property'], value) 
 
                     self._logger.info('Value for "{}.{}" changed to "{}"'.format(

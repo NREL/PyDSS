@@ -343,7 +343,7 @@ class Utilidata_Interface(AbstractPostprocess):
         reply = requests.post(url, data=json_object, verify=False, headers=headers)
         if reply.status_code == 200:
             reply = reply.json()
-            print(reply)
+            #print(reply)
             return reply['recommendations']
         else:
             reply = reply.json()

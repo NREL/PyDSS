@@ -68,7 +68,7 @@ class MotorStall(ControllerAbstract):
         self.Ibase = 1e3 * self.kva_rated /1e3 * self.kvbase
 
         ######################################### TESTING CODE ###################################################
-        self.f = open(r"C:\Users\alatif\Desktop\Simple_cosimulation\PV_example_1_bus\results.csv", "w")
+        self.f = open(r"C:/Users/alatif/Desktop/NAERM/models/74012/Exports/results.csv", "w")
         self.f.write(f"Current,Voltage,Active power,Reactive power,u,t out,y out,Kth,CompLF,CompPF,V_break_adj,V_stall_adj\n")
         ##########################################################################################################
 
@@ -182,5 +182,9 @@ class MotorStall(ControllerAbstract):
     def __del__(self):
         
         ######################################### TESTING CODE ###################################################
-        self.f.close()
+        try:
+            self.f.flush()
+            self.f.close()
+        except:
+            ...
         ##########################################################################################################

@@ -988,7 +988,7 @@ def dump_settings(settings: SimulationSettingsModel, filename):
 
     """
     dump_data(settings.dict(by_alias=False), filename)
-    print(f"Created {filename}")
+    #print(f"Created {filename}")
 
 
 def load_simulation_settings(path: Path):
