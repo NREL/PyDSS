@@ -362,7 +362,7 @@ class DataViewer:
             try:
                 window = int(self._window_text.value)
             except Exception:
-                #print(f"window size {self._window_text.value} must be an integer")
+                print(f"window size {self._window_text.value} must be an integer")
                 return
             self._df = self._df.rolling(window=window).mean()
 

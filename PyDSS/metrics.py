@@ -279,7 +279,7 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
 
         if objects_changed:
             values = [self._get_value(x, time_step) for x in self._dss_objs]
-        #assert len(values) == len(self._dss_objs)
+        assert len(values) == len(self._dss_objs)
 
         if not self._containers:
             self._initialize_containers(values)
