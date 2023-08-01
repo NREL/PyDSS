@@ -502,10 +502,10 @@ class OpenDSS:
                 if within_range:
                     pydss_has_converged = self.RunStep(step)
                     opendss_has_converged = dss.Solution.Converged()
-                    # if not opendss_has_converged:
-                    #     self._Logger.error("OpenDSS did not converge at step=%s pydss_converged=%s",
-                    #                         step, pydss_has_converged)
-                    #     self._HandleOpenDSSConvergenceErrorChecks(step)
+                    if not opendss_has_converged:
+                        self._Logger.error("OpenDSS did not converge at step=%s pydss_converged=%s",
+                                            step, pydss_has_converged)
+                        self._HandleOpenDSSConvergenceErrorChecks(step)
                 has_converged = pydss_has_converged and opendss_has_converged
                 if step == 0 and self.ResultContainer is not None:
                     size = make_human_readable_size(self.ResultContainer.max_num_bytes())
