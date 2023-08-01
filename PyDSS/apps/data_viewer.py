@@ -12,7 +12,7 @@ from IPython.display import display
 try:
     import plotly
 except ImportError:
-    #print("plotly is required to run the DataViewer. Please run 'pip install plotly'")
+    print("plotly is required to run the DataViewer. Please run 'pip install plotly'")
     sys.exit(1)
 
 
@@ -257,7 +257,7 @@ class DataViewer:
     def _on_load_project_click(self, _):
         path = self._project_path_text.value
         if path == "":
-            #print("Project Path cannot be empty.", file=sys.stderr)
+            print("Project Path cannot be empty.", file=sys.stderr)
             return
 
         self._results = PyDssResults(path)
@@ -274,7 +274,7 @@ class DataViewer:
         p_start = self._timestamps.iloc[0]
         p_end = self._timestamps.iloc[-1]
         if start_time < p_start or start_time > p_end:
-            #print(
+            print(
                 f"Error: start_time={start_time} must be between {p_start} and {p_end}",
                 file=sys.stderr,
             )
@@ -282,7 +282,7 @@ class DataViewer:
         if start_time != p_start:
             filter_required = True
         if end_time > p_end or end_time < p_start:
-            #print(
+            print(
                 f"Error: end_time={end_time} must be between {p_start} and {p_end}",
                 file=sys.stderr,
             )
@@ -316,7 +316,7 @@ class DataViewer:
             for option_pair in options_text.split(","):
                 fields = option_pair.split("=")
                 if len(fields) != 2:
-                    #print(
+                    print(
                         f"Invalid option pair: '{option_pair}'. Must be 'option=value'",
                         file=sys.stderr,
                     )
