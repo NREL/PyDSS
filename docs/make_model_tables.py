@@ -107,7 +107,7 @@ def make_tables(output):
     create_simulation_settings(
         output.parent, "ExampleProject", ["scenario1", "scenario2"], force=True
     )
-    #print(f"Generated simulation settings tables in {output}")
+    print(f"Generated simulation settings tables in {output}")
 
 
 def format_description(description, max_width=70):
