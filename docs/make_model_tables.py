@@ -190,7 +190,7 @@ def parse_property_types(ordered_names, classes):
                     definition = match.group(1)
                     property_types[name][title] = definition
                 else:
-                    #print(f"WARNING: Possible bug: need handling of %s", vals["allOf"])
+                    print(f"WARNING: Possible bug: need handling of %s", vals["allOf"])
     return property_types
 
 
