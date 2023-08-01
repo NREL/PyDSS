@@ -48,7 +48,7 @@ def simulation_file(filenames, name=None):
             new_filename = name
         reader = ExportListReader(filename)
         dump_data(reader.serialize(), new_filename)
-        #print(f"Converted {filename} to {new_filename}")
+        print(f"Converted {filename} to {new_filename}")
 
 
 convert.add_command(excel_to_toml)

@@ -26,17 +26,17 @@ def controllers():
 def register(controller_type, filename):
     """Register a controller in the local registry."""
     if controller_type not in CONTROLLER_TYPES:
-        #print(f"controller_type must be one of {CONTROLLER_TYPES}")
+        print(f"controller_type must be one of {CONTROLLER_TYPES}")
         sys.exit(1)
     if not os.path.exists(filename):
-        #print(f"{filename} does not exist")
+        print(f"{filename} does not exist")
         sys.exit(1)
 
     registry = Registry()
     for name in load_data(filename):
         data = {"name": name, "filename": filename}
         registry.register_controller(controller_type, data)
-        #print(f"Registered {controller_type} {name}")
+        print(f"Registered {controller_type} {name}")
 
 
 @click.argument("name")
@@ -45,7 +45,7 @@ def register(controller_type, filename):
 def unregister(controller_type, name):
     """Unregister a controller."""
     Registry().unregister_controller(controller_type, name)
-    #print(f"Unregistered {controller_type} {name}")
+    print(f"Unregistered {controller_type} {name}")
 
 
 @click.command()
@@ -58,7 +58,7 @@ def show():
 def reset_defaults():
     """Reset defaults."""
     Registry().reset_defaults(controllers_only=True)
-    #print("Reset PyDSS defaults")
+    print("Reset PyDSS defaults")
 
 
 controllers.add_command(register)
