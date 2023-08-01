@@ -22,7 +22,7 @@ def run_pyDSS(pydss_path, sim_path, sim_file):
     for t in range(5):
         x = {'Load.mpx000635970':{'kW':7.28}}
         results = dssInstance.RunStep(t, x)
-        # #print(results['Load.mpx000635970']['Powers']['E']['value'])
+        print(results['Load.mpx000635970']['Powers']['E']['value'])
     dssInstance.ResultContainer.ExportResults()
     dssInstance.DeleteInstance()
     del a

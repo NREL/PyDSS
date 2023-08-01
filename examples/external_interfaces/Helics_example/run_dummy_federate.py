@@ -59,7 +59,7 @@ for t in range(1, 30):
         h.helicsPublicationPublishDouble(pub1, 5.0 + 1. / (1.0 + i))
         h.helicsPublicationPublishDouble(pub2, 1.0)
         value = h.helicsInputGetVector(sub1)
-        #print(value)
+        print(value)
 
 h.helicsFederateFinalize(vfed)
 

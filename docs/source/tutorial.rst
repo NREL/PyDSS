@@ -174,7 +174,7 @@ Load element classes and properties
     for elem_class in scenario.list_element_classes():
         for prop in scenario.list_element_properties(elem_class):
             for name in scenario.list_element_names(elem_class, prop):
-                #print(elem_class, prop, name)
+                print(elem_class, prop, name)
 
 Read a dataframe for one element
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
