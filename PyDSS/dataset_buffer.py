@@ -1,5 +1,6 @@
 """Contains DatasetBuffer"""
 
+from cmath import nan
 import logging
 
 import numpy as np
@@ -8,6 +9,7 @@ import pandas as pd
 from PyDSS.common import DatasetPropertyType
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.utils.utils import make_timestamps
+
 
 
 KiB = 1024
@@ -143,6 +145,7 @@ class DatasetBuffer:
 
     def write_value(self, value):
         """Write the value to the internal buffer, flushing when full."""
+
         self._buf[self._buf_index] = value
         self._buf_index += 1
         if self._buf_index == self.chunk_count:

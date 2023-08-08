@@ -16,5 +16,6 @@ aiohttp~=3.8.2
 aiohttp_swagger3>=0.4.3
 requests
 pymongo
-pydantic>=1.8
+pydantic~=1.10.11
 matplotlib
+pvder

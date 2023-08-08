@@ -35,6 +35,7 @@ DEFAULT_REGISTRY = {
         ControllerType.STORAGE_CONTROLLER.value: [],
         ControllerType.XMFR_CONTROLLER.value: [],
         ControllerType.MOTOR_STALL.value: [],
+        ControllerType.MOTOR_STALL_SIMPLE.value: [],
         ControllerType.PV_VOLTAGE_RIDETHROUGH.value: [],
         ControllerType.FAULT_CONTROLLER.value: [],
     },

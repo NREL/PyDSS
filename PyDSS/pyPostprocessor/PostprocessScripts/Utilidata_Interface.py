@@ -343,7 +343,6 @@ class Utilidata_Interface(AbstractPostprocess):
         reply = requests.post(url, data=json_object, verify=False, headers=headers)
         if reply.status_code == 200:
             reply = reply.json()
-            print(reply)
             return reply['recommendations']
         else:
             reply = reply.json()
@@ -421,7 +420,7 @@ class NOAAData(object):
         r = requests.get(self.url + req_type, headers=self.h, params=payload)
 
         if r.status_code != 200:  # Handle erroneous requests
-            print("Error: " + str(r.status_code))
+            self.logger.error("Error: " + str(r.status_code))
         else:
             r = r.json()
             try:

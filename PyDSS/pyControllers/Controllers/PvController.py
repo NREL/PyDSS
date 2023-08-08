@@ -28,10 +28,10 @@ class PvController(ControllerAbstract):
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
         """Constructor method
         """
+        
         super(PvController, self).__init__(PvObj, Settings, dssInstance, ElmObjectList, dssSolver)
         self.TimeChange = False
         self.Time = (-1, 0)
-
         self.oldQpv = 0
         self.oldPcalc = 0
 

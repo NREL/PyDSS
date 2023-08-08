@@ -601,6 +601,7 @@ class ValueContainer:
             list of ValueStorageBase
 
         """
+        
         if isinstance(values[0].value, list):
             vals = [x for y in values for x in y.value]
         else:
@@ -618,6 +619,7 @@ class ValueContainer:
         elem_index : int
 
         """
+        
         if isinstance(value.value, list):
             vals = [x for x in value.value]
         else:
@@ -625,7 +627,8 @@ class ValueContainer:
 
         self._dataset.write_value(vals)
         self._time_steps.write_value([time_step, elem_index])
-
+        
+        
     def flush_data(self):
         """Flush any outstanding data to disk."""
         self._dataset.flush_data()

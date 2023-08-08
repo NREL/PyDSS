@@ -237,7 +237,7 @@ def form_pvzones(affected_buses, dismat_df, zone_thr):
     """
     Builds PV zones
     """
-    # print('Affected buses:', affected_buses)
+    # #print('Affected buses:', affected_buses)
     ohmy = dismat_df.loc[affected_buses, :].copy()
     zone = list()
     for col in ohmy.columns:
@@ -540,7 +540,7 @@ class EdLiFoControl(AbstractPostprocess):
         lifo_pv_list = list(lifo_pv_list)
         if self.zone and not lifo_pv_list:
             self.comment = f"No PV system found in the vicinity (radius={self.zone_threshold}) of the thermal overload"
-            # print(comment)
+            # #print(comment)
 
         if self.zone_option == "Yes" and lifo_pv_list:
             self.my_lifo_list = lifo_pv_list + [
@@ -566,7 +566,7 @@ class EdLiFoControl(AbstractPostprocess):
         self.comment = "RAS"
         total_kVA_deployed = self.pvs_df["kVARated"].sum()
         self.total_init_kW_deployed = 0
-        # print("Total PV KVA deployed: ",total_kVA_deployed)
+        # #print("Total PV KVA deployed: ",total_kVA_deployed)
         self.total_kVA_curtailed = 0
         self.total_kW_curtailed = 0
         self.total_kW_output = 0
@@ -594,7 +594,7 @@ class EdLiFoControl(AbstractPostprocess):
             self.zone = form_pvzones(
                 self.affected_buses, self.dismat_df, self.zone_threshold
             )
-            # print('zone length:',len(zone))
+            # #print('zone length:',len(zone))
 
         else:
             self.logger.info("No monitored line affected")
@@ -623,7 +623,7 @@ class EdLiFoControl(AbstractPostprocess):
 
         if max(self.PV_curtailed.keys(), key=(lambda k: self.PV_curtailed[k])) == 0:
             self.comment = "Deployment passed without curtailment!"
-            # print(comment)
+            # #print(comment)
             self.solution_status == 0
 
         self.PV_curtailed["Comment"] = self.comment
@@ -639,7 +639,7 @@ class EdLiFoControl(AbstractPostprocess):
         self.PV_kW_curtailed["Total_PV_kW_output"] = self.total_kW_output
 
         self.PV_kW_curtailed["Comment"] = self.comment
-        # print("Done with 1 poa loop:", Pct_curtailment)
+        # #print("Done with 1 poa loop:", Pct_curtailment)
 
         self.logger.info(f"kW Curtailed: {self.PV_kW_curtailed}")
         self.has_converged = sol.Converged()
