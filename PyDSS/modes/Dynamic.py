@@ -3,7 +3,6 @@ import math
 
 from PyDSS.modes.solver_base import solver_base
 from PyDSS.simulation_input_models import ProjectModel
-from PyDSS.utils.timing_utils import timer_stats_collector, track_timing
 
 
 class Dynamic(solver_base):
@@ -41,7 +40,6 @@ class Dynamic(solver_base):
         self._dssSolution.MaxControlIterations(self._settings.project.max_control_iterations)
         return
 
-    @track_timing(timer_stats_collector)
     def SolveFor(self, mStartTime, mTimeStep):
         Hour = int(mStartTime/60)
         Min = mStartTime % 60
@@ -50,7 +48,6 @@ class Dynamic(solver_base):
         self._dssSolution.Solve()
         return self._dssSolution.Converged()
 
-    @track_timing(timer_stats_collector)
     def IncStep(self):
         self._dssSolution.StepSize(self._sStepRes)
         self._dssSolution.Solve()
@@ -61,13 +58,11 @@ class Dynamic(solver_base):
         self.pyLogger.debug('PyDSS datetime - ' + str(self._Time))
         return self._dssSolution.Converged()
 
-    @track_timing(timer_stats_collector)
     def reSolve(self):
         self._dssSolution.StepSize(0)
         self._dssSolution.SolveNoControl()
         return self._dssSolution.Converged()
 
-    @track_timing(timer_stats_collector)
     def Solve(self):
         self._dssSolution.StepSize(0)
         self._dssSolution.Solve()
