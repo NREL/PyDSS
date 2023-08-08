@@ -6,8 +6,12 @@ try:
     from pvder.simulation_events import SimulationEvents
     from pvder.grid_components import Grid
     from pvder.DER_wrapper import DERModel
-except:
-    print("This controller requires installation of the PVDER module. Use 'pip install pvder' to install the module and try running the simulation again." )
+except ImportError:
+    raise ImportError("""
+        This controller requires installation of the PVDER module. 
+        Use 'pip install pvder' to install the module and try running the simulation again.
+        """ 
+    )
 #from pvder import utility_functions
 
 import numpy as np

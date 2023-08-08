@@ -608,7 +608,6 @@ class ValueContainer:
             vals = [x.value for x in values]
 
         self._dataset.write_value(vals)
-        self.old_values = values
 
     def append_by_time_step(self, value, time_step, elem_index):
         """Append a value to the container.

@@ -63,6 +63,7 @@ class MotorStallSimple(ControllerAbstract):
 
 
     def Update(self, Priority, Time, UpdateResults):
+        assert Priority in [0, 1, 2], "Valid control priorities can range from 0-2."
         if Priority == 0:
             Vbase = self._ControlledElm.sBus[0].GetVariable('kVBase')
             Ve_mags = max(self._ControlledElm.GetVariable('VoltagesMagAng')[::2])/ 120.0
@@ -97,5 +98,6 @@ class MotorStallSimple(ControllerAbstract):
                     self._ControlledElm.SetParameter('model', 2)
                     self._ControlledElm.SetParameter('vminpu', 0.0)
 
+       
         return 0
 
