@@ -97,7 +97,5 @@ class MotorStallSimple(ControllerAbstract):
                     self._ControlledElm.SetParameter('kvar', self.kvar)
                     self._ControlledElm.SetParameter('model', 2)
                     self._ControlledElm.SetParameter('vminpu', 0.0)
-
-       
         return 0
 
