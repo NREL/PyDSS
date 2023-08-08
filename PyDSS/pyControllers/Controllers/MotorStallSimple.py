@@ -8,7 +8,7 @@ from PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
 import random
 import math
 
-class MotorStall(ControllerAbstract):
+class MotorStallSimple(ControllerAbstract):
     """The controller locks a regulator in the event of reverse power flow. Subclass of the :class:`PyDSS.pyControllers.
     pyControllerAbstract.ControllerAbstract` abstract class.
 
@@ -28,7 +28,7 @@ class MotorStall(ControllerAbstract):
 
 
     def __init__(self, MotorObj, Settings, dssInstance, ElmObjectList, dssSolver):
-        super(MotorStall, self).__init__(MotorObj, Settings, dssInstance, ElmObjectList, dssSolver)
+        super(MotorStallSimple, self).__init__(MotorObj, Settings, dssInstance, ElmObjectList, dssSolver)
         self._class, self._name = MotorObj.GetInfo()
         self.name = "Controller-{}-{}".format(self._class, self._name)
         self._ControlledElm = MotorObj
@@ -37,6 +37,7 @@ class MotorStall(ControllerAbstract):
 
         self._ControlledElm.SetParameter('model', 2)
         self._ControlledElm.SetParameter('vminpu', 0.0)
+        self._ControlledElm.SetParameter('vlowpu', 0.0)
         # self.kw = self._ControlledElm.GetParameter('kw')
         # self.kvar = self._ControlledElm.GetParameter('kvar')
         self.kw = self.__Settings['ratedKW']

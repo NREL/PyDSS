@@ -26,8 +26,6 @@ class ThermostaticLoad(ControllerAbstract):
         self.a = 1 / (Settings["R"] * Settings["C"])
         self.b = Settings["mu"] / Settings["C"]
         self.w = 0
-        self.f = open(r"C:\Users\alatif\Desktop\tcl\results.csv", "w")
-        self.f.write("Tamb,T,State\n")
         return
 
     @property
@@ -62,8 +60,6 @@ class ThermostaticLoad(ControllerAbstract):
             elif self.T < self.Tmin:
                 self.On = False
                 self.__ControlledElm.SetParameter("kw", 0)
-
-            self.f.write(f"{Ta},{self.T},{self.On}" + "\n")
         return 0
 
     def __del__(self):

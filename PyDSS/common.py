@@ -36,21 +36,21 @@ class VisualizationType(enum.Enum):
     NETWORK_GRAPH = "NetworkGraph"
 
 class ControllerType(enum.Enum):
-    PV_CONTROLLER = "PvController"
-    SOCKET_CONTROLLER = "SocketController"
-    STORAGE_CONTROLLER = "StorageController"
-    XMFR_CONTROLLER = "xmfrController"
+    FAULT_CONTROLLER = "FaultController"
+    GENERATOR_CONTROLLER = "GenController"
     MOTOR_STALL = "MotorStall"
     MOTOR_STALL_SIMPLE = "MotorStallSimple"
+    PV_CONTROLLER = "PvController"
+    PV_DYNAMIC = "PvDynamic"
+    PV_FREQUENCY_RIDETHROUGH = "PvFrequencyRideThru"
     PV_VOLTAGE_RIDETHROUGH = "PvVoltageRideThru"
-    FAULT_CONTROLLER = "FaultController"
+    SOCKET_CONTROLLER = "SocketController"
+    STORAGE_CONTROLLER = "StorageController"
     THERMOSTATIC_LOAD_CONTROLLER = "ThermostaticLoad"
-    GENERATOR_CONTROLLER = "GenController"
-
+    XMFR_CONTROLLER = "xmfrController"
 
 CONTROLLER_TYPES = tuple(x.value for x in ControllerType)
 CONFIG_EXT = ".toml"
-
 
 class ExportMode(enum.Enum):
     BY_CLASS = "ExportMode-byClass"
@@ -58,20 +58,104 @@ class ExportMode(enum.Enum):
     SUBSCRIPTIONS = 'Subscriptions'
     EXPORTS = "Exports"
 
-
 def filename_from_enum(obj):
     return obj.value + CONFIG_EXT
 
+FAULT_CONTROLLER_FILENAME = filename_from_enum(ControllerType.FAULT_CONTROLLER)
+GENERATOR_CONTROLLER_FILENAME = filename_from_enum(ControllerType.GENERATOR_CONTROLLER)
+MOTOR_STALL_FILENAME = filename_from_enum(ControllerType.MOTOR_STALL)
+MOTOR_STALL_SIMPLE_FILENAME = filename_from_enum(ControllerType.MOTOR_STALL_SIMPLE)
+PV_CONTROLLER_FILENAME = filename_from_enum(ControllerType.PV_CONTROLLER)
+PV_DYNAMIC_FILENAME = filename_from_enum(ControllerType.PV_DYNAMIC)
+PV_FREQUENCY_RIDETHROUGH_FILENAME = filename_from_enum(ControllerType.PV_FREQUENCY_RIDETHROUGH)
+PV_VOLTAGE_RIDETHROUGH_FILENAME = filename_from_enum(ControllerType.PV_VOLTAGE_RIDETHROUGH)
+SOCKET_CONTROLLER_FILENAME = filename_from_enum(ControllerType.SOCKET_CONTROLLER)
+STORAGE_CONTROLLER_FILENAME = filename_from_enum(ControllerType.STORAGE_CONTROLLER)
+THERMOSTATIC_LOAD_CONTROLLER_FILENAME = filename_from_enum(ControllerType.THERMOSTATIC_LOAD_CONTROLLER)
+XMFR_CONTROLLER_FILENAME = filename_from_enum(ControllerType.XMFR_CONTROLLER)
 
 TIMESERIES_PLOT_FILENAME = filename_from_enum(VisualizationType.TIMESERIES_PLOT)
-PV_CONTROLLER_FILENAME = filename_from_enum(ControllerType.PV_CONTROLLER)
-STORAGE_CONTROLLER_FILENAME = filename_from_enum(ControllerType.STORAGE_CONTROLLER)
-SOCKET_CONTROLLER_FILENAME = filename_from_enum(ControllerType.XMFR_CONTROLLER)
-XMFR_CONTROLLER_FILENAME = filename_from_enum(ControllerType.SOCKET_CONTROLLER)
 EXPORT_BY_CLASS_FILENAME = filename_from_enum(ExportMode.BY_CLASS)
 EXPORT_BY_ELEMENT_FILENAME = filename_from_enum(ExportMode.BY_ELEMENT)
 EXPORTS_FILENAME = filename_from_enum(ExportMode.EXPORTS)
 
+DEFAULT_FAULT_CONTROLLER_CONFIG_FILE = os.path.join(
+    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    "PyDSS",
+    "defaults",
+    "pyControllerList",
+    FAULT_CONTROLLER_FILENAME,
+)
+DEFAULT_GENERATOR_CONTROLLER_CONFIG_FILE = os.path.join(
+    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    "PyDSS",
+    "defaults",
+    "pyControllerList",
+    GENERATOR_CONTROLLER_FILENAME,
+)
+DEFAULT_MOTOR_STALL_CONTROLLER_CONFIG_FILE = os.path.join(
+    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    "PyDSS",
+    "defaults",
+    "pyControllerList",
+    MOTOR_STALL_FILENAME,
+)
+DEFAULT_PV_CONTROLLER_CONFIG_FILE = os.path.join(
+    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    "PyDSS",
+    "defaults",
+    "pyControllerList",
+    PV_CONTROLLER_FILENAME,
+)
+DEFAULT_PV_DYNAMIC_CONTROLLER_CONFIG_FILE = os.path.join(
+    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    "PyDSS",
+    "defaults",
+    "pyControllerList",
+    PV_DYNAMIC_FILENAME,
+)
+DEFAULT_PV_FREQUENCY_RIDETHROUGH_CONTROLLER_CONFIG_FILE = os.path.join(
+    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    "PyDSS",
+    "defaults",
+    "pyControllerList",
+    PV_FREQUENCY_RIDETHROUGH_FILENAME,
+)
+DEFAULT_PV_VOLTAGE_RIDETHROUGH_CONTROLLER_CONFIG_FILE = os.path.join(
+    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    "PyDSS",
+    "defaults",
+    "pyControllerList",
+    PV_VOLTAGE_RIDETHROUGH_FILENAME,
+)
+DEFAULT_SOCKET_CONTROLLER_CONFIG_FILE = os.path.join(
+    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    "PyDSS",
+    "defaults",
+    "pyControllerList",
+    SOCKET_CONTROLLER_FILENAME,
+)
+DEFAULT_STORAGE_CONTROLLER_CONFIG_FILE = os.path.join(
+    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    "PyDSS",
+    "defaults",
+    "pyControllerList",
+    STORAGE_CONTROLLER_FILENAME,
+)
+DEFAULT_THERMOSTATIC_LOAD_CONTROLLER_CONFIG_FILE = os.path.join(
+    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    "PyDSS",
+    "defaults",
+    "pyControllerList",
+    THERMOSTATIC_LOAD_CONTROLLER_FILENAME,
+)
+DEFAULT_XMFR_CONTROLLER_CONFIG_FILE = os.path.join(
+    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    "PyDSS",
+    "defaults",
+    "pyControllerList",
+    XMFR_CONTROLLER_FILENAME,
+)
 
 DEFAULT_SUBSCRIPTIONS_FILE = os.path.join(
     os.path.dirname(getattr(PyDSS, "__path__")[0]),
@@ -86,13 +170,7 @@ DEFAULT_SIMULATION_SETTINGS_FILE = os.path.join(
     "defaults",
     SIMULATION_SETTINGS_FILENAME,
 )
-DEFAULT_CONTROLLER_CONFIG_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
-    "PyDSS",
-    "defaults",
-    "pyControllerList",
-    PV_CONTROLLER_FILENAME,
-)
+
 DEFAULT_VISUALIIZATION_CONFIG_FILE = os.path.join(
     os.path.dirname(getattr(PyDSS, "__path__")[0]),
     "PyDSS",
@@ -134,14 +212,10 @@ DEFAULT_MONTE_CARLO_SETTINGS_FILE = os.path.join(
     "Monte_Carlo",
     MONTE_CARLO_SETTINGS_FILENAME,
 )
-
-
 class ControlMode(enum.Enum):
     """Supported control modes"""
     STATIC = "Static"
     TIME = "Time"
-
-
 class DataConversion(enum.Enum):
     NONE = "none"
     ABS = "abs"
@@ -149,16 +223,12 @@ class DataConversion(enum.Enum):
     SUM = "sum"
     SUM_REAL = "sum_real"
     SUM_ABS_REAL = "sum_abs_real"
-
-
 class DatasetPropertyType(enum.Enum):
     PER_TIME_POINT = "per_time_point"  # data is stored at every time point
     FILTERED = "filtered"  # data is stored after being filtered
     METADATA = "metadata"  # metadata for another dataset
     TIME_STEP = "time_step"  # data are time indices, tied to FILTERED
     VALUE = "value"  # Only a single value is written for each element
-
-
 class FileFormat(enum.Enum):
     """Supported file formats"""
     CSV = "csv"
