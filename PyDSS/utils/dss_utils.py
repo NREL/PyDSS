@@ -182,7 +182,7 @@ def iter_elements(element_class, element_func):
         }
 
     >>> for reg_control in iter_elements(opendssdirect.RegControls, get_reg_control_info):
-        #print(reg_control["name"])
+        print(reg_control["name"])
 
     """
     flag = element_class.First()

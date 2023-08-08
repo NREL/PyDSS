@@ -145,8 +145,7 @@ class DatasetBuffer:
 
     def write_value(self, value):
         """Write the value to the internal buffer, flushing when full."""
-
-        # print(value)
+        
         if pd.isna(value[0]):
             value = [-1 for i in value]
 

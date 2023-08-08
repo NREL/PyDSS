@@ -67,11 +67,6 @@ class MotorStall(ControllerAbstract):
         self.kvbase = self._ControlledElm.sBus[0].GetVariable("kVBase")
         self.Ibase = 1e3 * self.kva_rated /1e3 * self.kvbase
 
-        ######################################### TESTING CODE ###################################################
-        self.f = open(r"C:/Users/alatif/Desktop/NAERM/models/74012/Exports/results.csv", "w")
-        self.f.write(f"Current,Voltage,Active power,Reactive power,u,t out,y out,Kth,CompLF,CompPF,V_break_adj,V_stall_adj\n")
-        ##########################################################################################################
-
         self.dt = dssSolver.GetStepResolutionSeconds()
         self.H = signal.TransferFunction([1], [self.__Settings['Tth'], 1])
         self.R = signal.TransferFunction([1], [self.__Settings['Trestart'], 1])
@@ -172,19 +167,7 @@ class MotorStall(ControllerAbstract):
                 self._ControlledElm.SetParameter('kw', self.kw_rated * reconnect)
                 self._ControlledElm.SetParameter('kvar', self.kvar_rated * reconnect)
                 self.stall = False
-                
-            ######################################### TESTING CODE ###################################################
-            self.f.write(f"{self.current_pu},{self.voltage_pu},{self.p},{self.q},{u},{tout[-1]},{yout[-1]},{Kth},{CompLF},{CompPF},{V_break_adj},{V_stall_adj}\n")
-            ##########################################################################################################
+         
         self.model_mode_old = self.model_mode
         return 0
 
-    def __del__(self):
-        
-        ######################################### TESTING CODE ###################################################
-        try:
-            self.f.flush()
-            self.f.close()
-        except:
-            ...
-        ##########################################################################################################

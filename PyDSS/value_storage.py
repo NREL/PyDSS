@@ -601,18 +601,11 @@ class ValueContainer:
             list of ValueStorageBase
 
         """
-        #print([v.value for v in values])
-        # try:
+        
         if isinstance(values[0].value, list):
             vals = [x for y in values for x in y.value]
         else:
             vals = [x.value for x in values]
-        # except:
-        #     values = self.old_values
-        #     if isinstance(values[0].value, list):
-        #         vals = [-1 for y in values for x in y.value]
-        #     else:
-        #         vals = [-1 for x in values]
 
         self._dataset.write_value(vals)
         self.old_values = values

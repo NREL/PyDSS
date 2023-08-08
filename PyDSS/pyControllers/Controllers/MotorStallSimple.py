@@ -69,7 +69,6 @@ class MotorStallSimple(ControllerAbstract):
 
 
             if Ve_mags < self.__Settings['Vstall'] and not self.stall:
-                print(Ve_mags)
                 self._ControlledElm.SetParameter('kw', self.kw * self.__Settings['Pfault'] )
                 self._ControlledElm.SetParameter('kvar', self.kw * self.__Settings['Qfault'] )
                 self._ControlledElm.SetParameter('model', 1)
@@ -80,7 +79,6 @@ class MotorStallSimple(ControllerAbstract):
         if Priority == 1:
             if self.stall:
                 self.stall_time = self.__dssSolver.GetTotalSeconds() - self.stall_time_start
-                #print(self.stall_time)
                 if self.stall_time > self.__Settings['Tprotection']:
                     self.stall = False
                     self.disconnected = True
