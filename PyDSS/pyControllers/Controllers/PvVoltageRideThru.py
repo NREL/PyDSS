@@ -73,7 +73,11 @@ class PvVoltageRideThru(ControllerAbstract):
         self.__UcalcMode = Settings['UcalcMode']
         # initialize deadtimes and other variables
         self.__initializeRideThroughSettings()
-        self.__rVs, self.__rTs = self.__CreateOperationRegions()
+        if self.__Settings["Follow standard"] == "1547-2003":
+            self.__rVs = [1.10, 0.88]
+        else:
+            self.__rVs, self.__rTs = self.__CreateOperationRegions()
+
         # For debugging only
         self.useAvgVoltage = False
         cycleAvg = 5
