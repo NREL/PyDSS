@@ -261,8 +261,8 @@ class PvVoltageRideThru(ControllerAbstract):
                 print("User defined setting outside of IEEE 1547 acceptable range.")
                 assert False
 
-            if self.__Settings['UV1 CT - sec'] >=21 and self.__Settings['UV1 CT - sec'] <= 50:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
+            if self.__Settings['UV1 CT - sec'] <21 and self.__Settings['UV1 CT - sec'] > 50:
+                print("User defined setting outside of IEEE 1547 acceptable range.")             
                 assert False
 
 
