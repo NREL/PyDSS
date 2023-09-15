@@ -83,7 +83,7 @@ class PvDynamic(ControllerAbstract):
                 gridVoltagePhaseB = self._Vb,
                 gridVoltagePhaseC = self._Vc,
                 gridFrequency=2 * math.pi * self.freq,
-                #derId=Settings["DER_ID"],
+                derId=Settings["DER_ID"],
                 standAlone = stand_alone,
                 steadyStateInitialization=steady_state,
                 verbosity = der_verbosity

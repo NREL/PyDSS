@@ -71,6 +71,9 @@ class solver_base(abc.ABC):
     def GetOpenDSSTime(self):
         return self._dssSolution.DblHour()
 
+    def get_simulation_end_time(self):
+        return self._EndTime
+
     @property
     def MaxIterations(self):
         return self._settings.max_control_iterations
