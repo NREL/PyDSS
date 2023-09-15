@@ -1,4 +1,4 @@
-[[subscriptions]]
+[["Load.mpx000635970"]]
 model = "Load.mpx000635970"
 property = "kw"
 id = "test.load1.power"
@@ -7,7 +7,7 @@ subscribe = true
 data_type = "double"
 multiplier = 1 
 
-[[subscriptions]]
+[["Vsource.source"]]
 model = "Vsource.source"
 property = "pu"
 id = "test.feederhead.voltage"
@@ -16,7 +16,7 @@ subscribe = true
 data_type = "double"
 multiplier = 1 
 
-[[subscriptions]]
+[["Vsource.source"]]
 model = "Vsource.source"
 property = "angle"
 id = "test.feederhead.angle"

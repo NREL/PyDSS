@@ -24,7 +24,7 @@
 # post_process_infos = []
 
 [[Project.Scenarios]]
-name = "socket"
+name = "helics"
 post_process_infos = []
 
 [Exports]
@@ -49,12 +49,15 @@ post_process_infos = []
 "Percentage load in series" = 50.0
 
 [Helics]
-"Co-simulation Mode" = false
+"Co-simulation Mode" = true
 "Federate name" = "PyDSS"
 "Time delta" = 0.01
 "Core type" = "zmq"
 Uninterruptible = true
 "Helics logging level" = 5
+"Broker port" = 23404
+Broker = "127.0.0.1"
+"Iterative Mode" = false
 
 [Logging]
 "Logging Level" = "DEBUG"
