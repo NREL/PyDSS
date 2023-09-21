@@ -76,15 +76,23 @@ class PvFrequencyRideThru(ControllerAbstract):
         self.__UcalcMode = Settings['UcalcMode']
         # initialize deadtimes and other variables
         self.__initializeRideThroughSettings()
-        # self.__rVs, self.__rTs = self.__CreateOperationRegions()
-        self.__CreateOperationRegions()
+        if self.__Settings["Follow standard"] == "1547-2018":
+            self.__CreateOperationRegions()
         # For debugging only
-        self.useAvgFrequency = True
-        cycleAvg = 5 #same for voltage and frequency.  #see Table 3 of 1547-2018. Measurement window for frequency is 5 cycles
+        self.useAvgVoltage = True
+        self.useAvgFrequency = True 
+        self.cycleAvg = 6 #I think it's good enough for now to use the same cycle average for voltage and frequency.  
+                     #see Table 3 of 1547-2018. Measurement window for frequency is 5 cycles (not six)
+                     #todo: confirm this.  THE ROCOF AVERAGING WINDOW MUST BE >= 0.1 seconds (is six)
+                     # Table 3 says 5 cycle measurement window but not sure what this applies to. 
+                     #see highlighted section on page 30 of the standard.  I'm not sure we should be average voltage or frequency in general.
+                     #might need to refactor all of this to handle averages for rocof and average frequencies. ugh. 
         freq = dssSolver.getFrequency()
-        step = dssSolver.GetStepSizeSec()
-        hist_size = math.ceil(cycleAvg / (step * freq))
+        self.step = dssSolver.GetStepSizeSec()
+        hist_size = math.ceil(self.cycleAvg / (self.step * freq))
         self.frequency = [60.0 for i in range(hist_size)]
+        self.voltage = [1.0 for i in range(hist_size)]
+        self.rocof = [0.0 for i in range(hist_size)]
         self.reactive_power = [0.0 for i in range(hist_size)]
         self.__VoltVioM = False
         self.__VoltVioP = False
@@ -116,8 +124,7 @@ class PvFrequencyRideThru(ControllerAbstract):
         self.__isConnected = True
         self.__Plimit = self.__Prated
         self.__CutoffTime = self.__dssSolver.GetDateTime()
-        self.__ReconnStartTime = self.__dssSolver.GetDateTime() - datetime.timedelta(
-            seconds=int(self.__Time_to_Pmax_sec))
+        self.__ReconnStartTime = self.__dssSolver.GetDateTime() - datetime.timedelta(seconds=int(self.__Time_to_Pmax_sec))
 
         self.__TrippedPmaxDelay = 0
         self.__NormOper = True
@@ -136,11 +143,6 @@ class PvFrequencyRideThru(ControllerAbstract):
     def __CreateOperationRegions(self):
         fMaxTheo = 100
         tMax = 1e10
-        # #deprecated...
-        # V = [1.10, 0.88, 0.5, 1.2, 1.2, 1.2, 0.0, 0.0]
-        # T = [21, 10, 13, 13, 13, 1, 1]
-
-        #...deprecated
 
         #define the over frequency shall-trip region
         OFtripPoints = [
@@ -199,9 +201,6 @@ class PvFrequencyRideThru(ControllerAbstract):
                 print("User defined setting outside of IEEE 1547 acceptable range.")
                 assert False
 
-      
-            # F = [1.10, 0.88, 0.7, 1.20, 1.175, 1.15, 0.50, 0.5]
-            # T = [1.5,   0.7, 0.2, 0.50, 1.000, 0.16, 0.16]
             self.__faultCounterMax = 2
             self.__faultCounterClearingTimeSec = 20
 
@@ -209,28 +208,27 @@ class PvFrequencyRideThru(ControllerAbstract):
             print("Unknown Standard.")
             assert False
 
+        if self.__Settings['Ride-through Category'] == 'Category I':
+            self.__max_rocof = 0.5 #hz/sec
+        elif self.__Settings['Ride-through Category'] == 'Category II':
+            self.__max_rocof = 2.0 #hz/sec
+        elif self.__Settings['Ride-through Category'] == 'Category III':
+            self.__max_rocof = 3.0 #hz/sec
+
+        
+        
+
         self._ControlledElm.SetParameter('Model', '7')
-        # self._ControlledElm.SetParameter('Vmaxpu', V[0])
-        # self._ControlledElm.SetParameter('Vminpu', V[1])
 
 
         ContinuousPoints = [Point(self.__continuous_f_upper, 0), Point(self.__continuous_f_upper, tMax), Point(self.__continuous_f_lower, tMax), Point(self.__continuous_f_lower, 0)]
         ContinuousRegion = Polygon([[p.y, p.x] for p in ContinuousPoints])
 
         MandatoryPoints1 = [Point(61.8, 0), Point(61.8, 299), Point(self.__continuous_f_upper, 299), Point(self.__continuous_f_upper, 0)]
-        MandatoryRegion1 = Polygon([[p.y, p.x] for p in MandatoryPoints1])
+        MandatoryRegion1 = Polygon([[p.y, p.x] for p in MandatoryPoints1]) #todo: could define these numbers in variables but they are not configurable by user.
 
         MandatoryPoints2 = [Point(self.__continuous_f_lower, 0), Point(self.__continuous_f_lower, 299), Point(57.0, 299), Point(57.0, 0)]
-        MandatoryRegion2 = Polygon([[p.y, p.x] for p in MandatoryPoints2])
-
-        # PermissiveOVPoints = [Point(V[3], 0), Point(V[3], T[2]), Point(V[4], T[2]), Point(V[4], T[3]),
-        #                       Point(V[5], T[3]),
-        #                       Point(V[5], T[4]), Point(V[0], T[4]), Point(V[0], 0.0)]
-        # PermissiveOVRegion = Polygon([[p.y, p.x] for p in PermissiveOVPoints])
-
-        # PermissiveUVPoints = [Point(V[2], 0), Point(V[2], T[5]), Point(V[6], T[5]), Point(V[6], T[6]),
-        #                       Point(V[7], T[6]), Point(V[7], 0)]
-        # PermissiveUVRegion = Polygon([[p.y, p.x] for p in PermissiveUVPoints])
+        MandatoryRegion2 = Polygon([[p.y, p.x] for p in MandatoryPoints2]) #todo: could define these numbers in variables but they are not configurable by user.
 
         ActiveRegion = MultiPolygon([OFtripRegion, UFtripRegion, ContinuousRegion, 
                                     MandatoryRegion1,MandatoryRegion2])
@@ -255,7 +253,8 @@ class PvFrequencyRideThru(ControllerAbstract):
         
         return 
 
-    def calculate_frequency(self, priority, time):    
+    def calculate_frequency(self, priority, time):
+ 
         vsrc = self._ElmObjectList["Vsource.source"]
         u_ang = vsrc.GetParameter("angle")
         u_ang = u_ang * math.pi / 180
@@ -273,8 +272,31 @@ class PvFrequencyRideThru(ControllerAbstract):
                 bus_freq = base_freq + self.df 
                 self.u_ang = u_ang
                 print("Time: ", h )
+
+                # Testing Block
+                # #overwrite bus frequency to do testing. I thinkt he blip is power dependency on opendss nework frequency
+                # if time < 100:
+                #     bus_freq = 60
+                # elif time >=100 and time <=299:
+                #     bus_freq = 60 - 0.002*(time-100)
+                # elif time >=299 and time <=599:
+                #     bus_freq = 60 - 0.002*(299-100) + 0.002*(time-299)
+                # else:
+                #     bus_freq = 60 - 0.002*(299-100) + 0.002*(time-299)
+                #     # bus_freq = 60.0 #use 61.5 to test rocof trip
+
+                # #######################################
+
             self.freq_hist.append(bus_freq)
             return bus_freq
+
+    def calculate_rocof(self):
+        df = abs(self.frequency[0] - self.frequency[1])
+        self.rocof.insert(0,df/self.step)
+        self.rocof.pop()
+        avg_rocof = sum(self.rocof)/len(self.rocof)
+        return avg_rocof
+
 
 
     def Update(self, Priority, Time, Update):
@@ -282,36 +304,45 @@ class PvFrequencyRideThru(ControllerAbstract):
         self.TimeChange = self.Time != (Priority, Time)
         self.Time = Time
         
-        self.freq = self.calculate_frequency(Priority, Time)
        
-        
         if Priority == 0:
             if self.Time == 0:
                 self.u_ang = self._ControlledElm.GetVariable('VoltagesMagAng')[1::2][0]
             self.__isConnected = self.__Connect()
   
         if Priority == 2: 
-            
-            if self.Time == 719:
-                fig, ax = plt.subplots()
-                ax.plot(self.freq_hist[:-3])
-                plt.show()
-            
-        #     fIn = self.__UpdateViolatonTimers()
-        #     if self.__Settings["Follow standard"] == "1547-2018":
-        #         self.FrequencyRideThrough(fIn)
-        #     elif self.__Settings["Follow standard"] == "1547-2003":
-        #         self.Trip(fIn)
-        #     else:
-        #         raise Exception("Valid standard setting defined. Options are: 1547-2003, 1547-2018")
-            
-        #     P = -sum(self._ControlledElm.GetVariable('Powers')[::2])
-        #     self.power_hist.append(P)
-        #     self.frequency_hist.append(fIn)
-        #     self.timer_hist.append(self.__fViolationtime)
-        #     self.timer_act_hist.append(self.__dssSolver.GetTotalSeconds())
+            self.freq = self.calculate_frequency(Priority, Time)
+            print('frequency:', self.freq)
+            self.avg_rocof = self.calculate_rocof()
+            print('avg rocof:', self.avg_rocof)
 
-        # if self.Time == 39 and Priority==2: # Time is the time step, 
+            # Testing Block
+            #plot the frequency
+            # if self.Time == 719:
+            #     fig, ax = plt.subplots()
+            #     ax.plot(self.freq_hist[:-3])
+            #     plt.show()
+            pIn = -sum(self._ControlledElm.GetVariable('Powers')[::2])
+            
+            fIn = self.__UpdateViolatonTimers()
+            if self.__Settings["Follow standard"] == "1547-2018":
+                print("pIn: ", pIn)
+                print("Connected: ", self.__isConnected )
+                pOut = self.FrequencyRideThrough(fIn, pIn)
+            elif self.__Settings["Follow standard"] == "1547-2003":
+                self.Trip(fIn)
+                pOut = 0
+            else:
+                raise Exception("Valid standard setting defined. Options are: 1547-2003, 1547-2018")
+            
+            
+            self.power_hist.append(pOut)
+            self.frequency_hist.append(fIn)
+            self.timer_hist.append(self.__fViolationtime)
+            self.timer_act_hist.append(self.__dssSolver.GetTotalSeconds())
+
+        # Testing Block
+        # if self.Time == 719 and Priority==2: # Time is the time step, 
         #     import matplotlib.pyplot as plt
         #     fig, (ax1, ax2) = plt.subplots(2,1)
 
@@ -331,6 +362,7 @@ class PvFrequencyRideThru(ControllerAbstract):
         #     ax1.scatter( self.timer_act_hist, self.frequency_hist)
         #     ax3 = ax2.twinx()
         #     ax2.set_ylabel('Power (kW) in green')
+        #     ax2.set_ylim(2,3)
         #     ax3.set_ylabel('Frequency in red')
         #     ax2.plot(self.timer_act_hist[1:], self.power_hist[1:], c="green")
         #     ax3.plot(self.timer_act_hist[1:], self.frequency_hist[1:], c="red")
@@ -346,7 +378,7 @@ class PvFrequencyRideThru(ControllerAbstract):
                 self.__Trip(30.0, 0.4, False) #__Trip(self, Deadtime, Time2Pmax, forceTrip, permissive_to_trip=False)
         return
 
-    def FrequencyRideThrough(self, fIn):
+    def FrequencyRideThrough(self, fIn, pIn):
         """ Implementation of the IEEE1587-2018 voltage ride-through requirements for inverter systems
         """
         self.__faultCounterClearingTimeSec = 1
@@ -354,6 +386,7 @@ class PvFrequencyRideThru(ControllerAbstract):
         if Pm.within(self.CurrLimRegion):
             region = 0
             isinContinuousRegion = False
+            pOut = self.__Frequency_Droop(fIn, pIn)
 
         elif Pm.within(self.TripRegion):
             region = 2
@@ -362,9 +395,23 @@ class PvFrequencyRideThru(ControllerAbstract):
                 self.__Trip(self.__trip_deadtime_sec, self.__Time_to_Pmax_sec, False, True)
             else: 
                 self.__Trip(self.__trip_deadtime_sec, self.__Time_to_Pmax_sec, False)
+            pOut = pIn
         else:
             isinContinuousRegion = True
             region = 3
+            pOut = self.__Frequency_Droop(fIn, pIn)
+            #check if v/f > 1.1.  If it is, trip the DER. 
+            u_pu = self.__UpdateVoltage()
+            f_pu = fIn/60.0
+            if u_pu/f_pu  > 1.1: #note: this is a very conservative interpretation of the standard.  
+                self.__Trip(self.__trip_deadtime_sec, self.__Time_to_Pmax_sec, False)
+
+
+
+        #rocof
+        if self.avg_rocof > self.__max_rocof:
+            self.__Trip(self.__trip_deadtime_sec, self.__Time_to_Pmax_sec, False) #todo: not using function right. 
+
             
         self.region = self.region[1:] + self.region[:1]
         self.region[0] = region
@@ -388,18 +435,45 @@ class PvFrequencyRideThru(ControllerAbstract):
         if  clearingTime > self.__faultCounterClearingTimeSec and self.__faultCounter > 0:
             self.__faultCounter = 0
         self.__isinContinuousRegion = isinContinuousRegion
-        return
+        return pOut
+
+    def __Frequency_Droop(self, fIn, pIn):
+        db_UF = self.__Settings['db_UF']
+        db_OF = self.__Settings['db_OF']
+        k_UF = self.__Settings['k_UF']
+        k_OF = self.__Settings['k_OF']
+        minKW = self.__Settings['minKW']
+        maxKW = self.__Settings['maxKW']
+
+        #under frequency
+        if fIn < (60 - db_UF):
+            if self.__Settings["Ride-through Category"] == "Category I" and not self.__Settings["Category I Low Frequency Droop"]:
+                pOut = pIn
+            else:
+                pOut = min(pIn + (60-db_UF-fIn)/(60*k_UF) , maxKW) #todo: maxKW isn't quite right.  pIn is probably correct for solar unless some reserve margin is et
+
+            return pOut
+        #over frequency
+        elif fIn > (60 + db_OF):
+            pOut = max(pIn - (fIn-60-db_OF)/(60*k_OF), minKW)
+            return pOut
+        else:
+            pOut = pIn
+            return pOut
 
     def __Connect(self):
         if not self.__isConnected:
-            aIn = self._ControlledElm.GetVariable('VoltagesMagAng')[::2]
-            fIn = self.f_temp  #62.5 #should be some function of aIn
+            #In = self._ControlledElm.GetVariable('VoltagesMagAng')[::2]
+            fIn = self.freq
             if self.useAvgFrequency:
-                self.frequency = self.frequency[1:] + self.frequency[:1] #WHY??
-                self.frequency[0] = fIn
+                # self.frequency = self.frequency[1:] + self.frequency[:1] #WHY??
+                # self.frequency[0] = fIn
+                self.frequency.insert(0,fIn)
+                self.frequency.pop()
                 fIn = sum(self.frequency) / len(self.frequency)
+
             deadtime = (self.__dssSolver.GetDateTime() - self.__TrippedStartTime).total_seconds()
-            if fIn < self.__continuous_f_upper and fIn > self.continuous_f_lower and deadtime >= self.__TrippedDeadtime:
+            if fIn < self.__continuous_f_upper and fIn > self.__continuous_f_lower and deadtime >= self.__TrippedDeadtime:
                 self._ControlledElm.SetParameter('enabled', True)
                 self.__isConnected = True
                 self._ControlledElm.SetParameter('kw', 0)
@@ -434,12 +508,15 @@ class PvFrequencyRideThru(ControllerAbstract):
 
     
     def __UpdateViolatonTimers(self):
-        aIn = self._ControlledElm.GetVariable('VoltagesMagAng')[::2]
-        fIn = self.f_temp  #62.5 #should be some function of aIn
+        # aIn = self._ControlledElm.GetVariable('VoltagesMagAng')[::2]
+        fIn = self.freq #self.f_temp  #62.5 #should be some function of aIn
 
         if self.useAvgFrequency:
-            self.frequency = self.frequency[1:] + self.frequency[:1] #WHY??  I think we're trying to insert new element at first position and remove last
-            self.frequency[0] = fIn
+            #this is a strange way or ordering. 
+            # self.frequency = self.frequency[1:] + self.frequency[:1] #WHY??  
+            # self.frequency[0] = fIn
+            self.frequency.insert(0,fIn)
+            self.frequency.pop()
             fIn = sum(self.frequency) / len(self.frequency)
 
         #track how long we've been operating under normal or abnormal conditions
@@ -463,3 +540,21 @@ class PvFrequencyRideThru(ControllerAbstract):
 
 
         return fIn
+
+
+    def __UpdateVoltage(self):
+        uIn = self._ControlledElm.GetVariable('VoltagesMagAng')[::2]
+        uBase = self._ControlledElm.sBus[0].GetVariable('kVBase') * 1000
+        uIn = max(uIn) / uBase if self.__UcalcMode == 'Max' else sum(uIn) / (uBase * len(uIn))
+        if self.useAvgVoltage:
+            self.voltage.insert(0,uIn)
+            self.voltage.pop()
+            uIn = sum(self.voltage) / len(self.voltage)
+
+        # # Testing Block
+        # if self.Time >=700:
+        #     uIn = 1.11
+
+        return uIn
+
+
