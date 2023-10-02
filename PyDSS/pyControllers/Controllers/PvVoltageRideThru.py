@@ -73,7 +73,11 @@ class PvVoltageRideThru(ControllerAbstract):
         self.__UcalcMode = Settings['UcalcMode']
         # initialize deadtimes and other variables
         self.__initializeRideThroughSettings()
-        self.__rVs, self.__rTs = self.__CreateOperationRegions()
+        if self.__Settings["Follow standard"] == "1547-2003":
+            self.__rVs = [1.10, 0.88]
+        else:
+            self.__rVs, self.__rTs = self.__CreateOperationRegions()
+
         # For debugging only
         self.useAvgVoltage = False
         cycleAvg = 5
@@ -126,6 +130,7 @@ class PvVoltageRideThru(ControllerAbstract):
         uMaxTheo = 10
         tMax = 1e10
 
+
         OVtripPoints = [
             Point(uMaxTheo, self.__Settings['OV2 CT - sec']),
             Point(self.__Settings['OV2 - p.u.'], self.__Settings['OV2 CT - sec']),
@@ -147,80 +152,41 @@ class PvVoltageRideThru(ControllerAbstract):
         UVtripRegion = Polygon([[p.y, p.x] for p in UVtripPoints])
 
         if self.__Settings['Ride-through Category'] == 'Category I':
-
-            #check overvoltage points
-            if self.__Settings['OV2 - p.u.'] != 1.20:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-            if self.__Settings['OV2 CT - sec'] != 0.16:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-            if self.__Settings['OV1 - p.u.'] < 1.1 and self.__Settings['OV1 - p.u.'] > 1.2:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-            if self.__Settings['OV1 CT - sec'] <1 and self.__Settings['OV1 CT - sec'] > 13:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-            #check undervoltage points
-            if self.__Settings['UV2 - p.u.'] < 0.0 and self.__Settings['UV2 - p.u.'] > 0.5:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-            if self.__Settings['UV2 CT - sec'] < 0.16 and self.__Settings['UV2 CT - sec'] > 2:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-            if self.__Settings['UV1 - p.u.'] < 0.0 and self.__Settings['UV1 - p.u.'] > 0.88:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-            if self.__Settings['UV1 CT - sec'] <2 and self.__Settings['UV1 CT - sec'] > 21:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-      
+            ov2pu_eq = 1.20
+            ov2sec_eq = 0.16
+            ov1pu_min = 1.1
+            ov1pu_max = 1.2
+            ov1sec_min = 1
+            ov1sec_max = 13
+            uv2pu_min = 0.0
+            uv2pu_max = 0.5
+            uv2sec_min = 0.16
+            uv2sec_max = 2.0
+            uv1pu_min = 0.0
+            uv1pu_max = 0.88
+            uv1sec_min = 2.0
+            uv1sec_max = 21
+    
             V = [1.10, 0.88, 0.7, 1.20, 1.175, 1.15, 0.5, 0.5]
             T = [1.5, 0.7, 0.2, 0.5, 1, 0.16, 0.16]
             self.__faultCounterMax = 2
             self.__faultCounterClearingTimeSec = 20
 
         elif self.__Settings['Ride-through Category'] == 'Category II':
-            #check overvoltage points
-            if self.__Settings['OV2 - p.u.'] != 1.20:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-            if self.__Settings['OV2 CT - sec'] != 0.16:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-            if self.__Settings['OV1 - p.u.'] < 1.1 and self.__Settings['OV1 - p.u.'] > 1.2:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-            if self.__Settings['OV1 CT - sec'] <1 and self.__Settings['OV1 CT - sec'] > 13:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-            #check undervoltage points
-            if self.__Settings['UV2 - p.u.'] < 0.0 and self.__Settings['UV2 - p.u.'] > 0.45:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-            if self.__Settings['UV2 CT - sec'] < 0.16 and self.__Settings['UV2 CT - sec'] > 2:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-            if self.__Settings['UV1 - p.u.'] < 0.0 and self.__Settings['UV1 - p.u.'] > 0.88:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-            if self.__Settings['UV1 CT - sec'] <2 and self.__Settings['UV1 CT - sec'] > 21:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
+            ov2pu_eq = 1.20
+            ov2sec_eq = 0.16
+            ov1pu_min = 1.1
+            ov1pu_max = 1.2
+            ov1sec_min = 1
+            ov1sec_max = 13
+            uv2pu_min = 0.0
+            uv2pu_max = 0.45
+            uv2sec_min = 0.16
+            uv2sec_max = 2.0
+            uv1pu_min = 0.0
+            uv1pu_max = 0.88
+            uv1sec_min = 2.0
+            uv1sec_max = 21
 
             V = [1.10, 0.88, 0.65, 1.20, 1.175, 1.15, 0.45, 0.30]
             T = [5, 3, 0.2, 0.5, 1, 0.32, 0.16]
@@ -228,44 +194,58 @@ class PvVoltageRideThru(ControllerAbstract):
             self.__faultCounterClearingTimeSec = 10
 
         elif self.__Settings['Ride-through Category'] == 'Category III':
-            #check overvoltage points
-            if self.__Settings['OV2 - p.u.'] != 1.20:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-            if self.__Settings['OV2 CT - sec'] != 0.16:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-            if self.__Settings['OV1 - p.u.'] < 1.1 and self.__Settings['OV1 - p.u.'] > 1.2:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-            if self.__Settings['OV1 CT - sec'] <1 and self.__Settings['OV1 CT - sec'] > 13:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-            #check undervoltage points
-            if self.__Settings['UV2 - p.u.'] < 0.0 and self.__Settings['UV2 - p.u.'] > 0.5:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-            if self.__Settings['UV2 CT - sec'] < 2 and self.__Settings['UV2 CT - sec'] > 21:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-            if self.__Settings['UV1 - p.u.'] < 0.0 and self.__Settings['UV1 - p.u.'] > 0.88:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
-            if self.__Settings['UV1 CT - sec'] >=21 and self.__Settings['UV1 CT - sec'] <= 50:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
-                assert False
-
+            ov2pu_eq = 1.20
+            ov2sec_eq = 0.16
+            ov1pu_min = 1.1
+            ov1pu_max = 1.2
+            ov1sec_min = 1
+            ov1sec_max = 13
+            uv2pu_min = 0.0
+            uv2pu_max = 0.5
+            uv2sec_min = 2.0
+            uv2sec_max = 21.0
+            uv1pu_min = 0.0
+            uv1pu_max = 0.88
+            uv1sec_min = 2.0
+            uv1sec_max = 21.0
 
             V = [1.10, 0.88, 0.5, 1.2, 1.2, 1.2, 0.0, 0.0]
             T = [21, 10, 13, 13, 13, 1, 1]
             self.__faultCounterMax = 3
             self.__faultCounterClearingTimeSec = 5
+
+        #check overvoltage points
+        if self.__Settings['OV2 - p.u.'] != ov2pu_eq:
+            print("User defined setting outside of IEEE 1547 acceptable range.")
+            assert False
+
+        if self.__Settings['OV2 CT - sec'] != ov2sec_eq:
+            print("User defined setting outside of IEEE 1547 acceptable range.")
+            assert False
+
+        if self.__Settings['OV1 - p.u.'] < ov1pu_min and self.__Settings['OV1 - p.u.'] > ov1pu_max:
+            print("User defined setting outside of IEEE 1547 acceptable range.")
+            assert False
+
+        if self.__Settings['OV1 CT - sec'] < ov1sec_min and self.__Settings['OV1 CT - sec'] > ov1sec_max:
+            print("User defined setting outside of IEEE 1547 acceptable range.")
+            assert False
+        #check undervoltage points
+        if self.__Settings['UV2 - p.u.'] < uv2pu_min and self.__Settings['UV2 - p.u.'] > uv2pu_max:
+            print("User defined setting outside of IEEE 1547 acceptable range.")
+            assert False
+
+        if self.__Settings['UV2 CT - sec'] < uv2sec_min and self.__Settings['UV2 CT - sec'] > uv2sec_max:
+            print("User defined setting outside of IEEE 1547 acceptable range.")
+            assert False
+
+        if self.__Settings['UV1 - p.u.'] < uv1pu_min and self.__Settings['UV1 - p.u.'] > uv1pu_max:
+            print("User defined setting outside of IEEE 1547 acceptable range.")
+            assert False
+
+        if self.__Settings['UV1 CT - sec'] <uv1sec_min and self.__Settings['UV1 CT - sec'] > uv1sec_max:
+            print("User defined setting outside of IEEE 1547 acceptable range.")
+            assert False
 
         self._ControlledElm.SetParameter('Model', '7')
         self._ControlledElm.SetParameter('Vmaxpu', V[0])

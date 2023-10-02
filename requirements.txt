@@ -3,7 +3,7 @@ scipy
 bokeh
 networkx
 toml
-OpenDSSDirect.py~=0.7.0
+OpenDSSDirect.py~=0.8.4
 Shapely
 click
 numpy
@@ -12,8 +12,8 @@ tables
 h5py
 helics
 terminaltables
-aiohttp
-aiohttp_swagger3==0.4.3
+aiohttp~=3.8.2
+aiohttp_swagger3>=0.4.3
 requests
 pymongo
 pydantic~=1.10.11

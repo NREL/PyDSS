@@ -1,9 +1,12 @@
 import ast
 
+from opendssdirect import DSSException
+
 from PyDSS.dssBus import dssBus
 from PyDSS.dssObjectBase import dssObjectBase
 from PyDSS.exceptions import InvalidParameter
 from PyDSS.value_storage import ValueByNumber
+
 
 class dssElement(dssObjectBase):
 
@@ -81,8 +84,14 @@ class dssElement(dssObjectBase):
             self._Parameters[PptName] = str(i)
 
         CktElmVarDict = dssInstance.CktElement.__dict__
-        for VarName in dssInstance.CktElement.AllVariableNames():
-            CktElmVarDict[VarName] = None
+        try:
+            for VarName in dssInstance.CktElement.AllVariableNames():
+                CktElmVarDict[VarName] = None
+        except DSSException as e:
+            # Prior to OpenDSSDirect.py v0.8.0 this returned an empty list for non-PC elements.
+            # v0.8.0 and later raises an exception. Ignore the error.
+            if e.args[1] != "The active circuit element is not a PC Element":
+                raise
 
         for key in CktElmVarDict.keys():
             try:
