@@ -1,3 +1,13 @@
+[[Generators]]
+property = "Powers"
+data_conversion = "none"
+opendss_classes = []
+sample_interval = 1
+publish = true
+store_values_type = "all"
+sum_elements = false
+sum_groups = []
+
 [[Loads]]
 property = "Powers"
 data_conversion = "none"

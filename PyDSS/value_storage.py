@@ -520,13 +520,22 @@ class ValueContainer:
                  dataset_property_type, max_chunk_bytes=None, store_time_step=False):
         group_name = os.path.dirname(path)
         basename = os.path.basename(path)
+        self.group_name = group_name
+        self.basename = basename
         try:
             if basename in hdf_store[group_name]:
                 raise InvalidParameter(f"duplicate dataset name {basename}")
         except KeyError:
             # Don't bother checking each sub path.
             pass
-
+        
+        self._length={}
+        for value in values:
+            if isinstance(value, list):
+                self._length[value] = len(value.value)
+            else:
+                self._length[value] = 1
+        
         dtype = values[0].value_type
         scaleoffset = None
         # There is no np.float128 on Windows.
@@ -601,11 +610,13 @@ class ValueContainer:
             list of ValueStorageBase
 
         """
-        
-        if isinstance(values[0].value, list):
-            vals = [x for y in values for x in y.value]
+        if values:
+            if isinstance(values[0].value, list):
+                vals = [x for y in values for x in y.value]
+            else:
+                vals = [x.value for x in values]
         else:
-            vals = [x.value for x in values]
+            vals = [np.NaN for k, v in self._length.items() for x in range(v)]
 
         self._dataset.write_value(vals)
 

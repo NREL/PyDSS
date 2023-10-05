@@ -3,7 +3,7 @@ import abc
  
 from PyDSS.exceptions import InvalidParameter
 from PyDSS.value_storage import ValueByLabel, ValueByList, ValueByNumber
-
+import numpy as np
 
 class dssObjectBase(abc.ABC):
 
@@ -57,7 +57,7 @@ class dssObjectBase(abc.ABC):
         if VarName in self._Variables:
             VarValue = self.GetVariable(VarName, convert=convert)
         else:
-            VarValue = -1
+            VarValue = np.NaN
         return VarValue
 
     def GetVariable(self, VarName, convert=False):
@@ -88,6 +88,7 @@ class dssObjectBase(abc.ABC):
         return ValueByNumber(self._FullName, VarName, value)
 
     def UpdateValue(self, VarName):
+        
         cachedValue = self._CachedValueStorage.get(VarName)
         if cachedValue is None:
             cachedValue = self.GetValue(VarName, convert=True)

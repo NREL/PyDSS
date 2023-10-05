@@ -7,3 +7,4 @@ New PVSystem.pvgnem_mpx000460267 phases=1 bus=111-PV.1 kv=0.24 kva=8.5 pf=1.0 ir
 New PVSystem.pvgnem_mpx000594341 phases=1 bus=113-PV.1 kv=0.24 kva=4.6 pf=1.0 irradiance=1 Pmpp=4.6 yearly=pv_MPX000594341
 New PVSystem.pvgui_mpx000637601 phases=1 bus=112-PV.1 kv=0.24  kva=5.5 pf=1.0 irradiance=1.01069592198581 Pmpp=5.5 yearly=pv_MPX000637601
 New PVSystem.pvgui_mpx000460267 phases=1 bus=111-PV.1 kv=0.24  kva=3.9 pf=1.0 irradiance=0.925303188892118 Pmpp=3.9 yearly=pv_MPX000460267
+New Generator.gen_1 phases=1 bus=111-PV.1 kv=0.24  kva=3.9 kw=1.0 

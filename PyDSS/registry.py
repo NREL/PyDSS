@@ -15,16 +15,24 @@ from PyDSS.utils.utils import dump_data, load_data
 
 DEFAULT_REGISTRY = {
     "Controllers": {
-        ControllerType.PV_CONTROLLER.value: [
+        ControllerType.PV_CONTROLLER.value: [],
+        ControllerType.PV_VOLTAGE_RIDETHROUGH.value: [
             {
-                "name": "cpf",
+                "name": "1547_CAT_I",
                 "filename": os.path.join(
                     os.path.dirname(getattr(PyDSS, "__path__")[0]),
                     "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
                 ),
             },
             {
-                "name": "volt-var",
+                "name": "1547_CAT_II",
+                "filename": os.path.join(
+                    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+                    "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
+                ),
+            },
+            {
+                "name": "1547_CAT_III",
                 "filename": os.path.join(
                     os.path.dirname(getattr(PyDSS, "__path__")[0]),
                     "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
@@ -36,7 +44,6 @@ DEFAULT_REGISTRY = {
         ControllerType.XMFR_CONTROLLER.value: [],
         ControllerType.MOTOR_STALL.value: [],
         ControllerType.MOTOR_STALL_SIMPLE.value: [],
-        ControllerType.PV_VOLTAGE_RIDETHROUGH.value: [],
         ControllerType.FAULT_CONTROLLER.value: [],
     },
 }
@@ -56,7 +63,7 @@ class Registry:
             self._registry_filename = Path.home() / self._REGISTRY_FILENAME
         else:
             self._registry_filename = Path(registry_filename)
-
+         
         self._controllers = {x: {} for x in CONTROLLER_TYPES}
         data = copy.deepcopy(DEFAULT_REGISTRY)
         for controller_type, controllers in DEFAULT_REGISTRY["Controllers"].items():
@@ -64,7 +71,7 @@ class Registry:
                 path = Path(controller["filename"])
                 if not path.exists():
                     raise InvalidConfiguration(f"Default controller file={path} does not exist")
-
+                
         # This is written to work with legacy versions where default controllers were
         # written to the registry.
         if self._registry_filename.exists():

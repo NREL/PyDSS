@@ -1,3 +1,9 @@
+[[Generators]]
+property = "Powers"
+sample_interval = 1
+publish = true
+store_values_type = "all"
+
 [[Loads]]
 property = "Powers"
 sample_interval = 1

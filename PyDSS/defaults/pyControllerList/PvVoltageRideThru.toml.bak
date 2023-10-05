@@ -1,30 +1,3 @@
-[NO_VRT]
-"Category" = "test"
-"kVA" = 4.0
-"maxKW" = 4.0
-"KvarLimit"	= 1.76
-"%PCutin" = 10.0
-"%PCutout" = 10.0
-"UcalcMode" = "Max"
-"Priority" = "Equal"
-"Enable PF limit" = false
-"pfMin"	= 0.95
-"Follow standard" = "1547-2003"
-"Ride-through Category"	= "Category I"
-"OV2 - p.u." = 1.2
-"OV2 CT - sec" = 0.16
-"OV1 - p.u." = 1.2
-"OV1 CT - sec" = 2.0
-"UV1 - p.u." = 0.8
-"UV1 CT - sec" = 2.0
-"UV2 - p.u." = 0.5
-"UV2 CT - sec" = 0.16
-"Reconnect deadtime - sec" = 3000.0
-"Reconnect Pmax time - sec" = 300.0
-"Permissive operation" = "Current limited"
-"May trip operation" = "Trip"
-"Multiple disturbances" = "Trip"
-
 [1547_CAT_I]
 "Category" = "test"
 "kVA" = 4.0
@@ -52,7 +25,6 @@
 "May trip operation" = "Trip"
 "Multiple disturbances" = "Trip"
 
-
 [1547_CAT_II]
 "Category" = "test"
 "kVA" = 4.0
@@ -79,7 +51,6 @@
 "Permissive operation" = "Current limited"
 "May trip operation" = "Trip"
 "Multiple disturbances" = "Trip"
-
 
 [1547_CAT_III]
 "Category" = "test"
