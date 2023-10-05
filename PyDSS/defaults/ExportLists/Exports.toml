@@ -1,59 +1,46 @@
-[Loads.Powers]
+[[Generators]]
+property = "Powers"
+sample_interval = 1
 publish = true
 store_values_type = "all"
 
-[PVSystems.Pmpp]
-publish = false
-store_values_type = "all"
-
-[Storages.Powers]
+[[Loads]]
+property = "Powers"
+sample_interval = 1
 publish = true
 store_values_type = "all"
 
-[Buses.puVmagAngle]
-publish = false
-store_values_type = "all"
-
-[Buses.Distance]
-publish = false
-store_values_type = "all"
-
-[Circuits.TotalPower]
+[[PVSystems]]
+property = "Powers"
+name_regexes = [".*pvgnem.*"]
+sample_interval = 1
 publish = true
 store_values_type = "all"
 
-[Circuits.LineLosses]
+[[Storages]]
+property = "Powers"
+sample_interval = 1
 publish = true
 store_values_type = "all"
 
-[Circuits.Losses]
+[[Buses]]
+property = "puVmagAngle"
+sample_interval = 1
 publish = true
 store_values_type = "all"
 
-[Circuits.SubstationLosses]
+[[Circuits]]
+property = "TotalPower"
+sample_interval = 1
 publish = true
 store_values_type = "all"
 
-[Lines.Currents]
-publish = false
+[[Lines]]
+property = "VoltagesMagAng"
+sample_interval = 1
+names = [ "Line.sw0", "Line.sw1"]
+publish = true
 store_values_type = "all"
 
-[Lines.NormalAmps]
-publish = false
-store_values_type = "all"
 
-[Lines.VoltagesMagAng]
-publish = false
-store_values_type = "all"
 
-[Lines.CurrentsMagAng]
-publish = false
-store_values_type = "all"
-
-[Transformers.Currents]
-publish = false
-store_values_type = "all"
-
-[Transformers.NormalAmps]
-publish = false
-store_values_type = "all"

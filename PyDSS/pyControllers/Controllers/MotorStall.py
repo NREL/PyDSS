@@ -86,9 +86,6 @@ class MotorStall(ControllerAbstract):
         self.p_stall = 0
         self.q_stall = 0
         
-        self.file = open(r"C:\Users\alatif\Desktop\NAERM\models\17735\motor.csv", "w")
-        self.file.write("CompLF,CompPF,V_stall_adj,V_break_adj,P0,Q0,P,Q,u,x,theeta\n")
-        
         return
     
     def Name(self):
@@ -169,9 +166,6 @@ class MotorStall(ControllerAbstract):
                     self._ControlledElm.SetParameter('kw',  self.p_stall * Kth ) 
                     self._ControlledElm.SetParameter('kvar', self.q_stall * Kth ) 
   
-            self.file.write(f"{CompLF},{CompPF},{V_stall_adj},{V_break_adj},{P0},{Q0},{p},{q},{i2r},{self.X[0]},{i2r_calc}\n")
-            self.file.flush()
-
         self.model_mode_old = self.model_mode
         
         return 0

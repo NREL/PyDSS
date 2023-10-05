@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ValidationError, validator
+from pydantic import BaseModel, validator
 from typing import List, Optional, Any, Union, Dict
 from enum import Enum
 import logging
@@ -13,7 +13,7 @@ from PyDSS.common import SUBSCRIPTIONS_FILENAME, ExportMode
 from PyDSS.pyLogger import getLoggerTag
 from PyDSS.utils.utils import load_data
 
-type_info = {
+TYPE_INFO = {
         'CurrentsMagAng': 'vector',
         'Currents': 'vector',
         'RatedCurrent': 'double',
@@ -43,6 +43,7 @@ type_info = {
         '%stored': 'double',
         'Distance': 'double'
     }
+
 class DataType(Enum):
     DOUBLE = "double"
     VECTOR = "vector"
@@ -51,56 +52,55 @@ class DataType(Enum):
     INTEGER = "integer"
 
 class Subscription(BaseModel):
-    model : str
+    model: str
     property: str
-    id : str
-    unit : Optional[str] 
-    subscribe : bool = True
+    id: str
+    unit: Optional[str] 
+    subscribe: bool = True
     data_type: DataType
-    multiplier : float = 1.0
-    object : Any = None
-    states : List[Union[float, int, bool]] = [0.0, 0.0, 0.0, 0.0, 0.0]
-    sub : Any = None
+    multiplier: float = 1.0
+    object: Any = None
+    states: List[Union[float, int, bool]] = [0.0, 0.0, 0.0, 0.0, 0.0]
+    sub: Any = None
     
     class Config:
         arbitrary_types_allowed = True
 
 class Publication(BaseModel):
-    model : str
+    model: str
     property: str
-    id : str
-    object : Any = None
-    pub : Any = None
+    id: str
+    object: Any = None
+    pub: Any = None
     data_type: DataType
     
 class Subscriptions(BaseModel):
-    federate : Any
-    opendss_models : Dict
-    subscriptions : List[Subscription]
+    federate: Any
+    opendss_models: Dict
+    subscriptions: List[Subscription]
 
-    @validator('subscriptions')
+    @validator('subscriptions', each_item=True)
     def is_in_opendss_model(cls, v, values, **kwargs):
-        for subscription in v:
-            if subscription.model not in values["opendss_models"]:
-                raise ValidationError(f"The loaded OpenDSS model does not have an element define with the name {subscription}")
-            else:
-                if subscription.subscribe:
-                    subscription.object = values["opendss_models"][subscription.model]
-                    subscription.sub = helics.helicsFederateRegisterSubscription(
-                        values["federate"],
-                        subscription.id,
-                        subscription.unit
-                    )
+        if v.model not in values["opendss_models"]:
+            raise AssertionError(f"The loaded OpenDSS model does not have an element define with the name {v}")
+        
+        if v.subscribe:
+            v.object = values["opendss_models"][v.model]
+            v.sub = helics.helicsFederateRegisterSubscription(
+                values["federate"],
+                v.id,
+                v.unit
+            )
         return v
     
 class Publications(BaseModel):
     
-    federate : Any
-    federate_name : str
-    opendss_models : Dict
-    publications : List[Publication] = []
-    legacy_input : Optional[Dict] = {}
-    input: Optional[Dict] = {}
+    federate: Any
+    federate_name: str
+    opendss_models: Dict
+    publications: List[Publication] = []
+    legacy_input: Dict = {}
+    input: Dict = {}
     
     @validator('legacy_input')
     def build_from_legacy(cls, v, values, **kwargs):
@@ -116,11 +116,11 @@ class Publications(BaseModel):
                             "object" :  models[model],
                             "id" : name,
                             "property" : ppty,
-                            "data_type" : type_info[ppty],
+                            "data_type" : TYPE_INFO[ppty],
                             "pub" :  helics.helicsFederateRegisterGlobalTypePublication(
                                 values["federate"],
                                 name,
-                                type_info[ppty],
+                                TYPE_INFO[ppty],
                                 ''
                             )
                         }
@@ -130,7 +130,6 @@ class Publications(BaseModel):
 
     @validator('input')
     def build_from_export(cls, v, values, **kwargs):
-        print(v)
         publications = []
         for object_type, export_properties in v.items():
             if object_type in values["opendss_models"]:
@@ -161,11 +160,11 @@ class Publications(BaseModel):
                                 "object" :  model_obj,
                                 "id" : name,
                                 "property" : export_property["property"],
-                                "data_type" : type_info[export_property["property"]],
+                                "data_type" : TYPE_INFO[export_property["property"]],
                                 "pub" :  helics.helicsFederateRegisterGlobalTypePublication(
                                     values["federate"],
                                     name,
-                                    type_info[export_property["property"]],
+                                    TYPE_INFO[export_property["property"]],
                                     ''
                                 )
                             }
@@ -309,7 +308,7 @@ class helics_interface:
             
             if os.path.exists(legacy_export_file):
                 legacy_data = load_data(legacy_export_file)
-                print(legacy_data)
+
                 publication_dict["legacy_input"] = legacy_data
             elif os.path.exists(export_file):
                 export_data = load_data(export_file)
@@ -324,7 +323,7 @@ class helics_interface:
         
         for publication in self.publications.publications:
             value = publication.object.GetValue(publication.property)
-            print(publication.id, value)
+            
             if publication.data_type == DataType.VECTOR:
                 helics.helicsPublicationPublishVector(publication.pub, value)
             elif publication.data_type == DataType.DOUBLE:
@@ -335,6 +334,8 @@ class helics_interface:
                 helics.helicsPublicationPublishBoolean(publication.pub, value)
             elif publication.data_type == DataType.INTEGER:
                 helics.helicsPublicationPublishInteger(publication.pub, value)
+            else:
+                raise ValueError("Unsupported data type forr teh HELICS interface")
     
         return
 
