@@ -1,6 +1,6 @@
 from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
 from shapely.geometry import MultiPoint, Polygon, Point, MultiPolygon
-from shapely.ops import triangulate, cascaded_union
+from shapely.ops import triangulate, unary_union
 import datetime
 import math
 import os
@@ -277,32 +277,32 @@ class PvVoltageRideThru(ControllerAbstract):
         if self.__Settings['Ride-through Category'] in ['Category I', 'Category II']:
             if self.__Settings['Permissive operation'] == 'Current limited':
                 if self.__Settings['May trip operation'] == 'Permissive operation':
-                    self.CurrLimRegion = cascaded_union(
+                    self.CurrLimRegion = unary_union(
                         [PermissiveOVRegion, PermissiveUVRegion, MandatoryRegion, MayTripRegion])
                     self.MomentarySucessionRegion = None
-                    self.TripRegion = cascaded_union([OVtripRegion, UVtripRegion])
+                    self.TripRegion = unary_union([OVtripRegion, UVtripRegion])
                 else:
-                    self.CurrLimRegion = cascaded_union([PermissiveOVRegion, PermissiveUVRegion, MandatoryRegion])
+                    self.CurrLimRegion = unary_union([PermissiveOVRegion, PermissiveUVRegion, MandatoryRegion])
                     self.MomentarySucessionRegion = None
-                    self.TripRegion = cascaded_union([OVtripRegion, UVtripRegion, MayTripRegion])
+                    self.TripRegion = unary_union([OVtripRegion, UVtripRegion, MayTripRegion])
             else:
                 if self.__Settings['May trip operation'] == 'Permissive operation':
                     self.CurrLimRegion = MandatoryRegion
-                    self.MomentarySucessionRegion = cascaded_union([PermissiveOVRegion, PermissiveUVRegion, MayTripRegion])
-                    self.TripRegion = cascaded_union([OVtripRegion, UVtripRegion])
+                    self.MomentarySucessionRegion = unary_union([PermissiveOVRegion, PermissiveUVRegion, MayTripRegion])
+                    self.TripRegion = unary_union([OVtripRegion, UVtripRegion])
                 else:
                     self.CurrLimRegion = MandatoryRegion
-                    self.MomentarySucessionRegion = cascaded_union([PermissiveOVRegion, PermissiveUVRegion])
-                    self.TripRegion = cascaded_union([OVtripRegion, UVtripRegion, MayTripRegion])
+                    self.MomentarySucessionRegion = unary_union([PermissiveOVRegion, PermissiveUVRegion])
+                    self.TripRegion = unary_union([OVtripRegion, UVtripRegion, MayTripRegion])
         else:
             if self.__Settings['May trip operation'] == 'Permissive operation':
                 self.CurrLimRegion = MandatoryRegion
-                self.MomentarySucessionRegion = cascaded_union([PermissiveOVRegion, PermissiveUVRegion, MayTripRegion])
-                self.TripRegion = cascaded_union([OVtripRegion, UVtripRegion])
+                self.MomentarySucessionRegion = unary_union([PermissiveOVRegion, PermissiveUVRegion, MayTripRegion])
+                self.TripRegion = unary_union([OVtripRegion, UVtripRegion])
             else:
                 self.CurrLimRegion = MandatoryRegion
-                self.MomentarySucessionRegion = cascaded_union([PermissiveOVRegion, PermissiveUVRegion])
-                self.TripRegion = cascaded_union([OVtripRegion, UVtripRegion, MayTripRegion])
+                self.MomentarySucessionRegion = unary_union([PermissiveOVRegion, PermissiveUVRegion])
+                self.TripRegion = unary_union([OVtripRegion, UVtripRegion, MayTripRegion])
         self.NormalRegion = ContineousRegion
         
         

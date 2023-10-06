@@ -419,8 +419,9 @@ class ValueByLabel(ValueStorageBase):
 
         self._m = m
         self._n = n
+        self._value_length = len(value)
         value = self._fix_value(value)
-
+        
         # Chunk_list example
         # X = list(range(12)) , nList= 2
         # Y = chunk_list(X, nList) -> [[0, 1], [2, 3], [4, 5], [6, 7], [8, 9], [10, 11]]
@@ -498,8 +499,12 @@ class ValueByLabel(ValueStorageBase):
             self._value_type = type(value[0])
 
     def set_value_from_raw(self, value):
+        if len(value) != self._value_length:
+            value = [np.NaN for i in range(self._value_length)]
+        
         value = self._fix_value(value)
         self._value.clear()
+        
         for i, node_val in enumerate(zip(self._nodes, value)):
             node, val = node_val
             for v, x in zip(node, val):
@@ -507,7 +512,6 @@ class ValueByLabel(ValueStorageBase):
                     self._value += [complex(x[0], x[1])]
                 else:
                     self._value += [x[0], x[1]]
-
     @property
     def value_type(self):
         return self._value_type
@@ -521,7 +525,7 @@ class ValueContainer:
         group_name = os.path.dirname(path)
         basename = os.path.basename(path)
         self.group_name = group_name
-        self.basename = basename
+        self.base_name = basename
         try:
             if basename in hdf_store[group_name]:
                 raise InvalidParameter(f"duplicate dataset name {basename}")
@@ -617,7 +621,9 @@ class ValueContainer:
                 vals = [x.value for x in values]
         else:
             vals = [np.NaN for k, v in self._length.items() for x in range(v)]
-
+        
+        print(self.group_name, self.base_name, len(vals), vals[:min([len(vals), 3])])
+        
         self._dataset.write_value(vals)
 
     def append_by_time_step(self, value, time_step, elem_index):
