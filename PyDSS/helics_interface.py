@@ -305,14 +305,13 @@ class helics_interface:
                 "federate_name" : self._settings.helics.federate_name,
                 "federate" : self._federate,
             }
-            
-            if os.path.exists(legacy_export_file):
-                legacy_data = load_data(legacy_export_file)
-
-                publication_dict["legacy_input"] = legacy_data
-            elif os.path.exists(export_file):
+                  
+            if os.path.exists(export_file):
                 export_data = load_data(export_file)
-                publication_dict["input"] = export_data                    
+                publication_dict["input"] = export_data     
+            elif os.path.exists(legacy_export_file):
+                legacy_data = load_data(legacy_export_file)
+                publication_dict["legacy_input"] = legacy_data               
             else:
                 raise FileNotFoundError("No valid export settings found for the current scenario")
             
