@@ -98,75 +98,75 @@ class MotorStall(ControllerAbstract):
         return 
 
     def Update(self, Priority, Time, UpdateResults):
-        
         self.t = self.__dssSolver.GetTotalSeconds()
-        self.current_pu = self._ControlledElm.GetVariable('CurrentsMagAng')[0] / self.Ibase
-        self.voltage = self._ControlledElm.GetVariable('VoltagesMagAng')[0]
-        self.p = self._ControlledElm.GetVariable('Powers')[0]
-        self.q = self._ControlledElm.GetVariable('Powers')[1]
-        self.voltage_pu = self._ControlledElm.sBus[0].GetVariable("puVmagAngle")[0]
+        if self.Ibase:    
+            self.current_pu = self._ControlledElm.GetVariable('CurrentsMagAng')[0] / self.Ibase
+            self.voltage = self._ControlledElm.GetVariable('VoltagesMagAng')[0]
+            self.p = self._ControlledElm.GetVariable('Powers')[0]
+            self.q = self._ControlledElm.GetVariable('Powers')[1]
+            self.voltage_pu = self._ControlledElm.sBus[0].GetVariable("puVmagAngle")[0]
 
-        if Priority == 0:
-            
-            i2r = self.current_pu ** 2 * self.R_stall_pu       
-            self.i2r = max(self.i2r, i2r)  
-            self.T = np.array([self.T[-1], self.t])
-            self.U = np.array([self.U[-1], self.i2r])
-            tout, yout, xout = signal.lsim2(self.H, self.U, self.T, self.X)
-            self.X = xout[-1]
-            i2r_calc = yout[-1] / 50.0
-            
-          
-            CompLF = self.p / self.kw_rated
-            CompPF = 0.75 #self.p / (self.p**2 + self.q**2)**0.5
-            
-            V_stall_adj = self.__Settings['Vstall']*(1 + self.__Settings['LFadj'] * (CompLF-1))
-            V_break_adj = self.__Settings['Vbreak']*(1 + self.__Settings['LFadj'] * (CompLF-1))
-            
-            P0 = 1 - self.__Settings['Kp1'] * (1-V_break_adj)**self.__Settings['Np1']
-            Q0 = ((1 - CompPF**2)**0.5 / CompPF)-self.__Settings['Kq1']*(1-V_break_adj)**self.__Settings['Nq1']
-            
-            p = self.p / self.kw_rated
-            q = self.q / self.kvar_rated
-            
-            if self.voltage_pu > V_break_adj and not self.stall: 
-                p = P0 + self.__Settings['Kp1']*(self.voltage_pu-V_break_adj)**self.__Settings['Np1']
-                q = Q0 + self.__Settings['Kq1']*(self.voltage_pu-V_break_adj)**self.__Settings['Nq1']
-                self._ControlledElm.SetParameter('kw', self.kw_rated * p) 
-                self._ControlledElm.SetParameter('kvar', self.kvar_rated * q) 
-
-            elif self.voltage_pu <= V_break_adj and not self.stall:   
-                p = P0 + self.__Settings['Kp2'] * (V_break_adj - self.voltage_pu)**self.__Settings['Np2']
-                q = Q0 + self.__Settings['Kq2'] * (V_break_adj - self.voltage_pu)**self.__Settings['Nq2']
+            if Priority == 0:
                 
-                self._ControlledElm.SetParameter('kw', self.kw_rated * p ) 
-                self._ControlledElm.SetParameter('kvar', self.kvar_rated * q) 
-
-                if self.voltage_pu < V_stall_adj and not self.stall:
-                    self.p_stall = self._ControlledElm.GetParameter('kw')
-                    self.q_stall = self._ControlledElm.GetParameter('kvar')
-                    self.stall_time_start = self.__dssSolver.GetTotalSeconds()
-                    self.stall = True
+                i2r = self.current_pu ** 2 * self.R_stall_pu       
+                self.i2r = max(self.i2r, i2r)  
+                self.T = np.array([self.T[-1], self.t])
+                self.U = np.array([self.U[-1], self.i2r])
+                tout, yout, xout = signal.lsim2(self.H, self.U, self.T, self.X)
+                self.X = xout[-1]
+                i2r_calc = yout[-1] / 50.0
+                
             
-            if self.voltage_pu > V_stall_adj and self.stall:
-                self.stall_time = self.__dssSolver.GetTotalSeconds() - self.stall_time_start
-                if self.stall_time < self.__Settings['Tstall']:
-                    self._ControlledElm.SetParameter('kw', self.p_stall)
-                    self._ControlledElm.SetParameter('kvar', self.q_stall)
-                else:
-                    if i2r_calc < self.__Settings['Tth1t']:
-                        Kth = 1
-                    elif i2r_calc > self.__Settings['Tth2t']:
-                        Kth = 0
-                    else:
-                        m = 1 / (self.__Settings['Tth1t'] - self.__Settings['Tth2t'])
-                        c = - m * self.__Settings['Tth2t']
-                        Kth = m * i2r_calc + c
+                CompLF = self.p / self.kw_rated
+                CompPF = 0.75 #self.p / (self.p**2 + self.q**2)**0.5
+                
+                V_stall_adj = self.__Settings['Vstall']*(1 + self.__Settings['LFadj'] * (CompLF-1))
+                V_break_adj = self.__Settings['Vbreak']*(1 + self.__Settings['LFadj'] * (CompLF-1))
+                
+                P0 = 1 - self.__Settings['Kp1'] * (1-V_break_adj)**self.__Settings['Np1']
+                Q0 = ((1 - CompPF**2)**0.5 / CompPF)-self.__Settings['Kq1']*(1-V_break_adj)**self.__Settings['Nq1']
+                
+                p = self.p / self.kw_rated
+                q = self.q / self.kvar_rated
+                
+                if self.voltage_pu > V_break_adj and not self.stall: 
+                    p = P0 + self.__Settings['Kp1']*(self.voltage_pu-V_break_adj)**self.__Settings['Np1']
+                    q = Q0 + self.__Settings['Kq1']*(self.voltage_pu-V_break_adj)**self.__Settings['Nq1']
+                    self._ControlledElm.SetParameter('kw', self.kw_rated * p) 
+                    self._ControlledElm.SetParameter('kvar', self.kvar_rated * q) 
 
-                    self._ControlledElm.SetParameter('kw',  self.p_stall * Kth ) 
-                    self._ControlledElm.SetParameter('kvar', self.q_stall * Kth ) 
-  
-        self.model_mode_old = self.model_mode
+                elif self.voltage_pu <= V_break_adj and not self.stall:   
+                    p = P0 + self.__Settings['Kp2'] * (V_break_adj - self.voltage_pu)**self.__Settings['Np2']
+                    q = Q0 + self.__Settings['Kq2'] * (V_break_adj - self.voltage_pu)**self.__Settings['Nq2']
+                    
+                    self._ControlledElm.SetParameter('kw', self.kw_rated * p ) 
+                    self._ControlledElm.SetParameter('kvar', self.kvar_rated * q) 
+
+                    if self.voltage_pu < V_stall_adj and not self.stall:
+                        self.p_stall = self._ControlledElm.GetParameter('kw')
+                        self.q_stall = self._ControlledElm.GetParameter('kvar')
+                        self.stall_time_start = self.__dssSolver.GetTotalSeconds()
+                        self.stall = True
+                
+                if self.voltage_pu > V_stall_adj and self.stall:
+                    self.stall_time = self.__dssSolver.GetTotalSeconds() - self.stall_time_start
+                    if self.stall_time < self.__Settings['Tstall']:
+                        self._ControlledElm.SetParameter('kw', self.p_stall)
+                        self._ControlledElm.SetParameter('kvar', self.q_stall)
+                    else:
+                        if i2r_calc < self.__Settings['Tth1t']:
+                            Kth = 1
+                        elif i2r_calc > self.__Settings['Tth2t']:
+                            Kth = 0
+                        else:
+                            m = 1 / (self.__Settings['Tth1t'] - self.__Settings['Tth2t'])
+                            c = - m * self.__Settings['Tth2t']
+                            Kth = m * i2r_calc + c
+
+                        self._ControlledElm.SetParameter('kw',  self.p_stall * Kth ) 
+                        self._ControlledElm.SetParameter('kvar', self.q_stall * Kth ) 
+    
+            self.model_mode_old = self.model_mode
         
         return 0
 

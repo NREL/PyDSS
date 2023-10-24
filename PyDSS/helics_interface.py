@@ -249,6 +249,9 @@ class helics_interface:
             self.subscriptions = Subscriptions.validate(file_data)
         else:
             self.subscriptions = subscriptions
+        self._logger.info(str(self.subscriptions.subscriptions))
+        for subscription in self.subscriptions.subscriptions:
+            self._logger.info(f"subscription created: {subscription}")
         return
 
     def updateHelicsSubscriptions(self):
@@ -316,6 +319,9 @@ class helics_interface:
                 raise FileNotFoundError("No valid export settings found for the current scenario")
             
             self.publications = Publications.validate(publication_dict)
+            self._logger.info(str(self.publications.publications))
+            for publication in self.publications.publications:
+                self._logger.info(f"pubscription created: {publication}")
         return
 
     def updateHelicsPublications(self):
@@ -335,7 +341,7 @@ class helics_interface:
                 helics.helicsPublicationPublishInteger(publication.pub, value)
             else:
                 raise ValueError("Unsupported data type forr teh HELICS interface")
-    
+            self._logger.info(f"{publication} - {value}")
         return
 
     def request_time_increment(self):

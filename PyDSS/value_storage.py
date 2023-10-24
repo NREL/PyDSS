@@ -621,9 +621,7 @@ class ValueContainer:
                 vals = [x.value for x in values]
         else:
             vals = [np.NaN for k, v in self._length.items() for x in range(v)]
-        
-        print(self.group_name, self.base_name, len(vals), vals[:min([len(vals), 3])])
-        
+            
         self._dataset.write_value(vals)
 
     def append_by_time_step(self, value, time_step, elem_index):

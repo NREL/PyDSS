@@ -15,29 +15,16 @@ from PyDSS.utils.utils import dump_data, load_data
 
 DEFAULT_REGISTRY = {
     "Controllers": {
-        ControllerType.PV_CONTROLLER.value: [],
+        ControllerType.PV_CONTROLLER.value: [
+            {
+                "name": "NO_VRT",
+                "filename": os.path.join(
+                    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+                    "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
+                ),
+            },
+            ],
         ControllerType.PV_VOLTAGE_RIDETHROUGH.value: [
-            {
-                "name": "1547_CAT_I",
-                "filename": os.path.join(
-                    os.path.dirname(getattr(PyDSS, "__path__")[0]),
-                    "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
-                ),
-            },
-            {
-                "name": "1547_CAT_II",
-                "filename": os.path.join(
-                    os.path.dirname(getattr(PyDSS, "__path__")[0]),
-                    "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
-                ),
-            },
-            {
-                "name": "1547_CAT_III",
-                "filename": os.path.join(
-                    os.path.dirname(getattr(PyDSS, "__path__")[0]),
-                    "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
-                ),
-            },
         ],
         ControllerType.SOCKET_CONTROLLER.value: [],
         ControllerType.STORAGE_CONTROLLER.value: [],

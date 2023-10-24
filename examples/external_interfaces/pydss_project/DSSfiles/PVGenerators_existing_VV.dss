@@ -2,9 +2,9 @@ New Line.PVL_110 phases=1 bus1=110_2.1 bus2=110-PV.1 linecode=6 length=10 units=
 New Line.PVL_111 phases=1 bus1=111_2.1 bus2=111-PV.1 linecode=6 length=10 units=ft
 New Line.PVL_113 phases=1 bus1=113_2.1 bus2=113-PV.1 linecode=6 length=10 units=ft
 New Line.PVL_112 phases=1 bus1=112_2.1 bus2=112-PV.1 linecode=6 length=10 units=ft
-New PVSystem.pvgnem_mpx000635970 phases=1 bus=110-PV.1 kv=0.24 kva=20 pf=1.0 irradiance=1 Pmpp=20 yearly=pv_MPX000635970 !was kva=3.1, Pmpp=3.1
-New PVSystem.pvgnem_mpx000460267 phases=1 bus=111-PV.1 kv=0.24 kva=8.5 pf=1.0 irradiance=1 Pmpp=8.5 yearly=pv_MPX000460267
-New PVSystem.pvgnem_mpx000594341 phases=1 bus=113-PV.1 kv=0.24 kva=4.6 pf=1.0 irradiance=1 Pmpp=4.6 yearly=pv_MPX000594341
-New PVSystem.pvgui_mpx000637601 phases=1 bus=112-PV.1 kv=0.24  kva=5.5 pf=1.0 irradiance=1.01069592198581 Pmpp=5.5 yearly=pv_MPX000637601
-New PVSystem.pvgui_mpx000460267 phases=1 bus=111-PV.1 kv=0.24  kva=3.9 pf=1.0 irradiance=0.925303188892118 Pmpp=3.9 yearly=pv_MPX000460267
-New Generator.gen_1 phases=1 bus=111-PV.1 kv=0.24  kva=3.9 kw=1.0 
+!New PVSystem.pvgnem_mpx000635970 phases=1 bus=110-PV.1 kv=0.24 kva=20 pf=1.0 irradiance=1 Pmpp=20 yearly=pv_MPX000635970 !was kva=3.1, Pmpp=3.1
+!New PVSystem.pvgnem_mpx000460267 phases=1 bus=111-PV.1 kv=0.24 kva=8.5 pf=1.0 irradiance=1 Pmpp=8.5 yearly=pv_MPX000460267
+!New PVSystem.pvgnem_mpx000594341 phases=1 bus=113-PV.1 kv=0.24 kva=4.6 pf=1.0 irradiance=1 Pmpp=4.6 yearly=pv_MPX000594341
+!New PVSystem.pvgui_mpx000637601 phases=1 bus=112-PV.1 kv=0.24  kva=5.5 pf=1.0 irradiance=1.01069592198581 Pmpp=5.5 yearly=pv_MPX000637601
+!New PVSystem.pvgui_mpx000460267 phases=1 bus=111-PV.1 kv=0.24  kva=3.9 pf=1.0 irradiance=0.925303188892118 Pmpp=3.9 yearly=pv_MPX000460267
+!New Generator.gen_1 phases=1 bus=111-PV.1 kv=0.24  kva=3.9 kw=1.0 
