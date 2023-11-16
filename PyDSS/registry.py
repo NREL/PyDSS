@@ -23,6 +23,20 @@ DEFAULT_REGISTRY = {
                     "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
                 ),
             },
+            {
+                "name": "cpf",
+                "filename": os.path.join(
+                    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+                    "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
+                ),
+            },
+            {
+                "name": "volt-var",
+                "filename": os.path.join(
+                    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+                    "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
+                ),
+            },
             ],
         ControllerType.PV_VOLTAGE_RIDETHROUGH.value: [
         ],

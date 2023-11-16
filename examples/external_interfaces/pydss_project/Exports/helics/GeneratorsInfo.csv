@@ -1,1 +1,2 @@
-""
+,%Fuel,%Reserve,Balanced,D,DutyStart,FuelkWh,H,MVA,Refuel,ShaftData,ShaftModel,UseFuel,UserData,UserModel,Vmaxpu,Vminpu,Vpu,XRdp,Xd,Xdp,Xdpp,basefreq,bus1,class,conn,daily,debugtrace,dispmode,dispvalue,duty,enabled,forceon,kVA,kW,kv,kvar,like,maxkvar,minkvar,model,pf,phases,pvfactor,spectrum,status,yearly
+Generator.gen_1,100,20,No,0,0,0,1,0.0039,No,,,No,,,1.1,0.9,1,20,1,0.28,0.2,60,111-pv.1,1,wye,,No,Default,0,,Yes,No,3.9,1,0.24,0.539742822138087,,1.07948564427617,-1.07948564427617,1,0.88,1,0.1,defaultgen,Variable,
