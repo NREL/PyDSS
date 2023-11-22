@@ -6,8 +6,8 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field, root_validator, validator
-from pydantic.json import isoformat, timedelta_isoformat
+from pydantic.v1 import BaseModel, Field, root_validator, validator
+from pydantic.v1.json import isoformat, timedelta_isoformat
 
 from PyDSS.common import (
     ControlMode,

@@ -5,7 +5,7 @@ import os
 from datetime import timedelta
 from typing import Dict
 
-from pydantic import BaseModel, Field
+from pydantic.v1 import BaseModel, Field
 
 from PyDSS.reports.reports import ReportBase
 
