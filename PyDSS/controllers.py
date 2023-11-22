@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Optional, List, Union
 
 import opendssdirect as dss
-from pydantic import BaseModel, Field, validator
+from pydantic.v1 import BaseModel, Field
 
 from PyDSS.SolveMode import get_solver_from_simulation_type
 from PyDSS.common import SimulationType

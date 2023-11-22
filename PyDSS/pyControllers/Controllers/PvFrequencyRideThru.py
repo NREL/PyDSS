@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import datetime
 import math
 import os
-from pydantic import BaseModel, validator, conint, confloat
 import pdb
 
 class PvFrequencyRideThru(ControllerAbstract):
