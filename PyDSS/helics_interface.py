@@ -221,7 +221,7 @@ class helics_interface:
         Port = self._settings.helics.broker_port
         self._logger.info("Connecting to broker @ {}".format(f"{IP}:{Port}" if Port else IP))
         if self._settings.helics.broker:
-            helics.helicsFederateInfoSetBroker(self.fedinfo, self._settings.helics.broker)
+            helics.helicsFederateInfoSetBroker(self.fedinfo, str(self._settings.helics.broker))
         if self._settings.helics.broker_port:
             helics.helicsFederateInfoSetBrokerPort(self.fedinfo, self._settings.helics.broker_port)
         helics.helicsFederateInfoSetTimeProperty(self.fedinfo, helics.helics_property_time_delta,

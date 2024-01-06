@@ -329,43 +329,44 @@ class PvVoltageRideThru(ControllerAbstract):
             P = -sum(self._ControlledElm.GetVariable('Powers')[::2])
             self.power_hist.append(P)
             self.voltage_hist.append(uIn)
+            self.voltage_hist.append(uIn)
             self.timer_hist.append(self.__uViolationtime)
             self.timer_act_hist.append(self.__dssSolver.GetTotalSeconds())
-        if self.Time == 59 and Priority==2:
+        # if self.Time == 59 and Priority==2:
          
-            if hasattr(self, "CurrLimRegion"):
+        #     if hasattr(self, "CurrLimRegion"):
             
-                import matplotlib.pyplot as plt
-                fig, (ax1, ax2) = plt.subplots(2,1)
+        #         import matplotlib.pyplot as plt
+        #         fig, (ax1, ax2) = plt.subplots(2,1)
 
-                try:
-                    models = [MultiPolygon([self.CurrLimRegion]), self.MomentarySucessionRegion, self.TripRegion, MultiPolygon([self.NormalRegion])]
-                except:
-                    try:
-                        models = [self.CurrLimRegion, self.MomentarySucessionRegion, self.TripRegion, MultiPolygon([self.NormalRegion])]
-                    except:
-                        try:
-                            models = [MultiPolygon([self.CurrLimRegion]), self.MomentarySucessionRegion, self.TripRegion, self.NormalRegion]
-                        except:
-                            models = [self.CurrLimRegion, self.MomentarySucessionRegion, self.TripRegion, self.NormalRegion]
+        #         try:
+        #             models = [MultiPolygon([self.CurrLimRegion]), self.MomentarySucessionRegion, self.TripRegion, MultiPolygon([self.NormalRegion])]
+        #         except:
+        #             try:
+        #                 models = [self.CurrLimRegion, self.MomentarySucessionRegion, self.TripRegion, MultiPolygon([self.NormalRegion])]
+        #             except:
+        #                 try:
+        #                     models = [MultiPolygon([self.CurrLimRegion]), self.MomentarySucessionRegion, self.TripRegion, self.NormalRegion]
+        #                 except:
+        #                     models = [self.CurrLimRegion, self.MomentarySucessionRegion, self.TripRegion, self.NormalRegion]
                         
-                models = [i for i in models if i is not None]            
+        #         models = [i for i in models if i is not None]            
                 
-                colors = ["orange", "grey", "red", "green"]
-                for m, c in zip(models, colors):
-                    for geom in m.geoms:    
-                        xs, ys = geom.exterior.xy    
-                        ax1.fill(xs, ys, alpha=0.35, fc=c, ec='none')
-                ax1.set_xlim(0, 60)
-                ax1.set_ylim(0, 1.20)
-                ax1.scatter( self.timer_hist, self.voltage_hist)
-                ax3 = ax2.twinx()
-                ax2.set_ylabel('Power (kW) in green')
-                ax3.set_ylabel('Voltage (p.u.) in red')
-                ax2.plot(self.timer_act_hist[1:], self.power_hist[1:], c="green")
-                ax3.plot(self.timer_act_hist[1:], self.voltage_hist[1:], c="red")
-                fig.savefig(f"test.png")
-                quit()
+        #         colors = ["orange", "grey", "red", "green"]
+        #         for m, c in zip(models, colors):
+        #             for geom in m.geoms:    
+        #                 xs, ys = geom.exterior.xy    
+        #                 ax1.fill(xs, ys, alpha=0.35, fc=c, ec='none')
+        #         ax1.set_xlim(0, 60)
+        #         ax1.set_ylim(0, 1.20)
+        #         ax1.scatter( self.timer_hist, self.voltage_hist)
+        #         ax3 = ax2.twinx()
+        #         ax2.set_ylabel('Power (kW) in green')
+        #         ax3.set_ylabel('Voltage (p.u.) in red')
+        #         ax2.plot(self.timer_act_hist[1:], self.power_hist[1:], c="green")
+        #         ax3.plot(self.timer_act_hist[1:], self.voltage_hist[1:], c="red")
+        #         fig.savefig(f"test.png")
+        #         quit()
 
         return Error
 
@@ -433,6 +434,7 @@ class PvVoltageRideThru(ControllerAbstract):
                 uIn = sum(self.voltage) / len(self.voltage)
             deadtime = (self.__dssSolver.GetDateTime() - self.__TrippedStartTime).total_seconds()
             if uIn < self.__rVs[0] and uIn > self.__rVs[1] and deadtime >= self.__TrippedDeadtime:
+                
                 self._ControlledElm.SetParameter('enabled', True)
                 self.__isConnected = True
                 self._ControlledElm.SetParameter('kw', 0)
@@ -446,8 +448,14 @@ class PvVoltageRideThru(ControllerAbstract):
 
     def __Trip(self, Deadtime, Time2Pmax, forceTrip, permissive_to_trip=False):
         
+        uIn = self._ControlledElm.GetVariable('VoltagesMagAng')[::2]
+        uBase = self._ControlledElm.sBus[0].GetVariable('kVBase') * 1000
+        uIn = max(uIn) / uBase if self.__UcalcMode == 'Max' else sum(uIn) / (uBase * len(uIn))
+        
+        #if self.Time >1:
+        
         if self.__isConnected or forceTrip:
-
+            print(self._ControlledElm.GetInfo(), uIn, uBase)
             self._ControlledElm.SetParameter('enabled', False)
 
             self.__isConnected = False
@@ -456,7 +464,7 @@ class PvVoltageRideThru(ControllerAbstract):
             self.__TrippedDeadtime = Deadtime
             
         elif permissive_to_trip:
-    
+            print(self._ControlledElm.GetInfo(), uIn, uBase)
             self._ControlledElm.SetParameter('enabled', False)
 
             self.__isConnected = False
