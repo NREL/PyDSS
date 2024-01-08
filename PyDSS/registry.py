@@ -172,7 +172,6 @@ class Registry:
         controller = self._controllers[controller_type].get(name)
         if controller is None:
             raise InvalidParameter(f"{controller_type} / {name} is not registered")
-
         return load_data(controller["filename"])[name]
 
     def register_controller(self, controller_type, controller):

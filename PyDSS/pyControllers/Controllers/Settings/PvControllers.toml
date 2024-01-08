@@ -107,3 +107,57 @@
 "Permissive operation" = "Current limited"
 "May trip operation" = "Trip"
 "Multiple disturbances" = "Trip"
+
+[cpf]
+Category = "Legacy"
+Control1 = "None"
+Control2 = "None"
+Control3 = "None"
+pf = "None"
+pfMin = 0.8
+pfMax = 1
+Pmin = 0
+Pmax = 1
+uMin = 0.92
+uDbMin = 0.967
+uDbMax = 1.033
+uMax = 1.06  # must be less than or equal to uMinC
+QlimPU = 0.44
+PFlim = 1
+"Enable PF limit" = false
+uMinC = 1.06
+uMaxC = 1.1
+PminVW = 10
+VWtype = "Available Power"
+"%UCutoff" = 1.1
+"%PCutin" = 10
+"%PCutout" = 10
+Efficiency = 100
+Priority = "Var"
+DampCoef = 0.8
+
+[volt-var]
+Control1 = "VVar"
+Control2 = "None"
+Control3 = "None"
+pf = 1
+pfMin = 0.8
+pfMax = 1
+Pmin = 0
+Pmax = 1
+uMin = 0.9399999999999999
+uDbMin = 0.97
+uDbMax = 1.03
+uMax = 1.06
+QlimPU = 0.44
+PFlim = 0.9
+"Enable PF limit" = false
+uMinC = 1.06
+uMaxC = 1.1
+PminVW = 10
+VWtype = "Rated Power"
+"%PCutin" = 10
+"%PCutout" = 10
+Efficiency = 100
+Priority = "Var"
+DampCoef = 0.8
