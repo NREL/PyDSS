@@ -7,6 +7,8 @@ Version: 1.0
 from PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
 import random
 import math
+import os
+import pdb
 
 class MotorStallSimple(ControllerAbstract):
     """The controller locks a regulator in the event of reverse power flow. Subclass of the :class:`PyDSS.pyControllers.
@@ -35,16 +37,12 @@ class MotorStallSimple(ControllerAbstract):
         self.__Settings = Settings
         self.__dssSolver = dssSolver
 
-        self._ControlledElm.SetParameter('model', 2)
+        self._ControlledElm.SetParameter('model', 3)
         self._ControlledElm.SetParameter('vminpu', 0.0)
         self._ControlledElm.SetParameter('vlowpu', 0.0)
-        # self.kw = self._ControlledElm.GetParameter('kw')
-        # self.kvar = self._ControlledElm.GetParameter('kvar')
-        self.kw = self.__Settings['ratedKW']
-        S = self.kw / self.__Settings['ratedPF']
-        self.kvar = math.sqrt(S**2 - self.kw**2)
-        self._ControlledElm.SetParameter('kw', self.kw)
-        self._ControlledElm.SetParameter('kvar', self.kvar)
+        self.kw = self._ControlledElm.GetParameter('kw')
+        self.kvar = self._ControlledElm.GetParameter('kvar')
+
         self.stall_time_start = 0
         self.stall = False
         self.disconnected =False
@@ -64,21 +62,21 @@ class MotorStallSimple(ControllerAbstract):
 
     def Update(self, Priority, Time, UpdateResults):
         assert Priority in [0, 1, 2], "Valid control priorities can range from 0-2."
+        Ve_mags = 1.0
         if Priority == 0:
-            Vbase = self._ControlledElm.sBus[0].GetVariable('kVBase')
-            Ve_mags = max(self._ControlledElm.GetVariable('VoltagesMagAng')[::2])/ 120.0
-
-
-            if Ve_mags < self.__Settings['Vstall'] and not self.stall:
+            Vbase = self._ControlledElm.sBus[0].GetVariable('kVBase') * 1000
+            Ve_mags = max(self._ControlledElm.GetVariable('VoltagesMagAng')[::2])/ Vbase
+            if Ve_mags < self.__Settings['Vstall'] and not self.stall and not self.disconnected:                
                 self._ControlledElm.SetParameter('kw', self.kw * self.__Settings['Pfault'] )
-                self._ControlledElm.SetParameter('kvar', self.kw * self.__Settings['Qfault'] )
-                self._ControlledElm.SetParameter('model', 1)
+                self._ControlledElm.SetParameter('kvar', self.kvar * self.__Settings['Qfault'] )
+                self._ControlledElm.SetParameter('model', 2)
                 self.stall = True
                 self.stall_time_start = self.__dssSolver.GetTotalSeconds()
                 return 0.1
             return 0
         if Priority == 1:
             if self.stall:
+                
                 self.stall_time = self.__dssSolver.GetTotalSeconds() - self.stall_time_start
                 if self.stall_time > self.__Settings['Tprotection']:
                     self.stall = False
@@ -91,11 +89,11 @@ class MotorStallSimple(ControllerAbstract):
         if Priority == 2:
             if self.disconnected:
                 time = self.__dssSolver.GetTotalSeconds() - self.Tdisconnect_start
-                if time > self.__Settings['Treconnect']:
+                if time > self.__Settings['Treconnect'] and Ve_mags > self.__Settings['Vstall']:
                     self.disconnected = False
                     self._ControlledElm.SetParameter('kw', self.kw)
                     self._ControlledElm.SetParameter('kvar', self.kvar)
-                    self._ControlledElm.SetParameter('model', 2)
+                    self._ControlledElm.SetParameter('model', 3)
                     self._ControlledElm.SetParameter('vminpu', 0.0)
         return 0
 

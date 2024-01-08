@@ -17,6 +17,13 @@ DEFAULT_REGISTRY = {
     "Controllers": {
         ControllerType.PV_CONTROLLER.value: [
             {
+                "name": "NO_VRT",
+                "filename": os.path.join(
+                    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+                    "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
+                ),
+            },
+            {
                 "name": "cpf",
                 "filename": os.path.join(
                     os.path.dirname(getattr(PyDSS, "__path__")[0]),
@@ -30,13 +37,14 @@ DEFAULT_REGISTRY = {
                     "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
                 ),
             },
+            ],
+        ControllerType.PV_VOLTAGE_RIDETHROUGH.value: [
         ],
         ControllerType.SOCKET_CONTROLLER.value: [],
         ControllerType.STORAGE_CONTROLLER.value: [],
         ControllerType.XMFR_CONTROLLER.value: [],
         ControllerType.MOTOR_STALL.value: [],
         ControllerType.MOTOR_STALL_SIMPLE.value: [],
-        ControllerType.PV_VOLTAGE_RIDETHROUGH.value: [],
         ControllerType.FAULT_CONTROLLER.value: [],
     },
 }
@@ -56,7 +64,7 @@ class Registry:
             self._registry_filename = Path.home() / self._REGISTRY_FILENAME
         else:
             self._registry_filename = Path(registry_filename)
-
+         
         self._controllers = {x: {} for x in CONTROLLER_TYPES}
         data = copy.deepcopy(DEFAULT_REGISTRY)
         for controller_type, controllers in DEFAULT_REGISTRY["Controllers"].items():
@@ -64,7 +72,7 @@ class Registry:
                 path = Path(controller["filename"])
                 if not path.exists():
                     raise InvalidConfiguration(f"Default controller file={path} does not exist")
-
+                
         # This is written to work with legacy versions where default controllers were
         # written to the registry.
         if self._registry_filename.exists():
@@ -164,7 +172,6 @@ class Registry:
         controller = self._controllers[controller_type].get(name)
         if controller is None:
             raise InvalidParameter(f"{controller_type} / {name} is not registered")
-
         return load_data(controller["filename"])[name]
 
     def register_controller(self, controller_type, controller):

@@ -221,7 +221,7 @@ class NetworkGraph(PlotAbstract):
             try:
                 PropertyName = self.__dssInstance.Properties.Name(str(i))
                 X = self.__dssInstance.Properties.Value(str(i))
-                if X is not None and X is not '' and PropertyName is not None and PropertyName is not '':
+                if X is not None and X != '' and PropertyName is not None and PropertyName != '':
                     Dict[PropertyName] = X
             except:
                 pass

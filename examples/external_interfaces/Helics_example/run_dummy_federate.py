@@ -12,8 +12,9 @@ helicsversion = h.helicsGetVersion()
 
 # Create broker #
 broker = h.helicsCreateBroker("zmq", "", initstring)
+print(broker)
 isconnected = h.helicsBrokerIsConnected(broker)
-
+print(isconnected)
 # Create Federate Info object that describes the federate properties #
 fedinfo = h.helicsCreateFederateInfo()
 
@@ -38,8 +39,9 @@ h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_delta, delta
 vfed = h.helicsCreateValueFederate("Test Federate", fedinfo)
 
 # Register the publication #
-pub1 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.load1.power", "double", "kW")
-pub2 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.feederhead.voltage", "double", "kW")
+pub1 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.load1.power", "double", "")
+pub2 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.feederhead.voltage", "double", "")
+pub3 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.feederhead.angle", "double", "")
 sub1 = h.helicsFederateRegisterSubscription(vfed, "PyDSS.Circuit.heco19021.TotalPower", "")
 #h.helicsInputSetMinimumChange(sub1, 0.1)
 
@@ -58,6 +60,7 @@ for t in range(1, 30):
         )
         h.helicsPublicationPublishDouble(pub1, 5.0 + 1. / (1.0 + i))
         h.helicsPublicationPublishDouble(pub2, 1.0)
+        h.helicsPublicationPublishDouble(pub3, 120.0)
         value = h.helicsInputGetVector(sub1)
         print(value)
 

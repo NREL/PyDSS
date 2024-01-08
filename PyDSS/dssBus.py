@@ -81,5 +81,9 @@ class dssBus(dssObjectBase):
         return self._Nodes[:]
 
     def SetActiveObject(self):
-        if self._dssInstance.Bus.Name() != self._Name:
-            self._dssInstance.Circuit.SetActiveBus(self._Name)
+        try:
+            if self._dssInstance.Bus.Name() != self._Name:
+                self._dssInstance.Circuit.SetActiveBus(self._Name)
+            return 1
+        except:
+            return 0 
