@@ -38,6 +38,8 @@ DEFAULT_REGISTRY = {
         ControllerType.MOTOR_STALL_SIMPLE.value: [],
         ControllerType.PV_VOLTAGE_RIDETHROUGH.value: [],
         ControllerType.FAULT_CONTROLLER.value: [],
+        ControllerType.PV_DYNAMIC.value: [],
+        ControllerType.DYNAMIC_VOLTAGE_SUPPORT.value:[],
     },
 }
 

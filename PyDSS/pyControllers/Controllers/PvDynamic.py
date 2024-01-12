@@ -48,7 +48,7 @@ class PvDynamic(ControllerAbstract):
         rated_power_ac_va = Settings["RATED_POWER_AC_VA"]
         rated_power_dc_watts = Settings["RATED_POWER_DC_WATTS"]
         der_verbosity = 'DEBUG'
-        config_file = r"C:\Users\alatif\Documents\GitHub\pvder\config_der.json"
+        config_file = r"C:\Users\epohl\Desktop\PROJECT_FILES\NAERM\Modeling\PyDSS_Protection_Modeling\Dynamic_PV_Model\DER_config_files\config_der.json"
         if self.n_phases == 1:
             self._Va = self.Voltages()
             self._Vrms = abs(self._Va )/math.sqrt(2)
@@ -74,8 +74,8 @@ class PvDynamic(ControllerAbstract):
             self._Vrms = abs(self._Va ) / math.sqrt(2)
             self._pv_model = DERModel(
                 modelType= 'ThreePhaseUnbalanced',
-                powerRating = 250000,
-                Sinverter_rated = 250000,
+                powerRating = rated_power_dc_watts,
+                Sinverter_rated = rated_power_ac_va,
                 events=self.events1,
                 configFile=config_file,
                 Vrmsrated = self._Vrms,
@@ -83,7 +83,7 @@ class PvDynamic(ControllerAbstract):
                 gridVoltagePhaseB = self._Vb,
                 gridVoltagePhaseC = self._Vc,
                 gridFrequency=2 * math.pi * self.freq,
-                #derId=Settings["DER_ID"],
+                derId=Settings["DER_ID"],
                 standAlone = stand_alone,
                 steadyStateInitialization=steady_state,
                 verbosity = der_verbosity
