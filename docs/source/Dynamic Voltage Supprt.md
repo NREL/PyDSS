@@ -51,7 +51,7 @@ The following results show a single generator object's reaction to a FIDVR or to
 
 ### Varying 1qh1
 **iqh1=1.1:** Notice the significant real power curtailment during the initial voltage sag and moderate curtailment as voltage is slow to recover.\
-![](/images/iqh1_1_1.png)
+![](./images/iqh1_1_1.png)
 
 **iqh1=2.0:** Notice the significant current spike during the initial drop in voltage and less active power curtailment during this period. \
 ![](images\iqh1_2_0.png)
