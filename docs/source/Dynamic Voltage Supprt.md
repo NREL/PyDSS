@@ -54,35 +54,35 @@ The following results show a single generator object's reaction to a FIDVR or to
 ![](./images/iqh1_1_1.png)
 
 **iqh1=2.0:** Notice the significant current spike during the initial drop in voltage and less active power curtailment during this period. \
-![](images\iqh1_2_0.png)
+![](./images/iqh1_2_0.png)
 
 ### Varying kvarmax
 **kvarmax=0.44:** With peak generation around 85 kVA, prior to the fault, 0.44 represents about 37 kVA. The middle plot confirms this. \
-![](images\iqh1_1_1.png)
+![](./images/iqh1_1_1.png)
 
 **kvarmax=1.0:** One can set the inverter to produce *only* reactive power during a fault, sacrificing all active power production. Here we see reactive power climb to 85 kVA and active power drop to zero. \
-![](images\kvarmax_1_0.png)
+![](./images/kvarmax_1_0.png)
 
 ### Capacitive and Inductive Support
 **Capacitive_support=true**, **Inductive_support=false:** Notice the DER only provides capacitive support during the simulated undervoltage event, taking no action during the overvoltage event.\
-![](images\capacitive_only.png)
+![](./images/capacitive_only.png)
 
 **Capacitive_support=false**, **Inductive_support=true:** Notice the DER only provides inductive support during the simulated overvoltage event, taking no action during the undervoltage event.\
-![](images\inductive_only.png)
+![](./images/inductive_only.png)
 
 **Capacitive_support=true**, **Inductive_support=true:** Notice the DER provides support during both events, taking no action during the overvoltage event.\
-![](images\both_support.png)
+![](./images/both_support.png)
 
 ### Overvoltage kVA limiting
 **overvoltage_kva_limited = true:** During an overvoltage event the DER will not exceed its kVA nameplate limit, despite not hitting its current limit. This is consistent with OpenDSS model 7.\
-![](images\kva_limit_true.png)
+![](./images/kva_limit_true.png)
 
 **overvoltage_kva_limited = false:** During an overvoltage event the DER will exceed its kVA nameplate limit up to its current limit.\
-![](images\kva_limit_false.png)
+![](./images/kva_limit_false.png)
 
 ### Modeling Multiple Generators with DVS Control
 28, 3ph generators modeled below.\
-![](images\multi_gen.png)
+![](./images/multi_gen.png)
 
 ## Combining DVS and VRT Controller
 The following scenario descriptions represent the 13 scenarios plotted below, used to illustrate the effects of combining DVS and VRT. This uses a smart-DS feeder with 28, 200 kW generator objects (total 5.6 MW or 86% peak load).\
@@ -133,9 +133,9 @@ The following scenario descriptions represent the 13 scenarios plotted below, us
 * Average PCC voltage drops (compared with baseline) due to all DERs tripping offline.
 * Adding dynamic voltage support makes no difference, given the instantaneous trip. Generators start to ramp up kVAR production prior to tripping.
 
-![](images\no_vrt_1.png)
-![](images\no_vrt_2.png)
-![](images\no_vrt_3.png)
+![](./images/no_vrt_1.png)
+![](./images/no_vrt_2.png)
+![](./images/no_vrt_3.png)
 
 ### Ride-Through Category: 1547 Category I
 * 26/28 DERs trip offline in VRT_CAT_I without any DVS. 
@@ -143,24 +143,24 @@ The following scenario descriptions represent the 13 scenarios plotted below, us
 * We see an improvement in average PCC voltage (compared to baseline) due to VAR support from DVS (green vs. blue line in top chart). 
 * The reduction in aggregate kW generation in VRT_CAT_I_DVS (compared to baseline) is due to real power curtailment to provide VAR support.
 
-![](images\cat_1_1.png)
-![](images\cat_1_2.png)
-![](images\cat_1_3.png)
+![](./images/cat_1_1.png)
+![](./images/cat_1_2.png)
+![](./images/cat_1_3.png)
 
 ### Ride-Through Category: 1547 Category II
 * 0/28 DERs trip regardless of whether DVS is active or not. 
 * We still see improvement in average PCC voltages when DVS is active. 
 
-![](images\cat_2_1.png)
-![](images\cat_2_2.png)
-![](images\cat_2_3.png)
+![](./images/cat_2_1.png)
+![](./images/cat_2_2.png)
+![](./images/cat_2_3.png)
 
 ### Ride-Through Category: 1547 Category III
 * 26/28 DERs trip offline, 0 with DVS. Momentary cessation capability allows for re-entering service as voltage recovers. 
 * Slight discrepancy in when DERs re-enter service between VRT_CAT_III and VRT_CAT_III_DVS_INACTIVE scenarios, which needs to be investigated further. 
 
-![](images\cat_3_1.png)
-![](images\cat_3_2.png)
-![](images\cat_3_3.png)
+![](./images/cat_3_1.png)
+![](./images/cat_3_2.png)
+![](./images/cat_3_3.png)
 
 
