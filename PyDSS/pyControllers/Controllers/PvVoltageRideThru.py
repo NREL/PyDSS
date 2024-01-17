@@ -1,6 +1,6 @@
 from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
 from shapely.geometry import MultiPoint, Polygon, Point, MultiPolygon
-from shapely.ops import triangulate, cascaded_union
+from shapely.ops import triangulate, unary_union
 import datetime
 import math
 import os
@@ -91,10 +91,10 @@ class PvVoltageRideThru(ControllerAbstract):
         
         self.region = [3, 3, 3]
         
-        # self.voltage_hist = []
-        # self.power_hist = []
-        # self.timer_hist = []
-        # self.timer_act_hist = []
+        self.voltage_hist = []
+        self.power_hist = []
+        self.timer_hist = []
+        self.timer_act_hist = []
         
         return
 
@@ -278,33 +278,34 @@ class PvVoltageRideThru(ControllerAbstract):
         if self.__Settings['Ride-through Category'] in ['Category I', 'Category II']:
             if self.__Settings['Permissive operation'] == 'Current limited':
                 if self.__Settings['May trip operation'] == 'Permissive operation':
-                    self.CurrLimRegion = cascaded_union(
+                    self.CurrLimRegion = unary_union(
                         [PermissiveOVRegion, PermissiveUVRegion, MandatoryRegion, MayTripRegion])
                     self.MomentarySucessionRegion = None
-                    self.TripRegion = cascaded_union([OVtripRegion, UVtripRegion])
+                    self.TripRegion = unary_union([OVtripRegion, UVtripRegion])
                 else:
-                    self.CurrLimRegion = cascaded_union([PermissiveOVRegion, PermissiveUVRegion, MandatoryRegion])
+                    self.CurrLimRegion = unary_union([PermissiveOVRegion, PermissiveUVRegion, MandatoryRegion])
                     self.MomentarySucessionRegion = None
-                    self.TripRegion = cascaded_union([OVtripRegion, UVtripRegion, MayTripRegion])
+                    self.TripRegion = unary_union([OVtripRegion, UVtripRegion, MayTripRegion])
             else:
                 if self.__Settings['May trip operation'] == 'Permissive operation':
                     self.CurrLimRegion = MandatoryRegion
-                    self.MomentarySucessionRegion = cascaded_union([PermissiveOVRegion, PermissiveUVRegion, MayTripRegion])
-                    self.TripRegion = cascaded_union([OVtripRegion, UVtripRegion])
+                    self.MomentarySucessionRegion = unary_union([PermissiveOVRegion, PermissiveUVRegion, MayTripRegion])
+                    self.TripRegion = unary_union([OVtripRegion, UVtripRegion])
                 else:
                     self.CurrLimRegion = MandatoryRegion
-                    self.MomentarySucessionRegion = cascaded_union([PermissiveOVRegion, PermissiveUVRegion])
-                    self.TripRegion = cascaded_union([OVtripRegion, UVtripRegion, MayTripRegion])
+                    self.MomentarySucessionRegion = unary_union([PermissiveOVRegion, PermissiveUVRegion])
+                    self.TripRegion = unary_union([OVtripRegion, UVtripRegion, MayTripRegion])
         else:
             if self.__Settings['May trip operation'] == 'Permissive operation':
                 self.CurrLimRegion = MandatoryRegion
-                self.MomentarySucessionRegion = cascaded_union([PermissiveOVRegion, PermissiveUVRegion, MayTripRegion])
-                self.TripRegion = cascaded_union([OVtripRegion, UVtripRegion])
+                self.MomentarySucessionRegion = unary_union([PermissiveOVRegion, PermissiveUVRegion, MayTripRegion])
+                self.TripRegion = unary_union([OVtripRegion, UVtripRegion])
             else:
                 self.CurrLimRegion = MandatoryRegion
-                self.MomentarySucessionRegion = cascaded_union([PermissiveOVRegion, PermissiveUVRegion])
-                self.TripRegion = cascaded_union([OVtripRegion, UVtripRegion, MayTripRegion])
-       
+
+                self.MomentarySucessionRegion = unary_union([PermissiveOVRegion, PermissiveUVRegion])
+                self.TripRegion = unary_union([OVtripRegion, UVtripRegion, MayTripRegion])
+
         self.NormalRegion = ContineousRegion
         return V, T
 
@@ -325,43 +326,48 @@ class PvVoltageRideThru(ControllerAbstract):
             else:
                 raise Exception("Valid standard setting defined. Options are: 1547-2003, 1547-2018")
             
-        #     P = -sum(self._ControlledElm.GetVariable('Powers')[::2])
-        #     self.power_hist.append(P)
-        #     self.voltage_hist.append(uIn)
-        #     self.timer_hist.append(self.__uViolationtime)
-        #     self.timer_act_hist.append(self.__dssSolver.GetTotalSeconds())
+            P = -sum(self._ControlledElm.GetVariable('Powers')[::2])
+            self.power_hist.append(P)
+            self.voltage_hist.append(uIn)
+            self.voltage_hist.append(uIn)
+            self.timer_hist.append(self.__uViolationtime)
+            self.timer_act_hist.append(self.__dssSolver.GetTotalSeconds())
         # if self.Time == 59 and Priority==2:
-        #     import matplotlib.pyplot as plt
-        #     fig, (ax1, ax2) = plt.subplots(2,1)
+         
+        #     if hasattr(self, "CurrLimRegion"):
+            
+        #         import matplotlib.pyplot as plt
+        #         fig, (ax1, ax2) = plt.subplots(2,1)
 
-        #     try:
-        #         models = [MultiPolygon([self.CurrLimRegion]), self.MomentarySucessionRegion, self.TripRegion, MultiPolygon([self.NormalRegion])]
-        #     except:
         #         try:
-        #             models = [self.CurrLimRegion, self.MomentarySucessionRegion, self.TripRegion, MultiPolygon([self.NormalRegion])]
+        #             models = [MultiPolygon([self.CurrLimRegion]), self.MomentarySucessionRegion, self.TripRegion, MultiPolygon([self.NormalRegion])]
         #         except:
         #             try:
-        #                 models = [MultiPolygon([self.CurrLimRegion]), self.MomentarySucessionRegion, self.TripRegion, self.NormalRegion]
+        #                 models = [self.CurrLimRegion, self.MomentarySucessionRegion, self.TripRegion, MultiPolygon([self.NormalRegion])]
         #             except:
-        #                 models = [self.CurrLimRegion, self.MomentarySucessionRegion, self.TripRegion, self.NormalRegion]
-                    
-        #     models = [i for i in models if i is not None]            
-            
-        #     colors = ["orange", "grey", "red", "green"]
-        #     for m, c in zip(models, colors):
-        #         for geom in m.geoms:    
-        #             xs, ys = geom.exterior.xy    
-        #             ax1.fill(xs, ys, alpha=0.35, fc=c, ec='none')
-        #     ax1.set_xlim(0, 5)
-        #     ax1.set_ylim(0, 1.20)
-        #     ax1.scatter( self.timer_hist, self.voltage_hist)
-        #     ax3 = ax2.twinx()
-        #     ax2.set_ylabel('Power (kW) in green')
-        #     ax3.set_ylabel('Voltage (p.u.) in red')
-        #     ax2.plot(self.timer_act_hist[1:], self.power_hist[1:], c="green")
-        #     ax3.plot(self.timer_act_hist[1:], self.voltage_hist[1:], c="red")
-        #     fig.savefig(f"C:/Users/alatif/Desktop/pr100_opendss_model/Exports/cat1_3/{self.__Name}_{self.__Settings['Ride-through Category']}_0.8pu_short.png")
-  
+        #                 try:
+        #                     models = [MultiPolygon([self.CurrLimRegion]), self.MomentarySucessionRegion, self.TripRegion, self.NormalRegion]
+        #                 except:
+        #                     models = [self.CurrLimRegion, self.MomentarySucessionRegion, self.TripRegion, self.NormalRegion]
+                        
+        #         models = [i for i in models if i is not None]            
+                
+        #         colors = ["orange", "grey", "red", "green"]
+        #         for m, c in zip(models, colors):
+        #             for geom in m.geoms:    
+        #                 xs, ys = geom.exterior.xy    
+        #                 ax1.fill(xs, ys, alpha=0.35, fc=c, ec='none')
+        #         ax1.set_xlim(0, 60)
+        #         ax1.set_ylim(0, 1.20)
+        #         ax1.scatter( self.timer_hist, self.voltage_hist)
+        #         ax3 = ax2.twinx()
+        #         ax2.set_ylabel('Power (kW) in green')
+        #         ax3.set_ylabel('Voltage (p.u.) in red')
+        #         ax2.plot(self.timer_act_hist[1:], self.power_hist[1:], c="green")
+        #         ax3.plot(self.timer_act_hist[1:], self.voltage_hist[1:], c="red")
+        #         fig.savefig(f"test.png")
+        #         quit()
+
         return Error
 
     def Trip(self, uIn):
@@ -438,6 +444,7 @@ class PvVoltageRideThru(ControllerAbstract):
                 uIn = sum(self.voltage) / len(self.voltage)
             deadtime = (self.__dssSolver.GetDateTime() - self.__TrippedStartTime).total_seconds()
             if uIn < self.__rVs[0] and uIn > self.__rVs[1] and deadtime >= self.__TrippedDeadtime:
+                
                 self._ControlledElm.SetParameter('enabled', True)
                 self._ControlledElm.SetParameter('Class', 0)
                 self.__isConnected = True
@@ -452,11 +459,18 @@ class PvVoltageRideThru(ControllerAbstract):
 
     def __Trip(self, Deadtime, Time2Pmax, forceTrip, permissive_to_trip=False):
         
+        uIn = self._ControlledElm.GetVariable('VoltagesMagAng')[::2]
+        uBase = self._ControlledElm.sBus[0].GetVariable('kVBase') * 1000
+        uIn = max(uIn) / uBase if self.__UcalcMode == 'Max' else sum(uIn) / (uBase * len(uIn))
+        
+        #if self.Time >1:
+        
         if self.__isConnected or forceTrip:
 
             self._ControlledElm.SetParameter('kw', 0)
             self._ControlledElm.SetParameter('kvar', 0)
             self._ControlledElm.SetParameter('Class', 1)
+
 
             self.__isConnected = False
             self.__TrippedStartTime = self.__dssSolver.GetDateTime()
@@ -468,6 +482,7 @@ class PvVoltageRideThru(ControllerAbstract):
             self._ControlledElm.SetParameter('kw', 0)
             self._ControlledElm.SetParameter('kvar', 0)
             self._ControlledElm.SetParameter('Class', 1)
+
 
             self.__isConnected = False
             self.__TrippedStartTime = self.__dssSolver.GetDateTime()

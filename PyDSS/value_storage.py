@@ -419,8 +419,9 @@ class ValueByLabel(ValueStorageBase):
 
         self._m = m
         self._n = n
+        self._value_length = len(value)
         value = self._fix_value(value)
-
+        
         # Chunk_list example
         # X = list(range(12)) , nList= 2
         # Y = chunk_list(X, nList) -> [[0, 1], [2, 3], [4, 5], [6, 7], [8, 9], [10, 11]]
@@ -498,8 +499,12 @@ class ValueByLabel(ValueStorageBase):
             self._value_type = type(value[0])
 
     def set_value_from_raw(self, value):
+        if len(value) != self._value_length:
+            value = [np.NaN for i in range(self._value_length)]
+        
         value = self._fix_value(value)
         self._value.clear()
+        
         for i, node_val in enumerate(zip(self._nodes, value)):
             node, val = node_val
             for v, x in zip(node, val):
@@ -507,7 +512,6 @@ class ValueByLabel(ValueStorageBase):
                     self._value += [complex(x[0], x[1])]
                 else:
                     self._value += [x[0], x[1]]
-
     @property
     def value_type(self):
         return self._value_type
@@ -520,13 +524,22 @@ class ValueContainer:
                  dataset_property_type, max_chunk_bytes=None, store_time_step=False):
         group_name = os.path.dirname(path)
         basename = os.path.basename(path)
+        self.group_name = group_name
+        self.base_name = basename
         try:
             if basename in hdf_store[group_name]:
                 raise InvalidParameter(f"duplicate dataset name {basename}")
         except KeyError:
             # Don't bother checking each sub path.
             pass
-
+        
+        self._length={}
+        for value in values:
+            if isinstance(value, list):
+                self._length[value] = len(value.value)
+            else:
+                self._length[value] = 1
+        
         dtype = values[0].value_type
         scaleoffset = None
         # There is no np.float128 on Windows.
@@ -601,12 +614,14 @@ class ValueContainer:
             list of ValueStorageBase
 
         """
-        
-        if isinstance(values[0].value, list):
-            vals = [x for y in values for x in y.value]
+        if values:
+            if isinstance(values[0].value, list):
+                vals = [x for y in values for x in y.value]
+            else:
+                vals = [x.value for x in values]
         else:
-            vals = [x.value for x in values]
-
+            vals = [np.NaN for k, v in self._length.items() for x in range(v)]
+            
         self._dataset.write_value(vals)
 
     def append_by_time_step(self, value, time_step, elem_index):

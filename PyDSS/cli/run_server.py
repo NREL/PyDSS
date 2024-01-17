@@ -3,7 +3,7 @@ CLI to run the PyDSS server
 """
 
 from PyDSS.api.server import pydss_server
-from aiohttp import web
+#from aiohttp import web
 import logging
 import click
 

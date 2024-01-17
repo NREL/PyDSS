@@ -1,18 +1,19 @@
+from pydantic import BaseModel, validator
+from typing import List, Optional, Any, Union, Dict
+from enum import Enum
 import logging
 import helics
 import os
+import re
 
-from PyDSS.pyContrReader import pyExportReader, pySubscriptionReader
-from PyDSS.pyLogger import getLoggerTag
+
+from PyDSS.pyContrReader import pyExportReader
 from PyDSS.simulation_input_models import SimulationSettingsModel
+from PyDSS.common import SUBSCRIPTIONS_FILENAME, ExportMode
+from PyDSS.pyLogger import getLoggerTag
+from PyDSS.utils.utils import load_data
 
-
-class helics_interface:
-
-    n_states = 5
-    init_state = 1
-
-    type_info = {
+TYPE_INFO = {
         'CurrentsMagAng': 'vector',
         'Currents': 'vector',
         'RatedCurrent': 'double',
@@ -43,17 +44,154 @@ class helics_interface:
         'Distance': 'double'
     }
 
-    def __init__(self, dss_solver, objects_by_name, objects_by_class, settings: SimulationSettingsModel, system_paths, default=True):
+class DataType(Enum):
+    DOUBLE = "double"
+    VECTOR = "vector"
+    STRING = "string"
+    BOOLEAN = "boolean"
+    INTEGER = "integer"
+
+class Subscription(BaseModel):
+    model: str
+    property: str
+    id: str
+    unit: Optional[str] 
+    subscribe: bool = True
+    data_type: DataType
+    multiplier: float = 1.0
+    object: Any = None
+    states: List[Union[float, int, bool]] = [0.0, 0.0, 0.0, 0.0, 0.0]
+    sub: Any = None
+    
+    class Config:
+        arbitrary_types_allowed = True
+
+class Publication(BaseModel):
+    model: str
+    property: str
+    id: str
+    object: Any = None
+    pub: Any = None
+    data_type: DataType
+    
+class Subscriptions(BaseModel):
+    federate: Any
+    opendss_models: Dict
+    subscriptions: List[Subscription]
+
+    @validator('subscriptions', each_item=True)
+    def is_in_opendss_model(cls, v, values, **kwargs):
+        if v.model not in values["opendss_models"]:
+            raise AssertionError(f"The loaded OpenDSS model does not have an element define with the name {v}")
+        
+        if v.subscribe:
+            v.object = values["opendss_models"][v.model]
+            v.sub = helics.helicsFederateRegisterSubscription(
+                values["federate"],
+                v.id,
+                v.unit
+            )
+        return v
+    
+class Publications(BaseModel):
+    
+    federate: Any
+    federate_name: str
+    opendss_models: Dict
+    publications: List[Publication] = []
+    legacy_input: Dict = {}
+    input: Dict = {}
+    
+    @validator('legacy_input')
+    def build_from_legacy(cls, v, values, **kwargs):
+        publications = []
+        for object_type, k in v.items():
+            if object_type in values["opendss_models"]:
+                models =  values["opendss_models"][object_type]    
+                for model in models:
+                    for ppty in k['Publish']:
+                        name = '{}.{}.{}'.format(values["federate_name"], model, ppty)
+                        pub_dict = {
+                            "model" : model,
+                            "object" :  models[model],
+                            "id" : name,
+                            "property" : ppty,
+                            "data_type" : TYPE_INFO[ppty],
+                            "pub" :  helics.helicsFederateRegisterGlobalTypePublication(
+                                values["federate"],
+                                name,
+                                TYPE_INFO[ppty],
+                                ''
+                            )
+                        }
+                        publications.append(Publication.validate(pub_dict))
+        values["publications"] = publications
+        return v
+
+    @validator('input')
+    def build_from_export(cls, v, values, **kwargs):
+        publications = []
+        for object_type, export_properties in v.items():
+            if object_type in values["opendss_models"]:
+                models =  values["opendss_models"][object_type]
+                for export_property in export_properties:
+                    filtered_models = {}
+                    if export_property['publish']:
+                        if 'names' in export_property and export_property['names']:
+                            for k, v in models.items():
+                                if k in export_property['names']:
+                                    filtered_models[k] = models[k]
+                        elif 'name_regexes' in export_property and export_property['name_regexes']:
+                            for regex_expression in export_property['name_regexes']:
+                                r = re.compile(regex_expression)
+                                matches = list(filter(r.match, models.keys()))
+                                for match in matches:
+                                    filtered_models[match] = models[match]
+                        else:
+                            filtered_models = models
+                    
+                        for model_name, model_obj in filtered_models.items():
+                            if object_type == "Buses":
+                                name = '{}.Bus.{}.{}'.format(values["federate_name"], model_name, export_property["property"])
+                            else:
+                                name = '{}.{}.{}'.format(values["federate_name"], model_name, export_property["property"])
+                            pub_dict = {
+                                "model" : model_name,
+                                "object" :  model_obj,
+                                "id" : name,
+                                "property" : export_property["property"],
+                                "data_type" : TYPE_INFO[export_property["property"]],
+                                "pub" :  helics.helicsFederateRegisterGlobalTypePublication(
+                                    values["federate"],
+                                    name,
+                                    TYPE_INFO[export_property["property"]],
+                                    ''
+                                )
+                            }
+                            publications.append(Publication.validate(pub_dict))
+        values["publications"] = publications        
+        return v
+
+class helics_interface:
+
+    n_states = 5
+    init_state = 1
+
+    
+
+    def __init__(self, dss_solver, objects_by_name, objects_by_class, settings: SimulationSettingsModel, system_paths, default=True, logger=None):
         LoggerTag = getLoggerTag(settings)
         self.itr = 0
         self.c_seconds = 0
         self.c_seconds_old = -1
-        self._logger = logging.getLogger(LoggerTag)
+        if logger:
+            self._logger = logger
+        else:
+            self._logger = logging.getLogger(__name__)
         self._settings = settings
         self._co_convergance_error_tolerance = settings.helics.error_tolerance
         self._co_convergance_max_iterations = self._settings.helics.max_co_iterations
         self._publications = {}
-        self._subscriptions = {}
         self._system_paths = system_paths
         self._objects_by_element = objects_by_name
         self._objects_by_class = objects_by_class
@@ -69,7 +207,7 @@ class helics_interface:
         self._registerFederatePublications(pubs)
 
         helics.helicsFederateEnterExecutingModeIterative(
-            self._PyDSSfederate,
+            self._federate,
             helics.helics_iteration_request_iterate_if_needed
         )
         self._logger.info('Entered HELICS execution mode')
@@ -83,7 +221,7 @@ class helics_interface:
         Port = self._settings.helics.broker_port
         self._logger.info("Connecting to broker @ {}".format(f"{IP}:{Port}" if Port else IP))
         if self._settings.helics.broker:
-            helics.helicsFederateInfoSetBroker(self.fedinfo, self._settings.helics.broker)
+            helics.helicsFederateInfoSetBroker(self.fedinfo, str(self._settings.helics.broker))
         if self._settings.helics.broker_port:
             helics.helicsFederateInfoSetBrokerPort(self.fedinfo, self._settings.helics.broker_port)
         helics.helicsFederateInfoSetTimeProperty(self.fedinfo, helics.helics_property_time_delta,
@@ -92,148 +230,135 @@ class helics_interface:
                                                     self._settings.helics.logging_level)
         helics.helicsFederateInfoSetIntegerProperty(self.fedinfo, helics.helics_property_int_max_iterations,
                                                     self._settings.helics.max_co_iterations)
-        self._PyDSSfederate = helics.helicsCreateValueFederate(self._settings.helics.federate_name, self.fedinfo)
+        self._federate = helics.helicsCreateValueFederate(self._settings.helics.federate_name, self.fedinfo)
         return
 
 
-    def _registerFederateSubscriptions(self, subs):
+    def _registerFederateSubscriptions(self, subscriptions:Subscriptions = None):
         """
         :param subs:
         :return:
         """
-
-        if subs is not None:
-            SubscriptionList = subs
+        if subscriptions is None:
+            subscription_file = os.path.join(
+                self._system_paths["ExportLists"],
+                SUBSCRIPTIONS_FILENAME,
+            )
+            assert os.path.exists(subscription_file), f"The following file does not exist: {subscription_file}"
+            file_data = load_data(subscription_file)
+            file_data["opendss_models"] = self._objects_by_element
+            file_data["federate"] = self._federate
+         
+            self.subscriptions = Subscriptions.validate(file_data)
         else:
-            self._sub_file_reader = pySubscriptionReader(
-                os.path.join(
-                    self._system_paths["ExportLists"],
-                    "Subscriptions.toml",
-                ),
-            )
-            SubscriptionList = self._sub_file_reader.SubscriptionList
-        self._subscriptions = {}
-        self._subscription_dState = {}
-        for element, subscription in SubscriptionList.items():
-            assert element in self._objects_by_element, '"{}" listed in the subscription file not '.format(element) +\
-                                                     "available in PyDSS's master object dictionary."
-
-            sub = helics.helicsFederateRegisterSubscription(
-                self._PyDSSfederate,
-                subscription["Subscription ID"],
-                subscription["Unit"]
-            )
-            #helics.helicsInputSetMinimumChange(sub, self._settings.helics.error_tolerance)
-            self._logger.info('Subscription registered: "{}" with units "{}"'.format(
-                subscription["Subscription ID"],
-                subscription["Unit"])
-            )
-            subscription['Subscription'] = sub
-            self._subscriptions[element] = subscription
-            self._subscription_dState[element] = [self.init_state] * self.n_states
+            self.subscriptions = subscriptions
+        self._logger.info(str(self.subscriptions.subscriptions))
+        for subscription in self.subscriptions.subscriptions:
+            self._logger.info(f"subscription created: {subscription}")
         return
 
     def updateHelicsSubscriptions(self):
-
-        for element_name, sub_info in self._subscriptions.items():
-            if 'Subscription' in sub_info:
+        for subscription in self.subscriptions.subscriptions:
+            if subscription.subscribe:
                 value = None
-                if sub_info['Data type'].lower() == 'double':
-                    value = helics.helicsInputGetDouble(sub_info['Subscription'])
-                elif sub_info['Data type'].lower() == 'vector':
-                    value = helics.helicsInputGetVector(sub_info['Subscription'])
-                elif sub_info['Data type'].lower() == 'string':
-                    value = helics.helicsInputGetString(sub_info['Subscription'])
-                elif sub_info['Data type'].lower() == 'boolean':
-                    value = helics.helicsInputGetBoolean(sub_info['Subscription'])
-                elif sub_info['Data type'].lower() == 'integer':
-                    value = helics.helicsInputGetInteger(sub_info['Subscription'])
-
+                if subscription.data_type == DataType.DOUBLE:
+                    value = helics.helicsInputGetDouble(subscription.sub)
+                elif subscription.data_type == DataType.VECTOR:
+                    value = helics.helicsInputGetVector(subscription.sub)
+                elif subscription.data_type == DataType.STRING:
+                    value = helics.helicsInputGetString(subscription.sub)
+                elif subscription.data_type == DataType.BOOLEAN:
+                    value = helics.helicsInputGetBoolean(subscription.sub)
+                elif subscription.data_type == DataType.INTEGER:
+                    value = helics.helicsInputGetInteger(subscription.sub)
+                    
                 if value and value != 0:
                     if value > 1e6 or value < -1e6:
-                        # #print("YO HERE")
                         value = 1.0 
-                    
-                    value = value * sub_info['Multiplier']
-                    dssElement = self._objects_by_element[element_name]
-                    # #print(sub_info['Property'], value)
-                    dssElement.SetParameter(sub_info['Property'], value) 
 
-                    self._logger.info('Value for "{}.{}" changed to "{}"'.format(
-                        element_name,
-                        sub_info['Property'],
-                        value * sub_info['Multiplier']
+                value = value * subscription.multiplier
+                subscription.object.SetParameter(subscription.property, value) 
+                self._logger.info('Value for "{}.{}" changed to "{}"'.format(
+                        subscription.model,
+                        subscription.property,
+                        value
                     ))
 
-                    if self._settings.helics.iterative_mode:
-                        if self.c_seconds != self.c_seconds_old:
-                            self._subscription_dState[element_name] = [self.init_state] * self.n_states
-                        else:
-                            self._subscription_dState[element_name].insert(0, self._subscription_dState[element_name].pop())
-                        self._subscription_dState[element_name][0] = value
-                else:
-                    self._logger.warning('{} will not be used to update element for "{}.{}" '.format(
-                        value,
-                        element_name,
-                        sub_info['Property']))
-        self.c_seconds_old = self.c_seconds
+                if self._settings.helics.iterative_mode:
+                    if self.c_seconds != self.c_seconds_old:
+                        subscription.states = [self.init_state] * self.n_states
+                    else:
+                        subscription.states.insert(0, subscription.states.pop())
+                    subscription.states[0] = value
 
-    def _registerFederatePublications(self, pubs):
-        if pubs is not None:
-            publicationList= pubs
+        self.c_seconds_old = self.c_seconds
+  
+    def _registerFederatePublications(self, publications:Publications = None):
+        if publications:
+            self.publicatiuons = publications
         else:
-            self._file_reader = pyExportReader(
-                os.path.join(
-                    self._system_paths ["ExportLists"],
-                    "ExportMode-byClass.toml",
-                ),
+            legacy_export_file = os.path.join(
+                self._system_paths ["ExportLists"],
+                ExportMode.BY_CLASS.value + ".toml",
             )
-            publicationList = self._file_reader.publicationList
-        self._publications = {}
-        for valid_publication in publicationList:
-            obj_class, obj_property = valid_publication.split(' ')
-            objects = self._objects_by_class[obj_class]
-            for obj_X, obj in objects.items():
-                name = '{}.{}.{}'.format(self._settings.helics.federate_name, obj_X, obj_property)
-                self._publications[name] = helics.helicsFederateRegisterGlobalTypePublication(
-                    self._PyDSSfederate,
-                    name,
-                    self.type_info[obj_property],
-                    ''
-                )
-                self._logger.info(f'Publication registered: {name}')
+            export_file = os.path.join(
+                self._system_paths ["ExportLists"],
+                ExportMode.EXPORTS.value  + ".toml",
+            )
+            
+            publication_dict = {
+                "opendss_models" : self._objects_by_class,
+                "federate_name" : self._settings.helics.federate_name,
+                "federate" : self._federate,
+            }
+                  
+            if os.path.exists(export_file):
+                export_data = load_data(export_file)
+                publication_dict["input"] = export_data     
+            elif os.path.exists(legacy_export_file):
+                legacy_data = load_data(legacy_export_file)
+                publication_dict["legacy_input"] = legacy_data               
+            else:
+                raise FileNotFoundError("No valid export settings found for the current scenario")
+            
+            self.publications = Publications.validate(publication_dict)
+            self._logger.info(str(self.publications.publications))
+            for publication in self.publications.publications:
+                self._logger.info(f"pubscription created: {publication}")
         return
 
     def updateHelicsPublications(self):
-        for element, pub in self._publications.items():
-            fed_name, class_name, object_name, ppty_name = element.split('.')
-            obj_name = '{}.{}'.format(class_name, object_name)
-            obj = self._objects_by_element[obj_name]
-            value = obj.GetValue(ppty_name)
-            if isinstance(value, list):
-                helics.helicsPublicationPublishVector(pub, value)
-            elif isinstance(value, float):
-                helics.helicsPublicationPublishDouble(pub, value)
-            elif isinstance(value, str):
-                helics.helicsPublicationPublishString(pub, value)
-            elif isinstance(value, bool):
-                helics.helicsPublicationPublishBoolean(pub, value)
-            elif isinstance(value, int):
-                helics.helicsPublicationPublishInteger(pub, value)
+        
+        for publication in self.publications.publications:
+            value = publication.object.GetValue(publication.property)
+            
+            if publication.data_type == DataType.VECTOR:
+                helics.helicsPublicationPublishVector(publication.pub, value)
+            elif publication.data_type == DataType.DOUBLE:
+                helics.helicsPublicationPublishDouble(publication.pub, value)
+            elif publication.data_type == DataType.STRING:
+                helics.helicsPublicationPublishString(publication.pub, value)
+            elif publication.data_type == DataType.BOOLEAN:
+                helics.helicsPublicationPublishBoolean(publication.pub, value)
+            elif publication.data_type == DataType.INTEGER:
+                helics.helicsPublicationPublishInteger(publication.pub, value)
+            else:
+                raise ValueError("Unsupported data type forr teh HELICS interface")
+            self._logger.info(f"{publication} - {value}")
         return
 
     def request_time_increment(self):
-        error = sum([abs(x[0] - x[1]) for k, x in self._subscription_dState.items()])
+        error = sum([abs(sub.states[0] - sub.states[1]) for sub in self.subscriptions.subscriptions])
         r_seconds = self._dss_solver.GetTotalSeconds() #- self._dss_solver.GetStepResolutionSeconds()
         if not self._settings.helics.iterative_mode:
             while self.c_seconds < r_seconds:
-                self.c_seconds = helics.helicsFederateRequestTime(self._PyDSSfederate, r_seconds)
+                self.c_seconds = helics.helicsFederateRequestTime(self._federate, r_seconds)
             self._logger.info('Time requested: {} - time granted: {} '.format(r_seconds, self.c_seconds))
             return True, self.c_seconds
         else:
 
             self.c_seconds, iteration_state = helics.helicsFederateRequestTimeIterative(
-                self._PyDSSfederate,
+                self._federate,
                 r_seconds,
                 helics.helics_iteration_request_iterate_if_needed
             )
@@ -248,8 +373,8 @@ class helics_interface:
                 return True, self.c_seconds
 
     def __del__(self):
-        helics.helicsFederateFinalize(self._PyDSSfederate)
-        state = helics.helicsFederateGetState(self._PyDSSfederate)
+        helics.helicsFederateFinalize(self._federate)
+        state = helics.helicsFederateGetState(self._federate)
         helics.helicsFederateInfoFree(self.fedinfo)
-        helics.helicsFederateFree(self._PyDSSfederate)
+        helics.helicsFederateFree(self._federate)
         self._logger.info('HELICS federate for PyDSS destroyed')

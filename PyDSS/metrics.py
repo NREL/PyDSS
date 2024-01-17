@@ -266,7 +266,8 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
     def append_values(self, time_step, store_nan=False):
         if not self._name_order:
             self._name_order[:] = [x.FullName for x in self._iter_dss_objs()]
-
+    
+        #values = [self._get_value(x, time_step) for x in self._dss_objs]
         values = []
         objects_changed = False
         for dss_obj, expected_name in zip(self._iter_dss_objs(), self._name_order):
@@ -277,8 +278,9 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
                 break
             values.append(self._get_value(dss_obj, time_step))
 
-        if objects_changed:
+        if objects_changed or not values:
             values = [self._get_value(x, time_step) for x in self._dss_objs]
+
         assert len(values) == len(self._dss_objs)
 
         if not self._containers:
@@ -287,7 +289,7 @@ class MultiValueTypeMetricBase(MetricBase, abc.ABC):
         if store_nan:
             for val in values:
                 val.set_nan()
-
+                
         for value_type, container in self._containers.items():
             prop = self._properties[value_type]
             if prop.data_conversion != DataConversion.NONE:

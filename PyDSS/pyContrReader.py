@@ -46,9 +46,12 @@ def read_controller_settings_from_registry(path):
         controller_type, ext = os.path.splitext(filename)
         # This file contains a mapping of controller to an array of names.
         # The controller settings must be stored in the PyDSS registry.
+
         controller_to_name = load_data(os.path.join(path, filename))
+        
         for controller, names in controller_to_name.items():
             settings = controller_settings[controller_type].get(controller)
+
             if settings is None:
                 if not registry.is_controller_registered(controller_type, controller):
                     raise InvalidConfiguration(
