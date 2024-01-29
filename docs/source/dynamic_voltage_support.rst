@@ -18,7 +18,7 @@ designed to **mimic the current-limited behavior of OpenDSS generator
 model 7**. For comparison purposes, one can run a baseline simulation
 without this controller using generator model 7.
 
-DVS can be use alone or can be coupled with the **PvVpltageRideThru**
+DVS can be used alone or can be coupled with the **PvVoltageRideThru**
 controller (see notes below on required parameters). This controller can
 be used in both **QSTS** and **dynamic** simulations.
 
