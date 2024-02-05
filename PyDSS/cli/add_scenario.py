@@ -25,6 +25,10 @@ def build_scenario(project_path:str, scenario_name:str, controller_mapping:str):
         assert settings_path_obj.exists(), f"file for controller type {controller.controller_type} does not exist"
         controller_data = toml.load(settings_path_obj)
         if controller_data:
+            if controller.controller_type in controllers:
+                msg= f"Multiple keys files for the same controller type {controller.controller_type}."
+                "Each controller type can only be attached to a single file."
+                raise ValueError(msg)
             controllers[controller.controller_type] = toml.load(settings_path_obj)
     scenario_dir = project_path / "Scenarios" / scenario_name
     scenario_obj = PyDssScenario(
