@@ -1,0 +1,3 @@
+[[mapping]]
+controller_type = "MotorStall"
+controller_file = "./tests/data/add_scenario/MotorStall.toml"

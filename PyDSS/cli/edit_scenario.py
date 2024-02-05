@@ -1,8 +1,5 @@
 """CLI to edit an existing project or scenario"""
 
-import os
-import sys
-
 import click
 
 from PyDSS.common import CONTROLLER_TYPES
