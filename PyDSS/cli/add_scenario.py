@@ -40,7 +40,7 @@ def build_scenario(project_path:str, scenario_name:str, controller_mapping:str):
 
 @click.argument("project-path", type=click.Path(exists=True))
 @click.option(
-    "-s", "--scenerio-name",
+    "-s", "--scenario_name",
     required=True,
     help="name of the new scenario",
 )
