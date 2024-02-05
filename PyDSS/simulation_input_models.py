@@ -17,6 +17,7 @@ from PyDSS.common import (
     SimulationType,
     SnapshotTimePointSelectionMode,
     SIMULATION_SETTINGS_FILENAME,
+    ControllerType
 )
 from PyDSS.dataset_buffer import DEFAULT_MAX_CHUNK_BYTES
 from PyDSS.utils.utils import dump_data, load_data
@@ -939,6 +940,14 @@ class SimulationSettingsModel(InputsBaseModel):
         alias="Reports",
     )
 
+
+class ControllerMap(InputsBaseModel):
+    controller_type : ControllerType
+    controller_file : Path
+
+
+class MappedControllers(InputsBaseModel):
+    mapping : List[ControllerMap] = []
 
 def create_simulation_settings(path: Path, project_name: str, scenario_names: list, force=False):
     """Create a settings file with default values.
