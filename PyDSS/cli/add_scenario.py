@@ -7,7 +7,7 @@ from PyDSS.simulation_input_models import MappedControllers
 from PyDSS.pydss_project import PyDssScenario
 from PyDSS.common import CONTROLLER_TYPES, ControllerType
 
-def build_scenario(project_path:str, scenerio_name:str, controller_mapping:str):
+def build_scenario(project_path:str, scenario_name:str, controller_mapping:str):
     project_path = Path(project_path)
     controller_mapping_path = Path(controller_mapping)    
     assert project_path.exists(), "Provided project path does not exist"
@@ -26,9 +26,9 @@ def build_scenario(project_path:str, scenerio_name:str, controller_mapping:str):
         controller_data = toml.load(settings_path_obj)
         if controller_data:
             controllers[controller.controller_type] = toml.load(settings_path_obj)
-    scenario_dir = project_path / "Scenarios" / scenerio_name
+    scenario_dir = project_path / "Scenarios" / scenario_name
     scenario_obj = PyDssScenario(
-            [scenerio_name], list(controllers.keys()), export_modes=None, visualization_types=None
+            [scenario_name], list(controllers.keys()), export_modes=None, visualization_types=None
         )
     scenario_obj.serialize(str(scenario_dir))
 
@@ -43,10 +43,10 @@ def build_scenario(project_path:str, scenerio_name:str, controller_mapping:str):
     required=True,
     default=None,
     type=click.Path(exists=True),
-    help="JSON file tha maps controller to contoller defination files",
+    help="JSON file that maps controller to contoller defination files",
 )
 @click.command()
-def add_scenario(project_path:str, scenerio_name:str, controller_mapping:str):
+def add_scenario(project_path:str, scenario_name:str, controller_mapping:str):
     """Add a new scenario to an existing project"""
-    build_scenario(project_path, scenerio_name, controller_mapping)
+    build_scenario(project_path, scenario_name, controller_mapping)
 
