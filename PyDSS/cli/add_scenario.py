@@ -17,7 +17,6 @@ def build_scenario(project_path:str, scenerio_name:str, controller_mapping:str):
     
     controller_map = toml.load(controller_mapping_path)
     mapped_controllers = MappedControllers(**controller_map)
-    print(mapped_controllers)
     acceptable_controller_types = CONTROLLER_TYPES
     controllers = {}
     for controller in mapped_controllers.mapping:

@@ -20,11 +20,7 @@ def test_add_scenario():
         settings = toml.load(settings_path)
         settings['Project']['Project Path'] = str(tmpdirname_obj.absolute())
         toml.dump(settings, open(settings_path, "w"))
-        
-        print(tmpdirname_obj)
         build_scenario(str(tmpdirname), "test_scenario", str(MAPPING_FILE))
-        os.system("pause")
-        # runner = CliRunner()
-        # result = runner.invoke(add_scenario, [str(tmpdirname), "test_scenario", MAPPING_FILE])
-        
+        assert (tmpdirname_obj / "Scenarios" / "test_scenario").exists()
+        assert (tmpdirname_obj / "Scenarios" / "test_scenario" / "pyControllerList" / "MotorStall.toml").exists()
         
