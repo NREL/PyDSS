@@ -16,7 +16,6 @@ def test_add_scenario():
      
     with tempfile.TemporaryDirectory() as tmpdirname:
         tmpdirname_obj = Path(tmpdirname) / "tmp"
-        print(tmpdirname_obj)
         shutil.copytree(PYDSS_PROJECT, str(tmpdirname_obj))
         settings_path = tmpdirname_obj / "simulation.toml"
         settings = toml.load(settings_path)
