@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PyDSS.reports.feeder_losses &mdash; PyDSS 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/autodoc_pydantic.css?v=a0a71c94" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link href="../../../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyDSS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#create-an-empty-project">Create an empty project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#customize-the-simulation-settings">Customize the simulation settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#opendss-models">OpenDSS Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#run-the-simulation">Run the simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#results">Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#create-a-project">Create a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#exporting-data">Exporting Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#pre-filtering-export-data">Pre-filtering Export Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#run-a-project">Run a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#analyze-results">Analyze results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial.html#exported-csv-files">Exported CSV files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial.html#data-viewer">Data Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial.html#access-results-programmatically">Access results programmatically</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../tutorial.html#load-element-classes-and-properties">Load element classes and properties</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tutorial.html#read-a-dataframe-for-one-element">Read a dataframe for one element</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tutorial.html#read-a-dataframe-for-one-element-with-a-specific-option">Read a dataframe for one element with a specific option</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tutorial.html#read-a-dataframe-for-one-element-with-an-option-matching-a-regular-expression">Read a dataframe for one element with an option matching a regular expression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tutorial.html#read-the-total-value-for-a-property-stored-with-store-values-type-sum">Read the total value for a property stored with <code class="docutils literal notranslate"><span class="pre">store_values_type</span> <span class="pre">=</span> <span class="pre">&quot;sum&quot;</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tutorial.html#find-out-all-options-available-for-a-property">Find out all options available for a property</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tutorial.html#find-out-what-option-values-are-present-for-a-property">Find out what option values are present for a property</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tutorial.html#read-a-dataframe-for-all-elements">Read a dataframe for all elements</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial.html#estimate-space-required-by-pydss-simulation">Estimate space required by PyDSS simulation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interfaces.html">Interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../CLI%20interface.html">Command line interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-add-post-process">add-post-process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-add-scenario">add-scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-controllers">controllers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-controllers-register">register</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-controllers-reset-defaults">reset-defaults</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-controllers-show">show</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-controllers-unregister">unregister</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-convert">convert</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-convert-excel-to-toml">excel-to-toml</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-convert-simulation-file">simulation-file</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-create-project">create-project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-edit-scenario">edit-scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-edit-scenario-update-controllers">update-controllers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-export">export</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-extract">extract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-extract-element-files">extract-element-files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-reports">reports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-run">run</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CLI%20interface.html#command-line-interface-serve">serve</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../REST%20API%20interface.html">REST API interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../Python%20API%20interface.html">Python API interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../Respository%20documentaion.html">Python API interface</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/PyDSS.html">PyDSS</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../Models.html">Data models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../Models.html#simulation-input-models">Simulation input models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../Models.html#scenario-setup-models">Scenario setup models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../Models.html#thermal-metrics-models">Thermal metrics models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../Models.html#voltage-metrics-models">Voltage metrics models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../Models.html#feeder-metrics-models">Feeder metrics models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../Models.html#helics-interface-models">HELICS interface models</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../project_layout.html">PyDSS Project Layout</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../project_layout.html#simulation-settings">Simulation Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../project_layout.html#scenarios">Scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../project_layout.html#exports">Exports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../project_layout.html#reports">Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../project_layout.html#example-layout">Example layout</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Result%20management.html">Enhanced result export features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reports.html">Reports</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../reports.html#global-settings">Global settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reports.html#format">Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reports.html#granularity">Granularity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reports.html#export-parameters">Export Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reports.html#output-data">Output Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reports.html#adding-new-reports">Adding New Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reports.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../hdf-data-format.html">HDF Data Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../hdf-data-format.html#layout">Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../hdf-data-format.html#common-metadata">Common Metadata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../hdf-data-format.html#dataset-metadata">Dataset Metadata</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../hdf-data-format.html#attributes-per-dataset">Attributes per dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../hdf-data-format.html#metadata-datasets-per-dataset">Metadata datasets per dataset</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../hdf-data-format.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../co-simulation_support.html">Co-simulation interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../Co-simulation%20Interfaces.html">The HELICS interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../Co-simulation%20Interfaces.html#interface-overview">Interface overview</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../Co-simulation%20Interfaces.html#PyDSS.simulation_input_models.HelicsModel"><code class="docutils literal notranslate"><span class="pre">HelicsModel</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../Co-simulation%20Interfaces.html#setting-up-publications">Setting up publications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../Co-simulation%20Interfaces.html#setting-up-subscriptions">Setting up subscriptions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../Co-simulation%20Interfaces.html#PyDSS.helics_interface.Subscription"><code class="docutils literal notranslate"><span class="pre">Subscription</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../Co-simulation%20Interfaces.html#the-socket-interface">The socket interface</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyDSS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">PyDSS.reports.feeder_losses</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for PyDSS.reports.feeder_losses</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">ConfigDict</span>
+
+<span class="kn">from</span> <span class="nn">PyDSS.reports.reports</span> <span class="kn">import</span> <span class="n">ReportBase</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="FeederLossesMetricsModel">
+<a class="viewcode-back" href="../../../Models.html#PyDSS.reports.feeder_losses.FeederLossesMetricsModel">[docs]</a>
+<span class="k">class</span> <span class="nc">FeederLossesMetricsModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data model for metrics describing feeder losses&quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;FeederLossesMetricsModel&quot;</span><span class="p">,</span> <span class="n">str_strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">validate_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;forbid&quot;</span><span class="p">,</span> <span class="n">use_enum_values</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">total_losses_kwh</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span> 
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;total_losses_kwh&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Total losses in the circuit&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">line_losses_kwh</span><span class="p">:</span>  <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span> 
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;line_losses_kwh&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Total line losses&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">transformer_losses_kwh</span><span class="p">:</span>  <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span> 
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;transformer_losses_kwh&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Total transformer losses&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">total_load_demand_kwh</span><span class="p">:</span>  <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span> 
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;total_load_demand_kwh&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Total power output of loads&quot;</span><span class="p">,</span>
+        <span class="p">)]</span></div>
+
+
+
+<div class="viewcode-block" id="SimulationFeederLossesMetricsModel">
+<a class="viewcode-back" href="../../../Models.html#PyDSS.reports.feeder_losses.SimulationFeederLossesMetricsModel">[docs]</a>
+<span class="k">class</span> <span class="nc">SimulationFeederLossesMetricsModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">scenarios</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FeederLossesMetricsModel</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;scenarios&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Feeder losses by PyDSS scenario name&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">compare_feeder_losses</span><span class="p">(</span>
+        <span class="n">metrics1</span><span class="p">:</span> <span class="n">SimulationFeederLossesMetricsModel</span><span class="p">,</span>
+        <span class="n">metrics2</span><span class="p">:</span> <span class="n">SimulationFeederLossesMetricsModel</span><span class="p">,</span>
+        <span class="n">rel_tol</span><span class="o">=</span><span class="mf">0.000001</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compares the values of two instances of FeederLossesMetricsModel.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        Return True if they match.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="n">scenario</span> <span class="ow">in</span> <span class="n">metrics1</span><span class="o">.</span><span class="n">scenarios</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">FeederLossesMetricsModel</span><span class="o">.</span><span class="n">model_fields</span><span class="p">:</span>
+            <span class="n">val1</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">metrics1</span><span class="o">.</span><span class="n">scenarios</span><span class="p">[</span><span class="n">scenario</span><span class="p">],</span> <span class="n">field</span><span class="p">)</span>
+            <span class="n">val2</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">metrics2</span><span class="o">.</span><span class="n">scenarios</span><span class="p">[</span><span class="n">scenario</span><span class="p">],</span> <span class="n">field</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">,</span> <span class="n">rel_tol</span><span class="o">=</span><span class="n">rel_tol</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;field=</span><span class="si">%s</span><span class="s2"> mismatch </span><span class="si">%s</span><span class="s2"> : </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">)</span>
+                <span class="n">match</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="n">match</span>
+
+
+<span class="k">class</span> <span class="nc">FeederLossesReport</span><span class="p">(</span><span class="n">ReportBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reports the feeder losses.</span>
+
+<span class="sd">    The report generates a feeder_losses.json output file.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">FILENAME</span> <span class="o">=</span> <span class="s2">&quot;feeder_losses.json&quot;</span>
+    <span class="n">NAME</span> <span class="o">=</span> <span class="s2">&quot;Feeder Losses&quot;</span>
+    <span class="n">DEFAULTS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;store_all_time_points&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">):</span>
+        <span class="n">resolution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_simulation_resolution</span><span class="p">()</span>
+        <span class="n">to_kwh</span> <span class="o">=</span> <span class="n">resolution</span> <span class="o">/</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">scenarios</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span>
+        <span class="n">scenarios</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">scenario</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">scenarios</span><span class="p">:</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="n">FeederLossesReport</span><span class="o">.</span><span class="n">get_inputs_from_defaults</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_settings</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;store_all_time_points&quot;</span><span class="p">]:</span>
+                <span class="n">scenarios</span><span class="p">[</span><span class="n">scenario</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_from_all_time_points</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span> <span class="n">to_kwh</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">scenarios</span><span class="p">[</span><span class="n">scenario</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_from_in_memory_metrics</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span> <span class="n">to_kwh</span><span class="p">)</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">SimulationFeederLossesMetricsModel</span><span class="p">(</span><span class="n">scenarios</span><span class="o">=</span><span class="n">scenarios</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">FILENAME</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f_out</span><span class="p">:</span>
+            <span class="n">f_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+            <span class="n">f_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generated </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">filename</span>
+
+    <span class="k">def</span> <span class="nf">_generate_from_in_memory_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scenario</span><span class="p">,</span> <span class="n">to_kwh</span><span class="p">):</span>
+        <span class="n">total_losses_dict</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">get_summed_element_total</span><span class="p">(</span><span class="s2">&quot;Circuits&quot;</span><span class="p">,</span> <span class="s2">&quot;LossesSum&quot;</span><span class="p">)</span>
+        <span class="n">total_losses</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">total_losses_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())))</span> <span class="o">/</span> <span class="mi">1000</span> <span class="c1"># OpenDSS reports total losses in Watts</span>
+        <span class="n">line_losses_dict</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">get_summed_element_total</span><span class="p">(</span><span class="s2">&quot;Circuits&quot;</span><span class="p">,</span> <span class="s2">&quot;LineLossesSum&quot;</span><span class="p">)</span>
+        <span class="n">line_losses</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">line_losses_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())))</span>
+        <span class="n">transformer_losses</span> <span class="o">=</span> <span class="p">(</span><span class="n">total_losses</span> <span class="o">-</span> <span class="n">line_losses</span><span class="p">)</span>
+        <span class="n">total_load_power_dict</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">get_summed_element_total</span><span class="p">(</span><span class="s2">&quot;Loads&quot;</span><span class="p">,</span> <span class="s2">&quot;PowersSum&quot;</span><span class="p">)</span>
+        <span class="n">total_load_power</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">total_load_power_dict</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">total_load_power</span> <span class="o">+=</span> <span class="n">val</span><span class="o">.</span><span class="n">real</span>
+
+        <span class="c1"># TODO: total losses as a percentage of total load demand?</span>
+        <span class="k">return</span> <span class="n">FeederLossesMetricsModel</span><span class="p">(</span>
+            <span class="n">total_losses_kwh</span><span class="o">=</span><span class="n">total_losses</span> <span class="o">*</span> <span class="n">to_kwh</span><span class="p">,</span>
+            <span class="n">line_losses_kwh</span><span class="o">=</span><span class="n">line_losses</span> <span class="o">*</span> <span class="n">to_kwh</span><span class="p">,</span>
+            <span class="n">transformer_losses_kwh</span><span class="o">=</span><span class="n">transformer_losses</span> <span class="o">*</span> <span class="n">to_kwh</span><span class="p">,</span>
+            <span class="n">total_load_demand_kwh</span><span class="o">=</span><span class="n">total_load_power</span> <span class="o">*</span> <span class="n">to_kwh</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_generate_from_all_time_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scenario</span><span class="p">,</span> <span class="n">to_kwh</span><span class="p">):</span>
+        <span class="n">df_losses</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">get_full_dataframe</span><span class="p">(</span><span class="s2">&quot;Circuits&quot;</span><span class="p">,</span> <span class="s2">&quot;Losses&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_losses</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+        <span class="n">df_line_losses</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">get_full_dataframe</span><span class="p">(</span><span class="s2">&quot;Circuits&quot;</span><span class="p">,</span> <span class="s2">&quot;LineLosses&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_line_losses</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">df_loads_powers</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">get_full_dataframe</span><span class="p">(</span><span class="s2">&quot;Loads&quot;</span><span class="p">,</span> <span class="s2">&quot;Powers&quot;</span><span class="p">)</span>
+        <span class="n">total_losses</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">df_losses</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">/</span> <span class="mi">1000</span> <span class="c1"># OpenDSS reports total losses in Watts</span>
+        <span class="n">line_losses</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">df_line_losses</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+        <span class="n">transformer_losses</span> <span class="o">=</span> <span class="n">total_losses</span> <span class="o">-</span> <span class="n">line_losses</span>
+        <span class="k">return</span> <span class="n">FeederLossesMetricsModel</span><span class="p">(</span>
+            <span class="n">total_losses_kwh</span><span class="o">=</span><span class="n">total_losses</span> <span class="o">*</span> <span class="n">to_kwh</span><span class="p">,</span>
+            <span class="n">line_losses_kwh</span><span class="o">=</span><span class="n">line_losses</span> <span class="o">*</span> <span class="n">to_kwh</span><span class="p">,</span>
+            <span class="n">transformer_losses_kwh</span><span class="o">=</span><span class="n">transformer_losses</span> <span class="o">*</span> <span class="n">to_kwh</span><span class="p">,</span>
+            <span class="n">total_load_demand_kwh</span><span class="o">=</span><span class="n">df_loads_powers</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">*</span> <span class="n">to_kwh</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_required_exports</span><span class="p">(</span><span class="n">simulation_config</span><span class="p">):</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="n">FeederLossesReport</span><span class="o">.</span><span class="n">get_inputs_from_defaults</span><span class="p">(</span>
+            <span class="n">simulation_config</span><span class="p">,</span> <span class="n">FeederLossesReport</span><span class="o">.</span><span class="n">NAME</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;store_all_time_points&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;Circuits&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;property&quot;</span><span class="p">:</span> <span class="s2">&quot;Losses&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;store_values_type&quot;</span><span class="p">:</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;property&quot;</span><span class="p">:</span> <span class="s2">&quot;LineLosses&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;store_values_type&quot;</span><span class="p">:</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">],</span>
+                <span class="s2">&quot;Loads&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;property&quot;</span><span class="p">:</span> <span class="s2">&quot;Powers&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;store_values_type&quot;</span><span class="p">:</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;data_conversion&quot;</span><span class="p">:</span> <span class="s2">&quot;abs_sum&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;Circuits&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;property&quot;</span><span class="p">:</span> <span class="s2">&quot;Losses&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;store_values_type&quot;</span><span class="p">:</span> <span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;sum_elements&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;property&quot;</span><span class="p">:</span> <span class="s2">&quot;LineLosses&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;store_values_type&quot;</span><span class="p">:</span> <span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;sum_elements&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;Loads&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;property&quot;</span><span class="p">:</span> <span class="s2">&quot;Powers&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;store_values_type&quot;</span><span class="p">:</span> <span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;sum_elements&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="s2">&quot;data_conversion&quot;</span><span class="p">:</span> <span class="s2">&quot;abs_sum&quot;</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_required_scenario_names</span><span class="p">():</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Aadil Latif.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

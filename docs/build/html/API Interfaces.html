@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Command line interface &mdash; PyDSS 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="PyDSS Project Layout" href="project_layout.html" />
+    <link rel="prev" title="Interfaces" href="interfaces.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PyDSS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#create-an-empty-project">Create an empty project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#customize-the-simulation-settings">Customize the simulation settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#opendss-models">OpenDSS Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#run-the-simulation">Run the simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#results">Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#create-a-project">Create a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#exporting-data">Exporting Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#pre-filtering-export-data">Pre-filtering Export Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#run-a-project">Run a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#analyze-results">Analyze results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#exported-csv-files">Exported CSV files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#data-viewer">Data Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#access-results-programmatically">Access results programmatically</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#load-element-classes-and-properties">Load element classes and properties</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-one-element">Read a dataframe for one element</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-one-element-with-a-specific-option">Read a dataframe for one element with a specific option</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-one-element-with-an-option-matching-a-regular-expression">Read a dataframe for one element with an option matching a regular expression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-the-total-value-for-a-property-stored-with-store-values-type-sum">Read the total value for a property stored with <code class="docutils literal notranslate"><span class="pre">store_values_type</span> <span class="pre">=</span> <span class="pre">&quot;sum&quot;</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#find-out-all-options-available-for-a-property">Find out all options available for a property</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#find-out-what-option-values-are-present-for-a-property">Find out what option values are present for a property</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-all-elements">Read a dataframe for all elements</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#estimate-space-required-by-pydss-simulation">Estimate space required by PyDSS simulation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="interfaces.html">Interfaces</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Command line interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#command-line-interface-add-post-process">add-post-process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#command-line-interface-add-scenario">add-scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#command-line-interface-controllers">controllers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#command-line-interface-controllers-register">register</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#command-line-interface-controllers-reset-defaults">reset-defaults</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#command-line-interface-controllers-show">show</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#command-line-interface-controllers-unregister">unregister</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#command-line-interface-convert">convert</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#command-line-interface-convert-excel-to-toml">excel-to-toml</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#command-line-interface-convert-simulation-file">simulation-file</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#command-line-interface-create-project">create-project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#command-line-interface-edit-scenario">edit-scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#command-line-interface-edit-scenario-update-controllers">update-controllers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#command-line-interface-export">export</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#command-line-interface-extract">extract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#command-line-interface-extract-element-files">extract-element-files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#command-line-interface-reports">reports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#command-line-interface-run">run</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#command-line-interface-serve">serve</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#rest-api-interface">REST API interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="project_layout.html">PyDSS Project Layout</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#simulation-settings">Simulation Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#scenarios">Scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#exports">Exports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#reports">Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_layout.html#example-layout">Example layout</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Result%20management.html">Enhanced result export features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#global-settings">Global settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#format">Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#granularity">Granularity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#export-parameters">Export Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#output-data">Output Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#adding-new-reports">Adding New Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hdf-data-format.html">HDF Data Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hdf-data-format.html#layout">Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hdf-data-format.html#common-metadata">Common Metadata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hdf-data-format.html#dataset-metadata">Dataset Metadata</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hdf-data-format.html#attributes-per-dataset">Attributes per dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hdf-data-format.html#metadata-datasets-per-dataset">Metadata datasets per dataset</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hdf-data-format.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="co-simulation_support.html">Co-simulation interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Co-simulation%20Interfaces.html">The socket interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Co-simulation%20Interfaces.html#the-helics-interface">The HELICS interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Co-simulation%20Interfaces.html#helics-models-and-interface">HELICS models and interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Co-simulation%20Interfaces.html#id1">HELICS models and interface</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Co-simulation%20Interfaces.html#PyDSS.simulation_input_models.HelicsModel"><code class="docutils literal notranslate"><span class="pre">HelicsModel</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Co-simulation%20Interfaces.html#the-api-interface">The API interface</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyDSS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="interfaces.html">Interfaces</a></li>
+      <li class="breadcrumb-item active">Command line interface</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/API Interfaces.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="command-line-interface">
+<h1>Command line interface<a class="headerlink" href="#command-line-interface" title="Link to this heading">¶</a></h1>
+<p>PyDSS commands</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="command-line-interface-add-post-process">
+<h2>add-post-process<a class="headerlink" href="#command-line-interface-add-post-process" title="Link to this heading">¶</a></h2>
+<p>Add post-process script to PyDSS scenario.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span>add-post-process<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PROJECT_PATH<span class="w"> </span>SCENARIO_NAME
+<span class="w">                                        </span>SCRIPT<span class="w"> </span>CONFIG_FILE
+</pre></div>
+</div>
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-add-post-process-arg-PROJECT_PATH">
+<span class="sig-name descname"><span class="pre">PROJECT_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-add-post-process-arg-PROJECT_PATH" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-add-post-process-arg-SCENARIO_NAME">
+<span class="sig-name descname"><span class="pre">SCENARIO_NAME</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-add-post-process-arg-SCENARIO_NAME" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-add-post-process-arg-SCRIPT">
+<span class="sig-name descname"><span class="pre">SCRIPT</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-add-post-process-arg-SCRIPT" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-add-post-process-arg-CONFIG_FILE">
+<span class="sig-name descname"><span class="pre">CONFIG_FILE</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-add-post-process-arg-CONFIG_FILE" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="command-line-interface-add-scenario">
+<h2>add-scenario<a class="headerlink" href="#command-line-interface-add-scenario" title="Link to this heading">¶</a></h2>
+<p>Add a new scenario to an existing project</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span>add-scenario<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PROJECT_PATH
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-add-scenario-c">
+<span id="cmdoption-Command-line-interface-add-scenario-controller-mapping"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--controller-mapping</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;controller_mapping&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-add-scenario-c" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> JSON file that maps controller type to controller definition files</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-add-scenario-s">
+<span id="cmdoption-Command-line-interface-add-scenario-scenario_name"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--scenario_name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;scenario_name&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-add-scenario-s" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> name of the new scenario</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-add-scenario-arg-PROJECT_PATH">
+<span class="sig-name descname"><span class="pre">PROJECT_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-add-scenario-arg-PROJECT_PATH" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="command-line-interface-controllers">
+<h2>controllers<a class="headerlink" href="#command-line-interface-controllers" title="Link to this heading">¶</a></h2>
+<p>Manage registered PyDSS controllers.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span>controllers<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="command-line-interface-controllers-register">
+<h3>register<a class="headerlink" href="#command-line-interface-controllers-register" title="Link to this heading">¶</a></h3>
+<p>Register a controller in the local registry.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span>controllers<span class="w"> </span>register<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>CONTROLLER_TYPE<span class="w"> </span>FILENAME
+</pre></div>
+</div>
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-controllers-register-arg-CONTROLLER_TYPE">
+<span class="sig-name descname"><span class="pre">CONTROLLER_TYPE</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-controllers-register-arg-CONTROLLER_TYPE" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-controllers-register-arg-FILENAME">
+<span class="sig-name descname"><span class="pre">FILENAME</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-controllers-register-arg-FILENAME" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="command-line-interface-controllers-reset-defaults">
+<h3>reset-defaults<a class="headerlink" href="#command-line-interface-controllers-reset-defaults" title="Link to this heading">¶</a></h3>
+<p>Reset defaults.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span>controllers<span class="w"> </span>reset-defaults<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="command-line-interface-controllers-show">
+<h3>show<a class="headerlink" href="#command-line-interface-controllers-show" title="Link to this heading">¶</a></h3>
+<p>Show the registered controllers.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span>controllers<span class="w"> </span>show<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="command-line-interface-controllers-unregister">
+<h3>unregister<a class="headerlink" href="#command-line-interface-controllers-unregister" title="Link to this heading">¶</a></h3>
+<p>Unregister a controller.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span>controllers<span class="w"> </span>unregister<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>CONTROLLER_TYPE<span class="w"> </span>NAME
+</pre></div>
+</div>
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-controllers-unregister-arg-CONTROLLER_TYPE">
+<span class="sig-name descname"><span class="pre">CONTROLLER_TYPE</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-controllers-unregister-arg-CONTROLLER_TYPE" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-controllers-unregister-arg-NAME">
+<span class="sig-name descname"><span class="pre">NAME</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-controllers-unregister-arg-NAME" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="command-line-interface-convert">
+<h2>convert<a class="headerlink" href="#command-line-interface-convert" title="Link to this heading">¶</a></h2>
+<p>Convert input files to new formats.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span>convert<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="command-line-interface-convert-excel-to-toml">
+<h3>excel-to-toml<a class="headerlink" href="#command-line-interface-convert-excel-to-toml" title="Link to this heading">¶</a></h3>
+<p>Convert an Excel configuration file to TOML.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span>convert<span class="w"> </span>excel-to-toml<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>FILENAMES<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-convert-excel-to-toml-n">
+<span id="cmdoption-Command-line-interface-convert-excel-to-toml-name"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;name&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-convert-excel-to-toml-n" title="Link to this definition">¶</a></dt>
+<dd><p>new filename; default is to use the basename of the XLSX file</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-convert-excel-to-toml-arg-FILENAMES">
+<span class="sig-name descname"><span class="pre">FILENAMES</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-convert-excel-to-toml-arg-FILENAMES" title="Link to this definition">¶</a></dt>
+<dd><p>Optional argument(s)</p>
+</dd></dl>
+
+</section>
+<section id="command-line-interface-convert-simulation-file">
+<h3>simulation-file<a class="headerlink" href="#command-line-interface-convert-simulation-file" title="Link to this heading">¶</a></h3>
+<p>Convert a legacy simulation TOML file to the new format.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span>convert<span class="w"> </span>simulation-file<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>FILENAMES<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-convert-simulation-file-n">
+<span id="cmdoption-Command-line-interface-convert-simulation-file-name"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;name&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-convert-simulation-file-n" title="Link to this definition">¶</a></dt>
+<dd><p>new filename; default is Exports.toml</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-convert-simulation-file-arg-FILENAMES">
+<span class="sig-name descname"><span class="pre">FILENAMES</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-convert-simulation-file-arg-FILENAMES" title="Link to this definition">¶</a></dt>
+<dd><p>Optional argument(s)</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="command-line-interface-create-project">
+<h2>create-project<a class="headerlink" href="#command-line-interface-create-project" title="Link to this heading">¶</a></h2>
+<p>Create PyDSS project.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span>create-project<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-create-project-force">
+<span class="sig-name descname"><span class="pre">--force</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-create-project-force" title="Link to this definition">¶</a></dt>
+<dd><p>Overwrite directory if it already exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-create-project-o">
+<span id="cmdoption-Command-line-interface-create-project-options"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--options</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;options&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-create-project-o" title="Link to this definition">¶</a></dt>
+<dd><p>dict-formatted simulation settings that override the config file. Example:  pydss run ./project –options “{&quot;Simulation Type&quot;: &quot;QSTS&quot;}”</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-create-project-e">
+<span id="cmdoption-Command-line-interface-create-project-export-modes"></span><span class="sig-name descname"><span class="pre">-e</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--export-modes</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;export_modes&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-create-project-e" title="Link to this definition">¶</a></dt>
+<dd><p>comma-delimited list of export modes</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-create-project-v">
+<span id="cmdoption-Command-line-interface-create-project-visualization-types"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--visualization-types</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;visualization_types&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-create-project-v" title="Link to this definition">¶</a></dt>
+<dd><p>comma-delimited list of dynamic visualization types</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-create-project-c">
+<span id="cmdoption-Command-line-interface-create-project-controller-types"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--controller-types</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;controller_types&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-create-project-c" title="Link to this definition">¶</a></dt>
+<dd><p>comma-delimited list of controller types</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-create-project-S">
+<span id="cmdoption-Command-line-interface-create-project-simulation-config"></span><span class="sig-name descname"><span class="pre">-S</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--simulation-config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;simulation_config&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-create-project-S" title="Link to this definition">¶</a></dt>
+<dd><p>simulation configuration settings</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-create-project-m">
+<span id="cmdoption-Command-line-interface-create-project-master-dss-file"></span><span class="sig-name descname"><span class="pre">-m</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--master-dss-file</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;master_dss_file&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-create-project-m" title="Link to this definition">¶</a></dt>
+<dd><p>simulation file name</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-create-project-F">
+<span id="cmdoption-Command-line-interface-create-project-opendss-project-folder"></span><span class="sig-name descname"><span class="pre">-F</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--opendss-project-folder</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;opendss_project_folder&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-create-project-F" title="Link to this definition">¶</a></dt>
+<dd><p>simulation file name</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-create-project-f">
+<span id="cmdoption-Command-line-interface-create-project-simulation-file"></span><span class="sig-name descname"><span class="pre">-f</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--simulation-file</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;simulation_file&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-create-project-f" title="Link to this definition">¶</a></dt>
+<dd><p>simulation file name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">simulation.toml</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-create-project-s">
+<span id="cmdoption-Command-line-interface-create-project-scenarios"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--scenarios</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;scenarios&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-create-project-s" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> comma-delimited scenario names</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-create-project-p">
+<span id="cmdoption-Command-line-interface-create-project-project"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--project</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;project&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-create-project-p" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> project name</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-create-project-P">
+<span id="cmdoption-Command-line-interface-create-project-path"></span><span class="sig-name descname"><span class="pre">-P</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;path&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-create-project-P" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> path in which to create project</p>
+</dd></dl>
+
+</section>
+<section id="command-line-interface-edit-scenario">
+<h2>edit-scenario<a class="headerlink" href="#command-line-interface-edit-scenario" title="Link to this heading">¶</a></h2>
+<p>Edit scenario in a PyDSS project.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span>edit-scenario<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-edit-scenario-s">
+<span id="cmdoption-Command-line-interface-edit-scenario-scenario"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--scenario</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;scenario&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-edit-scenario-s" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> Project name (should exist)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-edit-scenario-p">
+<span id="cmdoption-Command-line-interface-edit-scenario-project-path"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--project-path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;project_path&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-edit-scenario-p" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> project path</p>
+</dd></dl>
+
+<section id="command-line-interface-edit-scenario-update-controllers">
+<h3>update-controllers<a class="headerlink" href="#command-line-interface-edit-scenario-update-controllers" title="Link to this heading">¶</a></h3>
+<p>Update a scenario’s controllers from an OpenDSS file.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span>edit-scenario<span class="w"> </span>update-controllers<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-edit-scenario-update-controllers-t">
+<span id="cmdoption-Command-line-interface-edit-scenario-update-controllers-controller-type"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--controller-type</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;controller_type&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-edit-scenario-update-controllers-t" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> controller type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><p>FaultController | GenController | MotorStall | MotorStallSimple | PvController | PvDynamic | PvFrequencyRideThru | PvVoltageRideThru | SocketController | StorageController | ThermostaticLoad | xmfrController</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-edit-scenario-update-controllers-f">
+<span id="cmdoption-Command-line-interface-edit-scenario-update-controllers-dss-file"></span><span class="sig-name descname"><span class="pre">-f</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--dss-file</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;dss_file&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-edit-scenario-update-controllers-f" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> OpenDSS file containing elements</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-edit-scenario-update-controllers-c">
+<span id="cmdoption-Command-line-interface-edit-scenario-update-controllers-controller"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--controller</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;controller&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-edit-scenario-update-controllers-c" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> controller name</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="command-line-interface-export">
+<h2>export<a class="headerlink" href="#command-line-interface-export" title="Link to this heading">¶</a></h2>
+<p>Export data from a PyDSS project.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PROJECT_PATH
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-export-verbose">
+<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-export-verbose" title="Link to this definition">¶</a></dt>
+<dd><p>Enable verbose log output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-export-o">
+<span id="cmdoption-Command-line-interface-export-output-dir"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output_dir&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-export-o" title="Link to this definition">¶</a></dt>
+<dd><p>Output directory. Default is project exports directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-export-c">
+<span id="cmdoption-Command-line-interface-export-compress"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--compress</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-export-c" title="Link to this definition">¶</a></dt>
+<dd><p>Compress output files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-export-f">
+<span id="cmdoption-Command-line-interface-export-fmt"></span><span class="sig-name descname"><span class="pre">-f</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--fmt</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;fmt&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-export-f" title="Link to this definition">¶</a></dt>
+<dd><p>Output file format (csv or h5).</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-export-arg-PROJECT_PATH">
+<span class="sig-name descname"><span class="pre">PROJECT_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-export-arg-PROJECT_PATH" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="command-line-interface-extract">
+<h2>extract<a class="headerlink" href="#command-line-interface-extract" title="Link to this heading">¶</a></h2>
+<p>Extract a file from an archived PyDSS project.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span>extract<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PROJECT_PATH<span class="w"> </span>FILE_PATH
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-extract-verbose">
+<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-extract-verbose" title="Link to this definition">¶</a></dt>
+<dd><p>Enable verbose log output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-extract-o">
+<span id="cmdoption-Command-line-interface-extract-output-dir"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output_dir&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-extract-o" title="Link to this definition">¶</a></dt>
+<dd><p>Output directory. Default is the project path.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-extract-arg-PROJECT_PATH">
+<span class="sig-name descname"><span class="pre">PROJECT_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-extract-arg-PROJECT_PATH" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-extract-arg-FILE_PATH">
+<span class="sig-name descname"><span class="pre">FILE_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-extract-arg-FILE_PATH" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="command-line-interface-extract-element-files">
+<h2>extract-element-files<a class="headerlink" href="#command-line-interface-extract-element-files" title="Link to this heading">¶</a></h2>
+<p>Extract the element info files from an archived PyDSS project.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span>extract-element-files<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PROJECT_PATH
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-extract-element-files-verbose">
+<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-extract-element-files-verbose" title="Link to this definition">¶</a></dt>
+<dd><p>Enable verbose log output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-extract-element-files-o">
+<span id="cmdoption-Command-line-interface-extract-element-files-output-dir"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output_dir&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-extract-element-files-o" title="Link to this definition">¶</a></dt>
+<dd><p>Output directory. Default is the project path.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-extract-element-files-arg-PROJECT_PATH">
+<span class="sig-name descname"><span class="pre">PROJECT_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-extract-element-files-arg-PROJECT_PATH" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="command-line-interface-reports">
+<h2>reports<a class="headerlink" href="#command-line-interface-reports" title="Link to this heading">¶</a></h2>
+<p>Explore and print PyDSS reports.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span>reports<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PROJECT_PATH
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-reports-r">
+<span id="cmdoption-Command-line-interface-reports-report"></span><span class="sig-name descname"><span class="pre">-r</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--report</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;report&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-reports-r" title="Link to this definition">¶</a></dt>
+<dd><p>PyDSS report name.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-reports-s">
+<span id="cmdoption-Command-line-interface-reports-scenario"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--scenario</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;scenario&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-reports-s" title="Link to this definition">¶</a></dt>
+<dd><p>PyDSS scenario name.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-reports-i">
+<span id="cmdoption-Command-line-interface-reports-index"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--index</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;index&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-reports-i" title="Link to this definition">¶</a></dt>
+<dd><p>View report by index (use -l flag to see list of available reports)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-reports-l">
+<span id="cmdoption-Command-line-interface-reports-list-reports"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--list-reports</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-reports-l" title="Link to this definition">¶</a></dt>
+<dd><p>List all reports for a given project path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-reports-arg-PROJECT_PATH">
+<span class="sig-name descname"><span class="pre">PROJECT_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-reports-arg-PROJECT_PATH" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="command-line-interface-run">
+<h2>run<a class="headerlink" href="#command-line-interface-run" title="Link to this heading">¶</a></h2>
+<p>Run a PyDSS simulation.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span>run<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PROJECT_PATH
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-run-dry-run">
+<span class="sig-name descname"><span class="pre">--dry-run</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-run-dry-run" title="Link to this definition">¶</a></dt>
+<dd><p>Dry run for getting estimated space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-run-verbose">
+<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-run-verbose" title="Link to this definition">¶</a></dt>
+<dd><p>Enable verbose log output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-run-z">
+<span id="cmdoption-Command-line-interface-run-zip-project"></span><span class="sig-name descname"><span class="pre">-z</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--zip-project</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-run-z" title="Link to this definition">¶</a></dt>
+<dd><p>Zip project files after successful execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-run-t">
+<span id="cmdoption-Command-line-interface-run-tar-project"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--tar-project</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-run-t" title="Link to this definition">¶</a></dt>
+<dd><p>Tar project files after successful execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-run-s">
+<span id="cmdoption-Command-line-interface-run-simulations-file"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--simulations-file</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;simulations_file&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-run-s" title="Link to this definition">¶</a></dt>
+<dd><p>scenario toml file to run (over rides default)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">simulation.toml</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-run-o">
+<span id="cmdoption-Command-line-interface-run-options"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--options</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;options&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-run-o" title="Link to this definition">¶</a></dt>
+<dd><p>dict-formatted simulation settings that override the config file. Example:  pydss run ./project –options “{&quot;Exports&quot;: {&quot;Export Compression&quot;: &quot;true&quot;}}”</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-run-arg-PROJECT_PATH">
+<span class="sig-name descname"><span class="pre">PROJECT_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-Command-line-interface-run-arg-PROJECT_PATH" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="command-line-interface-serve">
+<h2>serve<a class="headerlink" href="#command-line-interface-serve" title="Link to this heading">¶</a></h2>
+<p>Run a PyDSS RESTful API server.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Command<span class="w"> </span>line<span class="w"> </span>interface<span class="w"> </span>serve<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-Command-line-interface-serve-p">
+<span id="cmdoption-Command-line-interface-serve-port"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--port</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;port&gt;</span></span><a class="headerlink" href="#cmdoption-Command-line-interface-serve-p" title="Link to this definition">¶</a></dt>
+<dd><p>Socket port for the server</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">9090</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+<section id="rest-api-interface">
+<h1>REST API interface<a class="headerlink" href="#rest-api-interface" title="Link to this heading">¶</a></h1>
+<dl class="http head">
+<dt class="sig sig-object http" id="head--simulators-pydss-instances">
+<span class="sig-name descname"><span class="pre">HEAD</span> </span><span class="sig-name descname"><span class="pre">/simulators/pydss/instances</span></span><a class="headerlink" href="#head--simulators-pydss-instances" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Returns UUIDs of all the instances currently running on the server</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Status Codes<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a></span> – UUIDs of all currently running PyDSS instances have been returned</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.5">204 No Content</a></span> – No active PyDSS instance found</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="http get">
+<dt class="sig sig-object http" id="get--simulators-pydss-instances">
+<span class="sig-name descname"><span class="pre">GET</span> </span><span class="sig-name descname"><span class="pre">/simulators/pydss/instances</span></span><a class="headerlink" href="#get--simulators-pydss-instances" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Returns UUIDs of all the instances currently running on the server</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Status Codes<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a></span> – UUIDs of all currently running PyDSS instances have been returned</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.5">204 No Content</a></span> – No active PyDSS instance found</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="http head">
+<dt class="sig sig-object http" id="head--simulators-pydss-status-uuid-uuid">
+<span class="sig-name descname"><span class="pre">HEAD</span> </span><span class="sig-name descname"><span class="pre">/simulators/pydss/status/uuid/{uuid}</span></span><a class="headerlink" href="#head--simulators-pydss-status-uuid-uuid" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Returns states of process of with UUID matching the passed UUID</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uuid</strong> (<em>string</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Status Codes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a></span> – PyDSS instance with the provided UUID is currently running</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.5">204 No Content</a></span> – PyDSS instance with the provided UUID does not exist</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="http get">
+<dt class="sig sig-object http" id="get--simulators-pydss-status-uuid-uuid">
+<span class="sig-name descname"><span class="pre">GET</span> </span><span class="sig-name descname"><span class="pre">/simulators/pydss/status/uuid/{uuid}</span></span><a class="headerlink" href="#get--simulators-pydss-status-uuid-uuid" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Returns states of process of with UUID matching the passed UUID</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uuid</strong> (<em>string</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Status Codes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a></span> – PyDSS instance with the provided UUID is currently running</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.5">204 No Content</a></span> – PyDSS instance with the provided UUID does not exist</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="http head">
+<dt class="sig sig-object http" id="head--simulators-pydss-info">
+<span class="sig-name descname"><span class="pre">HEAD</span> </span><span class="sig-name descname"><span class="pre">/simulators/pydss/info</span></span><a class="headerlink" href="#head--simulators-pydss-info" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Returns a dictionary of valid project and scenarios in the provided path</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Query Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>string</em>) – (Required)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Status Codes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a></span> – Successfully retrieved project information</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.7">406 Not Acceptable</a></span> – Provided path does not exist</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="http get">
+<dt class="sig sig-object http" id="get--simulators-pydss-info">
+<span class="sig-name descname"><span class="pre">GET</span> </span><span class="sig-name descname"><span class="pre">/simulators/pydss/info</span></span><a class="headerlink" href="#get--simulators-pydss-info" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Returns a dictionary of valid project and scenarios in the provided path</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Query Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>string</em>) – (Required)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Status Codes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a></span> – Successfully retrieved project information</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.7">406 Not Acceptable</a></span> – Provided path does not exist</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="http put">
+<dt class="sig sig-object http" id="put--simulators-pydss">
+<span class="sig-name descname"><span class="pre">PUT</span> </span><span class="sig-name descname"><span class="pre">/simulators/pydss</span></span><a class="headerlink" href="#put--simulators-pydss" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Run a command on an active instance of PyDSS</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Status Codes<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a></span> – Successfully retrieved project information</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a></span> – Provided path does not exist</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.4">403 Forbidden</a></span> – Provided path does not exist</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="http post">
+<dt class="sig sig-object http" id="post--simulators-pydss">
+<span class="sig-name descname"><span class="pre">POST</span> </span><span class="sig-name descname"><span class="pre">/simulators/pydss</span></span><a class="headerlink" href="#post--simulators-pydss" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Creates an instance of PyDSS and runs the simulation</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Status Codes<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a></span> – Successfully retrieved project information</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a></span> – Provided path does not exist</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="http delete">
+<dt class="sig sig-object http" id="delete--simulators-pydss">
+<span class="sig-name descname"><span class="pre">DELETE</span> </span><span class="sig-name descname"><span class="pre">/simulators/pydss</span></span><a class="headerlink" href="#delete--simulators-pydss" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Deletes an active instance of PyDSS</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uuid</strong> (<em>string</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Status Codes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a></span> – Successfully retrieved project information</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.4">403 Forbidden</a></span> – Provided path does not exist</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="http post">
+<dt class="sig sig-object http" id="post--simulators-pydss-create">
+<span class="sig-name descname"><span class="pre">POST</span> </span><span class="sig-name descname"><span class="pre">/simulators/pydss/create</span></span><a class="headerlink" href="#post--simulators-pydss-create" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Creates a new project for PyDSS (User uploads a zipped OpenDSS model)</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Status Codes<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a></span> – Successfully retrieved project information</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.4">403 Forbidden</a></span> – Provided path does not exist</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="interfaces.html" class="btn btn-neutral float-left" title="Interfaces" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="project_layout.html" class="btn btn-neutral float-right" title="PyDSS Project Layout" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Aadil Latif.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

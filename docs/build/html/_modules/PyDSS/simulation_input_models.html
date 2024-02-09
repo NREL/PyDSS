@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PyDSS.simulation_input_models &mdash; PyDSS 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/autodoc_pydantic.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link href="../../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            PyDSS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#create-an-empty-project">Create an empty project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#customize-the-simulation-settings">Customize the simulation settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#opendss-models">OpenDSS Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#run-the-simulation">Run the simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#results">Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#create-a-project">Create a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#exporting-data">Exporting Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#pre-filtering-export-data">Pre-filtering Export Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#run-a-project">Run a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#analyze-results">Analyze results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial.html#exported-csv-files">Exported CSV files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial.html#data-viewer">Data Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial.html#access-results-programmatically">Access results programmatically</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../tutorial.html#load-element-classes-and-properties">Load element classes and properties</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tutorial.html#read-a-dataframe-for-one-element">Read a dataframe for one element</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tutorial.html#read-a-dataframe-for-one-element-with-a-specific-option">Read a dataframe for one element with a specific option</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tutorial.html#read-a-dataframe-for-one-element-with-an-option-matching-a-regular-expression">Read a dataframe for one element with an option matching a regular expression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tutorial.html#read-the-total-value-for-a-property-stored-with-store-values-type-sum">Read the total value for a property stored with <code class="docutils literal notranslate"><span class="pre">store_values_type</span> <span class="pre">=</span> <span class="pre">&quot;sum&quot;</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tutorial.html#find-out-all-options-available-for-a-property">Find out all options available for a property</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tutorial.html#find-out-what-option-values-are-present-for-a-property">Find out what option values are present for a property</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tutorial.html#read-a-dataframe-for-all-elements">Read a dataframe for all elements</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial.html#estimate-space-required-by-pydss-simulation">Estimate space required by PyDSS simulation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../interfaces.html">Interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../API%20Interfaces.html">Command line interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-add-post-process">add-post-process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-add-scenario">add-scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-controllers">controllers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-controllers-register">register</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-controllers-reset-defaults">reset-defaults</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-controllers-show">show</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-controllers-unregister">unregister</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-convert">convert</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-convert-excel-to-toml">excel-to-toml</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-convert-simulation-file">simulation-file</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-create-project">create-project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-edit-scenario">edit-scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-edit-scenario-update-controllers">update-controllers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-export">export</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-extract">extract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-extract-element-files">extract-element-files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-reports">reports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-run">run</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../API%20Interfaces.html#command-line-interface-serve">serve</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../API%20Interfaces.html#rest-api-interface">REST API interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../project_layout.html">PyDSS Project Layout</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../project_layout.html#simulation-settings">Simulation Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../project_layout.html#scenarios">Scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../project_layout.html#exports">Exports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../project_layout.html#reports">Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../project_layout.html#example-layout">Example layout</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Result%20management.html">Enhanced result export features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reports.html">Reports</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../reports.html#global-settings">Global settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../reports.html#format">Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reports.html#granularity">Granularity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../reports.html#export-parameters">Export Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reports.html#output-data">Output Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reports.html#adding-new-reports">Adding New Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reports.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hdf-data-format.html">HDF Data Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../hdf-data-format.html#layout">Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../hdf-data-format.html#common-metadata">Common Metadata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../hdf-data-format.html#dataset-metadata">Dataset Metadata</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../hdf-data-format.html#attributes-per-dataset">Attributes per dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../hdf-data-format.html#metadata-datasets-per-dataset">Metadata datasets per dataset</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../hdf-data-format.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../co-simulation_support.html">Co-simulation interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Co-simulation%20Interfaces.html">The socket interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Co-simulation%20Interfaces.html#the-helics-interface">The HELICS interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../Co-simulation%20Interfaces.html#helics-models-and-interface">HELICS models and interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../Co-simulation%20Interfaces.html#id1">HELICS models and interface</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../Co-simulation%20Interfaces.html#PyDSS.simulation_input_models.HelicsModel"><code class="docutils literal notranslate"><span class="pre">HelicsModel</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../Co-simulation%20Interfaces.html#the-api-interface">The API interface</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PyDSS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">PyDSS.simulation_input_models</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for PyDSS.simulation_input_models</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Defines user input models for a simulation.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Annotated</span>
+
+
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">field_validator</span><span class="p">,</span> <span class="n">model_validator</span><span class="p">,</span> <span class="n">ConfigDict</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">validator</span>
+<span class="c1">#from pydantic.json import isoformat, timedelta_isoformat</span>
+
+
+
+<span class="kn">from</span> <span class="nn">PyDSS.common</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ControlMode</span><span class="p">,</span>
+    <span class="n">FileFormat</span><span class="p">,</span>
+    <span class="n">LoggingLevel</span><span class="p">,</span>
+    <span class="n">ReportGranularity</span><span class="p">,</span>
+    <span class="n">SimulationType</span><span class="p">,</span>
+    <span class="n">SnapshotTimePointSelectionMode</span><span class="p">,</span>
+    <span class="n">SIMULATION_SETTINGS_FILENAME</span><span class="p">,</span>
+    <span class="n">ControllerType</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">PyDSS.dataset_buffer</span> <span class="kn">import</span> <span class="n">DEFAULT_MAX_CHUNK_BYTES</span>
+<span class="kn">from</span> <span class="nn">PyDSS.utils.utils</span> <span class="kn">import</span> <span class="n">dump_data</span><span class="p">,</span> <span class="n">load_data</span>
+<span class="kn">from</span> <span class="nn">PyDSS.common</span> <span class="kn">import</span> <span class="n">DATE_FORMAT</span>
+
+<span class="k">class</span> <span class="nc">InputsBaseModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all input models&quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;InputsBaseModel&quot;</span><span class="p">,</span> <span class="n">str_strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">validate_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;forbid&quot;</span><span class="p">,</span> <span class="n">use_enum_values</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">populate_by_name</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">value</span>
+            <span class="c1"># elif isinstance(val, datetime):</span>
+            <span class="c1">#     data[key] = isoformat(val)</span>
+            <span class="c1"># elif isinstance(val, timedelta):</span>
+            <span class="c1">#     data[key] = timedelta_isoformat(val)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span>
+
+
+<span class="k">class</span> <span class="nc">SnapshotTimePointSelectionConfigModel</span><span class="p">(</span><span class="n">InputsBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the user inputs for auto-selecting snapshot time points.&quot;&quot;&quot;</span>
+
+    <span class="n">mode</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">SnapshotTimePointSelectionMode</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Mode&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">SnapshotTimePointSelectionMode</span><span class="o">.</span><span class="n">NONE</span><span class="p">,</span>
+    <span class="p">)]</span>
+    <span class="n">start_time</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">datetime</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;start_time&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Start time in the load shape profiles&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="s2">&quot;2020-1-1 00:00:00.0&quot;</span><span class="p">,</span> <span class="n">DATE_FORMAT</span><span class="p">)</span>
+    <span class="p">)]</span>
+    <span class="n">search_duration_min</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;search_duration_min&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Duration in minutes to search in the load shape profiles&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mf">1440.0</span><span class="p">,</span>
+    <span class="p">)]</span>
+
+
+<span class="k">class</span> <span class="nc">ScenarioPostProcessModel</span><span class="p">(</span><span class="n">InputsBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines user inputs for a scenario post-process script.&quot;&quot;&quot;</span>
+
+    <span class="n">script</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;script&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Post-process script&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">config_file</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;config_file&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Post-process config file&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+
+<span class="k">class</span> <span class="nc">ScenarioModel</span><span class="p">(</span><span class="n">InputsBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the user inputs for a scenario.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of scenario&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">post_process_infos</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">ScenarioPostProcessModel</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;post_process_infos&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Post-process script descriptors&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="p">)]</span>
+    <span class="n">snapshot_time_point_selection_config</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">SnapshotTimePointSelectionConfigModel</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;snapshot_time_point_selection_config&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Descriptor for auto-selecting snapshot time points&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">SnapshotTimePointSelectionConfigModel</span><span class="p">(),</span>
+        <span class="p">)]</span>
+
+
+<span class="k">class</span> <span class="nc">SimulationRangeModel</span><span class="p">(</span><span class="n">InputsBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Governs time range when control algorithms can run in a simulation. Does not affect</span>
+<span class="sd">    simulation times.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">start</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span>
+            <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;start&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Time to start running control algorithms each day.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;00:00:00&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">end</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span> 
+        <span class="nb">str</span><span class="p">,</span>
+            <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;end&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Time to stop running control algorithms each day.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;23:59:59&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+
+<span class="k">class</span> <span class="nc">ProjectModel</span><span class="p">(</span><span class="n">InputsBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the user inputs for the project.&quot;&quot;&quot;</span>
+
+    <span class="n">project_path</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="s2">&quot;.&quot;</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;project_path&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Base path of project. Join with &#39;active_project&#39; to get full path&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Project Path&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">active_project</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="o">...</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;active_project&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Active project name. Join with &#39;project_path&#39; to get full path&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Active Project&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">active_project_path</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;active_project_path&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Path to project. Auto-generated.&quot;</span><span class="p">,</span>
+            <span class="n">internal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">scenarios</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">ScenarioModel</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;scenarios&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;List of scenarios&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Scenarios&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="p">)]</span>
+    <span class="n">active_scenario</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;active_scenario&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of active scenario&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Active Scenario&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">start_time</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">],</span>
+            <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;start_time&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Start time of simulation&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="s2">&quot;2020-1-1 00:00:00.0&quot;</span><span class="p">,</span> <span class="n">DATE_FORMAT</span><span class="p">),</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Start time&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">simulation_duration_min</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;simulation_duration_min&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Simulation duration in minutes.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mf">1440.0</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">step_resolution_sec</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;step_resolution_sec&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Time step resolution in seconds&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Step resolution (sec)&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mf">900.0</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">loadshape_start_time</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;loadshape_start_time&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Start time of loadshape profiles&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Loadshape start time&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;2020-01-01 00:00:00.0&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">simulation_range</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="n">SimulationRangeModel</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;simulation_range&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Restrict control algorithms and data collection to these hours. &quot;</span>
+            <span class="s2">&quot;Useful for skipping night when simulating PV Systems.&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Simulation range&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">SimulationRangeModel</span><span class="p">(),</span>
+        <span class="p">)]</span>
+    <span class="n">simulation_type</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">SimulationType</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;simulation_type&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Type of simulation to run.&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Simulation Type&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">SimulationType</span><span class="o">.</span><span class="n">QSTS</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">control_mode</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">ControlMode</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;control_mode&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Simulation control mode&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Control mode&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">ControlMode</span><span class="o">.</span><span class="n">STATIC</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">max_control_iterations</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">int</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;max_control_iterations&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Maximum outer loop control iterations&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Max Control Iterations&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">convergence_error_percent_threshold</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;convergence_error_percent_threshold&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Convergence error threshold as a percent&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Convergence error percent threshold&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">error_tolerance</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;error_tolerance&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Error tolerance in per unit&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Error tolerance&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">max_error_tolerance</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;max_error_tolerance&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Abort simulation if a convergence error exceeds this value.&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Max error tolerance&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">skip_export_on_convergence_error</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;skip_export_on_convergence_error&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Do not export data at a time point if there is a convergence error.&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Skip export on convergence error&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">dss_file</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;dss_file&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;OpenDSS master filename&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;DSS File&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;Master.dss&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">dss_file_absolute_path</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;dss_file_absolute_path&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true if &#39;dss_file&#39; is an absolute path.&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;DSS File Absolute Path&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">disable_pydss_controllers</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;disable_pydss_controllers&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Allows disabling of the control algorithms&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Disable PyDSS controllers&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">use_controller_registry</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;use_controller_registry&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Use local controller registry.&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Use Controller Registry&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">pre_process</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="c1"># Correct legacy files.</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Return Results&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;Simulation Type&quot;</span><span class="p">,</span> <span class="s2">&quot;simulation_type&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">val</span><span class="p">],</span> <span class="n">SimulationType</span><span class="p">):</span>
+                    <span class="n">values</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">val</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">old_duration</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Simulation duration (min)&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">old_duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;simulation_duration_min&quot;</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;&#39;simulation_duration_min&#39; is mutually exclusive with &#39;Simulation duration (min)&#39;&quot;</span>
+                <span class="p">)</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">&quot;simulation_duration_min&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_duration</span>
+        <span class="k">return</span> <span class="n">values</span>
+   
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;project_path&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">check_project_path</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># We are being used in library mode rather than project mode.</span>
+            <span class="k">return</span> <span class="n">val</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;project_path=</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2"> does not exist&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">val</span>
+
+    <span class="c1"># TODO[pydantic]: We couldn&#39;t refactor the `validator`, please replace it by `field_validator` manually.</span>
+    <span class="c1"># Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.</span>
+    <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;active_project&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">check_active_project</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;project_path&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+            
+        <span class="n">active_project_path</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;project_path&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">val</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">active_project_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;project_path=</span><span class="si">{</span><span class="n">active_project_path</span><span class="si">}</span><span class="s2"> does not exist&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">val</span>
+
+    <span class="c1"># TODO[pydantic]: We couldn&#39;t refactor the `validator`, please replace it by `field_validator` manually.</span>
+    <span class="c1"># Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.</span>
+    <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;active_project_path&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">assign_active_project_path</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;project_path&quot;</span> <span class="ow">in</span> <span class="n">values</span> <span class="ow">and</span> <span class="s2">&quot;active_project&quot;</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;project_path&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;active_project&quot;</span><span class="p">]</span>
+        
+        <span class="k">return</span> <span class="n">val</span>
+        
+
+    <span class="c1"># TODO[pydantic]: We couldn&#39;t refactor the `validator`, please replace it by `field_validator` manually.</span>
+    <span class="c1"># Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.</span>
+    <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;scenarios&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">check_scenarios</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;project_path&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">val</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">val</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;project[&#39;scenarios&#39;] cannot be empty&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">val</span>
+
+    <span class="k">def</span> <span class="nf">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;active_project_path&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+
+<span class="k">class</span> <span class="nc">ExportsModel</span><span class="p">(</span><span class="n">InputsBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the user inputs for defining data exports.&quot;&quot;&quot;</span>
+
+    <span class="n">export_results</span><span class="p">:</span>  <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;export_results&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true to export circuit element values at each time point.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Log Results&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">export_elements</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;export_elements&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true to export static information for all circuit elements.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Export Elements&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">export_element_types</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">list</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;export_element_types&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Restrict &#39;export_elements&#39; to these element types. Default is all types&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Export Element Types&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">export_data_tables</span><span class="p">:</span><span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;export_data_tables&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true to export circuit element data in tabular files. While it does &quot;</span>
+                        <span class="s2">&quot;duplicate data, it provides a way to preserve a human-readable &quot;</span>
+                        <span class="s2">&quot;dataset that does not require PyDSS to interpret.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Export Data Tables&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">export_pv_profiles</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;export_pv_profiles&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true to export PV profiles to tabular files.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Export PV Profiles&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">export_data_in_memory</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;export_data_in_memory&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true to keep circuit element data in memory rather than periodically &quot;</span>
+            <span class="s2">&quot;flushing to an HDF5 file. This can be faster but will consume more memory.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Export Data In Memory&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">export_node_names_by_type</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;export_node_names_by_type&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true to export node names by primary/secondary type to a file.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Export Node Names By Type&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">export_event_log</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;export_event_log&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true to export the OpenDSS event log.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Export Event Log&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">export_format</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">FileFormat</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;export_format&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Controls the file format used if export_data_tables is true.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">FileFormat</span><span class="o">.</span><span class="n">HDF5</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Export Format&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">export_compression</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;export_compression&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true to compress data exported with &#39;export_data_tables&#39;.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Export Compression&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">hdf_max_chunk_bytes</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;hdf_max_chunk_bytes&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The chunk size in bytes to use for exported data in the HDF5 data store. &quot;</span>
+                        <span class="s2">&quot;The value is passed to the h5py package. Refer to &quot;</span>
+                        <span class="s2">&quot;http://docs.h5py.org/en/stable/high/dataset.html#chunked-storage for more &quot;</span>
+                        <span class="s2">&quot;information.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_MAX_CHUNK_BYTES</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;HDF Max Chunk Bytes&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">pre_process</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Return Results&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Export Mode&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Export Style&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">values</span>
+
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;hdf_max_chunk_bytes&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">check_hdf_max_chunk_bytes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="nb">min</span> <span class="o">=</span> <span class="mi">16</span> <span class="o">*</span> <span class="mi">1024</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="nb">min</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;hdf_max_chunk_bytes must be &gt;= </span><span class="si">{</span><span class="nb">min</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="o">%</span> <span class="mi">512</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;hdf_max_chunk_bytes must be a multiple of 512&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">val</span>
+
+
+<span class="k">class</span> <span class="nc">FrequencyModel</span><span class="p">(</span><span class="n">InputsBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the user inputs for defining frequency parameters.&quot;&quot;&quot;</span>
+
+    <span class="n">enable_frequency_sweep</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;enable_frequency_sweep&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Enable harmonic sweep. Works with only &#39;Static&#39; and &#39;QSTS&#39; simulation modes.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Enable frequency sweep&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">fundamental_frequency</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;fundamental_frequency&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Fundamental system frequeny in Hertz&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Fundamental frequency&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">start_frequency</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;start_frequency&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Start system frequeny in Hertz&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Start frequency&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">end_frequency</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;end_frequency&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;End system frequeny in Hertz&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;End frequency&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">frequency_increment</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;frequency_increment&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;As multiple of fundamental&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;frequency increment&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">neglect_shunt_admittance</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;neglect_shunt_admittance&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Neglect shunt addmittance for frequency sweep&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Neglect shunt admittance&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">percentage_load_in_series</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;percentage_load_in_series&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Percent of load that is series RL for Harmonic studies&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Percentage load in series&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+    <span class="c1"># TODO[pydantic]: We couldn&#39;t refactor the `validator`, please replace it by `field_validator` manually.</span>
+    <span class="c1"># Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.</span>
+    <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;end_frequency&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">check_end_frequency</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;start_frequency&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">start</span> <span class="o">&gt;</span> <span class="n">val</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;start_frequency=</span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2"> must be less than end_frequency=</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">val</span>
+
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;fundamental_frequency&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">check_fundamental_frequency</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="n">allowed</span> <span class="o">=</span> <span class="p">(</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;fundamental_frequency must be one of </span><span class="si">{</span><span class="n">allowed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">val</span>
+
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;percentage_load_in_series&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">check_percentage_load_in_series</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;percentage_load_in_series must be between 0 and 100: </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">val</span>
+
+
+<div class="viewcode-block" id="HelicsModel">
+<a class="viewcode-back" href="../../Co-simulation%20Interfaces.html#PyDSS.simulation_input_models.HelicsModel">[docs]</a>
+<span class="k">class</span> <span class="nc">HelicsModel</span><span class="p">(</span><span class="n">InputsBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the user inputs for HELICS.&quot;&quot;&quot;</span>
+
+    <span class="n">co_simulation_mode</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;co_simulation_mode&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true to enable the HELICS interface for co-simulation.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Co-simulation Mode&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">iterative_mode</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;iterative_mode&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Iterative mode&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Iterative Mode&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">error_tolerance</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;error_tolerance&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Error tolerance&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Error tolerance&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">max_co_iterations</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;max_co_iterations&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Max number of co-simulation iterations&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Max co-iterations&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">broker</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;broker&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Broker name&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;mainbroker&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Broker&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">broker_port</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;broker_port&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Broker port&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Broker port&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">federate_name</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;federate_name&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of the federate&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;PyDSS&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Federate name&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">time_delta</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;time_delta&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The property controlling the minimum time delta for a federate.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Time delta&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">core_type</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;core_type&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Core type to be use for communication&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;zmq&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Core type&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">uninterruptible</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;uninterruptible&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Can the federate be interrupted&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Uninterruptible&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">logging_level</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;logging_level&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Logging level for the federate. Refer to HELICS documentation.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Helics logging level&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+<div class="viewcode-block" id="HelicsModel.check_logging_level">
+<a class="viewcode-back" href="../../Co-simulation%20Interfaces.html#PyDSS.simulation_input_models.HelicsModel.check_logging_level">[docs]</a>
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;logging_level&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">check_logging_level</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;HELICS logging level must be between 0 and 10: </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">val</span></div>
+
+
+<div class="viewcode-block" id="HelicsModel.check_max_co_iterations">
+<a class="viewcode-back" href="../../Co-simulation%20Interfaces.html#PyDSS.simulation_input_models.HelicsModel.check_max_co_iterations">[docs]</a>
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;max_co_iterations&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">check_max_co_iterations</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mi">1000</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;max_co_iterations must be between 1 and 1000: </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">val</span></div>
+</div>
+
+
+
+<span class="k">class</span> <span class="nc">LoggingModel</span><span class="p">(</span><span class="n">InputsBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the user inputs for controlling logging.&quot;&quot;&quot;</span>
+
+    <span class="n">logging_level</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="n">LoggingLevel</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;logging_level&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;PyDSS minimum logging level&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">LoggingLevel</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Logging Level&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">enable_console</span><span class="p">:</span>  <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;enable_console&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true to enable console logging.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Display on screen&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">enable_file</span><span class="p">:</span>  <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;enable_file&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true to enable logging to a file.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Log to external file&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">clear_old_log_file</span><span class="p">:</span>  <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">],</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;clear_old_log_file&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true to clear and overwrite any existing log files.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Clear old log file&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">log_time_step_updates</span><span class="p">:</span>  <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">],</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;log_time_step_updates&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true to log each completed time step.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Log time step updates&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">pre_process</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="c1"># Correct legacy files.</span>
+        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;Logging Level&quot;</span><span class="p">,</span> <span class="s2">&quot;logging_level&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">val</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">values</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">val</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">values</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">val</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">values</span>
+
+
+<span class="k">class</span> <span class="nc">MonteCarloModel</span><span class="p">(</span><span class="n">InputsBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the user inputs for Monte Carlo simulations.&quot;&quot;&quot;</span>
+
+    <span class="n">num_scenarios</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;num_scenarios&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Number of Monte Carlo scenarios&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Number of Monte Carlo scenarios&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+
+
+<span class="k">class</span> <span class="nc">ProfilesModel</span><span class="p">(</span><span class="n">InputsBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines user inputs for the Profile Manager.&quot;&quot;&quot;</span>
+
+    <span class="n">use_profile_manager</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;use_profile_manager&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true to enable the Profile Manager.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Use profile manager&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">source_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FileFormat</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;source_type&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;File format for source data&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">FileFormat</span><span class="o">.</span><span class="n">HDF5</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">source</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;source&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;File containing source data&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;Profiles_backup.hdf5&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">profile_mapping</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;profile_mapping&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Profile mapping&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Profile mapping&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">is_relative_path</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;is_relative_path&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Source file path is relative&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">settings</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Dict</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;settings&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Profiles settings&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="p">{},</span>
+        <span class="p">)]</span>
+
+    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">pre_process</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;HDF5&quot;</span><span class="p">:</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">&quot;source_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;h5&quot;</span>
+        <span class="k">return</span> <span class="n">values</span>
+
+
+<span class="k">class</span> <span class="nc">ReportBaseModel</span><span class="p">(</span><span class="n">InputsBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the base model for all report-specific user inputs.&quot;&quot;&quot;</span>
+
+    <span class="n">enabled</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;enabled&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true to enable the report&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">scenarios</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;scenarios&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Scenarios to which the report applies. Default is all scenarios.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="p">)]</span>
+    <span class="n">store_all_time_points</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;store_all_time_points&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true to store data for all time points. If false, store aggregated &quot;</span>
+                        <span class="s2">&quot;metrics in memory.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+
+<span class="k">class</span> <span class="nc">CapacitorStateChangeCountReportModel</span><span class="p">(</span><span class="n">ReportBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the user inputs for the Capacitor State Change Counts report.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Report name&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;Capacitor State Change Counts&quot;</span><span class="p">,</span>
+            <span class="n">internal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+
+<span class="k">class</span> <span class="nc">FeederLossesReportModel</span><span class="p">(</span><span class="n">ReportBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the user inputs for the Feeder Losses report.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Report name&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;Feeder Losses&quot;</span><span class="p">,</span>
+            <span class="n">internal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+
+<span class="k">class</span> <span class="nc">PvClippingReportModel</span><span class="p">(</span><span class="n">ReportBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the user inputs for the PV Clipping report.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Report name&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;PV Clipping&quot;</span><span class="p">,</span>
+            <span class="n">internal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">diff_tolerance_percent_pmpp</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;diff_tolerance_percent_pmpp&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;TBD&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">denominator_tolerance_percent_pmpp</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;denominator_tolerance_percent_pmpp&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;TBD&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+
+<span class="k">class</span> <span class="nc">PvCurtailmentReportModel</span><span class="p">(</span><span class="n">ReportBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the user inputs for the PV Curtailment report.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Report name&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;PV Curtailment&quot;</span><span class="p">,</span>
+            <span class="n">internal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">diff_tolerance_percent_pmpp</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;diff_tolerance_percent_pmpp&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;TBD&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">denominator_tolerance_percent_pmpp</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;denominator_tolerance_percent_pmpp&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;TBD&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+
+<span class="k">class</span> <span class="nc">RegControlTapNumberChangeCountsReportModel</span><span class="p">(</span><span class="n">ReportBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the user inputs for the RegControl Tap Number Change Counts report.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Report name&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;RegControl Tap Number Change Counts&quot;</span><span class="p">,</span>
+            <span class="n">internal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+
+<span class="k">class</span> <span class="nc">ThermalMetricsReportModel</span><span class="p">(</span><span class="n">ReportBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the user inputs for the Thermal Metrics report.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Report name&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;Thermal Metrics&quot;</span><span class="p">,</span>
+            <span class="n">internal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">transformer_window_size_hours</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;transformer_window_size_hours&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Transformer window size hours&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">transformer_loading_percent_threshold</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;transformer_loading_percent_threshold&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Transformer loading percent threshold&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">transformer_loading_percent_moving_average_threshold</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;transformer_loading_percent_moving_average_threshold&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Transformer loading percent moving average threshold&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">line_window_size_hours</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;line_window_size_hours&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Line window size hours&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">line_loading_percent_threshold</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;line_loading_percent_threshold&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Line loading percent threshold&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">line_loading_percent_moving_average_threshold</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;line_loading_percent_moving_average_threshold&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Line loading percent moving average threshold&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">store_per_element_data</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;store_per_element_data&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true to store metrics for each line and transformer.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+
+<span class="k">class</span> <span class="nc">VoltageMetricsReportModel</span><span class="p">(</span><span class="n">ReportBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the user inputs for the Voltage Metrics report.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Report name&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;Voltage Metrics&quot;</span><span class="p">,</span>
+            <span class="n">internal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">window_size_minutes</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;window_size_minutes&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Window size minutes&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">range_a_limits</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">List</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;range_a_limits&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;ANSI Range A voltage limits&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">1.05</span><span class="p">],</span>
+        <span class="p">)]</span>
+    <span class="n">range_b_limits</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">List</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;range_b_limits&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;ANSI Range B voltage limits&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="mf">0.90</span><span class="p">,</span> <span class="mf">1.0583</span><span class="p">],</span>
+        <span class="p">)]</span>
+    <span class="n">store_per_element_data</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">bool</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;store_per_element_data&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Set to true to store metrics for each node.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+
+<span class="n">_REPORT_MAPPING</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Capacitor State Change Counts&quot;</span><span class="p">:</span> <span class="n">CapacitorStateChangeCountReportModel</span><span class="p">,</span>
+    <span class="s2">&quot;Feeder Losses&quot;</span><span class="p">:</span> <span class="n">FeederLossesReportModel</span><span class="p">,</span>
+    <span class="s2">&quot;PV Clipping&quot;</span><span class="p">:</span> <span class="n">PvClippingReportModel</span><span class="p">,</span>
+    <span class="s2">&quot;PV Curtailment&quot;</span><span class="p">:</span> <span class="n">PvCurtailmentReportModel</span><span class="p">,</span>
+    <span class="s2">&quot;RegControl Tap Number Change Counts&quot;</span><span class="p">:</span> <span class="n">RegControlTapNumberChangeCountsReportModel</span><span class="p">,</span>
+    <span class="s2">&quot;Thermal Metrics&quot;</span><span class="p">:</span> <span class="n">ThermalMetricsReportModel</span><span class="p">,</span>
+    <span class="s2">&quot;Voltage Metrics&quot;</span><span class="p">:</span> <span class="n">VoltageMetricsReportModel</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="k">class</span> <span class="nc">ReportsModel</span><span class="p">(</span><span class="n">InputsBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the user inputs for reports.&quot;&quot;&quot;</span>
+
+    <span class="nb">format</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">FileFormat</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;format&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Controls the file format.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">FileFormat</span><span class="o">.</span><span class="n">HDF5</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Format&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">granularity</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">ReportGranularity</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;granularity&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Specifies the granularity on which data is collected.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">ReportGranularity</span><span class="o">.</span><span class="n">PER_ELEMENT_PER_TIME_POINT</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Granularity&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">types</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;types&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Reports to collect.&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Types&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;types&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">check_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="n">reports</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">report</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
+            <span class="n">report_cls</span> <span class="o">=</span> <span class="n">_REPORT_MAPPING</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">report</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">report_cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> is not a valid report name&quot;</span><span class="p">)</span>
+            <span class="n">reports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">report_cls</span><span class="p">(</span><span class="o">**</span><span class="n">report</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">reports</span>
+
+
+<span class="k">class</span> <span class="nc">SimulationSettingsModel</span><span class="p">(</span><span class="n">InputsBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines user inputs for a simulation.&quot;&quot;&quot;</span>
+
+    <span class="n">project</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">ProjectModel</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="o">...</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;project&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Project settings&quot;</span><span class="p">,</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Project&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">exports</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">ExportsModel</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;exports&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Exports settings&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">ExportsModel</span><span class="p">(),</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Exports&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">frequency</span><span class="p">:</span><span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">FrequencyModel</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span> 
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;frequency&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Frequency settings&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">FrequencyModel</span><span class="p">(),</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Frequency&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">helics</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">HelicsModel</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;helics&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;HELICS settings&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">HelicsModel</span><span class="p">(),</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Helics&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">logging</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">LoggingModel</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;logging&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Logging settings&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">LoggingModel</span><span class="p">(),</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Logging&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">monte_carlo</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">MonteCarloModel</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;monte_carlo&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Monte Carlo settings&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">MonteCarloModel</span><span class="p">(),</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;MonteCarlo&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">profiles</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">ProfilesModel</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;profiles&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Profiles settings&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">ProfilesModel</span><span class="p">(),</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Profiles&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">reports</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">ReportsModel</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;reports&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Reports settings&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">ReportsModel</span><span class="p">(),</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;Reports&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+
+<span class="k">class</span> <span class="nc">ControllerMap</span><span class="p">(</span><span class="n">InputsBaseModel</span><span class="p">):</span>
+    <span class="n">controller_type</span> <span class="p">:</span><span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">ControllerType</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span> 
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;controller_types&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Should be a valid controller type registered with PyDSS&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">ControllerType</span><span class="o">.</span><span class="n">PV_CONTROLLER</span><span class="p">,</span>
+        <span class="p">)]</span>
+    
+    <span class="n">controller_file</span> <span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Path</span><span class="p">,</span> 
+        <span class="n">Field</span><span class="p">(</span> 
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;controller_file&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Path to the controller settings TOML file&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+
+<span class="k">class</span> <span class="nc">MappedControllers</span><span class="p">(</span><span class="n">InputsBaseModel</span><span class="p">):</span>
+    <span class="n">mapping</span> <span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">ControllerMap</span><span class="p">],</span> 
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;mapping&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Mapping of contoller type to controller settings TOML file&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="p">[]</span>
+        <span class="p">)]</span>
+
+<span class="k">def</span> <span class="nf">create_simulation_settings</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">project_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scenario_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a settings file with default values.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : Path</span>
+<span class="sd">        Path in which to create the project.</span>
+<span class="sd">    project_name : str</span>
+<span class="sd">        Name of the project. Will be joined with &#39;path&#39;.</span>
+<span class="sd">    scenario_names : list</span>
+<span class="sd">        Name of each scenario to create.</span>
+<span class="sd">    force : bool</span>
+<span class="sd">        If project already exists, overwrite it.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
+    <span class="n">project_path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">/</span> <span class="n">project_name</span>
+    <span class="k">if</span> <span class="n">project_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">force</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">project_path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project_path</span><span class="si">}</span><span class="s2"> already exists. Set force=true to overwrite.&quot;</span><span class="p">)</span>
+
+    <span class="n">project_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
+    <span class="n">scenarios</span> <span class="o">=</span> <span class="p">[</span><span class="n">ScenarioModel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">scenario_names</span><span class="p">]</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="n">ProjectModel</span><span class="p">(</span>
+        <span class="n">project_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">),</span>
+        <span class="n">active_project</span><span class="o">=</span><span class="n">project_name</span><span class="p">,</span>
+        <span class="n">scenarios</span><span class="o">=</span><span class="n">scenarios</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">settings</span> <span class="o">=</span> <span class="n">SimulationSettingsModel</span><span class="p">(</span><span class="n">project</span><span class="o">=</span><span class="n">project</span><span class="p">)</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">project_path</span> <span class="o">/</span> <span class="n">SIMULATION_SETTINGS_FILENAME</span>
+    <span class="n">dump_settings</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">filename</span>
+
+
+<span class="k">def</span> <span class="nf">dump_settings</span><span class="p">(</span><span class="n">settings</span><span class="p">:</span> <span class="n">SimulationSettingsModel</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dump the settings into a TOML file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    settings : SimulationSettingsModel</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dump_data</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">by_alias</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">filename</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">load_simulation_settings</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the simulation settings.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : Path</span>
+<span class="sd">        Path to simulation.toml</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    SimulationSettingsModel</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        Raised if any setting is invalid.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">settings</span> <span class="o">=</span> <span class="n">SimulationSettingsModel</span><span class="p">(</span><span class="o">**</span><span class="n">load_data</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="n">enabled_reports</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">reports</span><span class="o">.</span><span class="n">types</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">enabled</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">enabled_reports</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">settings</span><span class="o">.</span><span class="n">exports</span><span class="o">.</span><span class="n">export_results</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Reports are only supported with exported_results = true.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">settings</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Aadil Latif.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

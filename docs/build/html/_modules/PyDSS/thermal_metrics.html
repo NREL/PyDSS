@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PyDSS.thermal_metrics &mdash; PyDSS 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/autodoc_pydantic.css?v=a0a71c94" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link href="../../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            PyDSS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#create-an-empty-project">Create an empty project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#customize-the-simulation-settings">Customize the simulation settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#opendss-models">OpenDSS Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#run-the-simulation">Run the simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#results">Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#create-a-project">Create a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#exporting-data">Exporting Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#pre-filtering-export-data">Pre-filtering Export Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#run-a-project">Run a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#analyze-results">Analyze results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial.html#exported-csv-files">Exported CSV files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial.html#data-viewer">Data Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial.html#access-results-programmatically">Access results programmatically</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../tutorial.html#load-element-classes-and-properties">Load element classes and properties</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tutorial.html#read-a-dataframe-for-one-element">Read a dataframe for one element</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tutorial.html#read-a-dataframe-for-one-element-with-a-specific-option">Read a dataframe for one element with a specific option</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tutorial.html#read-a-dataframe-for-one-element-with-an-option-matching-a-regular-expression">Read a dataframe for one element with an option matching a regular expression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tutorial.html#read-the-total-value-for-a-property-stored-with-store-values-type-sum">Read the total value for a property stored with <code class="docutils literal notranslate"><span class="pre">store_values_type</span> <span class="pre">=</span> <span class="pre">&quot;sum&quot;</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tutorial.html#find-out-all-options-available-for-a-property">Find out all options available for a property</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tutorial.html#find-out-what-option-values-are-present-for-a-property">Find out what option values are present for a property</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tutorial.html#read-a-dataframe-for-all-elements">Read a dataframe for all elements</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial.html#estimate-space-required-by-pydss-simulation">Estimate space required by PyDSS simulation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../interfaces.html">Interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../CLI%20interface.html">Command line interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-add-post-process">add-post-process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-add-scenario">add-scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-controllers">controllers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-controllers-register">register</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-controllers-reset-defaults">reset-defaults</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-controllers-show">show</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-controllers-unregister">unregister</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-convert">convert</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-convert-excel-to-toml">excel-to-toml</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-convert-simulation-file">simulation-file</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-create-project">create-project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-edit-scenario">edit-scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-edit-scenario-update-controllers">update-controllers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-export">export</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-extract">extract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-extract-element-files">extract-element-files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-reports">reports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-run">run</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../CLI%20interface.html#command-line-interface-serve">serve</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../REST%20API%20interface.html">REST API interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Python%20API%20interface.html">Python API interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/PyDSS.html">PyDSS</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.Extensions.html">PyDSS.Extensions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.NetworkModifier.html">PyDSS.NetworkModifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.ProfileManager.html">PyDSS.ProfileManager</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.ResultData.html">PyDSS.ResultData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.SolveMode.html">PyDSS.SolveMode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.api.html">PyDSS.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.apps.html">PyDSS.apps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.cli.html">PyDSS.cli</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.common.html">PyDSS.common</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.config_data.html">PyDSS.config_data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.controllers.html">PyDSS.controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.dataset_buffer.html">PyDSS.dataset_buffer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.defaults.html">PyDSS.defaults</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.dssBus.html">PyDSS.dssBus</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.dssCircuit.html">PyDSS.dssCircuit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.dssElement.html">PyDSS.dssElement</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.dssElementFactory.html">PyDSS.dssElementFactory</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.dssInstance.html">PyDSS.dssInstance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.dssObjectBase.html">PyDSS.dssObjectBase</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.dssTransformer.html">PyDSS.dssTransformer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.element_fields.html">PyDSS.element_fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.element_options.html">PyDSS.element_options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.exceptions.html">PyDSS.exceptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.export_list_reader.html">PyDSS.export_list_reader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.get_snapshot_timepoints.html">PyDSS.get_snapshot_timepoints</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.helics_interface.html">PyDSS.helics_interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.loggers.html">PyDSS.loggers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.metrics.html">PyDSS.metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.modes.html">PyDSS.modes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.naerm.html">PyDSS.naerm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.node_voltage_metrics.html">PyDSS.node_voltage_metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.pyContrReader.html">PyDSS.pyContrReader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.pyControllers.html">PyDSS.pyControllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.pyDSS.html">PyDSS.pyDSS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.pyLogger.html">PyDSS.pyLogger</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.pyPlotReader.html">PyDSS.pyPlotReader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.pyPlots.html">PyDSS.pyPlots</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.pyPostprocessor.html">PyDSS.pyPostprocessor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.pyResults.html">PyDSS.pyResults</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.pydss_fs_interface.html">PyDSS.pydss_fs_interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.pydss_project.html">PyDSS.pydss_project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.pydss_results.html">PyDSS.pydss_results</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.registry.html">PyDSS.registry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.reports.html">PyDSS.reports</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.simulation_input_models.html">PyDSS.simulation_input_models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.storage_filters.html">PyDSS.storage_filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.thermal_metrics.html">PyDSS.thermal_metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.unitDefinations.html">PyDSS.unitDefinations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.utils.html">PyDSS.utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/PyDSS.value_storage.html">PyDSS.value_storage</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../Python%20API%20interface.html#data-models">Data models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../Python%20API%20interface.html#simulation-input-models">Simulation input models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Python%20API%20interface.html#scenario-setup-models">Scenario setup models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Python%20API%20interface.html#thermal-metrics-models">Thermal metrics models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Python%20API%20interface.html#voltage-metrics-models">Voltage metrics models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Python%20API%20interface.html#feeder-metrics-models">Feeder metrics models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Python%20API%20interface.html#helics-interface-models">HELICS interface models</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../project_layout.html">PyDSS Project Layout</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../project_layout.html#simulation-settings">Simulation Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../project_layout.html#scenarios">Scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../project_layout.html#exports">Exports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../project_layout.html#reports">Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../project_layout.html#example-layout">Example layout</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Result%20management.html">Enhanced result export features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reports.html">Reports</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../reports.html#global-settings">Global settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../reports.html#format">Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reports.html#granularity">Granularity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../reports.html#export-parameters">Export Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reports.html#output-data">Output Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reports.html#adding-new-reports">Adding New Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reports.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hdf-data-format.html">HDF Data Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../hdf-data-format.html#layout">Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../hdf-data-format.html#common-metadata">Common Metadata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../hdf-data-format.html#dataset-metadata">Dataset Metadata</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../hdf-data-format.html#attributes-per-dataset">Attributes per dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../hdf-data-format.html#metadata-datasets-per-dataset">Metadata datasets per dataset</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../hdf-data-format.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../co-simulation_support.html">Co-simulation interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Co-simulation%20Interfaces.html">The HELICS interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../Co-simulation%20Interfaces.html#interface-overview">Interface overview</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../Co-simulation%20Interfaces.html#PyDSS.simulation_input_models.HelicsModel"><code class="docutils literal notranslate"><span class="pre">HelicsModel</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../Co-simulation%20Interfaces.html#setting-up-publications">Setting up publications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../Co-simulation%20Interfaces.html#setting-up-subscriptions">Setting up subscriptions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../Co-simulation%20Interfaces.html#PyDSS.helics_interface.Subscription"><code class="docutils literal notranslate"><span class="pre">Subscription</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../Co-simulation%20Interfaces.html#the-socket-interface">The socket interface</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PyDSS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">PyDSS.thermal_metrics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for PyDSS.thermal_metrics</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+
+<span class="kn">from</span> <span class="nn">PyDSS.utils.simulation_utils</span> <span class="kn">import</span> <span class="n">CircularBufferHelper</span>
+<span class="kn">from</span> <span class="nn">PyDSS.utils.utils</span> <span class="kn">import</span> <span class="n">dump_data</span><span class="p">,</span> <span class="n">load_data</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">ConfigDict</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ThermalMetricsBaseModel">
+<a class="viewcode-back" href="../../Python%20API%20interface.html#PyDSS.thermal_metrics.ThermalMetricsBaseModel">[docs]</a>
+<span class="k">class</span> <span class="nc">ThermalMetricsBaseModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;ThermalMetricsBaseModel&quot;</span><span class="p">,</span> <span class="n">str_strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">validate_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;forbid&quot;</span><span class="p">,</span> <span class="n">use_enum_values</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ThermalMetricsModel">
+<a class="viewcode-back" href="../../Python%20API%20interface.html#PyDSS.thermal_metrics.ThermalMetricsModel">[docs]</a>
+<span class="k">class</span> <span class="nc">ThermalMetricsModel</span><span class="p">(</span><span class="n">ThermalMetricsBaseModel</span><span class="p">):</span>
+    <span class="n">max_instantaneous_loadings_pct</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="p">{},</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;max_instantaneous_loadings_pct&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;maximum instantaneous loading percent for each element&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">max_instantaneous_loading_pct</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">default</span> <span class="o">=</span> <span class="mi">120</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;max_instantaneous_loading_pct&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;maximum instantaneous loading percent overall&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">max_moving_average_loadings_pct</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="p">{},</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;max_moving_average_loadings_pct&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;maximum moving average loading percent for each element&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">max_moving_average_loading_pct</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">float</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="mi">100</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;max_moving_average_loading_pct&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;maximum moving average loading percent overall&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">window_size_hours</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;window_size_hours&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;window size used to calculate the moving average&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">num_time_points_with_instantaneous_violations</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;num_time_points_with_instantaneous_violations&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;number of time points where the instantaneous threshold was violated&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">num_time_points_with_moving_average_violations</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;num_time_points_with_moving_average_violations&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;number of time points where the moving average threshold was violated&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">instantaneous_threshold</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;instantaneous_threshold&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;instantaneous threshold&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">moving_average_threshold</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;moving_average_threshold&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;moving average threshold&quot;</span><span class="p">,</span>
+        <span class="p">)]</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">compare_thermal_metrics</span><span class="p">(</span><span class="n">metrics1</span><span class="p">:</span> <span class="n">ThermalMetricsModel</span><span class="p">,</span> <span class="n">metrics2</span><span class="p">:</span> <span class="n">ThermalMetricsModel</span><span class="p">,</span> <span class="n">rel_tol</span><span class="o">=</span><span class="mf">0.001</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compares the values of two instances of ThermalMetricsModel.</span>
+<span class="sd">    Uses a tolerance of 0.001 for moving averages.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        Return True if they match.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;max_instantaneous_loading_pct&quot;</span><span class="p">,</span> <span class="s2">&quot;window_size_hours&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;num_time_points_with_instantaneous_violations&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;num_time_points_with_moving_average_violations&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;instantaneous_threshold&quot;</span><span class="p">,</span> <span class="s2">&quot;moving_average_threshold&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+        <span class="n">val1</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">metrics1</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
+        <span class="n">val2</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">metrics2</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">val1</span> <span class="o">!=</span> <span class="n">val2</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;field=</span><span class="si">%s</span><span class="s2"> mismatch </span><span class="si">%s</span><span class="s2"> != </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">)</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">metrics1</span><span class="o">.</span><span class="n">max_moving_average_loading_pct</span><span class="p">,</span> <span class="n">metrics2</span><span class="o">.</span><span class="n">max_instantaneous_loading_pct</span><span class="p">,</span> <span class="n">rel_tol</span><span class="o">=</span><span class="n">rel_tol</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;max_moving_average_loading_pct mismatch </span><span class="si">%s</span><span class="s2"> != </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                     <span class="n">metrics1</span><span class="o">.</span><span class="n">max_moving_average_loading_pct</span><span class="p">,</span> <span class="n">metrics2</span><span class="o">.</span><span class="n">max_instantaneous_loading_pct</span><span class="p">)</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val1</span> <span class="ow">in</span> <span class="n">metrics1</span><span class="o">.</span><span class="n">max_instantaneous_loadings_pct</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">val2</span> <span class="o">=</span> <span class="n">metrics2</span><span class="o">.</span><span class="n">max_instantaneous_loadings_pct</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">val1</span> <span class="o">!=</span> <span class="n">val2</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;max_instantaneous_loadings_pct mismatch </span><span class="si">%s</span><span class="s2"> != </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">)</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val1</span> <span class="ow">in</span> <span class="n">metrics1</span><span class="o">.</span><span class="n">max_moving_average_loadings_pct</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">val2</span> <span class="o">=</span> <span class="n">metrics2</span><span class="o">.</span><span class="n">max_moving_average_loadings_pct</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">,</span> <span class="n">rel_tol</span><span class="o">=</span><span class="n">rel_tol</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;max_moving_average_loadings_pct mismatch </span><span class="si">%s</span><span class="s2"> != </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">)</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="n">match</span>
+
+
+<div class="viewcode-block" id="ThermalMetricsSummaryModel">
+<a class="viewcode-back" href="../../Python%20API%20interface.html#PyDSS.thermal_metrics.ThermalMetricsSummaryModel">[docs]</a>
+<span class="k">class</span> <span class="nc">ThermalMetricsSummaryModel</span><span class="p">(</span><span class="n">ThermalMetricsBaseModel</span><span class="p">):</span>
+    <span class="n">line_loadings</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">ThermalMetricsModel</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;line_loadings&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;line loading metrics&quot;</span><span class="p">,</span>
+        <span class="p">)]</span>
+    <span class="n">transformer_loadings</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Union</span><span class="p">[</span><span class="n">ThermalMetricsModel</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;transformer_loadings&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;transformer loading metrics&quot;</span><span class="p">,</span>
+        <span class="p">)]</span></div>
+
+
+
+<div class="viewcode-block" id="SimulationThermalMetricsModel">
+<a class="viewcode-back" href="../../Python%20API%20interface.html#PyDSS.thermal_metrics.SimulationThermalMetricsModel">[docs]</a>
+<span class="k">class</span> <span class="nc">SimulationThermalMetricsModel</span><span class="p">(</span><span class="n">ThermalMetricsBaseModel</span><span class="p">):</span>
+    <span class="n">scenarios</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ThermalMetricsSummaryModel</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;scenarios&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;thermal metrics by PyDSS scenario name&quot;</span><span class="p">,</span>
+        <span class="p">)]</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">create_summary</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">create_summary_from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">create_summary_from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a summary of the metrics values for use in a table.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename: str</span>
+<span class="sd">        File containing a serialized SimulationThermalMetricsModel instance</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Two-level dict. First level keys are scenario names. Second level has line/transform</span>
+<span class="sd">        metric names and values.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">summary</span> <span class="o">=</span> <span class="n">SimulationThermalMetricsModel</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">report</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">scenario</span> <span class="ow">in</span> <span class="n">summary</span><span class="o">.</span><span class="n">scenarios</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">model</span><span class="p">,</span> <span class="n">elem_type</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">((</span><span class="s2">&quot;line_loadings&quot;</span><span class="p">,</span> <span class="s2">&quot;transformer_loadings&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;line&quot;</span><span class="p">,</span> <span class="s2">&quot;transformer&quot;</span><span class="p">)):</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">summary</span><span class="o">.</span><span class="n">scenarios</span><span class="p">[</span><span class="n">scenario</span><span class="p">],</span> <span class="n">model</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">__fields__</span><span class="p">:</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">new_name</span> <span class="o">=</span> <span class="n">elem_type</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">column</span>
+                    <span class="n">report</span><span class="p">[</span><span class="n">scenario</span><span class="p">][</span><span class="n">new_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+
+    <span class="k">return</span> <span class="n">report</span>
+
+
+<span class="k">class</span> <span class="nc">ThermalMetrics</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Stores thermal metrics in memory.</span>
+
+<span class="sd">    The metrics are defined in this paper:</span>
+<span class="sd">    https://www.sciencedirect.com/science/article/pii/S0306261920311351</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">FILENAME</span> <span class="o">=</span> <span class="s2">&quot;thermal_metrics.json&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">prop</span><span class="p">,</span>
+        <span class="n">start_time</span><span class="p">,</span>
+        <span class="n">sim_resolution</span><span class="p">,</span>
+        <span class="n">line_window_size_hours</span><span class="p">,</span>
+        <span class="n">line_window_size</span><span class="p">,</span>
+        <span class="n">transformer_window_size_hours</span><span class="p">,</span>
+        <span class="n">transformer_window_size</span><span class="p">,</span>
+        <span class="n">line_loading_percent_threshold</span><span class="p">,</span>
+        <span class="n">line_loading_percent_moving_average_threshold</span><span class="p">,</span>
+        <span class="n">transformer_loading_percent_threshold</span><span class="p">,</span>
+        <span class="n">transformer_loading_percent_moving_average_threshold</span><span class="p">,</span>
+        <span class="n">store_per_element_data</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prop</span> <span class="o">=</span> <span class="n">prop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span> <span class="o">=</span> <span class="n">start_time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span> <span class="o">=</span> <span class="n">sim_resolution</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_window_size_hours</span> <span class="o">=</span> <span class="n">line_window_size_hours</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_window_size</span> <span class="o">=</span> <span class="n">line_window_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_loading_percent_threshold</span> <span class="o">=</span> <span class="n">line_loading_percent_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_loading_percent_mavg_threshold</span> <span class="o">=</span> <span class="n">line_loading_percent_moving_average_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transformer_loading_percent_threshold</span> <span class="o">=</span> <span class="n">transformer_loading_percent_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transformer_window_size_hours</span> <span class="o">=</span> <span class="n">transformer_window_size_hours</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transformer_window_size</span> <span class="o">=</span> <span class="n">transformer_window_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transformer_loading_percent_mavg_threshold</span> <span class="o">=</span> <span class="n">transformer_loading_percent_moving_average_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_time_points_inst_line_violations</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_time_points_mavg_line_violations</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_time_points_inst_transformer_violations</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_time_points_mavg_transformer_violations</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_inst_line_violations</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_mavg_line_violations</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_inst_transformer_violations</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_mavg_transformer_violations</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_bufs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transformer_bufs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_time_points</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_names</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transformer_names</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_store_per_element_data</span> <span class="o">=</span> <span class="n">store_per_element_data</span>
+
+    <span class="k">def</span> <span class="nf">generate_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a summary file containing all metrics.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            report filename</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_time_points</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_inst_line_violations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Cannot generate report with no data&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">inst_violations_by_line</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">mavg_violations_by_line</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_inst_line_violations</span><span class="p">)):</span>
+            <span class="n">inst_violations_by_line</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_line_names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_inst_line_violations</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_mavg_line_violations</span><span class="p">)):</span>
+            <span class="n">mavg_violations_by_line</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_line_names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_mavg_line_violations</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">line_metric</span> <span class="o">=</span> <span class="n">ThermalMetricsModel</span><span class="p">(</span>
+            <span class="n">max_instantaneous_loadings_pct</span><span class="o">=</span><span class="n">inst_violations_by_line</span><span class="p">,</span>
+            <span class="n">max_instantaneous_loading_pct</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">inst_violations_by_line</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+            <span class="n">max_moving_average_loadings_pct</span><span class="o">=</span><span class="n">mavg_violations_by_line</span><span class="p">,</span>
+            <span class="n">max_moving_average_loading_pct</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">mavg_violations_by_line</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+            <span class="n">window_size_hours</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_line_window_size_hours</span><span class="p">,</span>
+            <span class="n">num_time_points_with_instantaneous_violations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_time_points_inst_line_violations</span><span class="p">,</span>
+            <span class="n">num_time_points_with_moving_average_violations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_time_points_mavg_line_violations</span><span class="p">,</span>
+            <span class="n">instantaneous_threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_line_loading_percent_threshold</span><span class="p">,</span>
+            <span class="n">moving_average_threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_line_loading_percent_mavg_threshold</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">inst_violations_by_transformer</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">mavg_violations_by_transformer</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_inst_transformer_violations</span><span class="p">)):</span>
+            <span class="n">inst_violations_by_transformer</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_transformer_names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_inst_transformer_violations</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_mavg_transformer_violations</span><span class="p">)):</span>
+            <span class="n">mavg_violations_by_transformer</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_transformer_names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_mavg_transformer_violations</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_transformers</span><span class="p">():</span>
+            <span class="n">transformer_metric</span> <span class="o">=</span> <span class="n">ThermalMetricsModel</span><span class="p">(</span>
+                <span class="n">max_instantaneous_loadings_pct</span><span class="o">=</span><span class="n">inst_violations_by_transformer</span><span class="p">,</span>
+                <span class="n">max_instantaneous_loading_pct</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">inst_violations_by_transformer</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+                <span class="n">max_moving_average_loadings_pct</span><span class="o">=</span><span class="n">mavg_violations_by_transformer</span><span class="p">,</span>
+                <span class="n">max_moving_average_loading_pct</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">mavg_violations_by_transformer</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+                <span class="n">window_size_hours</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_transformer_window_size_hours</span><span class="p">,</span>
+                <span class="n">num_time_points_with_instantaneous_violations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_time_points_inst_transformer_violations</span><span class="p">,</span>
+                <span class="n">num_time_points_with_moving_average_violations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_time_points_mavg_transformer_violations</span><span class="p">,</span>
+                <span class="n">instantaneous_threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_transformer_loading_percent_threshold</span><span class="p">,</span>
+                <span class="n">moving_average_threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_transformer_loading_percent_mavg_threshold</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">transformer_metric</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store_per_element_data</span><span class="p">:</span>
+            <span class="n">line_metric</span><span class="o">.</span><span class="n">max_instantaneous_loadings_pct</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="n">line_metric</span><span class="o">.</span><span class="n">max_moving_average_loadings_pct</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_transformers</span><span class="p">():</span>
+                <span class="n">transformer_metric</span><span class="o">.</span><span class="n">max_instantaneous_loadings_pct</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                <span class="n">transformer_metric</span><span class="o">.</span><span class="n">max_moving_average_loadings_pct</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="n">summary</span> <span class="o">=</span> <span class="n">ThermalMetricsSummaryModel</span><span class="p">(</span>
+            <span class="n">line_loadings</span><span class="o">=</span><span class="n">line_metric</span><span class="p">,</span>
+            <span class="n">transformer_loadings</span><span class="o">=</span><span class="n">transformer_metric</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;thermal_metrics.json&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f_out</span><span class="p">:</span>
+            <span class="n">f_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">summary</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+            <span class="n">f_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generated thermal metric report in </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">has_transformers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_transformer_names</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">line_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line_names</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">transformer_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformer_names</span>
+
+    <span class="nd">@line_names</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">line_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_names</span> <span class="o">=</span> <span class="n">names</span>
+
+    <span class="nd">@transformer_names</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">transformer_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transformer_names</span> <span class="o">=</span> <span class="n">names</span>
+
+    <span class="k">def</span> <span class="nf">increment_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Increment the time step counter.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_time_points</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_step</span><span class="p">,</span> <span class="n">line_loadings</span><span class="p">,</span> <span class="n">transformer_loadings</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the metrics for the time step.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time_step : int</span>
+<span class="sd">        voltages : list</span>
+<span class="sd">            list of ValueStorageBase</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line_bufs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_line_bufs</span> <span class="o">=</span> <span class="p">[</span><span class="n">CircularBufferHelper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_line_window_size</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_line_names</span><span class="p">))]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_transformer_bufs</span> <span class="o">=</span> <span class="p">[</span><span class="n">CircularBufferHelper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_transformer_window_size</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_transformer_names</span><span class="p">))]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_inst_line_violations</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_line_names</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_mavg_line_violations</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_line_names</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_inst_transformer_violations</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_transformer_names</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_mavg_transformer_violations</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_transformer_names</span><span class="p">)</span>
+
+        <span class="n">has_inst_line_violation</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">has_mavg_line_violation</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">loading</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">line_loadings</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">loading</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_inst_line_violations</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_max_inst_line_violations</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">loading</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">has_inst_line_violation</span> <span class="ow">and</span> <span class="n">loading</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line_loading_percent_threshold</span><span class="p">:</span>
+                <span class="n">has_inst_line_violation</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="n">buf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line_bufs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">buf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loading</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">moving_avg</span> <span class="o">=</span> <span class="n">buf</span><span class="o">.</span><span class="n">average</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">moving_avg</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_mavg_line_violations</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_max_mavg_line_violations</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">moving_avg</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">has_mavg_line_violation</span> <span class="ow">and</span> <span class="n">moving_avg</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line_loading_percent_mavg_threshold</span><span class="p">:</span>
+                <span class="n">has_mavg_line_violation</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">has_inst_transformer_violation</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">has_mavg_transformer_violation</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">loading</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">transformer_loadings</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">loading</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_inst_transformer_violations</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_max_inst_transformer_violations</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">loading</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">has_inst_transformer_violation</span> <span class="ow">and</span> <span class="n">loading</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformer_loading_percent_threshold</span><span class="p">:</span>
+                <span class="n">has_inst_transformer_violation</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="n">buf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformer_bufs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">buf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loading</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">moving_avg</span> <span class="o">=</span> <span class="n">buf</span><span class="o">.</span><span class="n">average</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">moving_avg</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_mavg_transformer_violations</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_max_mavg_transformer_violations</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">moving_avg</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">has_mavg_transformer_violation</span> <span class="ow">and</span> <span class="n">moving_avg</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformer_loading_percent_mavg_threshold</span><span class="p">:</span>
+                <span class="n">has_mavg_transformer_violation</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">has_inst_line_violation</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_num_time_points_inst_line_violations</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">has_mavg_line_violation</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_num_time_points_mavg_line_violations</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">has_inst_transformer_violation</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_num_time_points_inst_transformer_violations</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">has_mavg_transformer_violation</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_num_time_points_mavg_transformer_violations</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Aadil Latif.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

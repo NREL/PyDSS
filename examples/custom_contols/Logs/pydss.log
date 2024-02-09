@@ -1,0 +1,61 @@
+2024-02-09 09:20:27,935 - INFO [PyDSS.cli.run run.py:96] : CLI: [pydss run C:\Users\alatif\Documents\GitHub\PyDSS\examples\custom_contols]
+2024-02-09 09:20:27,944 - INFO [PyDSS.dssInstance dssInstance.py:82] : An instance of OpenDSS version 0.8.4 has been created.
+2024-02-09 09:20:27,945 - INFO [PyDSS.dssInstance dssInstance.py:151] : Loading OpenDSS model
+2024-02-09 09:20:28,062 - INFO [PyDSS.dssInstance dssInstance.py:159] : OpenDSS:  
+2024-02-09 09:20:28,062 - INFO [PyDSS.dssInstance dssInstance.py:94] : OpenDSS fundamental frequency set to :  60.0 Hz
+2024-02-09 09:20:28,062 - INFO [PyDSS.modes.solver_base solver_base.py:39] : SimulationType.QSTS solver setup complete
+2024-02-09 09:20:28,069 - INFO [PyDSS.dssInstance dssInstance.py:118] : Disabling internal yearly and duty-cycle profiles.
+2024-02-09 09:20:28,070 - INFO [PyDSS.dssInstance h5.py:19] : Loading existing h5 store
+2024-02-09 09:20:28,075 - INFO [PyDSS.dssInstance dssInstance.py:143] : Simulation initialization complete
+2024-02-09 09:20:28,077 - INFO [PyDSS.pyDSS pyDSS.py:81] : Running scenario: base_case
+2024-02-09 09:20:28,077 - INFO [PyDSS.dssInstance dssInstance.py:398] : Running simulation from 2020-07-13 00:00:00 till 2020-07-13 00:10:00.
+2024-02-09 09:20:28,077 - INFO [PyDSS.dssInstance dssInstance.py:399] : Simulation time step 10.
+2024-02-09 09:20:28,077 - INFO [PyDSS.dssInstance dssInstance.py:400] : Set OpenDSS convergence to 0.001
+2024-02-09 09:20:28,077 - INFO [PyDSS.dssInstance dssInstance.py:401] : Max convergence error count None.
+2024-02-09 09:20:28,077 - INFO [PyDSS.dssInstance dssInstance.py:402] : initializing store
+2024-02-09 09:20:28,079 - INFO [PyDSS.dssInstance dssInstance.py:418] : No post processing script selected
+2024-02-09 09:20:28,079 - INFO [PyDSS.dssInstance dssInstance.py:284] : PyDSS datetime - 2020-07-13 00:00:00
+2024-02-09 09:20:28,079 - INFO [PyDSS.dssInstance dssInstance.py:285] : OpenDSS time [h] - 0.0
+2024-02-09 09:20:28,080 - INFO [PyDSS.dssInstance dssInstance.py:439] : Storage requirement estimation: 0.00 B, estimated based on first time step run.
+2024-02-09 09:20:28,100 - INFO [PyDSS.dssInstance dssInstance.py:284] : PyDSS datetime - 2020-07-13 00:01:00
+2024-02-09 09:20:28,100 - INFO [PyDSS.dssInstance dssInstance.py:285] : OpenDSS time [h] - 0.016666666666666666
+2024-02-09 09:20:28,103 - INFO [PyDSS.dssInstance dssInstance.py:284] : PyDSS datetime - 2020-07-13 00:02:00
+2024-02-09 09:20:28,103 - INFO [PyDSS.dssInstance dssInstance.py:285] : OpenDSS time [h] - 0.03333333333333333
+2024-02-09 09:20:28,106 - INFO [PyDSS.dssInstance dssInstance.py:284] : PyDSS datetime - 2020-07-13 00:03:00
+2024-02-09 09:20:28,106 - INFO [PyDSS.dssInstance dssInstance.py:285] : OpenDSS time [h] - 0.05
+2024-02-09 09:20:28,109 - INFO [PyDSS.dssInstance dssInstance.py:284] : PyDSS datetime - 2020-07-13 00:04:00
+2024-02-09 09:20:28,109 - INFO [PyDSS.dssInstance dssInstance.py:285] : OpenDSS time [h] - 0.06666666666666667
+2024-02-09 09:20:28,111 - INFO [PyDSS.dssInstance dssInstance.py:284] : PyDSS datetime - 2020-07-13 00:05:00
+2024-02-09 09:20:28,112 - INFO [PyDSS.dssInstance dssInstance.py:285] : OpenDSS time [h] - 0.08333333333333333
+2024-02-09 09:20:28,114 - INFO [PyDSS.dssInstance dssInstance.py:284] : PyDSS datetime - 2020-07-13 00:06:00
+2024-02-09 09:20:28,114 - INFO [PyDSS.dssInstance dssInstance.py:285] : OpenDSS time [h] - 0.1
+2024-02-09 09:20:28,117 - INFO [PyDSS.dssInstance dssInstance.py:284] : PyDSS datetime - 2020-07-13 00:07:00
+2024-02-09 09:20:28,117 - INFO [PyDSS.dssInstance dssInstance.py:285] : OpenDSS time [h] - 0.11666666666666667
+2024-02-09 09:20:28,120 - INFO [PyDSS.dssInstance dssInstance.py:284] : PyDSS datetime - 2020-07-13 00:08:00
+2024-02-09 09:20:28,120 - INFO [PyDSS.dssInstance dssInstance.py:285] : OpenDSS time [h] - 0.13333333333333333
+2024-02-09 09:20:28,122 - INFO [PyDSS.dssInstance dssInstance.py:284] : PyDSS datetime - 2020-07-13 00:09:00
+2024-02-09 09:20:28,122 - INFO [PyDSS.dssInstance dssInstance.py:285] : OpenDSS time [h] - 0.15
+2024-02-09 09:20:28,134 - INFO [PyDSS.ResultData ResultData.py:291] : Exported OpenDSS event log to event_log.csv
+2024-02-09 09:20:28,136 - INFO [PyDSS.ResultData ResultData.py:269] : Exported metadata to examples\custom_contols\Exports\base_case\metadata.json
+2024-02-09 09:20:28,136 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: OpenDSS._CompileModel: total=0.117s avg=117.165ms max=117.165ms min=117.165ms count=1
+2024-02-09 09:20:28,136 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: OpenDSS.RunStep: total=0.007s avg=0.735ms max=1.175ms min=0.462ms count=10
+2024-02-09 09:20:28,136 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: UpdateControllers: total=0.000s avg=0.010ms max=0.016ms min=0.008ms count=10
+2024-02-09 09:20:28,137 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: ResultData.UpdateResults: total=0.044s avg=4.427ms max=20.038ms min=1.672ms count=10
+2024-02-09 09:20:28,137 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: Buses.puVmagAngle: total=0.005s avg=0.544ms max=1.769ms min=0.336ms count=10
+2024-02-09 09:20:28,137 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: Buses.Distance: total=0.003s avg=0.338ms max=1.298ms min=0.177ms count=10
+2024-02-09 09:20:28,137 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: Buses.kVBase: total=0.003s avg=0.342ms max=1.476ms min=0.166ms count=10
+2024-02-09 09:20:28,137 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: Circuits.TotalPower: total=0.002s avg=0.170ms max=1.232ms min=0.012ms count=10
+2024-02-09 09:20:28,137 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: Circuits.LineLosses: total=0.002s avg=0.151ms max=1.076ms min=0.010ms count=10
+2024-02-09 09:20:28,137 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: Circuits.Losses: total=0.001s avg=0.145ms max=1.018ms min=0.009ms count=10
+2024-02-09 09:20:28,137 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: Circuits.SubstationLosses: total=0.001s avg=0.139ms max=0.959ms min=0.008ms count=10
+2024-02-09 09:20:28,138 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: Lines.CurrentsMagAng: total=0.005s avg=0.544ms max=1.685ms min=0.333ms count=10
+2024-02-09 09:20:28,138 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: Lines.normamps: total=0.005s avg=0.468ms max=1.452ms min=0.286ms count=10
+2024-02-09 09:20:28,138 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: Loads.Powers: total=0.002s avg=0.199ms max=1.131ms min=0.048ms count=10
+2024-02-09 09:20:28,138 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: Loads.VoltagesMagAng: total=0.002s avg=0.194ms max=1.137ms min=0.043ms count=10
+2024-02-09 09:20:28,138 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: PVSystems.Powers: total=0.002s avg=0.243ms max=1.193ms min=0.052ms count=10
+2024-02-09 09:20:28,139 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: PVSystems.VoltagesMagAng: total=0.002s avg=0.207ms max=1.080ms min=0.052ms count=10
+2024-02-09 09:20:28,139 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: Transformers.CurrentsMagAng: total=0.002s avg=0.159ms max=1.037ms min=0.018ms count=10
+2024-02-09 09:20:28,139 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: Transformers.normamps: total=0.002s avg=0.164ms max=1.134ms min=0.016ms count=10
+2024-02-09 09:20:28,139 - INFO [PyDSS.utils.timing_utils timing_utils.py:91] : TimerStats summary: Transformers.taps: total=0.002s avg=0.202ms max=1.222ms min=0.041ms count=10
+2024-02-09 09:20:28,140 - INFO [PyDSS.dssInstance dssInstance.py:492] : Simulation completed in 0.06299471855163574 seconds
+2024-02-09 09:20:28,140 - INFO [PyDSS.dssInstance dssInstance.py:493] : End of simulation
