@@ -1,4 +1,4 @@
-PyDSS.api.src.app
+﻿PyDSS.api.src.app
 =================
 
 .. automodule:: PyDSS.api.src.app
@@ -31,6 +31,5 @@ PyDSS.api.src.app
    PyDSS.api.src.app.HDF5
    PyDSS.api.src.app.JSON_writer
    PyDSS.api.src.app.Tester
-   PyDSS.api.src.app.arrow_writer
    PyDSS.api.src.app.pydss
 
