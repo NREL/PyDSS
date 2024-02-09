@@ -16,43 +16,6 @@ New Line.sw2 bus1=112.1 bus2=112_2.1 switch=y phases=1 length=0.01 units=ft
 New Line.sw3 bus1=113.1 bus2=113_2.1 switch=y phases=1 length=0.01 units=ft
 
 
-New Storage.ESS110 phases=1 Bus1=110_2.1 kv=0.240 ! was .120
-~ kWRated=7 kVA=9 kWhRated=10 kWhStored=5  !assume ess starting with depleted status
-! Confirm the efficiency and the aux power
-~ %IdlingkW=0 basefreq=60 TimeChargeTrig=-1 !overestimate aux power
-~ %EffCharge=95 %EffDischarge=95 ! 0.82(batter)*0.95(inv)=0.78
-~ State=IDLING
-~ %reserve=0
-!New EnergyMeter.energy_meter_1 Line.SL_21 !needed to monitor exports and imports for self-consumption
-
-New Storage.ESS111 phases=1 Bus1=111_2.1 kv=0.240 ! was .120
-~ kWRated=7 kVA=9 kWhRated=10 kWhStored=5  !assume ess starting with depleted status
-! Confirm the efficiency and the aux power
-~ %IdlingkW=0 basefreq=60 TimeChargeTrig=-1 !overestimate aux power
-~ %EffCharge=95 %EffDischarge=95 ! 0.82(batter)*0.95(inv)=0.78
-~ State=IDLING
-~ %reserve=0
-!New EnergyMeter.energy_meter_2 Line.SL_22 !needed to monitor exports and imports for self-consumption
-
-New Storage.ESS112 phases=1 Bus1=112_2.1 kv=0.240 ! was .120
-~ kWRated=7 kVA=9 kWhRated=10 kWhStored=5  !assume ess starting with depleted status
-! Confirm the efficiency and the aux power
-~ %IdlingkW=0 basefreq=60 TimeChargeTrig=-1 !overestimate aux power
-~ %EffCharge=95 %EffDischarge=95 ! 0.82(batter)*0.95(inv)=0.78
-~ State=IDLING
-~ %reserve=0
-!New EnergyMeter.energy_meter_3 Line.SL_23 !needed to monitor exports and imports for self-consumption
-
-New Storage.ESS113 phases=1 Bus1=113_2.1 kv=0.240 ! was .120
-~ kWRated=7 kVA=9 kWhRated=10 kWhStored=5  !assume ess starting with depleted status
-! Confirm the efficiency and the aux power
-~ %IdlingkW=0 basefreq=60 TimeChargeTrig=-1 !overestimate aux power
-~ %EffCharge=95 %EffDischarge=95 ! 0.82(batter)*0.95(inv)=0.78
-~ State=IDLING
-~ %reserve=0
-!New EnergyMeter.energy_meter_4 Line.SL_26 !needed to monitor exports and imports for self-consumption
-
-
 
 // ==== Triplex Linecodes =====
 Redirect testcodes.dss

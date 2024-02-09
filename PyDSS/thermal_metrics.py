@@ -10,19 +10,14 @@ from pydantic.v1 import BaseModel, Field
 
 from PyDSS.utils.simulation_utils import CircularBufferHelper
 from PyDSS.utils.utils import dump_data, load_data
+from pydantic import ConfigDict
 
 
 logger = logging.getLogger(__name__)
 
 
 class ThermalMetricsBaseModel(BaseModel):
-    class Config:
-        title = "ThermalMetricsBaseModel"
-        anystr_strip_whitespace = True
-        validate_assignment = True
-        validate_all = True
-        extra = "forbid"
-        use_enum_values = False
+    model_config = ConfigDict(title="ThermalMetricsBaseModel", str_strip_whitespace=True, validate_assignment=True, validate_default=True, extra="forbid", use_enum_values=False)
 
 
 class ThermalMetricsModel(ThermalMetricsBaseModel):

@@ -20,20 +20,14 @@ from PyDSS.simulation_input_models import ProjectModel
 from PyDSS.utils.dss_utils import iter_elements, list_element_names_by_class
 from PyDSS.utils.timing_utils import TimerStatsCollector, Timer
 from PyDSS.utils.utils import load_data
+from pydantic import ConfigDict
 
 
 logger = logging.getLogger(__name__)
 
 
 class ControllerBaseModel(BaseModel, abc.ABC):
-    class Config:
-        title = "ControllerBaseModel"
-        anystr_strip_whitespace = True
-        validate_assignment = True
-        validate_all = True
-        extra = "forbid"
-        use_enum_values = False
-        allow_population_by_field_name = True
+    model_config = ConfigDict(title="ControllerBaseModel", str_strip_whitespace=True, validate_assignment=True, validate_default=True, extra="forbid", use_enum_values=False, populate_by_name=True)
 
     @staticmethod
     @abc.abstractmethod

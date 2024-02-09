@@ -6,19 +6,14 @@ from typing import Dict, List, Union
 from pydantic.v1 import BaseModel, Field
 
 from PyDSS.utils.simulation_utils import CircularBufferHelper
+from pydantic import ConfigDict
 
 
 logger = logging.getLogger(__name__)
 
 
 class VoltageMetricsBaseModel(BaseModel):
-    class Config:
-        title = "VoltageMetricsBaseModel"
-        anystr_strip_whitespace = True
-        validate_assignment = True
-        validate_all = True
-        extra = "forbid"
-        use_enum_values = False
+    model_config = ConfigDict(title="VoltageMetricsBaseModel", str_strip_whitespace=True, validate_assignment=True, validate_default=True, extra="forbid", use_enum_values=False)
 
 
 class VoltageMetric1(VoltageMetricsBaseModel):

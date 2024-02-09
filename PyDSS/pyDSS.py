@@ -52,20 +52,13 @@ class instance(object):
         self._estimated_space = None
 
     def run(self, settings: SimulationSettingsModel, project, scenario, dry_run=False):
-        bokeh_server_proc = None
-        if settings.plots.create_dynamic_plots:
-            bokeh_server_proc = subprocess.Popen(["bokeh", "serve"], stdout=subprocess.PIPE)
-        try:
-            self.run_scenario(
-                project,
-                scenario,
-                settings,
-                dry_run=dry_run,
-            )
-        finally:
-            if settings.plots.create_dynamic_plots:
-                bokeh_server_proc.terminate()
-
+        
+        self.run_scenario(
+            project,
+            scenario,
+            settings,
+            dry_run=dry_run,
+        )
         return
 
     def create_dss_instance(self, dss_args):
@@ -105,4 +98,6 @@ class instance(object):
             settings.project.active_scenario,
             RUN_SIMULATION_FILENAME,
         )
+        print(scenario_simulation_filename)
+        print(settings)
         dump_settings(settings, scenario_simulation_filename)

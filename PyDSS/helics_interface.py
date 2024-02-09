@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator
+from pydantic import ConfigDict, BaseModel, validator
 from typing import List, Optional, Any, Union, Dict
 from enum import Enum
 import logging
@@ -55,16 +55,14 @@ class Subscription(BaseModel):
     model: str
     property: str
     id: str
-    unit: Optional[str] 
+    unit: Optional[str] = None 
     subscribe: bool = True
     data_type: DataType
     multiplier: float = 1.0
     object: Any = None
     states: List[Union[float, int, bool]] = [0.0, 0.0, 0.0, 0.0, 0.0]
     sub: Any = None
-    
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 class Publication(BaseModel):
     model: str
@@ -75,10 +73,12 @@ class Publication(BaseModel):
     data_type: DataType
     
 class Subscriptions(BaseModel):
-    federate: Any
+    federate: Any = None
     opendss_models: Dict
     subscriptions: List[Subscription]
 
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator('subscriptions', each_item=True)
     def is_in_opendss_model(cls, v, values, **kwargs):
         if v.model not in values["opendss_models"]:
@@ -95,13 +95,15 @@ class Subscriptions(BaseModel):
     
 class Publications(BaseModel):
     
-    federate: Any
+    federate: Any = None
     federate_name: str
     opendss_models: Dict
     publications: List[Publication] = []
     legacy_input: Dict = {}
     input: Dict = {}
     
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator('legacy_input')
     def build_from_legacy(cls, v, values, **kwargs):
         publications = []
@@ -128,6 +130,8 @@ class Publications(BaseModel):
         values["publications"] = publications
         return v
 
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator('input')
     def build_from_export(cls, v, values, **kwargs):
         publications = []

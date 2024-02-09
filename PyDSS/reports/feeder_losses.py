@@ -8,6 +8,7 @@ from typing import Dict
 from pydantic.v1 import BaseModel, Field
 
 from PyDSS.reports.reports import ReportBase
+from pydantic import ConfigDict
 
 
 logger = logging.getLogger(__name__)
@@ -15,14 +16,7 @@ logger = logging.getLogger(__name__)
 
 class FeederLossesMetricsModel(BaseModel):
     """Data model for metrics describing feeder losses"""
-
-    class Config:
-        title = "FeederLossesMetricsModel"
-        anystr_strip_whitespace = True
-        validate_assignment = True
-        validate_all = True
-        extra = "forbid"
-        use_enum_values = False
+    model_config = ConfigDict(title="FeederLossesMetricsModel", str_strip_whitespace=True, validate_assignment=True, validate_default=True, extra="forbid", use_enum_values=False)
 
     total_losses_kwh: float = Field(
         title="total_losses_kwh",
