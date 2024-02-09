@@ -13,6 +13,7 @@ PyDSS
 ***********
 About PyDSS
 ***********
+
 PyDSS is a Python wrapper for OpenDSS that aims to expand upon its
 organizational, analytical, and visualization capabilities with these features:
 
@@ -75,9 +76,7 @@ simulation with an existing OpenDSS model.
 
 Refer to :ref:`tutorial_label` for in-depth instructions on how to customize a PyDSS project.
 
-Refer to :ref:`examples_label` for example simulations covering various use cases.
 
-   
 ************************
 Additional Documentation
 ************************
@@ -87,13 +86,12 @@ Additional Documentation
 
    quickstart
    tutorial
+   interfaces
    project_layout
-   simulation_settings
-   examples
    Result management
    reports
    hdf-data-format
-   PyDSS
+   co-simulation_support
    
 License
 =======

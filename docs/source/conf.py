@@ -12,12 +12,15 @@
 #
 import os
 import sys
-# sys.path.insert(0, os.path.abspath('.'))
+
+# my_path = os.path.abspath('../../PyDSS')
+# print(f"{my_path=}")
+# sys.path.insert(0, os.path.abspath('../../PyDSS'))
 
 import sphinx_rtd_theme
 
-import PyDSS
-import PyDSS.simulation_input_models
+# import PyDSS
+# import PyDSS.simulation_input_models
 #from PyDSS.simulation_input_models import SimulationSettingsModel, ProjectModel
 
 # -- Project information -----------------------------------------------------
@@ -28,7 +31,8 @@ author = 'Aadil Latif'
 
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'
-sys.path.append(r'C:\Users\alatif\Desktop\PyDSS')
+
+
 
 # -- General configuration ---------------------------------------------------
 
@@ -36,12 +40,12 @@ sys.path.append(r'C:\Users\alatif\Desktop\PyDSS')
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc', 'sphinx.ext.coverage', 'sphinx.ext.doctest',
+    'sphinx.ext.napoleon', 'sphinx.ext.ifconfig', "sphinx_click", "sphinxcontrib.openapi", 'sphinxcontrib.redoc',
+    'sphinx.ext.autosectionlabel', 'sphinx.ext.githubpages', 'sphinx.ext.todo', "sphinxcontrib.autodoc_pydantic",
     'sphinx.ext.todo', 'sphinx.ext.autosummary', 'sphinx.ext.extlinks',
-    'sphinx.ext.autodoc', 'sphinx.ext.viewcode',
+    'sphinx.ext.autodoc', 'sphinx.ext.coverage', 'sphinx.ext.doctest',
     'sphinx.ext.inheritance_diagram', 'sphinx.ext.imgmath',
-    'sphinx.ext.autosectionlabel', 'sphinx.ext.githubpages', 'sphinx.ext.todo',
-    'sphinx.ext.napoleon', 'sphinx.ext.ifconfig'
+    'sphinx.ext.autodoc', 'sphinx.ext.viewcode',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -74,3 +78,17 @@ html_theme_options = {
 html_static_path = ['_static']
 
 autosectionlabel_prefix_document = True
+
+redoc = [
+    {
+        'name': 'PyDSS API',
+        'page': 'api',
+        'spec': 'spec/swagger.yml',
+        'embed': True,
+    },
+]
+
+autosummary_generate = True
+# autodoc_pydantic_model_show_json = True
+# autodoc_pydantic_settings_show_json = True
+# autodoc_pydantic_model_erdantic_figure_collapsed = True
