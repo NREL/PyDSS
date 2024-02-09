@@ -167,35 +167,35 @@ class PvFrequencyRideThru(ControllerAbstract):
 
             #check over frequency points
             if self.__Settings['OF2 - Hz'] < 61.8 or self.__Settings['OF2 - Hz'] > 66:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
+                #print("User defined setting outside of IEEE 1547 acceptable range.")
                 assert False
 
             if self.__Settings['OF2 CT - sec'] < 0.16 or self.__Settings['OF2 CT - sec'] > 1000:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
+                #print("User defined setting outside of IEEE 1547 acceptable range.")
                 assert False
 
             if self.__Settings['OF1 - Hz'] < 61.0 or self.__Settings['OF1 - Hz'] > 66.0:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
+                #print("User defined setting outside of IEEE 1547 acceptable range.")
                 assert False
 
             if self.__Settings['OF1 CT - sec'] <180 or self.__Settings['OF1 CT - sec'] > 1000:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
+                #print("User defined setting outside of IEEE 1547 acceptable range.")
                 assert False
             #check under frequency points
             if self.__Settings['UF2 - Hz'] > 57.0 or self.__Settings['UF2 - Hz'] < 50:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
+                #print("User defined setting outside of IEEE 1547 acceptable range.")
                 assert False
 
             if self.__Settings['UF2 CT - sec'] < 0.16 or self.__Settings['UF2 CT - sec'] > 1000:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
+                #print("User defined setting outside of IEEE 1547 acceptable range.")
                 assert False
 
             if self.__Settings['UF1 - Hz'] < 50 or self.__Settings['UF1 - Hz'] > 59.0:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
+                #print("User defined setting outside of IEEE 1547 acceptable range.")
                 assert False
 
             if self.__Settings['UF1 CT - sec'] < 180 or self.__Settings['UF1 CT - sec'] > 1000:
-                print("User defined setting outside of IEEE 1547 acceptable range.")
+                #print("User defined setting outside of IEEE 1547 acceptable range.")
                 assert False
 
       
@@ -205,7 +205,6 @@ class PvFrequencyRideThru(ControllerAbstract):
             self.__faultCounterClearingTimeSec = 20
 
         else:
-            print("Unknown Standard.")
             assert False
 
         self._ControlledElm.SetParameter('Model', '7')
@@ -247,7 +246,6 @@ class PvFrequencyRideThru(ControllerAbstract):
             self.CurrLimRegion = cascaded_union([MandatoryRegion1, MandatoryRegion2, MayTripRegion])
             self.TripRegion = cascaded_union([OFtripRegion, UFtripRegion])
         else:
-            print('unknown ride-through setting')
             assert False
         self.ContinuousRegion = ContinuousRegion
       
@@ -271,7 +269,7 @@ class PvFrequencyRideThru(ControllerAbstract):
                 base_freq = self.__dssSolver.getFrequency()
                 bus_freq = base_freq + self.df 
                 self.u_ang = u_ang
-                print("Time: ", h )
+
             self.freq_hist.append(bus_freq)
             return bus_freq
 

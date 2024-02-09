@@ -314,7 +314,6 @@ class ProjectModel(InputsBaseModel):
         
         for val in ("Simulation Type", "simulation_type"):
             if val in values:
-                print(val, values[val])
                 if not isinstance(values[val], SimulationType):
                     values[val] = values[val].lower()
         old_duration = values.pop("Simulation duration (min)", None)
@@ -1230,7 +1229,6 @@ def dump_settings(settings: SimulationSettingsModel, filename):
 
     """
     dump_data(settings.dict(by_alias=False), filename)
-    print(f"Created {filename}")
 
 
 def load_simulation_settings(path: Path):
@@ -1251,7 +1249,6 @@ def load_simulation_settings(path: Path):
         Raised if any setting is invalid.
 
     """
-    print(load_data(path))
     settings = SimulationSettingsModel(**load_data(path))
     enabled_reports = [x for x in settings.reports.types if x.enabled]
     if enabled_reports and not settings.exports.export_results:

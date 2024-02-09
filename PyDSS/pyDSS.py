@@ -98,6 +98,4 @@ class instance(object):
             settings.project.active_scenario,
             RUN_SIMULATION_FILENAME,
         )
-        print(scenario_simulation_filename)
-        print(settings)
         dump_settings(settings, scenario_simulation_filename)
