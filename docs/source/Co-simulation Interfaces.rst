@@ -1,49 +1,154 @@
+
+
+The HELICS interface
+^^^^^^^^^^^^^^^^^^^^
+
+
+Hierarchical Engine for Large-scale Infrastructure Co-Simulation (HELICS) provides an open-source, general-purpose, modular, highly-scalable co-simulation framework that runs cross-platform (Linux, Windows, and Mac OS X). It is not a modeling tool by itself, but rather an integration tool that enables multiple existing simulation tools (and/or multiple instances of the same tool), known as "federates," to exchange data during runtime and stay synchronized in time such that together they act as one large simulation, or "federation". This enables bringing together established (or new/emerging) off-the-shelf tools from multiple domains to form a complex software-simulation without having to change the individual tools (known as "black-box" modeling). All that is required is for someone to write a thin interface layer for each tool that interfaces with existing simulation time control and data value updating, such as through an existing scripting interface. Moreover, the HELICS community has a growing ecosystem of established interfaces for popular tools, such that many users can simply mix and match existing tools with their own data and run complex co-simulations with minimal coding. More information on HELICS can be found here (https://github.com/GMLC-TDC/HELICS).
+
+The HELICS interface for PyDSS is built to reduce complexity of setting up large scale cosimulation scenarios. The user is required to publications and suscriptions.
+
+A minimal HELICS example is availble in the ``examples`` folder (top directory of the repository). Enabling the HELICS interface requires user to define additional parammeters in the scenario TOML file.
+
+
+Interface overview
+---------------------------
+
+The HELICS interface can be enabled and setup using the simultion.toml file. 
+
+Following attributes can be configured for the HELICS interface.
+
+.. autopydantic_model:: PyDSS.simulation_input_models.HelicsModel
+
+	
+- "co_simulation_mode" : Set to 'true' to enable the HELICS interface. By default it is set to 'false'
+- "federate_name" : Required to identify a federate in a cosimulation with a large number of federates.	
+- Additional attribution pertaining to convergence, timing and iteration can be configured here
+
+Default values for additional simulation settings are as follows. For more information on how to appropriately set these values please look at HELICS documentaion 
+
+Once the HELICS co-simulation interface has been enabled, the next step is to set up ``publications`` and ``subscriptions`` to set up information exchange with external federates. 
+PyDSS enables zero code setup of these modules. Each scenario can have its publlcation and subscription defination and is managed by two file in the ``ExportLists`` directory for a given scenario.
+
+publication tags (names) follow the following convertion
+
+.. code-block::
+
+	<federate name>.<object type>.<object name>.<object property>
+
+	examples,
+
+	federate1.Circuit.70008.TotalPower
+	federate1.Load.load_1.VoltageMagAng
+
+where ``federate name`` is defined in the project's ``settings.toml`` file
+
+Setting up publications
+---------------------------
+Publications (information communicated to external federates) can be set up by using the ``Exports.toml``. This file is also used to define export varibles 
+for a simulation scenario. By setting the ``publish`` attribute to ``true``, enable automated setup of a HELICS publication. 
+The file enables users to use multiple filtering options such as regex operation etc. to only pushlish what is reuired for a given use case.
+
+examples:
+
+The following code block will setup publications for all PV systems powers in a given model. 
+Setting the ``publish`` attribute to ``false`` will allow the data to be writtin to the h5 store, 
+but the data will not be published on the helics interface.
+
+.. code-block:: toml	
+
+	[[PVSystems]]
+	property = "Powers"
+	sample_interval = 1
+	publish = true
+	store_values_type = "all"
+
+Users tave two options to filter and setup publication for a subset of object type (in this case PV systems). 
+User are able to use tag attribute ``name_regexes`` to filter PV systems matching a given list of regex expressions.
+Alternately, users can use ``names`` attribute to explicitly define objects whos property they want publiched on the HELICS interface.
+
+Filtering using regex expressions
+
+.. code-block:: toml
+
+	[[PVSystems]]
+	property = "Powers"
+	name_regexes = [".*pvgnem.*"]
+	sample_interval = 1
+	publish = true
+	store_values_type = "all"
+
+Filtering using explicitly list model names 
+
+.. code-block:: toml
+
+	[[PVSystems]]
+	property = "Powers"
+	sample_interval = 1
+	names = ["PVSystems.pv1", "PVSystems.pv2"]
+	publish = true
+	store_values_type = "all"
+
+
+
+Setting up subscriptions
+---------------------------
+
+Subscriptions (information ingested from external federates) can be set up 
+using the ``Subscriptions.toml`` in the ``ExportLists`` directory for a given scenario.
+Valis subscriptions should confine to teh following model
+
+.. autopydantic_model:: PyDSS.helics_interface.Subscription
+
+When setting up subscriptions it is important to understand that the subscription tag is generated by 
+the external federate and should be known before setting up the subscriptions. In the example below, values recieved from
+subscription tag ``test.load1.power`` are used to update the ``kw`` property of load ``Load.mpx000635970``. ``multiplier`` property can be used to
+scale values before they are used to update the coupled model. 
+
+example
+
+.. code-block:: toml
+
+	[[subscriptions]]
+	model = "Load.mpx000635970"
+	property = "kw"
+	id = "test.load1.power"
+	unit = "kW"
+	subscribe = true
+	data_type = "double"
+	multiplier = 1 
+
+
 Within the example folder the project named external interfaces provides an example usage of all three interafces.
-
-
-
 
 The socket interface
 ^^^^^^^^^^^^^^^^^^^^
 
-The socket interface is implemented as a PyDSS pyController. Implmentation details and expected inputs are detailed here: :py:class:`PyDSS.pyControllers.Controllers.SocketController.SocketController`. The socket controller is weill suited in situatons where an existing controller needs to be integrated to the simulation environment. An exmaple of this would be integrating a controller for thermostatically controlled loads implemeted in say Modelica or Python. This allows user to integrate controller, without making changes to the implemented controller. With a little effort, the same controller can be implemented as a pyController object in PyDSS.
+The socket interface is implemented as a PyDSS pyController. Implmentation details and expected inputs are detailed here: :py:class:`PyDSS.pyControllers.Controllers.SocketController.SocketController`. 
+The socket controller is well suited in situatons where an existing controller needs to be integrated to the simulation environment. 
+An exmaple of this would be integrating a controller for thermostatically controlled loads implemeted in say Modelica or Python. 
+This allows user to integrate controller, without making changes to the implemented controller. With a little effort, 
+the same controller can be implemented as a pyController object in PyDSS.
 
-The socket interface in PyDSS also come in handy, when setting up a hardware-in-loop type simulations and integrating the simulation engine with actual hardware. Interfaces similar to raw socket implementations have been developed (to be  open-sourced at a time) for Modbus-TCP and DNP3 communcations have developed and tested with PyDSS with sucess. A minimal socket interfacing example has been provided as a PyDSS project in ~PyDSS/exmaples/External_interfacing_example. Within the folder, ~/PyDSS/examples/External_interfacing_example/pyDSS_project a scenario called 'socket_interface' has been defined. Socket contntroller definations have been detailed with the 'pyControllerList' folder.
+The socket interface in PyDSS also come in handy, when setting up a hardware-in-loop type simulations and integrating the simulation 
+engine with actual hardware. Interfaces similar to raw socket implementations have been developed (to be  open-sourced at a later time) 
+for Modbus-TCP and DNP3 communcations have developed and tested with PyDSS with sucess. A minimal socket interfacing example has 
+been provided as a PyDSS project in ~PyDSS/examples/external_interfaces. Within the folder, 
+~/PyDSS/examples/external_interfaces/pydss_project a scenario called 'socket' has been defined. Socket 
+controller definations have been detailed with the 'pyControllerList' folder. An example of input requirements can be studied below.
+This example will publish ``voltage magnitude`` (see Even set in Index) and ``real power`` for load ``Load.mpx000635970`` in the model. Subscribed 
+values will be used to update the ``kW`` property of the coupled load (Load.mpx000635970 in this case)
 
-In this example, each iteration, voltage and power information is being exported via the socket and new value recieved is used to update the 'kW' property of the load. Once the inputs, outputs, IP and port have been defined, the next step is to create a TOML file and define simulation settings. 
+.. code-block:: toml
 
-.. code-block:: python
-
-	"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS\\examples\\External_interfacing_example"
-	"Simulation Type" = "QSTS"
-	"Active Project" = "pyDSS_project"
-	"Active Scenario" = "socket_interface"
-	"DSS File" = "Master_Spohn_existing_VV.dss"
-
-
-A small script is used to run the particular scenario.
-
-.. code-block:: python
-
-	import click
-	import sys
-	import os
-
-	@click.command()
-	@click.option('--pydss_path',
-				  default=r'C:\Users\alatif\Desktop\PyDSS')
-	@click.option('--sim_path',
-				  default=r'C:\Users\alatif\Desktop\PyDSS\examples\External_interfacing_example\pyDSS_project\Scenarios')
-	@click.option('--sim_file',
-				  default=r'socket_interface.toml') #The TOML file contains simulation settings for the particular scenario
-	def run_pyDSS(pydss_path, sim_path, sim_file):
-		sys.path.append(pydss_path)
-		sys.path.append(os.path.join(pydss_path, 'PyDSS'))
-		from pyDSS import instance as dssInstance
-		a = dssInstance()                           #Create an instance of PyDSS
-		a.run(os.path.join(sim_path, sim_file))     #Run the simulation 
-
-	run_pyDSS()
+	["Load.mpx000635970"]
+	IP = "127.0.0.1"
+	Port = 5001
+	Encoding = false
+	Buffer = 1024
+	Index = "Even,Even"
+	Inputs = "VoltagesMagAng,Powers"
+	Outputs = "kW"
 
 
 Finally, the minimal example below shows how to retrive data from the sockets and return new values for parameters defined in the definations file.
@@ -80,157 +185,4 @@ Finally, the minimal example below shows how to retrive data from the sockets an
 
 
 
-The HELICS interface
-^^^^^^^^^^^^^^^^^^^^
 
-HELICS models and interface
----------------------------
-
-Hierarchical Engine for Large-scale Infrastructure Co-Simulation (HELICS) provides an open-source, general-purpose, modular, highly-scalable co-simulation framework that runs cross-platform (Linux, Windows, and Mac OS X). It is not a modeling tool by itself, but rather an integration tool that enables multiple existing simulation tools (and/or multiple instances of the same tool), known as "federates," to exchange data during runtime and stay synchronized in time such that together they act as one large simulation, or "federation". This enables bringing together established (or new/emerging) off-the-shelf tools from multiple domains to form a complex software-simulation without having to change the individual tools (known as "black-box" modeling). All that is required is for someone to write a thin interface layer for each tool that interfaces with existing simulation time control and data value updating, such as through an existing scripting interface. Moreover, the HELICS community has a growing ecosystem of established interfaces for popular tools, such that many users can simply mix and match existing tools with their own data and run complex co-simulations with minimal coding. More information on HELICS can be found here (https://github.com/GMLC-TDC/HELICS).
-
-The HELICS interface for PyDSS is built to reduuce complexity of setting up large scale cosimulation scenarios. The user is requuired to publications and suscriptions. Details on the format have been detailed here: :ref:`Result management:Enhanced result export features` 
-
-A minimal HELICS interfacing example has been provided as a PyDSS project in ~PyDSS/exmaples/External_interfacing_example. Within the folder, ~PyDSS/examples/External_interfacing_example/pyDSS_project a scenario called ‘helics_interface’ has been defined. Enabling the HELICS interface requires user to define additional patammeters in the scenario TOML file.
-
-
-HELICS models and interface
----------------------------
-
-The HELICS interface can be enabled and setup using the simultion.toml file. 
-
-Following attributes can be configured for the HELICS interface.
-
-.. automodule:: PyDSS.helics_interface
-   :members: 
-	
-- "Co-simulation Mode" : Set to 'true' to enable the HELICS interface. By default it is set to 'false'
-- "Federate name" : Required to identify a federate ina cosimulation with a large number of federates.	
-
-Default values for additional simulation settings are as follows. For more information on how to appropriately set these values please look at HELICS documentaion 
-
-.. code-block:: python	
-
-	"Time delta" = 0.01
-	"Core type" = "zmq"
-	"Uninterruptible" = true
-	"Helics logging level" = 5   
-
-
-For a helics example a minimal dummy federate has been defined using the HELICS Python interaface. The dummy federate script creates a broker and a federate. The federate subsscribes to feeder total power and publishes actie power values for three loads in the network.
-
-.. code-block:: python	
-
-	import time
-	import helics as h
-	from math import pi
-	import random
-
-	initstring = "-f 2 --name=mainbroker"
-	fedinitstring = "--broker=mainbroker --federates=1"
-	deltat = 0.01
-
-	helicsversion = h.helicsGetVersion()
-
-
-	# Create broker #
-	broker = h.helicsCreateBroker("zmq", "", initstring)
-
-	isconnected = h.helicsBrokerIsConnected(broker)
-
-	# Create Federate Info object that describes the federate properties #
-	fedinfo = h.helicsCreateFederateInfo()
-
-	# Set Federate name #
-	h.helicsFederateInfoSetCoreName(fedinfo, "Test Federate")
-
-	# Set core type from string #
-	h.helicsFederateInfoSetCoreTypeFromString(fedinfo, "zmq")
-
-	# Federate init string #
-	h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
-
-	# Set the message interval (timedelta) for federate. Note th#
-	# HELICS minimum message time interval is 1 ns and by default
-	# it uses a time delta of 1 second. What is provided to the
-	# setTimedelta routine is a multiplier for the default timedelta.
-
-	# Set one second message interval #
-	h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_delta, deltat)
-
-	# Create value federate #
-	vfed = h.helicsCreateValueFederate("Test Federate", fedinfo)
-
-	# Register the publication #
-	pub1 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.load1.power", "double", "kW")
-	pub2 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.load2.power", "double", "kW")
-	pub3 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.load3.power", "double", "kW")
-	sub1 = h.helicsFederateRegisterSubscription(vfed, "Circuit.heco19021.TotalPower.E", "kW")
-	# Enter execution mode #
-	h.helicsFederateEnterExecutingMode(vfed)
-
-	# This federate will be publishing deltat*pi for numsteps steps #
-
-	for t in range(0, 96):
-		currenttime = h.helicsFederateRequestTime(vfed, t * 15 * 60)
-		h.helicsPublicationPublishDouble(pub1, 5.0)
-		h.helicsPublicationPublishDouble(pub2, -1.0)
-		h.helicsPublicationPublishDouble(pub3, random.random() * 12)
-		value = h.helicsInputGetString(sub1)
-		time.sleep(0.01)
-
-	h.helicsFederateFinalize(vfed)
-	while h.helicsBrokerIsConnected(broker):
-		time.sleep(1)
-
-	h.helicsFederateFree(vfed)
-	h.helicsCloseLibrary()
-
-The API interface
-^^^^^^^^^^^^^^^^^
-
-Using the API interface gives user access to results within the result contianar. would require user to create an instance of the :class:`PyDSS.dssInstacne` class. This would require the user to define the arguments dictionary. If structured correctly, user should be able to invove an instance of PyDSS. Ensure within the passed arguments dictionary, 
-
-.. code-block:: python
-
-	"Return Results" : True
-
-Else, None will be returned at simulator steps through time. Once an instance has been created, simulation may be controlled externaly. A simple example is as follows:
-
-
-A minimal HELICS interfacing example has been provided as a PyDSS project in ~PyDSS/exmaples/External_interfacing_example. Within the folder, ~PyDSS/examples/External_interfacing_example/pyDSS_project a scenario called ‘API_interface’ has been defined. Enabling the HELICS interface requires user to define additional patammeters in the scenario TOML file.
-
-.. code-block:: python
-
-	import click
-	import sys
-	import os
-
-	@click.command()
-	@click.option('--pydss_path',
-				  default=r'C:\Users\alatif\Desktop\PyDSS')
-	@click.option('--sim_path',
-				  default=r'C:\Users\alatif\Desktop\PyDSS\examples\External_interfacing_example\pyDSS_project\Scenarios')
-	@click.option('--sim_file',
-				  default=r'api_interface.toml')
-	@click.option('--run_simulation',
-				  default=True)
-	@click.option('--generate_visuals',
-				  default=False)
-	def run_pyDSS(pydss_path, sim_path, sim_file, run_simulation, generate_visuals):
-		sys.path.append(pydss_path)
-		sys.path.append(os.path.join(pydss_path, 'PyDSS'))
-		from pyDSS import instance as dssInstance
-		a = dssInstance() # Create an instance of PyDSS
-		sim_args = a.update_scenario_settigs(os.path.join(sim_path, sim_file)) # Update the default settings
-		dssInstance = a.create_dss_instance(sim_args)  
-		for t in range(5): # Run simulation for five time steps
-			x = {'Load.mpx000635970':{'kW':7.28}} 
-			results = dssInstance.RunStep(t, x) # Update the value of a load
-		dssInstance.ResultContainer.ExportResults() # Export the results
-		dssInstance.DeleteInstance()
-		del a
-	run_pyDSS()
-
-
-
-	

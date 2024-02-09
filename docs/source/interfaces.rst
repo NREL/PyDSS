@@ -6,4 +6,6 @@ PyDSS provides three easy to configure external interfaces. These interface help
 .. toctree::
    :maxdepth: 3
   
-   API Interfaces
+   CLI interface
+   REST API interface
+   Python API interface

@@ -6,8 +6,6 @@ import helics
 import os
 import re
 
-
-from PyDSS.pyContrReader import pyExportReader
 from PyDSS.simulation_input_models import SimulationSettingsModel
 from PyDSS.common import SUBSCRIPTIONS_FILENAME, ExportMode
 from PyDSS.pyLogger import getLoggerTag
@@ -126,7 +124,7 @@ class Publications(BaseModel):
                                 ''
                             )
                         }
-                        publications.append(Publication.validate(pub_dict))
+                        publications.append(Publication.model_validate(pub_dict))
         values["publications"] = publications
         return v
 
@@ -172,17 +170,14 @@ class Publications(BaseModel):
                                     ''
                                 )
                             }
-                            publications.append(Publication.validate(pub_dict))
+                            publications.append(Publication.model_validate(pub_dict))
         values["publications"] = publications        
         return v
 
 class helics_interface:
-
     n_states = 5
     init_state = 1
-
     
-
     def __init__(self, dss_solver, objects_by_name, objects_by_class, settings: SimulationSettingsModel, system_paths, default=True, logger=None):
         LoggerTag = getLoggerTag(settings)
         self.itr = 0
@@ -203,7 +198,6 @@ class helics_interface:
         self._dss_solver = dss_solver
         if default:
             self.registerPubSubTags()
-
 
     def registerPubSubTags(self, pubs=None, subs=None):
 
@@ -253,7 +247,7 @@ class helics_interface:
             file_data["opendss_models"] = self._objects_by_element
             file_data["federate"] = self._federate
          
-            self.subscriptions = Subscriptions.validate(file_data)
+            self.subscriptions = Subscriptions.model_validate(file_data)
         else:
             self.subscriptions = subscriptions
         self._logger.info(str(self.subscriptions.subscriptions))

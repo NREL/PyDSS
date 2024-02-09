@@ -129,21 +129,27 @@ def compare_thermal_metrics(metrics1: ThermalMetricsModel, metrics2: ThermalMetr
 
 
 class ThermalMetricsSummaryModel(ThermalMetricsBaseModel):
-    line_loadings: ThermalMetricsModel = Field(
-        title="line_loadings",
-        description="line loading metrics",
-    )
-    transformer_loadings: Union[ThermalMetricsModel, None] = Field(
-        title="transformer_loadings",
-        description="transformer loading metrics",
-    )
+    line_loadings: Annotated[
+        ThermalMetricsModel,
+        Field(
+            title="line_loadings",
+            description="line loading metrics",
+        )]
+    transformer_loadings: Annotated[
+        Union[ThermalMetricsModel, None],
+        Field(
+            title="transformer_loadings",
+            description="transformer loading metrics",
+        )]
 
 
 class SimulationThermalMetricsModel(ThermalMetricsBaseModel):
-    scenarios: Dict[str, ThermalMetricsSummaryModel] = Field(
-        title="scenarios",
-        description="thermal metrics by PyDSS scenario name",
-    )
+    scenarios: Annotated[
+        Dict[str, ThermalMetricsSummaryModel],
+        Field(
+            title="scenarios",
+            description="thermal metrics by PyDSS scenario name",
+        )]
 
 
 def create_summary(filename):

@@ -74,14 +74,14 @@ class ScenarioPostProcessModel(InputsBaseModel):
 
     script: Annotated[
         str,
-            Field(
+        Field(
             "",
             title="script",
             description="Post-process script",
         )]
     config_file: Annotated[
         str,
-            Field(
+        Field(
             title="config_file",
             description="Post-process config file",
         )]
@@ -92,7 +92,7 @@ class ScenarioModel(InputsBaseModel):
 
     name: Annotated[
         str,
-            Field(
+        Field(
             title="name",
             description="Name of scenario",
         )]
@@ -104,12 +104,12 @@ class ScenarioModel(InputsBaseModel):
             default=[],
         )]
     snapshot_time_point_selection_config: Annotated[
-            SnapshotTimePointSelectionConfigModel, 
-                Field(
-                title="snapshot_time_point_selection_config",
-                description="Descriptor for auto-selecting snapshot time points",
-                default=SnapshotTimePointSelectionConfigModel(),
-            )]
+        SnapshotTimePointSelectionConfigModel, 
+        Field(
+            title="snapshot_time_point_selection_config",
+            description="Descriptor for auto-selecting snapshot time points",
+            default=SnapshotTimePointSelectionConfigModel(),
+        )]
 
 
 class SimulationRangeModel(InputsBaseModel):
