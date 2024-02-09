@@ -1,1501 +1,447 @@
-<!DOCTYPE html>
-<html class="writer-html5" lang="en" >
-<head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Simulation Settings &mdash; PyDSS 0.0.1 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+        <title>Simulation Settings - PyDSS 3.0.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-    <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Default Simulation Settings" href="default_simulation_settings.html" />
-    <link rel="prev" title="PyDSS Project Layout" href="project_layout.html" />
-    <link href="_static/style.css" rel="stylesheet" type="text/css">
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
 
-</head>
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> PyDSS
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#create-an-empty-project">Create an empty project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#customize-the-simulation-settings">Customize the simulation settings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#opendss-models">OpenDSS Models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#run-the-simulation">Run the simulation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#results">Results</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#create-a-project">Create a project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#exporting-data">Exporting Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#pre-filtering-export-data">Pre-filtering Export Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#run-a-project">Run a project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#analyze-results">Analyze results</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tutorial.html#exported-csv-files">Exported CSV files</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorial.html#data-viewer">Data Viewer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorial.html#access-results-programmatically">Access results programmatically</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="tutorial.html#load-element-classes-and-properties">Load element classes and properties</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-one-element">Read a dataframe for one element</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-one-element-with-a-specific-option">Read a dataframe for one element with a specific option</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-one-element-with-an-option-matching-a-regular-expression">Read a dataframe for one element with an option matching a regular expression</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-the-total-value-for-a-property-stored-with-store-values-type-sum">Read the total value for a property stored with <code class="docutils literal notranslate"><span class="pre">store_values_type</span> <span class="pre">=</span> <span class="pre">&quot;sum&quot;</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="tutorial.html#find-out-all-options-available-for-a-property">Find out all options available for a property</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tutorial.html#find-out-what-option-values-are-present-for-a-property">Find out what option values are present for a property</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-all-elements">Read a dataframe for all elements</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="tutorial.html#estimate-space-required-by-pydss-simulation">Estimate space required by PyDSS simulation</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="project_layout.html">PyDSS Project Layout</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="project_layout.html#simulation-settings">Simulation Settings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="project_layout.html#scenarios">Scenarios</a></li>
-<li class="toctree-l2"><a class="reference internal" href="project_layout.html#exports">Exports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="project_layout.html#reports">Reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="project_layout.html#example-layout">Example layout</a></li>
-</ul>
-</li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Simulation Settings</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#simulationsettings">SimulationSettings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#project">Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#scenario">Scenario</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#scenariopostprocess">ScenarioPostProcess</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#snapshottimepointselectionconfig">SnapshotTimePointSelectionConfig</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#exports">Exports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#frequency">Frequency</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#helics">Helics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#logging">Logging</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#montecarlo">MonteCarlo</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#plots">Plots</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#profiles">Profiles</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#reports">Reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#simulationrange">SimulationRange</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#capacitorstatechangecountreport">CapacitorStateChangeCountReport</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#feederlossesreport">FeederLossesReport</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pvclippingreport">PvClippingReport</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pvcurtailmentreport">PvCurtailmentReport</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#regcontroltapnumberchangecountsreport">RegControlTapNumberChangeCountsReport</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#thermalmetricsreport">ThermalMetricsReport</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#voltagemetricsreport">VoltageMetricsReport</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#reportbase">ReportBase</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="default_simulation_settings.html">Default Simulation Settings</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">Example PyDSS simulations</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Dynamic%20visualization%20capabilities.html">Dynamic visualization capabilities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html">Frequency sweep plot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#gis-plot">GIS plot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#histogram-plot">Histogram plot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#voltage-sag-plot">Voltage sag plot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#time-series-plot">Time series plot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#voltage-current-heatmap-plot">Voltage / Current heatmap plot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#xy-plots">XY plots</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Creating%20custom%20dynamic%20plots.html">Development of custom dynamic plots</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="Extended%20controls%20library.html">Extended controls library</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Creating%20custom%20controls.html">Extending PyDSS controllers</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="External%20interfaces%20for%20cosimulation.html">External PyDSS interfaces</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="interfaces.html">The socket interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interfaces.html#the-helics-interface">The HELICS interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interfaces.html#the-api-interface">The API interface</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="Automated%20comparison%20of%20scenarios.html">Automated scenario comparison</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="Result%20management.html">Enhanced result export features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="reports.html#global-settings">Global settings</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="reports.html#format">Format</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reports.html#granularity">Granularity</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="reports.html#export-parameters">Export Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reports.html#output-data">Output Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reports.html#adding-new-reports">Adding New Reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reports.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="hdf-data-format.html">HDF Data Format</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="hdf-data-format.html#layout">Layout</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="hdf-data-format.html#common-metadata">Common Metadata</a></li>
-<li class="toctree-l3"><a class="reference internal" href="hdf-data-format.html#dataset-metadata">Dataset Metadata</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="hdf-data-format.html#attributes-per-dataset">Attributes per dataset</a></li>
-<li class="toctree-l4"><a class="reference internal" href="hdf-data-format.html#metadata-datasets-per-dataset">Metadata datasets per dataset</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="hdf-data-format.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="PyDSS.html">PyDSS</a><ul class="simple">
-</ul>
-</li>
-</ul>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
 
-        </div>
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">PyDSS 3.0.2 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
       </div>
-    </nav>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">PyDSS 3.0.2 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="interfaces.html">Interfaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Interfaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="CLI%20interface.html">Command line interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="REST%20API%20interface.html">REST API interface</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="Python%20API%20interface.html">Python API interface</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Python API interface</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="Respository%20documentaion.html">Python API interface</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Python API interface</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="_autosummary/PyDSS.html">PyDSS</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of PyDSS</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.Extensions.html">PyDSS.Extensions</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of PyDSS.Extensions</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.Extensions.MonteCarlo.html">PyDSS.Extensions.MonteCarlo</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.NetworkModifier.html">PyDSS.NetworkModifier</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.html">PyDSS.ProfileManager</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of PyDSS.ProfileManager</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.ProfileInterface.html">PyDSS.ProfileManager.ProfileInterface</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.base_definitions.html">PyDSS.ProfileManager.base_definitions</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.common.html">PyDSS.ProfileManager.common</a></li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.hooks.html">PyDSS.ProfileManager.hooks</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of PyDSS.ProfileManager.hooks</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.hooks.MongoDB.html">PyDSS.ProfileManager.hooks.MongoDB</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.hooks.h5.html">PyDSS.ProfileManager.hooks.h5</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.ResultData.html">PyDSS.ResultData</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.SolveMode.html">PyDSS.SolveMode</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.api.html">PyDSS.api</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of PyDSS.api</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.api.schema.html">PyDSS.api.schema</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.api.server.html">PyDSS.api.server</a></li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="_autosummary/PyDSS.api.src.html">PyDSS.api.src</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of PyDSS.api.src</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="_autosummary/PyDSS.api.src.app.html">PyDSS.api.src.app</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of PyDSS.api.src.app</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.api.src.app.HDF5.html">PyDSS.api.src.app.HDF5</a></li>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.api.src.app.JSON_writer.html">PyDSS.api.src.app.JSON_writer</a></li>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.api.src.app.pydss.html">PyDSS.api.src.app.pydss</a></li>
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="_autosummary/PyDSS.api.src.web.html">PyDSS.api.src.web</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of PyDSS.api.src.web</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.api.src.web.create_schema.html">PyDSS.api.src.web.create_schema</a></li>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.api.src.web.handler.html">PyDSS.api.src.web.handler</a></li>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.api.src.web.parser.html">PyDSS.api.src.web.parser</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.apps.html">PyDSS.apps</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of PyDSS.apps</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.apps.data_viewer.html">PyDSS.apps.data_viewer</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.cli.html">PyDSS.cli</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of PyDSS.cli</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.add_post_process.html">PyDSS.cli.add_post_process</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.add_scenario.html">PyDSS.cli.add_scenario</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.controllers.html">PyDSS.cli.controllers</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.convert.html">PyDSS.cli.convert</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.create_project.html">PyDSS.cli.create_project</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.edit_scenario.html">PyDSS.cli.edit_scenario</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.export.html">PyDSS.cli.export</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.extract.html">PyDSS.cli.extract</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.pydss.html">PyDSS.cli.pydss</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.reports.html">PyDSS.cli.reports</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.run.html">PyDSS.cli.run</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.run_server.html">PyDSS.cli.run_server</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.common.html">PyDSS.common</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.config_data.html">PyDSS.config_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.controllers.html">PyDSS.controllers</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dataset_buffer.html">PyDSS.dataset_buffer</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.defaults.html">PyDSS.defaults</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of PyDSS.defaults</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.defaults.ExportLists.html">PyDSS.defaults.ExportLists</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.defaults.Monte_Carlo.html">PyDSS.defaults.Monte_Carlo</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.defaults.pyControllerList.html">PyDSS.defaults.pyControllerList</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.defaults.pyPlotList.html">PyDSS.defaults.pyPlotList</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssBus.html">PyDSS.dssBus</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssCircuit.html">PyDSS.dssCircuit</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssElement.html">PyDSS.dssElement</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssElementFactory.html">PyDSS.dssElementFactory</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssInstance.html">PyDSS.dssInstance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssObjectBase.html">PyDSS.dssObjectBase</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssTransformer.html">PyDSS.dssTransformer</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.element_fields.html">PyDSS.element_fields</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.element_options.html">PyDSS.element_options</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.exceptions.html">PyDSS.exceptions</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.export_list_reader.html">PyDSS.export_list_reader</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.get_snapshot_timepoints.html">PyDSS.get_snapshot_timepoints</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.helics_interface.html">PyDSS.helics_interface</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.loggers.html">PyDSS.loggers</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.metrics.html">PyDSS.metrics</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.modes.html">PyDSS.modes</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of PyDSS.modes</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.modes.Dynamic.html">PyDSS.modes.Dynamic</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.modes.QSTS.html">PyDSS.modes.QSTS</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.modes.Snapshot.html">PyDSS.modes.Snapshot</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.modes.solver_base.html">PyDSS.modes.solver_base</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.naerm.html">PyDSS.naerm</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.node_voltage_metrics.html">PyDSS.node_voltage_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pyContrReader.html">PyDSS.pyContrReader</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.html">PyDSS.pyControllers</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of PyDSS.pyControllers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.html">PyDSS.pyControllers.Controllers</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of PyDSS.pyControllers.Controllers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.FaultController.html">PyDSS.pyControllers.Controllers.FaultController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.GenController.html">PyDSS.pyControllers.Controllers.GenController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.MotorStall.html">PyDSS.pyControllers.Controllers.MotorStall</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.MotorStallBackup.html">PyDSS.pyControllers.Controllers.MotorStallBackup</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.MotorStallSimple.html">PyDSS.pyControllers.Controllers.MotorStallSimple</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.PvController.html">PyDSS.pyControllers.Controllers.PvController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.PvDynamic.html">PyDSS.pyControllers.Controllers.PvDynamic</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.PvFrequencyRideThru.html">PyDSS.pyControllers.Controllers.PvFrequencyRideThru</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.PvVoltageRideThru.html">PyDSS.pyControllers.Controllers.PvVoltageRideThru</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.Settings.html">PyDSS.pyControllers.Controllers.Settings</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.SocketController.html">PyDSS.pyControllers.Controllers.SocketController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.StorageController.html">PyDSS.pyControllers.Controllers.StorageController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.ThermostaticLoad.html">PyDSS.pyControllers.Controllers.ThermostaticLoad</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.xfmrController.html">PyDSS.pyControllers.Controllers.xfmrController</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.pyController.html">PyDSS.pyControllers.pyController</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.pyControllerAbstract.html">PyDSS.pyControllers.pyControllerAbstract</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pyDSS.html">PyDSS.pyDSS</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pyLogger.html">PyDSS.pyLogger</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pyPlotReader.html">PyDSS.pyPlotReader</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.html">PyDSS.pyPlots</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of PyDSS.pyPlots</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.html">PyDSS.pyPlots.Plots</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of PyDSS.pyPlots.Plots</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.FrequencySweep.html">PyDSS.pyPlots.Plots.FrequencySweep</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.Histogram.html">PyDSS.pyPlots.Plots.Histogram</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.NetworkGraph.html">PyDSS.pyPlots.Plots.NetworkGraph</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.Table.html">PyDSS.pyPlots.Plots.Table</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.ThreeDim.html">PyDSS.pyPlots.Plots.ThreeDim</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.TimeSeries.html">PyDSS.pyPlots.Plots.TimeSeries</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.Topology.html">PyDSS.pyPlots.Plots.Topology</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.VoltageDistance.html">PyDSS.pyPlots.Plots.VoltageDistance</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.XY.html">PyDSS.pyPlots.Plots.XY</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.pyPlotAbstract.html">PyDSS.pyPlots.pyPlotAbstract</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.pyPlots.html">PyDSS.pyPlots.pyPlots</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.html">PyDSS.pyPostprocessor</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle navigation of PyDSS.pyPostprocessor</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.html">PyDSS.pyPostprocessor.PostprocessScripts</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle navigation of PyDSS.pyPostprocessor.PostprocessScripts</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer.html">PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer</a></li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules.html">PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle navigation of PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules.opt_funcs.html">PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules.opt_funcs</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.EdLiFoControl.html">PyDSS.pyPostprocessor.PostprocessScripts.EdLiFoControl</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.Utilidata_Interface.html">PyDSS.pyPostprocessor.PostprocessScripts.Utilidata_Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.pyPostprocess.html">PyDSS.pyPostprocessor.pyPostprocess</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.pyPostprocessAbstract.html">PyDSS.pyPostprocessor.pyPostprocessAbstract</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pyResults.html">PyDSS.pyResults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pydss_fs_interface.html">PyDSS.pydss_fs_interface</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pydss_project.html">PyDSS.pydss_project</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pydss_results.html">PyDSS.pydss_results</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.registry.html">PyDSS.registry</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.reports.html">PyDSS.reports</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle navigation of PyDSS.reports</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.capacitor_change_count.html">PyDSS.reports.capacitor_change_count</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.feeder_losses.html">PyDSS.reports.feeder_losses</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.pv_reports.html">PyDSS.reports.pv_reports</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.reg_control_tap_number_change_count.html">PyDSS.reports.reg_control_tap_number_change_count</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.reports.html">PyDSS.reports.reports</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.thermal_metrics.html">PyDSS.reports.thermal_metrics</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.voltage_metrics.html">PyDSS.reports.voltage_metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.simulation_input_models.html">PyDSS.simulation_input_models</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.storage_filters.html">PyDSS.storage_filters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.thermal_metrics.html">PyDSS.thermal_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.unitDefinations.html">PyDSS.unitDefinations</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.utils.html">PyDSS.utils</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of PyDSS.utils</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.utils.dataframe_utils.html">PyDSS.utils.dataframe_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.utils.dss_utils.html">PyDSS.utils.dss_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.utils.pydss_utils.html">PyDSS.utils.pydss_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.utils.simulation_utils.html">PyDSS.utils.simulation_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.utils.timing_utils.html">PyDSS.utils.timing_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.utils.utils.html">PyDSS.utils.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.value_storage.html">PyDSS.value_storage</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Models.html">Data models</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="project_layout.html">PyDSS Project Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Result%20management.html">Enhanced result export features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hdf-data-format.html">HDF Data Format</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="co-simulation_support.html">Co-simulation interfaces</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle navigation of Co-simulation interfaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="Co-simulation%20Interfaces.html">The HELICS interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Co-simulation%20Interfaces.html#the-socket-interface">The socket interface</a></li>
+</ul>
+</li>
+</ul>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">PyDSS</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Simulation Settings</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="_sources/simulation_settings.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <section id="simulation-settings">
-<span id="simulation-settings-label"></span><h1>Simulation Settings<a class="headerlink" href="#simulation-settings" title="Permalink to this headline">¶</a></h1>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="simulation-settings">
+<span id="simulation-settings-label"></span><h1>Simulation Settings<a class="headerlink" href="#simulation-settings" title="Link to this heading">#</a></h1>
 <p>This page describes the simulation customizations available in the settings file
 (<code class="docutils literal notranslate"><span class="pre">simulation.toml</span></code>).</p>
 <p>Refer to <a class="reference internal" href="default_simulation_settings.html#default-settings-label"><span class="std std-ref">Default Simulation Settings</span></a> for a default file.</p>
-<section id="simulationsettings">
-<span id="simulationsettingsmodel"></span><h2>SimulationSettings<a class="headerlink" href="#simulationsettings" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>project</p></td>
-<td><p><a class="reference internal" href="#projectmodel"><span class="std std-ref">Project</span></a></p></td>
-<td><p>Project settings</p></td>
-<td><p>True</p></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><p>exports</p></td>
-<td><p><a class="reference internal" href="#exportsmodel"><span class="std std-ref">Exports</span></a></p></td>
-<td><p>Exports settings</p></td>
-<td><p>False</p></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><p>frequency</p></td>
-<td><p><a class="reference internal" href="#frequencymodel"><span class="std std-ref">Frequency</span></a></p></td>
-<td><p>Frequency settings</p></td>
-<td><p>False</p></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><p>helics</p></td>
-<td><p><a class="reference internal" href="#helicsmodel"><span class="std std-ref">Helics</span></a></p></td>
-<td><p>HELICS settings</p></td>
-<td><p>False</p></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><p>logging</p></td>
-<td><p><a class="reference internal" href="#loggingmodel"><span class="std std-ref">Logging</span></a></p></td>
-<td><p>Logging settings</p></td>
-<td><p>False</p></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><p>monte_carlo</p></td>
-<td><p><a class="reference internal" href="#montecarlomodel"><span class="std std-ref">MonteCarlo</span></a></p></td>
-<td><p>Monte Carlo settings</p></td>
-<td><p>False</p></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><p>plots</p></td>
-<td><p><a class="reference internal" href="#plotsmodel"><span class="std std-ref">Plots</span></a></p></td>
-<td><p>Plots settings</p></td>
-<td><p>False</p></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><p>profiles</p></td>
-<td><p><a class="reference internal" href="#profilesmodel"><span class="std std-ref">Profiles</span></a></p></td>
-<td><p>Profiles settings</p></td>
-<td><p>False</p></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><p>reports</p></td>
-<td><p><a class="reference internal" href="#reportsmodel"><span class="std std-ref">Reports</span></a></p></td>
-<td><p>Reports settings</p></td>
-<td><p>False</p></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="project">
-<span id="projectmodel"></span><h2>Project<a class="headerlink" href="#project" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>project_path</p></td>
-<td><p>string</p></td>
-<td><p>Base path of project. Join with ‘active_project’ to get full path</p></td>
-<td><p>False</p></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><p>active_project</p></td>
-<td><p>string</p></td>
-<td><p>Active project name. Join with ‘project_path’ to get full path</p></td>
-<td><p>False</p></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><p>scenarios</p></td>
-<td><p>array</p></td>
-<td><p>List of scenarios</p></td>
-<td><p>False</p></td>
-<td><p>[]</p></td>
-</tr>
-<tr class="row-odd"><td><p>active_scenario</p></td>
-<td><p>string</p></td>
-<td><p>Name of active scenario</p></td>
-<td><p>False</p></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><p>start_time</p></td>
-<td><p>string</p></td>
-<td><p>Start time of simulation</p></td>
-<td><p>False</p></td>
-<td><p>2020-01-01 00:00:00.0</p></td>
-</tr>
-<tr class="row-odd"><td><p>simulation_duration_min</p></td>
-<td><p>number</p></td>
-<td><p>Simulation duration in minutes.</p></td>
-<td><p>False</p></td>
-<td><p>1440.0</p></td>
-</tr>
-<tr class="row-even"><td><p>step_resolution_sec</p></td>
-<td><p>number</p></td>
-<td><p>Time step resolution in seconds</p></td>
-<td><p>False</p></td>
-<td><p>900.0</p></td>
-</tr>
-<tr class="row-odd"><td><p>loadshape_start_time</p></td>
-<td><p>string</p></td>
-<td><p>Start time of loadshape profiles</p></td>
-<td><p>False</p></td>
-<td><p>2020-01-01 00:00:00.0</p></td>
-</tr>
-<tr class="row-even"><td><p>simulation_range</p></td>
-<td><p><a class="reference internal" href="#simulationrangemodel"><span class="std std-ref">SimulationRange</span></a></p></td>
-<td><p>Restrict control algorithms and data collection to these hours. Useful</p>
-<p>for skipping night when simulating PV Systems.</p>
-</td>
-<td><p>False</p></td>
-<td><p>{‘start’: ‘00:00:00’, ‘end’: ‘23:59:59’}</p></td>
-</tr>
-<tr class="row-odd"><td><p>simulation_type</p></td>
-<td><p>SimulationType</p></td>
-<td><p>Type of simulation to run.</p>
-<ul class="simple">
-<li><p>dynamic</p></li>
-<li><p>qsts</p></li>
-<li><p>snapshot</p></li>
-</ul>
-</td>
-<td><p>False</p></td>
-<td><p>qsts</p></td>
-</tr>
-<tr class="row-even"><td><p>control_mode</p></td>
-<td><p>ControlMode</p></td>
-<td><p>Simulation control mode</p>
-<ul class="simple">
-<li><p>Static</p></li>
-<li><p>Time</p></li>
-</ul>
-</td>
-<td><p>False</p></td>
-<td><p>Static</p></td>
-</tr>
-<tr class="row-odd"><td><p>max_control_iterations</p></td>
-<td><p>integer</p></td>
-<td><p>Maximum outer loop control iterations</p></td>
-<td><p>False</p></td>
-<td><p>50</p></td>
-</tr>
-<tr class="row-even"><td><p>convergence_error_percent_threshold</p></td>
-<td><p>number</p></td>
-<td><p>Convergence error threshold as a percent</p></td>
-<td><p>False</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-odd"><td><p>error_tolerance</p></td>
-<td><p>number</p></td>
-<td><p>Error tolerance in per unit</p></td>
-<td><p>False</p></td>
-<td><p>0.001</p></td>
-</tr>
-<tr class="row-even"><td><p>max_error_tolerance</p></td>
-<td><p>number</p></td>
-<td><p>Abort simulation if a convergence error exceeds this value.</p></td>
-<td><p>False</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-odd"><td><p>skip_export_on_convergence_error</p></td>
-<td><p>boolean</p></td>
-<td><p>Do not export data at a time point if there is a convergence error.</p></td>
-<td><p>False</p></td>
-<td><p>True</p></td>
-</tr>
-<tr class="row-even"><td><p>dss_file</p></td>
-<td><p>string</p></td>
-<td><p>OpenDSS master filename</p></td>
-<td><p>False</p></td>
-<td><p>Master.dss</p></td>
-</tr>
-<tr class="row-odd"><td><p>dss_file_absolute_path</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true if ‘dss_file’ is an absolute path.</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-even"><td><p>disable_pydss_controllers</p></td>
-<td><p>boolean</p></td>
-<td><p>Allows disabling of the control algorithms</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>use_controller_registry</p></td>
-<td><p>boolean</p></td>
-<td><p>Use local controller registry.</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="scenario">
-<span id="scenariomodel"></span><h2>Scenario<a class="headerlink" href="#scenario" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>name</p></td>
-<td><p>string</p></td>
-<td><p>Name of scenario</p></td>
-<td><p>True</p></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><p>post_process_infos</p></td>
-<td><p>array</p></td>
-<td><p>Post-process script descriptors</p></td>
-<td><p>False</p></td>
-<td><p>[]</p></td>
-</tr>
-<tr class="row-even"><td><p>snapshot_time_point_selection_config</p></td>
-<td><p><a class="reference internal" href="#snapshottimepointselectionconfigmodel"><span class="std std-ref">SnapshotTimePointSelectionConfig</span></a></p></td>
-<td><p>Descriptor for auto-selecting snapshot time points</p></td>
-<td><p>False</p></td>
-<td><p>{‘mode’: ‘none’, ‘start_time’: ‘2020-01-01T00:00:00’, ‘search_duration_min’: 1440.0}</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="scenariopostprocess">
-<span id="scenariopostprocessmodel"></span><h2>ScenarioPostProcess<a class="headerlink" href="#scenariopostprocess" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>script</p></td>
-<td><p>string</p></td>
-<td><p>Post-process script</p></td>
-<td><p>True</p></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><p>config_file</p></td>
-<td><p>string</p></td>
-<td><p>Post-process config file</p></td>
-<td><p>True</p></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="snapshottimepointselectionconfig">
-<span id="snapshottimepointselectionconfigmodel"></span><h2>SnapshotTimePointSelectionConfig<a class="headerlink" href="#snapshottimepointselectionconfig" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>mode</p></td>
-<td><p>SnapshotTimePointSelectionMode</p></td>
-<td><p>Mode</p>
-<ul class="simple">
-<li><p>max_pv_load_ratio</p></li>
-<li><p>max_load</p></li>
-<li><p>daytime_min_load</p></li>
-<li><p>pv_minus_load</p></li>
-<li><p>none</p></li>
-</ul>
-</td>
-<td><p>False</p></td>
-<td><p>none</p></td>
-</tr>
-<tr class="row-odd"><td><p>start_time</p></td>
-<td><p>string</p></td>
-<td><p>Start time in the load shape profiles</p></td>
-<td><p>False</p></td>
-<td><p>2020-1-1 00:00:00.0</p></td>
-</tr>
-<tr class="row-even"><td><p>search_duration_min</p></td>
-<td><p>number</p></td>
-<td><p>Duration in minutes to search in the load shape profiles</p></td>
-<td><p>False</p></td>
-<td><p>1440.0</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="exports">
-<span id="exportsmodel"></span><h2>Exports<a class="headerlink" href="#exports" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>export_results</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to export circuit element values at each time point.</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>export_elements</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to export static information for all circuit elements.</p></td>
-<td><p>False</p></td>
-<td><p>True</p></td>
-</tr>
-<tr class="row-even"><td><p>export_element_types</p></td>
-<td><p>array</p></td>
-<td><p>Restrict ‘export_elements’ to these element types. Default is all</p>
-<p>types</p>
-</td>
-<td><p>False</p></td>
-<td><p>[]</p></td>
-</tr>
-<tr class="row-odd"><td><p>export_data_tables</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to export circuit element data in tabular files. While it</p>
-<p>does duplicate data, it provides a way to preserve a human-readable</p>
-<p>dataset that does not require PyDSS to interpret.</p>
-</td>
-<td><p>False</p></td>
-<td><p>True</p></td>
-</tr>
-<tr class="row-even"><td><p>export_pv_profiles</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to export PV profiles to tabular files.</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>export_data_in_memory</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to keep circuit element data in memory rather than</p>
-<p>periodically flushing to an HDF5 file. This can be faster but will</p>
-<p>consume more memory.</p>
-</td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-even"><td><p>export_node_names_by_type</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to export node names by primary/secondary type to a file.</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>export_event_log</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to export the OpenDSS event log.</p></td>
-<td><p>False</p></td>
-<td><p>True</p></td>
-</tr>
-<tr class="row-even"><td><p>export_format</p></td>
-<td><p>FileFormat</p></td>
-<td><p>Controls the file format used if export_data_tables is true.</p>
-<ul class="simple">
-<li><p>csv</p></li>
-<li><p>h5</p></li>
-</ul>
-</td>
-<td><p>False</p></td>
-<td><p>h5</p></td>
-</tr>
-<tr class="row-odd"><td><p>export_compression</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to compress data exported with ‘export_data_tables’.</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-even"><td><p>hdf_max_chunk_bytes</p></td>
-<td><p>integer</p></td>
-<td><p>The chunk size in bytes to use for exported data in the HDF5 data</p>
-<p>store. The value is passed to the h5py package. Refer to</p>
-<p><a class="reference external" href="http://docs.h5py.org/en/stable/high/dataset.html#chunked-storage">http://docs.h5py.org/en/stable/high/dataset.html#chunked-storage</a> for</p>
-<p>more information.</p>
-</td>
-<td><p>False</p></td>
-<td><p>1048576</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="frequency">
-<span id="frequencymodel"></span><h2>Frequency<a class="headerlink" href="#frequency" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>enable_frequency_sweep</p></td>
-<td><p>boolean</p></td>
-<td><p>Enable harmonic sweep. Works with only ‘Static’ and ‘QSTS’ simulation</p>
-<p>modes.</p>
-</td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>fundamental_frequency</p></td>
-<td><p>number</p></td>
-<td><p>Fundamental system frequeny in Hertz</p></td>
-<td><p>False</p></td>
-<td><p>60.0</p></td>
-</tr>
-<tr class="row-even"><td><p>start_frequency</p></td>
-<td><p>number</p></td>
-<td><p>Start system frequeny in Hertz</p></td>
-<td><p>False</p></td>
-<td><p>1.0</p></td>
-</tr>
-<tr class="row-odd"><td><p>end_frequency</p></td>
-<td><p>number</p></td>
-<td><p>End system frequeny in Hertz</p></td>
-<td><p>False</p></td>
-<td><p>15.0</p></td>
-</tr>
-<tr class="row-even"><td><p>frequency_increment</p></td>
-<td><p>number</p></td>
-<td><p>As multiple of fundamental</p></td>
-<td><p>False</p></td>
-<td><p>2.0</p></td>
-</tr>
-<tr class="row-odd"><td><p>neglect_shunt_admittance</p></td>
-<td><p>boolean</p></td>
-<td><p>Neglect shunt addmittance for frequency sweep</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-even"><td><p>percentage_load_in_series</p></td>
-<td><p>number</p></td>
-<td><p>Percent of load that is series RL for Harmonic studies</p></td>
-<td><p>False</p></td>
-<td><p>50.0</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="helics">
-<span id="helicsmodel"></span><h2>Helics<a class="headerlink" href="#helics" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>co_simulation_mode</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to enable the HELICS interface for co-simulation.</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>iterative_mode</p></td>
-<td><p>boolean</p></td>
-<td><p>Iterative mode</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-even"><td><p>error_tolerance</p></td>
-<td><p>number</p></td>
-<td><p>Error tolerance</p></td>
-<td><p>False</p></td>
-<td><p>0.0001</p></td>
-</tr>
-<tr class="row-odd"><td><p>max_co_iterations</p></td>
-<td><p>integer</p></td>
-<td><p>Max number of co-simulation iterations</p></td>
-<td><p>False</p></td>
-<td><p>15</p></td>
-</tr>
-<tr class="row-even"><td><p>broker</p></td>
-<td><p>string</p></td>
-<td><p>Broker name</p></td>
-<td><p>False</p></td>
-<td><p>mainbroker</p></td>
-</tr>
-<tr class="row-odd"><td><p>broker_port</p></td>
-<td><p>integer</p></td>
-<td><p>Broker port</p></td>
-<td><p>False</p></td>
-<td><p>0</p></td>
-</tr>
-<tr class="row-even"><td><p>federate_name</p></td>
-<td><p>string</p></td>
-<td><p>Name of the federate</p></td>
-<td><p>False</p></td>
-<td><p>PyDSS</p></td>
-</tr>
-<tr class="row-odd"><td><p>time_delta</p></td>
-<td><p>number</p></td>
-<td><p>The property controlling the minimum time delta for a federate.</p></td>
-<td><p>False</p></td>
-<td><p>0.01</p></td>
-</tr>
-<tr class="row-even"><td><p>core_type</p></td>
-<td><p>string</p></td>
-<td><p>Core type to be use for communication</p></td>
-<td><p>False</p></td>
-<td><p>zmq</p></td>
-</tr>
-<tr class="row-odd"><td><p>uninterruptible</p></td>
-<td><p>boolean</p></td>
-<td><p>Can the federate be interrupted</p></td>
-<td><p>False</p></td>
-<td><p>True</p></td>
-</tr>
-<tr class="row-even"><td><p>logging_level</p></td>
-<td><p>integer</p></td>
-<td><p>Logging level for the federate. Refer to HELICS documentation.</p></td>
-<td><p>False</p></td>
-<td><p>5</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="logging">
-<span id="loggingmodel"></span><h2>Logging<a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>logging_level</p></td>
-<td><p>LoggingLevel</p></td>
-<td><p>PyDSS minimum logging level</p>
-<ul class="simple">
-<li><p>debug</p></li>
-<li><p>info</p></li>
-<li><p>warning</p></li>
-<li><p>error</p></li>
-</ul>
-</td>
-<td><p>False</p></td>
-<td><p>info</p></td>
-</tr>
-<tr class="row-odd"><td><p>enable_console</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to enable console logging.</p></td>
-<td><p>False</p></td>
-<td><p>True</p></td>
-</tr>
-<tr class="row-even"><td><p>enable_file</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to enable logging to a file.</p></td>
-<td><p>False</p></td>
-<td><p>True</p></td>
-</tr>
-<tr class="row-odd"><td><p>clear_old_log_file</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to clear and overwrite any existing log files.</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-even"><td><p>log_time_step_updates</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to log each completed time step.</p></td>
-<td><p>False</p></td>
-<td><p>True</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="montecarlo">
-<span id="montecarlomodel"></span><h2>MonteCarlo<a class="headerlink" href="#montecarlo" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>num_scenarios</p></td>
-<td><p>integer</p></td>
-<td><p>Number of Monte Carlo scenarios</p></td>
-<td><p>False</p></td>
-<td><p>-1</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="plots">
-<span id="plotsmodel"></span><h2>Plots<a class="headerlink" href="#plots" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>create_dynamic_plots</p></td>
-<td><p>boolean</p></td>
-<td><p>Enable rendering of dynamic plots using bokeh. Dependent on</p>
-<p>‘open_plots_in_browser’</p>
-</td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>open_plots_in_browser</p></td>
-<td><p>boolean</p></td>
-<td><p>Open plots in a browser.</p></td>
-<td><p>False</p></td>
-<td><p>True</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="profiles">
-<span id="profilesmodel"></span><h2>Profiles<a class="headerlink" href="#profiles" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>use_profile_manager</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to enable the Profile Manager.</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>source_type</p></td>
-<td><p>FileFormat</p></td>
-<td><p>File format for source data</p>
-<ul class="simple">
-<li><p>csv</p></li>
-<li><p>h5</p></li>
-</ul>
-</td>
-<td><p>False</p></td>
-<td><p>h5</p></td>
-</tr>
-<tr class="row-even"><td><p>source</p></td>
-<td><p>string</p></td>
-<td><p>File containing source data</p></td>
-<td><p>False</p></td>
-<td><p>Profiles_backup.hdf5</p></td>
-</tr>
-<tr class="row-odd"><td><p>profile_mapping</p></td>
-<td><p>string</p></td>
-<td><p>Profile mapping</p></td>
-<td><p>False</p></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><p>is_relative_path</p></td>
-<td><p>boolean</p></td>
-<td><p>Source file path is relative</p></td>
-<td><p>False</p></td>
-<td><p>True</p></td>
-</tr>
-<tr class="row-odd"><td><p>settings</p></td>
-<td><p>object</p></td>
-<td><p>Profiles settings</p></td>
-<td><p>False</p></td>
-<td><p>{}</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="reports">
-<span id="reportsmodel"></span><h2>Reports<a class="headerlink" href="#reports" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>format</p></td>
-<td><p>FileFormat</p></td>
-<td><p>Controls the file format.</p>
-<ul class="simple">
-<li><p>csv</p></li>
-<li><p>h5</p></li>
-</ul>
-</td>
-<td><p>False</p></td>
-<td><p>h5</p></td>
-</tr>
-<tr class="row-odd"><td><p>granularity</p></td>
-<td><p>ReportGranularity</p></td>
-<td><p>Specifies the granularity on which data is collected.</p>
-<ul class="simple">
-<li><p>per_element_per_time_point</p></li>
-<li><p>per_element_total</p></li>
-<li><p>all_elements_per_time_point</p></li>
-<li><p>all_elements_total</p></li>
-</ul>
-</td>
-<td><p>False</p></td>
-<td><p>per_element_per_time_point</p></td>
-</tr>
-<tr class="row-even"><td><p>types</p></td>
-<td><p>array</p></td>
-<td><p>Reports to collect.</p></td>
-<td><p>False</p></td>
-<td><p>[]</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="simulationrange">
-<span id="simulationrangemodel"></span><h2>SimulationRange<a class="headerlink" href="#simulationrange" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>start</p></td>
-<td><p>string</p></td>
-<td><p>Time to start running control algorithms each day.</p></td>
-<td><p>False</p></td>
-<td><p>00:00:00</p></td>
-</tr>
-<tr class="row-odd"><td><p>end</p></td>
-<td><p>string</p></td>
-<td><p>Time to stop running control algorithms each day.</p></td>
-<td><p>False</p></td>
-<td><p>23:59:59</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="capacitorstatechangecountreport">
-<span id="capacitorstatechangecountreportmodel"></span><h2>CapacitorStateChangeCountReport<a class="headerlink" href="#capacitorstatechangecountreport" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>enabled</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to enable the report</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>scenarios</p></td>
-<td><p>array</p></td>
-<td><p>Scenarios to which the report applies. Default is all scenarios.</p></td>
-<td><p>False</p></td>
-<td><p>[]</p></td>
-</tr>
-<tr class="row-even"><td><p>store_all_time_points</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to store data for all time points. If false, store</p>
-<p>aggregated metrics in memory.</p>
-</td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="feederlossesreport">
-<span id="feederlossesreportmodel"></span><h2>FeederLossesReport<a class="headerlink" href="#feederlossesreport" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>enabled</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to enable the report</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>scenarios</p></td>
-<td><p>array</p></td>
-<td><p>Scenarios to which the report applies. Default is all scenarios.</p></td>
-<td><p>False</p></td>
-<td><p>[]</p></td>
-</tr>
-<tr class="row-even"><td><p>store_all_time_points</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to store data for all time points. If false, store</p>
-<p>aggregated metrics in memory.</p>
-</td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="pvclippingreport">
-<span id="pvclippingreportmodel"></span><h2>PvClippingReport<a class="headerlink" href="#pvclippingreport" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>enabled</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to enable the report</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>scenarios</p></td>
-<td><p>array</p></td>
-<td><p>Scenarios to which the report applies. Default is all scenarios.</p></td>
-<td><p>False</p></td>
-<td><p>[]</p></td>
-</tr>
-<tr class="row-even"><td><p>store_all_time_points</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to store data for all time points. If false, store</p>
-<p>aggregated metrics in memory.</p>
-</td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>diff_tolerance_percent_pmpp</p></td>
-<td><p>number</p></td>
-<td><p>TBD</p></td>
-<td><p>False</p></td>
-<td><p>1.0</p></td>
-</tr>
-<tr class="row-even"><td><p>denominator_tolerance_percent_pmpp</p></td>
-<td><p>number</p></td>
-<td><p>TBD</p></td>
-<td><p>False</p></td>
-<td><p>1.0</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="pvcurtailmentreport">
-<span id="pvcurtailmentreportmodel"></span><h2>PvCurtailmentReport<a class="headerlink" href="#pvcurtailmentreport" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>enabled</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to enable the report</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>scenarios</p></td>
-<td><p>array</p></td>
-<td><p>Scenarios to which the report applies. Default is all scenarios.</p></td>
-<td><p>False</p></td>
-<td><p>[]</p></td>
-</tr>
-<tr class="row-even"><td><p>store_all_time_points</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to store data for all time points. If false, store</p>
-<p>aggregated metrics in memory.</p>
-</td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>diff_tolerance_percent_pmpp</p></td>
-<td><p>number</p></td>
-<td><p>TBD</p></td>
-<td><p>False</p></td>
-<td><p>1.0</p></td>
-</tr>
-<tr class="row-even"><td><p>denominator_tolerance_percent_pmpp</p></td>
-<td><p>number</p></td>
-<td><p>TBD</p></td>
-<td><p>False</p></td>
-<td><p>1.0</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="regcontroltapnumberchangecountsreport">
-<span id="regcontroltapnumberchangecountsreportmodel"></span><h2>RegControlTapNumberChangeCountsReport<a class="headerlink" href="#regcontroltapnumberchangecountsreport" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>enabled</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to enable the report</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>scenarios</p></td>
-<td><p>array</p></td>
-<td><p>Scenarios to which the report applies. Default is all scenarios.</p></td>
-<td><p>False</p></td>
-<td><p>[]</p></td>
-</tr>
-<tr class="row-even"><td><p>store_all_time_points</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to store data for all time points. If false, store</p>
-<p>aggregated metrics in memory.</p>
-</td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="thermalmetricsreport">
-<span id="thermalmetricsreportmodel"></span><h2>ThermalMetricsReport<a class="headerlink" href="#thermalmetricsreport" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>enabled</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to enable the report</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>scenarios</p></td>
-<td><p>array</p></td>
-<td><p>Scenarios to which the report applies. Default is all scenarios.</p></td>
-<td><p>False</p></td>
-<td><p>[]</p></td>
-</tr>
-<tr class="row-even"><td><p>store_all_time_points</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to store data for all time points. If false, store</p>
-<p>aggregated metrics in memory.</p>
-</td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>transformer_window_size_hours</p></td>
-<td><p>integer</p></td>
-<td><p>Transformer window size hours</p></td>
-<td><p>False</p></td>
-<td><p>2</p></td>
-</tr>
-<tr class="row-even"><td><p>transformer_loading_percent_threshold</p></td>
-<td><p>integer</p></td>
-<td><p>Transformer loading percent threshold</p></td>
-<td><p>False</p></td>
-<td><p>150</p></td>
-</tr>
-<tr class="row-odd"><td><p>transformer_loading_percent_moving_average_threshold</p></td>
-<td><p>integer</p></td>
-<td><p>Transformer loading percent moving average threshold</p></td>
-<td><p>False</p></td>
-<td><p>120</p></td>
-</tr>
-<tr class="row-even"><td><p>line_window_size_hours</p></td>
-<td><p>integer</p></td>
-<td><p>Line window size hours</p></td>
-<td><p>False</p></td>
-<td><p>1</p></td>
-</tr>
-<tr class="row-odd"><td><p>line_loading_percent_threshold</p></td>
-<td><p>integer</p></td>
-<td><p>Line loading percent threshold</p></td>
-<td><p>False</p></td>
-<td><p>120</p></td>
-</tr>
-<tr class="row-even"><td><p>line_loading_percent_moving_average_threshold</p></td>
-<td><p>integer</p></td>
-<td><p>Line loading percent moving average threshold</p></td>
-<td><p>False</p></td>
-<td><p>100</p></td>
-</tr>
-<tr class="row-odd"><td><p>store_per_element_data</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to store metrics for each line and transformer.</p></td>
-<td><p>False</p></td>
-<td><p>True</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="voltagemetricsreport">
-<span id="voltagemetricsreportmodel"></span><h2>VoltageMetricsReport<a class="headerlink" href="#voltagemetricsreport" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>enabled</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to enable the report</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>scenarios</p></td>
-<td><p>array</p></td>
-<td><p>Scenarios to which the report applies. Default is all scenarios.</p></td>
-<td><p>False</p></td>
-<td><p>[]</p></td>
-</tr>
-<tr class="row-even"><td><p>store_all_time_points</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to store data for all time points. If false, store</p>
-<p>aggregated metrics in memory.</p>
-</td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>window_size_minutes</p></td>
-<td><p>integer</p></td>
-<td><p>Window size minutes</p></td>
-<td><p>False</p></td>
-<td><p>60</p></td>
-</tr>
-<tr class="row-even"><td><p>range_a_limits</p></td>
-<td><p>array</p></td>
-<td><p>ANSI Range A voltage limits</p></td>
-<td><p>False</p></td>
-<td><p>[0.95, 1.05]</p></td>
-</tr>
-<tr class="row-odd"><td><p>range_b_limits</p></td>
-<td><p>array</p></td>
-<td><p>ANSI Range B voltage limits</p></td>
-<td><p>False</p></td>
-<td><p>[0.9, 1.0583]</p></td>
-</tr>
-<tr class="row-even"><td><p>store_per_element_data</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to store metrics for each node.</p></td>
-<td><p>False</p></td>
-<td><p>True</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="reportbase">
-<span id="reportbasemodel"></span><h2>ReportBase<a class="headerlink" href="#reportbase" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Property</p></td>
-<td><p>Type</p></td>
-<td><p>Description</p></td>
-<td><p>Required</p></td>
-<td><p>Default</p></td>
-</tr>
-<tr class="row-even"><td><p>enabled</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to enable the report</p></td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-<tr class="row-odd"><td><p>scenarios</p></td>
-<td><p>array</p></td>
-<td><p>Scenarios to which the report applies. Default is all scenarios.</p></td>
-<td><p>False</p></td>
-<td><p>[]</p></td>
-</tr>
-<tr class="row-even"><td><p>store_all_time_points</p></td>
-<td><p>boolean</p></td>
-<td><p>Set to true to store data for all time points. If false, store</p>
-<p>aggregated metrics in memory.</p>
-</td>
-<td><p>False</p></td>
-<td><p>False</p></td>
-</tr>
-</tbody>
-</table>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="default_simulation_settings.html">Default Simulation Settings</a></li>
 </ul>
 </div>
 </section>
-</section>
 
-
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="project_layout.html" class="btn btn-neutral float-left" title="PyDSS Project Layout" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="default_simulation_settings.html" class="btn btn-neutral float-right" title="Default Simulation Settings" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2019, Aadil Latif.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
-        </div>
+        </article>
       </div>
-    </section>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2019, Aadil Latif
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
   </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
-
-</body>
+</div><script src="_static/documentation_options.js?v=3f474186"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=32e29ea5"></script>
+    </body>
 </html>

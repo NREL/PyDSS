@@ -1,425 +1,507 @@
-<!DOCTYPE html>
-<html class="writer-html5" lang="en" >
-<head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Command line interface" href="CLI%20interface.html" /><link rel="prev" title="Tutorial" href="tutorial.html" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The socket interface &mdash; PyDSS 0.0.1 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+        <title>Interfaces - PyDSS 3.0.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-    <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Automated scenario comparison" href="Automated%20comparison%20of%20scenarios.html" />
-    <link rel="prev" title="External PyDSS interfaces" href="External%20interfaces%20for%20cosimulation.html" />
-    <link href="_static/style.css" rel="stylesheet" type="text/css">
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
 
-</head>
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> PyDSS
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#create-an-empty-project">Create an empty project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#customize-the-simulation-settings">Customize the simulation settings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#opendss-models">OpenDSS Models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#run-the-simulation">Run the simulation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#results">Results</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#create-a-project">Create a project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#exporting-data">Exporting Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#pre-filtering-export-data">Pre-filtering Export Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#run-a-project">Run a project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#analyze-results">Analyze results</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tutorial.html#exported-csv-files">Exported CSV files</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorial.html#data-viewer">Data Viewer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorial.html#access-results-programmatically">Access results programmatically</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="tutorial.html#load-element-classes-and-properties">Load element classes and properties</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-one-element">Read a dataframe for one element</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-one-element-with-a-specific-option">Read a dataframe for one element with a specific option</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-one-element-with-an-option-matching-a-regular-expression">Read a dataframe for one element with an option matching a regular expression</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-the-total-value-for-a-property-stored-with-store-values-type-sum">Read the total value for a property stored with <code class="docutils literal notranslate"><span class="pre">store_values_type</span> <span class="pre">=</span> <span class="pre">&quot;sum&quot;</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="tutorial.html#find-out-all-options-available-for-a-property">Find out all options available for a property</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tutorial.html#find-out-what-option-values-are-present-for-a-property">Find out what option values are present for a property</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tutorial.html#read-a-dataframe-for-all-elements">Read a dataframe for all elements</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="tutorial.html#estimate-space-required-by-pydss-simulation">Estimate space required by PyDSS simulation</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="project_layout.html">PyDSS Project Layout</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="project_layout.html#simulation-settings">Simulation Settings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="project_layout.html#scenarios">Scenarios</a></li>
-<li class="toctree-l2"><a class="reference internal" href="project_layout.html#exports">Exports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="project_layout.html#reports">Reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="project_layout.html#example-layout">Example layout</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simulation_settings.html">Simulation Settings</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#simulationsettings">SimulationSettings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#project">Project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#scenario">Scenario</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#scenariopostprocess">ScenarioPostProcess</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#snapshottimepointselectionconfig">SnapshotTimePointSelectionConfig</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#exports">Exports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#frequency">Frequency</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#helics">Helics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#logging">Logging</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#montecarlo">MonteCarlo</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#plots">Plots</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#profiles">Profiles</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#reports">Reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#simulationrange">SimulationRange</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#capacitorstatechangecountreport">CapacitorStateChangeCountReport</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#feederlossesreport">FeederLossesReport</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#pvclippingreport">PvClippingReport</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#pvcurtailmentreport">PvCurtailmentReport</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#regcontroltapnumberchangecountsreport">RegControlTapNumberChangeCountsReport</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#thermalmetricsreport">ThermalMetricsReport</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#voltagemetricsreport">VoltageMetricsReport</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation_settings.html#reportbase">ReportBase</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="default_simulation_settings.html">Default Simulation Settings</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1 current"><a class="reference internal" href="examples.html">Example PyDSS simulations</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="Dynamic%20visualization%20capabilities.html">Dynamic visualization capabilities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html">Frequency sweep plot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#gis-plot">GIS plot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#histogram-plot">Histogram plot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#voltage-sag-plot">Voltage sag plot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#time-series-plot">Time series plot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#voltage-current-heatmap-plot">Voltage / Current heatmap plot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Dynamic%20plots.html#xy-plots">XY plots</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Creating%20custom%20dynamic%20plots.html">Development of custom dynamic plots</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="Extended%20controls%20library.html">Extended controls library</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Creating%20custom%20controls.html">Extending PyDSS controllers</a></li>
-</ul>
-</li>
-<li class="toctree-l2 current"><a class="reference internal" href="External%20interfaces%20for%20cosimulation.html">External PyDSS interfaces</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">The socket interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#the-helics-interface">The HELICS interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#the-api-interface">The API interface</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="Automated%20comparison%20of%20scenarios.html">Automated scenario comparison</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="Result%20management.html">Enhanced result export features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="reports.html#global-settings">Global settings</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="reports.html#format">Format</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reports.html#granularity">Granularity</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="reports.html#export-parameters">Export Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reports.html#output-data">Output Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reports.html#adding-new-reports">Adding New Reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reports.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="hdf-data-format.html">HDF Data Format</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="hdf-data-format.html#layout">Layout</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="hdf-data-format.html#common-metadata">Common Metadata</a></li>
-<li class="toctree-l3"><a class="reference internal" href="hdf-data-format.html#dataset-metadata">Dataset Metadata</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="hdf-data-format.html#attributes-per-dataset">Attributes per dataset</a></li>
-<li class="toctree-l4"><a class="reference internal" href="hdf-data-format.html#metadata-datasets-per-dataset">Metadata datasets per dataset</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="hdf-data-format.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="PyDSS.html">PyDSS</a><ul class="simple">
-</ul>
-</li>
-</ul>
-
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">PyDSS</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="examples.html">Example PyDSS simulations</a> &raquo;</li>
-          <li><a href="External%20interfaces%20for%20cosimulation.html">External PyDSS interfaces</a> &raquo;</li>
-      <li>The socket interface</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="_sources/interfaces.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <p>Within the example folder the project named external interfaces provides an example usage of all three interafces.</p>
-<section id="the-socket-interface">
-<h1>The socket interface<a class="headerlink" href="#the-socket-interface" title="Permalink to this headline">¶</a></h1>
-<p>The socket interface is implemented as a PyDSS pyController. Implmentation details and expected inputs are detailed here: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyDSS.pyControllers.Controllers.SocketController.SocketController</span></code>. The socket controller is weill suited in situatons where an existing controller needs to be integrated to the simulation environment. An exmaple of this would be integrating a controller for thermostatically controlled loads implemeted in say Modelica or Python. This allows user to integrate controller, without making changes to the implemented controller. With a little effort, the same controller can be implemented as a pyController object in PyDSS.</p>
-<p>The socket interface in PyDSS also come in handy, when setting up a hardware-in-loop type simulations and integrating the simulation engine with actual hardware. Interfaces similar to raw socket implementations have been developed (to be  open-sourced at a time) for Modbus-TCP and DNP3 communcations have developed and tested with PyDSS with sucess. A minimal socket interfacing example has been provided as a PyDSS project in ~PyDSS/exmaples/External_interfacing_example. Within the folder, ~/PyDSS/examples/External_interfacing_example/pyDSS_project a scenario called ‘socket_interface’ has been defined. Socket contntroller definations have been detailed with the ‘pyControllerList’ folder.</p>
-<p>In this example, each iteration, voltage and power information is being exported via the socket and new value recieved is used to update the ‘kW’ property of the load. Once the inputs, outputs, IP and port have been defined, the next step is to create a TOML file and define simulation settings.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;Project Path&quot;</span> <span class="o">=</span> <span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">Users</span><span class="se">\\</span><span class="s2">alatif</span><span class="se">\\</span><span class="s2">Desktop</span><span class="se">\\</span><span class="s2">PyDSS</span><span class="se">\\</span><span class="s2">examples</span><span class="se">\\</span><span class="s2">External_interfacing_example&quot;</span>
-<span class="s2">&quot;Simulation Type&quot;</span> <span class="o">=</span> <span class="s2">&quot;QSTS&quot;</span>
-<span class="s2">&quot;Active Project&quot;</span> <span class="o">=</span> <span class="s2">&quot;pyDSS_project&quot;</span>
-<span class="s2">&quot;Active Scenario&quot;</span> <span class="o">=</span> <span class="s2">&quot;socket_interface&quot;</span>
-<span class="s2">&quot;DSS File&quot;</span> <span class="o">=</span> <span class="s2">&quot;Master_Spohn_existing_VV.dss&quot;</span>
-</pre></div>
-</div>
-<p>A small script is used to run the particular scenario.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">click</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">os</span>
-
-<span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--pydss_path&#39;</span><span class="p">,</span>
-                          <span class="n">default</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;C:\Users\alatif\Desktop\PyDSS&#39;</span><span class="p">)</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--sim_path&#39;</span><span class="p">,</span>
-                          <span class="n">default</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;C:\Users\alatif\Desktop\PyDSS\examples\External_interfacing_example\pyDSS_project\Scenarios&#39;</span><span class="p">)</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--sim_file&#39;</span><span class="p">,</span>
-                          <span class="n">default</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;socket_interface.toml&#39;</span><span class="p">)</span> <span class="c1">#The TOML file contains simulation settings for the particular scenario</span>
-<span class="k">def</span> <span class="nf">run_pyDSS</span><span class="p">(</span><span class="n">pydss_path</span><span class="p">,</span> <span class="n">sim_path</span><span class="p">,</span> <span class="n">sim_file</span><span class="p">):</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pydss_path</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pydss_path</span><span class="p">,</span> <span class="s1">&#39;PyDSS&#39;</span><span class="p">))</span>
-        <span class="kn">from</span> <span class="nn">pyDSS</span> <span class="kn">import</span> <span class="n">instance</span> <span class="k">as</span> <span class="n">dssInstance</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="n">dssInstance</span><span class="p">()</span>                           <span class="c1">#Create an instance of PyDSS</span>
-        <span class="n">a</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sim_path</span><span class="p">,</span> <span class="n">sim_file</span><span class="p">))</span>     <span class="c1">#Run the simulation</span>
-
-<span class="n">run_pyDSS</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>Finally, the minimal example below shows how to retrive data from the sockets and return new values for parameters defined in the definations file.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># first of all import the socket library</span>
-<span class="kn">import</span> <span class="nn">socket</span>
-<span class="kn">import</span> <span class="nn">struct</span>
-
-<span class="c1"># next create a socket object</span>
-<span class="n">sockets</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">()</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="mi">5001</span> <span class="o">+</span> <span class="n">i</span><span class="p">))</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-        <span class="n">sockets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="c1"># Establish connection with client.</span>
-        <span class="n">conns</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sockets</span><span class="p">:</span>
-                <span class="n">c</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
-                <span class="n">conns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">conns</span><span class="p">:</span> <span class="c1">#Reading data from all ports</span>
-                        <span class="n">Data</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="n">Data</span><span class="p">:</span> <span class="c1">#Creating a list of doubles from the recieved byte stream</span>
-                                <span class="n">numDoubles</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Data</span><span class="p">)</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span>
-                                <span class="n">tag</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">numDoubles</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;d&#39;</span>
-                                <span class="n">Data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">Data</span><span class="p">))</span>
-                <span class="k">for</span> <span class="n">c</span> <span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">conns</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">]):</span> <span class="c1">#Writing data to all ports</span>
-                        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">]</span>
-                        <span class="n">c</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">d&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="o">*</span><span class="n">values</span><span class="p">))</span>
-</pre></div>
-</div>
-</section>
-<section id="the-helics-interface">
-<h1>The HELICS interface<a class="headerlink" href="#the-helics-interface" title="Permalink to this headline">¶</a></h1>
-<p>Hierarchical Engine for Large-scale Infrastructure Co-Simulation (HELICS) provides an open-source, general-purpose, modular, highly-scalable co-simulation framework that runs cross-platform (Linux, Windows, and Mac OS X). It is not a modeling tool by itself, but rather an integration tool that enables multiple existing simulation tools (and/or multiple instances of the same tool), known as “federates,” to exchange data during runtime and stay synchronized in time such that together they act as one large simulation, or “federation”. This enables bringing together established (or new/emerging) off-the-shelf tools from multiple domains to form a complex software-simulation without having to change the individual tools (known as “black-box” modeling). All that is required is for someone to write a thin interface layer for each tool that interfaces with existing simulation time control and data value updating, such as through an existing scripting interface. Moreover, the HELICS community has a growing ecosystem of established interfaces for popular tools, such that many users can simply mix and match existing tools with their own data and run complex co-simulations with minimal coding. More information on HELICS can be found here (<a class="reference external" href="https://github.com/GMLC-TDC/HELICS">https://github.com/GMLC-TDC/HELICS</a>).</p>
-<p>The HELICS interface for PyDSS is built to reduuce complexity of setting up large scale cosimulation scenarios. The user is requuired to publications and suscriptions. Details on the format have been detailed here: <a class="reference internal" href="Result%20management.html#enhanced-result-export-features"><span class="std std-ref">Enhanced result export features</span></a></p>
-<p>A minimal HELICS interfacing example has been provided as a PyDSS project in ~PyDSS/exmaples/External_interfacing_example. Within the folder, ~PyDSS/examples/External_interfacing_example/pyDSS_project a scenario called ‘helics_interface’ has been defined. Enabling the HELICS interface requires user to define additional patammeters in the scenario TOML file.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;Project Path&quot;</span> <span class="o">=</span> <span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">Users</span><span class="se">\\</span><span class="s2">alatif</span><span class="se">\\</span><span class="s2">Desktop</span><span class="se">\\</span><span class="s2">PyDSS</span><span class="se">\\</span><span class="s2">examples</span><span class="se">\\</span><span class="s2">External_interfacing_example&quot;</span>
-<span class="s2">&quot;Simulation Type&quot;</span> <span class="o">=</span> <span class="s2">&quot;QSTS&quot;</span>
-<span class="s2">&quot;Active Project&quot;</span> <span class="o">=</span> <span class="s2">&quot;pyDSS_project&quot;</span>
-<span class="s2">&quot;Active Scenario&quot;</span> <span class="o">=</span> <span class="s2">&quot;helics_interface&quot;</span>
-<span class="s2">&quot;DSS File&quot;</span> <span class="o">=</span> <span class="s2">&quot;Master_Spohn_existing_VV.dss&quot;</span>
-<span class="s2">&quot;Co-simulation Mode&quot;</span> <span class="o">=</span> <span class="n">true</span>
-<span class="s2">&quot;Federate name&quot;</span> <span class="o">=</span> <span class="s2">&quot;PyDSS&quot;</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>“Co-simulation Mode” : Set to ‘true’ to enable the HELICS interface. By default it is set to ‘false’</p></li>
-<li><p>“Federate name” : Required to identify a federate ina cosimulation with a large number of federates.</p></li>
-</ul>
-<p>Default values for additional simulation settings are as follows. For more information on how to appropriately set these values please look at HELICS documentaion</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;Time delta&quot;</span> <span class="o">=</span> <span class="mf">0.01</span>
-<span class="s2">&quot;Core type&quot;</span> <span class="o">=</span> <span class="s2">&quot;zmq&quot;</span>
-<span class="s2">&quot;Uninterruptible&quot;</span> <span class="o">=</span> <span class="n">true</span>
-<span class="s2">&quot;Helics logging level&quot;</span> <span class="o">=</span> <span class="mi">5</span>
-</pre></div>
-</div>
-<p>For a helics example a minimal dummy federate has been defined using the HELICS Python interaface. The dummy federate script creates a broker and a federate. The federate subsscribes to feeder total power and publishes actie power values for three loads in the network.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">helics</span> <span class="k">as</span> <span class="nn">h</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">pi</span>
-<span class="kn">import</span> <span class="nn">random</span>
-
-<span class="n">initstring</span> <span class="o">=</span> <span class="s2">&quot;-f 2 --name=mainbroker&quot;</span>
-<span class="n">fedinitstring</span> <span class="o">=</span> <span class="s2">&quot;--broker=mainbroker --federates=1&quot;</span>
-<span class="n">deltat</span> <span class="o">=</span> <span class="mf">0.01</span>
-
-<span class="n">helicsversion</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">helicsGetVersion</span><span class="p">()</span>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
 
 
-<span class="c1"># Create broker #</span>
-<span class="n">broker</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">helicsCreateBroker</span><span class="p">(</span><span class="s2">&quot;zmq&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">initstring</span><span class="p">)</span>
 
-<span class="n">isconnected</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">helicsBrokerIsConnected</span><span class="p">(</span><span class="n">broker</span><span class="p">)</span>
-
-<span class="c1"># Create Federate Info object that describes the federate properties #</span>
-<span class="n">fedinfo</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">helicsCreateFederateInfo</span><span class="p">()</span>
-
-<span class="c1"># Set Federate name #</span>
-<span class="n">h</span><span class="o">.</span><span class="n">helicsFederateInfoSetCoreName</span><span class="p">(</span><span class="n">fedinfo</span><span class="p">,</span> <span class="s2">&quot;Test Federate&quot;</span><span class="p">)</span>
-
-<span class="c1"># Set core type from string #</span>
-<span class="n">h</span><span class="o">.</span><span class="n">helicsFederateInfoSetCoreTypeFromString</span><span class="p">(</span><span class="n">fedinfo</span><span class="p">,</span> <span class="s2">&quot;zmq&quot;</span><span class="p">)</span>
-
-<span class="c1"># Federate init string #</span>
-<span class="n">h</span><span class="o">.</span><span class="n">helicsFederateInfoSetCoreInitString</span><span class="p">(</span><span class="n">fedinfo</span><span class="p">,</span> <span class="n">fedinitstring</span><span class="p">)</span>
-
-<span class="c1"># Set the message interval (timedelta) for federate. Note th#</span>
-<span class="c1"># HELICS minimum message time interval is 1 ns and by default</span>
-<span class="c1"># it uses a time delta of 1 second. What is provided to the</span>
-<span class="c1"># setTimedelta routine is a multiplier for the default timedelta.</span>
-
-<span class="c1"># Set one second message interval #</span>
-<span class="n">h</span><span class="o">.</span><span class="n">helicsFederateInfoSetTimeProperty</span><span class="p">(</span><span class="n">fedinfo</span><span class="p">,</span> <span class="n">h</span><span class="o">.</span><span class="n">helics_property_time_delta</span><span class="p">,</span> <span class="n">deltat</span><span class="p">)</span>
-
-<span class="c1"># Create value federate #</span>
-<span class="n">vfed</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">helicsCreateValueFederate</span><span class="p">(</span><span class="s2">&quot;Test Federate&quot;</span><span class="p">,</span> <span class="n">fedinfo</span><span class="p">)</span>
-
-<span class="c1"># Register the publication #</span>
-<span class="n">pub1</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">helicsFederateRegisterGlobalTypePublication</span><span class="p">(</span><span class="n">vfed</span><span class="p">,</span> <span class="s2">&quot;test.load1.power&quot;</span><span class="p">,</span> <span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="s2">&quot;kW&quot;</span><span class="p">)</span>
-<span class="n">pub2</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">helicsFederateRegisterGlobalTypePublication</span><span class="p">(</span><span class="n">vfed</span><span class="p">,</span> <span class="s2">&quot;test.load2.power&quot;</span><span class="p">,</span> <span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="s2">&quot;kW&quot;</span><span class="p">)</span>
-<span class="n">pub3</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">helicsFederateRegisterGlobalTypePublication</span><span class="p">(</span><span class="n">vfed</span><span class="p">,</span> <span class="s2">&quot;test.load3.power&quot;</span><span class="p">,</span> <span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="s2">&quot;kW&quot;</span><span class="p">)</span>
-<span class="n">sub1</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">helicsFederateRegisterSubscription</span><span class="p">(</span><span class="n">vfed</span><span class="p">,</span> <span class="s2">&quot;Circuit.heco19021.TotalPower.E&quot;</span><span class="p">,</span> <span class="s2">&quot;kW&quot;</span><span class="p">)</span>
-<span class="c1"># Enter execution mode #</span>
-<span class="n">h</span><span class="o">.</span><span class="n">helicsFederateEnterExecutingMode</span><span class="p">(</span><span class="n">vfed</span><span class="p">)</span>
-
-<span class="c1"># This federate will be publishing deltat*pi for numsteps steps #</span>
-
-<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">96</span><span class="p">):</span>
-        <span class="n">currenttime</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">helicsFederateRequestTime</span><span class="p">(</span><span class="n">vfed</span><span class="p">,</span> <span class="n">t</span> <span class="o">*</span> <span class="mi">15</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
-        <span class="n">h</span><span class="o">.</span><span class="n">helicsPublicationPublishDouble</span><span class="p">(</span><span class="n">pub1</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span>
-        <span class="n">h</span><span class="o">.</span><span class="n">helicsPublicationPublishDouble</span><span class="p">(</span><span class="n">pub2</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
-        <span class="n">h</span><span class="o">.</span><span class="n">helicsPublicationPublishDouble</span><span class="p">(</span><span class="n">pub3</span><span class="p">,</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span><span class="p">)</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">helicsInputGetString</span><span class="p">(</span><span class="n">sub1</span><span class="p">)</span>
-        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
-
-<span class="n">h</span><span class="o">.</span><span class="n">helicsFederateFinalize</span><span class="p">(</span><span class="n">vfed</span><span class="p">)</span>
-<span class="k">while</span> <span class="n">h</span><span class="o">.</span><span class="n">helicsBrokerIsConnected</span><span class="p">(</span><span class="n">broker</span><span class="p">):</span>
-        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
-<span class="n">h</span><span class="o">.</span><span class="n">helicsFederateFree</span><span class="p">(</span><span class="n">vfed</span><span class="p">)</span>
-<span class="n">h</span><span class="o">.</span><span class="n">helicsCloseLibrary</span><span class="p">()</span>
-</pre></div>
-</div>
-</section>
-<section id="the-api-interface">
-<h1>The API interface<a class="headerlink" href="#the-api-interface" title="Permalink to this headline">¶</a></h1>
-<p>Using the API interface gives user access to results within the result contianar. would require user to create an instance of the <code class="xref py py-class docutils literal notranslate"><span class="pre">PyDSS.dssInstacne</span></code> class. This would require the user to define the arguments dictionary. If structured correctly, user should be able to invove an instance of PyDSS. Ensure within the passed arguments dictionary,</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;Return Results&quot;</span> <span class="p">:</span> <span class="kc">True</span>
-</pre></div>
-</div>
-<p>Else, None will be returned at simulator steps through time. Once an instance has been created, simulation may be controlled externaly. A simple example is as follows:</p>
-<p>A minimal HELICS interfacing example has been provided as a PyDSS project in ~PyDSS/exmaples/External_interfacing_example. Within the folder, ~PyDSS/examples/External_interfacing_example/pyDSS_project a scenario called ‘API_interface’ has been defined. Enabling the HELICS interface requires user to define additional patammeters in the scenario TOML file.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">click</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">os</span>
-
-<span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--pydss_path&#39;</span><span class="p">,</span>
-                          <span class="n">default</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;C:\Users\alatif\Desktop\PyDSS&#39;</span><span class="p">)</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--sim_path&#39;</span><span class="p">,</span>
-                          <span class="n">default</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;C:\Users\alatif\Desktop\PyDSS\examples\External_interfacing_example\pyDSS_project\Scenarios&#39;</span><span class="p">)</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--sim_file&#39;</span><span class="p">,</span>
-                          <span class="n">default</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;api_interface.toml&#39;</span><span class="p">)</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--run_simulation&#39;</span><span class="p">,</span>
-                          <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--generate_visuals&#39;</span><span class="p">,</span>
-                          <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">run_pyDSS</span><span class="p">(</span><span class="n">pydss_path</span><span class="p">,</span> <span class="n">sim_path</span><span class="p">,</span> <span class="n">sim_file</span><span class="p">,</span> <span class="n">run_simulation</span><span class="p">,</span> <span class="n">generate_visuals</span><span class="p">):</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pydss_path</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pydss_path</span><span class="p">,</span> <span class="s1">&#39;PyDSS&#39;</span><span class="p">))</span>
-        <span class="kn">from</span> <span class="nn">pyDSS</span> <span class="kn">import</span> <span class="n">instance</span> <span class="k">as</span> <span class="n">dssInstance</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="n">dssInstance</span><span class="p">()</span> <span class="c1"># Create an instance of PyDSS</span>
-        <span class="n">sim_args</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">update_scenario_settigs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sim_path</span><span class="p">,</span> <span class="n">sim_file</span><span class="p">))</span> <span class="c1"># Update the default settings</span>
-        <span class="n">dssInstance</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">create_dss_instance</span><span class="p">(</span><span class="n">sim_args</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span> <span class="c1"># Run simulation for five time steps</span>
-                <span class="n">x</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Load.mpx000635970&#39;</span><span class="p">:{</span><span class="s1">&#39;kW&#39;</span><span class="p">:</span><span class="mf">7.28</span><span class="p">}}</span>
-                <span class="n">results</span> <span class="o">=</span> <span class="n">dssInstance</span><span class="o">.</span><span class="n">RunStep</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="c1"># Update the value of a load</span>
-        <span class="n">dssInstance</span><span class="o">.</span><span class="n">ResultContainer</span><span class="o">.</span><span class="n">ExportResults</span><span class="p">()</span> <span class="c1"># Export the results</span>
-        <span class="n">dssInstance</span><span class="o">.</span><span class="n">DeleteInstance</span><span class="p">()</span>
-        <span class="k">del</span> <span class="n">a</span>
-<span class="n">run_pyDSS</span><span class="p">()</span>
-</pre></div>
-</div>
-</section>
-
-
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="External%20interfaces%20for%20cosimulation.html" class="btn btn-neutral float-left" title="External PyDSS interfaces" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="Automated%20comparison%20of%20scenarios.html" class="btn btn-neutral float-right" title="Automated scenario comparison" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
     </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2019, Aadil Latif.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
-        </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">PyDSS 3.0.2 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
       </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">PyDSS 3.0.2 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Interfaces</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Interfaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="CLI%20interface.html">Command line interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="REST%20API%20interface.html">REST API interface</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="Python%20API%20interface.html">Python API interface</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Python API interface</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="Respository%20documentaion.html">Python API interface</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Python API interface</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="_autosummary/PyDSS.html">PyDSS</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of PyDSS</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.Extensions.html">PyDSS.Extensions</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of PyDSS.Extensions</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.Extensions.MonteCarlo.html">PyDSS.Extensions.MonteCarlo</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.NetworkModifier.html">PyDSS.NetworkModifier</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.html">PyDSS.ProfileManager</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of PyDSS.ProfileManager</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.ProfileInterface.html">PyDSS.ProfileManager.ProfileInterface</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.base_definitions.html">PyDSS.ProfileManager.base_definitions</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.common.html">PyDSS.ProfileManager.common</a></li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.hooks.html">PyDSS.ProfileManager.hooks</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of PyDSS.ProfileManager.hooks</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.hooks.MongoDB.html">PyDSS.ProfileManager.hooks.MongoDB</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.hooks.h5.html">PyDSS.ProfileManager.hooks.h5</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.ResultData.html">PyDSS.ResultData</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.SolveMode.html">PyDSS.SolveMode</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.api.html">PyDSS.api</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of PyDSS.api</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.api.schema.html">PyDSS.api.schema</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.api.server.html">PyDSS.api.server</a></li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="_autosummary/PyDSS.api.src.html">PyDSS.api.src</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of PyDSS.api.src</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="_autosummary/PyDSS.api.src.app.html">PyDSS.api.src.app</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of PyDSS.api.src.app</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.api.src.app.HDF5.html">PyDSS.api.src.app.HDF5</a></li>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.api.src.app.JSON_writer.html">PyDSS.api.src.app.JSON_writer</a></li>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.api.src.app.pydss.html">PyDSS.api.src.app.pydss</a></li>
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="_autosummary/PyDSS.api.src.web.html">PyDSS.api.src.web</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of PyDSS.api.src.web</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.api.src.web.create_schema.html">PyDSS.api.src.web.create_schema</a></li>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.api.src.web.handler.html">PyDSS.api.src.web.handler</a></li>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.api.src.web.parser.html">PyDSS.api.src.web.parser</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.apps.html">PyDSS.apps</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of PyDSS.apps</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.apps.data_viewer.html">PyDSS.apps.data_viewer</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.cli.html">PyDSS.cli</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of PyDSS.cli</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.add_post_process.html">PyDSS.cli.add_post_process</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.add_scenario.html">PyDSS.cli.add_scenario</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.controllers.html">PyDSS.cli.controllers</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.convert.html">PyDSS.cli.convert</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.create_project.html">PyDSS.cli.create_project</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.edit_scenario.html">PyDSS.cli.edit_scenario</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.export.html">PyDSS.cli.export</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.extract.html">PyDSS.cli.extract</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.pydss.html">PyDSS.cli.pydss</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.reports.html">PyDSS.cli.reports</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.run.html">PyDSS.cli.run</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.run_server.html">PyDSS.cli.run_server</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.common.html">PyDSS.common</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.config_data.html">PyDSS.config_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.controllers.html">PyDSS.controllers</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dataset_buffer.html">PyDSS.dataset_buffer</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.defaults.html">PyDSS.defaults</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of PyDSS.defaults</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.defaults.ExportLists.html">PyDSS.defaults.ExportLists</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.defaults.Monte_Carlo.html">PyDSS.defaults.Monte_Carlo</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.defaults.pyControllerList.html">PyDSS.defaults.pyControllerList</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.defaults.pyPlotList.html">PyDSS.defaults.pyPlotList</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssBus.html">PyDSS.dssBus</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssCircuit.html">PyDSS.dssCircuit</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssElement.html">PyDSS.dssElement</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssElementFactory.html">PyDSS.dssElementFactory</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssInstance.html">PyDSS.dssInstance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssObjectBase.html">PyDSS.dssObjectBase</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssTransformer.html">PyDSS.dssTransformer</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.element_fields.html">PyDSS.element_fields</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.element_options.html">PyDSS.element_options</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.exceptions.html">PyDSS.exceptions</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.export_list_reader.html">PyDSS.export_list_reader</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.get_snapshot_timepoints.html">PyDSS.get_snapshot_timepoints</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.helics_interface.html">PyDSS.helics_interface</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.loggers.html">PyDSS.loggers</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.metrics.html">PyDSS.metrics</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.modes.html">PyDSS.modes</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of PyDSS.modes</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.modes.Dynamic.html">PyDSS.modes.Dynamic</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.modes.QSTS.html">PyDSS.modes.QSTS</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.modes.Snapshot.html">PyDSS.modes.Snapshot</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.modes.solver_base.html">PyDSS.modes.solver_base</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.naerm.html">PyDSS.naerm</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.node_voltage_metrics.html">PyDSS.node_voltage_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pyContrReader.html">PyDSS.pyContrReader</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.html">PyDSS.pyControllers</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of PyDSS.pyControllers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.html">PyDSS.pyControllers.Controllers</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of PyDSS.pyControllers.Controllers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.FaultController.html">PyDSS.pyControllers.Controllers.FaultController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.GenController.html">PyDSS.pyControllers.Controllers.GenController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.MotorStall.html">PyDSS.pyControllers.Controllers.MotorStall</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.MotorStallBackup.html">PyDSS.pyControllers.Controllers.MotorStallBackup</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.MotorStallSimple.html">PyDSS.pyControllers.Controllers.MotorStallSimple</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.PvController.html">PyDSS.pyControllers.Controllers.PvController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.PvDynamic.html">PyDSS.pyControllers.Controllers.PvDynamic</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.PvFrequencyRideThru.html">PyDSS.pyControllers.Controllers.PvFrequencyRideThru</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.PvVoltageRideThru.html">PyDSS.pyControllers.Controllers.PvVoltageRideThru</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.Settings.html">PyDSS.pyControllers.Controllers.Settings</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.SocketController.html">PyDSS.pyControllers.Controllers.SocketController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.StorageController.html">PyDSS.pyControllers.Controllers.StorageController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.ThermostaticLoad.html">PyDSS.pyControllers.Controllers.ThermostaticLoad</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.xfmrController.html">PyDSS.pyControllers.Controllers.xfmrController</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.pyController.html">PyDSS.pyControllers.pyController</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.pyControllerAbstract.html">PyDSS.pyControllers.pyControllerAbstract</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pyDSS.html">PyDSS.pyDSS</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pyLogger.html">PyDSS.pyLogger</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pyPlotReader.html">PyDSS.pyPlotReader</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.html">PyDSS.pyPlots</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of PyDSS.pyPlots</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.html">PyDSS.pyPlots.Plots</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of PyDSS.pyPlots.Plots</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.FrequencySweep.html">PyDSS.pyPlots.Plots.FrequencySweep</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.Histogram.html">PyDSS.pyPlots.Plots.Histogram</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.NetworkGraph.html">PyDSS.pyPlots.Plots.NetworkGraph</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.Table.html">PyDSS.pyPlots.Plots.Table</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.ThreeDim.html">PyDSS.pyPlots.Plots.ThreeDim</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.TimeSeries.html">PyDSS.pyPlots.Plots.TimeSeries</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.Topology.html">PyDSS.pyPlots.Plots.Topology</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.VoltageDistance.html">PyDSS.pyPlots.Plots.VoltageDistance</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.XY.html">PyDSS.pyPlots.Plots.XY</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.pyPlotAbstract.html">PyDSS.pyPlots.pyPlotAbstract</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.pyPlots.html">PyDSS.pyPlots.pyPlots</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.html">PyDSS.pyPostprocessor</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle navigation of PyDSS.pyPostprocessor</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.html">PyDSS.pyPostprocessor.PostprocessScripts</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle navigation of PyDSS.pyPostprocessor.PostprocessScripts</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer.html">PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer</a></li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules.html">PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle navigation of PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules.opt_funcs.html">PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules.opt_funcs</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.EdLiFoControl.html">PyDSS.pyPostprocessor.PostprocessScripts.EdLiFoControl</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.Utilidata_Interface.html">PyDSS.pyPostprocessor.PostprocessScripts.Utilidata_Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.pyPostprocess.html">PyDSS.pyPostprocessor.pyPostprocess</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.pyPostprocessAbstract.html">PyDSS.pyPostprocessor.pyPostprocessAbstract</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pyResults.html">PyDSS.pyResults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pydss_fs_interface.html">PyDSS.pydss_fs_interface</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pydss_project.html">PyDSS.pydss_project</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pydss_results.html">PyDSS.pydss_results</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.registry.html">PyDSS.registry</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.reports.html">PyDSS.reports</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle navigation of PyDSS.reports</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.capacitor_change_count.html">PyDSS.reports.capacitor_change_count</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.feeder_losses.html">PyDSS.reports.feeder_losses</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.pv_reports.html">PyDSS.reports.pv_reports</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.reg_control_tap_number_change_count.html">PyDSS.reports.reg_control_tap_number_change_count</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.reports.html">PyDSS.reports.reports</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.thermal_metrics.html">PyDSS.reports.thermal_metrics</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.voltage_metrics.html">PyDSS.reports.voltage_metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.simulation_input_models.html">PyDSS.simulation_input_models</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.storage_filters.html">PyDSS.storage_filters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.thermal_metrics.html">PyDSS.thermal_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.unitDefinations.html">PyDSS.unitDefinations</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.utils.html">PyDSS.utils</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of PyDSS.utils</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.utils.dataframe_utils.html">PyDSS.utils.dataframe_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.utils.dss_utils.html">PyDSS.utils.dss_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.utils.pydss_utils.html">PyDSS.utils.pydss_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.utils.simulation_utils.html">PyDSS.utils.simulation_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.utils.timing_utils.html">PyDSS.utils.timing_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.utils.utils.html">PyDSS.utils.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.value_storage.html">PyDSS.value_storage</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Models.html">Data models</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="project_layout.html">PyDSS Project Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Result%20management.html">Enhanced result export features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hdf-data-format.html">HDF Data Format</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="co-simulation_support.html">Co-simulation interfaces</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle navigation of Co-simulation interfaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="Co-simulation%20Interfaces.html">The HELICS interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Co-simulation%20Interfaces.html#the-socket-interface">The socket interface</a></li>
+</ul>
+</li>
+</ul>
 
-</body>
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="interfaces">
+<h1>Interfaces<a class="headerlink" href="#interfaces" title="Link to this heading">#</a></h1>
+<p>PyDSS provides three easy to configure external interfaces. These interface help researchers cut lead time in setting up and configuring co-simulation setups to simulate cyber phsical interactions by coupling multiple domain scpific tools. The ‘External_interfacing_example’ project in the examples folder provides examples on how to set up and use each of these interfaces.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="CLI%20interface.html">Command line interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="CLI%20interface.html#command-line-interface-add-post-process">add-post-process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CLI%20interface.html#command-line-interface-add-scenario">add-scenario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CLI%20interface.html#command-line-interface-controllers">controllers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CLI%20interface.html#command-line-interface-controllers-register">register</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CLI%20interface.html#command-line-interface-controllers-reset-defaults">reset-defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CLI%20interface.html#command-line-interface-controllers-show">show</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CLI%20interface.html#command-line-interface-controllers-unregister">unregister</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CLI%20interface.html#command-line-interface-convert">convert</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CLI%20interface.html#command-line-interface-convert-excel-to-toml">excel-to-toml</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CLI%20interface.html#command-line-interface-convert-simulation-file">simulation-file</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CLI%20interface.html#command-line-interface-create-project">create-project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CLI%20interface.html#command-line-interface-edit-scenario">edit-scenario</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CLI%20interface.html#command-line-interface-edit-scenario-update-controllers">update-controllers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CLI%20interface.html#command-line-interface-export">export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CLI%20interface.html#command-line-interface-extract">extract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CLI%20interface.html#command-line-interface-extract-element-files">extract-element-files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CLI%20interface.html#command-line-interface-reports">reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CLI%20interface.html#command-line-interface-run">run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CLI%20interface.html#command-line-interface-serve">serve</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="REST%20API%20interface.html">REST API interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Python%20API%20interface.html">Python API interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Respository%20documentaion.html">Python API interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/PyDSS.html">PyDSS</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Models.html">Data models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Models.html#simulation-input-models">Simulation input models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Models.html#scenario-setup-models">Scenario setup models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Models.html#thermal-metrics-models">Thermal metrics models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Models.html#voltage-metrics-models">Voltage metrics models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Models.html#feeder-metrics-models">Feeder metrics models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Models.html#helics-interface-models">HELICS interface models</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="CLI%20interface.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Command line interface</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="tutorial.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Tutorial</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2019, Aadil Latif
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=3f474186"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=32e29ea5"></script>
+    </body>
 </html>

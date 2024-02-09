@@ -1,0 +1,1040 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Co-simulation interfaces" href="co-simulation_support.html" />
+
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+        <title>The HELICS interface - PyDSS 3.0.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">PyDSS 3.0.2 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">PyDSS 3.0.2 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="interfaces.html">Interfaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Interfaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="CLI%20interface.html">Command line interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="REST%20API%20interface.html">REST API interface</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="Python%20API%20interface.html">Python API interface</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Python API interface</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="Respository%20documentaion.html">Python API interface</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Python API interface</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="_autosummary/PyDSS.html">PyDSS</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of PyDSS</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.Extensions.html">PyDSS.Extensions</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of PyDSS.Extensions</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.Extensions.MonteCarlo.html">PyDSS.Extensions.MonteCarlo</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.NetworkModifier.html">PyDSS.NetworkModifier</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.html">PyDSS.ProfileManager</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of PyDSS.ProfileManager</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.ProfileInterface.html">PyDSS.ProfileManager.ProfileInterface</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.base_definitions.html">PyDSS.ProfileManager.base_definitions</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.common.html">PyDSS.ProfileManager.common</a></li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.hooks.html">PyDSS.ProfileManager.hooks</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of PyDSS.ProfileManager.hooks</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.hooks.MongoDB.html">PyDSS.ProfileManager.hooks.MongoDB</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.ProfileManager.hooks.h5.html">PyDSS.ProfileManager.hooks.h5</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.ResultData.html">PyDSS.ResultData</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.SolveMode.html">PyDSS.SolveMode</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.api.html">PyDSS.api</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of PyDSS.api</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.api.schema.html">PyDSS.api.schema</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.api.server.html">PyDSS.api.server</a></li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="_autosummary/PyDSS.api.src.html">PyDSS.api.src</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of PyDSS.api.src</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="_autosummary/PyDSS.api.src.app.html">PyDSS.api.src.app</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of PyDSS.api.src.app</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.api.src.app.HDF5.html">PyDSS.api.src.app.HDF5</a></li>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.api.src.app.JSON_writer.html">PyDSS.api.src.app.JSON_writer</a></li>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.api.src.app.pydss.html">PyDSS.api.src.app.pydss</a></li>
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="_autosummary/PyDSS.api.src.web.html">PyDSS.api.src.web</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of PyDSS.api.src.web</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.api.src.web.create_schema.html">PyDSS.api.src.web.create_schema</a></li>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.api.src.web.handler.html">PyDSS.api.src.web.handler</a></li>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.api.src.web.parser.html">PyDSS.api.src.web.parser</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.apps.html">PyDSS.apps</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of PyDSS.apps</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.apps.data_viewer.html">PyDSS.apps.data_viewer</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.cli.html">PyDSS.cli</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of PyDSS.cli</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.add_post_process.html">PyDSS.cli.add_post_process</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.add_scenario.html">PyDSS.cli.add_scenario</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.controllers.html">PyDSS.cli.controllers</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.convert.html">PyDSS.cli.convert</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.create_project.html">PyDSS.cli.create_project</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.edit_scenario.html">PyDSS.cli.edit_scenario</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.export.html">PyDSS.cli.export</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.extract.html">PyDSS.cli.extract</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.pydss.html">PyDSS.cli.pydss</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.reports.html">PyDSS.cli.reports</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.run.html">PyDSS.cli.run</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.cli.run_server.html">PyDSS.cli.run_server</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.common.html">PyDSS.common</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.config_data.html">PyDSS.config_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.controllers.html">PyDSS.controllers</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dataset_buffer.html">PyDSS.dataset_buffer</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.defaults.html">PyDSS.defaults</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of PyDSS.defaults</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.defaults.ExportLists.html">PyDSS.defaults.ExportLists</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.defaults.Monte_Carlo.html">PyDSS.defaults.Monte_Carlo</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.defaults.pyControllerList.html">PyDSS.defaults.pyControllerList</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.defaults.pyPlotList.html">PyDSS.defaults.pyPlotList</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssBus.html">PyDSS.dssBus</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssCircuit.html">PyDSS.dssCircuit</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssElement.html">PyDSS.dssElement</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssElementFactory.html">PyDSS.dssElementFactory</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssInstance.html">PyDSS.dssInstance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssObjectBase.html">PyDSS.dssObjectBase</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.dssTransformer.html">PyDSS.dssTransformer</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.element_fields.html">PyDSS.element_fields</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.element_options.html">PyDSS.element_options</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.exceptions.html">PyDSS.exceptions</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.export_list_reader.html">PyDSS.export_list_reader</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.get_snapshot_timepoints.html">PyDSS.get_snapshot_timepoints</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.helics_interface.html">PyDSS.helics_interface</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.loggers.html">PyDSS.loggers</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.metrics.html">PyDSS.metrics</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.modes.html">PyDSS.modes</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of PyDSS.modes</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.modes.Dynamic.html">PyDSS.modes.Dynamic</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.modes.QSTS.html">PyDSS.modes.QSTS</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.modes.Snapshot.html">PyDSS.modes.Snapshot</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.modes.solver_base.html">PyDSS.modes.solver_base</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.naerm.html">PyDSS.naerm</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.node_voltage_metrics.html">PyDSS.node_voltage_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pyContrReader.html">PyDSS.pyContrReader</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.html">PyDSS.pyControllers</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of PyDSS.pyControllers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.html">PyDSS.pyControllers.Controllers</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of PyDSS.pyControllers.Controllers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.FaultController.html">PyDSS.pyControllers.Controllers.FaultController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.GenController.html">PyDSS.pyControllers.Controllers.GenController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.MotorStall.html">PyDSS.pyControllers.Controllers.MotorStall</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.MotorStallBackup.html">PyDSS.pyControllers.Controllers.MotorStallBackup</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.MotorStallSimple.html">PyDSS.pyControllers.Controllers.MotorStallSimple</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.PvController.html">PyDSS.pyControllers.Controllers.PvController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.PvDynamic.html">PyDSS.pyControllers.Controllers.PvDynamic</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.PvFrequencyRideThru.html">PyDSS.pyControllers.Controllers.PvFrequencyRideThru</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.PvVoltageRideThru.html">PyDSS.pyControllers.Controllers.PvVoltageRideThru</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.Settings.html">PyDSS.pyControllers.Controllers.Settings</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.SocketController.html">PyDSS.pyControllers.Controllers.SocketController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.StorageController.html">PyDSS.pyControllers.Controllers.StorageController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.ThermostaticLoad.html">PyDSS.pyControllers.Controllers.ThermostaticLoad</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.Controllers.xfmrController.html">PyDSS.pyControllers.Controllers.xfmrController</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.pyController.html">PyDSS.pyControllers.pyController</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.pyControllers.pyControllerAbstract.html">PyDSS.pyControllers.pyControllerAbstract</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pyDSS.html">PyDSS.pyDSS</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pyLogger.html">PyDSS.pyLogger</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pyPlotReader.html">PyDSS.pyPlotReader</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.html">PyDSS.pyPlots</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of PyDSS.pyPlots</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.html">PyDSS.pyPlots.Plots</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of PyDSS.pyPlots.Plots</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.FrequencySweep.html">PyDSS.pyPlots.Plots.FrequencySweep</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.Histogram.html">PyDSS.pyPlots.Plots.Histogram</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.NetworkGraph.html">PyDSS.pyPlots.Plots.NetworkGraph</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.Table.html">PyDSS.pyPlots.Plots.Table</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.ThreeDim.html">PyDSS.pyPlots.Plots.ThreeDim</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.TimeSeries.html">PyDSS.pyPlots.Plots.TimeSeries</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.Topology.html">PyDSS.pyPlots.Plots.Topology</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.VoltageDistance.html">PyDSS.pyPlots.Plots.VoltageDistance</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.Plots.XY.html">PyDSS.pyPlots.Plots.XY</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.pyPlotAbstract.html">PyDSS.pyPlots.pyPlotAbstract</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.pyPlots.pyPlots.html">PyDSS.pyPlots.pyPlots</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.html">PyDSS.pyPostprocessor</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle navigation of PyDSS.pyPostprocessor</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.html">PyDSS.pyPostprocessor.PostprocessScripts</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle navigation of PyDSS.pyPostprocessor.PostprocessScripts</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer.html">PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer</a></li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules.html">PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle navigation of PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l8"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules.opt_funcs.html">PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules.opt_funcs</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.EdLiFoControl.html">PyDSS.pyPostprocessor.PostprocessScripts.EdLiFoControl</a></li>
+<li class="toctree-l7"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.Utilidata_Interface.html">PyDSS.pyPostprocessor.PostprocessScripts.Utilidata_Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.pyPostprocess.html">PyDSS.pyPostprocessor.pyPostprocess</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.pyPostprocessor.pyPostprocessAbstract.html">PyDSS.pyPostprocessor.pyPostprocessAbstract</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pyResults.html">PyDSS.pyResults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pydss_fs_interface.html">PyDSS.pydss_fs_interface</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pydss_project.html">PyDSS.pydss_project</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.pydss_results.html">PyDSS.pydss_results</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.registry.html">PyDSS.registry</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.reports.html">PyDSS.reports</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle navigation of PyDSS.reports</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.capacitor_change_count.html">PyDSS.reports.capacitor_change_count</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.feeder_losses.html">PyDSS.reports.feeder_losses</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.pv_reports.html">PyDSS.reports.pv_reports</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.reg_control_tap_number_change_count.html">PyDSS.reports.reg_control_tap_number_change_count</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.reports.html">PyDSS.reports.reports</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.thermal_metrics.html">PyDSS.reports.thermal_metrics</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.reports.voltage_metrics.html">PyDSS.reports.voltage_metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.simulation_input_models.html">PyDSS.simulation_input_models</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.storage_filters.html">PyDSS.storage_filters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.thermal_metrics.html">PyDSS.thermal_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.unitDefinations.html">PyDSS.unitDefinations</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="_autosummary/PyDSS.utils.html">PyDSS.utils</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of PyDSS.utils</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.utils.dataframe_utils.html">PyDSS.utils.dataframe_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.utils.dss_utils.html">PyDSS.utils.dss_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.utils.pydss_utils.html">PyDSS.utils.pydss_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.utils.simulation_utils.html">PyDSS.utils.simulation_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.utils.timing_utils.html">PyDSS.utils.timing_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="_autosummary/PyDSS.utils.utils.html">PyDSS.utils.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="_autosummary/PyDSS.value_storage.html">PyDSS.value_storage</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Models.html">Data models</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="project_layout.html">PyDSS Project Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Result%20management.html">Enhanced result export features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hdf-data-format.html">HDF Data Format</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="co-simulation_support.html">Co-simulation interfaces</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle navigation of Co-simulation interfaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">The HELICS interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-socket-interface">The socket interface</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="the-helics-interface">
+<h1>The HELICS interface<a class="headerlink" href="#the-helics-interface" title="Link to this heading">#</a></h1>
+<p>Hierarchical Engine for Large-scale Infrastructure Co-Simulation (HELICS) provides an open-source, general-purpose, modular, highly-scalable co-simulation framework that runs cross-platform (Linux, Windows, and Mac OS X). It is not a modeling tool by itself, but rather an integration tool that enables multiple existing simulation tools (and/or multiple instances of the same tool), known as “federates,” to exchange data during runtime and stay synchronized in time such that together they act as one large simulation, or “federation”. This enables bringing together established (or new/emerging) off-the-shelf tools from multiple domains to form a complex software-simulation without having to change the individual tools (known as “black-box” modeling). All that is required is for someone to write a thin interface layer for each tool that interfaces with existing simulation time control and data value updating, such as through an existing scripting interface. Moreover, the HELICS community has a growing ecosystem of established interfaces for popular tools, such that many users can simply mix and match existing tools with their own data and run complex co-simulations with minimal coding. More information on HELICS can be found here (<a class="reference external" href="https://github.com/GMLC-TDC/HELICS">https://github.com/GMLC-TDC/HELICS</a>).</p>
+<p>The HELICS interface for PyDSS is built to reduce complexity of setting up large scale cosimulation scenarios. The user is required to publications and suscriptions.</p>
+<p>A minimal HELICS example is availble in the <code class="docutils literal notranslate"><span class="pre">examples</span></code> folder (top directory of the repository). Enabling the HELICS interface requires user to define additional parammeters in the scenario TOML file.</p>
+<section id="interface-overview">
+<h2>Interface overview<a class="headerlink" href="#interface-overview" title="Link to this heading">#</a></h2>
+<p>The HELICS interface can be enabled and setup using the simultion.toml file.</p>
+<p>Following attributes can be configured for the HELICS interface.</p>
+<dl class="py class pydantic_model">
+<dt class="sig sig-object py" id="PyDSS.simulation_input_models.HelicsModel">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyDSS.simulation_input_models.</span></span><span class="sig-name descname"><span class="pre">HelicsModel</span></span><a class="reference internal" href="_modules/PyDSS/simulation_input_models.html#HelicsModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.simulation_input_models.HelicsModel" title="Link to this definition">#</a></dt>
+<dd><p>Defines the user inputs for HELICS.</p>
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">   </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;InputsBaseModel&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Defines the user inputs for HELICS.&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;Co-simulation Mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Set to true to enable the HELICS interface for co-simulation.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;co_simulation_mode&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;boolean&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;Iterative Mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Iterative mode&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iterative_mode&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;boolean&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;Error tolerance&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0001</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Error tolerance&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;error_tolerance&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;Max co-iterations&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Max number of co-simulation iterations&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;max_co_iterations&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;Broker&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mainbroker&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Broker name&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;broker&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;Broker port&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Broker port&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;broker_port&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;Federate name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PyDSS&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Name of the federate&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;federate_name&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;Time delta&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The property controlling the minimum time delta for a federate.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;time_delta&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;Core type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;zmq&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Core type to be use for communication&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;core_type&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;Uninterruptible&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Can the federate be interrupted&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uninterruptible&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;boolean&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;Helics logging level&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Logging level for the federate. Refer to HELICS documentation.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;logging_level&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">   </span><span class="p">},</span>
+<span class="w">   </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details></p><dl class="field-list simple">
+<dt class="field-odd">Config<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong>: <em>str = InputsBaseModel</em></p></li>
+<li><p><strong>str_strip_whitespace</strong>: <em>bool = True</em></p></li>
+<li><p><strong>validate_assignment</strong>: <em>bool = True</em></p></li>
+<li><p><strong>validate_default</strong>: <em>bool = True</em></p></li>
+<li><p><strong>extra</strong>: <em>str = forbid</em></p></li>
+<li><p><strong>use_enum_values</strong>: <em>bool = False</em></p></li>
+<li><p><strong>populate_by_name</strong>: <em>bool = True</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Fields<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.broker" title="PyDSS.simulation_input_models.HelicsModel.broker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">broker</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.broker_port" title="PyDSS.simulation_input_models.HelicsModel.broker_port"><code class="xref py py-obj docutils literal notranslate"><span class="pre">broker_port</span> <span class="pre">(int)</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.co_simulation_mode" title="PyDSS.simulation_input_models.HelicsModel.co_simulation_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">co_simulation_mode</span> <span class="pre">(bool)</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.core_type" title="PyDSS.simulation_input_models.HelicsModel.core_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">core_type</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.error_tolerance" title="PyDSS.simulation_input_models.HelicsModel.error_tolerance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">error_tolerance</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.federate_name" title="PyDSS.simulation_input_models.HelicsModel.federate_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">federate_name</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.iterative_mode" title="PyDSS.simulation_input_models.HelicsModel.iterative_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iterative_mode</span> <span class="pre">(bool)</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.logging_level" title="PyDSS.simulation_input_models.HelicsModel.logging_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logging_level</span> <span class="pre">(int)</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.max_co_iterations" title="PyDSS.simulation_input_models.HelicsModel.max_co_iterations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_co_iterations</span> <span class="pre">(int)</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.time_delta" title="PyDSS.simulation_input_models.HelicsModel.time_delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">time_delta</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.uninterruptible" title="PyDSS.simulation_input_models.HelicsModel.uninterruptible"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uninterruptible</span> <span class="pre">(bool)</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-odd">Validators<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.check_logging_level" title="PyDSS.simulation_input_models.HelicsModel.check_logging_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_logging_level</span></code></a> » <a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.logging_level" title="PyDSS.simulation_input_models.HelicsModel.logging_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logging_level</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.check_max_co_iterations" title="PyDSS.simulation_input_models.HelicsModel.check_max_co_iterations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_max_co_iterations</span></code></a> » <a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.max_co_iterations" title="PyDSS.simulation_input_models.HelicsModel.max_co_iterations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_co_iterations</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.simulation_input_models.HelicsModel.broker">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">broker</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mainbroker'</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Broker')</span></em><a class="headerlink" href="#PyDSS.simulation_input_models.HelicsModel.broker" title="Link to this definition">#</a></dt>
+<dd><p>Broker name</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.simulation_input_models.HelicsModel.broker_port">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">broker_port</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Broker</span> <span class="pre">port')</span></em><a class="headerlink" href="#PyDSS.simulation_input_models.HelicsModel.broker_port" title="Link to this definition">#</a></dt>
+<dd><p>Broker port</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.simulation_input_models.HelicsModel.co_simulation_mode">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">co_simulation_mode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Co-simulation</span> <span class="pre">Mode')</span></em><a class="headerlink" href="#PyDSS.simulation_input_models.HelicsModel.co_simulation_mode" title="Link to this definition">#</a></dt>
+<dd><p>Set to true to enable the HELICS interface for co-simulation.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.simulation_input_models.HelicsModel.core_type">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">core_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'zmq'</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Core</span> <span class="pre">type')</span></em><a class="headerlink" href="#PyDSS.simulation_input_models.HelicsModel.core_type" title="Link to this definition">#</a></dt>
+<dd><p>Core type to be use for communication</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.simulation_input_models.HelicsModel.error_tolerance">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">error_tolerance</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0001</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Error</span> <span class="pre">tolerance')</span></em><a class="headerlink" href="#PyDSS.simulation_input_models.HelicsModel.error_tolerance" title="Link to this definition">#</a></dt>
+<dd><p>Error tolerance</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.simulation_input_models.HelicsModel.federate_name">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">federate_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'PyDSS'</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Federate</span> <span class="pre">name')</span></em><a class="headerlink" href="#PyDSS.simulation_input_models.HelicsModel.federate_name" title="Link to this definition">#</a></dt>
+<dd><p>Name of the federate</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.simulation_input_models.HelicsModel.iterative_mode">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">iterative_mode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Iterative</span> <span class="pre">Mode')</span></em><a class="headerlink" href="#PyDSS.simulation_input_models.HelicsModel.iterative_mode" title="Link to this definition">#</a></dt>
+<dd><p>Iterative mode</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.simulation_input_models.HelicsModel.logging_level">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">logging_level</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Helics</span> <span class="pre">logging</span> <span class="pre">level')</span></em><a class="headerlink" href="#PyDSS.simulation_input_models.HelicsModel.logging_level" title="Link to this definition">#</a></dt>
+<dd><p>Logging level for the federate. Refer to HELICS documentation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.check_logging_level" title="PyDSS.simulation_input_models.HelicsModel.check_logging_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_logging_level</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.simulation_input_models.HelicsModel.max_co_iterations">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_co_iterations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">15</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Max</span> <span class="pre">co-iterations')</span></em><a class="headerlink" href="#PyDSS.simulation_input_models.HelicsModel.max_co_iterations" title="Link to this definition">#</a></dt>
+<dd><p>Max number of co-simulation iterations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.check_max_co_iterations" title="PyDSS.simulation_input_models.HelicsModel.check_max_co_iterations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_max_co_iterations</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.simulation_input_models.HelicsModel.time_delta">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">time_delta</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.01</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Time</span> <span class="pre">delta')</span></em><a class="headerlink" href="#PyDSS.simulation_input_models.HelicsModel.time_delta" title="Link to this definition">#</a></dt>
+<dd><p>The property controlling the minimum time delta for a federate.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.simulation_input_models.HelicsModel.uninterruptible">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uninterruptible</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Uninterruptible')</span></em><a class="headerlink" href="#PyDSS.simulation_input_models.HelicsModel.uninterruptible" title="Link to this definition">#</a></dt>
+<dd><p>Can the federate be interrupted</p>
+</dd></dl>
+
+<dl class="py method pydantic_validator">
+<dt class="sig sig-object py" id="PyDSS.simulation_input_models.HelicsModel.check_logging_level">
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_logging_level</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.logging_level" title="PyDSS.simulation_input_models.HelicsModel.logging_level"><em class="xref py py-obj"><span class="pre">logging_level</span></em></a><a class="reference internal" href="_modules/PyDSS/simulation_input_models.html#HelicsModel.check_logging_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.simulation_input_models.HelicsModel.check_logging_level" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method pydantic_validator">
+<dt class="sig sig-object py" id="PyDSS.simulation_input_models.HelicsModel.check_max_co_iterations">
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_max_co_iterations</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="Models.html#PyDSS.simulation_input_models.HelicsModel.max_co_iterations" title="PyDSS.simulation_input_models.HelicsModel.max_co_iterations"><em class="xref py py-obj"><span class="pre">max_co_iterations</span></em></a><a class="reference internal" href="_modules/PyDSS/simulation_input_models.html#HelicsModel.check_max_co_iterations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.simulation_input_models.HelicsModel.check_max_co_iterations" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.simulation_input_models.HelicsModel.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#PyDSS.simulation_input_models.HelicsModel.model_computed_fields" title="Link to this definition">#</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+</dd></dl>
+
+<ul class="simple">
+<li><p>“co_simulation_mode” : Set to ‘true’ to enable the HELICS interface. By default it is set to ‘false’</p></li>
+<li><p>“federate_name” : Required to identify a federate in a cosimulation with a large number of federates.</p></li>
+<li><p>Additional attribution pertaining to convergence, timing and iteration can be configured here</p></li>
+</ul>
+<p>Default values for additional simulation settings are as follows. For more information on how to appropriately set these values please look at HELICS documentaion</p>
+<p>Once the HELICS co-simulation interface has been enabled, the next step is to set up <code class="docutils literal notranslate"><span class="pre">publications</span></code> and <code class="docutils literal notranslate"><span class="pre">subscriptions</span></code> to set up information exchange with external federates.
+PyDSS enables zero code setup of these modules. Each scenario can have its publlcation and subscription defination and is managed by two file in the <code class="docutils literal notranslate"><span class="pre">ExportLists</span></code> directory for a given scenario.</p>
+<p>publication tags (names) follow the following convertion</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">federate</span> <span class="n">name</span><span class="o">&gt;.&lt;</span><span class="nb">object</span> <span class="nb">type</span><span class="o">&gt;.&lt;</span><span class="nb">object</span> <span class="n">name</span><span class="o">&gt;.&lt;</span><span class="nb">object</span> <span class="nb">property</span><span class="o">&gt;</span>
+
+<span class="n">examples</span><span class="p">,</span>
+
+<span class="n">federate1</span><span class="o">.</span><span class="n">Circuit</span><span class="mf">.70008</span><span class="o">.</span><span class="n">TotalPower</span>
+<span class="n">federate1</span><span class="o">.</span><span class="n">Load</span><span class="o">.</span><span class="n">load_1</span><span class="o">.</span><span class="n">VoltageMagAng</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">federate</span> <span class="pre">name</span></code> is defined in the project’s <code class="docutils literal notranslate"><span class="pre">settings.toml</span></code> file</p>
+</section>
+<section id="setting-up-publications">
+<h2>Setting up publications<a class="headerlink" href="#setting-up-publications" title="Link to this heading">#</a></h2>
+<p>Publications (information communicated to external federates) can be set up by using the <code class="docutils literal notranslate"><span class="pre">Exports.toml</span></code>. This file is also used to define export varibles
+for a simulation scenario. By setting the <code class="docutils literal notranslate"><span class="pre">publish</span></code> attribute to <code class="docutils literal notranslate"><span class="pre">true</span></code>, enable automated setup of a HELICS publication.
+The file enables users to use multiple filtering options such as regex operation etc. to only pushlish what is reuired for a given use case.</p>
+<p>examples:</p>
+<p>The following code block will setup publications for all PV systems powers in a given model.
+Setting the <code class="docutils literal notranslate"><span class="pre">publish</span></code> attribute to <code class="docutils literal notranslate"><span class="pre">false</span></code> will allow the data to be writtin to the h5 store,
+but the data will not be published on the helics interface.</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[[PVSystems]]</span>
+<span class="n">property</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Powers&quot;</span>
+<span class="n">sample_interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="n">publish</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="n">store_values_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;all&quot;</span>
+</pre></div>
+</div>
+<p>Users tave two options to filter and setup publication for a subset of object type (in this case PV systems).
+User are able to use tag attribute <code class="docutils literal notranslate"><span class="pre">name_regexes</span></code> to filter PV systems matching a given list of regex expressions.
+Alternately, users can use <code class="docutils literal notranslate"><span class="pre">names</span></code> attribute to explicitly define objects whos property they want publiched on the HELICS interface.</p>
+<p>Filtering using regex expressions</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[[PVSystems]]</span>
+<span class="n">property</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Powers&quot;</span>
+<span class="n">name_regexes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;.*pvgnem.*&quot;</span><span class="p">]</span>
+<span class="n">sample_interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="n">publish</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="n">store_values_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;all&quot;</span>
+</pre></div>
+</div>
+<p>Filtering using explicitly list model names</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[[PVSystems]]</span>
+<span class="n">property</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Powers&quot;</span>
+<span class="n">sample_interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="n">names</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;PVSystems.pv1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;PVSystems.pv2&quot;</span><span class="p">]</span>
+<span class="n">publish</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="n">store_values_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;all&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="setting-up-subscriptions">
+<h2>Setting up subscriptions<a class="headerlink" href="#setting-up-subscriptions" title="Link to this heading">#</a></h2>
+<p>Subscriptions (information ingested from external federates) can be set up
+using the <code class="docutils literal notranslate"><span class="pre">Subscriptions.toml</span></code> in the <code class="docutils literal notranslate"><span class="pre">ExportLists</span></code> directory for a given scenario.
+Valis subscriptions should confine to teh following model</p>
+<dl class="py class pydantic_model">
+<dt class="sig sig-object py" id="PyDSS.helics_interface.Subscription">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyDSS.helics_interface.</span></span><span class="sig-name descname"><span class="pre">Subscription</span></span><a class="reference internal" href="_modules/PyDSS/helics_interface.html#Subscription"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.helics_interface.Subscription" title="Link to this definition">#</a></dt>
+<dd><p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">   </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Subscription&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Model&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;property&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Property&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Id&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;anyOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;null&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Unit&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;subscribe&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Subscribe&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;boolean&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;data_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/DataType&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;multiplier&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Multiplier&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;object&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Object&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;states&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">            </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">            </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">            </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">            </span><span class="mf">0.0</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;anyOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">               </span><span class="p">{</span>
+<span class="w">                  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">               </span><span class="p">},</span>
+<span class="w">               </span><span class="p">{</span>
+<span class="w">                  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span>
+<span class="w">               </span><span class="p">},</span>
+<span class="w">               </span><span class="p">{</span>
+<span class="w">                  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;boolean&quot;</span>
+<span class="w">               </span><span class="p">}</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">         </span><span class="p">},</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;States&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;sub&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Sub&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">   </span><span class="p">},</span>
+<span class="w">   </span><span class="nt">&quot;$defs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;DataType&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;double&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;vector&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;boolean&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;integer&quot;</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DataType&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">   </span><span class="p">},</span>
+<span class="w">   </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="s2">&quot;model&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">&quot;property&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">&quot;id&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">&quot;data_type&quot;</span>
+<span class="w">   </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details></p><dl class="field-list simple">
+<dt class="field-odd">Config<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arbitrary_types_allowed</strong>: <em>bool = True</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Fields<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="Models.html#PyDSS.helics_interface.Subscription.data_type" title="PyDSS.helics_interface.Subscription.data_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_type</span> <span class="pre">(PyDSS.helics_interface.DataType)</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.helics_interface.Subscription.id" title="PyDSS.helics_interface.Subscription.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.helics_interface.Subscription.model" title="PyDSS.helics_interface.Subscription.model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">model</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.helics_interface.Subscription.multiplier" title="PyDSS.helics_interface.Subscription.multiplier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiplier</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.helics_interface.Subscription.object" title="PyDSS.helics_interface.Subscription.object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span> <span class="pre">(Any)</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.helics_interface.Subscription.property" title="PyDSS.helics_interface.Subscription.property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">property</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.helics_interface.Subscription.states" title="PyDSS.helics_interface.Subscription.states"><code class="xref py py-obj docutils literal notranslate"><span class="pre">states</span> <span class="pre">(List[float</span> <span class="pre">|</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">bool])</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.helics_interface.Subscription.sub" title="PyDSS.helics_interface.Subscription.sub"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sub</span> <span class="pre">(Any)</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.helics_interface.Subscription.subscribe" title="PyDSS.helics_interface.Subscription.subscribe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subscribe</span> <span class="pre">(bool)</span></code></a></p></li>
+<li><p><a class="reference internal" href="Models.html#PyDSS.helics_interface.Subscription.unit" title="PyDSS.helics_interface.Subscription.unit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unit</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.helics_interface.Subscription.data_type">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataType</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#PyDSS.helics_interface.Subscription.data_type" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.helics_interface.Subscription.id">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#PyDSS.helics_interface.Subscription.id" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.helics_interface.Subscription.model">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#PyDSS.helics_interface.Subscription.model" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.helics_interface.Subscription.multiplier">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">multiplier</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><a class="headerlink" href="#PyDSS.helics_interface.Subscription.multiplier" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.helics_interface.Subscription.object">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">object</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#PyDSS.helics_interface.Subscription.object" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.helics_interface.Subscription.property">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">property</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#PyDSS.helics_interface.Subscription.property" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.helics_interface.Subscription.states">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">states</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0]</span></em><a class="headerlink" href="#PyDSS.helics_interface.Subscription.states" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.helics_interface.Subscription.sub">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sub</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#PyDSS.helics_interface.Subscription.sub" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.helics_interface.Subscription.subscribe">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">subscribe</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#PyDSS.helics_interface.Subscription.subscribe" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.helics_interface.Subscription.unit">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#PyDSS.helics_interface.Subscription.unit" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.helics_interface.Subscription.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#PyDSS.helics_interface.Subscription.model_computed_fields" title="Link to this definition">#</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>When setting up subscriptions it is important to understand that the subscription tag is generated by
+the external federate and should be known before setting up the subscriptions. In the example below, values recieved from
+subscription tag <code class="docutils literal notranslate"><span class="pre">test.load1.power</span></code> are used to update the <code class="docutils literal notranslate"><span class="pre">kw</span></code> property of load <code class="docutils literal notranslate"><span class="pre">Load.mpx000635970</span></code>. <code class="docutils literal notranslate"><span class="pre">multiplier</span></code> property can be used to
+scale values before they are used to update the coupled model.</p>
+<p>example</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[[subscriptions]]</span>
+<span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Load.mpx000635970&quot;</span>
+<span class="n">property</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;kw&quot;</span>
+<span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;test.load1.power&quot;</span>
+<span class="n">unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;kW&quot;</span>
+<span class="n">subscribe</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="n">data_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;double&quot;</span>
+<span class="n">multiplier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+</pre></div>
+</div>
+<p>Within the example folder the project named external interfaces provides an example usage of all three interafces.</p>
+</section>
+</section>
+<section id="the-socket-interface">
+<h1>The socket interface<a class="headerlink" href="#the-socket-interface" title="Link to this heading">#</a></h1>
+<p>The socket interface is implemented as a PyDSS pyController. Implmentation details and expected inputs are detailed here: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyDSS.pyControllers.Controllers.SocketController.SocketController</span></code>.
+The socket controller is well suited in situatons where an existing controller needs to be integrated to the simulation environment.
+An exmaple of this would be integrating a controller for thermostatically controlled loads implemeted in say Modelica or Python.
+This allows user to integrate controller, without making changes to the implemented controller. With a little effort,
+the same controller can be implemented as a pyController object in PyDSS.</p>
+<p>The socket interface in PyDSS also come in handy, when setting up a hardware-in-loop type simulations and integrating the simulation
+engine with actual hardware. Interfaces similar to raw socket implementations have been developed (to be  open-sourced at a later time)
+for Modbus-TCP and DNP3 communcations have developed and tested with PyDSS with sucess. A minimal socket interfacing example has
+been provided as a PyDSS project in ~PyDSS/examples/external_interfaces. Within the folder,
+~/PyDSS/examples/external_interfaces/pydss_project a scenario called ‘socket’ has been defined. Socket
+controller definations have been detailed with the ‘pyControllerList’ folder. An example of input requirements can be studied below.
+This example will publish <code class="docutils literal notranslate"><span class="pre">voltage</span> <span class="pre">magnitude</span></code> (see Even set in Index) and <code class="docutils literal notranslate"><span class="pre">real</span> <span class="pre">power</span></code> for load <code class="docutils literal notranslate"><span class="pre">Load.mpx000635970</span></code> in the model. Subscribed
+values will be used to update the <code class="docutils literal notranslate"><span class="pre">kW</span></code> property of the coupled load (Load.mpx000635970 in this case)</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[</span><span class="s2">&quot;Load.mpx000635970&quot;</span><span class="k">]</span>
+<span class="n">IP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;127.0.0.1&quot;</span>
+<span class="n">Port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5001</span>
+<span class="n">Encoding</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="n">Buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1024</span>
+<span class="n">Index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Even,Even&quot;</span>
+<span class="n">Inputs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;VoltagesMagAng,Powers&quot;</span>
+<span class="n">Outputs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;kW&quot;</span>
+</pre></div>
+</div>
+<p>Finally, the minimal example below shows how to retrive data from the sockets and return new values for parameters defined in the definations file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># first of all import the socket library</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+
+<span class="c1"># next create a socket object</span>
+<span class="n">sockets</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">()</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="mi">5001</span> <span class="o">+</span> <span class="n">i</span><span class="p">))</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">sockets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># Establish connection with client.</span>
+        <span class="n">conns</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sockets</span><span class="p">:</span>
+                <span class="n">c</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+                <span class="n">conns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">conns</span><span class="p">:</span> <span class="c1">#Reading data from all ports</span>
+                        <span class="n">Data</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">Data</span><span class="p">:</span> <span class="c1">#Creating a list of doubles from the recieved byte stream</span>
+                                <span class="n">numDoubles</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Data</span><span class="p">)</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span>
+                                <span class="n">tag</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">numDoubles</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;d&#39;</span>
+                                <span class="n">Data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">Data</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">c</span> <span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">conns</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">]):</span> <span class="c1">#Writing data to all ports</span>
+                        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">]</span>
+                        <span class="n">c</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">d&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="o">*</span><span class="n">values</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          <a class="prev-page" href="co-simulation_support.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Co-simulation interfaces</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2019, Aadil Latif
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">The HELICS interface</a><ul>
+<li><a class="reference internal" href="#interface-overview">Interface overview</a><ul>
+<li><a class="reference internal" href="#PyDSS.simulation_input_models.HelicsModel"><code class="docutils literal notranslate"><span class="pre">HelicsModel</span></code></a><ul>
+<li><a class="reference internal" href="#PyDSS.simulation_input_models.HelicsModel.broker"><code class="docutils literal notranslate"><span class="pre">HelicsModel.broker</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.simulation_input_models.HelicsModel.broker_port"><code class="docutils literal notranslate"><span class="pre">HelicsModel.broker_port</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.simulation_input_models.HelicsModel.co_simulation_mode"><code class="docutils literal notranslate"><span class="pre">HelicsModel.co_simulation_mode</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.simulation_input_models.HelicsModel.core_type"><code class="docutils literal notranslate"><span class="pre">HelicsModel.core_type</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.simulation_input_models.HelicsModel.error_tolerance"><code class="docutils literal notranslate"><span class="pre">HelicsModel.error_tolerance</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.simulation_input_models.HelicsModel.federate_name"><code class="docutils literal notranslate"><span class="pre">HelicsModel.federate_name</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.simulation_input_models.HelicsModel.iterative_mode"><code class="docutils literal notranslate"><span class="pre">HelicsModel.iterative_mode</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.simulation_input_models.HelicsModel.logging_level"><code class="docutils literal notranslate"><span class="pre">HelicsModel.logging_level</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.simulation_input_models.HelicsModel.max_co_iterations"><code class="docutils literal notranslate"><span class="pre">HelicsModel.max_co_iterations</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.simulation_input_models.HelicsModel.time_delta"><code class="docutils literal notranslate"><span class="pre">HelicsModel.time_delta</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.simulation_input_models.HelicsModel.uninterruptible"><code class="docutils literal notranslate"><span class="pre">HelicsModel.uninterruptible</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.simulation_input_models.HelicsModel.check_logging_level"><code class="docutils literal notranslate"><span class="pre">HelicsModel.check_logging_level</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.simulation_input_models.HelicsModel.check_max_co_iterations"><code class="docutils literal notranslate"><span class="pre">HelicsModel.check_max_co_iterations</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.simulation_input_models.HelicsModel.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">HelicsModel.model_computed_fields</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#setting-up-publications">Setting up publications</a></li>
+<li><a class="reference internal" href="#setting-up-subscriptions">Setting up subscriptions</a><ul>
+<li><a class="reference internal" href="#PyDSS.helics_interface.Subscription"><code class="docutils literal notranslate"><span class="pre">Subscription</span></code></a><ul>
+<li><a class="reference internal" href="#PyDSS.helics_interface.Subscription.data_type"><code class="docutils literal notranslate"><span class="pre">Subscription.data_type</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.helics_interface.Subscription.id"><code class="docutils literal notranslate"><span class="pre">Subscription.id</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.helics_interface.Subscription.model"><code class="docutils literal notranslate"><span class="pre">Subscription.model</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.helics_interface.Subscription.multiplier"><code class="docutils literal notranslate"><span class="pre">Subscription.multiplier</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.helics_interface.Subscription.object"><code class="docutils literal notranslate"><span class="pre">Subscription.object</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.helics_interface.Subscription.property"><code class="docutils literal notranslate"><span class="pre">Subscription.property</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.helics_interface.Subscription.states"><code class="docutils literal notranslate"><span class="pre">Subscription.states</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.helics_interface.Subscription.sub"><code class="docutils literal notranslate"><span class="pre">Subscription.sub</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.helics_interface.Subscription.subscribe"><code class="docutils literal notranslate"><span class="pre">Subscription.subscribe</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.helics_interface.Subscription.unit"><code class="docutils literal notranslate"><span class="pre">Subscription.unit</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.helics_interface.Subscription.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">Subscription.model_computed_fields</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-socket-interface">The socket interface</a></li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=3f474186"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=32e29ea5"></script>
+    </body>
+</html>
