@@ -1,26 +1,24 @@
 
-import abc
-import json
-import logging
+from typing import Optional, List, Union, Annotated
 from collections import defaultdict
 from pathlib import Path
-from typing import Optional, List, Union
+import logging
+import json
+import abc
 
-import opendssdirect as dss
-from pydantic.v1 import BaseModel, Field
-
-from PyDSS.SolveMode import get_solver_from_simulation_type
-from PyDSS.common import SimulationType
-from PyDSS.dssInstance import OpenDSS, CONTROLLER_PRIORITIES
-from PyDSS.exceptions import InvalidConfiguration, OpenDssConvergenceError
-from PyDSS.modes.solver_base import solver_base
-from PyDSS.pyControllers.Controllers.PvController import PvController
-from PyDSS.pyControllers.Controllers.StorageController import StorageController
-from PyDSS.simulation_input_models import ProjectModel
-from PyDSS.utils.dss_utils import iter_elements, list_element_names_by_class
-from PyDSS.utils.timing_utils import TimerStatsCollector, Timer
-from PyDSS.utils.utils import load_data
+from pydantic import BaseModel, Field
 from pydantic import ConfigDict
+import opendssdirect as dss
+
+from PyDSS.exceptions import InvalidConfiguration, OpenDssConvergenceError
+from PyDSS.pyControllers.Controllers.PvController import PvController
+from PyDSS.utils.timing_utils import TimerStatsCollector, Timer
+from PyDSS.utils.dss_utils import list_element_names_by_class
+from PyDSS.dssInstance import OpenDSS, CONTROLLER_PRIORITIES
+from PyDSS.SolveMode import get_solver_from_simulation_type
+from PyDSS.simulation_input_models import ProjectModel
+from PyDSS.modes.solver_base import solver_base
+
 
 
 logger = logging.getLogger(__name__)
@@ -41,11 +39,13 @@ class ControllerBaseModel(BaseModel, abc.ABC):
 
 
 class PvControllerModel(ControllerBaseModel):
-    control1: str = Field(
-        title="Control1",
-        description="TODO",
-        alias="Control1",
-    )
+    control1: Annotated[
+        str,
+        Field(
+            title="Control1",
+            description="TODO",
+            alias="Control1",
+        )]
     control2: Optional[str] = Field(
         title="Control1",
         description="TODO",
@@ -60,106 +60,146 @@ class PvControllerModel(ControllerBaseModel):
         title="pf",
         description="TODO",
     )
-    pf_min: float = Field(
-        title="pfMin",
-        description="TODO",
-        alias="pfMin",
-    )
-    pf_max: float = Field(
-        title="pfMax",
-        description="TODO",
-        alias="pfMax",
-    )
-    p_min: float = Field(
-        title="Pmin",
-        description="TODO",
-        alias="Pmin",
-    )
-    p_max: float = Field(
-        title="Pmax",
-        description="TODO",
-        alias="Pmax",
-    )
-    u_min: float = Field(
-        title="uMin",
-        description="TODO",
-        alias="uMin",
-    )
-    u_db_min: float = Field(
-        title="uDbMin",
-        description="TODO",
-        alias="uDbMin",
-    )
-    u_db_max: float = Field(
-        title="uDbMax",
-        description="TODO",
-        alias="uDbMax",
-    )
-    u_max: float = Field(
-        title="uMax",
-        description="TODO",
-        alias="uMax",
-    )
-    q_lim_pu: float = Field(
-        title="QlimPU",
-        description="TODO",
-        alias="QlimPU",
-    )
-    pf_lim: float = Field(
-        title="PFlim",
-        description="TODO",
-        alias="PFlim",
-    )
-    enable_pf_limit: bool = Field(
-        title="EnablePFLimit",
-        description="TODO",
-        alias="Enable PF limit",
-    )
-    u_min_c: float = Field(
-        title="uMinC",
-        description="TODO",
-        alias="uMinC",
-    )
-    u_max_c: float = Field(
-        title="uMaxC",
-        description="TODO",
-        alias="uMaxC",
-    )
-    p_min_vw: float = Field(
-        title="PminVW",
-        description="TODO",
-        alias="PminVW",
-    )
-    vw_type: str = Field(
-        title="VWtype",
-        description="TODO",
-        alias="VWtype",
-    )
-    percent_p_cutin: float = Field(
-        title="PCutin",
-        description="TODO",
-        alias="%PCutin",
-    )
-    percent_p_cutout: float = Field(
-        title="%PCutout",
-        description="TODO",
-        alias="%PCutout",
-    )
-    efficiency: float = Field(
-        title="Efficiency",
-        description="TODO",
-        alias="Efficiency",
-    )
-    priority: str = Field(
-        title="Priority",
-        description="TODO",
-        alias="Priority",
-    )
-    damp_coef: float = Field(
-        title="DampCoef",
-        description="TODO",
-        alias="DampCoef",
-    )
+    pf_min: Annotated[
+        float,
+        Field(
+            title="pfMin",
+            description="TODO",
+            alias="pfMin",
+        )]
+    pf_max: Annotated[
+        float,
+        Field(
+            title="pfMax",
+            description="TODO",
+            alias="pfMax",
+        )]
+    p_min: Annotated[
+        float,
+        Field(
+            title="Pmin",
+            description="TODO",
+            alias="Pmin",
+        )]
+    p_max:Annotated[
+        float,
+        Field(
+            title="Pmax",
+            description="TODO",
+            alias="Pmax",
+        )]
+    u_min: Annotated[
+        float,
+        Field(
+            title="uMin",
+            description="TODO",
+            alias="uMin",
+        )]
+    u_db_min: Annotated[
+        float,
+        Field(
+            title="uDbMin",
+            description="TODO",
+            alias="uDbMin",
+        )]
+    u_db_max: Annotated[
+        float,
+        Field(
+            title="uDbMax",
+            description="TODO",
+            alias="uDbMax",
+        )]
+    u_max: Annotated[
+        float,
+        Field(
+            title="uMax",
+            description="TODO",
+            alias="uMax",
+        )]
+    q_lim_pu: Annotated[
+        float,
+        Field(
+            title="QlimPU",
+            description="TODO",
+            alias="QlimPU",
+        )]
+    pf_lim: Annotated[
+        float,
+        Field(
+            title="PFlim",
+            description="TODO",
+            alias="PFlim",
+        )]
+    enable_pf_limit: Annotated[
+        bool,
+        Field(
+            title="EnablePFLimit",
+            description="TODO",
+            alias="Enable PF limit",
+        )]
+    u_min_c: Annotated[
+        float,
+        Field(
+            title="uMinC",
+            description="TODO",
+            alias="uMinC",
+        )]
+    u_max_c: Annotated[
+        float,
+        Field(
+            title="uMaxC",
+            description="TODO",
+            alias="uMaxC",
+        )]
+    p_min_vw: Annotated[
+        float,
+        Field(
+            title="PminVW",
+            description="TODO",
+            alias="PminVW",
+        )]
+    vw_type: Annotated[
+        str,
+        Field(
+            title="VWtype",
+            description="TODO",
+            alias="VWtype",
+        )]
+    percent_p_cutin: Annotated[
+        float,
+        Field(
+            title="PCutin",
+            description="TODO",
+            alias="%PCutin",
+        )]
+    percent_p_cutout: Annotated[
+        float,
+        Field(
+            title="%PCutout",
+            description="TODO",
+            alias="%PCutout",
+        )]
+    efficiency: Annotated[
+        float,
+        Field(
+            title="Efficiency",
+            description="TODO",
+            alias="Efficiency",
+        )]
+    priority: Annotated[
+        str,
+        Field(
+            title="Priority",
+            description="TODO",
+            alias="Priority",
+        )]
+    damp_coef: Annotated[
+        float,
+        Field(
+            title="DampCoef",
+            description="TODO",
+            alias="DampCoef",
+        )]
 
     @staticmethod
     def get_controller_class():

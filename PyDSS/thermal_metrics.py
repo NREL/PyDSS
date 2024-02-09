@@ -2,11 +2,9 @@ import logging
 import math
 import os
 from collections import defaultdict
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Annotated, Optional
 
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 from PyDSS.utils.simulation_utils import CircularBufferHelper
 from PyDSS.utils.utils import dump_data, load_data
@@ -21,42 +19,69 @@ class ThermalMetricsBaseModel(BaseModel):
 
 
 class ThermalMetricsModel(ThermalMetricsBaseModel):
-    max_instantaneous_loadings_pct: Dict[str, float] = Field(
-        title="max_instantaneous_loadings_pct",
-        description="maximum instantaneous loading percent for each element",
-    )
-    max_instantaneous_loading_pct: float = Field(
-        title="max_instantaneous_loading_pct",
-        description="maximum instantaneous loading percent overall",
-    )
-    max_moving_average_loadings_pct: Dict[str, float] = Field(
-        title="max_moving_average_loadings_pct",
-        description="maximum moving average loading percent for each element",
-    )
-    max_moving_average_loading_pct: float = Field(
-        title="max_moving_average_loading_pct",
-        description="maximum moving average loading percent overall",
-    )
-    window_size_hours: int = Field(
-        title="window_size_hours",
-        description="window size used to calculate the moving average",
-    )
-    num_time_points_with_instantaneous_violations: int = Field(
-        title="num_time_points_with_instantaneous_violations",
-        description="number of time points where the instantaneous threshold was violated",
-    )
-    num_time_points_with_moving_average_violations: int = Field(
-        title="num_time_points_with_moving_average_violations",
-        description="number of time points where the moving average threshold was violated",
-    )
-    instantaneous_threshold: int = Field(
-        title="instantaneous_threshold",
-        description="instantaneous threshold",
-    )
-    moving_average_threshold: int = Field(
-        title="moving_average_threshold",
-        description="moving average threshold",
-    )
+    max_instantaneous_loadings_pct: Annotated[
+        Dict[str, float],
+        Field(
+            {},
+            title="max_instantaneous_loadings_pct",
+            description="maximum instantaneous loading percent for each element",
+        )]
+    max_instantaneous_loading_pct: Annotated[
+        float,
+        Field(
+            default = 120,
+            title="max_instantaneous_loading_pct",
+            description="maximum instantaneous loading percent overall",
+        )]
+    max_moving_average_loadings_pct: Annotated[
+        Dict[str, float],
+        Field(
+            {},
+            title="max_moving_average_loadings_pct",
+            description="maximum moving average loading percent for each element",
+        )]
+    max_moving_average_loading_pct: Annotated[
+        float,
+        Field(
+            100,
+            title="max_moving_average_loading_pct",
+            description="maximum moving average loading percent overall",
+        )]
+    window_size_hours: Annotated[
+        Optional[int],
+        Field(
+            None,
+            title="window_size_hours",
+            description="window size used to calculate the moving average",
+        )]
+    num_time_points_with_instantaneous_violations: Annotated[
+        Optional[int],
+        Field(
+            None,
+            title="num_time_points_with_instantaneous_violations",
+            description="number of time points where the instantaneous threshold was violated",
+        )]
+    num_time_points_with_moving_average_violations: Annotated[
+        Optional[int],
+        Field(
+            None,
+            title="num_time_points_with_moving_average_violations",
+            description="number of time points where the moving average threshold was violated",
+        )]
+    instantaneous_threshold: Annotated[
+        Optional[int],
+        Field(
+            None,
+            title="instantaneous_threshold",
+            description="instantaneous threshold",
+        )]
+    moving_average_threshold: Annotated[
+        Optional[int],
+        Field(
+            None,
+            title="moving_average_threshold",
+            description="moving average threshold",
+        )]
 
 
 def compare_thermal_metrics(metrics1: ThermalMetricsModel, metrics2: ThermalMetricsModel, rel_tol=0.001):
