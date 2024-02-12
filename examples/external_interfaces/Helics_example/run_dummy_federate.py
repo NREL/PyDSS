@@ -69,5 +69,5 @@ h.helicsFederateFinalize(vfed)
 while h.helicsBrokerIsConnected(broker):
     time.sleep(1)
 
-h.helicsFederateFree(vfed)
+h.helicsFederateDisconnect(vfed)
 h.helicsCloseLibrary()

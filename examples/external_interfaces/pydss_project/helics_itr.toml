@@ -69,7 +69,3 @@ Uninterruptible = true
 
 [MonteCarlo]
 "Number of Monte Carlo scenarios" = -1
-
-[Plots]
-"Create dynamic plots" = false
-"Open plots in browser" = true

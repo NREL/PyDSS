@@ -15,16 +15,8 @@
 "DSS File Absolute Path" = false
 "Return Results" = false
 
-# [[Project.Scenarios]]
-# name = "helics"
-# post_process_infos = []
-
-# [[Project.Scenarios]]
-# name = "python"
-# post_process_infos = []
-
 [[Project.Scenarios]]
-name = "helics"
+name = "socket"
 post_process_infos = []
 
 [Exports]
@@ -49,7 +41,7 @@ post_process_infos = []
 "Percentage load in series" = 50.0
 
 [Helics]
-"Co-simulation Mode" = true
+"Co-simulation Mode" = false
 "Federate name" = "PyDSS"
 "Time delta" = 0.01
 "Core type" = "zmq"
