@@ -93,6 +93,7 @@ Additional Documentation
    Result management
    reports
    hdf-data-format
+   controllers
    PyDSS
    
 License

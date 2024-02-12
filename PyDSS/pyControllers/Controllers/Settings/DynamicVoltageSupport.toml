@@ -1,0 +1,33 @@
+[DVS_test]
+"Trv" = 0.001
+"dbd1" = -0.12
+"dbd2" = 0.1
+"Kqv" = 100
+"iqh1" = 1.1
+"iql1" = -1.1
+"kvar_max" = 0.44
+"kvar_min" = -0.44
+"capacitive_support" = true
+"inductive_support" = true
+"post_fault_reset" = 1
+"overvoltage_kva_limited" = true
+"current_limited_error_tolerance" = 0.0001
+"priority" = "var"
+"Use with Voltage Ride Through" = false
+
+[DVS_VRT_test]
+"Trv" = 0.001
+"dbd1" = -0.1
+"dbd2" = 0.1
+"Kqv" = 100
+"iqh1" = 1.1
+"iql1" = -1.1
+"kvar_max" = 0.44
+"kvar_min" = -0.44
+"capacitive_support" = true
+"inductive_support" = true
+"post_fault_reset" = 1
+"overvoltage_kva_limited" = true
+"current_limited_error_tolerance" = 0.0001
+"priority" = "var"
+"Use with Voltage Ride Through" = true

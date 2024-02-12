@@ -55,21 +55,22 @@ class PvVoltageRideThru(ControllerAbstract):
 
         # Initializing the model
         PvObj.SetParameter('kvar', 0)
-        self.__Srated = float(PvObj.SetParameter('kva', Settings['kVA']))
-        self.__Prated = float(PvObj.SetParameter('kW', Settings['maxKW']))
-        self.__minQ = float(PvObj.SetParameter('minkvar', -Settings['KvarLimit']))
-        self.__maxQ = float(PvObj.SetParameter('maxkvar', Settings['KvarLimit']))
+        self.__Srated = float(PvObj.GetParameter('kva'))
+        self.__Prated = float(PvObj.GetParameter('kw'))
+        self._ControlledElm.SetParameter('Class', 0) #ECMP
+        self.__minQ = -self.__Srated*0.44
+        self.__maxQ = self.__Srated*0.44
 
         # MISC settings
         self.__cutin = Settings['%PCutin']
         self.__cutout = Settings['%PCutout']
         self.__trip_deadtime_sec = Settings['Reconnect deadtime - sec']
         self.__Time_to_Pmax_sec = Settings['Reconnect Pmax time - sec']
-        self.__Prated = Settings['maxKW']
         self.__priority = Settings['Priority']
         self.__enablePFlimit = Settings['Enable PF limit']
         self.__minPF = Settings['pfMin']
         self.__UcalcMode = Settings['UcalcMode']
+        self.__use_with_dynamic_voltage_support = Settings['Use with Dynamic Voltage Support']
         # initialize deadtimes and other variables
         self.__initializeRideThroughSettings()
         if self.__Settings["Follow standard"] == "1547-2003":
@@ -246,9 +247,10 @@ class PvVoltageRideThru(ControllerAbstract):
             print("User defined setting outside of IEEE 1547 acceptable range.")
             assert False
 
-        self._ControlledElm.SetParameter('Model', '7')
-        self._ControlledElm.SetParameter('Vmaxpu', V[0])
-        self._ControlledElm.SetParameter('Vminpu', V[1])
+        if not self.__use_with_dynamic_voltage_support:
+            self._ControlledElm.SetParameter('Model', '7')
+            self._ControlledElm.SetParameter('Vmaxpu', V[0])
+            self._ControlledElm.SetParameter('Vminpu', V[1])
 
         ContineousPoints = [Point(V[0], 0), Point(V[0], tMax), Point(V[1], tMax), Point(V[1], 0)]
         ContineousRegion = Polygon([[p.y, p.x] for p in ContineousPoints])
@@ -300,12 +302,11 @@ class PvVoltageRideThru(ControllerAbstract):
                 self.TripRegion = unary_union([OVtripRegion, UVtripRegion])
             else:
                 self.CurrLimRegion = MandatoryRegion
+
                 self.MomentarySucessionRegion = unary_union([PermissiveOVRegion, PermissiveUVRegion])
                 self.TripRegion = unary_union([OVtripRegion, UVtripRegion, MayTripRegion])
+
         self.NormalRegion = ContineousRegion
-        
-        
-        
         return V, T
 
     def Update(self, Priority, Time, Update):
@@ -374,7 +375,12 @@ class PvVoltageRideThru(ControllerAbstract):
         """
         if uIn < 0.88:
             if self.__isConnected:
-                self.__Trip(30.0, 0.4, False)
+                self.__Trip(
+                            Deadtime=30, 
+                            Time2Pmax=0.4, 
+                            forceTrip=False, 
+                            permissive_to_trip=False
+                            )
         return
 
     def VoltageRideThrough(self, uIn):
@@ -426,7 +432,12 @@ class PvVoltageRideThru(ControllerAbstract):
         if not self.__isConnected:
             uIn = self._ControlledElm.GetVariable('VoltagesMagAng')[::2]
             uBase = self._ControlledElm.sBus[0].GetVariable('kVBase') * 1000
-            uIn = max(uIn) / uBase if self.__UcalcMode == 'Max' else sum(uIn) / (uBase * len(uIn))
+            if self.__UcalcMode == 'Max':
+                uIn = max(uIn) / uBase
+            elif self.__UcalcMode == 'Min': 
+                uIn = min(uIn) / uBase
+            else: 
+                uIn = sum(uIn) / (uBase * len(uIn))
             if self.useAvgVoltage:
                 self.voltage = self.voltage[1:] + self.voltage[:1]
                 self.voltage[0] = uIn
@@ -435,6 +446,7 @@ class PvVoltageRideThru(ControllerAbstract):
             if uIn < self.__rVs[0] and uIn > self.__rVs[1] and deadtime >= self.__TrippedDeadtime:
                 
                 self._ControlledElm.SetParameter('enabled', True)
+                self._ControlledElm.SetParameter('Class', 0)
                 self.__isConnected = True
                 self._ControlledElm.SetParameter('kw', 0)
                 self.__ReconnStartTime = self.__dssSolver.GetDateTime()
@@ -454,8 +466,11 @@ class PvVoltageRideThru(ControllerAbstract):
         #if self.Time >1:
         
         if self.__isConnected or forceTrip:
-            print(self._ControlledElm.GetInfo(), uIn, uBase)
-            self._ControlledElm.SetParameter('enabled', False)
+
+            self._ControlledElm.SetParameter('kw', 0)
+            self._ControlledElm.SetParameter('kvar', 0)
+            self._ControlledElm.SetParameter('Class', 1)
+
 
             self.__isConnected = False
             self.__TrippedStartTime = self.__dssSolver.GetDateTime()
@@ -463,8 +478,11 @@ class PvVoltageRideThru(ControllerAbstract):
             self.__TrippedDeadtime = Deadtime
             
         elif permissive_to_trip:
-            print(self._ControlledElm.GetInfo(), uIn, uBase)
-            self._ControlledElm.SetParameter('enabled', False)
+
+            self._ControlledElm.SetParameter('kw', 0)
+            self._ControlledElm.SetParameter('kvar', 0)
+            self._ControlledElm.SetParameter('Class', 1)
+
 
             self.__isConnected = False
             self.__TrippedStartTime = self.__dssSolver.GetDateTime()
@@ -475,7 +493,12 @@ class PvVoltageRideThru(ControllerAbstract):
     def __UpdateViolatonTimers(self):
         uIn = self._ControlledElm.GetVariable('VoltagesMagAng')[::2]
         uBase = self._ControlledElm.sBus[0].GetVariable('kVBase') * 1000
-        uIn = max(uIn) / uBase if self.__UcalcMode == 'Max' else sum(uIn) / (uBase * len(uIn))
+        if self.__UcalcMode == 'Max':
+            uIn = max(uIn) / uBase
+        elif self.__UcalcMode == 'Min': 
+            uIn = min(uIn) / uBase
+        else: 
+            uIn = sum(uIn) / (uBase * len(uIn)) 
         if self.useAvgVoltage:
             self.voltage = self.voltage[1:] + self.voltage[:1]
             self.voltage[0] = uIn

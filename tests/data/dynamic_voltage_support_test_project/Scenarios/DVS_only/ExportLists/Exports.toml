@@ -1,0 +1,3 @@
+[Generators.kvar]
+publish = true
+store_values_type = "all"
