@@ -91,6 +91,7 @@ Additional Documentation
    reports
    hdf-data-format
    co-simulation_support
+   controllers_overview
    
 License
 =======

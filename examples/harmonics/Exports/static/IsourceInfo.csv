@@ -1,0 +1,2 @@
+,Bus2,Daily,Duty,Yearly,amps,angle,basefreq,bus1,enabled,frequency,like,phases,scantype,sequence,spectrum
+Isource.scansource,83.0.0.0,,,,1,0,60,83,Yes,60,,3,Positive,Positive,scanspec

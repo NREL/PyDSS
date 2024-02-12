@@ -1,4 +1,4 @@
-PyDSS.pyPostprocessor.PostprocessScripts
+﻿PyDSS.pyPostprocessor.PostprocessScripts
 ========================================
 
 .. automodule:: PyDSS.pyPostprocessor.PostprocessScripts
@@ -30,5 +30,4 @@ PyDSS.pyPostprocessor.PostprocessScripts
    PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer
    PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules
    PyDSS.pyPostprocessor.PostprocessScripts.EdLiFoControl
-   PyDSS.pyPostprocessor.PostprocessScripts.Utilidata_Interface
 
