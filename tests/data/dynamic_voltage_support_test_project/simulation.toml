@@ -11,7 +11,7 @@
 "Project Path" = "./tests/data"
 "Active Project" = "dynamic_voltage_support_test_project"
 "Active Scenario" = ""
-"DSS File" = "Master.DSS"
+"DSS File" = "Master.dss"
 "DSS File Absolute Path" = false
 use_controller_registry = true
 
