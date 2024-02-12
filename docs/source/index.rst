@@ -88,7 +88,6 @@ Additional Documentation
    tutorial
    interfaces
    project_layout
-   Result management
    reports
    hdf-data-format
    co-simulation_support

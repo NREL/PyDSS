@@ -310,7 +310,7 @@ class ThermalMetrics:
 
         filename = os.path.join(path, "thermal_metrics.json")
         with open(filename, "w") as f_out:
-            f_out.write(summary.json(indent=2))
+            f_out.write(summary.model_dump_json(indent=2))
             f_out.write("\n")
         logger.info("Generated thermal metric report in %s", filename)
 

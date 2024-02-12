@@ -554,7 +554,7 @@ class NodeVoltageMetrics:
 
         filename = Path(path) / self.FILENAME
         with open(filename, "w") as f_out:
-            f_out.write(metrics.json())
+            f_out.write(metrics.model_dump_json())
             f_out.write("\n")
 
     def increment_steps(self):

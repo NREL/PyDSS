@@ -67,7 +67,16 @@ class SnapshotTimePointSelectionConfigModel(InputsBaseModel):
         description="Duration in minutes to search in the load shape profiles",
         default=1440.0,
     )]
-
+    
+    @field_validator('start_time', mode="before")
+    @classmethod
+    def double(cls, v: str) -> str:
+        if isinstance(v, str):
+            if "T" in v:
+                v = datetime.fromisoformat(v)
+            else: 
+                v = datetime.strptime(v, DATE_FORMAT)
+        return v 
 
 class ScenarioPostProcessModel(InputsBaseModel):
     """Defines user inputs for a scenario post-process script."""
@@ -140,15 +149,15 @@ class ProjectModel(InputsBaseModel):
     project_path: Annotated[
         Optional[Path],
         Field(
-            ".",
+            None,
             title="project_path",
             description="Base path of project. Join with 'active_project' to get full path",
             alias="Project Path",
         )]
     active_project: Annotated[
-        str,
+        Optional[str],
         Field(
-            ...,
+            None,
             title="active_project",
             description="Active project name. Join with 'project_path' to get full path",
             alias="Active Project",
@@ -162,7 +171,7 @@ class ProjectModel(InputsBaseModel):
             internal=True,
         )]
     scenarios: Annotated[
-        List[ScenarioModel],
+        Optional[List[ScenarioModel]],
         Field(
             title="scenarios",
             description="List of scenarios",
@@ -306,6 +315,16 @@ class ProjectModel(InputsBaseModel):
             default=False,
         )]
 
+    @field_validator('start_time', 'loadshape_start_time', mode="before")
+    @classmethod
+    def double(cls, v: str) -> str:
+        if isinstance(v, str):
+            if "T" in v:
+                v = datetime.fromisoformat(v)
+            else: 
+                v = datetime.strptime(v, DATE_FORMAT)
+        return v 
+    
     @model_validator(mode="before")
     @classmethod
     def pre_process(cls, values):
@@ -341,7 +360,7 @@ class ProjectModel(InputsBaseModel):
     # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator("active_project")
     def check_active_project(cls, val, values):
-        if values.get("project_path") is None:
+        if values.get("project_path") is None or val is None:
             return None
             
         active_project_path = values["project_path"] / val
@@ -353,7 +372,7 @@ class ProjectModel(InputsBaseModel):
     # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator("active_project_path")
     def assign_active_project_path(cls, val, values):
-        if "project_path" in values and "active_project" in values:
+        if "project_path" in values and "active_project" in values and values["active_project"] is not None:
             return values["project_path"] / values["active_project"]
         
         return val

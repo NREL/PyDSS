@@ -7,6 +7,6 @@ simulate cyber phsical interactions by coupling multiple domain scepific tools. 
 certain pros and cons detailed in the documentation pages.
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
   
    Co-simulation Interfaces

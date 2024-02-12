@@ -100,7 +100,7 @@ class VoltageMetrics(ReportBase):
 
         filename = os.path.join(output_dir, self.FILENAME)
         with open(filename, "w") as f_out:
-            f_out.write(model.json(indent=2))
+            f_out.write(model.model_dump_json(indent=2))
             f_out.write("\n")
 
         logger.info("Generated %s", filename)

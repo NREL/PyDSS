@@ -78,15 +78,15 @@ exclude_patterns = []
 # a list of builtin themes.
 #
 #html_theme = 'classic'
-html_theme = 'sphinx_rtd_theme'
-#html_theme = 'furo'
+#tml_theme = 'sphinx_rtd_theme'
+html_theme = 'furo'
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
-html_theme_options = {
-    'collapse_navigation': False,
-    'sticky_navigation': True,
-    'titles_only': False
-}
+# html_theme_options = {
+#     'collapse_navigation': False,
+#     'sticky_navigation': True,
+#     'titles_only': False
+# }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

@@ -3,6 +3,7 @@ import os
 import shutil
 import tarfile
 import zipfile
+import tempfile
 from pathlib import Path
 
 import opendssdirect as dss

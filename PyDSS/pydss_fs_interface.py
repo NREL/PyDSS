@@ -382,7 +382,7 @@ class PyDssArchiveFileInterfaceBase(PyDssFileSystemInterface):
             scenario_name,
             "metadata.json",
         )
-        if not self.exists(filename):
+        if not self.exists(self.normalize_path(filename)):
             return {}
         return self._load_data(filename)
 
@@ -402,7 +402,8 @@ class PyDssArchiveFileInterfaceBase(PyDssFileSystemInterface):
 class PyDssTarFileInterface(PyDssArchiveFileInterfaceBase):
     """Reads PyDSS files when the project is archived in tar file."""
     def __init__(self, project_dir):
-        self._tar = tarfile.open(os.path.join(project_dir, PROJECT_TAR))
+        tar_path = os.path.join(project_dir, PROJECT_TAR)
+        self._tar = tarfile.open(tar_path)
         super(PyDssTarFileInterface, self).__init__(project_dir)
 
     def __del__(self):
@@ -419,6 +420,8 @@ class PyDssTarFileInterface(PyDssArchiveFileInterfaceBase):
 
     def read_csv(self, path):
         return pd.read_csv(self._tar.extractfile(os.path.normpath(path).replace("\\", "/")))
+
+
 
 
 class PyDssZipFileInterface(PyDssArchiveFileInterfaceBase):
