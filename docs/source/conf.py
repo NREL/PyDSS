@@ -10,17 +10,18 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+# from pathlib import Path
 import os
 import io
-import os
 import re
+# import sys
 
-# my_path = os.path.abspath('../../PyDSS')
+# my_path = os.path.abspath('../PyDSS')
 # print(f"{my_path=}")
-# sys.path.insert(0, os.path.abspath('../../PyDSS'))
+# sys.path.insert(0, os.path.abspath('../PyDSS'))
 
 import sphinx_rtd_theme
-import PyDSS
+# import PyDSS
 # import PyDSS
 # import PyDSS.simulation_input_models
 #from PyDSS.simulation_input_models import SimulationSettingsModel, ProjectModel
@@ -59,8 +60,8 @@ extensions = [
     'sphinx.ext.autosectionlabel', 'sphinx.ext.githubpages', 'sphinx.ext.todo', "sphinxcontrib.autodoc_pydantic",
     'sphinx.ext.todo', 'sphinx.ext.autosummary', 'sphinx.ext.extlinks',
     'sphinx.ext.autodoc', 'sphinx.ext.coverage', 'sphinx.ext.doctest',
-    'sphinx.ext.inheritance_diagram', 'sphinx.ext.imgmath',
-    'sphinx.ext.autodoc', 'sphinx.ext.viewcode',
+    'sphinx.ext.inheritance_diagram', 'sphinx.ext.imgmath', "sphinx_enum_extend",
+    'sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'enum_tools.autoenum',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

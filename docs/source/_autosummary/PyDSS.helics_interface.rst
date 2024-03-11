@@ -1,4 +1,4 @@
-PyDSS.helics\_interface
+﻿PyDSS.helics\_interface
 =======================
 
 .. automodule:: PyDSS.helics_interface
@@ -17,7 +17,6 @@ PyDSS.helics\_interface
 
    .. autosummary::
    
-      DataType
       helics_interface
    
    

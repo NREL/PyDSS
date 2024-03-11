@@ -19,10 +19,7 @@ from PyDSS.SolveMode import get_solver_from_simulation_type
 from PyDSS.simulation_input_models import ProjectModel
 from PyDSS.modes.solver_base import solver_base
 
-
-
 logger = logging.getLogger(__name__)
-
 
 class ControllerBaseModel(BaseModel, abc.ABC):
     model_config = ConfigDict(title="ControllerBaseModel", str_strip_whitespace=True, validate_assignment=True, validate_default=True, extra="forbid", use_enum_values=False, populate_by_name=True)

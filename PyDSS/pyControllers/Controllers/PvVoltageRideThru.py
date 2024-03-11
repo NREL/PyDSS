@@ -1,9 +1,12 @@
-from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
 from shapely.geometry import MultiPoint, Polygon, Point, MultiPolygon
 from shapely.ops import triangulate, unary_union
 import datetime
 import math
-import os
+
+from PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
+from PyDSS.pyControllers.models import PvVoltageRideThruModel
+from PyDSS.pyControllers.enumerations import PvStandard, VoltageCalcModes, RideThroughCategory, PermissiveOperation, MayTripOperation, MultipleDisturbances
+
 
 class PvVoltageRideThru(ControllerAbstract):
     """Implementation of IEEE1547-2003 and IEEE1547-2018 voltage ride-through standards using the OpenDSS Generator model. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
@@ -18,139 +21,121 @@ class PvVoltageRideThru(ControllerAbstract):
             :type ElmObjectList: dict
             :param dssSolver: An instance of one of the classed defined in :mod:`PyDSS.SolveMode`.
             :type dssSolver: :mod:`PyDSS.SolveMode`
-            :raises: AssertionError if 'PvObj' is not a wrapped OpenDSS Generator element
+            :raises: Assertionerror if 'PvObj' is not a wrapped OpenDSS Generator element
 
     """
 
     def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
         super(PvVoltageRideThru, self).__init__(PvObj, Settings, dssInstance, ElmObjectList, dssSolver)
 
-        self.TimeChange = False
-        self.Time = (-1, 0)
+        self.model = PvVoltageRideThruModel(**Settings)
+        
+        self.time_change = False
+        self.time = (-1, 0)
 
-        self.oldPcalc = 0
-        self.oldQcalc = 0
-        self.Qpvpu = 0
-        self. __vDisconnected = False
-        self.__pDisconnected = False
-
-        self.__ElmObjectList = ElmObjectList
         self.ControlDict = {
             'None': lambda: 0,
         }
 
-        self._ControlledElm = PvObj
-        self.__ElmObjectList = ElmObjectList
-        self.__dssInstance = dssInstance
+        self._controlled_element = PvObj
         self.__dssSolver = dssSolver
-        self.__Settings = Settings
 
-        self.Class, self.Name = self._ControlledElm.GetInfo()
-        assert (self.Class.lower() == 'generator'), 'PvControllerGen works only with an OpenDSS Generator element'
-        self.__Name = 'pyCont_' + self.Class + '_' + self.Name
-        if '_' in self.Name:
-            self.Phase = self.Name.split('_')[1]
+        self.object_type, self.object_name = self._controlled_element.GetInfo()
+        assert (self.object_type.lower() == 'generator'), 'PvControllerGen works only with an OpenDSS Generator element'
+        self._name = 'pyCont_' + self.object_type + '_' + self.object_name
+        if '_' in self.object_name:
+            self.phase = self.object_name.split('_')[1]
         else:
-            self.Phase = None
+            self.phase = None
 
         # Initializing the model
         PvObj.SetParameter('kvar', 0)
-        self.__Srated = float(PvObj.SetParameter('kva', Settings['kVA']))
-        self.__Prated = float(PvObj.SetParameter('kW', Settings['maxKW']))
-        self.__minQ = float(PvObj.SetParameter('minkvar', -Settings['KvarLimit']))
-        self.__maxQ = float(PvObj.SetParameter('maxkvar', Settings['KvarLimit']))
+        PvObj.SetParameter('kva', self.model.kva)
+        self._p_rated = float(PvObj.SetParameter('kW', self.model.max_kw))
 
         # MISC settings
-        self.__cutin = Settings['%PCutin']
-        self.__cutout = Settings['%PCutout']
-        self.__trip_deadtime_sec = Settings['Reconnect deadtime - sec']
-        self.__Time_to_Pmax_sec = Settings['Reconnect Pmax time - sec']
-        self.__Prated = Settings['maxKW']
-        self.__priority = Settings['Priority']
-        self.__enablePFlimit = Settings['Enable PF limit']
-        self.__minPF = Settings['pfMin']
-        self.__UcalcMode = Settings['UcalcMode']
+        self._trip_deadtime_sec = self.model.reconnect_deadtime_sec
+        self._time_to_p_max_sec = self.model.reconnect_pmax_time_sec
+        self._p_rated = self.model.max_kw
+        self._voltage_calc_mode = self.model.voltage_calc_mode
         # initialize deadtimes and other variables
-        self.__initializeRideThroughSettings()
-        if self.__Settings["Follow standard"] == "1547-2003":
-            self.__rVs = [1.10, 0.88]
+        self._initialize_ride_through_settings()
+        if self.model.follow_standard == PvStandard.IEEE_1547_2003:
+            self._rvs = [1.10, 0.88]
         else:
-            self.__rVs, self.__rTs = self.__CreateOperationRegions()
+            self._rvs, _= self._create_operation_regions()
 
         # For debugging only
-        self.useAvgVoltage = False
-        cycleAvg = 5
+        self.use_avg_voltage = False
+        cycle_average = 5
         freq = dssSolver.getFrequency()
         step = dssSolver.GetStepSizeSec()
-        hist_size = math.ceil(cycleAvg / (step * freq))
+        hist_size = math.ceil(cycle_average / (step * freq))
         self.voltage = [1.0 for i in range(hist_size)]
         self.reactive_power = [0.0 for i in range(hist_size)]
-        self.__VoltVioM = False
-        self.__VoltVioP = False
+        self._voltage_violation_m = False
         
         self.region = [3, 3, 3]
         
-        self.voltage_hist = []
-        self.power_hist = []
-        self.timer_hist = []
-        self.timer_act_hist = []
+        # self.voltage_hist = []
+        # self.power_hist = []
+        # self.timer_hist = []
+        # self.timer_act_hist = []
         
         return
 
     def Name(self):
-        return self.__Name
+        return self._name
 
     def ControlledElement(self):
-        return "{}.{}".format(self.Class, self.Name)
+        return "{}.{}".format(self.object_type, self.object_name)
 
     def debugInfo(self):
-        return [self.__Settings['Control{}'.format(i+1)] for i in range(3)]
+        return []
 
-    def __initializeRideThroughSettings(self):
-        self.__isConnected = True
-        self.__Plimit = self.__Prated
-        self.__CutoffTime = self.__dssSolver.GetDateTime()
-        self.__ReconnStartTime = self.__dssSolver.GetDateTime() - datetime.timedelta(
-            seconds=int(self.__Time_to_Pmax_sec))
+    def _initialize_ride_through_settings(self):
+        self._is_connected = True
+        self._p_limit = self._p_rated
+        self._reconnect_start_time = self.__dssSolver.GetDateTime() - datetime.timedelta(
+            seconds=int(self._time_to_p_max_sec))
 
-        self.__TrippedPmaxDelay = 0
-        self.__NormOper = True
-        self.__NormOperStartTime = self.__dssSolver.GetDateTime()
-        self.__uViolationtime = 99999
-        self.__TrippedStartTime = self.__dssSolver.GetDateTime()
-        self.__TrippedDeadtime = 0
-        self.__faultCounter = 0
-        self.__isinContioeousRegion = True
-        self.__FaultwindowClearingStartTime = self.__dssSolver.GetDateTime()
+        self._tripped_p_max_delay = 0
+        self._normal_operation = True
+        self._normal_operation_start_time = self.__dssSolver.GetDateTime()
+        self._u_violation_time = 99999
+        self._tripped_start_time = self.__dssSolver.GetDateTime()
+        self._tripped_dead_time = 0
+        self._fault_counter = 0
+        self._is_in_contioeous_region = True
+        self._fault_window_clearing_start_time = self.__dssSolver.GetDateTime()
 
         return
 
-    def __CreateOperationRegions(self):
-        uMaxTheo = 10
-        tMax = 1e10
+    def _create_operation_regions(self):
+        u_max_theo = 10
+        t_max = 1e10
 
-
-        OVtripPoints = [
-            Point(uMaxTheo, self.__Settings['OV2 CT - sec']),
-            Point(self.__Settings['OV2 - p.u.'], self.__Settings['OV2 CT - sec']),
-            Point(self.__Settings['OV2 - p.u.'], self.__Settings['OV1 CT - sec']),
-            Point(self.__Settings['OV1 - p.u.'], self.__Settings['OV1 CT - sec']),
-            Point(self.__Settings['OV1 - p.u.'], tMax),
-            Point(uMaxTheo, tMax)
+        ov_trip_points = [
+            Point(u_max_theo, self.model.ov_2_ct_sec),
+            Point(self.model.ov_2_pu, self.model.ov_2_ct_sec),
+            Point(self.model.ov_2_pu, self.model.ov_1_ct_sec),
+            Point(self.model.ov_1_pu, self.model.ov_1_ct_sec),
+            Point(self.model.ov_1_pu, t_max),
+            Point(u_max_theo, t_max)
         ]
-        OVtripRegion = Polygon([[p.y, p.x] for p in OVtripPoints])
+        ov_trip_region = Polygon([[p.y, p.x] for p in ov_trip_points])
 
         UVtripPoints = [
-            Point(0, self.__Settings['UV2 CT - sec']),
-            Point(self.__Settings['UV2 - p.u.'], self.__Settings['UV2 CT - sec']),
-            Point(self.__Settings['UV2 - p.u.'], self.__Settings['UV1 CT - sec']),
-            Point(self.__Settings['UV1 - p.u.'], self.__Settings['UV1 CT - sec']),
-            Point(self.__Settings['UV1 - p.u.'], tMax),
-            Point(0, tMax)
+            Point(0, self.model.uv_2_ct_sec),
+            Point(self.model.uv_2_pu, self.model.uv_2_ct_sec),
+            Point(self.model.uv_2_pu, self.model.uv_1_ct_sec),
+            Point(self.model.uv_1_pu, self.model.uv_1_ct_sec),
+            Point(self.model.uv_1_pu, t_max),
+            Point(0, t_max)
         ]
-        UVtripRegion = Polygon([[p.y, p.x] for p in UVtripPoints])
+        uv_trip_region = Polygon([[p.y, p.x] for p in UVtripPoints])
 
-        if self.__Settings['Ride-through Category'] == 'Category I':
+        if self.model.ride_through_category == RideThroughCategory.CATEGORY_I:
             ov2pu_eq = 1.20
             ov2sec_eq = 0.16
             ov1pu_min = 1.1
@@ -168,10 +153,10 @@ class PvVoltageRideThru(ControllerAbstract):
     
             V = [1.10, 0.88, 0.7, 1.20, 1.175, 1.15, 0.5, 0.5]
             T = [1.5, 0.7, 0.2, 0.5, 1, 0.16, 0.16]
-            self.__faultCounterMax = 2
-            self.__faultCounterClearingTimeSec = 20
+            self._fault_counter_max = 2
+            self._fault_counter_clearing_time_sec = 20
 
-        elif self.__Settings['Ride-through Category'] == 'Category II':
+        elif self.model.ride_through_category == RideThroughCategory.CATEGORY_II:
             ov2pu_eq = 1.20
             ov2sec_eq = 0.16
             ov1pu_min = 1.1
@@ -189,10 +174,10 @@ class PvVoltageRideThru(ControllerAbstract):
 
             V = [1.10, 0.88, 0.65, 1.20, 1.175, 1.15, 0.45, 0.30]
             T = [5, 3, 0.2, 0.5, 1, 0.32, 0.16]
-            self.__faultCounterMax = 2
-            self.__faultCounterClearingTimeSec = 10
+            self._fault_counter_max = 2
+            self._fault_counter_clearing_time_sec = 10
 
-        elif self.__Settings['Ride-through Category'] == 'Category III':
+        elif self.model.ride_through_category == RideThroughCategory.CATEGORY_I:
             ov2pu_eq = 1.20
             ov2sec_eq = 0.16
             ov1pu_min = 1.1
@@ -210,289 +195,251 @@ class PvVoltageRideThru(ControllerAbstract):
 
             V = [1.10, 0.88, 0.5, 1.2, 1.2, 1.2, 0.0, 0.0]
             T = [21, 10, 13, 13, 13, 1, 1]
-            self.__faultCounterMax = 3
-            self.__faultCounterClearingTimeSec = 5
+            self._fault_counter_max = 3
+            self._fault_counter_clearing_time_sec = 5
 
         #check overvoltage points
-        if self.__Settings['OV2 - p.u.'] != ov2pu_eq:
+        if self.model.ov_2_pu != ov2pu_eq:
             #print("User defined setting outside of IEEE 1547 acceptable range.")
             assert False
 
-        if self.__Settings['OV2 CT - sec'] != ov2sec_eq:
+        
+        if self.model.ov_2_ct_sec != ov2sec_eq:
             #print("User defined setting outside of IEEE 1547 acceptable range.")
             assert False
 
-        if self.__Settings['OV1 - p.u.'] < ov1pu_min and self.__Settings['OV1 - p.u.'] > ov1pu_max:
+        if self.model.ov_1_pu < ov1pu_min and self.model.ov_1_pu > ov1pu_max:
             #print("User defined setting outside of IEEE 1547 acceptable range.")
             assert False
 
-        if self.__Settings['OV1 CT - sec'] < ov1sec_min and self.__Settings['OV1 CT - sec'] > ov1sec_max:
+        if self.model.ov_1_ct_sec < ov1sec_min and self.model.ov_1_ct_sec > ov1sec_max:
             #print("User defined setting outside of IEEE 1547 acceptable range.")
             assert False
         #check undervoltage points
-        if self.__Settings['UV2 - p.u.'] < uv2pu_min and self.__Settings['UV2 - p.u.'] > uv2pu_max:
+        if self.model.uv_2_pu < uv2pu_min and self.model.uv_2_pu > uv2pu_max:
             #print("User defined setting outside of IEEE 1547 acceptable range.")
             assert False
 
-        if self.__Settings['UV2 CT - sec'] < uv2sec_min and self.__Settings['UV2 CT - sec'] > uv2sec_max:
+        if self.model.uv_2_ct_sec < uv2sec_min and self.model.uv_2_ct_sec > uv2sec_max:
             #print("User defined setting outside of IEEE 1547 acceptable range.")
             assert False
 
-        if self.__Settings['UV1 - p.u.'] < uv1pu_min and self.__Settings['UV1 - p.u.'] > uv1pu_max:
+        if self.model.uv_1_pu < uv1pu_min and self.model.uv_1_pu > uv1pu_max:
             #print("User defined setting outside of IEEE 1547 acceptable range.")
             assert False
 
-        if self.__Settings['UV1 CT - sec'] <uv1sec_min and self.__Settings['UV1 CT - sec'] > uv1sec_max:
+        if self.model.uv_1_ct_sec <uv1sec_min and self.model.uv_1_ct_sec > uv1sec_max:
             #print("User defined setting outside of IEEE 1547 acceptable range.")
             assert False
 
-        self._ControlledElm.SetParameter('Model', '7')
-        self._ControlledElm.SetParameter('Vmaxpu', V[0])
-        self._ControlledElm.SetParameter('Vminpu', V[1])
+        self._controlled_element.SetParameter('Model', '7')
+        self._controlled_element.SetParameter('Vmaxpu', V[0])
+        self._controlled_element.SetParameter('Vminpu', V[1])
 
-        ContineousPoints = [Point(V[0], 0), Point(V[0], tMax), Point(V[1], tMax), Point(V[1], 0)]
-        ContineousRegion = Polygon([[p.y, p.x] for p in ContineousPoints])
+        contineous_points = [Point(V[0], 0), Point(V[0], t_max), Point(V[1], t_max), Point(V[1], 0)]
+        contineous_region = Polygon([[p.y, p.x] for p in contineous_points])
 
-        MandatoryPoints = [Point(V[1], 0), Point(V[1], T[0]), Point(V[2], T[1]), Point(V[2], 0)]
-        MandatoryRegion = Polygon([[p.y, p.x] for p in MandatoryPoints])
+        mandatory_points = [Point(V[1], 0), Point(V[1], T[0]), Point(V[2], T[1]), Point(V[2], 0)]
+        mandatory_region = Polygon([[p.y, p.x] for p in mandatory_points])
 
-        PermissiveOVPoints = [Point(V[3], 0), Point(V[3], T[2]), Point(V[4], T[2]), Point(V[4], T[3]),
+        permissive_ov_points = [Point(V[3], 0), Point(V[3], T[2]), Point(V[4], T[2]), Point(V[4], T[3]),
                               Point(V[5], T[3]),
                               Point(V[5], T[4]), Point(V[0], T[4]), Point(V[0], 0.0)]
-        PermissiveOVRegion = Polygon([[p.y, p.x] for p in PermissiveOVPoints])
+        permissive_ov_region = Polygon([[p.y, p.x] for p in permissive_ov_points])
 
-        PermissiveUVPoints = [Point(V[2], 0), Point(V[2], T[5]), Point(V[6], T[5]), Point(V[6], T[6]),
+        permissive_uv_points = [Point(V[2], 0), Point(V[2], T[5]), Point(V[6], T[5]), Point(V[6], T[6]),
                               Point(V[7], T[6]), Point(V[7], 0)]
-        PermissiveUVRegion = Polygon([[p.y, p.x] for p in PermissiveUVPoints])
+        permissive_uv_region = Polygon([[p.y, p.x] for p in permissive_uv_points])
 
-        ActiveRegion = MultiPolygon([OVtripRegion, UVtripRegion, ContineousRegion, MandatoryRegion,
-                                     PermissiveOVRegion, PermissiveUVRegion])
+        active_region = MultiPolygon([ov_trip_region, uv_trip_region, contineous_region, mandatory_region,
+                                     permissive_ov_region, permissive_uv_region])
 
-        TotalPoints = [Point(uMaxTheo, 0), Point(uMaxTheo, tMax), Point(0, tMax), Point(0, 0)]
-        TotalRegion = Polygon([[p.y, p.x] for p in TotalPoints])
-        intersection = TotalRegion.intersection(ActiveRegion)
-        MayTripRegion = TotalRegion.difference(intersection)
+        total_points = [Point(u_max_theo, 0), Point(u_max_theo, t_max), Point(0, t_max), Point(0, 0)]
+        total_region = Polygon([[p.y, p.x] for p in total_points])
+        intersection = total_region.intersection(active_region)
+        may_trip_region = total_region.difference(intersection)
 
-        if self.__Settings['Ride-through Category'] in ['Category I', 'Category II']:
-            if self.__Settings['Permissive operation'] == 'Current limited':
-                if self.__Settings['May trip operation'] == 'Permissive operation':
-                    self.CurrLimRegion = unary_union(
-                        [PermissiveOVRegion, PermissiveUVRegion, MandatoryRegion, MayTripRegion])
-                    self.MomentarySucessionRegion = None
-                    self.TripRegion = unary_union([OVtripRegion, UVtripRegion])
+        if self.model.ride_through_category in [RideThroighCategory.CATEGORY_I, RideThroighCategory.CATEGORY_II]:
+            if self.model.permissive_operation ==  PermissiveOperation.CURRENT_LIMITED:
+                if self.model.may_trip_operation == MayTripOperation.PERMISSIVE_OPERATION:
+                    self.curr_lim_region = unary_union(
+                        [permissive_ov_region, permissive_uv_region, mandatory_region, may_trip_region])
+                    self.momentary_sucession_region = None
+                    self.trip_region = unary_union([ov_trip_region, uv_trip_region])
                 else:
-                    self.CurrLimRegion = unary_union([PermissiveOVRegion, PermissiveUVRegion, MandatoryRegion])
-                    self.MomentarySucessionRegion = None
-                    self.TripRegion = unary_union([OVtripRegion, UVtripRegion, MayTripRegion])
+                    self.curr_lim_region = unary_union([permissive_ov_region, permissive_uv_region, mandatory_region])
+                    self.momentary_sucession_region = None
+                    self.trip_region = unary_union([ov_trip_region, uv_trip_region, may_trip_region])
             else:
-                if self.__Settings['May trip operation'] == 'Permissive operation':
-                    self.CurrLimRegion = MandatoryRegion
-                    self.MomentarySucessionRegion = unary_union([PermissiveOVRegion, PermissiveUVRegion, MayTripRegion])
-                    self.TripRegion = unary_union([OVtripRegion, UVtripRegion])
+                if self.model.may_trip_operation == MayTripOperation.PERMISSIVE_OPERATION:
+                    self.curr_lim_region = mandatory_region
+                    self.momentary_sucession_region = unary_union([permissive_ov_region, permissive_uv_region, may_trip_region])
+                    self.trip_region = unary_union([ov_trip_region, uv_trip_region])
                 else:
-                    self.CurrLimRegion = MandatoryRegion
-                    self.MomentarySucessionRegion = unary_union([PermissiveOVRegion, PermissiveUVRegion])
-                    self.TripRegion = unary_union([OVtripRegion, UVtripRegion, MayTripRegion])
+                    self.curr_lim_region = mandatory_region
+                    self.momentary_sucession_region = unary_union([permissive_ov_region, permissive_uv_region])
+                    self.trip_region = unary_union([ov_trip_region, uv_trip_region, may_trip_region])
         else:
-            if self.__Settings['May trip operation'] == 'Permissive operation':
-                self.CurrLimRegion = MandatoryRegion
-                self.MomentarySucessionRegion = unary_union([PermissiveOVRegion, PermissiveUVRegion, MayTripRegion])
-                self.TripRegion = unary_union([OVtripRegion, UVtripRegion])
+            if self.model.may_trip_operation == MayTripOperation.PERMISSIVE_OPERATION:
+                self.curr_lim_region = mandatory_region
+                self.momentary_sucession_region = unary_union([permissive_ov_region, permissive_uv_region, may_trip_region])
+                self.trip_region = unary_union([ov_trip_region, uv_trip_region])
             else:
-                self.CurrLimRegion = MandatoryRegion
-                self.MomentarySucessionRegion = unary_union([PermissiveOVRegion, PermissiveUVRegion])
-                self.TripRegion = unary_union([OVtripRegion, UVtripRegion, MayTripRegion])
-        self.NormalRegion = ContineousRegion
+                self.curr_lim_region = mandatory_region
+                self.momentary_sucession_region = unary_union([permissive_ov_region, permissive_uv_region])
+                self.trip_region = unary_union([ov_trip_region, uv_trip_region, may_trip_region])
+        self.normal_region = contineous_region
         
         
         
         return V, T
 
-    def Update(self, Priority, Time, Update):
+    def Update(self, priority, time, update_results):
 
-        Error = 0
-        self.TimeChange = self.Time != (Priority, Time)
-        self.Time = Time
-        if Priority == 0:
-            self.__isConnected = self.__Connect()
+        error = 0
+        self.time_change = self.time != (priority, time)
+        self.time = time
+        if priority == 0:
+            self._is_connected = self._connect()
   
-        if Priority == 2:
-            uIn = self.__UpdateViolatonTimers()
-            if self.__Settings["Follow standard"] == "1547-2018":
-                self.VoltageRideThrough(uIn)
-            elif self.__Settings["Follow standard"] == "1547-2003":
-                self.Trip(uIn)
+        if priority == 2:
+            u_in = self._update_violaton_timers()
+            if self.model.follow_standard == PvStandard.IEEE_1547_2018:
+                self.voltage_ride_through(u_in)
+            elif self.model.follow_standard == PvStandard.IEEE_1547_2003:
+                self.trip(u_in)
             else:
                 raise Exception("Valid standard setting defined. Options are: 1547-2003, 1547-2018")
             
-            P = -sum(self._ControlledElm.GetVariable('Powers')[::2])
-            self.power_hist.append(P)
-            self.voltage_hist.append(uIn)
-            self.voltage_hist.append(uIn)
-            self.timer_hist.append(self.__uViolationtime)
-            self.timer_act_hist.append(self.__dssSolver.GetTotalSeconds())
-        # if self.Time == 59 and Priority==2:
-         
-        #     if hasattr(self, "CurrLimRegion"):
-            
-        #         import matplotlib.pyplot as plt
-        #         fig, (ax1, ax2) = plt.subplots(2,1)
+            P = -sum(self._controlled_element.GetVariable('Powers')[::2])
+            # self.power_hist.append(P)
+            # self.voltage_hist.append(u_in)
+            # self.timer_hist.append(self._u_violation_time)
+            # self.timer_act_hist.append(self.__dssSolver.GetTotalSeconds())
 
-        #         try:
-        #             models = [MultiPolygon([self.CurrLimRegion]), self.MomentarySucessionRegion, self.TripRegion, MultiPolygon([self.NormalRegion])]
-        #         except:
-        #             try:
-        #                 models = [self.CurrLimRegion, self.MomentarySucessionRegion, self.TripRegion, MultiPolygon([self.NormalRegion])]
-        #             except:
-        #                 try:
-        #                     models = [MultiPolygon([self.CurrLimRegion]), self.MomentarySucessionRegion, self.TripRegion, self.NormalRegion]
-        #                 except:
-        #                     models = [self.CurrLimRegion, self.MomentarySucessionRegion, self.TripRegion, self.NormalRegion]
-                        
-        #         models = [i for i in models if i is not None]            
-                
-        #         colors = ["orange", "grey", "red", "green"]
-        #         for m, c in zip(models, colors):
-        #             for geom in m.geoms:    
-        #                 xs, ys = geom.exterior.xy    
-        #                 ax1.fill(xs, ys, alpha=0.35, fc=c, ec='none')
-        #         ax1.set_xlim(0, 60)
-        #         ax1.set_ylim(0, 1.20)
-        #         ax1.scatter( self.timer_hist, self.voltage_hist)
-        #         ax3 = ax2.twinx()
-        #         ax2.set_ylabel('Power (kW) in green')
-        #         ax3.set_ylabel('Voltage (p.u.) in red')
-        #         ax2.plot(self.timer_act_hist[1:], self.power_hist[1:], c="green")
-        #         ax3.plot(self.timer_act_hist[1:], self.voltage_hist[1:], c="red")
-        #         fig.savefig(f"test.png")
-        #         quit()
+        return error
 
-        return Error
-
-    def Trip(self, uIn):
+    def trip(self, u_in):
         """ Implementation of the IEEE1587-2003 voltage ride-through requirements for inverter systems
         """
-        if uIn < 0.88:
-            if self.__isConnected:
-                self.__Trip(30.0, 0.4, False)
+        if u_in < 0.88:
+            if self._is_connected:
+                self._trip(30.0, 0.4, False)
         return
 
-    def VoltageRideThrough(self, uIn):
+    def voltage_ride_through(self, u_in):
         """ Implementation of the IEEE1587-2018 voltage ride-through requirements for inverter systems
         """
-        self.__faultCounterClearingTimeSec = 1
+        self._fault_counter_clearing_time_sec = 1
 
-        Pm = Point(self.__uViolationtime, uIn)
-        if Pm.within(self.CurrLimRegion):
+        Pm = Point(self._u_violation_time, u_in)
+        if Pm.within(self.curr_lim_region):
             region = 0
-            isinContioeousRegion = False
-        elif self.MomentarySucessionRegion and Pm.within(self.MomentarySucessionRegion):
+            is_in_contioeous_region = False
+        elif self.momentary_sucession_region and Pm.within(self.momentary_sucession_region):
             region = 1
-            isinContioeousRegion = False
-            self.__Trip(self.__dssSolver.GetStepSizeSec(), 0.4, False)
-        elif Pm.within(self.TripRegion):
+            is_in_contioeous_region = False
+            self._trip(self.__dssSolver.GetStepSizeSec(), 0.4, False)
+        elif Pm.within(self.trip_region):
             region = 2
-            isinContioeousRegion = False
+            is_in_contioeous_region = False
             if self.region == [3, 1, 1]:
-                self.__Trip(self.__trip_deadtime_sec, self.__Time_to_Pmax_sec, False, True)
+                self._trip(self._trip_deadtime_sec, self._time_to_p_max_sec, False, True)
             else: 
-                self.__Trip(self.__trip_deadtime_sec, self.__Time_to_Pmax_sec, False)
+                self._trip(self._trip_deadtime_sec, self._time_to_p_max_sec, False)
         else:
-            isinContioeousRegion = True
+            is_in_contioeous_region = True
             region = 3
             
         self.region = self.region[1:] + self.region[:1]
         self.region[0] = region
 
-        if isinContioeousRegion and not self.__isinContioeousRegion:
-            self.__FaultwindowClearingStartTime = self.__dssSolver.GetDateTime()
-        clearingTime = (self.__dssSolver.GetDateTime() - self.__FaultwindowClearingStartTime).total_seconds()
+        if is_in_contioeous_region and not self._is_in_contioeous_region:
+            self._fault_window_clearing_start_time = self.__dssSolver.GetDateTime()
+        clearing_time = (self.__dssSolver.GetDateTime() - self._fault_window_clearing_start_time).total_seconds()
 
-        if self.__isinContioeousRegion and not isinContioeousRegion:
-            if  clearingTime <= self.__faultCounterClearingTimeSec:
-                self.__faultCounter += 1
-                if self.__faultCounter > self.__faultCounterMax:
-                    if self.__Settings['Multiple disturbances'] == 'Trip':
-                        self.__Trip(self.__trip_deadtime_sec, self.__Time_to_Pmax_sec, True)
-                        self.__faultCounter = 0
+        if self._is_in_contioeous_region and not is_in_contioeous_region:
+            if  clearing_time <= self._fault_counter_clearing_time_sec:
+                self._fault_counter += 1
+                if self._fault_counter > self._fault_counter_max:
+                    if self.model.multiple_disturdances == MultipleDisturbances.TRIP: 
+                        self._trip(self._trip_deadtime_sec, self._time_to_p_max_sec, True)
+                        self._fault_counter = 0
                     else:
                         pass
-        if  clearingTime > self.__faultCounterClearingTimeSec and self.__faultCounter > 0:
-            self.__faultCounter = 0
-        self.__isinContioeousRegion = isinContioeousRegion
+        if  clearing_time > self._fault_counter_clearing_time_sec and self._fault_counter > 0:
+            self._fault_counter = 0
+        self._is_in_contioeous_region = is_in_contioeous_region
         return
 
-    def __Connect(self):
-        if not self.__isConnected:
-            uIn = self._ControlledElm.GetVariable('VoltagesMagAng')[::2]
-            uBase = self._ControlledElm.sBus[0].GetVariable('kVBase') * 1000
-            uIn = max(uIn) / uBase if self.__UcalcMode == 'Max' else sum(uIn) / (uBase * len(uIn))
-            if self.useAvgVoltage:
+    def _connect(self):
+        if not self._is_connected:
+            u_in = self._controlled_element.GetVariable('VoltagesMagAng')[::2]
+            u_base = self._controlled_element.sBus[0].GetVariable('kVBase') * 1000
+            u_in = max(u_in) / u_base if self._voltage_calc_mode == VoltageCalcModes.MAX else sum(u_in) / (u_base * len(u_in))
+            if self.use_avg_voltage:
                 self.voltage = self.voltage[1:] + self.voltage[:1]
-                self.voltage[0] = uIn
-                uIn = sum(self.voltage) / len(self.voltage)
-            deadtime = (self.__dssSolver.GetDateTime() - self.__TrippedStartTime).total_seconds()
-            if uIn < self.__rVs[0] and uIn > self.__rVs[1] and deadtime >= self.__TrippedDeadtime:
+                self.voltage[0] = u_in
+                u_in = sum(self.voltage) / len(self.voltage)
+            deadtime = (self.__dssSolver.GetDateTime() - self._tripped_start_time).total_seconds()
+            if u_in < self._rvs[0] and u_in > self._rvs[1] and deadtime >= self._tripped_dead_time:
                 
-                self._ControlledElm.SetParameter('enabled', True)
-                self.__isConnected = True
-                self._ControlledElm.SetParameter('kw', 0)
-                self.__ReconnStartTime = self.__dssSolver.GetDateTime()
+                self._controlled_element.SetParameter('enabled', True)
+                self._is_connected = True
+                self._controlled_element.SetParameter('kw', 0)
+                self._reconnect_start_time = self.__dssSolver.GetDateTime()
         else:
-            conntime = (self.__dssSolver.GetDateTime() - self.__ReconnStartTime).total_seconds()
-            self.__Plimit = conntime / self.__TrippedPmaxDelay * self.__Prated if conntime < self.__TrippedPmaxDelay \
-                else self.__Prated
-            self._ControlledElm.SetParameter('kw', self.__Plimit)
-        return self.__isConnected
+            conntime = (self.__dssSolver.GetDateTime() - self._reconnect_start_time).total_seconds()
+            self._p_limit = conntime / self._tripped_p_max_delay * self._p_rated if conntime < self._tripped_p_max_delay \
+                else self._p_rated
+            self._controlled_element.SetParameter('kw', self._p_limit)
+        return self._is_connected
 
-    def __Trip(self, Deadtime, Time2Pmax, forceTrip, permissive_to_trip=False):
+    def _trip(self, Deadtime, time2Pmax, forceTrip, permissive_to_trip=False):
         
-        uIn = self._ControlledElm.GetVariable('VoltagesMagAng')[::2]
-        uBase = self._ControlledElm.sBus[0].GetVariable('kVBase') * 1000
-        uIn = max(uIn) / uBase if self.__UcalcMode == 'Max' else sum(uIn) / (uBase * len(uIn))
-        
-        #if self.Time >1:
-        
-        if self.__isConnected or forceTrip:
-            self._ControlledElm.SetParameter('enabled', False)
+        u_in = self._controlled_element.GetVariable('VoltagesMagAng')[::2]
+        u_base = self._controlled_element.sBus[0].GetVariable('kVBase') * 1000
+        u_in = max(u_in) / u_base if self._voltage_calc_mode == VoltageCalcModes.MAX else sum(u_in) / (u_base * len(u_in))
 
-            self.__isConnected = False
-            self.__TrippedStartTime = self.__dssSolver.GetDateTime()
-            self.__TrippedPmaxDelay = Time2Pmax
-            self.__TrippedDeadtime = Deadtime
+        if self._is_connected or forceTrip:
+            self._controlled_element.SetParameter('enabled', False)
+
+            self._is_connected = False
+            self._tripped_start_time = self.__dssSolver.GetDateTime()
+            self._tripped_p_max_delay = time2Pmax
+            self._tripped_dead_time = Deadtime
             
         elif permissive_to_trip:
-            self._ControlledElm.SetParameter('enabled', False)
+            self._controlled_element.SetParameter('enabled', False)
 
-            self.__isConnected = False
-            self.__TrippedStartTime = self.__dssSolver.GetDateTime()
-            self.__TrippedPmaxDelay = Time2Pmax
-            self.__TrippedDeadtime = Deadtime
+            self._is_connected = False
+            self._tripped_start_time = self.__dssSolver.GetDateTime()
+            self._tripped_p_max_delay = time2Pmax
+            self._tripped_dead_time = Deadtime
         return
 
-    def __UpdateViolatonTimers(self):
-        uIn = self._ControlledElm.GetVariable('VoltagesMagAng')[::2]
-        uBase = self._ControlledElm.sBus[0].GetVariable('kVBase') * 1000
-        uIn = max(uIn) / uBase if self.__UcalcMode == 'Max' else sum(uIn) / (uBase * len(uIn))
-        if self.useAvgVoltage:
+    def _update_violaton_timers(self):
+        u_in = self._controlled_element.GetVariable('VoltagesMagAng')[::2]
+        u_base = self._controlled_element.sBus[0].GetVariable('kVBase') * 1000
+        u_in = max(u_in) / u_base if self._voltage_calc_mode == VoltageCalcModes.MAX else sum(u_in) / (u_base * len(u_in))
+        if self.use_avg_voltage:
             self.voltage = self.voltage[1:] + self.voltage[:1]
-            self.voltage[0] = uIn
-            uIn = sum(self.voltage) / len(self.voltage)
+            self.voltage[0] = u_in
+            u_in = sum(self.voltage) / len(self.voltage)
 
-        if uIn < self.__rVs[0] and uIn > self.__rVs[1]:
-            if not self.__NormOper:
-                self.__NormOper = True
-                self.__NormOperStartTime = self.__dssSolver.GetDateTime()
-                self.__NormOperTime = 0
+        if u_in < self._rvs[0] and u_in > self._rvs[1]:
+            if not self._normal_operation:
+                self._normal_operation = True
+                self._normal_operation_start_time = self.__dssSolver.GetDateTime()
+                self._normal_operation_time = 0
             else:
-                self.__NormOperTime = (self.__dssSolver.GetDateTime() - self.__NormOperStartTime).total_seconds()
-            self.__VoltVioM = False
-            self.__VoltVioP = False
+                self._normal_operation_time = (self.__dssSolver.GetDateTime() - self._normal_operation_start_time).total_seconds()
+            self._voltage_violation_m = False
         else:
-            if not self.__VoltVioM:
-                self.__VoltVioM = True
-                self.__uViolationstartTime = self.__dssSolver.GetDateTime()
-                self.__uViolationtime = 0
+            if not self._voltage_violation_m:
+                self._voltage_violation_m = True
+                self.__uViolationstarttime = self.__dssSolver.GetDateTime()
+                self._u_violation_time = 0
             else:
-                self.__uViolationtime = (self.__dssSolver.GetDateTime() - self.__uViolationstartTime).total_seconds()
-        return uIn
+                self._u_violation_time = (self.__dssSolver.GetDateTime() - self.__uViolationstarttime).total_seconds()
+        return u_in
