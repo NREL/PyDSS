@@ -259,7 +259,7 @@ class PvVoltageRideThru(ControllerAbstract):
         intersection = total_region.intersection(active_region)
         may_trip_region = total_region.difference(intersection)
 
-        if self.model.ride_through_category in [RideThroighCategory.CATEGORY_I, RideThroighCategory.CATEGORY_II]:
+        if self.model.ride_through_category in [RideThroughCategory.CATEGORY_I, RideThroughCategory.CATEGORY_II]:
             if self.model.permissive_operation ==  PermissiveOperation.CURRENT_LIMITED:
                 if self.model.may_trip_operation == MayTripOperation.PERMISSIVE_OPERATION:
                     self.curr_lim_region = unary_union(
