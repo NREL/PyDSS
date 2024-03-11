@@ -1,6 +1,6 @@
 from typing import Union, Annotated
 
-from pydantic import BaseModel, confloat, Field
+from pydantic import BaseModel, Field, model_validator
 
 from PyDSS.pyControllers.enumerations import CategoryI, CategoryII, CategoryIII, PvStandard, VoltageCalcModes, RideThroughCategory, PermissiveOperation, MayTripOperation, MultipleDisturbances
 
@@ -21,7 +21,6 @@ class PvVoltageRideThruModel(BaseControllerModel):
         float,
         Field(4.0, ge=0.0, description="kW capacity of the PV system (DC-side)."),
     ] 
-    
     voltage_calc_mode: Annotated[
         VoltageCalcModes,
         Field(VoltageCalcModes.MAX, description="Voltage values used to calculate Var support from the inverter (Maximum or Average)."),
@@ -87,7 +86,21 @@ class PvVoltageRideThruModel(BaseControllerModel):
         Field(MultipleDisturbances.TRIP, description="Defines behavior of the system after multiple disturbances. (see IEEE 1547-2018 std for more information)."),
     ] 
 
-
+    @model_validator(mode='after')
+    def update_settings(self) -> 'PvVoltageRideThruModel':
+        cat1 = self.ride_through_category == RideThroughCategory.CATEGORY_I
+        cat2 = self.ride_through_category == RideThroughCategory.CATEGORY_II
+          
+        self.ov_2_pu = CategoryI.OV2_PU.value if cat1 else CategoryII.OV2_PU.value if cat2 else CategoryIII.OV2_PU.value
+        self.ov_1_pu = CategoryI.OV1_PU.value if cat1 else CategoryII.OV1_PU.value if cat2 else CategoryIII.OV1_PU.value
+        self.uv_2_pu = CategoryI.UV2_PU.value if cat1 else CategoryII.UV2_PU.value if cat2 else CategoryIII.UV2_PU.value
+        self.uv_1_pu = CategoryI.UV1_PU.value if cat1 else CategoryII.UV1_PU.value if cat2 else CategoryIII.UV1_PU.value     
+        self.ov_2_ct_sec = CategoryI.OV2_CT_SEC.value if cat1 else CategoryII.OV2_CT_SEC.value if cat2 else CategoryIII.OV2_CT_SEC.value
+        self.ov_1_ct_sec = CategoryI.OV1_CT_SEC.value if cat1 else CategoryII.OV1_CT_SEC.value if cat2 else CategoryIII.OV1_CT_SEC.value
+        self.uv_2_ct_sec = CategoryI.UV2_CT_SEC.value if cat1 else CategoryII.UV2_CT_SEC.value if cat2 else CategoryIII.UV2_CT_SEC.value
+        self.uv_1_ct_sec = CategoryI.UV1_CT_SEC.value if cat1 else CategoryII.UV1_CT_SEC.value if cat2 else CategoryIII.UV1_CT_SEC.value
+        
+        return self
 
 
 
