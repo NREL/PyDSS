@@ -1,4 +1,4 @@
-__version__ = "3.0.3"
+__version__ = "3.0.4"
 
 
 from PyDSS.utils.timing_utils import timer_stats_collector

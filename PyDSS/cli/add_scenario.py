@@ -34,7 +34,7 @@ def build_scenario(project_path:str, scenario_name:str, controller_mapping:str):
             controllers[controller.controller_type] = toml.load(settings_path_obj)
     scenario_dir = project_path / "Scenarios" / scenario_name
     scenario_obj = PyDssScenario(
-            [scenario_name], list(controllers.keys()), export_modes=None, visualization_types=None
+            [scenario_name], controllers=controllers, export_modes=None, visualization_types=None
         )
     scenario_obj.serialize(str(scenario_dir))
 
