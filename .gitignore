@@ -8,7 +8,7 @@ __pycache__
 docs/build/*
 tags
 cscope.files
-
+tests/data/*/Exports/*
 .idea/*
 .vscode/*
 store.h5
