@@ -52,7 +52,7 @@ class PvDynamic(ControllerAbstract):
         if self.n_phases == 1:
             self._Va = self.Voltages()
             self._Vrms = abs(self._Va )/math.sqrt(2)
-            print(f"\nmodel inputs: \nVa - {self._Va}, \nVrms - {self._Vrms}\nFreq - {self.freq}\nvBase - {self.voltage_base}\n")
+            #print(f"\nmodel inputs: \nVa - {self._Va}, \nVrms - {self._Vrms}\nFreq - {self.freq}\nvBase - {self.voltage_base}\n")
             self._pv_model = DERModel(
                 modelType= 'SinglePhase',
                 powerRating = rated_power_dc_watts,
@@ -70,7 +70,6 @@ class PvDynamic(ControllerAbstract):
             
         elif self.n_phases == 3:
             self._Va, self._Vb, self._Vc = self.Voltages()
-            print(self._Va, self._Vb, self._Vc)
             self._Vrms = abs(self._Va ) / math.sqrt(2)
             self._pv_model = DERModel(
                 modelType= 'ThreePhaseUnbalanced',
@@ -231,7 +230,7 @@ class PvDynamic(ControllerAbstract):
         t_sim = [sim_time_sec,sim_time_sec + self.dt]
         if self.n_phases == 1:
             self._Va =  self.Voltages()
-            print(f"Grid voltage: {self._Va}")
+
             self.sim1.run_simulation(
                 gridVoltagePhaseA=self._Va / self.voltage_base , 
                 y0= self.sim1.y0 , 
@@ -249,7 +248,7 @@ class PvDynamic(ControllerAbstract):
         
 
         S_PCC = self._pv_model.DER_model.S_PCC * self._pv_model.DER_model.Sbase / 1000
-        print(f"kW {S_PCC.real}\nkvar {S_PCC.imag}")
+        #print(f"kW {S_PCC.real}\nkvar {S_PCC.imag}")
         self._controlled_element.SetParameter("kw", S_PCC.real )
         self._controlled_element.SetParameter("kvar", S_PCC.imag)
         self.results.append({

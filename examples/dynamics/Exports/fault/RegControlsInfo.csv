@@ -1,0 +1,5 @@
+,transformer,winding,vreg,band,ptratio,CTprim,R,X,bus,delay,reversible,revvreg,revband,revR,revX,tapdelay,debugtrace,maxtapchange,inversetime,tapwinding,vlimit,PTphase,revThreshold,revDelay,revNeutral,EventLog,RemotePTRatio,TapNum,Reset,LDC_Z,rev_Z,Cogen,basefreq,enabled,like
+RegControl.reg1a,reg1a,2,119.9926,3,60,600,5,3,,15,Yes,119.9926,3,5,3,2,No,16,No,2,0,1,100,60,No,No,60,0,No,0,0,No,60,Yes,
+RegControl.reg1b,reg1b,2,119.9926,3,60,600,5,3,,15,Yes,119.9926,3,5,3,2,No,16,No,2,0,1,100,60,No,No,60,0,No,0,0,No,60,Yes,
+RegControl.reg1c,reg1c,2,119.9926,3,60,600,5,3,,15,Yes,119.9926,3,5,3,2,No,16,No,2,0,1,100,60,No,No,60,0,No,0,0,No,60,Yes,
+RegControl.sub,sub,2,119.9926,3,60,300,0,0,,10,No,120,3,0,0,2,No,16,No,2,0,1,100,60,No,No,60,0,No,0,0,No,60,Yes,

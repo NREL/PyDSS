@@ -44,7 +44,7 @@ class ProfileManager(BaseProfileManager):
                             **self.kwargs
                         )
                     else:
-                        self.logger.warning("Group {} \ data set {} not found in the h5 store".format(
+                        self.logger.warning("Group {} / data set {} not found in the h5 store".format(
                             group, profileName
                         ))
             else:

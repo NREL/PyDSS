@@ -2,66 +2,86 @@ import logging
 import math
 import os
 from collections import defaultdict
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Annotated, Optional
 
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 from PyDSS.utils.simulation_utils import CircularBufferHelper
 from PyDSS.utils.utils import dump_data, load_data
+from pydantic import ConfigDict
 
 
 logger = logging.getLogger(__name__)
 
 
 class ThermalMetricsBaseModel(BaseModel):
-    class Config:
-        title = "ThermalMetricsBaseModel"
-        anystr_strip_whitespace = True
-        validate_assignment = True
-        validate_all = True
-        extra = "forbid"
-        use_enum_values = False
+    model_config = ConfigDict(title="ThermalMetricsBaseModel", str_strip_whitespace=True, validate_assignment=True, validate_default=True, extra="forbid", use_enum_values=False)
 
 
 class ThermalMetricsModel(ThermalMetricsBaseModel):
-    max_instantaneous_loadings_pct: Dict[str, float] = Field(
-        title="max_instantaneous_loadings_pct",
-        description="maximum instantaneous loading percent for each element",
-    )
-    max_instantaneous_loading_pct: float = Field(
-        title="max_instantaneous_loading_pct",
-        description="maximum instantaneous loading percent overall",
-    )
-    max_moving_average_loadings_pct: Dict[str, float] = Field(
-        title="max_moving_average_loadings_pct",
-        description="maximum moving average loading percent for each element",
-    )
-    max_moving_average_loading_pct: float = Field(
-        title="max_moving_average_loading_pct",
-        description="maximum moving average loading percent overall",
-    )
-    window_size_hours: int = Field(
-        title="window_size_hours",
-        description="window size used to calculate the moving average",
-    )
-    num_time_points_with_instantaneous_violations: int = Field(
-        title="num_time_points_with_instantaneous_violations",
-        description="number of time points where the instantaneous threshold was violated",
-    )
-    num_time_points_with_moving_average_violations: int = Field(
-        title="num_time_points_with_moving_average_violations",
-        description="number of time points where the moving average threshold was violated",
-    )
-    instantaneous_threshold: int = Field(
-        title="instantaneous_threshold",
-        description="instantaneous threshold",
-    )
-    moving_average_threshold: int = Field(
-        title="moving_average_threshold",
-        description="moving average threshold",
-    )
+    max_instantaneous_loadings_pct: Annotated[
+        Dict[str, float],
+        Field(
+            {},
+            title="max_instantaneous_loadings_pct",
+            description="maximum instantaneous loading percent for each element",
+        )]
+    max_instantaneous_loading_pct: Annotated[
+        float,
+        Field(
+            default = 120,
+            title="max_instantaneous_loading_pct",
+            description="maximum instantaneous loading percent overall",
+        )]
+    max_moving_average_loadings_pct: Annotated[
+        Dict[str, float],
+        Field(
+            {},
+            title="max_moving_average_loadings_pct",
+            description="maximum moving average loading percent for each element",
+        )]
+    max_moving_average_loading_pct: Annotated[
+        float,
+        Field(
+            100,
+            title="max_moving_average_loading_pct",
+            description="maximum moving average loading percent overall",
+        )]
+    window_size_hours: Annotated[
+        Optional[int],
+        Field(
+            None,
+            title="window_size_hours",
+            description="window size used to calculate the moving average",
+        )]
+    num_time_points_with_instantaneous_violations: Annotated[
+        Optional[int],
+        Field(
+            None,
+            title="num_time_points_with_instantaneous_violations",
+            description="number of time points where the instantaneous threshold was violated",
+        )]
+    num_time_points_with_moving_average_violations: Annotated[
+        Optional[int],
+        Field(
+            None,
+            title="num_time_points_with_moving_average_violations",
+            description="number of time points where the moving average threshold was violated",
+        )]
+    instantaneous_threshold: Annotated[
+        Optional[int],
+        Field(
+            None,
+            title="instantaneous_threshold",
+            description="instantaneous threshold",
+        )]
+    moving_average_threshold: Annotated[
+        Optional[int],
+        Field(
+            None,
+            title="moving_average_threshold",
+            description="moving average threshold",
+        )]
 
 
 def compare_thermal_metrics(metrics1: ThermalMetricsModel, metrics2: ThermalMetricsModel, rel_tol=0.001):
@@ -109,21 +129,27 @@ def compare_thermal_metrics(metrics1: ThermalMetricsModel, metrics2: ThermalMetr
 
 
 class ThermalMetricsSummaryModel(ThermalMetricsBaseModel):
-    line_loadings: ThermalMetricsModel = Field(
-        title="line_loadings",
-        description="line loading metrics",
-    )
-    transformer_loadings: Union[ThermalMetricsModel, None] = Field(
-        title="transformer_loadings",
-        description="transformer loading metrics",
-    )
+    line_loadings: Annotated[
+        ThermalMetricsModel,
+        Field(
+            title="line_loadings",
+            description="line loading metrics",
+        )]
+    transformer_loadings: Annotated[
+        Union[ThermalMetricsModel, None],
+        Field(
+            title="transformer_loadings",
+            description="transformer loading metrics",
+        )]
 
 
 class SimulationThermalMetricsModel(ThermalMetricsBaseModel):
-    scenarios: Dict[str, ThermalMetricsSummaryModel] = Field(
-        title="scenarios",
-        description="thermal metrics by PyDSS scenario name",
-    )
+    scenarios: Annotated[
+        Dict[str, ThermalMetricsSummaryModel],
+        Field(
+            title="scenarios",
+            description="thermal metrics by PyDSS scenario name",
+        )]
 
 
 def create_summary(filename):
@@ -284,7 +310,7 @@ class ThermalMetrics:
 
         filename = os.path.join(path, "thermal_metrics.json")
         with open(filename, "w") as f_out:
-            f_out.write(summary.json(indent=2))
+            f_out.write(summary.model_dump_json(indent=2))
             f_out.write("\n")
         logger.info("Generated thermal metric report in %s", filename)
 

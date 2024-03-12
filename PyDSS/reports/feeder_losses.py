@@ -1,45 +1,50 @@
 
+from typing import Annotated, Dict
+from datetime import timedelta
 import logging
 import math
 import os
-from datetime import timedelta
-from typing import Dict
 
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
+from pydantic import ConfigDict
 
 from PyDSS.reports.reports import ReportBase
-
 
 logger = logging.getLogger(__name__)
 
 
 class FeederLossesMetricsModel(BaseModel):
     """Data model for metrics describing feeder losses"""
+    model_config = ConfigDict(title="FeederLossesMetricsModel", str_strip_whitespace=True, validate_assignment=True, validate_default=True, extra="forbid", use_enum_values=False)
 
-    class Config:
-        title = "FeederLossesMetricsModel"
-        anystr_strip_whitespace = True
-        validate_assignment = True
-        validate_all = True
-        extra = "forbid"
-        use_enum_values = False
-
-    total_losses_kwh: float = Field(
-        title="total_losses_kwh",
-        description="Total losses in the circuit",
-    )
-    line_losses_kwh: float = Field(
-        title="line_losses_kwh",
-        description="Total line losses",
-    )
-    transformer_losses_kwh: float = Field(
-        title="transformer_losses_kwh",
-        description="Total transformer losses",
-    )
-    total_load_demand_kwh: float = Field(
-        title="total_load_demand_kwh",
-        description="Total power output of loads",
-    )
+    total_losses_kwh: Annotated[
+        float,
+        Field(
+            None, 
+            title="total_losses_kwh",
+            description="Total losses in the circuit",
+        )]
+    line_losses_kwh:  Annotated[
+        float,
+        Field(
+            None, 
+            title="line_losses_kwh",
+            description="Total line losses",
+        )]
+    transformer_losses_kwh:  Annotated[
+        float,
+        Field(
+            None, 
+            title="transformer_losses_kwh",
+            description="Total transformer losses",
+        )]
+    total_load_demand_kwh:  Annotated[
+        float,
+        Field(
+            None, 
+            title="total_load_demand_kwh",
+            description="Total power output of loads",
+        )]
 
 
 class SimulationFeederLossesMetricsModel(BaseModel):
@@ -64,7 +69,7 @@ def compare_feeder_losses(
     """
     match = True
     for scenario in metrics1.scenarios:
-        for field in FeederLossesMetricsModel.__fields__:
+        for field in FeederLossesMetricsModel.model_fields:
             val1 = getattr(metrics1.scenarios[scenario], field)
             val2 = getattr(metrics2.scenarios[scenario], field)
             if not math.isclose(val1, val2, rel_tol=rel_tol):
@@ -102,7 +107,7 @@ class FeederLossesReport(ReportBase):
         model = SimulationFeederLossesMetricsModel(scenarios=scenarios)
         filename = os.path.join(output_dir, self.FILENAME)
         with open(filename, "w") as f_out:
-            f_out.write(model.json(indent=2))
+            f_out.write(model.model_dump_json(indent=2))
             f_out.write("\n")
         logger.info("Generated %s", filename)
         return filename

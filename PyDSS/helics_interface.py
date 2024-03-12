@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator
+from pydantic import ConfigDict, BaseModel, validator
 from typing import List, Optional, Any, Union, Dict
 from enum import Enum
 import logging
@@ -6,8 +6,6 @@ import helics
 import os
 import re
 
-
-from PyDSS.pyContrReader import pyExportReader
 from PyDSS.simulation_input_models import SimulationSettingsModel
 from PyDSS.common import SUBSCRIPTIONS_FILENAME, ExportMode
 from PyDSS.pyLogger import getLoggerTag
@@ -55,16 +53,14 @@ class Subscription(BaseModel):
     model: str
     property: str
     id: str
-    unit: Optional[str] 
+    unit: Optional[str] = None 
     subscribe: bool = True
     data_type: DataType
     multiplier: float = 1.0
     object: Any = None
     states: List[Union[float, int, bool]] = [0.0, 0.0, 0.0, 0.0, 0.0]
     sub: Any = None
-    
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 class Publication(BaseModel):
     model: str
@@ -75,10 +71,12 @@ class Publication(BaseModel):
     data_type: DataType
     
 class Subscriptions(BaseModel):
-    federate: Any
+    federate: Any = None
     opendss_models: Dict
     subscriptions: List[Subscription]
 
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator('subscriptions', each_item=True)
     def is_in_opendss_model(cls, v, values, **kwargs):
         if v.model not in values["opendss_models"]:
@@ -95,13 +93,15 @@ class Subscriptions(BaseModel):
     
 class Publications(BaseModel):
     
-    federate: Any
+    federate: Any = None
     federate_name: str
     opendss_models: Dict
     publications: List[Publication] = []
     legacy_input: Dict = {}
     input: Dict = {}
     
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator('legacy_input')
     def build_from_legacy(cls, v, values, **kwargs):
         publications = []
@@ -124,10 +124,12 @@ class Publications(BaseModel):
                                 ''
                             )
                         }
-                        publications.append(Publication.validate(pub_dict))
+                        publications.append(Publication.model_validate(pub_dict))
         values["publications"] = publications
         return v
 
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator('input')
     def build_from_export(cls, v, values, **kwargs):
         publications = []
@@ -168,17 +170,14 @@ class Publications(BaseModel):
                                     ''
                                 )
                             }
-                            publications.append(Publication.validate(pub_dict))
+                            publications.append(Publication.model_validate(pub_dict))
         values["publications"] = publications        
         return v
 
 class helics_interface:
-
     n_states = 5
     init_state = 1
-
     
-
     def __init__(self, dss_solver, objects_by_name, objects_by_class, settings: SimulationSettingsModel, system_paths, default=True, logger=None):
         LoggerTag = getLoggerTag(settings)
         self.itr = 0
@@ -199,7 +198,6 @@ class helics_interface:
         self._dss_solver = dss_solver
         if default:
             self.registerPubSubTags()
-
 
     def registerPubSubTags(self, pubs=None, subs=None):
 
@@ -249,7 +247,7 @@ class helics_interface:
             file_data["opendss_models"] = self._objects_by_element
             file_data["federate"] = self._federate
          
-            self.subscriptions = Subscriptions.validate(file_data)
+            self.subscriptions = Subscriptions.model_validate(file_data)
         else:
             self.subscriptions = subscriptions
         self._logger.info(str(self.subscriptions.subscriptions))

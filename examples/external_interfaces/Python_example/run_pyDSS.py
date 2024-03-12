@@ -16,7 +16,7 @@ def run_pyDSS(pydss_path, sim_path, sim_file):
     file1 = open(os.path.join(sim_path, sim_file),"r")
     text = file1.read()
     sim_args = toml.loads(text)
-    from pyDSS import instance as dssInstance
+    from PyDSS import instance as dssInstance
     a = dssInstance()
     dssInstance = a.create_dss_instance(sim_args)
     for t in range(5):
