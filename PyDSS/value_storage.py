@@ -614,15 +614,16 @@ class ValueContainer:
             list of ValueStorageBase
 
         """
+        
         if values:
             if isinstance(values[0].value, list):
                 vals = [x for y in values for x in y.value]
             else:
-                vals = [x.value for x in values]
+                vals = [INTEGER_NAN if (x.is_nan() and x._value_type == int) else x.value for x in values ]
         else:
-            vals = [np.NaN for k, v in self._length.items() for x in range(v)]
-            
+            vals = [self.set_nan() for k, v in self._length.items() for x in range(v)]
         self._dataset.write_value(vals)
+                     
 
     def append_by_time_step(self, value, time_step, elem_index):
         """Append a value to the container.

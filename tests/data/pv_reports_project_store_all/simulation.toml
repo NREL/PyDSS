@@ -44,9 +44,6 @@ post_process_infos = []
 
 # Create dynamic plots- [Bool] - Enable rendering of dynamic plots using bokeh
 # Open plots in browser- [Bool] - Open plots  in s window. Will work if "Create dynamic plots" is set to true 
-[Plots]
-"Create dynamic plots" = false
-"Open plots in browser" = true
 
 # Co-simulation Mode - [Bool] - Set to true to enable Helics interface all other co-simulation settings only valid if this value is true
 # Federate name - [str] - Name of the federate 

@@ -4,7 +4,6 @@ from PyDSS.pyContrReader import read_controller_settings_from_registry
 from PyDSS.dssElementFactory import create_dss_element
 from PyDSS.utils.utils import make_human_readable_size
 from PyDSS.pyContrReader import pyContrReader as pcr
-from PyDSS.pyPlotReader import pyPlotReader as ppr
 from PyDSS.exceptions import (
     InvalidConfiguration, PyDssConvergenceError, PyDssConvergenceErrorCountExceeded,
     PyDssConvergenceMaxError, OpenDssModelError, OpenDssConvergenceErrorCountExceeded
@@ -16,7 +15,6 @@ from PyDSS.NetworkModifier import Modifier
 from PyDSS import helics_interface as HI
 from PyDSS.ResultData import ResultData
 from PyDSS.dssCircuit import dssCircuit
-import PyDSS.pyPlots as pyPlots
 from PyDSS.common import SnapshotTimePointSelectionMode, DATE_FORMAT
 from PyDSS.dssBus import dssBus
 from PyDSS import SolveMode
@@ -35,10 +33,6 @@ import os
 from collections import defaultdict
 from pathlib import Path
 
-from bokeh.client import push_session
-from bokeh.plotting import curdoc
-from bokeh.layouts import row
-
 from opendssdirect.utils import run_command
 
 CONTROLLER_PRIORITIES = 3
@@ -51,8 +45,6 @@ class OpenDSS:
         self._dssObjects = {}
         self._dssObjectsByClass = {}
         self._DelFlag = 0
-        self._pyPlotObjects = {}
-        self.BokehSessionID = None
         self._settings = settings
         self._convergenceErrors = 0
         self._convergenceErrorsOpenDSS = 0
@@ -70,7 +62,6 @@ class OpenDSS:
         self._dssPath = {
             'root': root_path,
             'Import': import_path,
-            'pyPlots': active_scenario_path / 'pyPlotList',
             'ExportLists': active_scenario_path / 'ExportLists',
             'pyControllers': active_scenario_path / 'pyControllerList',
             'Export': active_project_path /  'Exports',
@@ -145,15 +136,6 @@ class OpenDSS:
         if ControllerList is not None:
             self._CreateControllers(ControllerList)
 
-        if settings.plots.create_dynamic_plots:
-            pyPlotReader = ppr(self._dssPath['pyPlots'])
-            PlotList = pyPlotReader.pyPlots
-            self._CreatePlots(PlotList)
-            for Plot in self._pyPlotObjects:
-                self.BokehSessionID = self._pyPlotObjects[Plot].GetSessionID()
-                if settings.plots.open_plots_in_browser:
-                    self._pyPlotObjects[Plot].session.show()
-                break
         self._increment_flag = True
         if settings.helics.co_simulation_mode:
             self._HI = HI.helics_interface(self._dssSolver, self._dssObjects, self._dssObjectsByClass, settings,
@@ -212,59 +194,6 @@ class OpenDSS:
                     self._Logger.info('Created pyController -> Controller.' + ElmName)
         return
 
-    def _CreatePlots(self, PlotsDict):
-
-        self.BokehDoc = curdoc()
-        Figures = []
-        for PlotType, PlotNames in PlotsDict.items():
-            newPlotNames = list(PlotNames)
-            PlotType1= ['Topology', 'GISplot', 'NetworkGraph']
-            PlotType2 = ['SagPlot', 'Histogram']
-            PlotType3 = ['XY', 'TimeSeries', 'FrequencySweep']
-
-            for Name in newPlotNames:
-                PlotSettings = PlotNames[Name]
-                PlotSettings['FileName'] = Name
-                if PlotType in PlotType1:
-
-                    self._pyPlotObjects[PlotType] = pyPlots.pyPlots.Create(
-                        PlotType,
-                        PlotSettings,
-                        self._dssBuses,
-                        self._dssObjectsByClass,
-                        self._dssCircuit,
-                        self._dssSolver
-                    )
-                    Figures.append(self._pyPlotObjects[PlotType].GetFigure())
-                    #self.BokehDoc.add_root(self._pyPlotObjects[PlotType].GetFigure())
-                    self._Logger.info('Created pyPlot -> ' + PlotType)
-                elif PlotType in PlotType2:
-                    self._pyPlotObjects[PlotType + Name] = pyPlots.pyPlots.Create(
-                        PlotType,
-                        PlotSettings,
-                        self._dssBuses,
-                        self._dssObjectsByClass,
-                        self._dssCircuit,
-                        self._dssSolver
-                    )
-                    self._Logger.info('Created pyPlot -> ' + PlotType)
-                elif PlotType in PlotType3:
-                    self._pyPlotObjects[PlotType+Name] = pyPlots.pyPlots.Create(
-                        PlotType,
-                        PlotSettings,
-                        self._dssBuses,
-                        self._dssObjects,
-                        self._dssCircuit,
-                        self._dssSolver
-                    )
-                    self._Logger.info('Created pyPlot -> ' + PlotType)
-
-        Layout = row(*Figures)
-        self.BokehDoc.add_root(Layout)
-        self.BokehDoc.title = "PyDSS"
-        self.session = push_session(self.BokehDoc)
-        self.session.show()
-        return
 
     def _UpdateControllers(self, Priority, Time, Iteration, UpdateResults):
         errors = []
@@ -390,7 +319,6 @@ class OpenDSS:
                         self._Logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
                         self._HandleConvergenceErrorChecks(step, error)
 
-            self._UpdatePlots()
 
         if self._settings.frequency.enable_frequency_sweep and \
                 self._settings.project.simulation_type != SimulationType.DYNAMIC:
@@ -400,7 +328,6 @@ class OpenDSS:
                                       self._settings.frequency.frequency_increment):
                 self._dssSolver.setFrequency(frequency * self._settings.frequency.fundamental_frequency)
                 self._dssSolver.reSolve()
-                self._UpdatePlots()
                 if self._settings.exports.export_results:
                     self.ResultContainer.UpdateResults()
             if self._settings.project.simulation_type != SimulationType.SNAPSHOT:
@@ -586,11 +513,6 @@ class OpenDSS:
             for is_complete, _, _, _ in self.RunSimulation(project, scenario, i):
                 if is_complete:
                     break
-        return
-
-    def _UpdatePlots(self):
-        for Plot in self._pyPlotObjects:
-            self._pyPlotObjects[Plot].UpdatePlot()
         return
 
     def _GetActiveScenario(self):

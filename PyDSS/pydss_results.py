@@ -81,6 +81,12 @@ class PyDssResults:
                 )
                 self._scenarios.append(scenario_result)
 
+    def __del__(self):
+        if hasattr(self, "_hdf_store"):
+            self._hdf_store.flush()
+            self._hdf_store.close()
+            logger.info("store closed sucessfully")
+    
     def generate_reports(self):
         """Generate all reports specified in the configuration.
 

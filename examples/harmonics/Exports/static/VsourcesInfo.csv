@@ -1,0 +1,2 @@
+,Daily,Duty,Isc1,Isc3,MVAsc1,MVAsc3,Model,R0,R1,ScanType,Sequence,X0,X1,Yearly,Z0,Z1,Z2,angle,baseMVA,basefreq,basekv,bus1,bus2,enabled,frequency,like,phases,pu,puZ0,puZ1,puZ2,puZideal,spectrum,x0r0,x1r1
+Vsource.source,,,24017771.1982884,24017771.1982884,173056,173056,Thevenin,0,0,Positive,Positive,0.0001,0.0001,,"['0', '0.0001']","['0', '0.0001']","['0', '0.0001']",0,100,60,4.16,150,150.0.0.0,Yes,60,,3,1,"['0', '0.000577847633136095']","['0', '0.000577847633136095']","['0', '0.000577847633136095']","['1E-6', '0.001']",defaultvsource,3,4

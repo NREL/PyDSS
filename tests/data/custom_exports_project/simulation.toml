@@ -33,10 +33,6 @@ post_process_infos = []
 "HDF Max Chunk Bytes" = 32768
 "Log Results" = true
 
-[Plots]
-"Create dynamic plots" = false
-"Open plots in browser" = true
-
 [Helics]
 "Co-simulation Mode" = false
 "Federate name" = "PyDSS"

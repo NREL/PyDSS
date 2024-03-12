@@ -5,7 +5,6 @@ import inspect
 from queue import Empty
 from PyDSS.dssInstance import OpenDSS
 from PyDSS.api.src.web.parser import restructure_dictionary
-# from PyDSS.api.src.app.arrow_writer import ArrowWriter
 from PyDSS.api.src.app.JSON_writer import JSONwriter
 from PyDSS.simulation_input_models import SimulationSettingsModel
 

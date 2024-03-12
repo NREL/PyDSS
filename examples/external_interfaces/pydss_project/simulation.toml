@@ -68,6 +68,3 @@ Broker = "127.0.0.1"
 [MonteCarlo]
 "Number of Monte Carlo scenarios" = -1
 
-[Plots]
-"Create dynamic plots" = false
-"Open plots in browser" = true

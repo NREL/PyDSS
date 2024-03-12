@@ -429,12 +429,13 @@ class FeederHeadMetrics(MetricBase):
 
     def _get_values(self):
         total_power = dss.Circuit.TotalPower()
-        return FeederHeadValues(
+        feeder_head_values = FeederHeadValues(
             load_kvar=total_power[1],
             load_kw=total_power[0],
             loading=self._get_feeder_head_loading(),
             reverse_power_flow=self._reverse_power_flow(),
         )
+        return feeder_head_values
 
     def _get_feeder_head_loading(self):
         flag = dss.Circuit.SetActiveElement(self._feeder_head_line)

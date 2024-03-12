@@ -23,8 +23,8 @@ class SocketController(ControllerAbstract):
         super(SocketController, self).__init__(ElmObject, Settings, dssInstance, ElmObjectList, dssSolver)
         self.Time = -1
         self.__ControlledElm = ElmObject
-        Class, Name = self.__ControlledElm.GetInfo()
-        self.__Name = 'pyCont_' + Class + '_' + Name
+        self.Class, self.Name = self.__ControlledElm.GetInfo()
+        self.__Name = 'pyCont_' + self.Class + '_' + self.Name
         #assert (Class.lower() == 'regulator'), 'PvControllerGen works only with an OpenDSS Regulator element'
         self.IP = Settings['IP']
         self.Port = Settings['Port']
@@ -43,10 +43,10 @@ class SocketController(ControllerAbstract):
 
     def Update(self, Priority, Time, UpdateResults):
 
-        self.TimeChange = self.Time != (Priority, Time)
-        self.Time = (Priority, Time)
-        # self.TimeChange = self.Time != Time
-        # self.Time = Time
+        # self.TimeChange = self.Time != (Priority, Time)
+        # self.Time = (Priority, Time)
+        self.TimeChange = self.Time != Time
+        self.Time = Time
 
         if self.TimeChange and Priority==0:
             Values = []
@@ -71,7 +71,7 @@ class SocketController(ControllerAbstract):
         return self.__Name
 
     def ControlledElement(self):
-        return self.__ControlledElm
+        return "{}.{}".format(self.Class, self.Name)
 
     def debugInfo(self):
         pass

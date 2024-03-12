@@ -104,10 +104,13 @@ def run_test_project_by_property(tar_project, zip_project):
         zip_project=zip_project,
         simulation_file=SIMULATION_SETTINGS_FILENAME,
     )
+    
     results = PyDssResults(RUN_PROJECT_PATH)
     assert len(results.scenarios) == 1
     assert results._hdf_store.attrs["version"] == DATA_FORMAT_VERSION
     scenario = results.scenarios[0]
+    print(scenario)
+    
     assert isinstance(scenario, PyDssScenarioResults)
     elem_classes = scenario.list_element_classes()
     expected_elem_classes = list(EXPECTED_ELEM_CLASSES_PROPERTIES.keys())
