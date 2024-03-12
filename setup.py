@@ -68,7 +68,7 @@ setup(name='dsspy',
         ],
     },
     license='BSD 3 clause',
-    python_requires='>=3.7',
+    python_requires='>=3.9',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
