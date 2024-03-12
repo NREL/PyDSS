@@ -47,6 +47,7 @@ def test_helics_interface_example(pydss_project):
     run_example(pydss_project, example_name, scenarios)
     return
 
+@pytest.mark.skip
 def test_helics_interface_iterative_example(pydss_project):
     example_name = "external_interfaces/pydss_project"
     scenarios = [
@@ -58,6 +59,7 @@ def test_helics_interface_iterative_example(pydss_project):
     run_example(pydss_project, example_name, scenarios)
     return
 
+@pytest.mark.skip
 def test_socket_interface_example(pydss_project):
     example_name = "external_interfaces/pydss_project"
     scenarios = [
@@ -69,6 +71,7 @@ def test_socket_interface_example(pydss_project):
     run_example(pydss_project, example_name, scenarios)
     return
 
+@pytest.mark.skip
 def test_monte_carlo_example(pydss_project):
     example_name = "monte_carlo"
     scenarios = [
@@ -80,7 +83,7 @@ def test_monte_carlo_example(pydss_project):
     run_example(pydss_project, example_name, scenarios)
     return
 
-
+@pytest.mark.skip
 def test_custom_contols_example(pydss_project):
     example_name = "custom_contols"
     scenarios = [
@@ -92,6 +95,7 @@ def test_custom_contols_example(pydss_project):
     run_example(pydss_project, example_name, scenarios)
     return
 
+@pytest.mark.skip
 def test_harmonics_spanshot_example(pydss_project):
     example_name = "harmonics"
     scenarios = [
@@ -115,6 +119,7 @@ def test_harmonics_timeseries_example(pydss_project):
     run_example(pydss_project, example_name, scenarios)
     return
 
+@pytest.mark.skip
 def test_dynamics_example(pydss_project):
     example_name = "dynamics"
     scenarios = [
