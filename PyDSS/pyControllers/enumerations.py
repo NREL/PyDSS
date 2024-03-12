@@ -68,6 +68,7 @@ class MultipleDisturbances(str, Enum):
     """
     TRIP = "Trip" 
     PERMISSIVE_OPERATION = "Permissive operation" 
+    
 class CategoryI(float, Enum):
     """
     Variable defination for Category I
