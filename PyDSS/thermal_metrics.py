@@ -1,18 +1,14 @@
-import logging
+from typing import Dict, Union, Annotated, Optional
+from collections import defaultdict
 import math
 import os
-from collections import defaultdict
-from typing import Dict, List, Union, Annotated, Optional
 
+from loguru import logger
 from pydantic import BaseModel, Field
 
 from PyDSS.utils.simulation_utils import CircularBufferHelper
 from PyDSS.utils.utils import dump_data, load_data
 from pydantic import ConfigDict
-
-
-logger = logging.getLogger(__name__)
-
 
 class ThermalMetricsBaseModel(BaseModel):
     model_config = ConfigDict(title="ThermalMetricsBaseModel", str_strip_whitespace=True, validate_assignment=True, validate_default=True, extra="forbid", use_enum_values=False)

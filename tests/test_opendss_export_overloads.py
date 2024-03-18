@@ -1,28 +1,21 @@
-import logging
-import os
-import shutil
-import tempfile
-from collections import namedtuple
 from pathlib import Path
+import tempfile
+import shutil
+import os
 
-import h5py
-import mock
-import numpy as np
 import pandas as pd
 import pytest
+import h5py
+import mock
 
-import PyDSS.metrics
-from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.export_list_reader import ExportListProperty
-from PyDSS.metrics import ExportLoadingsMetric, OpenDssExportMetric
+from PyDSS.dataset_buffer import DatasetBuffer
+from PyDSS.metrics import ExportLoadingsMetric
 from PyDSS.simulation_input_models import (
-    SimulationSettingsModel, create_simulation_settings, load_simulation_settings
+    create_simulation_settings, 
+    load_simulation_settings
 )
-from PyDSS.utils.utils import load_data
 from tests.common import FakeElement
-
-
-logger = logging.getLogger(__name__)
 
 OBJS = [
     FakeElement("Line.one", "one"),

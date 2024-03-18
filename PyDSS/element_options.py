@@ -1,12 +1,8 @@
 """Stores the options available for element classes and properties."""
 
-import logging
+from loguru import logger
 
 from PyDSS.element_fields import ELEMENT_FIELDS
-
-
-logger = logging.getLogger(__name__)
-
 
 class ElementOptions:
     """Stores the options available for element classes and properties."""

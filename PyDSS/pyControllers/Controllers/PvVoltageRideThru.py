@@ -11,24 +11,24 @@ from PyDSS.pyControllers.enumerations import PvStandard, VoltageCalcModes, RideT
 class PvVoltageRideThru(ControllerAbstract):
     """Implementation of IEEE1547-2003 and IEEE1547-2018 voltage ride-through standards using the OpenDSS Generator model. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
 
-            :param PvObj: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS 'Generator' element
+            :param pv_object: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS 'Generator' element
             :type FaultObj: class:`PyDSS.dssElement.dssElement`
-            :param Settings: A dictionary that defines the settings for the PvController.
-            :type Settings: dict
-            :param dssInstance: An :class:`opendssdirect` instance
-            :type dssInstance: :class:`opendssdirect`
-            :param ElmObjectList: Dictionary of all dssElement, dssBus and dssCircuit objects
-            :type ElmObjectList: dict
-            :param dssSolver: An instance of one of the classed defined in :mod:`PyDSS.SolveMode`.
-            :type dssSolver: :mod:`PyDSS.SolveMode`
-            :raises: Assertionerror if 'PvObj' is not a wrapped OpenDSS Generator element
+            :param settings: A dictionary that defines the settings for the PvController.
+            :type settings: dict
+            :param dss_instance: An :class:`opendssdirect` instance
+            :type dss_instance: :class:`opendssdirect`
+            :param elm_object_list: Dictionary of all dssElement, dssBus and dssCircuit objects
+            :type elm_object_list: dict
+            :param dss_solver: An instance of one of the classed defined in :mod:`PyDSS.SolveMode`.
+            :type dss_solver: :mod:`PyDSS.SolveMode`
+            :raises: Assertionerror if 'pv_object' is not a wrapped OpenDSS Generator element
 
     """
 
-    def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
-        super(PvVoltageRideThru, self).__init__(PvObj, Settings, dssInstance, ElmObjectList, dssSolver)
+    def __init__(self, pv_object, settings, dss_instance, elm_object_list, dss_solver):
+        super(PvVoltageRideThru, self).__init__(pv_object, settings, dss_instance, elm_object_list, dss_solver)
 
-        self.model = PvVoltageRideThruModel(**Settings)
+        self.model = PvVoltageRideThruModel(**settings)
         
         self.time_change = False
         self.time = (-1, 0)
@@ -37,8 +37,8 @@ class PvVoltageRideThru(ControllerAbstract):
             'None': lambda: 0,
         }
 
-        self._controlled_element = PvObj
-        self.__dssSolver = dssSolver
+        self._controlled_element = pv_object
+        self.__dss_solver = dss_solver
 
         self.object_type, self.object_name = self._controlled_element.GetInfo()
         assert (self.object_type.lower() == 'generator'), 'PvControllerGen works only with an OpenDSS Generator element'
@@ -49,9 +49,9 @@ class PvVoltageRideThru(ControllerAbstract):
             self.phase = None
 
         # Initializing the model
-        PvObj.SetParameter('kvar', 0)
-        PvObj.SetParameter('kva', self.model.kva)
-        self._p_rated = float(PvObj.SetParameter('kW', self.model.max_kw))
+        pv_object.SetParameter('kvar', 0)
+        pv_object.SetParameter('kva', self.model.kva)
+        self._p_rated = float(pv_object.SetParameter('kW', self.model.max_kw))
 
         # MISC settings
         self._trip_deadtime_sec = self.model.reconnect_deadtime_sec
@@ -68,8 +68,8 @@ class PvVoltageRideThru(ControllerAbstract):
         # For debugging only
         self.use_avg_voltage = False
         cycle_average = 5
-        freq = dssSolver.getFrequency()
-        step = dssSolver.GetStepSizeSec()
+        freq = dss_solver.getFrequency()
+        step = dss_solver.GetStepSizeSec()
         hist_size = math.ceil(cycle_average / (step * freq))
         self.voltage = [1.0 for i in range(hist_size)]
         self.reactive_power = [0.0 for i in range(hist_size)]
@@ -96,18 +96,18 @@ class PvVoltageRideThru(ControllerAbstract):
     def _initialize_ride_through_settings(self):
         self._is_connected = True
         self._p_limit = self._p_rated
-        self._reconnect_start_time = self.__dssSolver.GetDateTime() - datetime.timedelta(
+        self._reconnect_start_time = self.__dss_solver.GetDateTime() - datetime.timedelta(
             seconds=int(self._time_to_p_max_sec))
 
         self._tripped_p_max_delay = 0
         self._normal_operation = True
-        self._normal_operation_start_time = self.__dssSolver.GetDateTime()
+        self._normal_operation_start_time = self.__dss_solver.GetDateTime()
         self._u_violation_time = 99999
-        self._tripped_start_time = self.__dssSolver.GetDateTime()
+        self._tripped_start_time = self.__dss_solver.GetDateTime()
         self._tripped_dead_time = 0
         self._fault_counter = 0
         self._is_in_contioeous_region = True
-        self._fault_window_clearing_start_time = self.__dssSolver.GetDateTime()
+        self._fault_window_clearing_start_time = self.__dss_solver.GetDateTime()
 
         return
 
@@ -315,7 +315,7 @@ class PvVoltageRideThru(ControllerAbstract):
             # self.power_hist.append(P)
             # self.voltage_hist.append(u_in)
             # self.timer_hist.append(self._u_violation_time)
-            # self.timer_act_hist.append(self.__dssSolver.GetTotalSeconds())
+            # self.timer_act_hist.append(self.__dss_solver.GetTotalSeconds())
 
         return error
 
@@ -339,7 +339,7 @@ class PvVoltageRideThru(ControllerAbstract):
         elif self.momentary_sucession_region and Pm.within(self.momentary_sucession_region):
             region = 1
             is_in_contioeous_region = False
-            self._trip(self.__dssSolver.GetStepSizeSec(), 0.4, False)
+            self._trip(self.__dss_solver.GetStepSizeSec(), 0.4, False)
         elif Pm.within(self.trip_region):
             region = 2
             is_in_contioeous_region = False
@@ -355,8 +355,8 @@ class PvVoltageRideThru(ControllerAbstract):
         self.region[0] = region
 
         if is_in_contioeous_region and not self._is_in_contioeous_region:
-            self._fault_window_clearing_start_time = self.__dssSolver.GetDateTime()
-        clearing_time = (self.__dssSolver.GetDateTime() - self._fault_window_clearing_start_time).total_seconds()
+            self._fault_window_clearing_start_time = self.__dss_solver.GetDateTime()
+        clearing_time = (self.__dss_solver.GetDateTime() - self._fault_window_clearing_start_time).total_seconds()
 
         if self._is_in_contioeous_region and not is_in_contioeous_region:
             if  clearing_time <= self._fault_counter_clearing_time_sec:
@@ -381,15 +381,15 @@ class PvVoltageRideThru(ControllerAbstract):
                 self.voltage = self.voltage[1:] + self.voltage[:1]
                 self.voltage[0] = u_in
                 u_in = sum(self.voltage) / len(self.voltage)
-            deadtime = (self.__dssSolver.GetDateTime() - self._tripped_start_time).total_seconds()
+            deadtime = (self.__dss_solver.GetDateTime() - self._tripped_start_time).total_seconds()
             if u_in < self._rvs[0] and u_in > self._rvs[1] and deadtime >= self._tripped_dead_time:
                 
                 self._controlled_element.SetParameter('enabled', True)
                 self._is_connected = True
                 self._controlled_element.SetParameter('kw', 0)
-                self._reconnect_start_time = self.__dssSolver.GetDateTime()
+                self._reconnect_start_time = self.__dss_solver.GetDateTime()
         else:
-            conntime = (self.__dssSolver.GetDateTime() - self._reconnect_start_time).total_seconds()
+            conntime = (self.__dss_solver.GetDateTime() - self._reconnect_start_time).total_seconds()
             self._p_limit = conntime / self._tripped_p_max_delay * self._p_rated if conntime < self._tripped_p_max_delay \
                 else self._p_rated
             self._controlled_element.SetParameter('kw', self._p_limit)
@@ -405,7 +405,7 @@ class PvVoltageRideThru(ControllerAbstract):
             self._controlled_element.SetParameter('enabled', False)
 
             self._is_connected = False
-            self._tripped_start_time = self.__dssSolver.GetDateTime()
+            self._tripped_start_time = self.__dss_solver.GetDateTime()
             self._tripped_p_max_delay = time2Pmax
             self._tripped_dead_time = Deadtime
             
@@ -413,7 +413,7 @@ class PvVoltageRideThru(ControllerAbstract):
             self._controlled_element.SetParameter('enabled', False)
 
             self._is_connected = False
-            self._tripped_start_time = self.__dssSolver.GetDateTime()
+            self._tripped_start_time = self.__dss_solver.GetDateTime()
             self._tripped_p_max_delay = time2Pmax
             self._tripped_dead_time = Deadtime
         return
@@ -430,16 +430,16 @@ class PvVoltageRideThru(ControllerAbstract):
         if u_in < self._rvs[0] and u_in > self._rvs[1]:
             if not self._normal_operation:
                 self._normal_operation = True
-                self._normal_operation_start_time = self.__dssSolver.GetDateTime()
+                self._normal_operation_start_time = self.__dss_solver.GetDateTime()
                 self._normal_operation_time = 0
             else:
-                self._normal_operation_time = (self.__dssSolver.GetDateTime() - self._normal_operation_start_time).total_seconds()
+                self._normal_operation_time = (self.__dss_solver.GetDateTime() - self._normal_operation_start_time).total_seconds()
             self._voltage_violation_m = False
         else:
             if not self._voltage_violation_m:
                 self._voltage_violation_m = True
-                self.__uViolationstarttime = self.__dssSolver.GetDateTime()
+                self.__uViolationstarttime = self.__dss_solver.GetDateTime()
                 self._u_violation_time = 0
             else:
-                self._u_violation_time = (self.__dssSolver.GetDateTime() - self.__uViolationstarttime).total_seconds()
+                self._u_violation_time = (self.__dss_solver.GetDateTime() - self.__uViolationstarttime).total_seconds()
         return u_in

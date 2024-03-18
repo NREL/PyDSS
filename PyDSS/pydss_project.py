@@ -1,6 +1,4 @@
 """Contains functionality to configure PyDSS simulations."""
-
-import logging
 import os
 import shutil
 import sys
@@ -10,17 +8,17 @@ import zipfile
 from pathlib import Path
 
 import h5py
-import pandas as pd
+
+from loguru import logger
 
 import PyDSS
 from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, CONTROLLER_TYPES, \
     SIMULATION_SETTINGS_FILENAME, DEFAULT_SIMULATION_SETTINGS_FILE, \
     ControllerType, ExportMode, SnapshotTimePointSelectionMode, MONTE_CARLO_SETTINGS_FILENAME,\
-    filename_from_enum, VisualizationType, DEFAULT_MONTE_CARLO_SETTINGS_FILE,\
+    filename_from_enum, DEFAULT_MONTE_CARLO_SETTINGS_FILE,\
     SUBSCRIPTIONS_FILENAME, DEFAULT_SUBSCRIPTIONS_FILE, OPENDSS_MASTER_FILENAME, \
     RUN_SIMULATION_FILENAME
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
-from PyDSS.loggers import setup_logging
 from PyDSS.pyDSS import instance
 from PyDSS.pydss_fs_interface import PyDssDirectoryInterface, \
     PyDssArchiveFileInterfaceBase, PyDssTarFileInterface, \
@@ -41,7 +39,6 @@ from PyDSS.utils.dss_utils import read_pv_systems_from_dss_file
 from PyDSS.utils.utils import dump_data, load_data
 
 from distutils.dir_util import copy_tree
-logger = logging.getLogger(__name__)
 
 
 DATA_FORMAT_VERSION = "1.0.2"
@@ -328,20 +325,18 @@ class PyDssProject:
         inst = instance()
         if not logging_configured:
             if self._settings.logging.enable_console:
-                console_level = logging.INFO
+                console_level = "INFO"
             else:
-                console_level = logging.ERROR
+                console_level = "ERROR"
             if self._settings.logging.enable_file:
                 filename = os.path.join(self._project_dir, "Logs", "pydss.log")
             else:
                 filename = None
-            file_level = logging.INFO
-            setup_logging(
-                "PyDSS",
-                filename=filename,
-                console_level=console_level,
-                file_level=file_level,
-            )
+            file_level = "INFO"
+            logger.level(console_level)
+            if filename:
+                logger.add(filename)
+            
         if dry_run:
             store_filename = os.path.join(tempfile.gettempdir(), STORE_FILENAME)
         else:
@@ -384,7 +379,7 @@ class PyDssProject:
             raise
 
         finally:
-            logging.shutdown()
+            logger.stop()
             if tar_project:
                 self._tar_project_files()
             elif zip_project:
@@ -620,10 +615,6 @@ class PyDssScenario:
     """Represents a PyDSS Scenario."""
 
     DEFAULT_CONTROLLER_TYPES = (ControllerType.PV_CONTROLLER,)
-    DEFAULT_VISUALIZATION_TYPES = (VisualizationType.FREQUENCY_PLOT, VisualizationType.HISTOGRAM_PLOT,
-                                   VisualizationType.TABLE_PLOT, VisualizationType.THREEDIM_PLOT,
-                                   VisualizationType.TIMESERIES_PLOT, VisualizationType.TOPOLOGY_PLOT,
-                                   VisualizationType.VOLTDIST_PLOT, VisualizationType.XY_PLOT,)
     DEFAULT_EXPORT_MODE = ExportMode.EXPORTS
     _SCENARIO_DIRECTORIES = (
         "ExportLists",
@@ -635,30 +626,12 @@ class PyDssScenario:
     REQUIRED_POST_PROCESS_FIELDS = ("script", "config_file")
 
     def __init__(self, name, controller_types=None, controllers=None,
-                 export_modes=None, exports=None, visualizations=None,
-                 post_process_infos=None, visualization_types=None,
+                 export_modes=None, exports=None,
+                 post_process_infos=None, 
                  snapshot_time_point_selection_config=None):
         self.name = name
         self.post_process_infos = []
         self.snapshot_time_point_selection_config = None
-
-        if visualization_types is None and visualizations is None:
-            self.visualizations = {
-                x: self.load_visualization_config_from_type(x)
-                for x in PyDssScenario.DEFAULT_VISUALIZATION_TYPES
-            }
-        elif visualization_types is not None:
-            self.visualizations = {
-                x: self.load_visualization_config_from_type(x)
-                for x in visualization_types
-            }
-        elif isinstance(visualizations, str):
-            basename = os.path.splitext(os.path.basename(visualizations))[0]
-            visualization_type = VisualizationType(basename)
-            self.visualizations = {visualization_type: load_data(controllers)}
-        else:
-            assert isinstance(visualizations, dict)
-            self.visualizations = visualizations
 
         if (controller_types is None and controllers is None):
             self.controllers = {}
@@ -724,13 +697,11 @@ class PyDssScenario:
         """
         controllers = fs_intf.read_controller_config(name)
         exports = fs_intf.read_export_config(name)
-        visualizations = fs_intf.read_visualization_config(name)
 
         return cls(
             name,
             controllers=controllers,
             exports=exports,
-            visualizations=visualizations,
             post_process_infos=post_process_infos,
         )
 
@@ -759,12 +730,6 @@ class PyDssScenario:
                 os.path.join(path, "ExportLists", filename_from_enum(mode))
             )
 
-        for visualization_type, visualizations in self.visualizations.items():
-            filename = os.path.join(
-                path, "pyPlotList", filename_from_enum(visualization_type)
-            )
-            dump_data(visualizations, filename)
-
         dump_data(
             load_data(DEFAULT_MONTE_CARLO_SETTINGS_FILE),
             os.path.join(path, "Monte_Carlo", MONTE_CARLO_SETTINGS_FILENAME)
@@ -774,30 +739,6 @@ class PyDssScenario:
             load_data(DEFAULT_SUBSCRIPTIONS_FILE),
             os.path.join(path, "ExportLists", SUBSCRIPTIONS_FILENAME)
         )
-
-    @staticmethod
-    def load_visualization_config_from_type(visualization_type):
-        """Load a default visualization config from a type.
-
-        Parameters
-        ----------
-        visualization_type : VisualizationType
-
-        Returns
-        -------
-        dict
-
-        """
-
-        path = os.path.join(
-            os.path.dirname(getattr(PyDSS, "__path__")[0]),
-            "PyDSS",
-            "defaults",
-            "pyPlotList",
-            filename_from_enum(visualization_type),
-        )
-
-        return load_data(path)
 
     @staticmethod
     def load_controller_config_from_type(controller_type):

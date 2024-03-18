@@ -1,22 +1,20 @@
-import datetime
+
 import math
 import os
-import re
-import shutil
-import tempfile
+
 
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_series_equal
 
-from PyDSS.cli.convert import simulation_file
-from PyDSS.utils.utils import load_data, dump_data
+
+from PyDSS.utils.utils import load_data
 from PyDSS.pydss_project import PyDssProject
 from PyDSS.pydss_results import PyDssResults
 from tests.common import (
+    run_project_with_custom_exports,
     CUSTOM_EXPORTS_PROJECT_PATH,
     cleanup_project,
-    run_project_with_custom_exports,
 )
 from PyDSS.common import SIMULATION_SETTINGS_FILENAME
 

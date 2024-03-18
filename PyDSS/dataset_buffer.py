@@ -1,14 +1,12 @@
 """Contains DatasetBuffer"""
 
-from cmath import nan
-import logging
-
-import numpy as np
+from loguru import logger
 import pandas as pd
+import numpy as np
 
-from PyDSS.common import DatasetPropertyType
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.utils.utils import make_timestamps
+from PyDSS.common import DatasetPropertyType
 
 
 
@@ -24,9 +22,6 @@ GiB = MiB * MiB
 # Note that the downside to making this larger is that any read causes the
 # entire chunk to be read.
 DEFAULT_MAX_CHUNK_BYTES = 1 * MiB
-
-logger = logging.getLogger(__name__)
-
 
 class DatasetBuffer:
     """Provides a write buffer to an HDF dataset to increase performance.

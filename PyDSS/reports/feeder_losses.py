@@ -1,17 +1,14 @@
 
 from typing import Annotated, Dict
 from datetime import timedelta
-import logging
 import math
 import os
 
 from pydantic import BaseModel, Field
 from pydantic import ConfigDict
+from loguru import logger
 
 from PyDSS.reports.reports import ReportBase
-
-logger = logging.getLogger(__name__)
-
 
 class FeederLossesMetricsModel(BaseModel):
     """Data model for metrics describing feeder losses"""

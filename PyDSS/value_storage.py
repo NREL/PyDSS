@@ -1,18 +1,14 @@
 
 import abc
-import enum
-import logging
 import os
 import re
 
+from loguru import logger
 import numpy as np
 
 from PyDSS.common import DatasetPropertyType, INTEGER_NAN
 from PyDSS.dataset_buffer import DatasetBuffer
 from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
-
-
-logger = logging.getLogger(__name__)
 
 
 class ValueStorageBase(abc.ABC):

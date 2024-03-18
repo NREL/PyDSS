@@ -1,14 +1,14 @@
 from pydantic import ConfigDict, BaseModel, validator
 from typing import List, Optional, Any, Union, Dict
 from enum import Enum
-import logging
 import helics
 import os
 import re
 
+from loguru import logger
+
 from PyDSS.simulation_input_models import SimulationSettingsModel
 from PyDSS.common import SUBSCRIPTIONS_FILENAME, ExportMode
-from PyDSS.pyLogger import getLoggerTag
 from PyDSS.utils.utils import load_data
 
 TYPE_INFO = {
@@ -183,10 +183,6 @@ class helics_interface:
         self.itr = 0
         self.c_seconds = 0
         self.c_seconds_old = -1
-        if logger:
-            self._logger = logger
-        else:
-            self._logger = logging.getLogger(__name__)
         self._settings = settings
         self._co_convergance_error_tolerance = settings.helics.error_tolerance
         self._co_convergance_max_iterations = self._settings.helics.max_co_iterations
@@ -208,7 +204,7 @@ class helics_interface:
             self._federate,
             helics.helics_iteration_request_iterate_if_needed
         )
-        self._logger.info('Entered HELICS execution mode')
+        logger.info('Entered HELICS execution mode')
 
     def _create_helics_federate(self):
         self.fedinfo = helics.helicsCreateFederateInfo()
@@ -217,7 +213,7 @@ class helics_interface:
         helics.helicsFederateInfoSetCoreInitString(self.fedinfo, f"--federates=1")
         IP = self._settings.helics.broker
         Port = self._settings.helics.broker_port
-        self._logger.info("Connecting to broker @ {}".format(f"{IP}:{Port}" if Port else IP))
+        logger.info("Connecting to broker @ {}".format(f"{IP}:{Port}" if Port else IP))
         if self._settings.helics.broker:
             helics.helicsFederateInfoSetBroker(self.fedinfo, str(self._settings.helics.broker))
         if self._settings.helics.broker_port:
@@ -250,9 +246,9 @@ class helics_interface:
             self.subscriptions = Subscriptions.model_validate(file_data)
         else:
             self.subscriptions = subscriptions
-        self._logger.info(str(self.subscriptions.subscriptions))
+        logger.info(str(self.subscriptions.subscriptions))
         for subscription in self.subscriptions.subscriptions:
-            self._logger.info(f"subscription created: {subscription}")
+            logger.info(f"subscription created: {subscription}")
         return
 
     def updateHelicsSubscriptions(self):
@@ -276,7 +272,7 @@ class helics_interface:
 
                 value = value * subscription.multiplier
                 subscription.object.SetParameter(subscription.property, value) 
-                self._logger.info('Value for "{}.{}" changed to "{}"'.format(
+                logger.info('Value for "{}.{}" changed to "{}"'.format(
                         subscription.model,
                         subscription.property,
                         value
@@ -320,9 +316,9 @@ class helics_interface:
                 raise FileNotFoundError("No valid export settings found for the current scenario")
             
             self.publications = Publications.validate(publication_dict)
-            self._logger.info(str(self.publications.publications))
+            logger.info(str(self.publications.publications))
             for publication in self.publications.publications:
-                self._logger.info(f"pubscription created: {publication}")
+                logger.info(f"pubscription created: {publication}")
         return
 
     def updateHelicsPublications(self):
@@ -342,7 +338,7 @@ class helics_interface:
                 helics.helicsPublicationPublishInteger(publication.pub, value)
             else:
                 raise ValueError("Unsupported data type forr teh HELICS interface")
-            self._logger.info(f"{publication} - {value}")
+            logger.info(f"{publication} - {value}")
         return
 
     def request_time_increment(self):
@@ -351,7 +347,7 @@ class helics_interface:
         if not self._settings.helics.iterative_mode:
             while self.c_seconds < r_seconds:
                 self.c_seconds = helics.helicsFederateRequestTime(self._federate, r_seconds)
-            self._logger.info('Time requested: {} - time granted: {} '.format(r_seconds, self.c_seconds))
+            logger.info('Time requested: {} - time granted: {} '.format(r_seconds, self.c_seconds))
             return True, self.c_seconds
         else:
 
@@ -361,7 +357,7 @@ class helics_interface:
                 helics.helics_iteration_request_iterate_if_needed
             )
 
-            self._logger.info('Time requested: {} - time granted: {} error: {} it: {}'.format(
+            logger.info('Time requested: {} - time granted: {} error: {} it: {}'.format(
                 r_seconds, self.c_seconds, error, self.itr))
             if error > -1 and self.itr < self._co_convergance_max_iterations - 1:
                 self.itr += 1
@@ -375,4 +371,4 @@ class helics_interface:
         state = helics.helicsFederateGetState(self._federate)
         helics.helicsFederateInfoFree(self.fedinfo)
         helics.helicsFederateFree(self._federate)
-        self._logger.info('HELICS federate for PyDSS destroyed')
+        logger.info('HELICS federate for PyDSS destroyed')

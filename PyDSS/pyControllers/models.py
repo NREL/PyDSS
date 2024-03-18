@@ -125,3 +125,121 @@ class PvSmartController(BaseControllerModel):
         float,
         Field(0.95, ge=0.0, le=1.0, description="Minimum allowable powerfactor for the system. 'enable_pf_limit' should be enable for the constraint to be implemented."),
     ] 
+    
+class MotorStallSimpleSettings(BaseModel):
+    p_fault: Annotated[
+        float,
+        Field(3.5, ge=3.0, le=5.0, description="Active power multiplier post fault."),
+    ] 
+    q_fault: Annotated[
+        float,
+        Field(5.0, ge=3.0, le=7.0, description="Reactive power multiplier post fault."),
+    ] 
+    v_stall: Annotated[
+        float,
+        Field(0.55, ge=0.53, le=0.58, description="Per unit voltage below which the motor will stall."),
+    ] 
+    t_protection: Annotated[
+        float,
+        Field(0.95, ge=0.0, le=15.0, description="Time [sec] after stall the motor will disconnect."),
+    ] 
+    t_reconnect: Annotated[
+        float,
+        Field(6.0, ge=5.0, le=7.0, description="Time duration [sec] after which the motor will reconnect."),
+    ] 
+    
+
+class MotorStallSettings(BaseModel):
+    k_p1:  Annotated[
+        float,
+        Field(0 , description="Real power constant for running state 111"),
+    ] 
+    n_p1:  Annotated[
+        float,
+        Field(1.0, description="Real power exponent for running state 1"),
+    ] 
+    k_p2:  Annotated[
+        float,
+        Field(12.0, description="Real power constant for running state 2"),
+    ] 
+    n_p2:  Annotated[
+        float,
+        Field(3.2, description="Real power exponent for running state 2"),
+    ] 
+    k_q1:  Annotated[
+        float,
+        Field(6.0, description="Reactive power constant for running state 1"),
+    ] 
+    n_q1:  Annotated[
+        float,
+        Field(2.0, description="Reactive power exponent for running state 1"),
+    ] 
+    k_q2:  Annotated[
+        float,
+        Field(11.0, description="Reactive power constant for running state 2"),
+    ] 
+    n_q2:  Annotated[
+        float,
+        Field(2.5, description="Reactive power exponent for running state 2."),
+    ] 
+    t_th:  Annotated[
+        float,
+        Field(4.0, description="Varies based on manufacturer and external factors - sensitivity analysis required"),
+    ] 
+    f_rst:  Annotated[
+        float,
+        Field(0.2, description="Captures diversity in load; also based on testing (fraction of motors capable of restart)."),
+    ] 
+    lf_adj:  Annotated[
+        float,
+        Field(0.0, description="Load factor adjustment to the stall voltage10"),
+    ] 
+    t_th1t:  Annotated[
+        float,
+        Field(0.7, description="Assumed tripping starting at 70% temperature"),
+    ] 
+    t_th2t:  Annotated[
+        float,
+        Field(1.9, description="Assumed all tripped at 190% temperature"),
+    ] 
+    p_fault: Annotated[
+        float,
+        Field(3.5, ge=3.0, le=5.0, description="Active power multiplier post fault."),
+    ] 
+    q_fault: Annotated[
+        float,
+        Field(5.0, ge=3.0, le=7.0, description="Reactive power multiplier post fault."),
+    ] 
+    v_stall:  Annotated[
+        float,
+        Field(0.55, ge=0.45, le=0.60,  description="Stall voltage (range) based on laboratory testing"),
+    ] 
+    v_break:  Annotated[
+        float,
+        Field(0.86, description="Compressor motor 'breakdown' voltage (pu)"),
+    ] 
+    v_rstrt: Annotated[
+        float,
+        Field(0.95, description="Reconnect when acceptable voltage met"),
+    ] 
+    t_stall:  Annotated[
+        float,
+        Field(0.032, description="Stall time (range) based on laboratory testing"),
+    ] 
+    t_restart:  Annotated[
+        float,
+        Field(0.300, description="Induction motor restart time is relatively short"),
+    ] 
+    rated_pf:  Annotated[
+        float,
+        Field(0.939, description="Assumed slightly inductive motors load"),
+    ] 
+    r_stall_pu:  Annotated[
+        float,
+        Field(0.100, description="Based on laboratory testing results of residential air-conditioners."),
+    ]
+    x_stall_pu:  Annotated[
+        float,
+        Field(0.100, description="Based on laboratory testing results of residential air-conditioners."),
+    ]  
+    

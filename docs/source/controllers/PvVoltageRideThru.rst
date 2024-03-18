@@ -52,7 +52,7 @@ Controller options
 
 .. autoenum:: PyDSS.pyControllers.enumerations.VoltageCalcModes
 
-.. autoenum:: PyDSS.pyControllers.enumerations.RideThroighCategory
+.. autoenum:: PyDSS.pyControllers.enumerations.RideThroughCategory
 
 .. autoenum:: PyDSS.pyControllers.enumerations.PermissiveOperation
 

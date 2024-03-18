@@ -1,6 +1,6 @@
 """Converts Excel config files to TOML."""
 
-import logging
+from loguru import logger
 import os
 
 import numpy as np
@@ -8,10 +8,6 @@ import pandas as pd
 
 from PyDSS.exceptions import InvalidParameter
 from PyDSS.utils.utils import dump_data
-
-
-logger = logging.getLogger(__name__)
-
 
 def convert_config_data_to_toml(filename, name=None):
     """Converts an Excel config file to TOML.

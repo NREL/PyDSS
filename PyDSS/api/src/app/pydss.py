@@ -1,14 +1,12 @@
-import os
-import logging
 from multiprocessing import current_process
-import inspect
 from queue import Empty
-from PyDSS.dssInstance import OpenDSS
-from PyDSS.api.src.web.parser import restructure_dictionary
-from PyDSS.api.src.app.JSON_writer import JSONwriter
-from PyDSS.simulation_input_models import SimulationSettingsModel
+import os
 
-logger = logging.getLogger(__name__)
+from loguru import logger
+
+from PyDSS.simulation_input_models import SimulationSettingsModel
+from PyDSS.api.src.app.JSON_writer import JSONwriter
+from PyDSS.dssInstance import OpenDSS
 
 
 class PyDSS:

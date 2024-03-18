@@ -10,6 +10,10 @@ class VoltageCalcModes(str, Enum):
     """
     MAX = "Max"
     AVG = "Avg"
+    MIN = "Min"
+    A = "1"
+    B = "2"
+    C = "3"
 
 class PvStandard(str, Enum):
     """
@@ -155,3 +159,55 @@ class CategoryIII(float, Enum):
     UV1_CT_SEC = 21.0
     UV2_PU = 0.5
     UV2_CT_SEC = 2.0
+
+class SmartControls(str, Enum):
+    """
+    Supported smart control algorithms
+    
+    **NONE** - *No contol algorithm*
+     
+    **CONSTANT_POWER_FACTOR** - *Constant power factor implmentation*
+    
+    **VARIABLE_POWER_FACTOR** - *Variable power factor implmentation* 
+    
+    **VOLT_VAR** - *Volt / Var algorithm implementation*
+    
+    **VOLT_WATT** - *Volt / Watt algorithm implementation* 
+    
+    **TRIP** - *Over voltage trip implementation*
+    
+    """
+    
+    NONE = 'none'           
+    CONSTANT_POWER_FACTOR ='cpf'            
+    VARIABLE_POWER_FACTOR ='vpf'            
+    VOLT_VAR ='vvar'           
+    VOLT_WATT ='vwatt'             
+    TRIP = 'trip'
+    
+class ControlPriority(str, Enum):
+    """
+    Variable to prooritize at inverter capability limit
+    
+    **VAR** - *Var priority*
+     
+    **WATT** - *Watt priority*
+        
+    """
+    
+    VAR = 'var'           
+    WATT ='watt'            
+
+
+class VoltWattCurtailmentStrategy(str, Enum):
+    """
+    Curtailment strategy for volt / watt algorithm
+    
+    **AVAILABLE_POWER** - *Curtailment is based on available power of the inverter*
+     
+    **RAETED_POWER** - *Curtailment is based on rated power of the inverter*
+        
+    """
+    
+    AVAILABLE_POWER = 'available_power'           
+    RAETED_POWER ='rated_power' 

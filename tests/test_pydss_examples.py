@@ -2,17 +2,12 @@
 from distutils.dir_util import copy_tree
 import subprocess
 import tempfile
-import logging
-import signal
-import shutil
-import uuid
 import os
 
+from loguru import logger
 import pytest
 
 from PyDSS.pydss_project import PyDssProject
-
-logger = logging.getLogger(__name__)
 
 EXAMPLES_path = "examples"
 

@@ -44,15 +44,3 @@ Default simulation settings
 - Clear old log file- [Bool] - Boolean variable
 - Number of Monte Carlo scenarios- [Int] -  Should be set to -1 to disbale MC simulation mode
 
-Default visualization settings
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   
-.. literalinclude:: Batch_settings.toml
-   :language: TOML 
-   
-- [Simulations].Run_simulations-  [Bool] - Run the simulation or not
-- [Simulations].Generate_visuals- [Bool] - Create comparative plots. If Run_simulations is false, simulation results from older simulation results will be used if available. If no results are available, an assertion error will be raied.   
-- [Simulations].Run_bokeh_server- [Bool] - Run bokeh server. Will only work if Run_simulations Run_bokeh_server = false 
-- [Plots].<any plot type>- [Bool] - Enable plots to be created for the given list of scenarios.   
-- [Visualization].Plotting_mode- [Str]- possible_values 'Single', 'Separate'
-- [Visualization].FileType - [Str]- possible_values 'png', 'pdf'

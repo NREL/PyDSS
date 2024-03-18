@@ -1,7 +1,8 @@
-from datetime import datetime, timedelta
-import abc
-import logging
+from datetime import timedelta
 import math
+import abc
+
+from loguru import logger
 
 from PyDSS.common import DATE_FORMAT
 from PyDSS.simulation_input_models import ProjectModel
@@ -10,7 +11,6 @@ class solver_base(abc.ABC):
     def __init__(self, dssInstance, settings: ProjectModel):
 
         self._settings = settings
-        self.pyLogger = logging.getLogger(__name__)
 
         self._Time = settings.start_time
         self._Loadshape_init_time = settings.loadshape_start_time
@@ -36,7 +36,7 @@ class solver_base(abc.ABC):
 
         #self._dssSolution.DblHour()
         self.reSolve()
-        self.pyLogger.info("%s solver setup complete", settings.simulation_type)
+        logger.info("%s solver setup complete", settings.simulation_type)
 
     def setFrequency(self, frequency):
         self._dssSolution.Frequency(frequency)

@@ -61,7 +61,6 @@
    PyDSS.pyContrReader
    PyDSS.pyControllers
    PyDSS.pyDSS
-   PyDSS.pyLogger
    PyDSS.pyPlotReader
    PyDSS.pyPlots
    PyDSS.pyPostprocessor

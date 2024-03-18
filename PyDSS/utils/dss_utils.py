@@ -1,13 +1,8 @@
 
-import logging
 import re
 
 import opendssdirect as dss
-
-from PyDSS.exceptions import InvalidConfiguration
-
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 def check_redirect(file_name):

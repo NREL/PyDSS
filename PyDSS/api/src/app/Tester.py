@@ -1,15 +1,14 @@
-from PyDSS.dssInstance import OpenDSS
-from PyDSS.api.src.web.parser import restructure_dictionary
-from PyDSS.api.src.app.DataWriter import DataWriter
-from PyDSS.simulation_input_models import SimulationSettingsModel, load_simulation_settings
 
-import logging
-import toml
+from pathlib import Path
 import time
 import os
-from pathlib import Path
 
-logger = logging.getLogger(__name__)
+from loguru import logger
+
+from PyDSS.simulation_input_models import load_simulation_settings
+from PyDSS.api.src.app.DataWriter import DataWriter
+from PyDSS.dssInstance import OpenDSS
+
 
 def run_test(tomlpath):
     try:

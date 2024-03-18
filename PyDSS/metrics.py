@@ -1,6 +1,5 @@
 import abc
 import copy
-import logging
 import os
 import shutil
 import tempfile
@@ -8,6 +7,7 @@ from collections import namedtuple
 from datetime import timedelta
 from pathlib import Path
 
+from loguru import logger
 import pandas as pd
 import opendssdirect as dss
 
@@ -20,10 +20,6 @@ from PyDSS.node_voltage_metrics import NodeVoltageMetrics
 from PyDSS.simulation_input_models import SimulationSettingsModel
 from PyDSS.thermal_metrics import ThermalMetrics
 from PyDSS.utils.simulation_utils import get_start_time, get_simulation_resolution
-
-
-logger = logging.getLogger(__name__)
-
 
 class MetricBase(abc.ABC):
     """Base class for all metrics"""

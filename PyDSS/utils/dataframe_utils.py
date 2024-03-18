@@ -1,15 +1,12 @@
 
-import gzip
-import logging
-import os
 import shutil
+import gzip
+import os
 
+from loguru import logger
 import pandas as pd
 
 from PyDSS.exceptions import InvalidParameter
-
-
-logger = logging.getLogger(__name__)
 
 
 def read_dataframe(filename, index_col=None, columns=None, parse_dates=False,

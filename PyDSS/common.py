@@ -24,17 +24,6 @@ PV_PROFILES_FILENAME = "pv_profiles.json"
 NODE_NAMES_BY_TYPE_FILENAME = "node_names_by_type.json"
 INTEGER_NAN = -9999
 
-class VisualizationType(enum.Enum):
-    FREQUENCY_PLOT = "FrequencySweep"
-    HISTOGRAM_PLOT = "Histogram"
-    VOLTDIST_PLOT = "VoltageDistance"
-    TIMESERIES_PLOT = "TimeSeries"
-    TOPOLOGY_PLOT = "Topology"
-    XY_PLOT = "XY"
-    THREEDIM_PLOT = "ThreeDim"
-    TABLE_PLOT = "Table"
-    NETWORK_GRAPH = "NetworkGraph"
-
 class ControllerType(enum.Enum):
     FAULT_CONTROLLER = "FaultController"
     GENERATOR_CONTROLLER = "GenController"
@@ -74,7 +63,6 @@ STORAGE_CONTROLLER_FILENAME = filename_from_enum(ControllerType.STORAGE_CONTROLL
 THERMOSTATIC_LOAD_CONTROLLER_FILENAME = filename_from_enum(ControllerType.THERMOSTATIC_LOAD_CONTROLLER)
 XMFR_CONTROLLER_FILENAME = filename_from_enum(ControllerType.XMFR_CONTROLLER)
 
-TIMESERIES_PLOT_FILENAME = filename_from_enum(VisualizationType.TIMESERIES_PLOT)
 EXPORT_BY_CLASS_FILENAME = filename_from_enum(ExportMode.BY_CLASS)
 EXPORT_BY_ELEMENT_FILENAME = filename_from_enum(ExportMode.BY_ELEMENT)
 EXPORTS_FILENAME = filename_from_enum(ExportMode.EXPORTS)
@@ -171,13 +159,6 @@ DEFAULT_SIMULATION_SETTINGS_FILE = os.path.join(
     SIMULATION_SETTINGS_FILENAME,
 )
 
-DEFAULT_VISUALIIZATION_CONFIG_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
-    "PyDSS",
-    "defaults",
-    "pyPlotList",
-    TIMESERIES_PLOT_FILENAME,
-)
 DEFAULT_PLOT_SETTINGS_FILE = os.path.join(
     os.path.dirname(getattr(PyDSS, "__path__")[0]),
     "PyDSS",

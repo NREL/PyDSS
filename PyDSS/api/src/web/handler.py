@@ -1,17 +1,16 @@
-import os
-import logging
-
-import shutil
-import asyncio
-from uuid import uuid4
-from aiohttp import web
-from PyDSS.api.src.app.pydss import PyDSS
 from multiprocessing import Queue, Process, Event, cpu_count
 from concurrent.futures import ThreadPoolExecutor
-from PyDSS.api.src.web.parser import variable_decode, bytestream_decode
-from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, VisualizationType
+from uuid import uuid4
+import shutil
+import asyncio
+import os
 
-logger = logging.getLogger(__name__)
+from loguru import logger
+from aiohttp import web
+
+from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType
+from PyDSS.api.src.web.parser import bytestream_decode
+from PyDSS.api.src.app.pydss import PyDSS
 
 
 class Handler:
@@ -126,10 +125,6 @@ class Handler:
                           type: string
                           description: comma separated list of PyDSS controller names
                           example: PvController,StorageController
-                        visualization_types:
-                          type: string
-                          description: comma separated list of PyDSS plot names
-                          example: Histogram,TimeSeries
                         fileName:
                           type: string
                           format: binary
@@ -184,13 +179,11 @@ class Handler:
             zipObj.extractall(path=unzip_path)
 
         controller_types = [ControllerType(x) for x in data['controller_types'].split(",")]
-        visualization_types = [VisualizationType(x) for x in data['visualization_types'].split(",")]
 
         scenarios = [
             PyDssScenario(
                 name=x.strip(),
                 controller_types=controller_types,
-                visualization_types=visualization_types,
             ) for x in data['scenarios'].split(",")
         ]
 

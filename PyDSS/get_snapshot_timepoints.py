@@ -1,19 +1,18 @@
 """Logic to determine snapshot time point by mode"""
 
-import logging
 import os
-from pathlib import Path
-import pandas as pd
+
+from loguru import logger
+
 import opendssdirect as dss
+import pandas as pd
 import numpy as np
+
 from PyDSS.common import SnapshotTimePointSelectionMode
 from PyDSS.utils.simulation_utils import create_loadshape_pmult_dataframe_for_simulation
 from PyDSS.utils.utils import dump_data
 from PyDSS.reports.reports import logger
 from PyDSS.simulation_input_models import SimulationSettingsModel
-
-
-logger = logging.getLogger(__name__)
 
 
 def get_snapshot_timepoint(settings: SimulationSettingsModel, mode: SnapshotTimePointSelectionMode):

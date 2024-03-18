@@ -1,17 +1,13 @@
 
-import copy
-import logging
-import os
-import pathlib
-import time
-from collections import defaultdict
+
 from datetime import datetime
+import pathlib
+import os
 
 import opendssdirect as dss
+from loguru import logger
 import pandas as pd
-import opendssdirect as dss
 
-from PyDSS.pyLogger import getLoggerTag
 from PyDSS.unitDefinations import unit_info
 from PyDSS.common import (
     PV_LOAD_SHAPE_FILENAME,
@@ -39,10 +35,6 @@ from PyDSS.metrics import (
     SummedElementsOpenDssPropertyMetric,
 )
 
-
-logger = logging.getLogger(__name__)
-
-
 class ResultData:
     """Exports data to files."""
 
@@ -52,7 +44,6 @@ class ResultData:
     def __init__(self, settings: SimulationSettingsModel, system_paths, dss_objects,
                  dss_objects_by_class, dss_buses, dss_solver, dss_command,
                  dss_instance):
-        self._logger = logger
         self._dss_solver = dss_solver
         self._results = {}
         self._buses = dss_buses
@@ -266,7 +257,7 @@ class ResultData:
 
         filename = os.path.join(self._export_dir, self.METADATA_FILENAME)
         dump_data(metadata, filename, indent=4)
-        self._logger.info("Exported metadata to %s", filename)
+        logger.info(f"Exported metadata to {filename}", )
         self._hdf_store = None
 
     def Close(self):
@@ -288,7 +279,7 @@ class ResultData:
             out = self._dss_command(cmd)
             if out != event_log:
                 raise Exception(f"Failed to export EventLog:  {out}")
-            self._logger.info("Exported OpenDSS event log to %s", out)
+            logger.info(f"Exported OpenDSS event log to {out}", )
             metadata["event_log"] = self._export_relative_dir + f"/{event_log}"
         finally:
             os.chdir(orig)
@@ -296,7 +287,7 @@ class ResultData:
     def _export_dataframe(self, df, basename):
         filename = basename + "." + self._export_format
         write_dataframe(df, filename, compress=self._export_compression)
-        self._logger.info("Exported %s", filename)
+        logger.info("Exported %s", filename)
 
     def _find_feeder_head_line(self):
         feeder_head_line = None
@@ -361,7 +352,7 @@ class ResultData:
         #write_dataframe(df, filepath)
         dump_data(df_dict, filepath)
         metadata["feeder_head_info_files"].append(relpath)
-        self._logger.info("Exported %s information to %s.", filename, filepath)
+        logger.info("Exported %s information to %s.", filename, filepath)
 
     def _export_elements(self, metadata, element_types):
         exports = [
@@ -403,7 +394,7 @@ class ResultData:
             filepath = os.path.join(self._export_dir, fname)
             write_dataframe(df, filepath)
             metadata["element_info_files"].append(relpath)
-            self._logger.info("Exported %s information to %s.", filename, filepath)
+            logger.info("Exported %s information to %s.", filename, filepath)
 
         if not element_types or "Transformer" in element_types or "Transformers" in element_types:
             self._export_transformers(metadata)
@@ -426,7 +417,7 @@ class ResultData:
         filepath = os.path.join(self._export_dir, "TransformersPhaseInfo.csv")
         write_dataframe(df, filepath)
         metadata["element_info_files"].append(relpath)
-        self._logger.info("Exported transformer phase information to %s", filepath)
+        logger.info("Exported transformer phase information to %s", filepath)
 
     def _export_pv_profiles(self):
         granularity = self._settings.reports.granularity
@@ -450,7 +441,7 @@ class ResultData:
 
         pmult_sums = {}
         if dss.LoadShape.First() == 0:
-            self._logger.warning("There are no load shapes.")
+            logger.warning("There are no load shapes.")
             return
 
         sim_resolution = self._settings.project.step_resolution_sec
@@ -490,13 +481,13 @@ class ResultData:
         data = {"pv_systems": pv_infos}
         filename = os.path.join(self._export_dir, PV_PROFILES_FILENAME)
         dump_data(data, filename, indent=2)
-        self._logger.info("Exported PV profile information to %s", filename)
+        logger.info("Exported PV profile information to %s", filename)
 
     def _export_node_names_by_type(self):
         data = get_node_names_by_type()
         filename = os.path.join(self._export_dir, NODE_NAMES_BY_TYPE_FILENAME)
         dump_data(data, filename, indent=2)
-        self._logger.info("Exported node names by type to %s", filename)
+        logger.info("Exported node names by type to %s", filename)
 
     @staticmethod
     def get_units(prop, index=None):

@@ -1,6 +1,8 @@
 from datetime import timedelta
 import math
 
+from loguru import logger 
+
 from PyDSS.modes.solver_base import solver_base
 from PyDSS.simulation_input_models import ProjectModel
 
@@ -54,8 +56,8 @@ class Dynamic(solver_base):
         self._Time = self._Time + timedelta(seconds=self._sStepRes)
         self._Hour = int(self._dssSolution.DblHour() // 1)
         self._Second = (self._dssSolution.DblHour() % 1) * 60 * 60
-        self.pyLogger.debug('OpenDSS time [h] - ' + str(self._dssSolution.DblHour()))
-        self.pyLogger.debug('PyDSS datetime - ' + str(self._Time))
+        logger.debug('OpenDSS time [h] - ' + str(self._dssSolution.DblHour()))
+        logger.debug('PyDSS datetime - ' + str(self._Time))
         return self._dssSolution.Converged()
 
     def reSolve(self):
