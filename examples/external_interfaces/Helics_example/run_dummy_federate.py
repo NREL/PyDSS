@@ -70,4 +70,8 @@ while h.helicsBrokerIsConnected(broker):
     time.sleep(1)
 
 h.helicsFederateDisconnect(vfed)
+h.helicsBrokerDisconnect(broker)
+h.helicsBrokerDestroy(broker)
+h.helicsBrokerFree(broker)
+
 h.helicsCloseLibrary()
