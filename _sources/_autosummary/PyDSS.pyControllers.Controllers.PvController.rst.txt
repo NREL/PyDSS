@@ -18,7 +18,6 @@ PyDSS.pyControllers.Controllers.PvController
    .. autosummary::
    
       PvController
-      VVarSettings
    
    
 

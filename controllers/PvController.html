@@ -1,0 +1,1155 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="PV System Dynamics Model" href="PvDynamic.html" /><link rel="prev" title="Motor Stall (simple)" href="MotorStallSimple.html" />
+
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+        <title>PV System Smart Controller - PyDSS 3.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="../_static/autodoc_pydantic.css?v=a0a71c94" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">PyDSS 3.1.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  
+  <span class="sidebar-brand-text">PyDSS 3.1.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../interfaces.html">Interfaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Interfaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../CLI%20interface.html">Command line interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../REST%20API%20interface.html">REST API interface</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../Python%20API%20interface.html">Python API interface</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Python API interface</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../Respository%20documentaion.html">Python API interface</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Python API interface</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../_autosummary/PyDSS.html">PyDSS</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of PyDSS</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.Extensions.html">PyDSS.Extensions</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of PyDSS.Extensions</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.Extensions.MonteCarlo.html">PyDSS.Extensions.MonteCarlo</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.ProfileManager.html">PyDSS.ProfileManager</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of PyDSS.ProfileManager</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.ProfileManager.ProfileInterface.html">PyDSS.ProfileManager.ProfileInterface</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.ProfileManager.base_definitions.html">PyDSS.ProfileManager.base_definitions</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.ProfileManager.common.html">PyDSS.ProfileManager.common</a></li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../_autosummary/PyDSS.ProfileManager.hooks.html">PyDSS.ProfileManager.hooks</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of PyDSS.ProfileManager.hooks</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.ProfileManager.hooks.MongoDB.html">PyDSS.ProfileManager.hooks.MongoDB</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.ProfileManager.hooks.h5.html">PyDSS.ProfileManager.hooks.h5</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.ResultData.html">PyDSS.ResultData</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.SolveMode.html">PyDSS.SolveMode</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.api.html">PyDSS.api</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of PyDSS.api</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.api.schema.html">PyDSS.api.schema</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.api.server.html">PyDSS.api.server</a></li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../_autosummary/PyDSS.api.src.html">PyDSS.api.src</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of PyDSS.api.src</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../_autosummary/PyDSS.api.src.app.html">PyDSS.api.src.app</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of PyDSS.api.src.app</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l8"><a class="reference internal" href="../_autosummary/PyDSS.api.src.app.DataWriter.html">PyDSS.api.src.app.DataWriter</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../_autosummary/PyDSS.api.src.app.HDF5.html">PyDSS.api.src.app.HDF5</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../_autosummary/PyDSS.api.src.app.JSON_writer.html">PyDSS.api.src.app.JSON_writer</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../_autosummary/PyDSS.api.src.app.Tester.html">PyDSS.api.src.app.Tester</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../_autosummary/PyDSS.api.src.app.pydss.html">PyDSS.api.src.app.pydss</a></li>
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../_autosummary/PyDSS.api.src.web.html">PyDSS.api.src.web</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of PyDSS.api.src.web</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l8"><a class="reference internal" href="../_autosummary/PyDSS.api.src.web.create_schema.html">PyDSS.api.src.web.create_schema</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../_autosummary/PyDSS.api.src.web.handler.html">PyDSS.api.src.web.handler</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../_autosummary/PyDSS.api.src.web.parser.html">PyDSS.api.src.web.parser</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.apps.html">PyDSS.apps</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of PyDSS.apps</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.apps.data_viewer.html">PyDSS.apps.data_viewer</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.cli.html">PyDSS.cli</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of PyDSS.cli</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.add_post_process.html">PyDSS.cli.add_post_process</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.add_scenario.html">PyDSS.cli.add_scenario</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.controllers.html">PyDSS.cli.controllers</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.convert.html">PyDSS.cli.convert</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.create_project.html">PyDSS.cli.create_project</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.edit_scenario.html">PyDSS.cli.edit_scenario</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.export.html">PyDSS.cli.export</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.extract.html">PyDSS.cli.extract</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.pydss.html">PyDSS.cli.pydss</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.reports.html">PyDSS.cli.reports</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.run.html">PyDSS.cli.run</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.run_server.html">PyDSS.cli.run_server</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.common.html">PyDSS.common</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.config_data.html">PyDSS.config_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.controllers.html">PyDSS.controllers</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.dataset_buffer.html">PyDSS.dataset_buffer</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.defaults.html">PyDSS.defaults</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of PyDSS.defaults</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.defaults.ExportLists.html">PyDSS.defaults.ExportLists</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.defaults.Monte_Carlo.html">PyDSS.defaults.Monte_Carlo</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.defaults.pyControllerList.html">PyDSS.defaults.pyControllerList</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.defaults.pyPlotList.html">PyDSS.defaults.pyPlotList</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.dssBus.html">PyDSS.dssBus</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.dssCircuit.html">PyDSS.dssCircuit</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.dssElement.html">PyDSS.dssElement</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.dssElementFactory.html">PyDSS.dssElementFactory</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.dssInstance.html">PyDSS.dssInstance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.dssObjectBase.html">PyDSS.dssObjectBase</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.dssTransformer.html">PyDSS.dssTransformer</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.element_fields.html">PyDSS.element_fields</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.element_options.html">PyDSS.element_options</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.exceptions.html">PyDSS.exceptions</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.export_list_reader.html">PyDSS.export_list_reader</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.get_snapshot_timepoints.html">PyDSS.get_snapshot_timepoints</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.helics_interface.html">PyDSS.helics_interface</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.metrics.html">PyDSS.metrics</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.modes.html">PyDSS.modes</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of PyDSS.modes</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.modes.Dynamic.html">PyDSS.modes.Dynamic</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.modes.QSTS.html">PyDSS.modes.QSTS</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.modes.Snapshot.html">PyDSS.modes.Snapshot</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.modes.solver_base.html">PyDSS.modes.solver_base</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.naerm.html">PyDSS.naerm</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.node_voltage_metrics.html">PyDSS.node_voltage_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.pyContrReader.html">PyDSS.pyContrReader</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.html">PyDSS.pyControllers</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of PyDSS.pyControllers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.html">PyDSS.pyControllers.Controllers</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of PyDSS.pyControllers.Controllers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.FaultController.html">PyDSS.pyControllers.Controllers.FaultController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.GenController.html">PyDSS.pyControllers.Controllers.GenController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.MotorStall.html">PyDSS.pyControllers.Controllers.MotorStall</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.MotorStallBackup.html">PyDSS.pyControllers.Controllers.MotorStallBackup</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.MotorStallSimple.html">PyDSS.pyControllers.Controllers.MotorStallSimple</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.PvController.html">PyDSS.pyControllers.Controllers.PvController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.PvDynamic.html">PyDSS.pyControllers.Controllers.PvDynamic</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.PvFrequencyRideThru.html">PyDSS.pyControllers.Controllers.PvFrequencyRideThru</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.PvVoltageRideThru.html">PyDSS.pyControllers.Controllers.PvVoltageRideThru</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.Settings.html">PyDSS.pyControllers.Controllers.Settings</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.SocketController.html">PyDSS.pyControllers.Controllers.SocketController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.StorageController.html">PyDSS.pyControllers.Controllers.StorageController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.ThermostaticLoad.html">PyDSS.pyControllers.Controllers.ThermostaticLoad</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.xfmrController.html">PyDSS.pyControllers.Controllers.xfmrController</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.enumerations.html">PyDSS.pyControllers.enumerations</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.models.html">PyDSS.pyControllers.models</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.pyController.html">PyDSS.pyControllers.pyController</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.pyControllerAbstract.html">PyDSS.pyControllers.pyControllerAbstract</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.pyDSS.html">PyDSS.pyDSS</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.pyPlotReader.html">PyDSS.pyPlotReader</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.pyPostprocessor.html">PyDSS.pyPostprocessor</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of PyDSS.pyPostprocessor</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.html">PyDSS.pyPostprocessor.PostprocessScripts</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of PyDSS.pyPostprocessor.PostprocessScripts</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer.html">PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer</a></li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules.html">PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle navigation of PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l8"><a class="reference internal" href="../_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules.opt_funcs.html">PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules.opt_funcs</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.EdLiFoControl.html">PyDSS.pyPostprocessor.PostprocessScripts.EdLiFoControl</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.pyPostprocessor.pyPostprocess.html">PyDSS.pyPostprocessor.pyPostprocess</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.pyPostprocessor.pyPostprocessAbstract.html">PyDSS.pyPostprocessor.pyPostprocessAbstract</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.pyResults.html">PyDSS.pyResults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.pydss_fs_interface.html">PyDSS.pydss_fs_interface</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.pydss_project.html">PyDSS.pydss_project</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.pydss_results.html">PyDSS.pydss_results</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.registry.html">PyDSS.registry</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.reports.html">PyDSS.reports</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle navigation of PyDSS.reports</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.reports.capacitor_change_count.html">PyDSS.reports.capacitor_change_count</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.reports.feeder_losses.html">PyDSS.reports.feeder_losses</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.reports.pv_reports.html">PyDSS.reports.pv_reports</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.reports.reg_control_tap_number_change_count.html">PyDSS.reports.reg_control_tap_number_change_count</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.reports.reports.html">PyDSS.reports.reports</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.reports.thermal_metrics.html">PyDSS.reports.thermal_metrics</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.reports.voltage_metrics.html">PyDSS.reports.voltage_metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.simulation_input_models.html">PyDSS.simulation_input_models</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.storage_filters.html">PyDSS.storage_filters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.thermal_metrics.html">PyDSS.thermal_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.unitDefinations.html">PyDSS.unitDefinations</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.utils.html">PyDSS.utils</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle navigation of PyDSS.utils</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.utils.dataframe_utils.html">PyDSS.utils.dataframe_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.utils.dss_utils.html">PyDSS.utils.dss_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.utils.pydss_utils.html">PyDSS.utils.pydss_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.utils.simulation_utils.html">PyDSS.utils.simulation_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.utils.timing_utils.html">PyDSS.utils.timing_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.utils.utils.html">PyDSS.utils.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.value_storage.html">PyDSS.value_storage</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../Models.html">Data models</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../project_layout.html">PyDSS Project Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reports.html">Reports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hdf-data-format.html">HDF Data Format</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../co-simulation_support.html">Co-simulation interfaces</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle navigation of Co-simulation interfaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Co-simulation%20Interfaces.html">The HELICS interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Co-simulation%20Interfaces.html#the-socket-interface">The socket interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../controllers_overview.html">Controller Documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of Controller Documentation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="FaultController.html">Fault Controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GenController.html">Generator Controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MotorStall.html">Motor Stall Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MotorStallSimple.html">Motor Stall (simple)</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">PV System Smart Controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PvDynamic.html">PV System Dynamics Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PvFrequencyRideThru.html">PV System Frequency Ride-Through</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PvVoltageRideThru.html">PV System Voltage Ride-Through</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SocketController.html">Socket Controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="StorageController.html">Storage Controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThermostaticLoad.html">Thermostatic Load Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xfmrController.html">Transformer controller</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="pv-system-smart-controller">
+<h1>PV System Smart Controller<a class="headerlink" href="#pv-system-smart-controller" title="Link to this heading">#</a></h1>
+<section id="controller-overview">
+<h2>Controller overview<a class="headerlink" href="#controller-overview" title="Link to this heading">#</a></h2>
+<p>This controller implments three reactive power compensation techniques namely,</p>
+<ul class="simple">
+<li><p>constant power factor mode</p></li>
+<li><p>variable power factor mode</p></li>
+<li><p>voltage droop mode (a.k.a. volt / var control)</p></li>
+</ul>
+<p>Additionally it implements the volt / watt control and finally implents the trip logic for legacy invereters.</p>
+<p>In constant power factor mode, inverter reactive power follows its active power output, thus ensuring
+power factor remains constant. Constant power factor control mode is cost effective as no
+additional components are required and is simple to implement. However, constant power factor
+control is an inherently inefficient compensation technique as reactive power is supplied not taking
+into consideration the current state of the network.</p>
+<a class="reference internal image-reference" href="../_images/cfp.png"><img alt="Alternative text" src="../_images/cfp.png" style="width: 750px;" /></a>
+<p>Variable power factor control is another reactive power compensation method implemented in this controller.
+The idea is to operate the inverter
+at unity power factor while output power is less than a preset fraction of the rated power of the
+inverter. Once power generation exceeds the preset limit, power factor decreases linearly as a
+function of inverter power output. At times of peak generation, power factor is at a minimum hence
+the reactive power supply is maximum. This method is much more efficient when compared with
+constant power factor mode.</p>
+<a class="reference internal image-reference" href="../_images/vfp.png"><img alt="Alternative text" src="../_images/vfp.png" style="width: 750px;" /></a>
+<p>Droop based reactive power compensation also known as Volt/VAR control is another
+local reactive power compensation method that has been implmented in this controller implementation.
+In this control method the amount of reactive power an inverter will absorb or inject is dependent
+upon the voltage at the PCC. The contoller allows users to define different droop curves including linear, piece-wise linear
+and non-linear curves. The advantage of having a dead band in Volt/VAR droop characteristics is
+that, it minimizes unnecessary compensation when voltage is within the prescribed bounds. Volt/VAR droop
+control is more efficient in voltage regulation compared to variable power factor control.</p>
+<a class="reference internal image-reference" href="../_images/vvar.png"><img alt="Alternative text" src="../_images/vvar.png" style="width: 750px;" /></a>
+<p>Active power curtailment algorithm has also been implemented in this controller implementation.
+Active power curtailment (APC) reduces the amount of active power injected
+by the PV inverters linearly, as the voltage at their buses increase above a certain value. In this way,
+it is possible to increase the installed PV capacity and energy yield while preventing overvoltage.</p>
+<a class="reference internal image-reference" href="../_images/vwatt.png"><img alt="Alternative text" src="../_images/vwatt.png" style="width: 750px;" /></a>
+</section>
+<section id="controller-model">
+<h2>Controller model<a class="headerlink" href="#controller-model" title="Link to this heading">#</a></h2>
+<dl class="py class pydantic_model">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyDSS.pyControllers.models.</span></span><span class="sig-name descname"><span class="pre">PvControllerModel</span></span><a class="reference internal" href="../_modules/PyDSS/pyControllers/models.html#PvControllerModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel" title="Link to this definition">#</a></dt>
+<dd><p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">   </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PvControllerModel&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;Control1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;allOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/SmartControls&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;VVar&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Algorithm to run in the first control loop&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Control1&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;Control2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;allOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/SmartControls&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;None&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Algorithm to run in the second control loop&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Control1&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;Control3&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;allOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/SmartControls&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;None&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Algorithm to run in the third control loop&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Control3&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;pf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Power factor for the PV system&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pf&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;pfMin&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.8</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Minimum allowable power factor for the PV system. Applied only if enable_pf_limit is set.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pfMin&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;pfMax&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Maximum allowable power factor for the PV system. Applied only if enable_pf_limit is set.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pfMax&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;Pmin&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TODO&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Pmin&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;Pmax&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TODO&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Pmax&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;uMin&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.94</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Per unit voltage value at which inverter produces maximum vars. (volt / var algorithm).&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uMin&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;uDbMin&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.97</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Lower bound for the voltage deadband [per unit]. Inverter will not produce or consume vars within these bands (volt / var algorithm).&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uDbMin&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;uDbMax&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.03</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Upper bound for the voltage deadband [per unit]. Inverter will not produce or consume vars within these bands (volt / var algorithm).&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uDbMax&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;uMax&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.06</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Per unit voltage value at which inverter consumes maximum vars (volt / var algorithm).&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uMax&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;QlimPU&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.44</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Inverter reactive power limit [per unit] for the volt / var algorithm.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;QlimPU&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;PFlim&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.9</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Inverter power factor limit. Applied only if enable_pf_limit is set.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PFlim&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;Enable PF limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Flag to enable / disable power factor limits on the inverter&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EnablePFLimit&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;boolean&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;uMinC&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.06</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Lower voltage bound [per unit] for the volt / watt algorithm&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uMinC&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;uMaxC&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.1</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Upper voltage bound [per unit] for the volt / watt algorithm&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uMaxC&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;PminVW&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">10.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Lower bound for the inveter active power output for the volt / watt algorithm&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PminVW&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;VWtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;allOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/VoltWattCurtailmentStrategy&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Rated Power&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;volt / watt algorithm to be implemented on rated or available power&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;VWtype&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;%PCutin&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">10.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Percentage cut-in power -- Percentage of kVA rating of inverter. When the inverter is OFF, the power from the array must be greater than this for the inverter to turn on.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PCutin&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;%PCutout&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">10.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Percentage cut-out power -- Percentage of kVA rating of inverter. When the inverter is ON, the inverter turns OFF when the power from the array drops below this value.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;%PCutout&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;Efficiency&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">100.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Efficieny of the inverter system&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Efficiency&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;Priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;allOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/ControlPriority&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Var&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Set export priority for active power or reactive power&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Priority&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;DampCoef&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.8</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Damping cooefficient for the convergence algorithm&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DampCoef&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;voltage_calc_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;allOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/VoltageCalcModes&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Max&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Voltage values used for calculations.&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">   </span><span class="p">},</span>
+<span class="w">   </span><span class="nt">&quot;$defs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;ControlPriority&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Variable to prooritize at inverter capability limit\n\n**VAR** - *Var priority*\n \n**WATT** - *Watt priority*\n\n**PF** - *Powerfactor priority*\n    &quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;Var&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;Watt&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;PF&quot;</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ControlPriority&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;SmartControls&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Supported smart control algorithms\n\n**NONE** - *No contol algorithm*\n \n**CONSTANT_POWER_FACTOR** - *Constant power factor implmentation*\n\n**VARIABLE_POWER_FACTOR** - *Variable power factor implmentation* \n\n**VOLT_VAR** - *Volt / Var algorithm implementation*\n\n**VOLT_WATT** - *Volt / Watt algorithm implementation* \n\n**TRIP** - *Over voltage trip implementation*&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;None&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;cpf&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;vpf&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;VVar&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;vwatt&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;trip&quot;</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SmartControls&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;VoltWattCurtailmentStrategy&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Curtailment strategy for volt / watt algorithm\n\n**AVAILABLE_POWER** - *Curtailment is based on available power of the inverter*\n \n**RAETED_POWER** - *Curtailment is based on rated power of the inverter*\n    &quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;Available Power&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;Rated Power&quot;</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;VoltWattCurtailmentStrategy&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;VoltageCalcModes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Voltage calculation modes for the controller\n\n**MAX** - *The the maximum voltage from the available phases as the contoller input*\n\n**AVG** - *The the average voltage from the available phases as the contoller input*\n\n**MIN** - *The the minimum voltage from the available phases as the contoller input*\n\n**A** - *The voltage from phase A as the contoller input*\n\n**B** - *The voltage from phase B as the contoller input*\n\n**C** - *The voltage from phase C as the contoller input*&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;Max&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;Avg&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;Min&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;2&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;3&quot;</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;VoltageCalcModes&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details></p><dl class="field-list simple">
+<dt class="field-odd">Fields<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.control1" title="PyDSS.pyControllers.models.PvControllerModel.control1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">control1</span> <span class="pre">(PyDSS.pyControllers.enumerations.SmartControls)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.control2" title="PyDSS.pyControllers.models.PvControllerModel.control2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">control2</span> <span class="pre">(PyDSS.pyControllers.enumerations.SmartControls)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.control3" title="PyDSS.pyControllers.models.PvControllerModel.control3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">control3</span> <span class="pre">(PyDSS.pyControllers.enumerations.SmartControls)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.damp_coef" title="PyDSS.pyControllers.models.PvControllerModel.damp_coef"><code class="xref py py-obj docutils literal notranslate"><span class="pre">damp_coef</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.efficiency" title="PyDSS.pyControllers.models.PvControllerModel.efficiency"><code class="xref py py-obj docutils literal notranslate"><span class="pre">efficiency</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.enable_pf_limit" title="PyDSS.pyControllers.models.PvControllerModel.enable_pf_limit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">enable_pf_limit</span> <span class="pre">(bool)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.p_max" title="PyDSS.pyControllers.models.PvControllerModel.p_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">p_max</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.p_min" title="PyDSS.pyControllers.models.PvControllerModel.p_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">p_min</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.p_min_vw" title="PyDSS.pyControllers.models.PvControllerModel.p_min_vw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">p_min_vw</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.percent_p_cutin" title="PyDSS.pyControllers.models.PvControllerModel.percent_p_cutin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">percent_p_cutin</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.percent_p_cutout" title="PyDSS.pyControllers.models.PvControllerModel.percent_p_cutout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">percent_p_cutout</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.pf" title="PyDSS.pyControllers.models.PvControllerModel.pf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pf</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.pf_lim" title="PyDSS.pyControllers.models.PvControllerModel.pf_lim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pf_lim</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.pf_max" title="PyDSS.pyControllers.models.PvControllerModel.pf_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pf_max</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.pf_min" title="PyDSS.pyControllers.models.PvControllerModel.pf_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pf_min</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.priority" title="PyDSS.pyControllers.models.PvControllerModel.priority"><code class="xref py py-obj docutils literal notranslate"><span class="pre">priority</span> <span class="pre">(PyDSS.pyControllers.enumerations.ControlPriority)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.q_lim_pu" title="PyDSS.pyControllers.models.PvControllerModel.q_lim_pu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">q_lim_pu</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.u_db_max" title="PyDSS.pyControllers.models.PvControllerModel.u_db_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">u_db_max</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.u_db_min" title="PyDSS.pyControllers.models.PvControllerModel.u_db_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">u_db_min</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.u_max" title="PyDSS.pyControllers.models.PvControllerModel.u_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">u_max</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.u_max_c" title="PyDSS.pyControllers.models.PvControllerModel.u_max_c"><code class="xref py py-obj docutils literal notranslate"><span class="pre">u_max_c</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.u_min" title="PyDSS.pyControllers.models.PvControllerModel.u_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">u_min</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.u_min_c" title="PyDSS.pyControllers.models.PvControllerModel.u_min_c"><code class="xref py py-obj docutils literal notranslate"><span class="pre">u_min_c</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.voltage_calc_mode" title="PyDSS.pyControllers.models.PvControllerModel.voltage_calc_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">voltage_calc_mode</span> <span class="pre">(PyDSS.pyControllers.enumerations.VoltageCalcModes)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.vw_type" title="PyDSS.pyControllers.models.PvControllerModel.vw_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vw_type</span> <span class="pre">(PyDSS.pyControllers.enumerations.VoltWattCurtailmentStrategy)</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.control1">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">control1</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#PyDSS.pyControllers.enumerations.SmartControls" title="PyDSS.pyControllers.enumerations.SmartControls"><span class="pre">SmartControls</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">SmartControls.VOLT_VAR</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Control1')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.control1" title="Link to this definition">#</a></dt>
+<dd><p>Algorithm to run in the first control loop</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.control2">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">control2</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#PyDSS.pyControllers.enumerations.SmartControls" title="PyDSS.pyControllers.enumerations.SmartControls"><span class="pre">SmartControls</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">SmartControls.NONE</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Control2')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.control2" title="Link to this definition">#</a></dt>
+<dd><p>Algorithm to run in the second control loop</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.control3">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">control3</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#PyDSS.pyControllers.enumerations.SmartControls" title="PyDSS.pyControllers.enumerations.SmartControls"><span class="pre">SmartControls</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">SmartControls.NONE</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Control3')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.control3" title="Link to this definition">#</a></dt>
+<dd><p>Algorithm to run in the third control loop</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.damp_coef">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">damp_coef</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.8</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'DampCoef')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.damp_coef" title="Link to this definition">#</a></dt>
+<dd><p>Damping cooefficient for the convergence algorithm</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.efficiency">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">efficiency</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100.0</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Efficiency')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.efficiency" title="Link to this definition">#</a></dt>
+<dd><p>Efficieny of the inverter system</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.enable_pf_limit">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">enable_pf_limit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Enable</span> <span class="pre">PF</span> <span class="pre">limit')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.enable_pf_limit" title="Link to this definition">#</a></dt>
+<dd><p>Flag to enable / disable power factor limits on the inverter</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.p_max">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">p_max</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Pmax')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.p_max" title="Link to this definition">#</a></dt>
+<dd><p>TODO</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.p_min">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">p_min</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Pmin')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.p_min" title="Link to this definition">#</a></dt>
+<dd><p>TODO</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.p_min_vw">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">p_min_vw</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10.0</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'PminVW')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.p_min_vw" title="Link to this definition">#</a></dt>
+<dd><p>Lower bound for the inveter active power output for the volt / watt algorithm</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.percent_p_cutin">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">percent_p_cutin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10.0</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'%PCutin')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.percent_p_cutin" title="Link to this definition">#</a></dt>
+<dd><p>Percentage cut-in power – Percentage of kVA rating of inverter. When the inverter is OFF, the power from the array must be greater than this for the inverter to turn on.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.percent_p_cutout">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">percent_p_cutout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10.0</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'%PCutout')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.percent_p_cutout" title="Link to this definition">#</a></dt>
+<dd><p>Percentage cut-out power – Percentage of kVA rating of inverter. When the inverter is ON, the inverter turns OFF when the power from the array drops below this value.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.pf">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pf</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.pf" title="Link to this definition">#</a></dt>
+<dd><p>Power factor for the PV system</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.pf_lim">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pf_lim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.9</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'PFlim')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.pf_lim" title="Link to this definition">#</a></dt>
+<dd><p>Inverter power factor limit. Applied only if enable_pf_limit is set.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.pf_max">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pf_max</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'pfMax')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.pf_max" title="Link to this definition">#</a></dt>
+<dd><p>Maximum allowable power factor for the PV system. Applied only if enable_pf_limit is set.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.pf_min">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pf_min</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.8</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'pfMin')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.pf_min" title="Link to this definition">#</a></dt>
+<dd><p>Minimum allowable power factor for the PV system. Applied only if enable_pf_limit is set.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.priority">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">priority</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#PyDSS.pyControllers.enumerations.ControlPriority" title="PyDSS.pyControllers.enumerations.ControlPriority"><span class="pre">ControlPriority</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">ControlPriority.VAR</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Priority')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.priority" title="Link to this definition">#</a></dt>
+<dd><p>Set export priority for active power or reactive power</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.q_lim_pu">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">q_lim_pu</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.44</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'QlimPU')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.q_lim_pu" title="Link to this definition">#</a></dt>
+<dd><p>Inverter reactive power limit [per unit] for the volt / var algorithm.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.u_db_max">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">u_db_max</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.03</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'uDbMax')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.u_db_max" title="Link to this definition">#</a></dt>
+<dd><p>Upper bound for the voltage deadband [per unit]. Inverter will not produce or consume vars within these bands (volt / var algorithm).</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.u_db_min">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">u_db_min</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.97</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'uDbMin')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.u_db_min" title="Link to this definition">#</a></dt>
+<dd><p>Lower bound for the voltage deadband [per unit]. Inverter will not produce or consume vars within these bands (volt / var algorithm).</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.u_max">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">u_max</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.06</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'uMax')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.u_max" title="Link to this definition">#</a></dt>
+<dd><p>Per unit voltage value at which inverter consumes maximum vars (volt / var algorithm).</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.u_max_c">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">u_max_c</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.1</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'uMaxC')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.u_max_c" title="Link to this definition">#</a></dt>
+<dd><p>Upper voltage bound [per unit] for the volt / watt algorithm</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.u_min">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">u_min</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.94</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'uMin')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.u_min" title="Link to this definition">#</a></dt>
+<dd><p>Per unit voltage value at which inverter produces maximum vars. (volt / var algorithm).</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.u_min_c">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">u_min_c</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.06</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'uMinC')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.u_min_c" title="Link to this definition">#</a></dt>
+<dd><p>Lower voltage bound [per unit] for the volt / watt algorithm</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.voltage_calc_mode">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">voltage_calc_mode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="PvVoltageRideThru.html#PyDSS.pyControllers.enumerations.VoltageCalcModes" title="PyDSS.pyControllers.enumerations.VoltageCalcModes"><span class="pre">VoltageCalcModes</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">VoltageCalcModes.MAX</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.voltage_calc_mode" title="Link to this definition">#</a></dt>
+<dd><p>Voltage values used for calculations.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.vw_type">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">vw_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltWattCurtailmentStrategy" title="PyDSS.pyControllers.enumerations.VoltWattCurtailmentStrategy"><span class="pre">VoltWattCurtailmentStrategy</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">VoltWattCurtailmentStrategy.RAETED_POWER</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'VWtype')</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.vw_type" title="Link to this definition">#</a></dt>
+<dd><p>volt / watt algorithm to be implemented on rated or available power</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvControllerModel.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvControllerModel.model_computed_fields" title="Link to this definition">#</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="controller-options">
+<h2>Controller options<a class="headerlink" href="#controller-options" title="Link to this heading">#</a></h2>
+<dl class="py class enum">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.SmartControls">
+<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyDSS.pyControllers.enumerations.</span></span><span class="sig-name descname"><span class="pre">SmartControls</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/PyDSS/pyControllers/enumerations.html#SmartControls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.pyControllers.enumerations.SmartControls" title="Link to this definition">#</a></dt>
+<dd><p>Supported smart control algorithms</p>
+<p><strong>NONE</strong> - <em>No contol algorithm</em></p>
+<p><strong>CONSTANT_POWER_FACTOR</strong> - <em>Constant power factor implmentation</em></p>
+<p><strong>VARIABLE_POWER_FACTOR</strong> - <em>Variable power factor implmentation</em></p>
+<p><strong>VOLT_VAR</strong> - <em>Volt / Var algorithm implementation</em></p>
+<p><strong>VOLT_WATT</strong> - <em>Volt / Watt algorithm implementation</em></p>
+<p><strong>TRIP</strong> - <em>Over voltage trip implementation</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Member Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+<p>Valid values are as follows:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.SmartControls.NONE">
+<span class="sig-name descname"><span class="pre">NONE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SmartControls.NONE:</span> <span class="pre">'None'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.SmartControls.NONE" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.SmartControls.CONSTANT_POWER_FACTOR">
+<span class="sig-name descname"><span class="pre">CONSTANT_POWER_FACTOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SmartControls.CONSTANT_POWER_FACTOR:</span> <span class="pre">'cpf'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.SmartControls.CONSTANT_POWER_FACTOR" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.SmartControls.VARIABLE_POWER_FACTOR">
+<span class="sig-name descname"><span class="pre">VARIABLE_POWER_FACTOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SmartControls.VARIABLE_POWER_FACTOR:</span> <span class="pre">'vpf'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.SmartControls.VARIABLE_POWER_FACTOR" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.SmartControls.VOLT_VAR">
+<span class="sig-name descname"><span class="pre">VOLT_VAR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SmartControls.VOLT_VAR:</span> <span class="pre">'VVar'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.SmartControls.VOLT_VAR" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.SmartControls.VOLT_WATT">
+<span class="sig-name descname"><span class="pre">VOLT_WATT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SmartControls.VOLT_WATT:</span> <span class="pre">'vwatt'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.SmartControls.VOLT_WATT" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.SmartControls.TRIP">
+<span class="sig-name descname"><span class="pre">TRIP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SmartControls.TRIP:</span> <span class="pre">'trip'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.SmartControls.TRIP" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class enum">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.ControlPriority">
+<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyDSS.pyControllers.enumerations.</span></span><span class="sig-name descname"><span class="pre">ControlPriority</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/PyDSS/pyControllers/enumerations.html#ControlPriority"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.pyControllers.enumerations.ControlPriority" title="Link to this definition">#</a></dt>
+<dd><p>Variable to prooritize at inverter capability limit</p>
+<p><strong>VAR</strong> - <em>Var priority</em></p>
+<p><strong>WATT</strong> - <em>Watt priority</em></p>
+<p><strong>PF</strong> - <em>Powerfactor priority</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Member Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+<p>Valid values are as follows:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.ControlPriority.VAR">
+<span class="sig-name descname"><span class="pre">VAR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;ControlPriority.VAR:</span> <span class="pre">'Var'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.ControlPriority.VAR" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.ControlPriority.WATT">
+<span class="sig-name descname"><span class="pre">WATT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;ControlPriority.WATT:</span> <span class="pre">'Watt'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.ControlPriority.WATT" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.ControlPriority.PF">
+<span class="sig-name descname"><span class="pre">PF</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;ControlPriority.PF:</span> <span class="pre">'PF'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.ControlPriority.PF" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class enum">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.VoltWattCurtailmentStrategy">
+<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyDSS.pyControllers.enumerations.</span></span><span class="sig-name descname"><span class="pre">VoltWattCurtailmentStrategy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/PyDSS/pyControllers/enumerations.html#VoltWattCurtailmentStrategy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.pyControllers.enumerations.VoltWattCurtailmentStrategy" title="Link to this definition">#</a></dt>
+<dd><p>Curtailment strategy for volt / watt algorithm</p>
+<p><strong>AVAILABLE_POWER</strong> - <em>Curtailment is based on available power of the inverter</em></p>
+<p><strong>RAETED_POWER</strong> - <em>Curtailment is based on rated power of the inverter</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Member Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+<p>Valid values are as follows:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.VoltWattCurtailmentStrategy.AVAILABLE_POWER">
+<span class="sig-name descname"><span class="pre">AVAILABLE_POWER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;VoltWattCurtailmentStrategy.AVAILABLE_POWER:</span> <span class="pre">'Available</span> <span class="pre">Power'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.VoltWattCurtailmentStrategy.AVAILABLE_POWER" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.VoltWattCurtailmentStrategy.RAETED_POWER">
+<span class="sig-name descname"><span class="pre">RAETED_POWER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;VoltWattCurtailmentStrategy.RAETED_POWER:</span> <span class="pre">'Rated</span> <span class="pre">Power'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.VoltWattCurtailmentStrategy.RAETED_POWER" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class enum">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.VoltageCalcModes">
+<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyDSS.pyControllers.enumerations.</span></span><span class="sig-name descname"><span class="pre">VoltageCalcModes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/PyDSS/pyControllers/enumerations.html#VoltageCalcModes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes" title="Link to this definition">#</a></dt>
+<dd><p>Voltage calculation modes for the controller</p>
+<p><strong>MAX</strong> - <em>The the maximum voltage from the available phases as the contoller input</em></p>
+<p><strong>AVG</strong> - <em>The the average voltage from the available phases as the contoller input</em></p>
+<p><strong>MIN</strong> - <em>The the minimum voltage from the available phases as the contoller input</em></p>
+<p><strong>A</strong> - <em>The voltage from phase A as the contoller input</em></p>
+<p><strong>B</strong> - <em>The voltage from phase B as the contoller input</em></p>
+<p><strong>C</strong> - <em>The voltage from phase C as the contoller input</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Member Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+<p>Valid values are as follows:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.VoltageCalcModes.MAX">
+<span class="sig-name descname"><span class="pre">MAX</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;VoltageCalcModes.MAX:</span> <span class="pre">'Max'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.MAX" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.VoltageCalcModes.AVG">
+<span class="sig-name descname"><span class="pre">AVG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;VoltageCalcModes.AVG:</span> <span class="pre">'Avg'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.AVG" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.VoltageCalcModes.MIN">
+<span class="sig-name descname"><span class="pre">MIN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;VoltageCalcModes.MIN:</span> <span class="pre">'Min'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.MIN" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.VoltageCalcModes.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;VoltageCalcModes.A:</span> <span class="pre">'1'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.A" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.VoltageCalcModes.B">
+<span class="sig-name descname"><span class="pre">B</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;VoltageCalcModes.B:</span> <span class="pre">'2'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.B" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.VoltageCalcModes.C">
+<span class="sig-name descname"><span class="pre">C</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;VoltageCalcModes.C:</span> <span class="pre">'3'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.C" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="usage-example">
+<h2>Usage example<a class="headerlink" href="#usage-example" title="Link to this heading">#</a></h2>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="PvDynamic.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">PV System Dynamics Model</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="MotorStallSimple.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Motor Stall (simple)</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2019, Aadil Latif
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">PV System Smart Controller</a><ul>
+<li><a class="reference internal" href="#controller-overview">Controller overview</a></li>
+<li><a class="reference internal" href="#controller-model">Controller model</a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel"><code class="docutils literal notranslate"><span class="pre">PvControllerModel</span></code></a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.control1"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.control1</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.control2"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.control2</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.control3"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.control3</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.damp_coef"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.damp_coef</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.efficiency"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.efficiency</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.enable_pf_limit"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.enable_pf_limit</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.p_max"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.p_max</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.p_min"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.p_min</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.p_min_vw"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.p_min_vw</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.percent_p_cutin"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.percent_p_cutin</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.percent_p_cutout"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.percent_p_cutout</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.pf"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.pf</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.pf_lim"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.pf_lim</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.pf_max"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.pf_max</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.pf_min"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.pf_min</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.priority"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.priority</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.q_lim_pu"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.q_lim_pu</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.u_db_max"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.u_db_max</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.u_db_min"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.u_db_min</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.u_max"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.u_max</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.u_max_c"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.u_max_c</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.u_min"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.u_min</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.u_min_c"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.u_min_c</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.voltage_calc_mode"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.voltage_calc_mode</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.vw_type"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.vw_type</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvControllerModel.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">PvControllerModel.model_computed_fields</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#controller-options">Controller options</a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.SmartControls"><code class="docutils literal notranslate"><span class="pre">SmartControls</span></code></a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.SmartControls.NONE"><code class="docutils literal notranslate"><span class="pre">SmartControls.NONE</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.SmartControls.CONSTANT_POWER_FACTOR"><code class="docutils literal notranslate"><span class="pre">SmartControls.CONSTANT_POWER_FACTOR</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.SmartControls.VARIABLE_POWER_FACTOR"><code class="docutils literal notranslate"><span class="pre">SmartControls.VARIABLE_POWER_FACTOR</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.SmartControls.VOLT_VAR"><code class="docutils literal notranslate"><span class="pre">SmartControls.VOLT_VAR</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.SmartControls.VOLT_WATT"><code class="docutils literal notranslate"><span class="pre">SmartControls.VOLT_WATT</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.SmartControls.TRIP"><code class="docutils literal notranslate"><span class="pre">SmartControls.TRIP</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.ControlPriority"><code class="docutils literal notranslate"><span class="pre">ControlPriority</span></code></a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.ControlPriority.VAR"><code class="docutils literal notranslate"><span class="pre">ControlPriority.VAR</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.ControlPriority.WATT"><code class="docutils literal notranslate"><span class="pre">ControlPriority.WATT</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.ControlPriority.PF"><code class="docutils literal notranslate"><span class="pre">ControlPriority.PF</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltWattCurtailmentStrategy"><code class="docutils literal notranslate"><span class="pre">VoltWattCurtailmentStrategy</span></code></a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltWattCurtailmentStrategy.AVAILABLE_POWER"><code class="docutils literal notranslate"><span class="pre">VoltWattCurtailmentStrategy.AVAILABLE_POWER</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltWattCurtailmentStrategy.RAETED_POWER"><code class="docutils literal notranslate"><span class="pre">VoltWattCurtailmentStrategy.RAETED_POWER</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes"><code class="docutils literal notranslate"><span class="pre">VoltageCalcModes</span></code></a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.MAX"><code class="docutils literal notranslate"><span class="pre">VoltageCalcModes.MAX</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.AVG"><code class="docutils literal notranslate"><span class="pre">VoltageCalcModes.AVG</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.MIN"><code class="docutils literal notranslate"><span class="pre">VoltageCalcModes.MIN</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.A"><code class="docutils literal notranslate"><span class="pre">VoltageCalcModes.A</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.B"><code class="docutils literal notranslate"><span class="pre">VoltageCalcModes.B</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.C"><code class="docutils literal notranslate"><span class="pre">VoltageCalcModes.C</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#usage-example">Usage example</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=dd1205ac"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=32e29ea5"></script>
+    </body>
+</html>

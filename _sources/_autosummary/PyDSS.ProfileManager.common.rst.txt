@@ -13,12 +13,6 @@ PyDSS.ProfileManager.common
 
    
    
-   .. rubric:: Classes
-
-   .. autosummary::
-   
-      PROFILE_TYPES
-   
    
 
    
