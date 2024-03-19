@@ -19,3 +19,4 @@ pymongo
 pydantic~=2.5.2
 matplotlib
 pvder
+loguru
