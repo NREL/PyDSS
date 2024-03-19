@@ -1,0 +1,2313 @@
+2024-03-19 09:27:19.555 | INFO     | PyDSS.cli.run:run:88 - CLI: [pydss run C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics]
+2024-03-19 09:27:19.555 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\simulation.toml
+2024-03-19 09:27:19.565 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\Scenarios\qsts\ExportLists\ExportMode-byClass.toml
+2024-03-19 09:27:19.567 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\simulation-run.toml
+2024-03-19 09:27:19.570 | INFO     | PyDSS.dssInstance:__init__:77 - An instance of OpenDSS version 0.8.4 has been created.
+2024-03-19 09:27:19.571 | INFO     | PyDSS.dssInstance:_compile_model:144 - Loading OpenDSS model
+2024-03-19 09:27:19.580 | INFO     | PyDSS.dssInstance:_compile_model:152 - OpenDSS:  
+2024-03-19 09:27:19.582 | INFO     | PyDSS.dssInstance:__init__:88 - OpenDSS fundamental frequency set to :  60.0 Hz
+2024-03-19 09:27:19.582 | INFO     | PyDSS.SolveMode:GetSolver:13 - Setting solver to %s mode.
+2024-03-19 09:27:19.582 | INFO     | PyDSS.modes.solver_base:__init__:39 - %s solver setup complete
+2024-03-19 09:27:19.583 | ERROR    | PyDSS.pydss_project:run:378 - Simulation failed
+Traceback (most recent call last):
+
+  File "\\?\C:\Users\alatif\.conda\envs\pydss\Scripts\pydss-script.py", line 33, in <module>
+    sys.exit(load_entry_point('dsspy', 'console_scripts', 'pydss')())
+    │   │    └ <function importlib_load_entry_point at 0x0000027104C9A660>
+    │   └ <built-in function exit>
+    └ <module 'sys' (built-in)>
+
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1157, in __call__
+    return self.main(*args, **kwargs)
+           │    │     │       └ {}
+           │    │     └ ()
+           │    └ <function BaseCommand.main at 0x000002710735C360>
+           └ <Group cli>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1078, in main
+    rv = self.invoke(ctx)
+         │    │      └ <click.core.Context object at 0x00000271072B0B60>
+         │    └ <function MultiCommand.invoke at 0x000002710735D580>
+         └ <Group cli>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1688, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+           │               │       │       │      └ <click.core.Context object at 0x0000027104B05220>
+           │               │       │       └ <function Command.invoke at 0x000002710735CF40>
+           │               │       └ <Command run>
+           │               └ <click.core.Context object at 0x0000027104B05220>
+           └ <function MultiCommand.invoke.<locals>._process_result at 0x0000027104CAD1C0>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1434, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           │   │      │    │           │   └ {'project_path': 'C:\\Users\\alatif\\Documents\\GitHub\\PyDSS\\examples\\harmonics', 'dry_run': False, 'verbose': False, 'zip...
+           │   │      │    │           └ <click.core.Context object at 0x0000027104B05220>
+           │   │      │    └ <function run at 0x000002712D002200>
+           │   │      └ <Command run>
+           │   └ <function Context.invoke at 0x000002710734F880>
+           └ <click.core.Context object at 0x0000027104B05220>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 783, in invoke
+    return __callback(*args, **kwargs)
+                       │       └ {'project_path': 'C:\\Users\\alatif\\Documents\\GitHub\\PyDSS\\examples\\harmonics', 'dry_run': False, 'verbose': False, 'zip...
+                       └ ()
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\cli\run.py", line 97, in run
+    project.run(tar_project=tar_project, zip_project=zip_project, dry_run=dry_run)
+    │       │               │                        │                    └ False
+    │       │               │                        └ False
+    │       │               └ False
+    │       └ <function PyDssProject.run at 0x000002712CFEDEE0>
+    └ <PyDSS.pydss_project.PyDssProject object at 0x000002712E5A3260>
+
+> File "c:\users\alatif\documents\github\pydss\PyDSS\pydss_project.py", line 361, in run
+    inst.run(self._settings, self, scenario, dry_run=dry_run)
+    │    │   │    │          │     │                 └ False
+    │    │   │    │          │     └ <PyDSS.pydss_project.PyDssScenario object at 0x000002712E41B920>
+    │    │   │    │          └ <PyDSS.pydss_project.PyDssProject object at 0x000002712E5A3260>
+    │    │   │    └ SimulationSettingsModel(project=ProjectModel(project_path=WindowsPath('examples'), active_project='harmonics', active_project...
+    │    │   └ <PyDSS.pydss_project.PyDssProject object at 0x000002712E5A3260>
+    │    └ <function instance.run at 0x0000027109641260>
+    └ <PyDSS.pyDSS.instance object at 0x000002712E51F080>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\pyDSS.py", line 51, in run
+    self.run_scenario(
+    │    └ <function instance.run_scenario at 0x000002712CEBF1A0>
+    └ <PyDSS.pyDSS.instance object at 0x000002712E51F080>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\pyDSS.py", line 74, in run_scenario
+    opendss = OpenDSS(settings)
+              │       └ SimulationSettingsModel(project=ProjectModel(project_path=WindowsPath('examples'), active_project='harmonics', active_project...
+              └ <class 'PyDSS.dssInstance.OpenDSS'>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 104, in __init__
+    self._dssSolver = SolveMode.GetSolver(settings=settings, dssInstance=self._dssInstance)
+    │                 │         │                  │                     │    └ <module 'opendssdirect' from 'C:\\Users\\alatif\\.conda\\envs\\pydss\\Lib\\site-packages\\opendssdirect\\__init__.py'>
+    │                 │         │                  │                     └ <PyDSS.dssInstance.OpenDSS object at 0x000002712E485730>
+    │                 │         │                  └ SimulationSettingsModel(project=ProjectModel(project_path=WindowsPath('examples'), active_project='harmonics', active_project...
+    │                 │         └ <function GetSolver at 0x000002712CDA3880>
+    │                 └ <module 'PyDSS.SolveMode' from 'c:\\users\\alatif\\documents\\github\\pydss\\PyDSS\\SolveMode.py'>
+    └ <PyDSS.dssInstance.OpenDSS object at 0x000002712E485730>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\SolveMode.py", line 14, in GetSolver
+    return get_solver_from_simulation_type(settings.project)
+           │                               │        └ ProjectModel(project_path=WindowsPath('examples'), active_project='harmonics', active_project_path=WindowsPath('examples/harm...
+           │                               └ SimulationSettingsModel(project=ProjectModel(project_path=WindowsPath('examples'), active_project='harmonics', active_project...
+           └ <function get_solver_from_simulation_type at 0x000002712CEBDD00>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\SolveMode.py", line 22, in get_solver_from_simulation_type
+    return QSTS(dssInstance=dss, settings=settings)
+           │                │             └ ProjectModel(project_path=WindowsPath('examples'), active_project='harmonics', active_project_path=WindowsPath('examples/harm...
+           │                └ <module 'opendssdirect' from 'C:\\Users\\alatif\\.conda\\envs\\pydss\\Lib\\site-packages\\opendssdirect\\__init__.py'>
+           └ <class 'PyDSS.modes.QSTS.QSTS'>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\modes\QSTS.py", line 19, in __init__
+    load_shape_resolutions_secs = get_load_shape_resolution_secs()
+                                  └ <function get_load_shape_resolution_secs at 0x000002712CC59BC0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\dss_utils.py", line 69, in get_load_shape_resolution_secs
+    return res[0]
+           └ []
+
+IndexError: list index out of range
+2024-03-19 09:28:48.482 | INFO     | PyDSS.cli.run:run:88 - CLI: [pydss run C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics]
+2024-03-19 09:28:48.484 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\simulation.toml
+2024-03-19 09:28:48.486 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\Scenarios\qsts\ExportLists\ExportMode-byClass.toml
+2024-03-19 09:28:48.488 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\simulation-run.toml
+2024-03-19 09:28:48.491 | INFO     | PyDSS.dssInstance:__init__:77 - An instance of OpenDSS version 0.8.4 has been created.
+2024-03-19 09:28:48.492 | INFO     | PyDSS.dssInstance:_compile_model:144 - Loading OpenDSS model
+2024-03-19 09:28:48.504 | INFO     | PyDSS.dssInstance:_compile_model:152 - OpenDSS:  
+2024-03-19 09:28:48.504 | INFO     | PyDSS.dssInstance:__init__:88 - OpenDSS fundamental frequency set to :  60.0 Hz
+2024-03-19 09:28:48.504 | INFO     | PyDSS.SolveMode:GetSolver:13 - Setting solver to %s mode.
+2024-03-19 09:28:48.504 | INFO     | PyDSS.modes.solver_base:__init__:39 - %s solver setup complete
+2024-03-19 09:28:48.525 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from examples\harmonics\Scenarios\qsts\ExportLists\ExportMode-byClass.toml
+2024-03-19 09:28:48.534 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to examples\harmonics\Exports\qsts\ExportsActual.toml
+2024-03-19 09:28:48.535 | INFO     | PyDSS.dssInstance:__init__:136 - Simulation initialization complete
+2024-03-19 09:28:48.537 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to examples\harmonics\Scenarios\qsts\simulation-run.toml
+2024-03-19 09:28:48.537 | INFO     | PyDSS.pyDSS:run_scenario:76 - Running scenario: %s
+2024-03-19 09:28:48.538 | INFO     | PyDSS.dssInstance:RunSimulation:358 - Running simulation from 2020-01-01 00:00:00 till 2020-01-01 01:14:00.
+2024-03-19 09:28:48.538 | INFO     | PyDSS.dssInstance:RunSimulation:359 - Simulation time step 5.
+2024-03-19 09:28:48.538 | INFO     | PyDSS.dssInstance:RunSimulation:360 - Set OpenDSS convergence to %s
+2024-03-19 09:28:48.538 | INFO     | PyDSS.dssInstance:RunSimulation:361 - Max convergence error count None.
+2024-03-19 09:28:48.539 | INFO     | PyDSS.dssInstance:RunSimulation:362 - initializing store
+2024-03-19 09:28:48.540 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:28:48.540 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:28:48.541 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:28:48.541 | INFO     | PyDSS.dssInstance:RunSimulation:378 - No post processing script selected
+2024-03-19 09:28:48.542 | INFO     | PyDSS.dssInstance:RunStep:244 - PyDSS datetime - 2020-01-01 00:00:00
+2024-03-19 09:28:48.542 | INFO     | PyDSS.dssInstance:RunStep:245 - OpenDSS time [h] - 0.0
+2024-03-19 09:28:48.542 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 0 convergence error: 0
+2024-03-19 09:28:48.543 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 1 convergence error: 0
+2024-03-19 09:28:48.543 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 2 convergence error: 0
+2024-03-19 09:28:48.552 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:28:48.553 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:28:48.553 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:28:48.556 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:28:48.556 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:28:48.556 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:28:48.558 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:28:48.558 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:28:48.558 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:28:48.559 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:28:48.559 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:28:48.559 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:28:48.560 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:28:48.560 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:28:48.560 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:28:48.563 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:28:48.564 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:28:48.564 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:28:48.564 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:28:48.564 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:28:48.564 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:28:48.564 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:28:48.573 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:28:48.573 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:28:48.574 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:28:48.574 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:28:48.579 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:28:48.583 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:28:48.583 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:28:48.584 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:28:48.585 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:28:48.585 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:28:48.585 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:28:48.585 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:28:48.585 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:28:48.585 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:28:48.593 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:28:48.594 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:28:48.594 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:28:48.665 | ERROR    | PyDSS.pydss_project:run:378 - Simulation failed
+Traceback (most recent call last):
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 390, in RunSimulation
+    pydss_has_converged = self.RunStep(step)
+                          │    │       └ 0
+                          │    └ <function track_timing.<locals>.wrap.<locals>.timed_ at 0x000001F6E33A2DE0>
+                          └ <PyDSS.dssInstance.OpenDSS object at 0x000001F6E4A01C70>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 182, in timed_
+    return _timed_func(timer_stats, func, *args, **kwargs)
+           │           │            │      │       └ {}
+           │           │            │      └ (<PyDSS.dssInstance.OpenDSS object at 0x000001F6E4A01C70>, 0)
+           │           │            └ <function OpenDSS.RunStep at 0x000001F6E33A2D40>
+           │           └ <PyDSS.utils.timing_utils.TimerStatsCollector object at 0x000001F6BD771850>
+           └ <function _timed_func at 0x000001F6BD78DC60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 190, in _timed_func
+    return func(*args, **kwargs)
+           │     │       └ {}
+           │     └ (<PyDSS.dssInstance.OpenDSS object at 0x000001F6E4A01C70>, 0)
+           └ <function OpenDSS.RunStep at 0x000001F6E33A2D40>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 292, in RunStep
+    self.ResultContainer.UpdateResults()
+    │    │               └ <function track_timing.<locals>.wrap.<locals>.timed_ at 0x000001F6E33A0040>
+    │    └ <PyDSS.ResultData.ResultData object at 0x000001F6E4A83470>
+    └ <PyDSS.dssInstance.OpenDSS object at 0x000001F6E4A01C70>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 182, in timed_
+    return _timed_func(timer_stats, func, *args, **kwargs)
+           │           │            │      │       └ {}
+           │           │            │      └ (<PyDSS.ResultData.ResultData object at 0x000001F6E4A83470>,)
+           │           │            └ <function ResultData.UpdateResults at 0x000001F6E3397F60>
+           │           └ <PyDSS.utils.timing_utils.TimerStatsCollector object at 0x000001F6BD771850>
+           └ <function _timed_func at 0x000001F6BD78DC60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 190, in _timed_func
+    return func(*args, **kwargs)
+           │     │       └ {}
+           │     └ (<PyDSS.ResultData.ResultData object at 0x000001F6E4A83470>,)
+           └ <function ResultData.UpdateResults at 0x000001F6E3397F60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\ResultData.py", line 232, in UpdateResults
+    data = metric.append_values(self._cur_step, store_nan=store_nan)
+           │      │             │    │                    └ False
+           │      │             │    └ 5
+           │      │             └ <PyDSS.ResultData.ResultData object at 0x000001F6E4A83470>
+           │      └ <function OpenDssPropertyMetric.append_values at 0x000001F6E32AF1A0>
+           └ <PyDSS.metrics.OpenDssPropertyMetric object at 0x000001F6E4C32EA0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 320, in append_values
+    values = super().append_values(time_step, store_nan=store_nan)
+                                   │                    └ False
+                                   └ 5
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 299, in append_values
+    container.append_values(vals, time_step)
+    │         │             │     └ 5
+    │         │             └ [<PyDSS.value_storage.ValueByLabel object at 0x000001F6E4C47320>, <PyDSS.value_storage.ValueByLabel object at 0x000001F6E4C46...
+    │         └ <function StorageAll.append_values at 0x000001F6E32AC4A0>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000001F6E4C47140>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 81, in append_values
+    self._container.append(values)
+    │    │          │      └ [<PyDSS.value_storage.ValueByLabel object at 0x000001F6E4C47320>, <PyDSS.value_storage.ValueByLabel object at 0x000001F6E4C46...
+    │    │          └ <function ValueContainer.append at 0x000001F6C18FCAE0>
+    │    └ <PyDSS.value_storage.ValueContainer object at 0x000001F6E4C80E30>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000001F6E4C47140>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\value_storage.py", line 621, in append
+    self._dataset.write_value(vals)
+    │    │        │           └ [1.0279369670050302, 174.78418402841413, 1.0181275781794819, 55.94865940879409, 1.02483606756101, -64.76544929248458, 1.02793...
+    │    │        └ <function DatasetBuffer.write_value at 0x000001F6BFD86700>
+    │    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001F6E4C80EF0>
+    └ <PyDSS.value_storage.ValueContainer object at 0x000001F6E4C80E30>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 147, in write_value
+    self.flush_data()
+    │    └ <function DatasetBuffer.flush_data at 0x000001F6BFD865C0>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001F6E4C80EF0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 124, in flush_data
+    self._dataset[self._dataset_index:new_index] = self._buf[0:length]
+    │    │        │    │              │            │    │      └ 3
+    │    │        │    │              │            │    └ array([[ 1.01939501e+00,  1.75380992e+02,  1.00861322e+00, ...,
+    │    │        │    │              │            │              -6.34349488e+01,  8.13476791e-12,  1.16565051e+02],
+    │    │        │    │              │            │       ...
+    │    │        │    │              │            └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001F6E4C80EF0>
+    │    │        │    │              └ 6
+    │    │        │    └ 3
+    │    │        └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001F6E4C80EF0>
+    │    └ <Closed HDF5 dataset>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001F6E4C80EF0>
+
+  File "h5py\_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py\_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\dataset.py", line 997, in __setitem__
+    mspace = h5s.create_simple(selection.expand_shape(mshape))
+             │   │             │         │            └ (3, 1052)
+             │   │             │         └ <function SimpleSelection.expand_shape at 0x000001F6BECA9EE0>
+             │   │             └ <h5py._hl.selections.SimpleSelection object at 0x000001F6E4CD6DE0>
+             │   └ <cyfunction create_simple at 0x000001F6BEC38D40>
+             └ <module 'h5py.h5s' from 'C:\\Users\\alatif\\.conda\\envs\\pydss\\Lib\\site-packages\\h5py\\h5s.cp312-win_amd64.pyd'>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\selections.py", line 264, in expand_shape
+    raise TypeError("Can't broadcast %s -> %s" % (source_shape, self.array_shape))  # array shape
+                                                  │             │    └ <property object at 0x000001F6BECCE430>
+                                                  │             └ <h5py._hl.selections.SimpleSelection object at 0x000001F6E4CD6DE0>
+                                                  └ (3, 1052)
+
+TypeError: Can't broadcast (3, 1052) -> (2, 1052)
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "\\?\C:\Users\alatif\.conda\envs\pydss\Scripts\pydss-script.py", line 33, in <module>
+    sys.exit(load_entry_point('dsspy', 'console_scripts', 'pydss')())
+    │   │    └ <function importlib_load_entry_point at 0x000001F6BB17A660>
+    │   └ <built-in function exit>
+    └ <module 'sys' (built-in)>
+
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1157, in __call__
+    return self.main(*args, **kwargs)
+           │    │     │       └ {}
+           │    │     └ ()
+           │    └ <function BaseCommand.main at 0x000001F6BD81C360>
+           └ <Group cli>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1078, in main
+    rv = self.invoke(ctx)
+         │    │      └ <click.core.Context object at 0x000001F6BAFE5220>
+         │    └ <function MultiCommand.invoke at 0x000001F6BD81D580>
+         └ <Group cli>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1688, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+           │               │       │       │      └ <click.core.Context object at 0x000001F6E2D5B140>
+           │               │       │       └ <function Command.invoke at 0x000001F6BD81CF40>
+           │               │       └ <Command run>
+           │               └ <click.core.Context object at 0x000001F6E2D5B140>
+           └ <function MultiCommand.invoke.<locals>._process_result at 0x000001F6BB18D1C0>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1434, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           │   │      │    │           │   └ {'project_path': 'C:\\Users\\alatif\\Documents\\GitHub\\PyDSS\\examples\\harmonics', 'dry_run': False, 'verbose': False, 'zip...
+           │   │      │    │           └ <click.core.Context object at 0x000001F6E2D5B140>
+           │   │      │    └ <function run at 0x000001F6E34E22A0>
+           │   │      └ <Command run>
+           │   └ <function Context.invoke at 0x000001F6BD80F880>
+           └ <click.core.Context object at 0x000001F6E2D5B140>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 783, in invoke
+    return __callback(*args, **kwargs)
+                       │       └ {'project_path': 'C:\\Users\\alatif\\Documents\\GitHub\\PyDSS\\examples\\harmonics', 'dry_run': False, 'verbose': False, 'zip...
+                       └ ()
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\cli\run.py", line 97, in run
+    project.run(tar_project=tar_project, zip_project=zip_project, dry_run=dry_run)
+    │       │               │                        │                    └ False
+    │       │               │                        └ False
+    │       │               └ False
+    │       └ <function PyDssProject.run at 0x000001F6E34D1F80>
+    └ <PyDSS.pydss_project.PyDssProject object at 0x000001F6E48CFD70>
+
+> File "c:\users\alatif\documents\github\pydss\PyDSS\pydss_project.py", line 361, in run
+    inst.run(self._settings, self, scenario, dry_run=dry_run)
+    │    │   │    │          │     │                 └ False
+    │    │   │    │          │     └ <PyDSS.pydss_project.PyDssScenario object at 0x000001F6E4A82E70>
+    │    │   │    │          └ <PyDSS.pydss_project.PyDssProject object at 0x000001F6E48CFD70>
+    │    │   │    └ SimulationSettingsModel(project=ProjectModel(project_path=WindowsPath('examples'), active_project='harmonics', active_project...
+    │    │   └ <PyDSS.pydss_project.PyDssProject object at 0x000001F6E48CFD70>
+    │    └ <function instance.run at 0x000001F6BFB21260>
+    └ <PyDSS.pyDSS.instance object at 0x000001F6E48FAC30>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\pyDSS.py", line 51, in run
+    self.run_scenario(
+    │    └ <function instance.run_scenario at 0x000001F6E33A32E0>
+    └ <PyDSS.pyDSS.instance object at 0x000001F6E48FAC30>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\pyDSS.py", line 80, in run_scenario
+    for is_complete, _, _, _ in opendss.RunSimulation(project, scenario):
+                                │       │             │        └ <PyDSS.pydss_project.PyDssScenario object at 0x000001F6E4A82E70>
+                                │       │             └ <PyDSS.pydss_project.PyDssProject object at 0x000001F6E48CFD70>
+                                │       └ <function OpenDSS.RunSimulation at 0x000001F6E33A3060>
+                                └ <PyDSS.dssInstance.OpenDSS object at 0x000001F6E4A01C70>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 435, in RunSimulation
+    self.ResultContainer.Close()
+    │    │               └ <function ResultData.Close at 0x000001F6E33A00E0>
+    │    └ <PyDSS.ResultData.ResultData object at 0x000001F6E4A83470>
+    └ <PyDSS.dssInstance.OpenDSS object at 0x000001F6E4A01C70>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\ResultData.py", line 267, in Close
+    metric.close()
+    │      └ <function MetricBase.close at 0x000001F6E32AE200>
+    └ <PyDSS.metrics.OpenDssPropertyMetric object at 0x000001F6E4C32EA0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 61, in close
+    container.close()
+    │         └ <function StorageFilterBase.close at 0x000001F6E32AC720>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000001F6E4C47140>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 37, in close
+    self.flush_data()
+    │    └ <function StorageFilterBase.flush_data at 0x000001F6E32AC540>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000001F6E4C47140>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 41, in flush_data
+    self._container.flush_data()
+    │    │          └ <function ValueContainer.flush_data at 0x000001F6C18FCC20>
+    │    └ <PyDSS.value_storage.ValueContainer object at 0x000001F6E4C80E30>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000001F6E4C47140>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\value_storage.py", line 646, in flush_data
+    self._dataset.flush_data()
+    │    │        └ <function DatasetBuffer.flush_data at 0x000001F6BFD865C0>
+    │    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001F6E4C80EF0>
+    └ <PyDSS.value_storage.ValueContainer object at 0x000001F6E4C80E30>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 124, in flush_data
+    self._dataset[self._dataset_index:new_index] = self._buf[0:length]
+    │    │        │    │              │            │    │      └ 3
+    │    │        │    │              │            │    └ array([[ 1.01939501e+00,  1.75380992e+02,  1.00861322e+00, ...,
+    │    │        │    │              │            │              -6.34349488e+01,  8.13476791e-12,  1.16565051e+02],
+    │    │        │    │              │            │       ...
+    │    │        │    │              │            └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001F6E4C80EF0>
+    │    │        │    │              └ 6
+    │    │        │    └ 3
+    │    │        └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001F6E4C80EF0>
+    │    └ <Closed HDF5 dataset>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001F6E4C80EF0>
+
+  File "h5py\_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py\_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\dataset.py", line 997, in __setitem__
+    mspace = h5s.create_simple(selection.expand_shape(mshape))
+             │   │             │         │            └ (3, 1052)
+             │   │             │         └ <function SimpleSelection.expand_shape at 0x000001F6BECA9EE0>
+             │   │             └ <h5py._hl.selections.SimpleSelection object at 0x000001F6E4CD6E40>
+             │   └ <cyfunction create_simple at 0x000001F6BEC38D40>
+             └ <module 'h5py.h5s' from 'C:\\Users\\alatif\\.conda\\envs\\pydss\\Lib\\site-packages\\h5py\\h5s.cp312-win_amd64.pyd'>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\selections.py", line 264, in expand_shape
+    raise TypeError("Can't broadcast %s -> %s" % (source_shape, self.array_shape))  # array shape
+                                                  │             │    └ <property object at 0x000001F6BECCE430>
+                                                  │             └ <h5py._hl.selections.SimpleSelection object at 0x000001F6E4CD6E40>
+                                                  └ (3, 1052)
+
+TypeError: Can't broadcast (3, 1052) -> (2, 1052)
+2024-03-19 09:29:47.003 | INFO     | PyDSS.cli.run:run:88 - CLI: [pydss run C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics]
+2024-03-19 09:29:47.005 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\simulation.toml
+2024-03-19 09:29:47.007 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\Scenarios\qsts\ExportLists\ExportMode-byClass.toml
+2024-03-19 09:29:47.009 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\simulation-run.toml
+2024-03-19 09:29:47.012 | INFO     | PyDSS.dssInstance:__init__:77 - An instance of OpenDSS version 0.8.4 has been created.
+2024-03-19 09:29:47.013 | INFO     | PyDSS.dssInstance:_compile_model:144 - Loading OpenDSS model
+2024-03-19 09:29:47.024 | INFO     | PyDSS.dssInstance:_compile_model:152 - OpenDSS:  
+2024-03-19 09:29:47.025 | INFO     | PyDSS.dssInstance:__init__:88 - OpenDSS fundamental frequency set to :  60.0 Hz
+2024-03-19 09:29:47.025 | INFO     | PyDSS.SolveMode:GetSolver:13 - Setting solver to %s mode.
+2024-03-19 09:29:47.027 | INFO     | PyDSS.modes.solver_base:__init__:39 - %s solver setup complete
+2024-03-19 09:29:47.055 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from examples\harmonics\Scenarios\qsts\ExportLists\ExportMode-byClass.toml
+2024-03-19 09:29:47.056 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to examples\harmonics\Exports\qsts\ExportsActual.toml
+2024-03-19 09:29:47.056 | INFO     | PyDSS.dssInstance:__init__:136 - Simulation initialization complete
+2024-03-19 09:29:47.056 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to examples\harmonics\Scenarios\qsts\simulation-run.toml
+2024-03-19 09:29:47.056 | INFO     | PyDSS.pyDSS:run_scenario:76 - Running scenario: %s
+2024-03-19 09:29:47.056 | INFO     | PyDSS.dssInstance:RunSimulation:358 - Running simulation from 2020-01-01 00:00:00 till 2020-01-01 01:14:00.
+2024-03-19 09:29:47.056 | INFO     | PyDSS.dssInstance:RunSimulation:359 - Simulation time step 5.
+2024-03-19 09:29:47.056 | INFO     | PyDSS.dssInstance:RunSimulation:360 - Set OpenDSS convergence to %s
+2024-03-19 09:29:47.056 | INFO     | PyDSS.dssInstance:RunSimulation:361 - Max convergence error count None.
+2024-03-19 09:29:47.056 | INFO     | PyDSS.dssInstance:RunSimulation:362 - initializing store
+2024-03-19 09:29:47.056 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:29:47.063 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:29:47.064 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:29:47.065 | INFO     | PyDSS.dssInstance:RunSimulation:378 - No post processing script selected
+2024-03-19 09:29:47.065 | INFO     | PyDSS.dssInstance:RunStep:244 - PyDSS datetime - 2020-01-01 00:00:00
+2024-03-19 09:29:47.065 | INFO     | PyDSS.dssInstance:RunStep:245 - OpenDSS time [h] - 0.0
+2024-03-19 09:29:47.065 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 0 convergence error: 0
+2024-03-19 09:29:47.065 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 1 convergence error: 0
+2024-03-19 09:29:47.065 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 2 convergence error: 0
+2024-03-19 09:29:47.073 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:29:47.073 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:29:47.073 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:29:47.076 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:29:47.076 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:29:47.076 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:29:47.076 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:29:47.079 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:29:47.079 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:29:47.080 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:29:47.081 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:29:47.081 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:29:47.083 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:29:47.083 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:29:47.083 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:29:47.085 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:29:47.085 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:29:47.085 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:29:47.085 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:29:47.085 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:29:47.085 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:29:47.095 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:29:47.095 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:29:47.095 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:29:47.097 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:29:47.098 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:29:47.098 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:29:47.101 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:29:47.101 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:29:47.101 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:29:47.103 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:29:47.103 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:29:47.104 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:29:47.105 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:29:47.105 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:29:47.105 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:29:47.107 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:29:47.107 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:29:47.108 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:29:47.165 | ERROR    | PyDSS.pydss_project:run:378 - Simulation failed
+Traceback (most recent call last):
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 390, in RunSimulation
+    pydss_has_converged = self.RunStep(step)
+                          │    │       └ 0
+                          │    └ <function track_timing.<locals>.wrap.<locals>.timed_ at 0x0000014D749C6DE0>
+                          └ <PyDSS.dssInstance.OpenDSS object at 0x0000014D75D43DA0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 182, in timed_
+    return _timed_func(timer_stats, func, *args, **kwargs)
+           │           │            │      │       └ {}
+           │           │            │      └ (<PyDSS.dssInstance.OpenDSS object at 0x0000014D75D43DA0>, 0)
+           │           │            └ <function OpenDSS.RunStep at 0x0000014D749C6D40>
+           │           └ <PyDSS.utils.timing_utils.TimerStatsCollector object at 0x0000014D4E34E720>
+           └ <function _timed_func at 0x0000014D4ED4DC60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 190, in _timed_func
+    return func(*args, **kwargs)
+           │     │       └ {}
+           │     └ (<PyDSS.dssInstance.OpenDSS object at 0x0000014D75D43DA0>, 0)
+           └ <function OpenDSS.RunStep at 0x0000014D749C6D40>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 292, in RunStep
+    self.ResultContainer.UpdateResults()
+    │    │               └ <function track_timing.<locals>.wrap.<locals>.timed_ at 0x0000014D749C4040>
+    │    └ <PyDSS.ResultData.ResultData object at 0x0000014D76242D50>
+    └ <PyDSS.dssInstance.OpenDSS object at 0x0000014D75D43DA0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 182, in timed_
+    return _timed_func(timer_stats, func, *args, **kwargs)
+           │           │            │      │       └ {}
+           │           │            │      └ (<PyDSS.ResultData.ResultData object at 0x0000014D76242D50>,)
+           │           │            └ <function ResultData.UpdateResults at 0x0000014D749BFF60>
+           │           └ <PyDSS.utils.timing_utils.TimerStatsCollector object at 0x0000014D4E34E720>
+           └ <function _timed_func at 0x0000014D4ED4DC60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 190, in _timed_func
+    return func(*args, **kwargs)
+           │     │       └ {}
+           │     └ (<PyDSS.ResultData.ResultData object at 0x0000014D76242D50>,)
+           └ <function ResultData.UpdateResults at 0x0000014D749BFF60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\ResultData.py", line 232, in UpdateResults
+    data = metric.append_values(self._cur_step, store_nan=store_nan)
+           │      │             │    │                    └ False
+           │      │             │    └ 5
+           │      │             └ <PyDSS.ResultData.ResultData object at 0x0000014D76242D50>
+           │      └ <function OpenDssPropertyMetric.append_values at 0x0000014D748D31A0>
+           └ <PyDSS.metrics.OpenDssPropertyMetric object at 0x0000014D762433B0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 320, in append_values
+    values = super().append_values(time_step, store_nan=store_nan)
+                                   │                    └ False
+                                   └ 5
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 299, in append_values
+    container.append_values(vals, time_step)
+    │         │             │     └ 5
+    │         │             └ [<PyDSS.value_storage.ValueByLabel object at 0x0000014D76257D40>, <PyDSS.value_storage.ValueByLabel object at 0x0000014D76257...
+    │         └ <function StorageAll.append_values at 0x0000014D748D04A0>
+    └ <PyDSS.storage_filters.StorageAll object at 0x0000014D76257590>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 81, in append_values
+    self._container.append(values)
+    │    │          │      └ [<PyDSS.value_storage.ValueByLabel object at 0x0000014D76257D40>, <PyDSS.value_storage.ValueByLabel object at 0x0000014D76257...
+    │    │          └ <function ValueContainer.append at 0x0000014D52F2CAE0>
+    │    └ <PyDSS.value_storage.ValueContainer object at 0x0000014D7628D1F0>
+    └ <PyDSS.storage_filters.StorageAll object at 0x0000014D76257590>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\value_storage.py", line 621, in append
+    self._dataset.write_value(vals)
+    │    │        │           └ [1.0279369670050302, 174.78418402841413, 1.0181275781794819, 55.94865940879409, 1.02483606756101, -64.76544929248458, 1.02793...
+    │    │        └ <function DatasetBuffer.write_value at 0x0000014D513B6700>
+    │    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x0000014D7628D2B0>
+    └ <PyDSS.value_storage.ValueContainer object at 0x0000014D7628D1F0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 147, in write_value
+    self.flush_data()
+    │    └ <function DatasetBuffer.flush_data at 0x0000014D513B65C0>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x0000014D7628D2B0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 124, in flush_data
+    self._dataset[self._dataset_index:new_index] = self._buf[0:length]
+    │    │        │    │              │            │    │      └ 3
+    │    │        │    │              │            │    └ array([[ 1.01939501e+00,  1.75380992e+02,  1.00861322e+00, ...,
+    │    │        │    │              │            │              -6.34349488e+01,  8.13476791e-12,  1.16565051e+02],
+    │    │        │    │              │            │       ...
+    │    │        │    │              │            └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x0000014D7628D2B0>
+    │    │        │    │              └ 6
+    │    │        │    └ 3
+    │    │        └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x0000014D7628D2B0>
+    │    └ <Closed HDF5 dataset>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x0000014D7628D2B0>
+
+  File "h5py\_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py\_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\dataset.py", line 997, in __setitem__
+    mspace = h5s.create_simple(selection.expand_shape(mshape))
+             │   │             │         │            └ (3, 1052)
+             │   │             │         └ <function SimpleSelection.expand_shape at 0x0000014D50365EE0>
+             │   │             └ <h5py._hl.selections.SimpleSelection object at 0x0000014D762DF440>
+             │   └ <cyfunction create_simple at 0x0000014D502F8D40>
+             └ <module 'h5py.h5s' from 'C:\\Users\\alatif\\.conda\\envs\\pydss\\Lib\\site-packages\\h5py\\h5s.cp312-win_amd64.pyd'>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\selections.py", line 264, in expand_shape
+    raise TypeError("Can't broadcast %s -> %s" % (source_shape, self.array_shape))  # array shape
+                                                  │             │    └ <property object at 0x0000014D5038E480>
+                                                  │             └ <h5py._hl.selections.SimpleSelection object at 0x0000014D762DF440>
+                                                  └ (3, 1052)
+
+TypeError: Can't broadcast (3, 1052) -> (2, 1052)
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "\\?\C:\Users\alatif\.conda\envs\pydss\Scripts\pydss-script.py", line 33, in <module>
+    sys.exit(load_entry_point('dsspy', 'console_scripts', 'pydss')())
+    │   │    └ <function importlib_load_entry_point at 0x0000014D4C79A660>
+    │   └ <built-in function exit>
+    └ <module 'sys' (built-in)>
+
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1157, in __call__
+    return self.main(*args, **kwargs)
+           │    │     │       └ {}
+           │    │     └ ()
+           │    └ <function BaseCommand.main at 0x0000014D4EDDC360>
+           └ <Group cli>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1078, in main
+    rv = self.invoke(ctx)
+         │    │      └ <click.core.Context object at 0x0000014D4C605220>
+         │    └ <function MultiCommand.invoke at 0x0000014D4EDDD580>
+         └ <Group cli>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1688, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+           │               │       │       │      └ <click.core.Context object at 0x0000014D4C7B6030>
+           │               │       │       └ <function Command.invoke at 0x0000014D4EDDCF40>
+           │               │       └ <Command run>
+           │               └ <click.core.Context object at 0x0000014D4C7B6030>
+           └ <function MultiCommand.invoke.<locals>._process_result at 0x0000014D4C7AD1C0>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1434, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           │   │      │    │           │   └ {'project_path': 'C:\\Users\\alatif\\Documents\\GitHub\\PyDSS\\examples\\harmonics', 'dry_run': False, 'verbose': False, 'zip...
+           │   │      │    │           └ <click.core.Context object at 0x0000014D4C7B6030>
+           │   │      │    └ <function run at 0x0000014D74B022A0>
+           │   │      └ <Command run>
+           │   └ <function Context.invoke at 0x0000014D4EDCF880>
+           └ <click.core.Context object at 0x0000014D4C7B6030>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 783, in invoke
+    return __callback(*args, **kwargs)
+                       │       └ {'project_path': 'C:\\Users\\alatif\\Documents\\GitHub\\PyDSS\\examples\\harmonics', 'dry_run': False, 'verbose': False, 'zip...
+                       └ ()
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\cli\run.py", line 97, in run
+    project.run(tar_project=tar_project, zip_project=zip_project, dry_run=dry_run)
+    │       │               │                        │                    └ False
+    │       │               │                        └ False
+    │       │               └ False
+    │       └ <function PyDssProject.run at 0x0000014D74AEDF80>
+    └ <PyDSS.pydss_project.PyDssProject object at 0x0000014D760930E0>
+
+> File "c:\users\alatif\documents\github\pydss\PyDSS\pydss_project.py", line 361, in run
+    inst.run(self._settings, self, scenario, dry_run=dry_run)
+    │    │   │    │          │     │                 └ False
+    │    │   │    │          │     └ <PyDSS.pydss_project.PyDssScenario object at 0x0000014D76093140>
+    │    │   │    │          └ <PyDSS.pydss_project.PyDssProject object at 0x0000014D760930E0>
+    │    │   │    └ SimulationSettingsModel(project=ProjectModel(project_path=WindowsPath('examples'), active_project='harmonics', active_project...
+    │    │   └ <PyDSS.pydss_project.PyDssProject object at 0x0000014D760930E0>
+    │    └ <function instance.run at 0x0000014D51151260>
+    └ <PyDSS.pyDSS.instance object at 0x0000014D76093110>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\pyDSS.py", line 51, in run
+    self.run_scenario(
+    │    └ <function instance.run_scenario at 0x0000014D749C72E0>
+    └ <PyDSS.pyDSS.instance object at 0x0000014D76093110>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\pyDSS.py", line 80, in run_scenario
+    for is_complete, _, _, _ in opendss.RunSimulation(project, scenario):
+                                │       │             │        └ <PyDSS.pydss_project.PyDssScenario object at 0x0000014D76093140>
+                                │       │             └ <PyDSS.pydss_project.PyDssProject object at 0x0000014D760930E0>
+                                │       └ <function OpenDSS.RunSimulation at 0x0000014D749C7060>
+                                └ <PyDSS.dssInstance.OpenDSS object at 0x0000014D75D43DA0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 435, in RunSimulation
+    self.ResultContainer.Close()
+    │    │               └ <function ResultData.Close at 0x0000014D749C40E0>
+    │    └ <PyDSS.ResultData.ResultData object at 0x0000014D76242D50>
+    └ <PyDSS.dssInstance.OpenDSS object at 0x0000014D75D43DA0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\ResultData.py", line 267, in Close
+    metric.close()
+    │      └ <function MetricBase.close at 0x0000014D748D2200>
+    └ <PyDSS.metrics.OpenDssPropertyMetric object at 0x0000014D762433B0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 61, in close
+    container.close()
+    │         └ <function StorageFilterBase.close at 0x0000014D748D0720>
+    └ <PyDSS.storage_filters.StorageAll object at 0x0000014D76257590>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 37, in close
+    self.flush_data()
+    │    └ <function StorageFilterBase.flush_data at 0x0000014D748D0540>
+    └ <PyDSS.storage_filters.StorageAll object at 0x0000014D76257590>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 41, in flush_data
+    self._container.flush_data()
+    │    │          └ <function ValueContainer.flush_data at 0x0000014D52F2CC20>
+    │    └ <PyDSS.value_storage.ValueContainer object at 0x0000014D7628D1F0>
+    └ <PyDSS.storage_filters.StorageAll object at 0x0000014D76257590>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\value_storage.py", line 646, in flush_data
+    self._dataset.flush_data()
+    │    │        └ <function DatasetBuffer.flush_data at 0x0000014D513B65C0>
+    │    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x0000014D7628D2B0>
+    └ <PyDSS.value_storage.ValueContainer object at 0x0000014D7628D1F0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 124, in flush_data
+    self._dataset[self._dataset_index:new_index] = self._buf[0:length]
+    │    │        │    │              │            │    │      └ 3
+    │    │        │    │              │            │    └ array([[ 1.01939501e+00,  1.75380992e+02,  1.00861322e+00, ...,
+    │    │        │    │              │            │              -6.34349488e+01,  8.13476791e-12,  1.16565051e+02],
+    │    │        │    │              │            │       ...
+    │    │        │    │              │            └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x0000014D7628D2B0>
+    │    │        │    │              └ 6
+    │    │        │    └ 3
+    │    │        └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x0000014D7628D2B0>
+    │    └ <Closed HDF5 dataset>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x0000014D7628D2B0>
+
+  File "h5py\_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py\_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\dataset.py", line 997, in __setitem__
+    mspace = h5s.create_simple(selection.expand_shape(mshape))
+             │   │             │         │            └ (3, 1052)
+             │   │             │         └ <function SimpleSelection.expand_shape at 0x0000014D50365EE0>
+             │   │             └ <h5py._hl.selections.SimpleSelection object at 0x0000014D762DF140>
+             │   └ <cyfunction create_simple at 0x0000014D502F8D40>
+             └ <module 'h5py.h5s' from 'C:\\Users\\alatif\\.conda\\envs\\pydss\\Lib\\site-packages\\h5py\\h5s.cp312-win_amd64.pyd'>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\selections.py", line 264, in expand_shape
+    raise TypeError("Can't broadcast %s -> %s" % (source_shape, self.array_shape))  # array shape
+                                                  │             │    └ <property object at 0x0000014D5038E480>
+                                                  │             └ <h5py._hl.selections.SimpleSelection object at 0x0000014D762DF140>
+                                                  └ (3, 1052)
+
+TypeError: Can't broadcast (3, 1052) -> (2, 1052)
+2024-03-19 09:30:41.938 | INFO     | PyDSS.cli.run:run:88 - CLI: [pydss run C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics]
+2024-03-19 09:30:41.943 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\simulation.toml
+2024-03-19 09:30:41.946 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\Scenarios\qsts\ExportLists\ExportMode-byClass.toml
+2024-03-19 09:30:41.948 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\simulation-run.toml
+2024-03-19 09:30:41.949 | INFO     | PyDSS.dssInstance:__init__:77 - An instance of OpenDSS version 0.8.4 has been created.
+2024-03-19 09:30:41.949 | INFO     | PyDSS.dssInstance:_compile_model:144 - Loading OpenDSS model
+2024-03-19 09:30:41.965 | INFO     | PyDSS.dssInstance:_compile_model:152 - OpenDSS:  
+2024-03-19 09:30:41.965 | INFO     | PyDSS.dssInstance:__init__:88 - OpenDSS fundamental frequency set to :  60.0 Hz
+2024-03-19 09:30:41.965 | INFO     | PyDSS.SolveMode:GetSolver:13 - Setting solver to %s mode.
+2024-03-19 09:30:41.965 | INFO     | PyDSS.modes.solver_base:__init__:39 - %s solver setup complete
+2024-03-19 09:30:41.994 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from examples\harmonics\Scenarios\qsts\ExportLists\ExportMode-byClass.toml
+2024-03-19 09:30:41.996 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to examples\harmonics\Exports\qsts\ExportsActual.toml
+2024-03-19 09:30:41.997 | INFO     | PyDSS.dssInstance:__init__:136 - Simulation initialization complete
+2024-03-19 09:30:41.998 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to examples\harmonics\Scenarios\qsts\simulation-run.toml
+2024-03-19 09:30:41.998 | INFO     | PyDSS.pyDSS:run_scenario:76 - Running scenario: %s
+2024-03-19 09:30:41.998 | INFO     | PyDSS.dssInstance:RunSimulation:358 - Running simulation from 2020-01-01 00:00:00 till 2020-01-01 01:14:00.
+2024-03-19 09:30:41.998 | INFO     | PyDSS.dssInstance:RunSimulation:359 - Simulation time step 5.
+2024-03-19 09:30:42.000 | INFO     | PyDSS.dssInstance:RunSimulation:360 - Set OpenDSS convergence to %s
+2024-03-19 09:30:42.000 | INFO     | PyDSS.dssInstance:RunSimulation:361 - Max convergence error count None.
+2024-03-19 09:30:42.001 | INFO     | PyDSS.dssInstance:RunSimulation:362 - initializing store
+2024-03-19 09:30:42.002 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:30:42.004 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:30:42.004 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:30:42.005 | INFO     | PyDSS.dssInstance:RunSimulation:378 - No post processing script selected
+2024-03-19 09:30:42.005 | INFO     | PyDSS.dssInstance:RunStep:244 - PyDSS datetime - 2020-01-01 00:00:00
+2024-03-19 09:30:42.006 | INFO     | PyDSS.dssInstance:RunStep:245 - OpenDSS time [h] - 0.0
+2024-03-19 09:30:42.006 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 0 convergence error: 0
+2024-03-19 09:30:42.006 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 1 convergence error: 0
+2024-03-19 09:30:42.006 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 2 convergence error: 0
+2024-03-19 09:30:42.011 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:30:42.011 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:30:42.012 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:30:42.014 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:30:42.015 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:30:42.015 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:30:42.015 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:30:42.015 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:30:42.015 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:30:42.015 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:30:42.015 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:30:42.015 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:30:42.015 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:30:42.023 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:30:42.024 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:30:42.025 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:30:42.025 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:30:42.026 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:30:42.029 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:30:42.029 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:30:42.029 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:30:42.034 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:30:42.035 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:30:42.035 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:30:42.038 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:30:42.038 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:30:42.038 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:30:42.041 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:30:42.042 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:30:42.042 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:30:42.044 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:30:42.045 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:30:42.045 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:30:42.046 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:30:42.047 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:30:42.047 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:30:42.048 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:30:42.049 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:30:42.049 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:30:42.122 | ERROR    | PyDSS.pydss_project:run:378 - Simulation failed
+Traceback (most recent call last):
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 390, in RunSimulation
+    pydss_has_converged = self.RunStep(step)
+                          │    │       └ 0
+                          │    └ <function track_timing.<locals>.wrap.<locals>.timed_ at 0x000001F94250EDE0>
+                          └ <PyDSS.dssInstance.OpenDSS object at 0x000001F943BF2F00>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 182, in timed_
+    return _timed_func(timer_stats, func, *args, **kwargs)
+           │           │            │      │       └ {}
+           │           │            │      └ (<PyDSS.dssInstance.OpenDSS object at 0x000001F943BF2F00>, 0)
+           │           │            └ <function OpenDSS.RunStep at 0x000001F94250ED40>
+           │           └ <PyDSS.utils.timing_utils.TimerStatsCollector object at 0x000001F91AB72780>
+           └ <function _timed_func at 0x000001F91C92DC60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 190, in _timed_func
+    return func(*args, **kwargs)
+           │     │       └ {}
+           │     └ (<PyDSS.dssInstance.OpenDSS object at 0x000001F943BF2F00>, 0)
+           └ <function OpenDSS.RunStep at 0x000001F94250ED40>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 292, in RunStep
+    self.ResultContainer.UpdateResults()
+    │    │               └ <function track_timing.<locals>.wrap.<locals>.timed_ at 0x000001F94250C040>
+    │    └ <PyDSS.ResultData.ResultData object at 0x000001F943DA2EA0>
+    └ <PyDSS.dssInstance.OpenDSS object at 0x000001F943BF2F00>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 182, in timed_
+    return _timed_func(timer_stats, func, *args, **kwargs)
+           │           │            │      │       └ {}
+           │           │            │      └ (<PyDSS.ResultData.ResultData object at 0x000001F943DA2EA0>,)
+           │           │            └ <function ResultData.UpdateResults at 0x000001F942507F60>
+           │           └ <PyDSS.utils.timing_utils.TimerStatsCollector object at 0x000001F91AB72780>
+           └ <function _timed_func at 0x000001F91C92DC60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 190, in _timed_func
+    return func(*args, **kwargs)
+           │     │       └ {}
+           │     └ (<PyDSS.ResultData.ResultData object at 0x000001F943DA2EA0>,)
+           └ <function ResultData.UpdateResults at 0x000001F942507F60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\ResultData.py", line 232, in UpdateResults
+    data = metric.append_values(self._cur_step, store_nan=store_nan)
+           │      │             │    │                    └ False
+           │      │             │    └ 5
+           │      │             └ <PyDSS.ResultData.ResultData object at 0x000001F943DA2EA0>
+           │      └ <function OpenDssPropertyMetric.append_values at 0x000001F94241B1A0>
+           └ <PyDSS.metrics.OpenDssPropertyMetric object at 0x000001F943DA3530>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 320, in append_values
+    values = super().append_values(time_step, store_nan=store_nan)
+                                   │                    └ False
+                                   └ 5
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 299, in append_values
+    container.append_values(vals, time_step)
+    │         │             │     └ 5
+    │         │             └ [<PyDSS.value_storage.ValueByLabel object at 0x000001F943892030>, <PyDSS.value_storage.ValueByLabel object at 0x000001F943DB3...
+    │         └ <function StorageAll.append_values at 0x000001F9424184A0>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000001F943DA3DA0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 81, in append_values
+    self._container.append(values)
+    │    │          │      └ [<PyDSS.value_storage.ValueByLabel object at 0x000001F943892030>, <PyDSS.value_storage.ValueByLabel object at 0x000001F943DB3...
+    │    │          └ <function ValueContainer.append at 0x000001F920A6CAE0>
+    │    └ <PyDSS.value_storage.ValueContainer object at 0x000001F943DED0A0>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000001F943DA3DA0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\value_storage.py", line 621, in append
+    self._dataset.write_value(vals)
+    │    │        │           └ [1.0279369670050302, 174.78418402841413, 1.0181275781794819, 55.94865940879409, 1.02483606756101, -64.76544929248458, 1.02793...
+    │    │        └ <function DatasetBuffer.write_value at 0x000001F91EEF6700>
+    │    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001F943DED160>
+    └ <PyDSS.value_storage.ValueContainer object at 0x000001F943DED0A0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 147, in write_value
+    self.flush_data()
+    │    └ <function DatasetBuffer.flush_data at 0x000001F91EEF65C0>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001F943DED160>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 124, in flush_data
+    self._dataset[self._dataset_index:new_index] = self._buf[0:length]
+    │    │        │    │              │            │    │      └ 3
+    │    │        │    │              │            │    └ array([[ 1.01939501e+00,  1.75380992e+02,  1.00861322e+00, ...,
+    │    │        │    │              │            │              -6.34349488e+01,  8.13476791e-12,  1.16565051e+02],
+    │    │        │    │              │            │       ...
+    │    │        │    │              │            └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001F943DED160>
+    │    │        │    │              └ 6
+    │    │        │    └ 3
+    │    │        └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001F943DED160>
+    │    └ <Closed HDF5 dataset>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001F943DED160>
+
+  File "h5py\_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py\_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\dataset.py", line 997, in __setitem__
+    mspace = h5s.create_simple(selection.expand_shape(mshape))
+             │   │             │         │            └ (3, 1052)
+             │   │             │         └ <function SimpleSelection.expand_shape at 0x000001F91DF35EE0>
+             │   │             └ <h5py._hl.selections.SimpleSelection object at 0x000001F943E43380>
+             │   └ <cyfunction create_simple at 0x000001F91DEC8D40>
+             └ <module 'h5py.h5s' from 'C:\\Users\\alatif\\.conda\\envs\\pydss\\Lib\\site-packages\\h5py\\h5s.cp312-win_amd64.pyd'>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\selections.py", line 264, in expand_shape
+    raise TypeError("Can't broadcast %s -> %s" % (source_shape, self.array_shape))  # array shape
+                                                  │             │    └ <property object at 0x000001F91DF5E430>
+                                                  │             └ <h5py._hl.selections.SimpleSelection object at 0x000001F943E43380>
+                                                  └ (3, 1052)
+
+TypeError: Can't broadcast (3, 1052) -> (2, 1052)
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "\\?\C:\Users\alatif\.conda\envs\pydss\Scripts\pydss-script.py", line 33, in <module>
+    sys.exit(load_entry_point('dsspy', 'console_scripts', 'pydss')())
+    │   │    └ <function importlib_load_entry_point at 0x000001F91A2EA660>
+    │   └ <built-in function exit>
+    └ <module 'sys' (built-in)>
+
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1157, in __call__
+    return self.main(*args, **kwargs)
+           │    │     │       └ {}
+           │    │     └ ()
+           │    └ <function BaseCommand.main at 0x000001F91C9BC360>
+           └ <Group cli>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1078, in main
+    rv = self.invoke(ctx)
+         │    │      └ <click.core.Context object at 0x000001F91A395790>
+         │    └ <function MultiCommand.invoke at 0x000001F91C9BD580>
+         └ <Group cli>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1688, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+           │               │       │       │      └ <click.core.Context object at 0x000001F91866BA40>
+           │               │       │       └ <function Command.invoke at 0x000001F91C9BCF40>
+           │               │       └ <Command run>
+           │               └ <click.core.Context object at 0x000001F91866BA40>
+           └ <function MultiCommand.invoke.<locals>._process_result at 0x000001F91A2FD1C0>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1434, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           │   │      │    │           │   └ {'project_path': 'C:\\Users\\alatif\\Documents\\GitHub\\PyDSS\\examples\\harmonics', 'dry_run': False, 'verbose': False, 'zip...
+           │   │      │    │           └ <click.core.Context object at 0x000001F91866BA40>
+           │   │      │    └ <function run at 0x000001F9426522A0>
+           │   │      └ <Command run>
+           │   └ <function Context.invoke at 0x000001F91C9AF880>
+           └ <click.core.Context object at 0x000001F91866BA40>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 783, in invoke
+    return __callback(*args, **kwargs)
+                       │       └ {'project_path': 'C:\\Users\\alatif\\Documents\\GitHub\\PyDSS\\examples\\harmonics', 'dry_run': False, 'verbose': False, 'zip...
+                       └ ()
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\cli\run.py", line 97, in run
+    project.run(tar_project=tar_project, zip_project=zip_project, dry_run=dry_run)
+    │       │               │                        │                    └ False
+    │       │               │                        └ False
+    │       │               └ False
+    │       └ <function PyDssProject.run at 0x000001F942641F80>
+    └ <PyDSS.pydss_project.PyDssProject object at 0x000001F943940110>
+
+> File "c:\users\alatif\documents\github\pydss\PyDSS\pydss_project.py", line 361, in run
+    inst.run(self._settings, self, scenario, dry_run=dry_run)
+    │    │   │    │          │     │                 └ False
+    │    │   │    │          │     └ <PyDSS.pydss_project.PyDssScenario object at 0x000001F943BF2FC0>
+    │    │   │    │          └ <PyDSS.pydss_project.PyDssProject object at 0x000001F943940110>
+    │    │   │    └ SimulationSettingsModel(project=ProjectModel(project_path=WindowsPath('examples'), active_project='harmonics', active_project...
+    │    │   └ <PyDSS.pydss_project.PyDssProject object at 0x000001F943940110>
+    │    └ <function instance.run at 0x000001F91EC91260>
+    └ <PyDSS.pyDSS.instance object at 0x000001F942623E90>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\pyDSS.py", line 51, in run
+    self.run_scenario(
+    │    └ <function instance.run_scenario at 0x000001F94250F2E0>
+    └ <PyDSS.pyDSS.instance object at 0x000001F942623E90>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\pyDSS.py", line 80, in run_scenario
+    for is_complete, _, _, _ in opendss.RunSimulation(project, scenario):
+                                │       │             │        └ <PyDSS.pydss_project.PyDssScenario object at 0x000001F943BF2FC0>
+                                │       │             └ <PyDSS.pydss_project.PyDssProject object at 0x000001F943940110>
+                                │       └ <function OpenDSS.RunSimulation at 0x000001F94250F060>
+                                └ <PyDSS.dssInstance.OpenDSS object at 0x000001F943BF2F00>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 435, in RunSimulation
+    self.ResultContainer.Close()
+    │    │               └ <function ResultData.Close at 0x000001F94250C0E0>
+    │    └ <PyDSS.ResultData.ResultData object at 0x000001F943DA2EA0>
+    └ <PyDSS.dssInstance.OpenDSS object at 0x000001F943BF2F00>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\ResultData.py", line 267, in Close
+    metric.close()
+    │      └ <function MetricBase.close at 0x000001F94241A200>
+    └ <PyDSS.metrics.OpenDssPropertyMetric object at 0x000001F943DA3530>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 61, in close
+    container.close()
+    │         └ <function StorageFilterBase.close at 0x000001F942418720>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000001F943DA3DA0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 37, in close
+    self.flush_data()
+    │    └ <function StorageFilterBase.flush_data at 0x000001F942418540>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000001F943DA3DA0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 41, in flush_data
+    self._container.flush_data()
+    │    │          └ <function ValueContainer.flush_data at 0x000001F920A6CC20>
+    │    └ <PyDSS.value_storage.ValueContainer object at 0x000001F943DED0A0>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000001F943DA3DA0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\value_storage.py", line 646, in flush_data
+    self._dataset.flush_data()
+    │    │        └ <function DatasetBuffer.flush_data at 0x000001F91EEF65C0>
+    │    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001F943DED160>
+    └ <PyDSS.value_storage.ValueContainer object at 0x000001F943DED0A0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 124, in flush_data
+    self._dataset[self._dataset_index:new_index] = self._buf[0:length]
+    │    │        │    │              │            │    │      └ 3
+    │    │        │    │              │            │    └ array([[ 1.01939501e+00,  1.75380992e+02,  1.00861322e+00, ...,
+    │    │        │    │              │            │              -6.34349488e+01,  8.13476791e-12,  1.16565051e+02],
+    │    │        │    │              │            │       ...
+    │    │        │    │              │            └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001F943DED160>
+    │    │        │    │              └ 6
+    │    │        │    └ 3
+    │    │        └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001F943DED160>
+    │    └ <Closed HDF5 dataset>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001F943DED160>
+
+  File "h5py\_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py\_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\dataset.py", line 997, in __setitem__
+    mspace = h5s.create_simple(selection.expand_shape(mshape))
+             │   │             │         │            └ (3, 1052)
+             │   │             │         └ <function SimpleSelection.expand_shape at 0x000001F91DF35EE0>
+             │   │             └ <h5py._hl.selections.SimpleSelection object at 0x000001F943E42FC0>
+             │   └ <cyfunction create_simple at 0x000001F91DEC8D40>
+             └ <module 'h5py.h5s' from 'C:\\Users\\alatif\\.conda\\envs\\pydss\\Lib\\site-packages\\h5py\\h5s.cp312-win_amd64.pyd'>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\selections.py", line 264, in expand_shape
+    raise TypeError("Can't broadcast %s -> %s" % (source_shape, self.array_shape))  # array shape
+                                                  │             │    └ <property object at 0x000001F91DF5E430>
+                                                  │             └ <h5py._hl.selections.SimpleSelection object at 0x000001F943E42FC0>
+                                                  └ (3, 1052)
+
+TypeError: Can't broadcast (3, 1052) -> (2, 1052)
+2024-03-19 09:32:00.493 | INFO     | PyDSS.cli.run:run:88 - CLI: [pydss run C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics]
+2024-03-19 09:32:00.495 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\simulation.toml
+2024-03-19 09:32:00.499 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\Scenarios\qsts\ExportLists\ExportMode-byClass.toml
+2024-03-19 09:32:00.501 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\simulation-run.toml
+2024-03-19 09:32:00.505 | INFO     | PyDSS.dssInstance:__init__:77 - An instance of OpenDSS version 0.8.4 has been created.
+2024-03-19 09:32:00.506 | INFO     | PyDSS.dssInstance:_compile_model:144 - Loading OpenDSS model
+2024-03-19 09:32:00.519 | INFO     | PyDSS.dssInstance:_compile_model:152 - OpenDSS:  
+2024-03-19 09:32:00.519 | INFO     | PyDSS.dssInstance:__init__:88 - OpenDSS fundamental frequency set to :  60.0 Hz
+2024-03-19 09:32:00.520 | INFO     | PyDSS.SolveMode:GetSolver:13 - Setting solver to %s mode.
+2024-03-19 09:32:00.520 | INFO     | PyDSS.modes.solver_base:__init__:39 - %s solver setup complete
+2024-03-19 09:32:00.562 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from examples\harmonics\Scenarios\qsts\ExportLists\ExportMode-byClass.toml
+2024-03-19 09:32:00.566 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to examples\harmonics\Exports\qsts\ExportsActual.toml
+2024-03-19 09:32:00.566 | INFO     | PyDSS.dssInstance:__init__:136 - Simulation initialization complete
+2024-03-19 09:32:00.569 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to examples\harmonics\Scenarios\qsts\simulation-run.toml
+2024-03-19 09:32:00.569 | INFO     | PyDSS.pyDSS:run_scenario:76 - Running scenario: %s
+2024-03-19 09:32:00.570 | INFO     | PyDSS.dssInstance:RunSimulation:358 - Running simulation from 2020-01-01 00:00:00 till 2020-01-01 01:14:00.
+2024-03-19 09:32:00.570 | INFO     | PyDSS.dssInstance:RunSimulation:359 - Simulation time step 5.
+2024-03-19 09:32:00.570 | INFO     | PyDSS.dssInstance:RunSimulation:360 - Set OpenDSS convergence to %s
+2024-03-19 09:32:00.571 | INFO     | PyDSS.dssInstance:RunSimulation:361 - Max convergence error count None.
+2024-03-19 09:32:00.571 | INFO     | PyDSS.dssInstance:RunSimulation:362 - initializing store
+2024-03-19 09:32:00.573 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:32:00.574 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:32:00.575 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:32:00.575 | INFO     | PyDSS.dssInstance:RunSimulation:378 - No post processing script selected
+2024-03-19 09:32:00.576 | INFO     | PyDSS.dssInstance:RunStep:244 - PyDSS datetime - 2020-01-01 00:00:00
+2024-03-19 09:32:00.576 | INFO     | PyDSS.dssInstance:RunStep:245 - OpenDSS time [h] - 0.0
+2024-03-19 09:32:00.576 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 0 convergence error: 0
+2024-03-19 09:32:00.577 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 1 convergence error: 0
+2024-03-19 09:32:00.577 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 2 convergence error: 0
+2024-03-19 09:32:00.588 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:32:00.589 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:32:00.590 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:32:00.594 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:32:00.594 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:32:00.595 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:32:00.597 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:32:00.597 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:32:00.598 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:32:00.599 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:32:00.600 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:32:00.600 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:32:00.601 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:32:00.601 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:32:00.602 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:32:00.603 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:32:00.603 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:32:00.603 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:32:00.608 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:32:00.609 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:32:00.609 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:32:00.617 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:32:00.617 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:32:00.618 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:32:00.622 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:32:00.622 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:32:00.622 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:32:00.628 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:32:00.629 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:32:00.629 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:32:00.633 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:32:00.633 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:32:00.634 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:32:00.636 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:32:00.637 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:32:00.637 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:32:00.639 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:32:00.640 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:32:00.640 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:32:00.707 | ERROR    | PyDSS.pydss_project:run:378 - Simulation failed
+Traceback (most recent call last):
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 390, in RunSimulation
+    pydss_has_converged = self.RunStep(step)
+                          │    │       └ 0
+                          │    └ <function track_timing.<locals>.wrap.<locals>.timed_ at 0x000001D689922DE0>
+                          └ <PyDSS.dssInstance.OpenDSS object at 0x000001D68AF73470>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 182, in timed_
+    return _timed_func(timer_stats, func, *args, **kwargs)
+           │           │            │      │       └ {}
+           │           │            │      └ (<PyDSS.dssInstance.OpenDSS object at 0x000001D68AF73470>, 0)
+           │           │            └ <function OpenDSS.RunStep at 0x000001D689922D40>
+           │           └ <PyDSS.utils.timing_utils.TimerStatsCollector object at 0x000001D6E2DEA720>
+           └ <function _timed_func at 0x000001D6E3C4DC60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 190, in _timed_func
+    return func(*args, **kwargs)
+           │     │       └ {}
+           │     └ (<PyDSS.dssInstance.OpenDSS object at 0x000001D68AF73470>, 0)
+           └ <function OpenDSS.RunStep at 0x000001D689922D40>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 292, in RunStep
+    self.ResultContainer.UpdateResults()
+    │    │               └ <function track_timing.<locals>.wrap.<locals>.timed_ at 0x000001D689920040>
+    │    └ <PyDSS.ResultData.ResultData object at 0x000001D68B1A2F00>
+    └ <PyDSS.dssInstance.OpenDSS object at 0x000001D68AF73470>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 182, in timed_
+    return _timed_func(timer_stats, func, *args, **kwargs)
+           │           │            │      │       └ {}
+           │           │            │      └ (<PyDSS.ResultData.ResultData object at 0x000001D68B1A2F00>,)
+           │           │            └ <function ResultData.UpdateResults at 0x000001D68991BF60>
+           │           └ <PyDSS.utils.timing_utils.TimerStatsCollector object at 0x000001D6E2DEA720>
+           └ <function _timed_func at 0x000001D6E3C4DC60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 190, in _timed_func
+    return func(*args, **kwargs)
+           │     │       └ {}
+           │     └ (<PyDSS.ResultData.ResultData object at 0x000001D68B1A2F00>,)
+           └ <function ResultData.UpdateResults at 0x000001D68991BF60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\ResultData.py", line 232, in UpdateResults
+    data = metric.append_values(self._cur_step, store_nan=store_nan)
+           │      │             │    │                    └ False
+           │      │             │    └ 5
+           │      │             └ <PyDSS.ResultData.ResultData object at 0x000001D68B1A2F00>
+           │      └ <function OpenDssPropertyMetric.append_values at 0x000001D68982F1A0>
+           └ <PyDSS.metrics.OpenDssPropertyMetric object at 0x000001D68B1A35C0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 320, in append_values
+    values = super().append_values(time_step, store_nan=store_nan)
+                                   │                    └ False
+                                   └ 5
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 299, in append_values
+    container.append_values(vals, time_step)
+    │         │             │     └ 5
+    │         │             └ [<PyDSS.value_storage.ValueByLabel object at 0x000001D68B1B76E0>, <PyDSS.value_storage.ValueByLabel object at 0x000001D68B1B7...
+    │         └ <function StorageAll.append_values at 0x000001D68982C360>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000001D68B1B7560>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 81, in append_values
+    self._container.append(values)
+    │    │          │      └ [<PyDSS.value_storage.ValueByLabel object at 0x000001D68B1B76E0>, <PyDSS.value_storage.ValueByLabel object at 0x000001D68B1B7...
+    │    │          └ <function ValueContainer.append at 0x000001D6E7E6CAE0>
+    │    └ <PyDSS.value_storage.ValueContainer object at 0x000001D68B1ED160>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000001D68B1B7560>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\value_storage.py", line 621, in append
+    self._dataset.write_value(vals)
+    │    │        │           └ [1.0279369670050302, 174.78418402841413, 1.0181275781794819, 55.94865940879409, 1.02483606756101, -64.76544929248458, 1.02793...
+    │    │        └ <function DatasetBuffer.write_value at 0x000001D6E62F6700>
+    │    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001D68B1ED220>
+    └ <PyDSS.value_storage.ValueContainer object at 0x000001D68B1ED160>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 147, in write_value
+    self.flush_data()
+    │    └ <function DatasetBuffer.flush_data at 0x000001D6E62F65C0>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001D68B1ED220>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 124, in flush_data
+    self._dataset[self._dataset_index:new_index] = self._buf[0:length]
+    │    │        │    │              │            │    │      └ 3
+    │    │        │    │              │            │    └ array([[ 1.01939501e+00,  1.75380992e+02,  1.00861322e+00, ...,
+    │    │        │    │              │            │              -6.34349488e+01,  8.13476791e-12,  1.16565051e+02],
+    │    │        │    │              │            │       ...
+    │    │        │    │              │            └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001D68B1ED220>
+    │    │        │    │              └ 6
+    │    │        │    └ 3
+    │    │        └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001D68B1ED220>
+    │    └ <Closed HDF5 dataset>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001D68B1ED220>
+
+  File "h5py\_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py\_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\dataset.py", line 997, in __setitem__
+    mspace = h5s.create_simple(selection.expand_shape(mshape))
+             │   │             │         │            └ (3, 1052)
+             │   │             │         └ <function SimpleSelection.expand_shape at 0x000001D6E5185EE0>
+             │   │             └ <h5py._hl.selections.SimpleSelection object at 0x000001D68B243380>
+             │   └ <cyfunction create_simple at 0x000001D6E5118D40>
+             └ <module 'h5py.h5s' from 'C:\\Users\\alatif\\.conda\\envs\\pydss\\Lib\\site-packages\\h5py\\h5s.cp312-win_amd64.pyd'>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\selections.py", line 264, in expand_shape
+    raise TypeError("Can't broadcast %s -> %s" % (source_shape, self.array_shape))  # array shape
+                                                  │             │    └ <property object at 0x000001D6E51AE390>
+                                                  │             └ <h5py._hl.selections.SimpleSelection object at 0x000001D68B243380>
+                                                  └ (3, 1052)
+
+TypeError: Can't broadcast (3, 1052) -> (2, 1052)
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "\\?\C:\Users\alatif\.conda\envs\pydss\Scripts\pydss-script.py", line 33, in <module>
+    sys.exit(load_entry_point('dsspy', 'console_scripts', 'pydss')())
+    │   │    └ <function importlib_load_entry_point at 0x000001D6E16EA660>
+    │   └ <built-in function exit>
+    └ <module 'sys' (built-in)>
+
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1157, in __call__
+    return self.main(*args, **kwargs)
+           │    │     │       └ {}
+           │    │     └ ()
+           │    └ <function BaseCommand.main at 0x000001D6E3CDC360>
+           └ <Group cli>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1078, in main
+    rv = self.invoke(ctx)
+         │    │      └ <click.core.Context object at 0x000001D6E1555220>
+         │    └ <function MultiCommand.invoke at 0x000001D6E3CDD580>
+         └ <Group cli>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1688, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+           │               │       │       │      └ <click.core.Context object at 0x000001D689B35340>
+           │               │       │       └ <function Command.invoke at 0x000001D6E3CDCF40>
+           │               │       └ <Command run>
+           │               └ <click.core.Context object at 0x000001D689B35340>
+           └ <function MultiCommand.invoke.<locals>._process_result at 0x000001D6E16FD1C0>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1434, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           │   │      │    │           │   └ {'project_path': 'C:\\Users\\alatif\\Documents\\GitHub\\PyDSS\\examples\\harmonics', 'dry_run': False, 'verbose': False, 'zip...
+           │   │      │    │           └ <click.core.Context object at 0x000001D689B35340>
+           │   │      │    └ <function run at 0x000001D689A622A0>
+           │   │      └ <Command run>
+           │   └ <function Context.invoke at 0x000001D6E3CCF880>
+           └ <click.core.Context object at 0x000001D689B35340>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 783, in invoke
+    return __callback(*args, **kwargs)
+                       │       └ {'project_path': 'C:\\Users\\alatif\\Documents\\GitHub\\PyDSS\\examples\\harmonics', 'dry_run': False, 'verbose': False, 'zip...
+                       └ ()
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\cli\run.py", line 97, in run
+    project.run(tar_project=tar_project, zip_project=zip_project, dry_run=dry_run)
+    │       │               │                        │                    └ False
+    │       │               │                        └ False
+    │       │               └ False
+    │       └ <function PyDssProject.run at 0x000001D689A51F80>
+    └ <PyDSS.pydss_project.PyDssProject object at 0x000001D68AD51CD0>
+
+> File "c:\users\alatif\documents\github\pydss\PyDSS\pydss_project.py", line 361, in run
+    inst.run(self._settings, self, scenario, dry_run=dry_run)
+    │    │   │    │          │     │                 └ False
+    │    │   │    │          │     └ <PyDSS.pydss_project.PyDssScenario object at 0x000001D68AFFB470>
+    │    │   │    │          └ <PyDSS.pydss_project.PyDssProject object at 0x000001D68AD51CD0>
+    │    │   │    └ SimulationSettingsModel(project=ProjectModel(project_path=WindowsPath('examples'), active_project='harmonics', active_project...
+    │    │   └ <PyDSS.pydss_project.PyDssProject object at 0x000001D68AD51CD0>
+    │    └ <function instance.run at 0x000001D6E6091260>
+    └ <PyDSS.pyDSS.instance object at 0x000001D68AD52C30>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\pyDSS.py", line 51, in run
+    self.run_scenario(
+    │    └ <function instance.run_scenario at 0x000001D6899232E0>
+    └ <PyDSS.pyDSS.instance object at 0x000001D68AD52C30>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\pyDSS.py", line 80, in run_scenario
+    for is_complete, _, _, _ in opendss.RunSimulation(project, scenario):
+                                │       │             │        └ <PyDSS.pydss_project.PyDssScenario object at 0x000001D68AFFB470>
+                                │       │             └ <PyDSS.pydss_project.PyDssProject object at 0x000001D68AD51CD0>
+                                │       └ <function OpenDSS.RunSimulation at 0x000001D689923060>
+                                └ <PyDSS.dssInstance.OpenDSS object at 0x000001D68AF73470>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 435, in RunSimulation
+    self.ResultContainer.Close()
+    │    │               └ <function ResultData.Close at 0x000001D6899200E0>
+    │    └ <PyDSS.ResultData.ResultData object at 0x000001D68B1A2F00>
+    └ <PyDSS.dssInstance.OpenDSS object at 0x000001D68AF73470>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\ResultData.py", line 267, in Close
+    metric.close()
+    │      └ <function MetricBase.close at 0x000001D68982E200>
+    └ <PyDSS.metrics.OpenDssPropertyMetric object at 0x000001D68B1A35C0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 61, in close
+    container.close()
+    │         └ <function StorageFilterBase.close at 0x000001D68982C720>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000001D68B1B7560>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 37, in close
+    self.flush_data()
+    │    └ <function StorageFilterBase.flush_data at 0x000001D68982C540>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000001D68B1B7560>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 41, in flush_data
+    self._container.flush_data()
+    │    │          └ <function ValueContainer.flush_data at 0x000001D6E7E6CC20>
+    │    └ <PyDSS.value_storage.ValueContainer object at 0x000001D68B1ED160>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000001D68B1B7560>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\value_storage.py", line 646, in flush_data
+    self._dataset.flush_data()
+    │    │        └ <function DatasetBuffer.flush_data at 0x000001D6E62F65C0>
+    │    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001D68B1ED220>
+    └ <PyDSS.value_storage.ValueContainer object at 0x000001D68B1ED160>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 124, in flush_data
+    self._dataset[self._dataset_index:new_index] = self._buf[0:length]
+    │    │        │    │              │            │    │      └ 3
+    │    │        │    │              │            │    └ array([[ 1.01939501e+00,  1.75380992e+02,  1.00861322e+00, ...,
+    │    │        │    │              │            │              -6.34349488e+01,  8.13476791e-12,  1.16565051e+02],
+    │    │        │    │              │            │       ...
+    │    │        │    │              │            └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001D68B1ED220>
+    │    │        │    │              └ 6
+    │    │        │    └ 3
+    │    │        └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001D68B1ED220>
+    │    └ <Closed HDF5 dataset>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000001D68B1ED220>
+
+  File "h5py\_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py\_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\dataset.py", line 997, in __setitem__
+    mspace = h5s.create_simple(selection.expand_shape(mshape))
+             │   │             │         │            └ (3, 1052)
+             │   │             │         └ <function SimpleSelection.expand_shape at 0x000001D6E5185EE0>
+             │   │             └ <h5py._hl.selections.SimpleSelection object at 0x000001D68B242FC0>
+             │   └ <cyfunction create_simple at 0x000001D6E5118D40>
+             └ <module 'h5py.h5s' from 'C:\\Users\\alatif\\.conda\\envs\\pydss\\Lib\\site-packages\\h5py\\h5s.cp312-win_amd64.pyd'>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\selections.py", line 264, in expand_shape
+    raise TypeError("Can't broadcast %s -> %s" % (source_shape, self.array_shape))  # array shape
+                                                  │             │    └ <property object at 0x000001D6E51AE390>
+                                                  │             └ <h5py._hl.selections.SimpleSelection object at 0x000001D68B242FC0>
+                                                  └ (3, 1052)
+
+TypeError: Can't broadcast (3, 1052) -> (2, 1052)
+2024-03-19 09:33:30.309 | INFO     | PyDSS.cli.run:run:88 - CLI: [pydss run C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics]
+2024-03-19 09:33:30.315 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\simulation.toml
+2024-03-19 09:33:30.316 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\Scenarios\qsts\ExportLists\ExportMode-byClass.toml
+2024-03-19 09:33:30.316 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\simulation-run.toml
+2024-03-19 09:33:30.322 | INFO     | PyDSS.dssInstance:__init__:77 - An instance of OpenDSS version 0.8.4 has been created.
+2024-03-19 09:33:30.323 | INFO     | PyDSS.dssInstance:_compile_model:144 - Loading OpenDSS model
+2024-03-19 09:33:30.334 | INFO     | PyDSS.dssInstance:_compile_model:152 - OpenDSS:  
+2024-03-19 09:33:30.334 | INFO     | PyDSS.dssInstance:__init__:88 - OpenDSS fundamental frequency set to :  60.0 Hz
+2024-03-19 09:33:30.335 | INFO     | PyDSS.SolveMode:GetSolver:13 - Setting solver to %s mode.
+2024-03-19 09:33:30.335 | INFO     | PyDSS.modes.solver_base:__init__:39 - %s solver setup complete
+2024-03-19 09:33:30.358 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from examples\harmonics\Scenarios\qsts\ExportLists\ExportMode-byClass.toml
+2024-03-19 09:33:30.361 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to examples\harmonics\Exports\qsts\ExportsActual.toml
+2024-03-19 09:33:30.361 | INFO     | PyDSS.dssInstance:__init__:136 - Simulation initialization complete
+2024-03-19 09:33:30.364 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to examples\harmonics\Scenarios\qsts\simulation-run.toml
+2024-03-19 09:33:30.365 | INFO     | PyDSS.pyDSS:run_scenario:76 - Running scenario: %s
+2024-03-19 09:33:30.366 | INFO     | PyDSS.dssInstance:RunSimulation:358 - Running simulation from 2020-01-01 00:00:00 till 2020-01-01 01:14:00.
+2024-03-19 09:33:30.366 | INFO     | PyDSS.dssInstance:RunSimulation:359 - Simulation time step 5.
+2024-03-19 09:33:30.366 | INFO     | PyDSS.dssInstance:RunSimulation:360 - Set OpenDSS convergence to %s
+2024-03-19 09:33:30.366 | INFO     | PyDSS.dssInstance:RunSimulation:361 - Max convergence error count None.
+2024-03-19 09:33:30.366 | INFO     | PyDSS.dssInstance:RunSimulation:362 - initializing store
+2024-03-19 09:33:30.366 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:33:30.382 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:33:30.382 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:33:30.382 | INFO     | PyDSS.dssInstance:RunSimulation:378 - No post processing script selected
+2024-03-19 09:33:30.382 | INFO     | PyDSS.dssInstance:RunStep:244 - PyDSS datetime - 2020-01-01 00:00:00
+2024-03-19 09:33:30.385 | INFO     | PyDSS.dssInstance:RunStep:245 - OpenDSS time [h] - 0.0
+2024-03-19 09:33:30.385 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 0 convergence error: 0
+2024-03-19 09:33:30.385 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 1 convergence error: 0
+2024-03-19 09:33:30.386 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 2 convergence error: 0
+2024-03-19 09:33:30.386 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:33:30.395 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:33:30.396 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:33:30.399 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:33:30.400 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:33:30.400 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:33:30.402 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:33:30.403 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:33:30.403 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:33:30.405 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:33:30.405 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:33:30.405 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:33:30.407 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:33:30.408 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:33:30.409 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:33:30.411 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:33:30.411 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:33:30.412 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:33:30.419 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:33:30.420 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:33:30.420 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:33:30.426 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:33:30.426 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:33:30.426 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:33:30.431 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:33:30.431 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:33:30.433 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:33:30.437 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:33:30.438 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:33:30.438 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:33:30.440 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:33:30.441 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:33:30.441 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:33:30.444 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:33:30.444 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:33:30.444 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:33:30.446 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:33:30.447 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:33:30.447 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:33:31.547 | ERROR    | PyDSS.pydss_project:run:378 - Simulation failed
+Traceback (most recent call last):
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 390, in RunSimulation
+    pydss_has_converged = self.RunStep(step)
+                          │    │       └ 0
+                          │    └ <function track_timing.<locals>.wrap.<locals>.timed_ at 0x00000193C35A6C00>
+                          └ <PyDSS.dssInstance.OpenDSS object at 0x00000193C4BCCDD0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 182, in timed_
+    return _timed_func(timer_stats, func, *args, **kwargs)
+           │           │            │      │       └ {}
+           │           │            │      └ (<PyDSS.dssInstance.OpenDSS object at 0x00000193C4BCCDD0>, 0)
+           │           │            └ <function OpenDSS.RunStep at 0x00000193C35A6B60>
+           │           └ <PyDSS.utils.timing_utils.TimerStatsCollector object at 0x000001939BC328D0>
+           └ <function _timed_func at 0x000001939D9CDC60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 190, in _timed_func
+    return func(*args, **kwargs)
+           │     │       └ {}
+           │     └ (<PyDSS.dssInstance.OpenDSS object at 0x00000193C4BCCDD0>, 0)
+           └ <function OpenDSS.RunStep at 0x00000193C35A6B60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 292, in RunStep
+    self.ResultContainer.UpdateResults()
+    │    │               └ <function track_timing.<locals>.wrap.<locals>.timed_ at 0x00000193C35A4180>
+    │    └ <PyDSS.ResultData.ResultData object at 0x00000193C4E330B0>
+    └ <PyDSS.dssInstance.OpenDSS object at 0x00000193C4BCCDD0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 182, in timed_
+    return _timed_func(timer_stats, func, *args, **kwargs)
+           │           │            │      │       └ {}
+           │           │            │      └ (<PyDSS.ResultData.ResultData object at 0x00000193C4E330B0>,)
+           │           │            └ <function ResultData.UpdateResults at 0x00000193C35A40E0>
+           │           └ <PyDSS.utils.timing_utils.TimerStatsCollector object at 0x000001939BC328D0>
+           └ <function _timed_func at 0x000001939D9CDC60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 190, in _timed_func
+    return func(*args, **kwargs)
+           │     │       └ {}
+           │     └ (<PyDSS.ResultData.ResultData object at 0x00000193C4E330B0>,)
+           └ <function ResultData.UpdateResults at 0x00000193C35A40E0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\ResultData.py", line 232, in UpdateResults
+    data = metric.append_values(self._cur_step, store_nan=store_nan)
+           │      │             │    │                    └ False
+           │      │             │    └ 5
+           │      │             └ <PyDSS.ResultData.ResultData object at 0x00000193C4E330B0>
+           │      └ <function OpenDssPropertyMetric.append_values at 0x00000193C34B72E0>
+           └ <PyDSS.metrics.OpenDssPropertyMetric object at 0x00000193C4E332F0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 320, in append_values
+    values = super().append_values(time_step, store_nan=store_nan)
+                                   │                    └ False
+                                   └ 5
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 299, in append_values
+    container.append_values(vals, time_step)
+    │         │             │     └ 5
+    │         │             └ [<PyDSS.value_storage.ValueByLabel object at 0x00000193C4E43770>, <PyDSS.value_storage.ValueByLabel object at 0x00000193C4E43...
+    │         └ <function StorageAll.append_values at 0x00000193C34B56C0>
+    └ <PyDSS.storage_filters.StorageAll object at 0x00000193C4E43B60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 81, in append_values
+    self._container.append(values)
+    │    │          │      └ [<PyDSS.value_storage.ValueByLabel object at 0x00000193C4E43770>, <PyDSS.value_storage.ValueByLabel object at 0x00000193C4E43...
+    │    │          └ <function ValueContainer.append at 0x00000193A1B0CA40>
+    │    └ <PyDSS.value_storage.ValueContainer object at 0x00000193C4E7D430>
+    └ <PyDSS.storage_filters.StorageAll object at 0x00000193C4E43B60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\value_storage.py", line 621, in append
+    self._dataset.write_value(vals)
+    │    │        │           └ [1.0279369670050302, 174.78418402841413, 1.0181275781794819, 55.94865940879409, 1.02483606756101, -64.76544929248458, 1.02793...
+    │    │        └ <function DatasetBuffer.write_value at 0x000001939FF96700>
+    │    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x00000193C4E7D4F0>
+    └ <PyDSS.value_storage.ValueContainer object at 0x00000193C4E7D430>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 148, in write_value
+    self.flush_data()
+    │    └ <function DatasetBuffer.flush_data at 0x000001939FF965C0>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x00000193C4E7D4F0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 125, in flush_data
+    self._dataset[self._dataset_index:new_index] = self._buf[0:length]
+    │    │        │    │              │            │    │      └ 3
+    │    │        │    │              │            │    └ array([[ 1.01939501e+00,  1.75380992e+02,  1.00861322e+00, ...,
+    │    │        │    │              │            │              -6.34349488e+01,  8.13476791e-12,  1.16565051e+02],
+    │    │        │    │              │            │       ...
+    │    │        │    │              │            └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x00000193C4E7D4F0>
+    │    │        │    │              └ 6
+    │    │        │    └ 3
+    │    │        └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x00000193C4E7D4F0>
+    │    └ <Closed HDF5 dataset>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x00000193C4E7D4F0>
+
+  File "h5py\_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py\_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\dataset.py", line 997, in __setitem__
+    mspace = h5s.create_simple(selection.expand_shape(mshape))
+             │   │             │         │            └ (3, 1052)
+             │   │             │         └ <function SimpleSelection.expand_shape at 0x000001939EEE5EE0>
+             │   │             └ <h5py._hl.selections.SimpleSelection object at 0x00000193C4F44EC0>
+             │   └ <cyfunction create_simple at 0x000001939EE78D40>
+             └ <module 'h5py.h5s' from 'C:\\Users\\alatif\\.conda\\envs\\pydss\\Lib\\site-packages\\h5py\\h5s.cp312-win_amd64.pyd'>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\selections.py", line 264, in expand_shape
+    raise TypeError("Can't broadcast %s -> %s" % (source_shape, self.array_shape))  # array shape
+                                                  │             │    └ <property object at 0x000001939EF0E3E0>
+                                                  │             └ <h5py._hl.selections.SimpleSelection object at 0x00000193C4F44EC0>
+                                                  └ (3, 1052)
+
+TypeError: Can't broadcast (3, 1052) -> (2, 1052)
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "\\?\C:\Users\alatif\.conda\envs\pydss\Scripts\pydss-script.py", line 33, in <module>
+    sys.exit(load_entry_point('dsspy', 'console_scripts', 'pydss')())
+    │   │    └ <function importlib_load_entry_point at 0x000001939B3FA660>
+    │   └ <built-in function exit>
+    └ <module 'sys' (built-in)>
+
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1157, in __call__
+    return self.main(*args, **kwargs)
+           │    │     │       └ {}
+           │    │     └ ()
+           │    └ <function BaseCommand.main at 0x000001939DA5C360>
+           └ <Group cli>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1078, in main
+    rv = self.invoke(ctx)
+         │    │      └ <click.core.Context object at 0x000001939D3B7260>
+         │    └ <function MultiCommand.invoke at 0x000001939DA5D580>
+         └ <Group cli>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1688, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+           │               │       │       │      └ <click.core.Context object at 0x000001939B33AA50>
+           │               │       │       └ <function Command.invoke at 0x000001939DA5CF40>
+           │               │       └ <Command run>
+           │               └ <click.core.Context object at 0x000001939B33AA50>
+           └ <function MultiCommand.invoke.<locals>._process_result at 0x000001939B40D1C0>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1434, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           │   │      │    │           │   └ {'project_path': 'C:\\Users\\alatif\\Documents\\GitHub\\PyDSS\\examples\\harmonics', 'dry_run': False, 'verbose': False, 'zip...
+           │   │      │    │           └ <click.core.Context object at 0x000001939B33AA50>
+           │   │      │    └ <function run at 0x00000193C36F6160>
+           │   │      └ <Command run>
+           │   └ <function Context.invoke at 0x000001939DA4F880>
+           └ <click.core.Context object at 0x000001939B33AA50>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 783, in invoke
+    return __callback(*args, **kwargs)
+                       │       └ {'project_path': 'C:\\Users\\alatif\\Documents\\GitHub\\PyDSS\\examples\\harmonics', 'dry_run': False, 'verbose': False, 'zip...
+                       └ ()
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\cli\run.py", line 97, in run
+    project.run(tar_project=tar_project, zip_project=zip_project, dry_run=dry_run)
+    │       │               │                        │                    └ False
+    │       │               │                        └ False
+    │       │               └ False
+    │       └ <function PyDssProject.run at 0x00000193C36E5E40>
+    └ <PyDSS.pydss_project.PyDssProject object at 0x00000193C4B61CD0>
+
+> File "c:\users\alatif\documents\github\pydss\PyDSS\pydss_project.py", line 361, in run
+    inst.run(self._settings, self, scenario, dry_run=dry_run)
+    │    │   │    │          │     │                 └ False
+    │    │   │    │          │     └ <PyDSS.pydss_project.PyDssScenario object at 0x00000193C34D2C90>
+    │    │   │    │          └ <PyDSS.pydss_project.PyDssProject object at 0x00000193C4B61CD0>
+    │    │   │    └ SimulationSettingsModel(project=ProjectModel(project_path=WindowsPath('examples'), active_project='harmonics', active_project...
+    │    │   └ <PyDSS.pydss_project.PyDssProject object at 0x00000193C4B61CD0>
+    │    └ <function instance.run at 0x000001939FD31260>
+    └ <PyDSS.pyDSS.instance object at 0x00000193C4C86F90>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\pyDSS.py", line 51, in run
+    self.run_scenario(
+    │    └ <function instance.run_scenario at 0x00000193C35A7100>
+    └ <PyDSS.pyDSS.instance object at 0x00000193C4C86F90>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\pyDSS.py", line 80, in run_scenario
+    for is_complete, _, _, _ in opendss.RunSimulation(project, scenario):
+                                │       │             │        └ <PyDSS.pydss_project.PyDssScenario object at 0x00000193C34D2C90>
+                                │       │             └ <PyDSS.pydss_project.PyDssProject object at 0x00000193C4B61CD0>
+                                │       └ <function OpenDSS.RunSimulation at 0x00000193C35A6E80>
+                                └ <PyDSS.dssInstance.OpenDSS object at 0x00000193C4BCCDD0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 435, in RunSimulation
+    self.ResultContainer.Close()
+    │    │               └ <function ResultData.Close at 0x00000193C35A4220>
+    │    └ <PyDSS.ResultData.ResultData object at 0x00000193C4E330B0>
+    └ <PyDSS.dssInstance.OpenDSS object at 0x00000193C4BCCDD0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\ResultData.py", line 267, in Close
+    metric.close()
+    │      └ <function MetricBase.close at 0x00000193C34B6340>
+    └ <PyDSS.metrics.OpenDssPropertyMetric object at 0x00000193C4E332F0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 61, in close
+    container.close()
+    │         └ <function StorageFilterBase.close at 0x00000193C34B5440>
+    └ <PyDSS.storage_filters.StorageAll object at 0x00000193C4E43B60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 37, in close
+    self.flush_data()
+    │    └ <function StorageFilterBase.flush_data at 0x00000193C34B54E0>
+    └ <PyDSS.storage_filters.StorageAll object at 0x00000193C4E43B60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 41, in flush_data
+    self._container.flush_data()
+    │    │          └ <function ValueContainer.flush_data at 0x00000193A1B0CB80>
+    │    └ <PyDSS.value_storage.ValueContainer object at 0x00000193C4E7D430>
+    └ <PyDSS.storage_filters.StorageAll object at 0x00000193C4E43B60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\value_storage.py", line 646, in flush_data
+    self._dataset.flush_data()
+    │    │        └ <function DatasetBuffer.flush_data at 0x000001939FF965C0>
+    │    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x00000193C4E7D4F0>
+    └ <PyDSS.value_storage.ValueContainer object at 0x00000193C4E7D430>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 125, in flush_data
+    self._dataset[self._dataset_index:new_index] = self._buf[0:length]
+    │    │        │    │              │            │    │      └ 3
+    │    │        │    │              │            │    └ array([[ 1.01939501e+00,  1.75380992e+02,  1.00861322e+00, ...,
+    │    │        │    │              │            │              -6.34349488e+01,  8.13476791e-12,  1.16565051e+02],
+    │    │        │    │              │            │       ...
+    │    │        │    │              │            └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x00000193C4E7D4F0>
+    │    │        │    │              └ 6
+    │    │        │    └ 3
+    │    │        └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x00000193C4E7D4F0>
+    │    └ <Closed HDF5 dataset>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x00000193C4E7D4F0>
+
+  File "h5py\_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py\_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\dataset.py", line 997, in __setitem__
+    mspace = h5s.create_simple(selection.expand_shape(mshape))
+             │   │             │         │            └ (3, 1052)
+             │   │             │         └ <function SimpleSelection.expand_shape at 0x000001939EEE5EE0>
+             │   │             └ <h5py._hl.selections.SimpleSelection object at 0x00000193C4ED3F50>
+             │   └ <cyfunction create_simple at 0x000001939EE78D40>
+             └ <module 'h5py.h5s' from 'C:\\Users\\alatif\\.conda\\envs\\pydss\\Lib\\site-packages\\h5py\\h5s.cp312-win_amd64.pyd'>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\selections.py", line 264, in expand_shape
+    raise TypeError("Can't broadcast %s -> %s" % (source_shape, self.array_shape))  # array shape
+                                                  │             │    └ <property object at 0x000001939EF0E3E0>
+                                                  │             └ <h5py._hl.selections.SimpleSelection object at 0x00000193C4ED3F50>
+                                                  └ (3, 1052)
+
+TypeError: Can't broadcast (3, 1052) -> (2, 1052)
+2024-03-19 09:35:28.676 | INFO     | PyDSS.cli.run:run:88 - CLI: [pydss run C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics]
+2024-03-19 09:35:28.678 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\simulation.toml
+2024-03-19 09:35:28.681 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\Scenarios\qsts\ExportLists\ExportMode-byClass.toml
+2024-03-19 09:35:28.683 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\simulation-run.toml
+2024-03-19 09:35:28.686 | INFO     | PyDSS.dssInstance:__init__:77 - An instance of OpenDSS version 0.8.4 has been created.
+2024-03-19 09:35:28.687 | INFO     | PyDSS.dssInstance:_compile_model:144 - Loading OpenDSS model
+2024-03-19 09:35:28.699 | INFO     | PyDSS.dssInstance:_compile_model:152 - OpenDSS:  
+2024-03-19 09:35:28.700 | INFO     | PyDSS.dssInstance:__init__:88 - OpenDSS fundamental frequency set to :  60.0 Hz
+2024-03-19 09:35:28.700 | INFO     | PyDSS.SolveMode:GetSolver:13 - Setting solver to %s mode.
+2024-03-19 09:35:28.701 | INFO     | PyDSS.modes.solver_base:__init__:39 - %s solver setup complete
+2024-03-19 09:35:28.737 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from examples\harmonics\Scenarios\qsts\ExportLists\ExportMode-byClass.toml
+2024-03-19 09:35:28.737 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to examples\harmonics\Exports\qsts\ExportsActual.toml
+2024-03-19 09:35:28.737 | INFO     | PyDSS.dssInstance:__init__:136 - Simulation initialization complete
+2024-03-19 09:35:28.746 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to examples\harmonics\Scenarios\qsts\simulation-run.toml
+2024-03-19 09:35:28.746 | INFO     | PyDSS.pyDSS:run_scenario:76 - Running scenario: %s
+2024-03-19 09:35:28.747 | INFO     | PyDSS.dssInstance:RunSimulation:358 - Running simulation from 2020-01-01 00:00:00 till 2020-01-01 01:14:00.
+2024-03-19 09:35:28.747 | INFO     | PyDSS.dssInstance:RunSimulation:359 - Simulation time step 5.
+2024-03-19 09:35:28.747 | INFO     | PyDSS.dssInstance:RunSimulation:360 - Set OpenDSS convergence to %s
+2024-03-19 09:35:28.747 | INFO     | PyDSS.dssInstance:RunSimulation:361 - Max convergence error count None.
+2024-03-19 09:35:28.747 | INFO     | PyDSS.dssInstance:RunSimulation:362 - initializing store
+2024-03-19 09:35:28.749 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:35:28.750 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:35:28.751 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:35:28.751 | INFO     | PyDSS.dssInstance:RunSimulation:378 - No post processing script selected
+2024-03-19 09:35:28.751 | INFO     | PyDSS.dssInstance:RunStep:244 - PyDSS datetime - 2020-01-01 00:00:00
+2024-03-19 09:35:28.751 | INFO     | PyDSS.dssInstance:RunStep:245 - OpenDSS time [h] - 0.0
+2024-03-19 09:35:28.751 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 0 convergence error: 0
+2024-03-19 09:35:28.751 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 1 convergence error: 0
+2024-03-19 09:35:28.751 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 2 convergence error: 0
+2024-03-19 09:35:28.756 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:35:28.763 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:35:28.763 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:35:28.767 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:35:28.767 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:35:28.767 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:35:28.767 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:35:28.767 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:35:28.767 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:35:28.767 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:35:28.767 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:35:28.767 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:35:28.775 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:35:28.776 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:35:28.776 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:35:28.777 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:35:28.778 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:35:28.778 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:35:28.785 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:35:28.786 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:35:28.786 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:35:28.791 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:35:28.792 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:35:28.792 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:35:28.797 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:35:28.798 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:35:28.798 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:35:28.802 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:35:28.803 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:35:28.803 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:35:28.806 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:35:28.807 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:35:28.807 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:35:28.809 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:35:28.810 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:35:28.810 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:35:28.812 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:35:28.812 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:35:28.812 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:35:30.276 | ERROR    | PyDSS.pydss_project:run:378 - Simulation failed
+Traceback (most recent call last):
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 390, in RunSimulation
+    pydss_has_converged = self.RunStep(step)
+                          │    │       └ 0
+                          │    └ <function track_timing.<locals>.wrap.<locals>.timed_ at 0x00000249187C6C00>
+                          └ <PyDSS.dssInstance.OpenDSS object at 0x0000024919E92F60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 182, in timed_
+    return _timed_func(timer_stats, func, *args, **kwargs)
+           │           │            │      │       └ {}
+           │           │            │      └ (<PyDSS.dssInstance.OpenDSS object at 0x0000024919E92F60>, 0)
+           │           │            └ <function OpenDSS.RunStep at 0x00000249187C6B60>
+           │           └ <PyDSS.utils.timing_utils.TimerStatsCollector object at 0x0000024971B22E40>
+           └ <function _timed_func at 0x00000249729BDC60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 190, in _timed_func
+    return func(*args, **kwargs)
+           │     │       └ {}
+           │     └ (<PyDSS.dssInstance.OpenDSS object at 0x0000024919E92F60>, 0)
+           └ <function OpenDSS.RunStep at 0x00000249187C6B60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 292, in RunStep
+    self.ResultContainer.UpdateResults()
+    │    │               └ <function track_timing.<locals>.wrap.<locals>.timed_ at 0x00000249187C4180>
+    │    └ <PyDSS.ResultData.ResultData object at 0x000002491844D880>
+    └ <PyDSS.dssInstance.OpenDSS object at 0x0000024919E92F60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 182, in timed_
+    return _timed_func(timer_stats, func, *args, **kwargs)
+           │           │            │      │       └ {}
+           │           │            │      └ (<PyDSS.ResultData.ResultData object at 0x000002491844D880>,)
+           │           │            └ <function ResultData.UpdateResults at 0x00000249187C40E0>
+           │           └ <PyDSS.utils.timing_utils.TimerStatsCollector object at 0x0000024971B22E40>
+           └ <function _timed_func at 0x00000249729BDC60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 190, in _timed_func
+    return func(*args, **kwargs)
+           │     │       └ {}
+           │     └ (<PyDSS.ResultData.ResultData object at 0x000002491844D880>,)
+           └ <function ResultData.UpdateResults at 0x00000249187C40E0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\ResultData.py", line 232, in UpdateResults
+    data = metric.append_values(self._cur_step, store_nan=store_nan)
+           │      │             │    │                    └ False
+           │      │             │    └ 5
+           │      │             └ <PyDSS.ResultData.ResultData object at 0x000002491844D880>
+           │      └ <function OpenDssPropertyMetric.append_values at 0x00000249186D72E0>
+           └ <PyDSS.metrics.OpenDssPropertyMetric object at 0x000002491A043470>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 320, in append_values
+    values = super().append_values(time_step, store_nan=store_nan)
+                                   │                    └ False
+                                   └ 5
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 299, in append_values
+    container.append_values(vals, time_step)
+    │         │             │     └ 5
+    │         │             └ [<PyDSS.value_storage.ValueByLabel object at 0x000002491A057320>, <PyDSS.value_storage.ValueByLabel object at 0x000002491A057...
+    │         └ <function StorageAll.append_values at 0x00000249186D56C0>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000002491A0573B0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 81, in append_values
+    self._container.append(values)
+    │    │          │      └ [<PyDSS.value_storage.ValueByLabel object at 0x000002491A057320>, <PyDSS.value_storage.ValueByLabel object at 0x000002491A057...
+    │    │          └ <function ValueContainer.append at 0x0000024976BECA40>
+    │    └ <PyDSS.value_storage.ValueContainer object at 0x000002491A08D100>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000002491A0573B0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\value_storage.py", line 621, in append
+    self._dataset.write_value(vals)
+    │    │        │           └ [1.0279369670050302, 174.78418402841413, 1.0181275781794819, 55.94865940879409, 1.02483606756101, -64.76544929248458, 1.02793...
+    │    │        └ <function DatasetBuffer.write_value at 0x0000024975076700>
+    │    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000002491A08D1C0>
+    └ <PyDSS.value_storage.ValueContainer object at 0x000002491A08D100>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 149, in write_value
+    self.flush_data()
+    │    └ <function DatasetBuffer.flush_data at 0x00000249750765C0>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000002491A08D1C0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 126, in flush_data
+    self._dataset[self._dataset_index:new_index] = self._buf[0:length]
+    │    │        │    │              │            │    │      └ 3
+    │    │        │    │              │            │    └ array([[ 1.01939501e+00,  1.75380992e+02,  1.00861322e+00, ...,
+    │    │        │    │              │            │              -6.34349488e+01,  8.13476791e-12,  1.16565051e+02],
+    │    │        │    │              │            │       ...
+    │    │        │    │              │            └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000002491A08D1C0>
+    │    │        │    │              └ 6
+    │    │        │    └ 3
+    │    │        └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000002491A08D1C0>
+    │    └ <Closed HDF5 dataset>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000002491A08D1C0>
+
+  File "h5py\_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py\_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\dataset.py", line 997, in __setitem__
+    mspace = h5s.create_simple(selection.expand_shape(mshape))
+             │   │             │         │            └ (3, 1052)
+             │   │             │         └ <function SimpleSelection.expand_shape at 0x0000024973EF9EE0>
+             │   │             └ <h5py._hl.selections.SimpleSelection object at 0x000002491A14D550>
+             │   └ <cyfunction create_simple at 0x0000024973E88D40>
+             └ <module 'h5py.h5s' from 'C:\\Users\\alatif\\.conda\\envs\\pydss\\Lib\\site-packages\\h5py\\h5s.cp312-win_amd64.pyd'>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\selections.py", line 264, in expand_shape
+    raise TypeError("Can't broadcast %s -> %s" % (source_shape, self.array_shape))  # array shape
+                                                  │             │    └ <property object at 0x0000024973F1E430>
+                                                  │             └ <h5py._hl.selections.SimpleSelection object at 0x000002491A14D550>
+                                                  └ (3, 1052)
+
+TypeError: Can't broadcast (3, 1052) -> (2, 1052)
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "\\?\C:\Users\alatif\.conda\envs\pydss\Scripts\pydss-script.py", line 33, in <module>
+    sys.exit(load_entry_point('dsspy', 'console_scripts', 'pydss')())
+    │   │    └ <function importlib_load_entry_point at 0x000002497047A660>
+    │   └ <built-in function exit>
+    └ <module 'sys' (built-in)>
+
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1157, in __call__
+    return self.main(*args, **kwargs)
+           │    │     │       └ {}
+           │    │     └ ()
+           │    └ <function BaseCommand.main at 0x0000024972A4C360>
+           └ <Group cli>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1078, in main
+    rv = self.invoke(ctx)
+         │    │      └ <click.core.Context object at 0x00000249702E5220>
+         │    └ <function MultiCommand.invoke at 0x0000024972A4D580>
+         └ <Group cli>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1688, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+           │               │       │       │      └ <click.core.Context object at 0x0000024970496030>
+           │               │       │       └ <function Command.invoke at 0x0000024972A4CF40>
+           │               │       └ <Command run>
+           │               └ <click.core.Context object at 0x0000024970496030>
+           └ <function MultiCommand.invoke.<locals>._process_result at 0x000002497048D1C0>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1434, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           │   │      │    │           │   └ {'project_path': 'C:\\Users\\alatif\\Documents\\GitHub\\PyDSS\\examples\\harmonics', 'dry_run': False, 'verbose': False, 'zip...
+           │   │      │    │           └ <click.core.Context object at 0x0000024970496030>
+           │   │      │    └ <function run at 0x0000024918912160>
+           │   │      └ <Command run>
+           │   └ <function Context.invoke at 0x0000024972A3F880>
+           └ <click.core.Context object at 0x0000024970496030>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 783, in invoke
+    return __callback(*args, **kwargs)
+                       │       └ {'project_path': 'C:\\Users\\alatif\\Documents\\GitHub\\PyDSS\\examples\\harmonics', 'dry_run': False, 'verbose': False, 'zip...
+                       └ ()
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\cli\run.py", line 97, in run
+    project.run(tar_project=tar_project, zip_project=zip_project, dry_run=dry_run)
+    │       │               │                        │                    └ False
+    │       │               │                        └ False
+    │       │               └ False
+    │       └ <function PyDssProject.run at 0x0000024918901E40>
+    └ <PyDSS.pydss_project.PyDssProject object at 0x0000024919E92DE0>
+
+> File "c:\users\alatif\documents\github\pydss\PyDSS\pydss_project.py", line 361, in run
+    inst.run(self._settings, self, scenario, dry_run=dry_run)
+    │    │   │    │          │     │                 └ False
+    │    │   │    │          │     └ <PyDSS.pydss_project.PyDssScenario object at 0x0000024919E23E60>
+    │    │   │    │          └ <PyDSS.pydss_project.PyDssProject object at 0x0000024919E92DE0>
+    │    │   │    └ SimulationSettingsModel(project=ProjectModel(project_path=WindowsPath('examples'), active_project='harmonics', active_project...
+    │    │   └ <PyDSS.pydss_project.PyDssProject object at 0x0000024919E92DE0>
+    │    └ <function instance.run at 0x0000024974E11260>
+    └ <PyDSS.pyDSS.instance object at 0x0000024919D89370>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\pyDSS.py", line 51, in run
+    self.run_scenario(
+    │    └ <function instance.run_scenario at 0x00000249187C7100>
+    └ <PyDSS.pyDSS.instance object at 0x0000024919D89370>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\pyDSS.py", line 80, in run_scenario
+    for is_complete, _, _, _ in opendss.RunSimulation(project, scenario):
+                                │       │             │        └ <PyDSS.pydss_project.PyDssScenario object at 0x0000024919E23E60>
+                                │       │             └ <PyDSS.pydss_project.PyDssProject object at 0x0000024919E92DE0>
+                                │       └ <function OpenDSS.RunSimulation at 0x00000249187C6E80>
+                                └ <PyDSS.dssInstance.OpenDSS object at 0x0000024919E92F60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 435, in RunSimulation
+    self.ResultContainer.Close()
+    │    │               └ <function ResultData.Close at 0x00000249187C4220>
+    │    └ <PyDSS.ResultData.ResultData object at 0x000002491844D880>
+    └ <PyDSS.dssInstance.OpenDSS object at 0x0000024919E92F60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\ResultData.py", line 267, in Close
+    metric.close()
+    │      └ <function MetricBase.close at 0x00000249186D6340>
+    └ <PyDSS.metrics.OpenDssPropertyMetric object at 0x000002491A043470>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 61, in close
+    container.close()
+    │         └ <function StorageFilterBase.close at 0x00000249186D5440>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000002491A0573B0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 37, in close
+    self.flush_data()
+    │    └ <function StorageFilterBase.flush_data at 0x00000249186D54E0>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000002491A0573B0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 41, in flush_data
+    self._container.flush_data()
+    │    │          └ <function ValueContainer.flush_data at 0x0000024976BECB80>
+    │    └ <PyDSS.value_storage.ValueContainer object at 0x000002491A08D100>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000002491A0573B0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\value_storage.py", line 646, in flush_data
+    self._dataset.flush_data()
+    │    │        └ <function DatasetBuffer.flush_data at 0x00000249750765C0>
+    │    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000002491A08D1C0>
+    └ <PyDSS.value_storage.ValueContainer object at 0x000002491A08D100>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 126, in flush_data
+    self._dataset[self._dataset_index:new_index] = self._buf[0:length]
+    │    │        │    │              │            │    │      └ 3
+    │    │        │    │              │            │    └ array([[ 1.01939501e+00,  1.75380992e+02,  1.00861322e+00, ...,
+    │    │        │    │              │            │              -6.34349488e+01,  8.13476791e-12,  1.16565051e+02],
+    │    │        │    │              │            │       ...
+    │    │        │    │              │            └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000002491A08D1C0>
+    │    │        │    │              └ 6
+    │    │        │    └ 3
+    │    │        └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000002491A08D1C0>
+    │    └ <Closed HDF5 dataset>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000002491A08D1C0>
+
+  File "h5py\_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py\_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\dataset.py", line 997, in __setitem__
+    mspace = h5s.create_simple(selection.expand_shape(mshape))
+             │   │             │         │            └ (3, 1052)
+             │   │             │         └ <function SimpleSelection.expand_shape at 0x0000024973EF9EE0>
+             │   │             └ <h5py._hl.selections.SimpleSelection object at 0x000002491A057560>
+             │   └ <cyfunction create_simple at 0x0000024973E88D40>
+             └ <module 'h5py.h5s' from 'C:\\Users\\alatif\\.conda\\envs\\pydss\\Lib\\site-packages\\h5py\\h5s.cp312-win_amd64.pyd'>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\selections.py", line 264, in expand_shape
+    raise TypeError("Can't broadcast %s -> %s" % (source_shape, self.array_shape))  # array shape
+                                                  │             │    └ <property object at 0x0000024973F1E430>
+                                                  │             └ <h5py._hl.selections.SimpleSelection object at 0x000002491A057560>
+                                                  └ (3, 1052)
+
+TypeError: Can't broadcast (3, 1052) -> (2, 1052)
+2024-03-19 09:39:41.617 | INFO     | PyDSS.cli.run:run:88 - CLI: [pydss run C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics]
+2024-03-19 09:39:41.617 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\simulation.toml
+2024-03-19 09:39:41.617 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\Scenarios\qsts\ExportLists\ExportMode-byClass.toml
+2024-03-19 09:39:41.617 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to C:\Users\alatif\Documents\GitHub\PyDSS\examples\harmonics\simulation-run.toml
+2024-03-19 09:39:41.628 | INFO     | PyDSS.dssInstance:__init__:77 - An instance of OpenDSS version 0.8.4 has been created.
+2024-03-19 09:39:41.630 | INFO     | PyDSS.dssInstance:_compile_model:144 - Loading OpenDSS model
+2024-03-19 09:39:41.641 | INFO     | PyDSS.dssInstance:_compile_model:152 - OpenDSS:  
+2024-03-19 09:39:41.642 | INFO     | PyDSS.dssInstance:__init__:88 - OpenDSS fundamental frequency set to :  60.0 Hz
+2024-03-19 09:39:41.642 | INFO     | PyDSS.SolveMode:GetSolver:13 - Setting solver to %s mode.
+2024-03-19 09:39:41.642 | INFO     | PyDSS.modes.solver_base:__init__:39 - %s solver setup complete
+2024-03-19 09:39:41.666 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from examples\harmonics\Scenarios\qsts\ExportLists\ExportMode-byClass.toml
+2024-03-19 09:39:41.670 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to examples\harmonics\Exports\qsts\ExportsActual.toml
+2024-03-19 09:39:41.670 | INFO     | PyDSS.dssInstance:__init__:136 - Simulation initialization complete
+2024-03-19 09:39:41.670 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to examples\harmonics\Scenarios\qsts\simulation-run.toml
+2024-03-19 09:39:41.675 | INFO     | PyDSS.pyDSS:run_scenario:76 - Running scenario: %s
+2024-03-19 09:39:41.675 | INFO     | PyDSS.dssInstance:RunSimulation:358 - Running simulation from 2020-01-01 00:00:00 till 2020-01-01 01:14:00.
+2024-03-19 09:39:41.675 | INFO     | PyDSS.dssInstance:RunSimulation:359 - Simulation time step 5.
+2024-03-19 09:39:41.676 | INFO     | PyDSS.dssInstance:RunSimulation:360 - Set OpenDSS convergence to %s
+2024-03-19 09:39:41.676 | INFO     | PyDSS.dssInstance:RunSimulation:361 - Max convergence error count None.
+2024-03-19 09:39:41.677 | INFO     | PyDSS.dssInstance:RunSimulation:362 - initializing store
+2024-03-19 09:39:41.677 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:39:41.677 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:39:41.677 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:39:41.677 | INFO     | PyDSS.dssInstance:RunSimulation:378 - No post processing script selected
+2024-03-19 09:39:41.677 | INFO     | PyDSS.dssInstance:RunStep:244 - PyDSS datetime - 2020-01-01 00:00:00
+2024-03-19 09:39:41.677 | INFO     | PyDSS.dssInstance:RunStep:245 - OpenDSS time [h] - 0.0
+2024-03-19 09:39:41.677 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 0 convergence error: 0
+2024-03-19 09:39:41.677 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 1 convergence error: 0
+2024-03-19 09:39:41.677 | DEBUG    | PyDSS.dssInstance:RunStep:265 - Control Loop 2 convergence error: 0
+2024-03-19 09:39:41.687 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:39:41.687 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:39:41.687 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:39:41.696 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:39:41.696 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:39:41.697 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:39:41.699 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:39:41.700 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:39:41.700 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:39:41.703 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:39:41.703 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:39:41.703 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:39:41.705 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:39:41.705 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:39:41.706 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:39:41.707 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:39:41.708 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:39:41.708 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:39:41.716 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:39:41.717 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:39:41.717 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:39:41.722 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:39:41.722 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:39:41.723 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:39:41.727 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:39:41.729 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:39:41.729 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:39:41.735 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:39:41.736 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:39:41.736 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:39:41.736 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:39:41.736 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:39:41.736 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:39:41.736 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:39:41.736 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:39:41.736 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:39:41.746 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-19 09:39:41.747 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-19 09:39:41.748 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-19 09:39:42.899 | ERROR    | PyDSS.pydss_project:run:378 - Simulation failed
+Traceback (most recent call last):
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 390, in RunSimulation
+    pydss_has_converged = self.RunStep(step)
+                          │    │       └ 0
+                          │    └ <function track_timing.<locals>.wrap.<locals>.timed_ at 0x0000028249B0EC00>
+                          └ <PyDSS.dssInstance.OpenDSS object at 0x000002824B06BB00>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 182, in timed_
+    return _timed_func(timer_stats, func, *args, **kwargs)
+           │           │            │      │       └ {}
+           │           │            │      └ (<PyDSS.dssInstance.OpenDSS object at 0x000002824B06BB00>, 0)
+           │           │            └ <function OpenDSS.RunStep at 0x0000028249B0EB60>
+           │           └ <PyDSS.utils.timing_utils.TimerStatsCollector object at 0x0000028223B27830>
+           └ <function _timed_func at 0x0000028223E5DC60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 190, in _timed_func
+    return func(*args, **kwargs)
+           │     │       └ {}
+           │     └ (<PyDSS.dssInstance.OpenDSS object at 0x000002824B06BB00>, 0)
+           └ <function OpenDSS.RunStep at 0x0000028249B0EB60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 292, in RunStep
+    self.ResultContainer.UpdateResults()
+    │    │               └ <function track_timing.<locals>.wrap.<locals>.timed_ at 0x0000028249B0C180>
+    │    └ <PyDSS.ResultData.ResultData object at 0x000002824B108B90>
+    └ <PyDSS.dssInstance.OpenDSS object at 0x000002824B06BB00>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 182, in timed_
+    return _timed_func(timer_stats, func, *args, **kwargs)
+           │           │            │      │       └ {}
+           │           │            │      └ (<PyDSS.ResultData.ResultData object at 0x000002824B108B90>,)
+           │           │            └ <function ResultData.UpdateResults at 0x0000028249B0C0E0>
+           │           └ <PyDSS.utils.timing_utils.TimerStatsCollector object at 0x0000028223B27830>
+           └ <function _timed_func at 0x0000028223E5DC60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\utils\timing_utils.py", line 190, in _timed_func
+    return func(*args, **kwargs)
+           │     │       └ {}
+           │     └ (<PyDSS.ResultData.ResultData object at 0x000002824B108B90>,)
+           └ <function ResultData.UpdateResults at 0x0000028249B0C0E0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\ResultData.py", line 232, in UpdateResults
+    data = metric.append_values(self._cur_step, store_nan=store_nan)
+           │      │             │    │                    └ False
+           │      │             │    └ 5
+           │      │             └ <PyDSS.ResultData.ResultData object at 0x000002824B108B90>
+           │      └ <function OpenDssPropertyMetric.append_values at 0x0000028249A232E0>
+           └ <PyDSS.metrics.OpenDssPropertyMetric object at 0x000002824B3A3440>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 320, in append_values
+    values = super().append_values(time_step, store_nan=store_nan)
+                                   │                    └ False
+                                   └ 5
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 299, in append_values
+    container.append_values(vals, time_step)
+    │         │             │     └ 5
+    │         │             └ [<PyDSS.value_storage.ValueByLabel object at 0x0000028249A152E0>, <PyDSS.value_storage.ValueByLabel object at 0x000002824B3A3...
+    │         └ <function StorageAll.append_values at 0x0000028249A216C0>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000002824B3A3B60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 81, in append_values
+    self._container.append(values)
+    │    │          │      └ [<PyDSS.value_storage.ValueByLabel object at 0x0000028249A152E0>, <PyDSS.value_storage.ValueByLabel object at 0x000002824B3A3...
+    │    │          └ <function ValueContainer.append at 0x000002822807CA40>
+    │    └ <PyDSS.value_storage.ValueContainer object at 0x000002824B3ED2E0>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000002824B3A3B60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\value_storage.py", line 621, in append
+    self._dataset.write_value(vals)
+    │    │        │           └ [1.0279369670050302, 174.78418402841413, 1.0181275781794819, 55.94865940879409, 1.02483606756101, -64.76544929248458, 1.02793...
+    │    │        └ <function DatasetBuffer.write_value at 0x0000028226506660>
+    │    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000002824B3ED3A0>
+    └ <PyDSS.value_storage.ValueContainer object at 0x000002824B3ED2E0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 149, in write_value
+    self.flush_data()
+    │    └ <function DatasetBuffer.flush_data at 0x0000028226506520>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000002824B3ED3A0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 126, in flush_data
+    self._dataset[self._dataset_index:new_index] = self._buf[0:length]
+    │    │        │    │              │            │    │      └ 3
+    │    │        │    │              │            │    └ array([[ 1.01939501e+00,  1.75380992e+02,  1.00861322e+00, ...,
+    │    │        │    │              │            │              -6.34349488e+01,  8.13476791e-12,  1.16565051e+02],
+    │    │        │    │              │            │       ...
+    │    │        │    │              │            └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000002824B3ED3A0>
+    │    │        │    │              └ 6
+    │    │        │    └ 3
+    │    │        └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000002824B3ED3A0>
+    │    └ <Closed HDF5 dataset>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000002824B3ED3A0>
+
+  File "h5py\_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py\_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\dataset.py", line 997, in __setitem__
+    mspace = h5s.create_simple(selection.expand_shape(mshape))
+             │   │             │         │            └ (3, 1052)
+             │   │             │         └ <function SimpleSelection.expand_shape at 0x0000028225395EE0>
+             │   │             └ <h5py._hl.selections.SimpleSelection object at 0x000002824B442F90>
+             │   └ <cyfunction create_simple at 0x0000028225328D40>
+             └ <module 'h5py.h5s' from 'C:\\Users\\alatif\\.conda\\envs\\pydss\\Lib\\site-packages\\h5py\\h5s.cp312-win_amd64.pyd'>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\selections.py", line 264, in expand_shape
+    raise TypeError("Can't broadcast %s -> %s" % (source_shape, self.array_shape))  # array shape
+                                                  │             │    └ <property object at 0x00000282253BE340>
+                                                  │             └ <h5py._hl.selections.SimpleSelection object at 0x000002824B442F90>
+                                                  └ (3, 1052)
+
+TypeError: Can't broadcast (3, 1052) -> (2, 1052)
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "\\?\C:\Users\alatif\.conda\envs\pydss\Scripts\pydss-script.py", line 33, in <module>
+    sys.exit(load_entry_point('dsspy', 'console_scripts', 'pydss')())
+    │   │    └ <function importlib_load_entry_point at 0x00000282218FA660>
+    │   └ <built-in function exit>
+    └ <module 'sys' (built-in)>
+
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1157, in __call__
+    return self.main(*args, **kwargs)
+           │    │     │       └ {}
+           │    │     └ ()
+           │    └ <function BaseCommand.main at 0x0000028223EEC360>
+           └ <Group cli>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1078, in main
+    rv = self.invoke(ctx)
+         │    │      └ <click.core.Context object at 0x0000028221765220>
+         │    └ <function MultiCommand.invoke at 0x0000028223EED580>
+         └ <Group cli>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1688, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+           │               │       │       │      └ <click.core.Context object at 0x000002822183AA50>
+           │               │       │       └ <function Command.invoke at 0x0000028223EECF40>
+           │               │       └ <Command run>
+           │               └ <click.core.Context object at 0x000002822183AA50>
+           └ <function MultiCommand.invoke.<locals>._process_result at 0x000002822190D1C0>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 1434, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           │   │      │    │           │   └ {'project_path': 'C:\\Users\\alatif\\Documents\\GitHub\\PyDSS\\examples\\harmonics', 'dry_run': False, 'verbose': False, 'zip...
+           │   │      │    │           └ <click.core.Context object at 0x000002822183AA50>
+           │   │      │    └ <function run at 0x0000028249C52160>
+           │   │      └ <Command run>
+           │   └ <function Context.invoke at 0x0000028223EDF880>
+           └ <click.core.Context object at 0x000002822183AA50>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\click\core.py", line 783, in invoke
+    return __callback(*args, **kwargs)
+                       │       └ {'project_path': 'C:\\Users\\alatif\\Documents\\GitHub\\PyDSS\\examples\\harmonics', 'dry_run': False, 'verbose': False, 'zip...
+                       └ ()
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\cli\run.py", line 97, in run
+    project.run(tar_project=tar_project, zip_project=zip_project, dry_run=dry_run)
+    │       │               │                        │                    └ False
+    │       │               │                        └ False
+    │       │               └ False
+    │       └ <function PyDssProject.run at 0x0000028249C41E40>
+    └ <PyDSS.pydss_project.PyDssProject object at 0x000002824B1F6390>
+
+> File "c:\users\alatif\documents\github\pydss\PyDSS\pydss_project.py", line 361, in run
+    inst.run(self._settings, self, scenario, dry_run=dry_run)
+    │    │   │    │          │     │                 └ False
+    │    │   │    │          │     └ <PyDSS.pydss_project.PyDssScenario object at 0x000002824B1F71A0>
+    │    │   │    │          └ <PyDSS.pydss_project.PyDssProject object at 0x000002824B1F6390>
+    │    │   │    └ SimulationSettingsModel(project=ProjectModel(project_path=WindowsPath('examples'), active_project='harmonics', active_project...
+    │    │   └ <PyDSS.pydss_project.PyDssProject object at 0x000002824B1F6390>
+    │    └ <function instance.run at 0x00000282262A1260>
+    └ <PyDSS.pyDSS.instance object at 0x000002824B06B0B0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\pyDSS.py", line 51, in run
+    self.run_scenario(
+    │    └ <function instance.run_scenario at 0x0000028249B0F100>
+    └ <PyDSS.pyDSS.instance object at 0x000002824B06B0B0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\pyDSS.py", line 80, in run_scenario
+    for is_complete, _, _, _ in opendss.RunSimulation(project, scenario):
+                                │       │             │        └ <PyDSS.pydss_project.PyDssScenario object at 0x000002824B1F71A0>
+                                │       │             └ <PyDSS.pydss_project.PyDssProject object at 0x000002824B1F6390>
+                                │       └ <function OpenDSS.RunSimulation at 0x0000028249B0EE80>
+                                └ <PyDSS.dssInstance.OpenDSS object at 0x000002824B06BB00>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dssInstance.py", line 435, in RunSimulation
+    self.ResultContainer.Close()
+    │    │               └ <function ResultData.Close at 0x0000028249B0C220>
+    │    └ <PyDSS.ResultData.ResultData object at 0x000002824B108B90>
+    └ <PyDSS.dssInstance.OpenDSS object at 0x000002824B06BB00>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\ResultData.py", line 267, in Close
+    metric.close()
+    │      └ <function MetricBase.close at 0x0000028249A22340>
+    └ <PyDSS.metrics.OpenDssPropertyMetric object at 0x000002824B3A3440>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\metrics.py", line 61, in close
+    container.close()
+    │         └ <function StorageFilterBase.close at 0x0000028249A21440>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000002824B3A3B60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 37, in close
+    self.flush_data()
+    │    └ <function StorageFilterBase.flush_data at 0x0000028249A214E0>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000002824B3A3B60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\storage_filters.py", line 41, in flush_data
+    self._container.flush_data()
+    │    │          └ <function ValueContainer.flush_data at 0x000002822807CB80>
+    │    └ <PyDSS.value_storage.ValueContainer object at 0x000002824B3ED2E0>
+    └ <PyDSS.storage_filters.StorageAll object at 0x000002824B3A3B60>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\value_storage.py", line 646, in flush_data
+    self._dataset.flush_data()
+    │    │        └ <function DatasetBuffer.flush_data at 0x0000028226506520>
+    │    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000002824B3ED3A0>
+    └ <PyDSS.value_storage.ValueContainer object at 0x000002824B3ED2E0>
+
+  File "c:\users\alatif\documents\github\pydss\PyDSS\dataset_buffer.py", line 126, in flush_data
+    self._dataset[self._dataset_index:new_index] = self._buf[0:length]
+    │    │        │    │              │            │    │      └ 3
+    │    │        │    │              │            │    └ array([[ 1.01939501e+00,  1.75380992e+02,  1.00861322e+00, ...,
+    │    │        │    │              │            │              -6.34349488e+01,  8.13476791e-12,  1.16565051e+02],
+    │    │        │    │              │            │       ...
+    │    │        │    │              │            └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000002824B3ED3A0>
+    │    │        │    │              └ 6
+    │    │        │    └ 3
+    │    │        └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000002824B3ED3A0>
+    │    └ <Closed HDF5 dataset>
+    └ <PyDSS.dataset_buffer.DatasetBuffer object at 0x000002824B3ED3A0>
+
+  File "h5py\_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py\_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\dataset.py", line 997, in __setitem__
+    mspace = h5s.create_simple(selection.expand_shape(mshape))
+             │   │             │         │            └ (3, 1052)
+             │   │             │         └ <function SimpleSelection.expand_shape at 0x0000028225395EE0>
+             │   │             └ <h5py._hl.selections.SimpleSelection object at 0x000002824B4AAF30>
+             │   └ <cyfunction create_simple at 0x0000028225328D40>
+             └ <module 'h5py.h5s' from 'C:\\Users\\alatif\\.conda\\envs\\pydss\\Lib\\site-packages\\h5py\\h5s.cp312-win_amd64.pyd'>
+  File "C:\Users\alatif\.conda\envs\pydss\Lib\site-packages\h5py\_hl\selections.py", line 264, in expand_shape
+    raise TypeError("Can't broadcast %s -> %s" % (source_shape, self.array_shape))  # array shape
+                                                  │             │    └ <property object at 0x00000282253BE340>
+                                                  │             └ <h5py._hl.selections.SimpleSelection object at 0x000002824B4AAF30>
+                                                  └ (3, 1052)
+
+TypeError: Can't broadcast (3, 1052) -> (2, 1052)

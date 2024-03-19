@@ -1,0 +1,54 @@
+Metadata-Version: 2.1
+Name: dsspy
+Version: 3.0.4
+Summary: A high-level python interface for OpenDSS
+Home-page: http://www.github.com/nrel/pydss
+Author: Aadil Latif
+Author-email: Aadil.Latif@nrel.gov
+License: BSD 3 clause
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Console
+Classifier: Environment :: Web Environment
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Science/Research
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: BSD License
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: pandas
+Requires-Dist: scipy
+Requires-Dist: bokeh
+Requires-Dist: networkx
+Requires-Dist: toml
+Requires-Dist: OpenDSSDirect.py~=0.8.4
+Requires-Dist: Shapely
+Requires-Dist: click
+Requires-Dist: numpy
+Requires-Dist: scikit-learn
+Requires-Dist: tables
+Requires-Dist: h5py
+Requires-Dist: helics
+Requires-Dist: terminaltables
+Requires-Dist: aiohttp~=3.8.2
+Requires-Dist: aiohttp_swagger3>=0.4.3
+Requires-Dist: requests
+Requires-Dist: pymongo
+Requires-Dist: pydantic~=2.5.2
+Requires-Dist: matplotlib
+Requires-Dist: pvder
+Provides-Extra: dev
+Requires-Dist: mock; extra == "dev"
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: pytest-cov; extra == "dev"
+Requires-Dist: setuptools; extra == "dev"
+Requires-Dist: sphinx; extra == "dev"
+Requires-Dist: sphinx-rtd-theme; extra == "dev"
+
+﻿# Welcome to the PyDSS Repository!
+
+**PyDSS** is a high level python interface for **OpenDSS** and provides the following functionalities
+
+Documentation on installation, setup and examples can be found here https://nrel.github.io/PyDSS/index.html
+

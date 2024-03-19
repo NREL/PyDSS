@@ -1,0 +1,420 @@
+2024-03-18 12:46:41.774 | INFO     | PyDSS.cli.run:run:89 - CLI: [pydss run -s simulation_motor_stall_simple.toml C:\Users\alatif\Documents\GitHub\PyDSS\tests\data\controllers]
+2024-03-18 12:46:41.775 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\tests\data\controllers\simulation_motor_stall_simple.toml
+2024-03-18 12:46:41.777 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\tests\data\controllers\Scenarios\motor_stall_simple\pyControllerList\MotorStallSimple.toml
+2024-03-18 12:46:41.778 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\tests\data\controllers\Scenarios\motor_stall_simple\ExportLists\ExportMode-byClass.toml
+2024-03-18 12:46:41.781 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to C:\Users\alatif\Documents\GitHub\PyDSS\tests\data\controllers\simulation-run.toml
+2024-03-18 12:46:41.784 | INFO     | PyDSS.dssInstance:__init__:78 - An instance of OpenDSS version 0.8.4 has been created.
+2024-03-18 12:46:41.785 | INFO     | PyDSS.dssInstance:_compile_model:145 - Loading OpenDSS model
+2024-03-18 12:46:41.947 | INFO     | PyDSS.dssInstance:_compile_model:153 - OpenDSS:  
+2024-03-18 12:46:41.948 | INFO     | PyDSS.dssInstance:__init__:89 - OpenDSS fundamental frequency set to :  60.0 Hz
+2024-03-18 12:46:41.948 | INFO     | PyDSS.SolveMode:GetSolver:13 - Setting solver to %s mode.
+2024-03-18 12:46:41.949 | INFO     | PyDSS.modes.solver_base:__init__:39 - %s solver setup complete
+2024-03-18 12:46:41.959 | INFO     | PyDSS.dssInstance:__init__:112 - Disabling internal yearly and duty-cycle profiles.
+2024-03-18 12:46:41.962 | INFO     | h5:__init__:19 - Loading existing h5 store
+2024-03-18 12:46:41.971 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from tests\data\controllers\Scenarios\motor_stall_simple\ExportLists\ExportMode-byClass.toml
+2024-03-18 12:46:41.975 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to tests\data\controllers\Exports\motor_stall_simple\ExportsActual.toml
+2024-03-18 12:46:41.977 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from tests\data\controllers\Scenarios\motor_stall_simple\pyControllerList\MotorStallSimple.toml
+2024-03-18 12:46:41.979 | INFO     | PyDSS.dssInstance:_CreateControllers:170 - Created pyController -> Controller.Load.mpx000635970
+2024-03-18 12:46:41.980 | INFO     | PyDSS.dssInstance:__init__:137 - Simulation initialization complete
+2024-03-18 12:46:41.983 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to tests\data\controllers\Scenarios\motor_stall_simple\simulation-run.toml
+2024-03-18 12:46:41.984 | INFO     | PyDSS.pyDSS:run_scenario:76 - Running scenario: %s
+2024-03-18 12:46:41.984 | INFO     | PyDSS.dssInstance:RunSimulation:359 - Running simulation from 2019-06-20 00:00:00 till 2019-06-20 00:00:03.
+2024-03-18 12:46:41.984 | INFO     | PyDSS.dssInstance:RunSimulation:360 - Simulation time step 60.
+2024-03-18 12:46:41.985 | INFO     | PyDSS.dssInstance:RunSimulation:361 - Set OpenDSS convergence to %s
+2024-03-18 12:46:41.985 | INFO     | PyDSS.dssInstance:RunSimulation:362 - Max convergence error count None.
+2024-03-18 12:46:41.985 | INFO     | PyDSS.dssInstance:RunSimulation:363 - initializing store
+2024-03-18 12:46:41.986 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:41.988 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:41.988 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:41.989 | INFO     | PyDSS.dssInstance:RunSimulation:379 - No post processing script selected
+2024-03-18 12:46:41.989 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00
+2024-03-18 12:46:41.990 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 1.388888888888889e-05
+2024-03-18 12:46:41.990 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:41.991 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:41.991 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:41.992 | INFO     | PyDSS.dssInstance:RunSimulation:400 - Storage requirement estimation: %s, estimated based on first time step run.
+2024-03-18 12:46:41.994 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:41.995 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:41.995 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:41.997 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:41.997 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:41.998 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:42.000 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:42.000 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:42.000 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:42.002 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:42.003 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:42.003 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:42.005 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:42.006 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:42.006 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:42.008 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:42.008 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:42.009 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:42.010 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:42.011 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:42.011 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:42.013 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:42.014 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:42.014 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:42.016 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:42.017 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:42.017 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:42.019 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:42.020 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:42.020 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:42.023 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:42.023 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:42.024 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:42.025 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:42.026 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:42.026 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:42.028 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:42.028 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:42.028 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:42.030 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:42.030 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:42.031 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:42.033 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:42.033 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:42.033 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:42.035 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:42.036 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:42.036 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:42.038 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:42.039 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:42.039 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:42.041 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:42.042 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:42.042 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:42.044 | DEBUG    | PyDSS.dataset_buffer:__init__:110 - Created DatasetBuffer path=%s shape=%s chunks=%s
+2024-03-18 12:46:42.044 | DEBUG    | PyDSS.storage_filters:make_container:66 - Created storage container path=%s
+2024-03-18 12:46:42.044 | DEBUG    | PyDSS.storage_filters:__init__:29 - Created %s path=%s
+2024-03-18 12:46:42.045 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.050000
+2024-03-18 12:46:42.045 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 2.777777777777778e-05
+2024-03-18 12:46:42.046 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.046 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.047 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.051 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.100000
+2024-03-18 12:46:42.051 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 4.166666666666667e-05
+2024-03-18 12:46:42.052 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.052 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.052 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.056 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.150000
+2024-03-18 12:46:42.056 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 5.555555555555556e-05
+2024-03-18 12:46:42.057 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.057 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.058 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.062 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.200000
+2024-03-18 12:46:42.062 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 6.944444444444444e-05
+2024-03-18 12:46:42.063 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.063 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.063 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.067 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.250000
+2024-03-18 12:46:42.068 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 8.333333333333333e-05
+2024-03-18 12:46:42.068 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.068 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.069 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.071 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.300000
+2024-03-18 12:46:42.072 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 9.722222222222222e-05
+2024-03-18 12:46:42.072 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.073 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.073 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.077 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.350000
+2024-03-18 12:46:42.077 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0001111111111111111
+2024-03-18 12:46:42.078 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.078 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.078 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.082 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.400000
+2024-03-18 12:46:42.083 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00012499999999999998
+2024-03-18 12:46:42.083 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0.1
+2024-03-18 12:46:42.084 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.084 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.084 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.088 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.450000
+2024-03-18 12:46:42.088 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00013888888888888886
+2024-03-18 12:46:42.089 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.089 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.090 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.093 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.500000
+2024-03-18 12:46:42.093 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00015277777777777775
+2024-03-18 12:46:42.094 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.094 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.094 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.098 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.550000
+2024-03-18 12:46:42.098 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00016666666666666666
+2024-03-18 12:46:42.099 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.099 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.100 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.104 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.600000
+2024-03-18 12:46:42.104 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00018055555555555557
+2024-03-18 12:46:42.105 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.105 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.105 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.109 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.650000
+2024-03-18 12:46:42.110 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00019444444444444446
+2024-03-18 12:46:42.111 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.111 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.111 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.115 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.700000
+2024-03-18 12:46:42.115 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00020833333333333337
+2024-03-18 12:46:42.116 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.116 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.117 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.119 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.750000
+2024-03-18 12:46:42.120 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00022222222222222226
+2024-03-18 12:46:42.120 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.121 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.121 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.124 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.800000
+2024-03-18 12:46:42.125 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00023611111111111117
+2024-03-18 12:46:42.125 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.126 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.126 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.129 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.850000
+2024-03-18 12:46:42.129 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00025000000000000006
+2024-03-18 12:46:42.130 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.131 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.131 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.136 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.900000
+2024-03-18 12:46:42.136 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00026388888888888897
+2024-03-18 12:46:42.137 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.137 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.137 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.142 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:00.950000
+2024-03-18 12:46:42.142 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00027777777777777783
+2024-03-18 12:46:42.144 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.144 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.144 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.147 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01
+2024-03-18 12:46:42.147 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00029166666666666675
+2024-03-18 12:46:42.148 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.148 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.148 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.150 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.050000
+2024-03-18 12:46:42.151 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00030555555555555566
+2024-03-18 12:46:42.151 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.151 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.151 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.154 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.100000
+2024-03-18 12:46:42.154 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0003194444444444445
+2024-03-18 12:46:42.155 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.155 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.155 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.159 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.150000
+2024-03-18 12:46:42.159 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00033333333333333343
+2024-03-18 12:46:42.160 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.160 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.160 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.163 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.200000
+2024-03-18 12:46:42.163 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00034722222222222234
+2024-03-18 12:46:42.163 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.164 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.164 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.166 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.250000
+2024-03-18 12:46:42.166 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00036111111111111126
+2024-03-18 12:46:42.167 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.167 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.167 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.170 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.300000
+2024-03-18 12:46:42.170 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00037500000000000017
+2024-03-18 12:46:42.170 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.171 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.171 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.173 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.350000
+2024-03-18 12:46:42.174 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00038888888888888903
+2024-03-18 12:46:42.174 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.175 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.175 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.177 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.400000
+2024-03-18 12:46:42.178 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00040277777777777794
+2024-03-18 12:46:42.178 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.178 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.178 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.181 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.450000
+2024-03-18 12:46:42.181 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00041666666666666686
+2024-03-18 12:46:42.182 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.182 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.182 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.186 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.500000
+2024-03-18 12:46:42.186 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00043055555555555577
+2024-03-18 12:46:42.186 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.187 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.187 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.189 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.550000
+2024-03-18 12:46:42.190 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00044444444444444463
+2024-03-18 12:46:42.190 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.191 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.191 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.193 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.600000
+2024-03-18 12:46:42.194 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00045833333333333354
+2024-03-18 12:46:42.194 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.194 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.194 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.197 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.650000
+2024-03-18 12:46:42.197 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00047222222222222245
+2024-03-18 12:46:42.198 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.198 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.198 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.201 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.700000
+2024-03-18 12:46:42.201 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.00048611111111111137
+2024-03-18 12:46:42.201 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.201 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.202 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.204 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.750000
+2024-03-18 12:46:42.204 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0005000000000000002
+2024-03-18 12:46:42.205 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.205 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.205 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.208 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.800000
+2024-03-18 12:46:42.208 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0005138888888888891
+2024-03-18 12:46:42.208 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.209 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.209 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.211 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.850000
+2024-03-18 12:46:42.211 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.000527777777777778
+2024-03-18 12:46:42.212 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.212 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.213 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.216 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.900000
+2024-03-18 12:46:42.216 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.000541666666666667
+2024-03-18 12:46:42.217 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.217 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.217 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.220 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:01.950000
+2024-03-18 12:46:42.220 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0005555555555555558
+2024-03-18 12:46:42.221 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.221 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.221 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.224 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02
+2024-03-18 12:46:42.224 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0005694444444444447
+2024-03-18 12:46:42.225 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.225 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.225 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.228 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.050000
+2024-03-18 12:46:42.228 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0005833333333333335
+2024-03-18 12:46:42.229 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.230 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.230 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.233 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.100000
+2024-03-18 12:46:42.233 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0005972222222222223
+2024-03-18 12:46:42.233 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.234 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.234 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.238 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.150000
+2024-03-18 12:46:42.238 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0006111111111111112
+2024-03-18 12:46:42.239 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.240 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.240 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.243 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.200000
+2024-03-18 12:46:42.243 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.000625
+2024-03-18 12:46:42.244 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.244 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.244 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.247 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.250000
+2024-03-18 12:46:42.247 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0006388888888888888
+2024-03-18 12:46:42.248 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.248 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.248 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.251 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.300000
+2024-03-18 12:46:42.251 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0006527777777777777
+2024-03-18 12:46:42.251 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.252 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.252 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.254 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.350000
+2024-03-18 12:46:42.255 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0006666666666666665
+2024-03-18 12:46:42.255 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.255 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.255 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.258 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.400000
+2024-03-18 12:46:42.258 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0006805555555555553
+2024-03-18 12:46:42.259 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.259 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.259 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.261 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.450000
+2024-03-18 12:46:42.262 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0006944444444444441
+2024-03-18 12:46:42.262 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.262 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.263 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.265 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.500000
+2024-03-18 12:46:42.265 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0007083333333333331
+2024-03-18 12:46:42.266 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.266 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.266 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.268 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.550000
+2024-03-18 12:46:42.269 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0007222222222222219
+2024-03-18 12:46:42.269 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.269 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.270 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.272 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.600000
+2024-03-18 12:46:42.272 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0007361111111111107
+2024-03-18 12:46:42.273 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.273 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.273 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.276 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.650000
+2024-03-18 12:46:42.276 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0007499999999999996
+2024-03-18 12:46:42.277 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.277 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.277 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.279 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.700000
+2024-03-18 12:46:42.280 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0007638888888888884
+2024-03-18 12:46:42.280 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.281 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.281 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.283 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.750000
+2024-03-18 12:46:42.283 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0007777777777777772
+2024-03-18 12:46:42.284 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.284 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.284 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.287 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.800000
+2024-03-18 12:46:42.287 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0007916666666666661
+2024-03-18 12:46:42.288 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.288 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.288 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.290 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.850000
+2024-03-18 12:46:42.291 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0008055555555555549
+2024-03-18 12:46:42.291 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.291 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.292 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.294 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.900000
+2024-03-18 12:46:42.294 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0008194444444444437
+2024-03-18 12:46:42.294 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.295 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.295 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.297 | INFO     | PyDSS.dssInstance:RunStep:245 - PyDSS datetime - 2019-06-20 00:00:02.950000
+2024-03-18 12:46:42.298 | INFO     | PyDSS.dssInstance:RunStep:246 - OpenDSS time [h] - 0.0008333333333333326
+2024-03-18 12:46:42.298 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 0 convergence error: 0
+2024-03-18 12:46:42.298 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 1 convergence error: 0
+2024-03-18 12:46:42.299 | DEBUG    | PyDSS.dssInstance:RunStep:266 - Control Loop 2 convergence error: 0
+2024-03-18 12:46:42.313 | INFO     | PyDSS.ResultData:_export_event_log:283 - Exported OpenDSS event log to event_log.csv
+2024-03-18 12:46:42.315 | DEBUG    | PyDSS.utils.utils:dump_data:66 - Dumped data to tests\data\controllers\Exports\motor_stall_simple\metadata.json
+2024-03-18 12:46:42.315 | INFO     | PyDSS.ResultData:ExportResults:261 - Exported metadata to tests\data\controllers\Exports\motor_stall_simple\metadata.json
+2024-03-18 12:46:42.315 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: OpenDSS._compile_model: total=0.163s avg=162.797ms max=162.797ms min=162.797ms count=1
+2024-03-18 12:46:42.316 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: OpenDSS.RunStep: total=0.102s avg=1.700ms max=2.799ms min=1.279ms count=60
+2024-03-18 12:46:42.316 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: UpdateControllers: total=0.051s avg=0.850ms max=1.487ms min=0.636ms count=60
+2024-03-18 12:46:42.316 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: ResultData.UpdateResults: total=0.213s avg=3.549ms max=52.339ms min=1.938ms count=60
+2024-03-18 12:46:42.316 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Buses.puVmagAngle: total=0.030s avg=0.498ms max=3.505ms min=0.320ms count=60
+2024-03-18 12:46:42.317 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Buses.Distance: total=0.020s avg=0.325ms max=2.654ms min=0.208ms count=60
+2024-03-18 12:46:42.317 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Buses.kVBase: total=0.018s avg=0.303ms max=2.543ms min=0.197ms count=60
+2024-03-18 12:46:42.317 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Circuits.TotalPower: total=0.004s avg=0.069ms max=2.539ms min=0.014ms count=60
+2024-03-18 12:46:42.317 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Circuits.LineLosses: total=0.004s avg=0.067ms max=2.769ms min=0.012ms count=60
+2024-03-18 12:46:42.317 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Circuits.Losses: total=0.004s avg=0.063ms max=2.524ms min=0.010ms count=60
+2024-03-18 12:46:42.318 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Circuits.SubstationLosses: total=0.003s avg=0.058ms max=2.400ms min=0.009ms count=60
+2024-03-18 12:46:42.318 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Generators.Powers: total=0.008s avg=0.135ms max=3.277ms min=0.054ms count=60
+2024-03-18 12:46:42.318 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Generators.VoltagesMagAng: total=0.007s avg=0.125ms max=2.991ms min=0.053ms count=60
+2024-03-18 12:46:42.318 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Lines.CurrentsMagAng: total=0.030s avg=0.499ms max=3.310ms min=0.320ms count=60
+2024-03-18 12:46:42.318 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Lines.normamps: total=0.028s avg=0.470ms max=3.400ms min=0.314ms count=60
+2024-03-18 12:46:42.319 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Loads.Powers: total=0.006s avg=0.107ms max=2.388ms min=0.046ms count=60
+2024-03-18 12:46:42.319 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Loads.VoltagesMagAng: total=0.006s avg=0.099ms max=2.154ms min=0.043ms count=60
+2024-03-18 12:46:42.319 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Storages.Powers: total=0.007s avg=0.113ms max=2.481ms min=0.046ms count=60
+2024-03-18 12:46:42.319 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Storages.VoltagesMagAng: total=0.006s avg=0.107ms max=2.377ms min=0.046ms count=60
+2024-03-18 12:46:42.319 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Storages.%stored: total=0.007s avg=0.113ms max=2.388ms min=0.050ms count=60
+2024-03-18 12:46:42.320 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Transformers.CurrentsMagAng: total=0.005s avg=0.091ms max=3.378ms min=0.020ms count=60
+2024-03-18 12:46:42.320 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Transformers.normamps: total=0.004s avg=0.070ms max=2.451ms min=0.017ms count=60
+2024-03-18 12:46:42.320 | INFO     | PyDSS.utils.timing_utils:log_stats:88 - TimerStats summary: Transformers.taps: total=0.006s avg=0.102ms max=2.565ms min=0.039ms count=60
+2024-03-18 12:46:42.320 | INFO     | PyDSS.dssInstance:RunSimulation:452 - Simulation completed in 0.3355545997619629 seconds
+2024-03-18 12:46:42.320 | INFO     | PyDSS.dssInstance:RunSimulation:453 - End of simulation
+2024-03-18 12:46:42.327 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\tests\data\controllers\simulation-run.toml
+2024-03-18 12:46:42.329 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\tests\data\controllers\Scenarios\motor_stall_simple\pyControllerList\MotorStallSimple.toml
+2024-03-18 12:46:42.331 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\tests\data\controllers\Scenarios\motor_stall_simple\ExportLists\ExportMode-byClass.toml
+2024-03-18 12:46:42.331 | DEBUG    | PyDSS.utils.utils:load_data:86 - Loaded data from C:\Users\alatif\Documents\GitHub\PyDSS\tests\data\controllers\Exports\motor_stall_simple\metadata.json

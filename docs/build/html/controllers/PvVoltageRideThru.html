@@ -1,0 +1,1443 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Socket Controller" href="SocketController.html" /><link rel="prev" title="PV System Frequency Ride-Through" href="PvFrequencyRideThru.html" />
+
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+        <title>PV System Voltage Ride-Through - PyDSS 3.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="../_static/autodoc_pydantic.css?v=a0a71c94" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">PyDSS 3.1.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  
+  <span class="sidebar-brand-text">PyDSS 3.1.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../interfaces.html">Interfaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Interfaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../CLI%20interface.html">Command line interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../REST%20API%20interface.html">REST API interface</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../Python%20API%20interface.html">Python API interface</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Python API interface</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../Respository%20documentaion.html">Python API interface</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Python API interface</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../_autosummary/PyDSS.html">PyDSS</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of PyDSS</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.Extensions.html">PyDSS.Extensions</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of PyDSS.Extensions</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.Extensions.MonteCarlo.html">PyDSS.Extensions.MonteCarlo</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.ProfileManager.html">PyDSS.ProfileManager</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of PyDSS.ProfileManager</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.ProfileManager.ProfileInterface.html">PyDSS.ProfileManager.ProfileInterface</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.ProfileManager.base_definitions.html">PyDSS.ProfileManager.base_definitions</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.ProfileManager.common.html">PyDSS.ProfileManager.common</a></li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../_autosummary/PyDSS.ProfileManager.hooks.html">PyDSS.ProfileManager.hooks</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of PyDSS.ProfileManager.hooks</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.ProfileManager.hooks.MongoDB.html">PyDSS.ProfileManager.hooks.MongoDB</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.ProfileManager.hooks.h5.html">PyDSS.ProfileManager.hooks.h5</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.ResultData.html">PyDSS.ResultData</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.SolveMode.html">PyDSS.SolveMode</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.api.html">PyDSS.api</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of PyDSS.api</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.api.schema.html">PyDSS.api.schema</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.api.server.html">PyDSS.api.server</a></li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../_autosummary/PyDSS.api.src.html">PyDSS.api.src</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of PyDSS.api.src</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../_autosummary/PyDSS.api.src.app.html">PyDSS.api.src.app</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of PyDSS.api.src.app</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l8"><a class="reference internal" href="../_autosummary/PyDSS.api.src.app.DataWriter.html">PyDSS.api.src.app.DataWriter</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../_autosummary/PyDSS.api.src.app.HDF5.html">PyDSS.api.src.app.HDF5</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../_autosummary/PyDSS.api.src.app.JSON_writer.html">PyDSS.api.src.app.JSON_writer</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../_autosummary/PyDSS.api.src.app.Tester.html">PyDSS.api.src.app.Tester</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../_autosummary/PyDSS.api.src.app.pydss.html">PyDSS.api.src.app.pydss</a></li>
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../_autosummary/PyDSS.api.src.web.html">PyDSS.api.src.web</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of PyDSS.api.src.web</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l8"><a class="reference internal" href="../_autosummary/PyDSS.api.src.web.create_schema.html">PyDSS.api.src.web.create_schema</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../_autosummary/PyDSS.api.src.web.handler.html">PyDSS.api.src.web.handler</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../_autosummary/PyDSS.api.src.web.parser.html">PyDSS.api.src.web.parser</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.apps.html">PyDSS.apps</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of PyDSS.apps</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.apps.data_viewer.html">PyDSS.apps.data_viewer</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.cli.html">PyDSS.cli</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of PyDSS.cli</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.add_post_process.html">PyDSS.cli.add_post_process</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.add_scenario.html">PyDSS.cli.add_scenario</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.controllers.html">PyDSS.cli.controllers</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.convert.html">PyDSS.cli.convert</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.create_project.html">PyDSS.cli.create_project</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.edit_scenario.html">PyDSS.cli.edit_scenario</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.export.html">PyDSS.cli.export</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.extract.html">PyDSS.cli.extract</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.pydss.html">PyDSS.cli.pydss</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.reports.html">PyDSS.cli.reports</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.run.html">PyDSS.cli.run</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.cli.run_server.html">PyDSS.cli.run_server</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.common.html">PyDSS.common</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.config_data.html">PyDSS.config_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.controllers.html">PyDSS.controllers</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.dataset_buffer.html">PyDSS.dataset_buffer</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.defaults.html">PyDSS.defaults</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of PyDSS.defaults</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.defaults.ExportLists.html">PyDSS.defaults.ExportLists</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.defaults.Monte_Carlo.html">PyDSS.defaults.Monte_Carlo</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.defaults.pyControllerList.html">PyDSS.defaults.pyControllerList</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.defaults.pyPlotList.html">PyDSS.defaults.pyPlotList</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.dssBus.html">PyDSS.dssBus</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.dssCircuit.html">PyDSS.dssCircuit</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.dssElement.html">PyDSS.dssElement</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.dssElementFactory.html">PyDSS.dssElementFactory</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.dssInstance.html">PyDSS.dssInstance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.dssObjectBase.html">PyDSS.dssObjectBase</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.dssTransformer.html">PyDSS.dssTransformer</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.element_fields.html">PyDSS.element_fields</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.element_options.html">PyDSS.element_options</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.exceptions.html">PyDSS.exceptions</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.export_list_reader.html">PyDSS.export_list_reader</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.get_snapshot_timepoints.html">PyDSS.get_snapshot_timepoints</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.helics_interface.html">PyDSS.helics_interface</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.metrics.html">PyDSS.metrics</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.modes.html">PyDSS.modes</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of PyDSS.modes</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.modes.Dynamic.html">PyDSS.modes.Dynamic</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.modes.QSTS.html">PyDSS.modes.QSTS</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.modes.Snapshot.html">PyDSS.modes.Snapshot</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.modes.solver_base.html">PyDSS.modes.solver_base</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.naerm.html">PyDSS.naerm</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.node_voltage_metrics.html">PyDSS.node_voltage_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.pyContrReader.html">PyDSS.pyContrReader</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.html">PyDSS.pyControllers</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of PyDSS.pyControllers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.html">PyDSS.pyControllers.Controllers</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of PyDSS.pyControllers.Controllers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.FaultController.html">PyDSS.pyControllers.Controllers.FaultController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.GenController.html">PyDSS.pyControllers.Controllers.GenController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.MotorStall.html">PyDSS.pyControllers.Controllers.MotorStall</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.MotorStallBackup.html">PyDSS.pyControllers.Controllers.MotorStallBackup</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.MotorStallSimple.html">PyDSS.pyControllers.Controllers.MotorStallSimple</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.PvController.html">PyDSS.pyControllers.Controllers.PvController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.PvDynamic.html">PyDSS.pyControllers.Controllers.PvDynamic</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.PvFrequencyRideThru.html">PyDSS.pyControllers.Controllers.PvFrequencyRideThru</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.PvVoltageRideThru.html">PyDSS.pyControllers.Controllers.PvVoltageRideThru</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.Settings.html">PyDSS.pyControllers.Controllers.Settings</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.SocketController.html">PyDSS.pyControllers.Controllers.SocketController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.StorageController.html">PyDSS.pyControllers.Controllers.StorageController</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.ThermostaticLoad.html">PyDSS.pyControllers.Controllers.ThermostaticLoad</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.Controllers.xfmrController.html">PyDSS.pyControllers.Controllers.xfmrController</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.enumerations.html">PyDSS.pyControllers.enumerations</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.models.html">PyDSS.pyControllers.models</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.pyController.html">PyDSS.pyControllers.pyController</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.pyControllers.pyControllerAbstract.html">PyDSS.pyControllers.pyControllerAbstract</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.pyDSS.html">PyDSS.pyDSS</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.pyPlotReader.html">PyDSS.pyPlotReader</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.pyPostprocessor.html">PyDSS.pyPostprocessor</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of PyDSS.pyPostprocessor</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.html">PyDSS.pyPostprocessor.PostprocessScripts</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of PyDSS.pyPostprocessor.PostprocessScripts</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer.html">PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer</a></li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules.html">PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle navigation of PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l8"><a class="reference internal" href="../_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules.opt_funcs.html">PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules.opt_funcs</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../_autosummary/PyDSS.pyPostprocessor.PostprocessScripts.EdLiFoControl.html">PyDSS.pyPostprocessor.PostprocessScripts.EdLiFoControl</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.pyPostprocessor.pyPostprocess.html">PyDSS.pyPostprocessor.pyPostprocess</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.pyPostprocessor.pyPostprocessAbstract.html">PyDSS.pyPostprocessor.pyPostprocessAbstract</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.pyResults.html">PyDSS.pyResults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.pydss_fs_interface.html">PyDSS.pydss_fs_interface</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.pydss_project.html">PyDSS.pydss_project</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.pydss_results.html">PyDSS.pydss_results</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.registry.html">PyDSS.registry</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.reports.html">PyDSS.reports</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle navigation of PyDSS.reports</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.reports.capacitor_change_count.html">PyDSS.reports.capacitor_change_count</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.reports.feeder_losses.html">PyDSS.reports.feeder_losses</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.reports.pv_reports.html">PyDSS.reports.pv_reports</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.reports.reg_control_tap_number_change_count.html">PyDSS.reports.reg_control_tap_number_change_count</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.reports.reports.html">PyDSS.reports.reports</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.reports.thermal_metrics.html">PyDSS.reports.thermal_metrics</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.reports.voltage_metrics.html">PyDSS.reports.voltage_metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.simulation_input_models.html">PyDSS.simulation_input_models</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.storage_filters.html">PyDSS.storage_filters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.thermal_metrics.html">PyDSS.thermal_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.unitDefinations.html">PyDSS.unitDefinations</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../_autosummary/PyDSS.utils.html">PyDSS.utils</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle navigation of PyDSS.utils</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.utils.dataframe_utils.html">PyDSS.utils.dataframe_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.utils.dss_utils.html">PyDSS.utils.dss_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.utils.pydss_utils.html">PyDSS.utils.pydss_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.utils.simulation_utils.html">PyDSS.utils.simulation_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.utils.timing_utils.html">PyDSS.utils.timing_utils</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../_autosummary/PyDSS.utils.utils.html">PyDSS.utils.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../_autosummary/PyDSS.value_storage.html">PyDSS.value_storage</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../Models.html">Data models</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../project_layout.html">PyDSS Project Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reports.html">Reports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hdf-data-format.html">HDF Data Format</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../co-simulation_support.html">Co-simulation interfaces</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle navigation of Co-simulation interfaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Co-simulation%20Interfaces.html">The HELICS interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Co-simulation%20Interfaces.html#the-socket-interface">The socket interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../controllers_overview.html">Controller Documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of Controller Documentation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="FaultController.html">Fault Controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GenController.html">Generator Controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MotorStall.html">Motor Stall Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MotorStallSimple.html">Motor Stall (simple)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PvController.html">PV System Smart Controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PvDynamic.html">PV System Dynamics Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PvFrequencyRideThru.html">PV System Frequency Ride-Through</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">PV System Voltage Ride-Through</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SocketController.html">Socket Controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="StorageController.html">Storage Controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThermostaticLoad.html">Thermostatic Load Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xfmrController.html">Transformer controller</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="pv-system-voltage-ride-through">
+<h1>PV System Voltage Ride-Through<a class="headerlink" href="#pv-system-voltage-ride-through" title="Link to this heading">#</a></h1>
+<section id="controller-overview">
+<h2>Controller overview<a class="headerlink" href="#controller-overview" title="Link to this heading">#</a></h2>
+<p>This controller implements the voltage ride-through requirements from both IEEE 1547-2003 and the IEEE 1547-2018 standard.</p>
+<p>The controller implements ride-through requirements in complete detail. This includes</p>
+<ul class="simple">
+<li><p>Implementation of inverter behaviour in defined regions such as may trip, current limited, permissive etc.</p></li>
+<li><p>Implementation of inverter categories for the  IEEE 1547-2018 standard.</p></li>
+<li><p>System behavior under multiple disturbances.</p></li>
+<li><p>System recovery under momentary cessation and trip scenarios.</p></li>
+</ul>
+<a class="reference internal image-reference" href="../_images/PvVoltageRideThru3.png"><img alt="Alternative text" src="../_images/PvVoltageRideThru3.png" style="width: 400px;" /></a>
+<p>The figure above shows inverter response to a fault.
+The inverter is configured to provide ‘momentary cessation’ operation in the ‘may trip’ region. The inverter enter momentary
+cessation region (grey) and the PV is temporarily disconnected. Once the fault is cleared, the PV system goes back to full power
+in 0.4s in a ramped manner as per the per IEEE 1547-2018 standard</p>
+<a class="reference internal image-reference" href="../_images/PvVoltageRideThru2.png"><img alt="Alternative text" src="../_images/PvVoltageRideThru2.png" style="width: 400px;" /></a>
+<p>The figure above shows inverter response to multiple faults fault. The inverter is modeled to trip on multiple faults.
+As per the standard the inverter should trip on the second consecutive fault. After the first fault, PV system enter momentary
+cessation region and starts to recover. On the second fault, the PV system trips and is required to wait at least 300s before it can reconnect</p>
+<a class="reference internal image-reference" href="../_images/PvVoltageRideThru1.png"><img alt="Alternative text" src="../_images/PvVoltageRideThru1.png" style="width: 400px;" /></a>
+<p>The figure above shows inverter response to multiple faults fault. The inverter is modeled to NOT trip on multiple faults.
+With each fault, PV system enter momentary cessation region and starts to recover in  a ramped manner.
+It finally recovers after the third fault</p>
+</section>
+<section id="controller-model">
+<h2>Controller model<a class="headerlink" href="#controller-model" title="Link to this heading">#</a></h2>
+<dl class="py class pydantic_model">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyDSS.pyControllers.models.</span></span><span class="sig-name descname"><span class="pre">PvVoltageRideThruModel</span></span><a class="reference internal" href="../_modules/PyDSS/pyControllers/models.html#PvVoltageRideThruModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel" title="Link to this definition">#</a></dt>
+<dd><p>Data model for the PV voltage ride through controller</p>
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">   </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PvVoltageRideThruModel&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Data model for the PV voltage ride through controller&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;kva&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">4.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;kVA capacity of the inverter (AC-side).&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;minimum&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Kva&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;max_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">4.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;kW capacity of the PV system (DC-side).&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;minimum&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Max Kw&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;voltage_calc_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;allOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/VoltageCalcModes&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Max&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Voltage values used to calculate Var support from the inverter (Maximum or Average).&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;follow_standard&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;allOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/PvStandard&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1547-2018&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;IEEE standard the inverter is following.&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;ride_through_category&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;allOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/RideThroughCategory&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Category I&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PV ride-through category fot the inverter (see IEEE 1547-2018 std for more information).&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;ov_2_pu&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.2</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Upper bound for the over-voltage region.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ov 2 Pu&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;ov_2_ct_sec&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.16</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Trip duration setting if the upper bound of the over-voltage region is violated.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ov 2 Ct Sec&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;ov_1_pu&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.1</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Lower bound for the over-voltage region.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ov 1 Pu&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;ov_1_ct_sec&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Trip duration setting if the lower bound of the over-voltage region is violated.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ov 1 Ct Sec&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;uv_1_pu&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.7</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Upper bound for the under-voltage region.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Uv 1 Pu&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;uv_1_ct_sec&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Trip duration setting if the upper bound of the under-voltage region is violated.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Uv 1 Ct Sec&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;uv_2_pu&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.45</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Lower bound for the under-voltage region.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Uv 2 Pu&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;uv_2_ct_sec&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.16</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Trip duration setting if the upper bound of the under-voltage region is violated.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Uv 2 Ct Sec&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;reconnect_deadtime_sec&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">3000.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;minimum&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Reconnect Deadtime Sec&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;reconnect_pmax_time_sec&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">300.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Reconnect after a trip event. PV system will connect back once this time has elapsed and the system voltage is within bounds.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;minimum&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Reconnect Pmax Time Sec&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;permissive_operation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;allOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/PermissiveOperation&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Current limited&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Defines behavior of the system within the &#39;permissive operation&#39; region. (see IEEE 1547-2018 std for more information).&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;may_trip_operation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;allOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/MayTripOperation&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Trip&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Defines behavior of the system within the &#39;may trip&#39; region. (see IEEE 1547-2018 std for more information).&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;multiple_disturdances&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;allOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/MultipleDisturbances&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Trip&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Defines behavior of the system after multiple disturbances. (see IEEE 1547-2018 std for more information).&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">   </span><span class="p">},</span>
+<span class="w">   </span><span class="nt">&quot;$defs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;MayTripOperation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Possible behaviors for my trip region\n\n**TRIP** - *PV system disconnects from the grid. Can not reconnect for atleast 300 seconds.*\n\n**PERMISSIVE_OPERATION** - *Option for the DER to either continue to exchange current with or to cease toenergize an EPS*&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;Trip&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;Permissive operation&quot;</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MayTripOperation&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;MultipleDisturbances&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Possible behaviors for multiple disturbamces\n\n**TRIP** - *PV system disconnects from the grid. Can not reconnect for atleast 300 seconds.*\n\n**PERMISSIVE_OPERATION** - *Option for the DER to either continue to exchange current with or to cease toenergize an EPS*&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;Trip&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;Permissive operation&quot;</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MultipleDisturbances&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;PermissiveOperation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Possible behaviors for permissive operation\n\n**CURRENT_LIMITED** - *Current injection into the grid is limited by the inverter during low or high voltage conditions outside the continuous operating range*\n\n**MOMENTARY_SUCESSION** - *No current is injected into the grid by the inverter during low or high voltage conditions outside the continuous operating range*&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;Current limited&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;Momentary sucession&quot;</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PermissiveOperation&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;PvStandard&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PV standards for the controller\n\n**IEEE_1547_2003** - *For legacy PV systems, use the IEEE 1574-2003 standard*\n\n**IEEE_1547_2018** - *For legacy PV systems with smart controls, use the IEEE 1574-2018 standard*&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;1547-2003&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;1547-2018&quot;</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PvStandard&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;RideThroughCategory&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PV ride-through catregories\n\n**CATEGORY_I**  - *Intended to meet minimum Bulk EPS reliability needs and to be achievable by all DER technologies, including rotating machines*\n\n**CATEGORY_II**  - *Designed to align with the requirements in NERC PRC-024-2*\n\n**CATEGORY_III** - *Designed to meet the needs of low-inertia or highly-penetrated grids*&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;Category I&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;Category II&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;Category III&quot;</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RideThroughCategory&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;VoltageCalcModes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Voltage calculation modes for the controller\n\n**MAX** - *The the maximum voltage from the available phases as the contoller input*\n\n**AVG** - *The the average voltage from the available phases as the contoller input*\n\n**MIN** - *The the minimum voltage from the available phases as the contoller input*\n\n**A** - *The voltage from phase A as the contoller input*\n\n**B** - *The voltage from phase B as the contoller input*\n\n**C** - *The voltage from phase C as the contoller input*&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;Max&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;Avg&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;Min&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;2&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;3&quot;</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;VoltageCalcModes&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details></p><dl class="field-list simple">
+<dt class="field-odd">Fields<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.follow_standard" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.follow_standard"><code class="xref py py-obj docutils literal notranslate"><span class="pre">follow_standard</span> <span class="pre">(PyDSS.pyControllers.enumerations.PvStandard)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.kva" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.kva"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kva</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.max_kw" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.max_kw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_kw</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.may_trip_operation" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.may_trip_operation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">may_trip_operation</span> <span class="pre">(PyDSS.pyControllers.enumerations.MayTripOperation)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.multiple_disturdances" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.multiple_disturdances"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiple_disturdances</span> <span class="pre">(PyDSS.pyControllers.enumerations.MultipleDisturbances)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_1_ct_sec" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_1_ct_sec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ov_1_ct_sec</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_1_pu" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_1_pu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ov_1_pu</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_2_ct_sec" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_2_ct_sec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ov_2_ct_sec</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_2_pu" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_2_pu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ov_2_pu</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.permissive_operation" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.permissive_operation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">permissive_operation</span> <span class="pre">(PyDSS.pyControllers.enumerations.PermissiveOperation)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.reconnect_deadtime_sec" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.reconnect_deadtime_sec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reconnect_deadtime_sec</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.reconnect_pmax_time_sec" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.reconnect_pmax_time_sec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reconnect_pmax_time_sec</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.ride_through_category" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.ride_through_category"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ride_through_category</span> <span class="pre">(PyDSS.pyControllers.enumerations.RideThroughCategory)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_1_ct_sec" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_1_ct_sec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uv_1_ct_sec</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_1_pu" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_1_pu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uv_1_pu</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_2_ct_sec" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_2_ct_sec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uv_2_ct_sec</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_2_pu" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_2_pu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uv_2_pu</span> <span class="pre">(float)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.voltage_calc_mode" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.voltage_calc_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">voltage_calc_mode</span> <span class="pre">(PyDSS.pyControllers.enumerations.VoltageCalcModes)</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Validators<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span> <span class="pre">fields</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.follow_standard">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">follow_standard</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#PyDSS.pyControllers.enumerations.PvStandard" title="PyDSS.pyControllers.enumerations.PvStandard"><span class="pre">PvStandard</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PvStandard.IEEE_1547_2018</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.follow_standard" title="Link to this definition">#</a></dt>
+<dd><p>IEEE standard the inverter is following.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.kva">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">kva</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4.0</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.kva" title="Link to this definition">#</a></dt>
+<dd><p>kVA capacity of the inverter (AC-side).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ge</strong> = 0.0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Validated by<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.max_kw">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_kw</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4.0</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.max_kw" title="Link to this definition">#</a></dt>
+<dd><p>kW capacity of the PV system (DC-side).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ge</strong> = 0.0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Validated by<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.may_trip_operation">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">may_trip_operation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#PyDSS.pyControllers.enumerations.MayTripOperation" title="PyDSS.pyControllers.enumerations.MayTripOperation"><span class="pre">MayTripOperation</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">MayTripOperation.TRIP</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.may_trip_operation" title="Link to this definition">#</a></dt>
+<dd><p>Defines behavior of the system within the ‘may trip’ region. (see IEEE 1547-2018 std for more information).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.multiple_disturdances">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">multiple_disturdances</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#PyDSS.pyControllers.enumerations.MultipleDisturbances" title="PyDSS.pyControllers.enumerations.MultipleDisturbances"><span class="pre">MultipleDisturbances</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">MultipleDisturbances.TRIP</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.multiple_disturdances" title="Link to this definition">#</a></dt>
+<dd><p>Defines behavior of the system after multiple disturbances. (see IEEE 1547-2018 std for more information).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_1_ct_sec">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ov_1_ct_sec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2.0</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_1_ct_sec" title="Link to this definition">#</a></dt>
+<dd><p>Trip duration setting if the lower bound of the over-voltage region is violated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_1_pu">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ov_1_pu</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.1</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_1_pu" title="Link to this definition">#</a></dt>
+<dd><p>Lower bound for the over-voltage region.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_2_ct_sec">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ov_2_ct_sec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.16</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_2_ct_sec" title="Link to this definition">#</a></dt>
+<dd><p>Trip duration setting if the upper bound of the over-voltage region is violated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_2_pu">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ov_2_pu</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.2</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_2_pu" title="Link to this definition">#</a></dt>
+<dd><p>Upper bound for the over-voltage region.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.permissive_operation">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">permissive_operation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#PyDSS.pyControllers.enumerations.PermissiveOperation" title="PyDSS.pyControllers.enumerations.PermissiveOperation"><span class="pre">PermissiveOperation</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PermissiveOperation.CURRENT_LIMITED</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.permissive_operation" title="Link to this definition">#</a></dt>
+<dd><p>Defines behavior of the system within the ‘permissive operation’ region. (see IEEE 1547-2018 std for more information).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.reconnect_deadtime_sec">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reconnect_deadtime_sec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3000.0</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.reconnect_deadtime_sec" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ge</strong> = 0.0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Validated by<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.reconnect_pmax_time_sec">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reconnect_pmax_time_sec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">300.0</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.reconnect_pmax_time_sec" title="Link to this definition">#</a></dt>
+<dd><p>Reconnect after a trip event. PV system will connect back once this time has elapsed and the system voltage is within bounds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ge</strong> = 0.0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Validated by<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.ride_through_category">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ride_through_category</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#PyDSS.pyControllers.enumerations.RideThroughCategory" title="PyDSS.pyControllers.enumerations.RideThroughCategory"><span class="pre">RideThroughCategory</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">RideThroughCategory.CATEGORY_I</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.ride_through_category" title="Link to this definition">#</a></dt>
+<dd><p>PV ride-through category fot the inverter (see IEEE 1547-2018 std for more information).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_1_ct_sec">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uv_1_ct_sec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2.0</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_1_ct_sec" title="Link to this definition">#</a></dt>
+<dd><p>Trip duration setting if the upper bound of the under-voltage region is violated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_1_pu">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uv_1_pu</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.7</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_1_pu" title="Link to this definition">#</a></dt>
+<dd><p>Upper bound for the under-voltage region.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_2_ct_sec">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uv_2_ct_sec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.16</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_2_ct_sec" title="Link to this definition">#</a></dt>
+<dd><p>Trip duration setting if the upper bound of the under-voltage region is violated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_2_pu">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uv_2_pu</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.45</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_2_pu" title="Link to this definition">#</a></dt>
+<dd><p>Lower bound for the under-voltage region.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.voltage_calc_mode">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">voltage_calc_mode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes" title="PyDSS.pyControllers.enumerations.VoltageCalcModes"><span class="pre">VoltageCalcModes</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">VoltageCalcModes.MAX</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.voltage_calc_mode" title="Link to this definition">#</a></dt>
+<dd><p>Voltage values used to calculate Var support from the inverter (Maximum or Average).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_settings</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method pydantic_validator">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings">
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_settings</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><em class="xref py py-obj"><span class="pre">all</span> <span class="pre">fields</span></em><a class="reference internal" href="../_modules/PyDSS/pyControllers/models.html#PvVoltageRideThruModel.update_settings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.models.PvVoltageRideThruModel.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.model_computed_fields" title="Link to this definition">#</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="controller-options">
+<h2>Controller options<a class="headerlink" href="#controller-options" title="Link to this heading">#</a></h2>
+<dl class="py class enum">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.PvStandard">
+<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyDSS.pyControllers.enumerations.</span></span><span class="sig-name descname"><span class="pre">PvStandard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/PyDSS/pyControllers/enumerations.html#PvStandard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.pyControllers.enumerations.PvStandard" title="Link to this definition">#</a></dt>
+<dd><p>PV standards for the controller</p>
+<p><strong>IEEE_1547_2003</strong> - <em>For legacy PV systems, use the IEEE 1574-2003 standard</em></p>
+<p><strong>IEEE_1547_2018</strong> - <em>For legacy PV systems with smart controls, use the IEEE 1574-2018 standard</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Member Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+<p>Valid values are as follows:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.PvStandard.IEEE_1547_2003">
+<span class="sig-name descname"><span class="pre">IEEE_1547_2003</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;PvStandard.IEEE_1547_2003:</span> <span class="pre">'1547-2003'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.PvStandard.IEEE_1547_2003" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.PvStandard.IEEE_1547_2018">
+<span class="sig-name descname"><span class="pre">IEEE_1547_2018</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;PvStandard.IEEE_1547_2018:</span> <span class="pre">'1547-2018'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.PvStandard.IEEE_1547_2018" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class enum">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.VoltageCalcModes">
+<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyDSS.pyControllers.enumerations.</span></span><span class="sig-name descname"><span class="pre">VoltageCalcModes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/PyDSS/pyControllers/enumerations.html#VoltageCalcModes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes" title="Link to this definition">#</a></dt>
+<dd><p>Voltage calculation modes for the controller</p>
+<p><strong>MAX</strong> - <em>The the maximum voltage from the available phases as the contoller input</em></p>
+<p><strong>AVG</strong> - <em>The the average voltage from the available phases as the contoller input</em></p>
+<p><strong>MIN</strong> - <em>The the minimum voltage from the available phases as the contoller input</em></p>
+<p><strong>A</strong> - <em>The voltage from phase A as the contoller input</em></p>
+<p><strong>B</strong> - <em>The voltage from phase B as the contoller input</em></p>
+<p><strong>C</strong> - <em>The voltage from phase C as the contoller input</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Member Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+<p>Valid values are as follows:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.VoltageCalcModes.MAX">
+<span class="sig-name descname"><span class="pre">MAX</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;VoltageCalcModes.MAX:</span> <span class="pre">'Max'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.MAX" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.VoltageCalcModes.AVG">
+<span class="sig-name descname"><span class="pre">AVG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;VoltageCalcModes.AVG:</span> <span class="pre">'Avg'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.AVG" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.VoltageCalcModes.MIN">
+<span class="sig-name descname"><span class="pre">MIN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;VoltageCalcModes.MIN:</span> <span class="pre">'Min'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.MIN" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.VoltageCalcModes.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;VoltageCalcModes.A:</span> <span class="pre">'1'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.A" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.VoltageCalcModes.B">
+<span class="sig-name descname"><span class="pre">B</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;VoltageCalcModes.B:</span> <span class="pre">'2'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.B" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.VoltageCalcModes.C">
+<span class="sig-name descname"><span class="pre">C</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;VoltageCalcModes.C:</span> <span class="pre">'3'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.C" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class enum">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.RideThroughCategory">
+<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyDSS.pyControllers.enumerations.</span></span><span class="sig-name descname"><span class="pre">RideThroughCategory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/PyDSS/pyControllers/enumerations.html#RideThroughCategory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.pyControllers.enumerations.RideThroughCategory" title="Link to this definition">#</a></dt>
+<dd><p>PV ride-through catregories</p>
+<p><strong>CATEGORY_I</strong>  - <em>Intended to meet minimum Bulk EPS reliability needs and to be achievable by all DER technologies, including rotating machines</em></p>
+<p><strong>CATEGORY_II</strong>  - <em>Designed to align with the requirements in NERC PRC-024-2</em></p>
+<p><strong>CATEGORY_III</strong> - <em>Designed to meet the needs of low-inertia or highly-penetrated grids</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Member Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+<p>Valid values are as follows:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.RideThroughCategory.CATEGORY_I">
+<span class="sig-name descname"><span class="pre">CATEGORY_I</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;RideThroughCategory.CATEGORY_I:</span> <span class="pre">'Category</span> <span class="pre">I'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.RideThroughCategory.CATEGORY_I" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.RideThroughCategory.CATEGORY_II">
+<span class="sig-name descname"><span class="pre">CATEGORY_II</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;RideThroughCategory.CATEGORY_II:</span> <span class="pre">'Category</span> <span class="pre">II'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.RideThroughCategory.CATEGORY_II" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.RideThroughCategory.CATEGORY_III">
+<span class="sig-name descname"><span class="pre">CATEGORY_III</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;RideThroughCategory.CATEGORY_III:</span> <span class="pre">'Category</span> <span class="pre">III'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.RideThroughCategory.CATEGORY_III" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class enum">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.PermissiveOperation">
+<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyDSS.pyControllers.enumerations.</span></span><span class="sig-name descname"><span class="pre">PermissiveOperation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/PyDSS/pyControllers/enumerations.html#PermissiveOperation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.pyControllers.enumerations.PermissiveOperation" title="Link to this definition">#</a></dt>
+<dd><p>Possible behaviors for permissive operation</p>
+<p><strong>CURRENT_LIMITED</strong> - <em>Current injection into the grid is limited by the inverter during low or high voltage conditions outside the continuous operating range</em></p>
+<p><strong>MOMENTARY_SUCESSION</strong> - <em>No current is injected into the grid by the inverter during low or high voltage conditions outside the continuous operating range</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Member Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+<p>Valid values are as follows:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.PermissiveOperation.CURRENT_LIMITED">
+<span class="sig-name descname"><span class="pre">CURRENT_LIMITED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;PermissiveOperation.CURRENT_LIMITED:</span> <span class="pre">'Current</span> <span class="pre">limited'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.PermissiveOperation.CURRENT_LIMITED" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.PermissiveOperation.MOMENTARY_SUCESSION">
+<span class="sig-name descname"><span class="pre">MOMENTARY_SUCESSION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;PermissiveOperation.MOMENTARY_SUCESSION:</span> <span class="pre">'Momentary</span> <span class="pre">sucession'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.PermissiveOperation.MOMENTARY_SUCESSION" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class enum">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.MayTripOperation">
+<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyDSS.pyControllers.enumerations.</span></span><span class="sig-name descname"><span class="pre">MayTripOperation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/PyDSS/pyControllers/enumerations.html#MayTripOperation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.pyControllers.enumerations.MayTripOperation" title="Link to this definition">#</a></dt>
+<dd><p>Possible behaviors for my trip region</p>
+<p><strong>TRIP</strong> - <em>PV system disconnects from the grid. Can not reconnect for atleast 300 seconds.</em></p>
+<p><strong>PERMISSIVE_OPERATION</strong> - <em>Option for the DER to either continue to exchange current with or to cease toenergize an EPS</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Member Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+<p>Valid values are as follows:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.MayTripOperation.TRIP">
+<span class="sig-name descname"><span class="pre">TRIP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;MayTripOperation.TRIP:</span> <span class="pre">'Trip'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.MayTripOperation.TRIP" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.MayTripOperation.PERMISSIVE_OPERATION">
+<span class="sig-name descname"><span class="pre">PERMISSIVE_OPERATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;MayTripOperation.PERMISSIVE_OPERATION:</span> <span class="pre">'Permissive</span> <span class="pre">operation'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.MayTripOperation.PERMISSIVE_OPERATION" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class enum">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.MultipleDisturbances">
+<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyDSS.pyControllers.enumerations.</span></span><span class="sig-name descname"><span class="pre">MultipleDisturbances</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/PyDSS/pyControllers/enumerations.html#MultipleDisturbances"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.pyControllers.enumerations.MultipleDisturbances" title="Link to this definition">#</a></dt>
+<dd><p>Possible behaviors for multiple disturbamces</p>
+<p><strong>TRIP</strong> - <em>PV system disconnects from the grid. Can not reconnect for atleast 300 seconds.</em></p>
+<p><strong>PERMISSIVE_OPERATION</strong> - <em>Option for the DER to either continue to exchange current with or to cease toenergize an EPS</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Member Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+<p>Valid values are as follows:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.MultipleDisturbances.TRIP">
+<span class="sig-name descname"><span class="pre">TRIP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;MultipleDisturbances.TRIP:</span> <span class="pre">'Trip'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.MultipleDisturbances.TRIP" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.MultipleDisturbances.PERMISSIVE_OPERATION">
+<span class="sig-name descname"><span class="pre">PERMISSIVE_OPERATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;MultipleDisturbances.PERMISSIVE_OPERATION:</span> <span class="pre">'Permissive</span> <span class="pre">operation'&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.MultipleDisturbances.PERMISSIVE_OPERATION" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class enum">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryI">
+<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyDSS.pyControllers.enumerations.</span></span><span class="sig-name descname"><span class="pre">CategoryI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/PyDSS/pyControllers/enumerations.html#CategoryI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryI" title="Link to this definition">#</a></dt>
+<dd><p>Variable defination for Category I</p>
+<p><strong>OV2_PU</strong> - <em>Upper bound for the over-voltage region</em></p>
+<p><strong>OV2_CT_SEC</strong> - <em>Trip time if voltage exceeds OV2_PU (seconds)</em></p>
+<p><strong>OV1_PU</strong> - <em>Lower bound for the over-voltage region</em></p>
+<p><strong>OV1_CT_SEC</strong> - <em>Trip time if voltage exceeds OV1_CT_SEC (seconds)</em></p>
+<p><strong>UV1_PU</strong> - <em>Upper bound for the under-voltage region</em></p>
+<p><strong>UV1_CT_SEC</strong> - <em>Trip time if voltage is less than UV1_PU (seconds)</em></p>
+<p><strong>UV2_PU</strong> - <em>Lower bound for the under-voltage region</em></p>
+<p><strong>UV2_CT_SEC</strong> - <em>Trip time if voltage is less than UV1_PU (seconds)</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Member Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+<p>Valid values are as follows:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryI.OV2_PU">
+<span class="sig-name descname"><span class="pre">OV2_PU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryI.OV2_PU:</span> <span class="pre">1.2&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryI.OV2_PU" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryI.OV2_CT_SEC">
+<span class="sig-name descname"><span class="pre">OV2_CT_SEC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryI.OV2_CT_SEC:</span> <span class="pre">0.16&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryI.OV2_CT_SEC" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryI.OV1_PU">
+<span class="sig-name descname"><span class="pre">OV1_PU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryI.OV1_PU:</span> <span class="pre">1.1&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryI.OV1_PU" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryI.OV1_CT_SEC">
+<span class="sig-name descname"><span class="pre">OV1_CT_SEC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryI.OV1_CT_SEC:</span> <span class="pre">2.0&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryI.OV1_CT_SEC" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryI.UV1_PU">
+<span class="sig-name descname"><span class="pre">UV1_PU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryI.UV1_PU:</span> <span class="pre">0.7&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryI.UV1_PU" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryI.UV2_PU">
+<span class="sig-name descname"><span class="pre">UV2_PU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryI.UV2_PU:</span> <span class="pre">0.45&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryI.UV2_PU" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class enum">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryII">
+<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyDSS.pyControllers.enumerations.</span></span><span class="sig-name descname"><span class="pre">CategoryII</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/PyDSS/pyControllers/enumerations.html#CategoryII"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryII" title="Link to this definition">#</a></dt>
+<dd><p>Variable defination for Category II</p>
+<p><strong>OV2_PU</strong> - <em>Upper bound for the over-voltage region</em></p>
+<p><strong>OV2_CT_SEC</strong> - <em>Trip time if voltage exceeds OV2_PU (seconds)</em></p>
+<p><strong>OV1_PU</strong> - <em>Lower bound for the over-voltage region</em></p>
+<p><strong>OV1_CT_SEC</strong> - <em>Trip time if voltage exceeds OV1_CT_SEC (seconds)</em></p>
+<p><strong>UV1_PU</strong> - <em>Upper bound for the under-voltage region</em></p>
+<p><strong>UV1_CT_SEC</strong> - <em>Trip time if voltage is less than UV1_PU (seconds)</em></p>
+<p><strong>UV2_PU</strong> - <em>Lower bound for the under-voltage region</em></p>
+<p><strong>UV2_CT_SEC</strong> - <em>Trip time if voltage is less than UV1_PU (seconds)</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Member Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+<p>Valid values are as follows:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryII.OV2_PU">
+<span class="sig-name descname"><span class="pre">OV2_PU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryII.OV2_PU:</span> <span class="pre">1.2&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryII.OV2_PU" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryII.OV2_CT_SEC">
+<span class="sig-name descname"><span class="pre">OV2_CT_SEC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryII.OV2_CT_SEC:</span> <span class="pre">0.16&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryII.OV2_CT_SEC" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryII.OV1_PU">
+<span class="sig-name descname"><span class="pre">OV1_PU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryII.OV1_PU:</span> <span class="pre">1.1&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryII.OV1_PU" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryII.OV1_CT_SEC">
+<span class="sig-name descname"><span class="pre">OV1_CT_SEC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryII.OV1_CT_SEC:</span> <span class="pre">2.0&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryII.OV1_CT_SEC" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryII.UV1_PU">
+<span class="sig-name descname"><span class="pre">UV1_PU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryII.UV1_PU:</span> <span class="pre">0.7&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryII.UV1_PU" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryII.UV1_CT_SEC">
+<span class="sig-name descname"><span class="pre">UV1_CT_SEC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryII.UV1_CT_SEC:</span> <span class="pre">10.0&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryII.UV1_CT_SEC" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryII.UV2_PU">
+<span class="sig-name descname"><span class="pre">UV2_PU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryII.UV2_PU:</span> <span class="pre">0.45&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryII.UV2_PU" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class enum">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryIII">
+<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyDSS.pyControllers.enumerations.</span></span><span class="sig-name descname"><span class="pre">CategoryIII</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/PyDSS/pyControllers/enumerations.html#CategoryIII"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryIII" title="Link to this definition">#</a></dt>
+<dd><p>Variable defination for Category III</p>
+<p><strong>OV2_PU</strong> - <em>Upper bound for the over-voltage region</em></p>
+<p><strong>OV2_CT_SEC</strong> - <em>Trip time if voltage exceeds OV2_PU (seconds)</em></p>
+<p><strong>OV1_PU</strong> - <em>Lower bound for the over-voltage region</em></p>
+<p><strong>OV1_CT_SEC</strong> - <em>Trip time if voltage exceeds OV1_CT_SEC (seconds)</em></p>
+<p><strong>UV1_PU</strong> - <em>Upper bound for the under-voltage region</em></p>
+<p><strong>UV1_CT_SEC</strong> - <em>Trip time if voltage is less than UV1_PU (seconds)</em></p>
+<p><strong>UV2_PU</strong> - <em>Lower bound for the under-voltage region</em></p>
+<p><strong>UV2_CT_SEC</strong> - <em>Trip time if voltage is less than UV1_PU (seconds)</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Member Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+<p>Valid values are as follows:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryIII.OV2_PU">
+<span class="sig-name descname"><span class="pre">OV2_PU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryIII.OV2_PU:</span> <span class="pre">1.2&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryIII.OV2_PU" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryIII.OV2_CT_SEC">
+<span class="sig-name descname"><span class="pre">OV2_CT_SEC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryIII.OV2_CT_SEC:</span> <span class="pre">0.16&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryIII.OV2_CT_SEC" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryIII.OV1_PU">
+<span class="sig-name descname"><span class="pre">OV1_PU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryIII.OV1_PU:</span> <span class="pre">1.1&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryIII.OV1_PU" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryIII.OV1_CT_SEC">
+<span class="sig-name descname"><span class="pre">OV1_CT_SEC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryIII.OV1_CT_SEC:</span> <span class="pre">13.0&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryIII.OV1_CT_SEC" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryIII.UV1_PU">
+<span class="sig-name descname"><span class="pre">UV1_PU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryIII.UV1_PU:</span> <span class="pre">0.88&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryIII.UV1_PU" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryIII.UV1_CT_SEC">
+<span class="sig-name descname"><span class="pre">UV1_CT_SEC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryIII.UV1_CT_SEC:</span> <span class="pre">21.0&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryIII.UV1_CT_SEC" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryIII.UV2_PU">
+<span class="sig-name descname"><span class="pre">UV2_PU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryIII.UV2_PU:</span> <span class="pre">0.5&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryIII.UV2_PU" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyDSS.pyControllers.enumerations.CategoryIII.UV2_CT_SEC">
+<span class="sig-name descname"><span class="pre">UV2_CT_SEC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CategoryIII.UV2_CT_SEC:</span> <span class="pre">2.0&gt;</span></em><a class="headerlink" href="#PyDSS.pyControllers.enumerations.CategoryIII.UV2_CT_SEC" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="usage-example">
+<h2>Usage example<a class="headerlink" href="#usage-example" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p>see test_controllers.py in the tests folder</p>
+</div></blockquote>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="SocketController.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Socket Controller</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="PvFrequencyRideThru.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">PV System Frequency Ride-Through</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2019, Aadil Latif
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">PV System Voltage Ride-Through</a><ul>
+<li><a class="reference internal" href="#controller-overview">Controller overview</a></li>
+<li><a class="reference internal" href="#controller-model">Controller model</a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel</span></code></a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.follow_standard"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.follow_standard</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.kva"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.kva</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.max_kw"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.max_kw</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.may_trip_operation"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.may_trip_operation</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.multiple_disturdances"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.multiple_disturdances</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_1_ct_sec"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.ov_1_ct_sec</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_1_pu"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.ov_1_pu</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_2_ct_sec"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.ov_2_ct_sec</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.ov_2_pu"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.ov_2_pu</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.permissive_operation"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.permissive_operation</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.reconnect_deadtime_sec"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.reconnect_deadtime_sec</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.reconnect_pmax_time_sec"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.reconnect_pmax_time_sec</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.ride_through_category"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.ride_through_category</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_1_ct_sec"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.uv_1_ct_sec</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_1_pu"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.uv_1_pu</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_2_ct_sec"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.uv_2_ct_sec</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.uv_2_pu"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.uv_2_pu</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.voltage_calc_mode"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.voltage_calc_mode</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.update_settings"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.update_settings</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.models.PvVoltageRideThruModel.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">PvVoltageRideThruModel.model_computed_fields</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#controller-options">Controller options</a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.PvStandard"><code class="docutils literal notranslate"><span class="pre">PvStandard</span></code></a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.PvStandard.IEEE_1547_2003"><code class="docutils literal notranslate"><span class="pre">PvStandard.IEEE_1547_2003</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.PvStandard.IEEE_1547_2018"><code class="docutils literal notranslate"><span class="pre">PvStandard.IEEE_1547_2018</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes"><code class="docutils literal notranslate"><span class="pre">VoltageCalcModes</span></code></a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.MAX"><code class="docutils literal notranslate"><span class="pre">VoltageCalcModes.MAX</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.AVG"><code class="docutils literal notranslate"><span class="pre">VoltageCalcModes.AVG</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.MIN"><code class="docutils literal notranslate"><span class="pre">VoltageCalcModes.MIN</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.A"><code class="docutils literal notranslate"><span class="pre">VoltageCalcModes.A</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.B"><code class="docutils literal notranslate"><span class="pre">VoltageCalcModes.B</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.VoltageCalcModes.C"><code class="docutils literal notranslate"><span class="pre">VoltageCalcModes.C</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.RideThroughCategory"><code class="docutils literal notranslate"><span class="pre">RideThroughCategory</span></code></a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.RideThroughCategory.CATEGORY_I"><code class="docutils literal notranslate"><span class="pre">RideThroughCategory.CATEGORY_I</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.RideThroughCategory.CATEGORY_II"><code class="docutils literal notranslate"><span class="pre">RideThroughCategory.CATEGORY_II</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.RideThroughCategory.CATEGORY_III"><code class="docutils literal notranslate"><span class="pre">RideThroughCategory.CATEGORY_III</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.PermissiveOperation"><code class="docutils literal notranslate"><span class="pre">PermissiveOperation</span></code></a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.PermissiveOperation.CURRENT_LIMITED"><code class="docutils literal notranslate"><span class="pre">PermissiveOperation.CURRENT_LIMITED</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.PermissiveOperation.MOMENTARY_SUCESSION"><code class="docutils literal notranslate"><span class="pre">PermissiveOperation.MOMENTARY_SUCESSION</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.MayTripOperation"><code class="docutils literal notranslate"><span class="pre">MayTripOperation</span></code></a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.MayTripOperation.TRIP"><code class="docutils literal notranslate"><span class="pre">MayTripOperation.TRIP</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.MayTripOperation.PERMISSIVE_OPERATION"><code class="docutils literal notranslate"><span class="pre">MayTripOperation.PERMISSIVE_OPERATION</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.MultipleDisturbances"><code class="docutils literal notranslate"><span class="pre">MultipleDisturbances</span></code></a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.MultipleDisturbances.TRIP"><code class="docutils literal notranslate"><span class="pre">MultipleDisturbances.TRIP</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.MultipleDisturbances.PERMISSIVE_OPERATION"><code class="docutils literal notranslate"><span class="pre">MultipleDisturbances.PERMISSIVE_OPERATION</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryI"><code class="docutils literal notranslate"><span class="pre">CategoryI</span></code></a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryI.OV2_PU"><code class="docutils literal notranslate"><span class="pre">CategoryI.OV2_PU</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryI.OV2_CT_SEC"><code class="docutils literal notranslate"><span class="pre">CategoryI.OV2_CT_SEC</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryI.OV1_PU"><code class="docutils literal notranslate"><span class="pre">CategoryI.OV1_PU</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryI.OV1_CT_SEC"><code class="docutils literal notranslate"><span class="pre">CategoryI.OV1_CT_SEC</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryI.UV1_PU"><code class="docutils literal notranslate"><span class="pre">CategoryI.UV1_PU</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryI.UV2_PU"><code class="docutils literal notranslate"><span class="pre">CategoryI.UV2_PU</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryII"><code class="docutils literal notranslate"><span class="pre">CategoryII</span></code></a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryII.OV2_PU"><code class="docutils literal notranslate"><span class="pre">CategoryII.OV2_PU</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryII.OV2_CT_SEC"><code class="docutils literal notranslate"><span class="pre">CategoryII.OV2_CT_SEC</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryII.OV1_PU"><code class="docutils literal notranslate"><span class="pre">CategoryII.OV1_PU</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryII.OV1_CT_SEC"><code class="docutils literal notranslate"><span class="pre">CategoryII.OV1_CT_SEC</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryII.UV1_PU"><code class="docutils literal notranslate"><span class="pre">CategoryII.UV1_PU</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryII.UV1_CT_SEC"><code class="docutils literal notranslate"><span class="pre">CategoryII.UV1_CT_SEC</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryII.UV2_PU"><code class="docutils literal notranslate"><span class="pre">CategoryII.UV2_PU</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryIII"><code class="docutils literal notranslate"><span class="pre">CategoryIII</span></code></a><ul>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryIII.OV2_PU"><code class="docutils literal notranslate"><span class="pre">CategoryIII.OV2_PU</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryIII.OV2_CT_SEC"><code class="docutils literal notranslate"><span class="pre">CategoryIII.OV2_CT_SEC</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryIII.OV1_PU"><code class="docutils literal notranslate"><span class="pre">CategoryIII.OV1_PU</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryIII.OV1_CT_SEC"><code class="docutils literal notranslate"><span class="pre">CategoryIII.OV1_CT_SEC</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryIII.UV1_PU"><code class="docutils literal notranslate"><span class="pre">CategoryIII.UV1_PU</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryIII.UV1_CT_SEC"><code class="docutils literal notranslate"><span class="pre">CategoryIII.UV1_CT_SEC</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryIII.UV2_PU"><code class="docutils literal notranslate"><span class="pre">CategoryIII.UV2_PU</span></code></a></li>
+<li><a class="reference internal" href="#PyDSS.pyControllers.enumerations.CategoryIII.UV2_CT_SEC"><code class="docutils literal notranslate"><span class="pre">CategoryIII.UV2_CT_SEC</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#usage-example">Usage example</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=dd1205ac"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=32e29ea5"></script>
+    </body>
+</html>

@@ -1,0 +1,2 @@
+[console_scripts]
+pydss = PyDSS.cli.pydss:cli

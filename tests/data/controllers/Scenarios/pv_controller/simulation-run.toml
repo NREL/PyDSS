@@ -1,0 +1,173 @@
+[project]
+project_path = "WindowsPath('tests/data')"
+active_project = "controllers"
+active_project_path = "WindowsPath('tests/data/controllers')"
+active_scenario = "voltage_ride_through"
+start_time = 2019-06-20T00:00:00
+simulation_duration_min = 0.05
+step_resolution_sec = 0.05
+loadshape_start_time = 2019-06-20T00:00:00
+simulation_type = "<SimulationType.QSTS: 'qsts'>"
+control_mode = "<ControlMode.STATIC: 'Static'>"
+max_control_iterations = 50
+convergence_error_percent_threshold = 0.0
+error_tolerance = 0.001
+max_error_tolerance = 0.0
+skip_export_on_convergence_error = true
+dss_file = "Master_Spohn_existing_VV.dss"
+dss_file_absolute_path = false
+disable_pydss_controllers = false
+use_controller_registry = false
+[[project.scenarios]]
+name = "voltage_ride_through"
+post_process_infos = []
+
+[project.scenarios.snapshot_time_point_selection_config]
+mode = "<SnapshotTimePointSelectionMode.NONE: 'none'>"
+start_time = 2020-01-01T00:00:00
+search_duration_min = 1440.0
+
+[exports]
+export_results = true
+export_elements = false
+export_element_types = []
+export_data_tables = false
+export_pv_profiles = false
+export_data_in_memory = false
+export_node_names_by_type = false
+export_event_log = true
+export_format = "<FileFormat.CSV: 'csv'>"
+export_compression = false
+hdf_max_chunk_bytes = 32768
+
+[frequency]
+enable_frequency_sweep = false
+fundamental_frequency = 60.0
+start_frequency = 1.0
+end_frequency = 15.0
+frequency_increment = 2.0
+neglect_shunt_admittance = false
+percentage_load_in_series = 50.0
+
+[helics]
+co_simulation_mode = false
+iterative_mode = false
+error_tolerance = 0.0001
+max_co_iterations = 15
+broker = "mainbroker"
+broker_port = 0
+federate_name = "PyDSS"
+time_delta = 0.01
+core_type = "zmq"
+uninterruptible = true
+logging_level = 5
+
+[logging]
+logging_level = "<LoggingLevel.INFO: 'info'>"
+enable_console = true
+enable_file = true
+clear_old_log_file = false
+log_time_step_updates = true
+
+[monte_carlo]
+num_scenarios = -1
+
+[profiles]
+use_profile_manager = true
+source_type = "<FileFormat.HDF5: 'h5'>"
+source = "profiles.hdf5"
+profile_mapping = ""
+is_relative_path = true
+
+[reports]
+format = "<FileFormat.HDF5: 'h5'>"
+granularity = "<ReportGranularity.PER_ELEMENT_PER_TIME_POINT: 'per_element_per_time_point'>"
+[[reports.types]]
+enabled = false
+scenarios = []
+store_all_time_points = false
+name = "Capacitor State Change Counts"
+
+[[reports.types]]
+enabled = false
+scenarios = []
+store_all_time_points = false
+name = "PV Clipping"
+diff_tolerance_percent_pmpp = 1.0
+denominator_tolerance_percent_pmpp = 1.0
+
+[[reports.types]]
+enabled = false
+scenarios = []
+store_all_time_points = false
+name = "PV Curtailment"
+diff_tolerance_percent_pmpp = 1.0
+denominator_tolerance_percent_pmpp = 1.0
+
+[[reports.types]]
+enabled = false
+scenarios = []
+store_all_time_points = false
+name = "RegControl Tap Number Change Counts"
+
+[project.simulation_range]
+start = "00:00:00"
+end = "23:59:59"
+
+[profiles.settings]
+bufferSize = 10
+neglectYear = false
+
+[profiles.settings.objects]
+"Vsource.source" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D2165A0>"
+"Line.sw0" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D216540>"
+"Line.sw1" = "<PyDSS.dssElement.dssElement object at 0x0000022A1BF1FD10>"
+"Line.sw2" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D216630>"
+"Line.sw3" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D217860>"
+"Storage.ess110" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D22C6E0>"
+"Storage.ess111" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D22E300>"
+"Storage.ess112" = "<PyDSS.dssElement.dssElement object at 0x0000022A1BF97FE0>"
+"Storage.ess113" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D234740>"
+"Transformer.tsf" = "<PyDSS.dssTransformer.dssTransformer object at 0x0000022A1D235A60>"
+"Line.sl_1" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D238E00>"
+"Line.sl_2" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D236750>"
+"Line.sl_3" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D236D80>"
+"Line.sl_4" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D239430>"
+"Line.sl_5" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D23A240>"
+"Line.sl_6" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D23B050>"
+"Line.sl_7" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D23BE60>"
+"Line.sl_8" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D240CB0>"
+"Line.sl_9" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D241AC0>"
+"Line.sl_10" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D2428D0>"
+"Line.sl_11" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D2436E0>"
+"Line.sl_12" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D243F50>"
+"Line.sl_13" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D245340>"
+"Line.sl_14" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D246150>"
+"Line.sl_15" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D246F60>"
+"Line.sl_16" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D247D70>"
+"Line.sl_17" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D24CBC0>"
+"Line.sl_18" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D24D9D0>"
+"Line.sl_19" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D24E7E0>"
+"Line.sl_20" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D24F050>"
+"Line.sl_21" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D24FE60>"
+"Line.sl_22" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D2511F0>"
+"Line.sl_23" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D252000>"
+"Line.sl_24" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D252E10>"
+"Line.sl_25" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D253C20>"
+"Line.sl_26" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D258A70>"
+"Load.mpx000635970" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D259880>"
+"Load.mpx000460267" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D260380>"
+"Load.mpx000637601" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D25AF00>"
+"Load.mpx000594341" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D25B4A0>"
+"Line.pvl_110" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D260C20>"
+"Line.pvl_111" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D261B20>"
+"Line.pvl_113" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D2630B0>"
+"Line.pvl_112" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D263F20>"
+"Generator.pvgnem_mpx000635970" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D268D40>"
+"Generator.pvgnem_mpx000460267" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D269B20>"
+"Generator.pvgnem_mpx000594341" = "<PyDSS.dssElement.dssElement object at 0x0000022A1B57BE30>"
+"Generator.pvgui_mpx000637601" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D26C6B0>"
+"Generator.pvgui_mpx000460267" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D26D640>"
+"EnergyMeter.feedermeter" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D26E5D0>"
+"Fault.default" = "<PyDSS.dssElement.dssElement object at 0x0000022A1D2746E0>"
+"Circuit.heco19021" = "<PyDSS.dssCircuit.dssCircuit object at 0x0000022A1BF1C890>"
