@@ -222,7 +222,7 @@ class ResultData:
         self._current_results.clear()
 
         # Get the number of seconds since the Epoch without any timezone conversions.
-        timestamp = (self._dss_solver.GetDateTime() - datetime.utcfromtimestamp(0)).total_seconds()
+        timestamp = (self._dss_solver.GetDateTime() - datetime(1970, 1, 1, 0, 0)).total_seconds() #  datetime.utcfromtimestamp(0) is now depriciated
         self._time_dataset.write_value([timestamp])
         self._frequency_dataset.write_value([self._dss_solver.getFrequency()])
         self._mode_dataset.write_value([self._dss_solver.getMode()])

@@ -379,7 +379,7 @@ class PyDssProject:
             raise
 
         finally:
-            logger.stop()
+            logger.remove()
             if tar_project:
                 self._tar_project_files()
             elif zip_project:

@@ -74,7 +74,7 @@ class MotorStall(ControllerAbstract):
                 self.i2r = max(self.i2r, i2r)  
                 self.t = np.array([self.t_arr [-1], self.t])
                 self.u = np.array([self.u[-1], self.i2r])
-                tout, yout, xout = signal.lsim2(self.h, self.u, self.t_arr, self.x)
+                tout, yout, xout = signal.lsim(self.h, self.u, self.t_arr, self.x)
                 self.x = xout[-1]
                 i2r_calc = yout[-1] / 50.0
                 

@@ -132,7 +132,7 @@ class OpenDSS:
         self._increment_flag = True
         if settings.helics.co_simulation_mode:
             self._heilcs_interface = HI.helics_interface(self._dssSolver, self._dssObjects, self._dssObjectsByClass, settings,
-                                           self._dssPath, logger)
+                                           self._dssPath)
         logger.info("Simulation initialization complete")
         return
 

@@ -199,7 +199,7 @@ class ReportBase(abc.ABC):
         all_reports = Reports.get_all_reports()
         report_settings = _get_report_settings(settings, name)
         inputs = copy.deepcopy(getattr(all_reports[name], "DEFAULTS"))
-        for key in type(report_settings).__fields__:
+        for key in type(report_settings).model_fields:
             inputs[key] = getattr(report_settings, key)
 
         return inputs

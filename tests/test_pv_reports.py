@@ -17,6 +17,18 @@ from PyDSS.utils.utils import load_data, dump_data
 from PyDSS.pydss_project import PyDssProject
 from PyDSS.pydss_results import PyDssResults
 
+import traceback
+import warnings
+import sys
+
+def warn_with_traceback(message, category, filename, lineno, file=None, line=None):
+
+    log = file if hasattr(file,'write') else sys.stderr
+    traceback.print_stack(file=log)
+    log.write(warnings.formatwarning(message, category, filename, lineno, line))
+
+warnings.showwarning = warn_with_traceback
+
 BASE_FILENAME = os.path.join(PV_REPORTS_PROJECT_PATH, SIMULATION_SETTINGS_FILENAME)
 TEST_SIM_BASE_NAME = "test_sim.toml"
 TEST_FILENAME = os.path.join(PV_REPORTS_PROJECT_PATH, TEST_SIM_BASE_NAME)

@@ -178,10 +178,10 @@ class SmartControls(str, Enum):
     
     """
     
-    NONE = 'none'           
+    NONE = 'None'           
     CONSTANT_POWER_FACTOR ='cpf'            
     VARIABLE_POWER_FACTOR ='vpf'            
-    VOLT_VAR ='vvar'           
+    VOLT_VAR ='VVar'           
     VOLT_WATT ='vwatt'             
     TRIP = 'trip'
     
@@ -195,8 +195,9 @@ class ControlPriority(str, Enum):
         
     """
     
-    VAR = 'var'           
-    WATT ='watt'            
+    VAR = 'Var'           
+    WATT ='Watt' 
+    PF = "PF"           
 
 
 class VoltWattCurtailmentStrategy(str, Enum):
@@ -209,5 +210,5 @@ class VoltWattCurtailmentStrategy(str, Enum):
         
     """
     
-    AVAILABLE_POWER = 'available_power'           
-    RAETED_POWER ='rated_power' 
+    AVAILABLE_POWER = 'Available Power'           
+    RAETED_POWER ='Rated Power' 

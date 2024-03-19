@@ -39,7 +39,7 @@ def get_snapshot_timepoint(settings: SimulationSettingsModel, mode: SnapshotTime
         timepoints = pd.read_json(temp_filename)
         if settings.project.active_scenario == settings.project.scenarios[-1].name:
             os.rename(temp_filename, final_filename)
-        return pd.to_datetime(timepoints[column][0]).to_pydatetime()
+        return pd.to_datetime(timepoints[column].iloc[0]).to_pydatetime()
     pv_generation_hours = {'start_time': '8:00', 'end_time': '17:00'}
     aggregate_profiles = pd.DataFrame(columns=['Load', 'PV'])
     pv_shapes = {}
@@ -92,4 +92,4 @@ def get_snapshot_timepoint(settings: SimulationSettingsModel, mode: SnapshotTime
     dump_data(timepoints.astype(str).to_dict(orient='index'), temp_filename, indent=2)
     if settings.project.active_scenario == settings.project.scenarios[-1].name:
         os.rename(temp_filename, final_filename)
-    return timepoints.loc[column][0].to_pydatetime()
+    return timepoints.loc[column].iloc[0].to_pydatetime()

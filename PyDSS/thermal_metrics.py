@@ -175,7 +175,7 @@ def create_summary_from_dict(data):
             model = getattr(summary.scenarios[scenario], model)
             if model is None:
                 continue
-            for column in model.__fields__:
+            for column in model.model_fields:
                 val = getattr(model, column)
                 if not isinstance(val, dict):
                     new_name = elem_type + "_" + column

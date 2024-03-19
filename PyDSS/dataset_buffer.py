@@ -57,6 +57,8 @@ class DatasetBuffer:
             shape = None
             chunks = None
 
+        dim = len(shape)
+        print(path)
         self._dataset = self._hdf_store.create_dataset(
             name=path,
             shape=shape,
@@ -66,6 +68,7 @@ class DatasetBuffer:
             compression="gzip",
             compression_opts=4,
             shuffle=True,
+            maxshape=[None for _ in range(dim)],
             # Does not preserve NaN, so don't use it.
             #scaleoffset=scaleoffset,
         )
@@ -77,6 +80,7 @@ class DatasetBuffer:
         column_dataset = self._hdf_store.create_dataset(
             name=column_dataset_path,
             data=np.array(columns, dtype="S"),
+            maxshape=(None, ),
         )
         column_dataset.attrs["type"] = DatasetPropertyType.METADATA.value
         self._dataset.attrs["column_dataset_path"] = column_dataset_path
@@ -86,15 +90,19 @@ class DatasetBuffer:
             name_dataset = self._hdf_store.create_dataset(
                 name = name_dataset_path,
                 data = np.array(names, dtype="S"),
+                maxshape=(None, ),
             )
             name_dataset.attrs["type"] = DatasetPropertyType.METADATA.value
             self._dataset.attrs["name_dataset_path"] = name_dataset_path
 
         if column_ranges_per_name is not None:
             column_ranges_dataset_path = path + "ColumnRanges"
+            data = np.array(column_ranges_per_name)
+            dim = len(data.shape)
             column_ranges_dataset = self._hdf_store.create_dataset(
                 name=column_ranges_dataset_path,
-                data=column_ranges_per_name,
+                data=data,
+                maxshape=[None for _ in range(dim)],
             )
             column_ranges_dataset.attrs["type"] = DatasetPropertyType.METADATA.value
             self._dataset.attrs["column_ranges_dataset_path"] = column_ranges_dataset_path
@@ -121,7 +129,14 @@ class DatasetBuffer:
             return
 
         new_index = self._dataset_index + length
+        
+        if new_index > self._dataset.shape[0]:
+            new_dimensions = (new_index, self._dataset.shape[1])
+            self._dataset.resize(new_dimensions)
+            logger.warning(f"result index {new_index} exceed dataset dimension {self._dataset.shape[0]} for dataset {self._dataset.name}. Resizig dataset to {new_dimensions}")
+  
         self._dataset[self._dataset_index:new_index] = self._buf[0:length]
+        
         self._buf_index = 0
         self._dataset_index = new_index
         self._dataset.attrs["length"] = new_index

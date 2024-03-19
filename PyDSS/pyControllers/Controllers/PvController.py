@@ -3,9 +3,7 @@ import math
 
 from PyDSS.pyControllers.enumerations import SmartControls, ControlPriority, VoltWattCurtailmentStrategy, VoltageCalcModes
 from PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
-# from PyDSS.controllers import PvControllerModel
-
-volt_var_settings = namedtuple("volt_var_settings", ["VmeaMethod", "uMin", "uMax", "uDbMin", "uDbMax", "kVBase"])
+from PyDSS.pyControllers.models import PvControllerModel
 
 
 class PvController(ControllerAbstract):
@@ -61,7 +59,7 @@ class PvController(ControllerAbstract):
         self._controlled_element = pv_obj
         self._dss_instance = dss_instance
         self._dss_solver = dss_solver
-        self._settings = settings
+        self._settings = PvControllerModel(**settings)
 
         self._base_kv = float(pv_obj.GetParameter('kv'))
         self._s_rated = float(pv_obj.GetParameter('kVA'))
@@ -69,39 +67,27 @@ class PvController(ControllerAbstract):
         self._q_rated = float(pv_obj.GetParameter('kvarMax'))
         self._cutin = float(pv_obj.SetParameter('%cutin', 0)) / 100
         self._cutout = float(pv_obj.SetParameter('%cutout', 0)) / 100
-        self._damp_coef = settings['DampCoef']
-
-        self._pf_rated = settings['pflim']
+        self._damp_coef = self._settings.damp_coef
+        self._pf_rated = self._settings.pf_lim
         self.p_mppt = 100
         self.pf = 1
 
         self.update = []
-        self._vvar = None
-        if 'VmeaMethod' not in self._settings:
-            self._settings['VmeaMethod'] = VoltageCalcModes.MAX
             
         for i in range(1, 4):
-            controller_type = self._settings['Control' + str(i)]
+            controller_type = getattr(self._settings, 'control' + str(i))
             self.update.append(self.control_dict[controller_type])
-            if controller_type == "VVar":
-                self._vvar = volt_var_settings(
-                    VmeaMethod=self._settings["VmeaMethod"].lower(),
-                    uMin=self._settings["uMin"],
-                    uMax=self._settings["uMax"],
-                    uDbMin=self._settings["uDbMin"],
-                    uDbMax=self._settings["uDbMax"],
-                    kVBase=self._controlled_element.sBus[0].GetVariable('kVBase') * 1000,
-                )
 
-        if self._settings["priority"] == ControlPriority.VAR:
+
+        if self._settings.priority == ControlPriority.VAR:
             pv_obj.SetParameter('Wattpriority', "False")
-        elif self._settings["priority"] == ControlPriority.WATT:
+        elif self._settings.priority == ControlPriority.WATT:
             pv_obj.SetParameter('Wattpriority', "True")
         #pv_obj.SetParameter('VarFollowInverter', "False")
 
         #self.q_lim_pu = self._q_rated / self._s_rated if self._q_rated < self._s_rated else 1
 
-        self.q_lim_pu = min(self._q_rated / self._s_rated, self._settings['q_lim_pu'], 1.0)
+        self.q_lim_pu = min(self._q_rated / self._s_rated, self._settings.q_lim_pu, 1.0)
         self.itr = 0
         return
 
@@ -112,9 +98,9 @@ class PvController(ControllerAbstract):
         return "{}.{}".format(self.ce_class, self.ce_name)
 
     def debugInfo(self):
-        return [self._settings['Control{}'.format(i+1)] for i in range(3)]
+        return [getattr(self._settings, 'control' + str(i)) for i in range(3)]
 
-    def update(self, priority, time, update):
+    def Update(self, priority, time, update):
         self.time_change = self.time != (priority, time)
         self.time = (priority, time)
         p_pv = -sum(self._controlled_element.GetVariable('Powers')[::2]) / self._p_rated
@@ -139,9 +125,9 @@ class PvController(ControllerAbstract):
     def volt_watt_control(self):
         """Volt / Watt  control implementation
         """
-        u_min_c = self._settings['u_min_c']
-        u_max_c = self._settings['u_max_c']
-        p_min  = self._settings['p_minVW'] / 100
+        u_min_c = self._settings.u_min_c
+        u_max_c = self._settings.u_max_c
+        p_min  = self._settings.p_min_vw / 100
 
         u_in = max(self._controlled_element.sBus[0].GetVariable('puVmagAngle')[::2])
         p_pv = -sum(self._controlled_element.GetVariable('Powers')[::2]) / self._s_rated
@@ -150,7 +136,7 @@ class PvController(ControllerAbstract):
 
         #p_pvoutPU = p_pv / self._p_rated
 
-        p_lim = (1 - q_pv ** 2) ** 0.5 if self._settings['VWtype'] == 'Available Power' else 1
+        p_lim = (1 - q_pv ** 2) ** 0.5 if self._settings.vw_type == VoltWattCurtailmentStrategy.AVAILABLE_POWER else 1
         m = (1 - p_min) / (u_min_c - u_max_c)
         #m = (p_lim - p_min) / (u_min_c - u_max_c)
         c = ((p_min * u_min_c) - u_max_c) / (u_min_c - u_max_c)
@@ -204,18 +190,18 @@ class PvController(ControllerAbstract):
     def constant_powerfactor_control(self):
         """Constant power factor implementation
         """
-        pf_set = self._settings['pf']
+        pf_set = self._settings.pf
         pf_act = self._controlled_element.GetParameter('pf')
         p_pv = abs(sum(self._controlled_element.GetVariable('Powers')[::2])) / self._s_rated
         q_pv = -sum(self._controlled_element.GetVariable('Powers')[1::2]) / self._s_rated
 
-        if self._settings['cpf-priority'] == 'pf':
+        if self._settings.priority == ControlPriority.PF:
            # if self.time_change:
             p_lim = pf_set * 100
             self._controlled_element.SetParameter('%Pmpp', p_lim)
            # else:
         else:
-            if self._settings['cpf-priority'] == 'Var':
+            if self._settings.priority == ControlPriority.VAR:
                 #add code for var priority here
                 p_lim = 0
             else:
@@ -232,10 +218,10 @@ class PvController(ControllerAbstract):
     def variable_powerfactor_control(self):
         """Variable power factor control implementation
         """
-        p_min = self._settings['p_min']
-        p_max = self._settings['p_max']
-        pf_min = self._settings['pf_min']
-        pf_max = self._settings['pf_max']
+        p_min = self._settings.p_min
+        p_max = self._settings.p_max
+        pf_min = self._settings.pf_min
+        pf_max = self._settings.pf_max
         self._dss_solver.reSolve()
         p_calc = abs(sum(-(float(x)) for x in self._controlled_element.GetVariable('Powers')[0::2]) ) / self._s_rated
         if p_calc > 0:
@@ -271,21 +257,22 @@ class PvController(ControllerAbstract):
 
         u_mag = self._controlled_element.GetVariable('VoltagesMagAng')[::2]
         u_mag = [i for i in u_mag if i != 0]
-        vmea = self._vvar.VmeaMethod
-        if vmea == VoltageCalcModes.MAX:
-            u_in = max(u_mag) / self._vvar.kVBase
-        elif vmea.lower() == VoltageCalcModes.AVG:
-            u_in = sum(u_mag) / (len(u_mag) * self._vvar.kVBase)
-        elif vmea == VoltageCalcModes.MIN:
-            u_in = min(u_mag) / self._vvar.kVBase
-        elif vmea == VoltageCalcModes.A:
-            u_in = u_mag[0] / self._vvar.kVBase
-        elif vmea == VoltageCalcModes.B:
-            u_in = u_mag[1] / self._vvar.kVBase
-        elif vmea == VoltageCalcModes.C:
-            u_in = u_mag[3] / self._vvar.kVBase
+        kv_base = self._controlled_element.sBus[0].GetVariable('kVBase') * 1000
+
+        if self._settings.voltage_calc_mode == VoltageCalcModes.MAX:
+            u_in = max(u_mag) / kv_base
+        elif self._settings.voltage_calc_mode == VoltageCalcModes.AVG:
+            u_in = sum(u_mag) / (len(u_mag) * kv_base)
+        elif self._settings.voltage_calc_mode == VoltageCalcModes.MIN:
+            u_in = min(u_mag) / kv_base
+        elif self._settings.voltage_calc_mode == VoltageCalcModes.A:
+            u_in = u_mag[0] / kv_base
+        elif self._settings.voltage_calc_mode == VoltageCalcModes.B:
+            u_in = u_mag[1] / kv_base
+        elif self._settings.voltage_calc_mode == VoltageCalcModes.C:
+            u_in = u_mag[3] / kv_base
         else:
-            u_in = max(u_mag) / self._vvar.kVBase
+            u_in = max(u_mag) / kv_base
 
         p_pv = abs(sum(self._controlled_element.GetVariable('Powers')[::2]))
         p_calc = p_pv / self._s_rated
@@ -293,25 +280,25 @@ class PvController(ControllerAbstract):
         q_pv = q_pv / self._s_rated
 
         q_calc = 0
-        if u_in <= self._vvar.uMin:
+        if u_in <= self._settings.u_min:
             q_calc = self.q_lim_pu
-        elif u_in <= self._vvar.uDbMin and u_in > self._vvar.uMin:
-            m1 = self.q_lim_pu / (self._vvar.uMin - self._vvar.uDbMin)
-            c1 = self.q_lim_pu * self._vvar.uDbMin / (self._vvar.uDbMin - self._vvar.uMin)
+        elif u_in <= self._settings.u_db_min and u_in > self._settings.u_min:
+            m1 = self.q_lim_pu / (self._settings.u_min - self._settings.u_db_min)
+            c1 = self.q_lim_pu * self._settings.u_db_min / (self._settings.u_db_min - self._settings.u_min)
             q_calc = u_in * m1 + c1
-        elif u_in <= self._vvar.uDbMax and u_in > self._vvar.uDbMin:
+        elif u_in <= self._settings.u_db_max and u_in > self._settings.u_db_min:
             q_calc = 0
-        elif u_in <= self._vvar.uMax and u_in > self._vvar.uDbMax:
-            m2 = self.q_lim_pu / (self._vvar.uDbMax - self._vvar.uMax)
-            c2 = self.q_lim_pu * self._vvar.uDbMax / (self._vvar.uMax - self._vvar.uDbMax)
+        elif u_in <= self._settings.u_max and u_in > self._settings.u_db_max:
+            m2 = self.q_lim_pu / (self._settings.u_db_max - self._settings.u_max)
+            c2 = self.q_lim_pu * self._settings.u_db_max / (self._settings.u_max - self._settings.u_db_max)
             q_calc = u_in * m2 + c2
-        elif u_in >= self._vvar.uMax:
+        elif u_in >= self._settings.u_max:
             q_calc = -self.q_lim_pu
 
         q_calc = q_pv + (q_calc - q_pv) * 0.5 / self._damp_coef + (q_pv - self.old_q_pv) * 0.1 / self._damp_coef
 
         if p_calc > 0:
-            if self._controlled_element.Numphases == 2:
+            if self._controlled_element.NumPhases == 2:
                 self._controlled_element.SetParameter('kvar', q_calc * self._s_rated * 1.3905768334328491495461135972974)
             else:
                 self._controlled_element.SetParameter('kvar', q_calc * self._s_rated)
