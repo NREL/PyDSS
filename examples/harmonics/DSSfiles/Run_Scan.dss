@@ -1,6 +1,6 @@
 // CHANGE THIS PATH TO MATCH WHERE YOU HAVE THE 123 BUS IEEE TEST FEEEDER
 
-Redirect "C:\Program Files\OpenDSS\IEEETestCases\123Bus\IEEE123Master.dss"
+Redirect "IEEE123Master.dss"
 
 /*
    NOTE: By using Redirect instead of Compile, OpenDSS returns to home directory
