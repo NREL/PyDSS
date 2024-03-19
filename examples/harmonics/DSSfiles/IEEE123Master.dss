@@ -28,7 +28,7 @@ new regcontrol.creg1a transformer=reg1a winding=2 vreg=120 band=2 ptratio=20 ctp
 ! REDIRECT INPUT STREAM TO FILE CONTAINING DEFINITIONS OF LINECODES
 ! This file defines the line impedances is a similar manner to the description in the test case.
 
-Redirect        IEEELinecodes.DSS
+Redirect IEEELinecodes.DSS
 
 ! LINE DEFINITIONS
 ! Lines are defined by referring to a "linecode" that contains the impedances per unit length
