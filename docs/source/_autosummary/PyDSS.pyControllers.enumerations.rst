@@ -1,4 +1,4 @@
-﻿PyDSS.pyControllers.enumerations
+PyDSS.pyControllers.enumerations
 ================================
 
 .. automodule:: PyDSS.pyControllers.enumerations

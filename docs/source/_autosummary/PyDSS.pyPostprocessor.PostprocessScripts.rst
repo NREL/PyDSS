@@ -1,4 +1,4 @@
-﻿PyDSS.pyPostprocessor.PostprocessScripts
+PyDSS.pyPostprocessor.PostprocessScripts
 ========================================
 
 .. automodule:: PyDSS.pyPostprocessor.PostprocessScripts

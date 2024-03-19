@@ -1,4 +1,4 @@
-﻿PyDSS.pyControllers
+PyDSS.pyControllers
 ===================
 
 .. automodule:: PyDSS.pyControllers

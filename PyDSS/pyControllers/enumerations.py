@@ -7,6 +7,14 @@ class VoltageCalcModes(str, Enum):
     **MAX** - *The the maximum voltage from the available phases as the contoller input*
     
     **AVG** - *The the average voltage from the available phases as the contoller input*
+    
+    **MIN** - *The the minimum voltage from the available phases as the contoller input*
+    
+    **A** - *The voltage from phase A as the contoller input*
+    
+    **B** - *The voltage from phase B as the contoller input*
+    
+    **C** - *The voltage from phase C as the contoller input*
     """
     MAX = "Max"
     AVG = "Avg"
@@ -192,6 +200,8 @@ class ControlPriority(str, Enum):
     **VAR** - *Var priority*
      
     **WATT** - *Watt priority*
+    
+    **PF** - *Powerfactor priority*
         
     """
     
