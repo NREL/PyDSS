@@ -143,7 +143,7 @@ class MotorStallBackup(ControllerAbstract):
             
             self.T = np.array([self.T[-1], self.t])
             self.U = np.array([self.U[-1], u])
-            tout, yout, xout = signal.lsim2(self.H, self.U, self.T, self.X)
+            tout, yout, xout = signal.lsim(self.H, self.U, self.T, self.X)
             self.X = xout[-1]
             theeta = yout[-1]
             
@@ -179,7 +179,7 @@ class MotorStallBackup(ControllerAbstract):
                 
             self.rT = np.array([self.rT[-1], self.t])
             self.rU = np.array([self.rU[-1], self.v])
-            _, yout_r, xout_r = signal.lsim2(self.R, self.rU, self.rT, self.rX)
+            _, yout_r, xout_r = signal.lsim(self.R, self.rU, self.rT, self.rX)
             self.rX = xout_r[-1]
             reconnect = yout_r[-1]
 

@@ -1,12 +1,11 @@
 
-import abc
-import logging
 import math
+import abc
 import os
-import time
 
-import numpy as np
+from loguru import logger
 import pandas as pd
+import numpy as np
 
 from PyDSS.common import PV_LOAD_SHAPE_FILENAME
 from PyDSS.reports.reports import ReportBase, ReportGranularity
@@ -15,10 +14,6 @@ from PyDSS.utils.utils import dump_data
 
 PF1_SCENARIO = "pf1"
 CONTROL_MODE_SCENARIO = "control_mode"
-
-
-logger = logging.getLogger(__name__)
-
 
 class PvReportBase(ReportBase, abc.ABC):
     """Base class for PV reports"""
@@ -117,6 +112,7 @@ class PvClippingReport(PvReportBase):
     def _calculate_clipping_array(dc_power, pf1_real_power):
         dcp = dc_power.values
         rp = pf1_real_power.values
+        rp = np.where(rp==0, np.nan, rp)
         return (dcp - rp) / rp * 100
 
     def _get_total_dc_power_across_pv_systems(self):

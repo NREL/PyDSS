@@ -1,14 +1,13 @@
 """CLI to create a new PyDSS project"""
 
+import click
 import ast
 import sys
-import click
-import logging
 
-from PyDSS.loggers import setup_logging
-from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, ExportMode, VisualizationType
+from loguru import logger
 
-logger = logging.getLogger(__name__)
+from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, ExportMode
+
 
 @click.option(
     "-P", "--path",
@@ -58,11 +57,6 @@ logger = logging.getLogger(__name__)
     help="comma-delimited list of controller types",
 )
 @click.option(
-    "-v", "--visualization-types",
-    default=None,
-    help="comma-delimited list of dynamic visualization types",
-)
-@click.option(
     "-e", "--export-modes",
     default=None,
     help="comma-delimited list of export modes",
@@ -81,17 +75,14 @@ logger = logging.getLogger(__name__)
 )
 @click.command()
 def create_project(path=None, project=None, scenarios=None, simulation_file=None, simulation_config=None,
-                   controller_types=None, export_modes=None, options=None, visualization_types=None,
+                   controller_types=None, export_modes=None, options=None, 
                    opendss_project_folder=None, master_dss_file=None, force=False):
     """Create PyDSS project."""
-    setup_logging("PyDSS", console_level=logging.INFO)
     if controller_types is not None:
         controller_types = [ControllerType(x) for x in controller_types.split(",")]
     if export_modes is not None:
         export_modes = [ExportMode(x) for x in export_modes.split(",")]
-    if visualization_types is not None:
-        visualization_types = [VisualizationType(x) for x in visualization_types.split(",")]
-
+        
     if options is not None:
         options = ast.literal_eval(options)
         if not isinstance(options, dict):
@@ -103,7 +94,7 @@ def create_project(path=None, project=None, scenarios=None, simulation_file=None
             name=x.strip(),
             controller_types=controller_types,
             export_modes=export_modes,
-            visualization_types=visualization_types,
+
         ) for x in scenarios.split(",")
     ]
     PyDssProject.create_project(

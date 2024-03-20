@@ -1,19 +1,14 @@
 
-import logging
-import time
+from datetime import timedelta
 from collections import deque
-from datetime import datetime, timedelta
+import time
 
-import numpy as np
 import opendssdirect as dss
 import pandas as pd
+import numpy as np
 
-from PyDSS.common import DATE_FORMAT, TIME_FORMAT
 from PyDSS.simulation_input_models import SimulationSettingsModel
-
-
-logger = logging.getLogger(__name__)
-
+from PyDSS.common import TIME_FORMAT
 
 class CircularBufferHelper:
     def __init__(self, window_size):

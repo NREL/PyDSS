@@ -2,17 +2,10 @@
 CLI to run a PyDSS project
 """
 
-import ast
-import logging
-import os
-import sys
-import json
 import click
+import json
+import os
 
-from PyDSS.pydss_project import PyDssProject
-from PyDSS.loggers import setup_logging
-from PyDSS.utils.utils import get_cli_string, make_human_readable_size
-from PyDSS.common import SIMULATION_SETTINGS_FILENAME
 from terminaltables import SingleTable
 from os.path import normpath, basename
 

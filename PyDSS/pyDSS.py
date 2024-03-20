@@ -1,9 +1,7 @@
-import subprocess
-import pathlib
 import PyDSS
-import toml
 import os
-import logging
+
+from loguru import logger
 
 from PyDSS.common import RUN_SIMULATION_FILENAME
 from PyDSS.exceptions import InvalidConfiguration
@@ -42,9 +40,6 @@ __email__ = "aadil.latif@nrel.gov, aadil.latif@gmail.com"
 __status__ = "Production"
 
 PYDSS_BASE_DIR = os.path.join(os.path.dirname(getattr(PyDSS, "__path__")[0]), "PyDSS")
-
-logger = logging.getLogger(__name__)
-
 
 class instance(object):
 

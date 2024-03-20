@@ -1,8 +1,7 @@
 
-from typing import Optional, List, Union, Annotated
+from typing import Optional, Annotated
 from collections import defaultdict
-from pathlib import Path
-import logging
+from  loguru import logger
 import json
 import abc
 
@@ -19,7 +18,6 @@ from PyDSS.SolveMode import get_solver_from_simulation_type
 from PyDSS.simulation_input_models import ProjectModel
 from PyDSS.modes.solver_base import solver_base
 
-logger = logging.getLogger(__name__)
 
 class ControllerBaseModel(BaseModel, abc.ABC):
     model_config = ConfigDict(title="ControllerBaseModel", str_strip_whitespace=True, validate_assignment=True, validate_default=True, extra="forbid", use_enum_values=False, populate_by_name=True)
@@ -40,35 +38,35 @@ class PvControllerModel(ControllerBaseModel):
         str,
         Field(
             title="Control1",
-            description="TODO",
+            description="Algorithm to run in the first control loop",
             alias="Control1",
         )]
     control2: Optional[str] = Field(
         title="Control1",
-        description="TODO",
+        description="Algorithm to run in the second control loop",
         alias="Control2",
     )
     control3: Optional[str] = Field(
         title="Control3",
-        description="TODO",
+        description="Algorithm to run in the third control loop",
         alias="Control3",
     )
     pf: int = Field(
         title="pf",
-        description="TODO",
+        description="Power factor for the PV system",
     )
     pf_min: Annotated[
         float,
         Field(
             title="pfMin",
-            description="TODO",
+            description="Minimum allowable power factor for the PV system. Applied only if enable_pf_limit is set.",
             alias="pfMin",
         )]
     pf_max: Annotated[
         float,
         Field(
             title="pfMax",
-            description="TODO",
+            description="Maximum allowable power factor for the PV system. Applied only if enable_pf_limit is set.",
             alias="pfMax",
         )]
     p_min: Annotated[
@@ -89,112 +87,112 @@ class PvControllerModel(ControllerBaseModel):
         float,
         Field(
             title="uMin",
-            description="TODO",
+            description="Per unit voltage value at which inverter produces maximum vars. (volt / var algorithm).",
             alias="uMin",
         )]
     u_db_min: Annotated[
         float,
         Field(
             title="uDbMin",
-            description="TODO",
+            description="Lower bound for the voltage deadband [per unit]. Inverter will not produce or consume vars within these bands (volt / var algorithm).",
             alias="uDbMin",
         )]
     u_db_max: Annotated[
         float,
         Field(
             title="uDbMax",
-            description="TODO",
+            description="Upper bound for the voltage deadband [per unit]. Inverter will not produce or consume vars within these bands (volt / var algorithm).",
             alias="uDbMax",
         )]
     u_max: Annotated[
         float,
         Field(
             title="uMax",
-            description="TODO",
+            description="Per unit voltage value at which inverter consumes maximum vars (volt / var algorithm).",
             alias="uMax",
         )]
     q_lim_pu: Annotated[
         float,
         Field(
             title="QlimPU",
-            description="TODO",
+            description="Inverter reactive power limit [per unit] for the volt / var algorithm.",
             alias="QlimPU",
         )]
     pf_lim: Annotated[
         float,
         Field(
             title="PFlim",
-            description="TODO",
+            description="Inverter power factor limit. Applied only if enable_pf_limit is set.",
             alias="PFlim",
         )]
     enable_pf_limit: Annotated[
         bool,
         Field(
             title="EnablePFLimit",
-            description="TODO",
+            description="Flag to enable / disable power factor limits on the inverter",
             alias="Enable PF limit",
         )]
     u_min_c: Annotated[
         float,
         Field(
             title="uMinC",
-            description="TODO",
+            description="Lower voltage bound [per unit] for the volt / watt algorithm",
             alias="uMinC",
         )]
     u_max_c: Annotated[
         float,
         Field(
             title="uMaxC",
-            description="TODO",
+            description="Upper voltage bound [per unit] for the volt / watt algorithm",
             alias="uMaxC",
         )]
     p_min_vw: Annotated[
         float,
         Field(
             title="PminVW",
-            description="TODO",
+            description="Lower bound for the inveter active power output for the volt / watt algorithm",
             alias="PminVW",
         )]
     vw_type: Annotated[
         str,
         Field(
             title="VWtype",
-            description="TODO",
+            description="volt / watt algorithm to be implemented on rated or available power",
             alias="VWtype",
         )]
     percent_p_cutin: Annotated[
         float,
         Field(
             title="PCutin",
-            description="TODO",
+            description="Percentage cut-in power -- Percentage of kVA rating of inverter. When the inverter is OFF, the power from the array must be greater than this for the inverter to turn on.",
             alias="%PCutin",
         )]
     percent_p_cutout: Annotated[
         float,
         Field(
             title="%PCutout",
-            description="TODO",
+            description="Percentage cut-out power -- Percentage of kVA rating of inverter. When the inverter is ON, the inverter turns OFF when the power from the array drops below this value.",
             alias="%PCutout",
         )]
     efficiency: Annotated[
         float,
         Field(
             title="Efficiency",
-            description="TODO",
+            description="Efficieny of the inverter system",
             alias="Efficiency",
         )]
     priority: Annotated[
         str,
         Field(
             title="Priority",
-            description="TODO",
+            description="Set export priority for active power or reactive power",
             alias="Priority",
         )]
     damp_coef: Annotated[
         float,
         Field(
             title="DampCoef",
-            description="TODO",
+            description="Damping cooefficient for the convergence algorithm",
             alias="DampCoef",
         )]
 

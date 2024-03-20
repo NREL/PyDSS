@@ -2,18 +2,14 @@
 from distutils.dir_util import copy_tree
 import subprocess
 import tempfile
-import logging
-import signal
-import shutil
-import uuid
 import os
 
+from loguru import logger
 import pytest
 
 from PyDSS.pydss_project import PyDssProject
 
-logger = logging.getLogger(__name__)
-
+IN_GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS") == "true"
 EXAMPLES_path = "examples"
 
 @pytest.fixture
@@ -47,7 +43,9 @@ def test_helics_interface_example(pydss_project):
     run_example(pydss_project, example_name, scenarios)
     return
 
-@pytest.mark.skip
+@pytest.mark.skipif(
+    IN_GITHUB_ACTIONS, reason="test runs locally but fails on github actions"
+)
 def test_helics_interface_iterative_example(pydss_project):
     example_name = "external_interfaces/pydss_project"
     scenarios = [
@@ -59,7 +57,9 @@ def test_helics_interface_iterative_example(pydss_project):
     run_example(pydss_project, example_name, scenarios)
     return
 
-@pytest.mark.skip
+@pytest.mark.skipif(
+    IN_GITHUB_ACTIONS, reason="test runs locally but fails on github actions"
+)
 def test_socket_interface_example(pydss_project):
     example_name = "external_interfaces/pydss_project"
     scenarios = [
@@ -71,7 +71,7 @@ def test_socket_interface_example(pydss_project):
     run_example(pydss_project, example_name, scenarios)
     return
 
-@pytest.mark.skip
+
 def test_monte_carlo_example(pydss_project):
     example_name = "monte_carlo"
     scenarios = [
@@ -83,7 +83,6 @@ def test_monte_carlo_example(pydss_project):
     run_example(pydss_project, example_name, scenarios)
     return
 
-@pytest.mark.skip
 def test_custom_contols_example(pydss_project):
     example_name = "custom_contols"
     scenarios = [
@@ -95,7 +94,7 @@ def test_custom_contols_example(pydss_project):
     run_example(pydss_project, example_name, scenarios)
     return
 
-@pytest.mark.skip
+
 def test_harmonics_spanshot_example(pydss_project):
     example_name = "harmonics"
     scenarios = [
@@ -107,7 +106,7 @@ def test_harmonics_spanshot_example(pydss_project):
     run_example(pydss_project, example_name, scenarios)
     return
 
-@pytest.mark.skip
+
 def test_harmonics_timeseries_example(pydss_project):
     example_name = "harmonics"
     scenarios = [
@@ -119,7 +118,7 @@ def test_harmonics_timeseries_example(pydss_project):
     run_example(pydss_project, example_name, scenarios)
     return
 
-@pytest.mark.skip
+
 def test_dynamics_example(pydss_project):
     example_name = "dynamics"
     scenarios = [
@@ -163,6 +162,6 @@ def run_example(pydss_project, example_name, scenarios):
             if proc != None:
                 print("killing process")
                 proc.terminate()
-                # os.kill(proc.pid, signal.SIGTERM)
+                #os.kill(proc.pid, signal.SIGTERM)
     return
 

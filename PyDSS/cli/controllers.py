@@ -2,18 +2,15 @@
 CLI to add controllers to the local registry
 """
 
-import logging
-import os
 import sys
+import os
 
 import click
 
+
 from PyDSS.common import CONTROLLER_TYPES
-from PyDSS.registry import Registry
 from PyDSS.utils.utils import load_data
-
-logger = logging.getLogger(__name__)
-
+from PyDSS.registry import Registry
 
 @click.group()
 def controllers():

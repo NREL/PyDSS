@@ -3,17 +3,17 @@
 import abc
 import io
 import json
-import logging
 import os
 import sys
 import tarfile
 import zipfile
 
+from loguru import logger
 import pandas as pd
 import toml
 
 from PyDSS.common import PLOTS_FILENAME, PROJECT_TAR, PROJECT_ZIP, \
-    ControllerType, ExportMode, SIMULATION_SETTINGS_FILENAME,VisualizationType
+    ControllerType, ExportMode, SIMULATION_SETTINGS_FILENAME
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.simulation_input_models import SimulationSettingsModel, load_simulation_settings
 from PyDSS.utils.utils import load_data
@@ -22,9 +22,6 @@ from PyDSS.utils.utils import load_data
 STORE_FILENAME = "store.h5"
 SCENARIOS = "Scenarios"
 PROJECT_DIRECTORIES = ("DSSfiles", "Exports", "Logs", "Scenarios")
-
-logger = logging.getLogger(__name__)
-
 
 class PyDssFileSystemInterface(abc.ABC):
     """Interface to read PyDSS files on differing filesystem structures."""
@@ -143,19 +140,6 @@ class PyDssFileSystemInterface(abc.ABC):
 
         """
 
-    @abc.abstractmethod
-    def read_visualization_config(self, scenario):
-        """Read visualization config for a scenario.
-
-        Parameters
-        ----------
-        scenario : str
-
-        Returns
-        -------
-        dict
-
-        """
 
     @property
     def scenario_names(self):
@@ -238,18 +222,6 @@ class PyDssDirectoryInterface(PyDssFileSystemInterface):
         ]
         scenarios.sort()
         return scenarios
-
-    def read_visualization_config(self, scenario):
-        visuals = {}
-
-        path = os.path.join(self._project_dir, SCENARIOS, scenario, "pyPlotList")
-        for filename in os.listdir(path):
-            base, ext = os.path.splitext(filename)
-            if ext == ".toml":
-                visual_type = VisualizationType(base)
-                visuals[visual_type] = load_data(os.path.join(path, filename))
-
-        return visuals
 
     def read_controller_config(self, scenario):
         controllers = {}
@@ -355,10 +327,6 @@ class PyDssArchiveFileInterfaceBase(PyDssFileSystemInterface):
         return self._settings
 
     def read_controller_config(self, scenario):
-        # Not currently needed for reading projects.
-        pass
-
-    def read_visualization_config(self, scenario):
         # Not currently needed for reading projects.
         pass
 

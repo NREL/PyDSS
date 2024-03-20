@@ -1,11 +1,12 @@
 """Manages PyDSS customized modules."""
 
-import copy
-import logging
-import os
-import sys
 from collections import defaultdict
 from pathlib import Path
+import copy
+import sys
+import os
+
+from loguru import logger
 
 import PyDSS
 from PyDSS.common import ControllerType, CONTROLLER_TYPES
@@ -50,10 +51,6 @@ DEFAULT_REGISTRY = {
 }
 
 REQUIRED_CONTROLLER_FIELDS = ("name", "filename")
-
-
-logger = logging.getLogger(__name__)
-
 
 class Registry:
     """Manages controllers registered with PyDSS."""

@@ -1,20 +1,16 @@
 from ast import literal_eval
 import os
 
+from loguru import logger
 from scipy import stats
-import pandas as pd
 import numpy as np
-import logging
 
-from PyDSS.pyLogger import getLoggerTag
 from PyDSS.simulation_input_models import SimulationSettingsModel
 from PyDSS.utils import utils
 
 class MonteCarloSim:
 
     def __init__(self, settings: SimulationSettingsModel, dssPaths, dssObjects, dssObjectsByClass):
-        LoggerTag = getLoggerTag(settings)
-        self.pyLogger = logging.getLogger(LoggerTag)
         self.__dssPaths = dssPaths
         self.__dssObjects = dssObjects
         self._settings = settings
@@ -24,10 +20,10 @@ class MonteCarloSim:
             MCfile = os.path.join(self._settings.project.active_scenario, 'Monte_Carlo', 'MonteCarloSettings.toml')
             MCfilePath = os.path.join(self.__dssPaths['Import'], MCfile)
 
-            self.pyLogger.info('Reading monte carlo scenario settings file from ' + MCfilePath)
+            logger.info('Reading monte carlo scenario settings file from ' + MCfilePath)
             self.__MCsettingsDict = utils.load_data(MCfilePath)
         except:
-            self.pyLogger.error('Failed to read Monte Carlo scenario generation file %s', MCfilePath)
+            logger.error('Failed to read Monte Carlo scenario generation file %s', MCfilePath)
             raise
         return
 
@@ -57,7 +53,7 @@ class MonteCarloSim:
                         Value = str(Value).replace('\n', '').replace('\r', '').replace('[ ', '[').replace(' ]', ']')
                         Elements[ElmName].SetParameter(Properties['Property'], Value)
             else:
-                self.pyLogger.warning(Properties['Class'] + ' class not present in object dictionary.')
+                logger.warning(Properties['Class'] + ' class not present in object dictionary.')
         return
 
 

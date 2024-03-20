@@ -2,19 +2,16 @@
 CLI to export data from a PyDSS project
 """
 
-import logging
-import os
 import sys
+import os
 
+from loguru import logger
 import click
 
-from PyDSS.pydss_project import PyDssProject
+
 from PyDSS.pydss_results import PyDssResults
-from PyDSS.loggers import setup_logging
 from PyDSS.utils.utils import get_cli_string
 
-
-logger = logging.getLogger(__name__)
 
 # TODO Make command to list scenarios.
 
@@ -51,18 +48,16 @@ def export(project_path, fmt="csv", compress=False, output_dir=None, verbose=Fal
         sys.exit(1)
 
     filename = "pydss_export.log"
-    console_level = logging.INFO
-    file_level = logging.INFO
+    console_level = "INFO"
+    file_level = "INFO"
     if verbose:
-        console_level = logging.DEBUG
-        file_level = logging.DEBUG
+        console_level = "DEBUG"
+        file_level = "DEBUG"
 
-    setup_logging(
-        "PyDSS",
-        filename=filename,
-        console_level=console_level,
-        file_level=file_level,
-    )
+    logger.level(console_level)
+    if filename:
+        logger.add(filename)
+
     logger.info("CLI: [%s]", get_cli_string())
 
     results = PyDssResults(project_path)

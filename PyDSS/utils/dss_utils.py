@@ -1,13 +1,8 @@
 
-import logging
 import re
 
 import opendssdirect as dss
-
-from PyDSS.exceptions import InvalidConfiguration
-
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 def check_redirect(file_name):
@@ -67,10 +62,11 @@ def get_load_shape_resolution_secs():
 
     res = [x for x in iter_elements(dss.LoadShape, func) if x is not None]
     if len(set(res)) != 1:
-        ...
+        return None
         # raise InvalidConfiguration(
         #     f"SInterval for all LoadShapes must be the same: {res}"
         # )
+        
     return res[0]
 
 

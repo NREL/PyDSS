@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional, Annotated
 
 
 from pydantic import field_validator, model_validator, ConfigDict
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field
 #from pydantic.json import isoformat, timedelta_isoformat
 
 
@@ -168,7 +168,7 @@ class ProjectModel(InputsBaseModel):
             None,
             title="active_project_path",
             description="Path to project. Auto-generated.",
-            internal=True,
+            #internal=True,
         )]
     scenarios: Annotated[
         Optional[List[ScenarioModel]],
@@ -356,39 +356,32 @@ class ProjectModel(InputsBaseModel):
             raise ValueError(f"project_path={val} does not exist")
         return val
 
-    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
-    @validator("active_project")
-    def check_active_project(cls, val, values):
-        if values.get("project_path") is None or val is None:
+
+    @model_validator(mode='after')
+    def check_active_project(self)-> 'ProjectModel':
+        if self.project_path is None or self.active_project is None:
             return None
             
-        active_project_path = values["project_path"] / val
+        active_project_path = self.project_path / self.active_project
         if not active_project_path.exists():
             raise ValueError(f"project_path={active_project_path} does not exist")
-        return val
-
-    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
-    @validator("active_project_path")
-    def assign_active_project_path(cls, val, values):
-        if "project_path" in values and "active_project" in values and values["active_project"] is not None:
-            return values["project_path"] / values["active_project"]
+        return self
         
-        return val
+    @model_validator(mode='before')
+    def assign_active_project_path(self)-> 'ProjectModel':
+        if "project_path" in self and "active_project" in self and self["active_project"] is not None:
+            self['active_project_path'] = Path(self["project_path"]) / self["active_project"]
+        return self
+
+    @model_validator(mode='after')
+    def check_scenarios(self)-> 'ProjectModel':
+        if hasattr(self, "project_path") and self.project_path is None:
+            return self
         
-
-    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
-    @validator("scenarios")
-    def check_scenarios(cls, val, values):
-        if values.get("project_path") is None:
-            return val
-
-        if not val:
+        if hasattr(self, "scenarios") and not self.scenarios:
             raise ValueError("project['scenarios'] cannot be empty")
-        return val
-
+        return self
+    
     def dict(self, *args, **kwargs):
         data = super().dict(*args, **kwargs)
         data.pop("active_project_path")
@@ -571,15 +564,13 @@ class FrequencyModel(InputsBaseModel):
             default=50.0,
             alias="Percentage load in series",
         )]
-
-    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
-    @validator("end_frequency")
-    def check_end_frequency(cls, val, values):
-        start = values["start_frequency"]
-        if start > val:
-            raise ValueError(f"start_frequency={start} must be less than end_frequency={val}")
-        return val
+    
+    @model_validator(mode='after')
+    def check_end_frequency(self)-> 'FrequencyModel':
+        start = self.start_frequency
+        if start > self.end_frequency:
+            raise ValueError(f"start_frequency={start} must be less than end_frequency={self.end_frequency}")
+        return self
 
     @field_validator("fundamental_frequency")
     @classmethod
@@ -866,7 +857,7 @@ class CapacitorStateChangeCountReportModel(ReportBaseModel):
             title="name",
             description="Report name",
             default="Capacitor State Change Counts",
-            internal=True,
+            #internal=True,
         )]
 
 
@@ -879,7 +870,7 @@ class FeederLossesReportModel(ReportBaseModel):
             title="name",
             description="Report name",
             default="Feeder Losses",
-            internal=True,
+            #internal=True,
         )]
 
 
@@ -892,7 +883,7 @@ class PvClippingReportModel(ReportBaseModel):
             title="name",
             description="Report name",
             default="PV Clipping",
-            internal=True,
+            #internal=True,
         )]
     diff_tolerance_percent_pmpp: Annotated[
         float, 
@@ -919,7 +910,7 @@ class PvCurtailmentReportModel(ReportBaseModel):
             title="name",
             description="Report name",
             default="PV Curtailment",
-            internal=True,
+            #internal=True,
         )]
     diff_tolerance_percent_pmpp: Annotated[
         float, 
@@ -946,7 +937,7 @@ class RegControlTapNumberChangeCountsReportModel(ReportBaseModel):
             title="name",
             description="Report name",
             default="RegControl Tap Number Change Counts",
-            internal=True,
+            #internal=True,
         )]
 
 
@@ -959,7 +950,7 @@ class ThermalMetricsReportModel(ReportBaseModel):
             title="name",
             description="Report name",
             default="Thermal Metrics",
-            internal=True,
+            #internal=True,
         )]
     transformer_window_size_hours: Annotated[
         int, 
@@ -1021,7 +1012,7 @@ class VoltageMetricsReportModel(ReportBaseModel):
             title="name",
             description="Report name",
             default="Voltage Metrics",
-            internal=True,
+            #internal=True,
         )]
     window_size_minutes: Annotated[
         int, 

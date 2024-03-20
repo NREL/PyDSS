@@ -1,4 +1,4 @@
-﻿PyDSS.common
+PyDSS.common
 ============
 
 .. automodule:: PyDSS.common

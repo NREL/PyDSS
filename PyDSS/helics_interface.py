@@ -1,14 +1,14 @@
-from pydantic import ConfigDict, BaseModel, validator
+from pydantic import ConfigDict, BaseModel, model_validator
 from typing import List, Optional, Any, Union, Dict
 from enum import Enum
-import logging
 import helics
 import os
 import re
 
+from loguru import logger
+
 from PyDSS.simulation_input_models import SimulationSettingsModel
 from PyDSS.common import SUBSCRIPTIONS_FILENAME, ExportMode
-from PyDSS.pyLogger import getLoggerTag
 from PyDSS.utils.utils import load_data
 
 TYPE_INFO = {
@@ -75,21 +75,20 @@ class Subscriptions(BaseModel):
     opendss_models: Dict
     subscriptions: List[Subscription]
 
-    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
-    @validator('subscriptions', each_item=True)
-    def is_in_opendss_model(cls, v, values, **kwargs):
-        if v.model not in values["opendss_models"]:
-            raise AssertionError(f"The loaded OpenDSS model does not have an element define with the name {v}")
-        
-        if v.subscribe:
-            v.object = values["opendss_models"][v.model]
-            v.sub = helics.helicsFederateRegisterSubscription(
-                values["federate"],
-                v.id,
-                v.unit
-            )
-        return v
+    @model_validator(mode='after')
+    def is_in_opendss_model(self)-> 'Subscriptions':
+        for subscription in self.subscriptions:
+            if subscription.model not in self.opendss_models:
+                raise AssertionError(f"The loaded OpenDSS model does not have an element define with the name {subscription}")
+            
+            if subscription.subscribe:
+                subscription.object = self.opendss_models[subscription.model]
+                subscription.sub = helics.helicsFederateRegisterSubscription(
+                    self.federate,
+                    subscription.id,
+                    subscription.unit
+                )
+        return self
     
 class Publications(BaseModel):
     
@@ -100,17 +99,15 @@ class Publications(BaseModel):
     legacy_input: Dict = {}
     input: Dict = {}
     
-    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
-    @validator('legacy_input')
-    def build_from_legacy(cls, v, values, **kwargs):
+    @model_validator(mode='after')
+    def build_from_legacy(self)-> 'Publications':
         publications = []
-        for object_type, k in v.items():
-            if object_type in values["opendss_models"]:
-                models =  values["opendss_models"][object_type]    
+        for object_type, k in self.legacy_input.items():
+            if object_type in self.opendss_models:
+                models =  self.opendss_models[object_type]    
                 for model in models:
                     for ppty in k['Publish']:
-                        name = '{}.{}.{}'.format(values["federate_name"], model, ppty)
+                        name = '{}.{}.{}'.format(self.federate_name, model, ppty)
                         pub_dict = {
                             "model" : model,
                             "object" :  models[model],
@@ -118,24 +115,22 @@ class Publications(BaseModel):
                             "property" : ppty,
                             "data_type" : TYPE_INFO[ppty],
                             "pub" :  helics.helicsFederateRegisterGlobalTypePublication(
-                                values["federate"],
+                                self.federate,
                                 name,
                                 TYPE_INFO[ppty],
                                 ''
                             )
                         }
                         publications.append(Publication.model_validate(pub_dict))
-        values["publications"] = publications
-        return v
+        self.publications = publications
+        return self
 
-    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
-    @validator('input')
-    def build_from_export(cls, v, values, **kwargs):
+    @model_validator(mode='after')
+    def build_from_export(self)-> 'Publications':
         publications = []
-        for object_type, export_properties in v.items():
-            if object_type in values["opendss_models"]:
-                models =  values["opendss_models"][object_type]
+        for object_type, export_properties in self.input.items():
+            if object_type in self.opendss_models:
+                models =  self.opendss_models[object_type]
                 for export_property in export_properties:
                     filtered_models = {}
                     if export_property['publish']:
@@ -154,9 +149,9 @@ class Publications(BaseModel):
                     
                         for model_name, model_obj in filtered_models.items():
                             if object_type == "Buses":
-                                name = '{}.Bus.{}.{}'.format(values["federate_name"], model_name, export_property["property"])
+                                name = '{}.Bus.{}.{}'.format(self.federate_name, model_name, export_property["property"])
                             else:
-                                name = '{}.{}.{}'.format(values["federate_name"], model_name, export_property["property"])
+                                name = '{}.{}.{}'.format(self.federate_name, model_name, export_property["property"])
                             pub_dict = {
                                 "model" : model_name,
                                 "object" :  model_obj,
@@ -164,29 +159,24 @@ class Publications(BaseModel):
                                 "property" : export_property["property"],
                                 "data_type" : TYPE_INFO[export_property["property"]],
                                 "pub" :  helics.helicsFederateRegisterGlobalTypePublication(
-                                    values["federate"],
+                                    self.federate,
                                     name,
                                     TYPE_INFO[export_property["property"]],
                                     ''
                                 )
                             }
                             publications.append(Publication.model_validate(pub_dict))
-        values["publications"] = publications        
-        return v
+        self.publications = publications        
+        return self
 
 class helics_interface:
     n_states = 5
     init_state = 1
     
-    def __init__(self, dss_solver, objects_by_name, objects_by_class, settings: SimulationSettingsModel, system_paths, default=True, logger=None):
-        LoggerTag = getLoggerTag(settings)
+    def __init__(self, dss_solver, objects_by_name, objects_by_class, settings: SimulationSettingsModel, system_paths, default=True):
         self.itr = 0
         self.c_seconds = 0
         self.c_seconds_old = -1
-        if logger:
-            self._logger = logger
-        else:
-            self._logger = logging.getLogger(__name__)
         self._settings = settings
         self._co_convergance_error_tolerance = settings.helics.error_tolerance
         self._co_convergance_max_iterations = self._settings.helics.max_co_iterations
@@ -208,7 +198,7 @@ class helics_interface:
             self._federate,
             helics.helics_iteration_request_iterate_if_needed
         )
-        self._logger.info('Entered HELICS execution mode')
+        logger.info('Entered HELICS execution mode')
 
     def _create_helics_federate(self):
         self.fedinfo = helics.helicsCreateFederateInfo()
@@ -217,7 +207,7 @@ class helics_interface:
         helics.helicsFederateInfoSetCoreInitString(self.fedinfo, f"--federates=1")
         IP = self._settings.helics.broker
         Port = self._settings.helics.broker_port
-        self._logger.info("Connecting to broker @ {}".format(f"{IP}:{Port}" if Port else IP))
+        logger.info("Connecting to broker @ {}".format(f"{IP}:{Port}" if Port else IP))
         if self._settings.helics.broker:
             helics.helicsFederateInfoSetBroker(self.fedinfo, str(self._settings.helics.broker))
         if self._settings.helics.broker_port:
@@ -250,9 +240,9 @@ class helics_interface:
             self.subscriptions = Subscriptions.model_validate(file_data)
         else:
             self.subscriptions = subscriptions
-        self._logger.info(str(self.subscriptions.subscriptions))
+        logger.info(str(self.subscriptions.subscriptions))
         for subscription in self.subscriptions.subscriptions:
-            self._logger.info(f"subscription created: {subscription}")
+            logger.info(f"subscription created: {subscription}")
         return
 
     def updateHelicsSubscriptions(self):
@@ -276,7 +266,7 @@ class helics_interface:
 
                 value = value * subscription.multiplier
                 subscription.object.SetParameter(subscription.property, value) 
-                self._logger.info('Value for "{}.{}" changed to "{}"'.format(
+                logger.info('Value for "{}.{}" changed to "{}"'.format(
                         subscription.model,
                         subscription.property,
                         value
@@ -319,10 +309,10 @@ class helics_interface:
             else:
                 raise FileNotFoundError("No valid export settings found for the current scenario")
             
-            self.publications = Publications.validate(publication_dict)
-            self._logger.info(str(self.publications.publications))
+            self.publications = Publications.model_validate(publication_dict)
+            logger.info(str(self.publications.publications))
             for publication in self.publications.publications:
-                self._logger.info(f"pubscription created: {publication}")
+                logger.info(f"pubscription created: {publication}")
         return
 
     def updateHelicsPublications(self):
@@ -342,7 +332,7 @@ class helics_interface:
                 helics.helicsPublicationPublishInteger(publication.pub, value)
             else:
                 raise ValueError("Unsupported data type forr teh HELICS interface")
-            self._logger.info(f"{publication} - {value}")
+            logger.info(f"{publication} - {value}")
         return
 
     def request_time_increment(self):
@@ -351,7 +341,7 @@ class helics_interface:
         if not self._settings.helics.iterative_mode:
             while self.c_seconds < r_seconds:
                 self.c_seconds = helics.helicsFederateRequestTime(self._federate, r_seconds)
-            self._logger.info('Time requested: {} - time granted: {} '.format(r_seconds, self.c_seconds))
+            logger.info('Time requested: {} - time granted: {} '.format(r_seconds, self.c_seconds))
             return True, self.c_seconds
         else:
 
@@ -361,7 +351,7 @@ class helics_interface:
                 helics.helics_iteration_request_iterate_if_needed
             )
 
-            self._logger.info('Time requested: {} - time granted: {} error: {} it: {}'.format(
+            logger.info('Time requested: {} - time granted: {} error: {} it: {}'.format(
                 r_seconds, self.c_seconds, error, self.itr))
             if error > -1 and self.itr < self._co_convergance_max_iterations - 1:
                 self.itr += 1
@@ -371,8 +361,8 @@ class helics_interface:
                 return True, self.c_seconds
 
     def __del__(self):
-        helics.helicsFederateFinalize(self._federate)
+        helics.helicsFederateDisconnect(self._federate)
         state = helics.helicsFederateGetState(self._federate)
         helics.helicsFederateInfoFree(self.fedinfo)
         helics.helicsFederateFree(self._federate)
-        self._logger.info('HELICS federate for PyDSS destroyed')
+        logger.info('HELICS federate for PyDSS destroyed')

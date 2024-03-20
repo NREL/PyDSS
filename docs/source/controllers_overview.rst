@@ -9,7 +9,6 @@ Controller Documentation
    controllers/FaultController.rst
    controllers/GenController.rst
    controllers/MotorStall.rst
-   controllers/MotorStallBackup.rst
    controllers/MotorStallSimple.rst
    controllers/PvController.rst
    controllers/PvDynamic.rst

@@ -1,8 +1,5 @@
 """Main CLI command for PyDSS."""
 
-import logging
-
-
 import click
 
 from PyDSS.cli.create_project import create_project
@@ -16,9 +13,6 @@ from PyDSS.cli.edit_scenario import edit_scenario
 from PyDSS.cli.run_server import serve
 from PyDSS.cli.reports import reports
 from PyDSS.cli.add_scenario import add_scenario
-
-logger = logging.getLogger(__name__)
-
 
 @click.group()
 def cli():

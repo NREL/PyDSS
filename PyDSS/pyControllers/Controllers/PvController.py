@@ -1,323 +1,311 @@
-from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
-import math
 from collections import namedtuple
+import math
 
+from PyDSS.pyControllers.enumerations import SmartControls, ControlPriority, VoltWattCurtailmentStrategy, VoltageCalcModes
 from PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
-
-
-VVarSettings = namedtuple("VVarSettings", ["VmeaMethod", "uMin", "uMax", "uDbMin", "uDbMax", "kVBase"])
+from PyDSS.pyControllers.models import PvControllerModel
 
 
 class PvController(ControllerAbstract):
     """Implementation of smart control modes of modern inverter systems. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
 
-        :param PvObj: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS 'PVSystem' element
+        :param pv_obj: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS 'PVSystem' element
         :type FaultObj: class:`PyDSS.dssElement.dssElement`
-        :param Settings: A dictionary that defines the settings for the PvController.
-        :type Settings: dict
-        :param dssInstance: An :class:`opendssdirect` instance
-        :type dssInstance: :class:`opendssdirect`
-        :param ElmObjectList: Dictionary of all dssElement, dssBus and dssCircuit objects
-        :type ElmObjectList: dict
-        :param dssSolver: An instance of one of the classed defined in :mod:`PyDSS.SolveMode`.
-        :type dssSolver: :mod:`PyDSS.SolveMode`
-        :raises: AssertionError if 'PvObj' is not a wrapped OpenDSS PVSystem element
+        :param settings: A dictionary that defines the settings for the PvController.
+        :type settings: dict
+        :param dss_instance: An :class:`opendssdirect` instance
+        :type dss_instance: :class:`opendssdirect`
+        :param element_object_list: Dictionary of all dssElement, dssBus and dssCircuit objects
+        :type element_object_list: dict
+        :param dss_solver: An instance of one of the classed defined in :mod:`PyDSS.SolveMode`.
+        :type dss_solver: :mod:`PyDSS.SolveMode`
+        :raises: Assertionerror if 'pv_obj' is not a wrapped OpenDSS PVSystem element
 
     """
 
-    def __init__(self, PvObj, Settings, dssInstance, ElmObjectList, dssSolver):
+    def __init__(self, pv_obj, settings, dss_instance, element_object_list, dss_solver):
         """Constructor method
         """
         
-        super(PvController, self).__init__(PvObj, Settings, dssInstance, ElmObjectList, dssSolver)
-        self.TimeChange = False
-        self.Time = (-1, 0)
-        self.oldQpv = 0
-        self.oldPcalc = 0
+        super(PvController, self).__init__(pv_obj, settings, dss_instance, element_object_list, dss_solver)
+        self.time_change = False
+        self.time = (-1, 0)
+        self.old_q_pv = 0
+        self.old_p_calc = 0
 
-        self.__vDisconnected = False
-        self.__pDisconnected = False
+        self._v_disconnected = False
+        self._p_disconnected = False
 
-        self.__ElmObjectList = ElmObjectList
-        self.ControlDict = {
-            'None'           : lambda: 0,
-            'CPF'            : self.CPFcontrol,
-            'VPF'            : self.VPFcontrol,
-            'VVar'           : self.VVARcontrol,
-            'VW'             : self.VWcontrol,
-            'Cutoff'         : self.CutoffControl,
+        self._element_object_list = element_object_list
+        self.control_dict = {
+            SmartControls.NONE : lambda: 0,
+            SmartControls.CONSTANT_POWER_FACTOR : self.constant_powerfactor_control,
+            SmartControls.VARIABLE_POWER_FACTOR : self.variable_powerfactor_control,
+            SmartControls.VOLT_VAR : self.volt_var_control,
+            SmartControls.VOLT_WATT : self.volt_watt_control,
+            SmartControls.TRIP : self.cutoff_control,
         }
 
-        self.__ControlledElm = PvObj
-        self.ceClass, self.ceName = self.__ControlledElm.GetInfo()
+        self._controlled_element = pv_obj
+        self.ce_class, self.ce_name = self._controlled_element.GetInfo()
 
-        assert (self.ceClass.lower()=='pvsystem'), 'PvController works only with an OpenDSS PVSystem element'
-        self.__Name = 'pyCont_' + self.ceClass + '_' +  self.ceName
-        if '_' in  self.ceName:
-            self.Phase =  self.ceName.split('_')[1]
+        assert (self.ce_class.lower()=='pvsystem'), 'PvController works only with an OpenDSS PVSystem element'
+        self._name = 'pyCont_' + self.ce_class + '_' +  self.ce_name
+        if '_' in  self.ce_name:
+            self.phase =  self.ce_name.split('_')[1]
         else:
-            self.Phase = None
-        self.__ElmObjectList = ElmObjectList
-        self.__ControlledElm = PvObj
-        self.__dssInstance = dssInstance
-        self.__dssSolver = dssSolver
-        self.__Settings = Settings
+            self.phase = None
+        self._element_object_list = element_object_list
+        self._controlled_element = pv_obj
+        self._dss_instance = dss_instance
+        self._dss_solver = dss_solver
+        self._settings = PvControllerModel(**settings)
 
-        self.__BaseKV = float(PvObj.GetParameter('kv'))
-        self.__Srated = float(PvObj.GetParameter('kVA'))
-        self.__Prated = float(PvObj.GetParameter('Pmpp'))
-        self.__Qrated = float(PvObj.GetParameter('kvarMax'))
-        self.__cutin = float(PvObj.SetParameter('%cutin', 0)) / 100
-        self.__cutout = float(PvObj.SetParameter('%cutout', 0)) / 100
-        self.__dampCoef = Settings['DampCoef']
-
-        self.__PFrated = Settings['PFlim']
-        self.Pmppt = 100
+        self._base_kv = float(pv_obj.GetParameter('kv'))
+        self._s_rated = float(pv_obj.GetParameter('kVA'))
+        self._p_rated = float(pv_obj.GetParameter('Pmpp'))
+        self._q_rated = float(pv_obj.GetParameter('kvarMax'))
+        self._cutin = float(pv_obj.SetParameter('%cutin', 0)) / 100
+        self._cutout = float(pv_obj.SetParameter('%cutout', 0)) / 100
+        self._damp_coef = self._settings.damp_coef
+        self._pf_rated = self._settings.pf_lim
+        self.p_mppt = 100
         self.pf = 1
 
         self.update = []
-        self._vvar = None
-        if 'VmeaMethod' not in self.__Settings:
-            self.__Settings['VmeaMethod'] = "max"
+            
         for i in range(1, 4):
-            controller_type = self.__Settings['Control' + str(i)]
-            self.update.append(self.ControlDict[controller_type])
-            if controller_type == "VVar":
-                self._vvar = VVarSettings(
-                    VmeaMethod=self.__Settings["VmeaMethod"].lower(),
-                    uMin=self.__Settings["uMin"],
-                    uMax=self.__Settings["uMax"],
-                    uDbMin=self.__Settings["uDbMin"],
-                    uDbMax=self.__Settings["uDbMax"],
-                    kVBase=self.__ControlledElm.sBus[0].GetVariable('kVBase') * 1000,
-                )
+            controller_type = getattr(self._settings, 'control' + str(i))
+            self.update.append(self.control_dict[controller_type])
 
-        if self.__Settings["Priority"] == "Var":
-            PvObj.SetParameter('WattPriority', "False")
-        else:
-            PvObj.SetParameter('WattPriority', "True")
-        #PvObj.SetParameter('VarFollowInverter', "False")
 
-        #self.QlimPU = self.__Qrated / self.__Srated if self.__Qrated < self.__Srated else 1
+        if self._settings.priority == ControlPriority.VAR:
+            pv_obj.SetParameter('Wattpriority', "False")
+        elif self._settings.priority == ControlPriority.WATT:
+            pv_obj.SetParameter('Wattpriority', "True")
+        #pv_obj.SetParameter('VarFollowInverter', "False")
 
-        self.QlimPU = min(self.__Qrated / self.__Srated, self.__Settings['QlimPU'], 1.0)
+        #self.q_lim_pu = self._q_rated / self._s_rated if self._q_rated < self._s_rated else 1
+
+        self.q_lim_pu = min(self._q_rated / self._s_rated, self._settings.q_lim_pu, 1.0)
         self.itr = 0
         return
 
     def Name(self):
-        return self.__Name
+        return self._name
 
     def ControlledElement(self):
-        return "{}.{}".format(self.ceClass, self.ceName)
+        return "{}.{}".format(self.ce_class, self.ce_name)
 
     def debugInfo(self):
-        return [self.__Settings['Control{}'.format(i+1)] for i in range(3)]
+        return [getattr(self._settings, 'control' + str(i)) for i in range(3)]
 
-    def Update(self, Priority, Time, Update):
-        self.TimeChange = self.Time != (Priority, Time)
-        self.Time = (Priority, Time)
-        Ppv = -sum(self.__ControlledElm.GetVariable('Powers')[::2]) / self.__Prated
+    def Update(self, priority, time, update):
+        self.time_change = self.time != (priority, time)
+        self.time = (priority, time)
+        p_pv = -sum(self._controlled_element.GetVariable('Powers')[::2]) / self._p_rated
 
-        if self.TimeChange:
+        if self.time_change:
             self.itr = 0
         else:
             self.itr += 1
 
-        if self.__pDisconnected:
-            if Ppv < self.__cutin:
+        if self._p_disconnected:
+            if p_pv < self._cutin:
                 return 0
             else:
-                self.__pDisconnected = False
+                self._p_disconnected = False
         else:
-            if Ppv < self.__cutout:
-                self.__pDisconnected = True
-                self.__ControlledElm.SetParameter('pf', 1)
+            if p_pv < self._cutout:
+                self._p_disconnected = True
+                self._controlled_element.SetParameter('pf', 1)
                 return 0
-        return self.update[Priority]()
+        return self.update[priority]()
 
-    def VWcontrol(self):
+    def volt_watt_control(self):
         """Volt / Watt  control implementation
         """
-        uMinC = self.__Settings['uMinC']
-        uMaxC = self.__Settings['uMaxC']
-        Pmin  = self.__Settings['PminVW'] / 100
+        u_min_c = self._settings.u_min_c
+        u_max_c = self._settings.u_max_c
+        p_min  = self._settings.p_min_vw / 100
 
-        uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[::2])
-        Ppv = -sum(self.__ControlledElm.GetVariable('Powers')[::2]) / self.__Srated
-        Qpv = -sum(self.__ControlledElm.GetVariable('Powers')[1::2]) / self.__Srated
+        u_in = max(self._controlled_element.sBus[0].GetVariable('puVmagAngle')[::2])
+        p_pv = -sum(self._controlled_element.GetVariable('Powers')[::2]) / self._s_rated
+        q_pv = -sum(self._controlled_element.GetVariable('Powers')[1::2]) / self._s_rated
 
 
-        #PpvoutPU = Ppv / self.__Prated
+        #p_pvoutPU = p_pv / self._p_rated
 
-        Plim = (1 - Qpv ** 2) ** 0.5 if self.__Settings['VWtype'] == 'Available Power' else 1
-        m = (1 - Pmin) / (uMinC - uMaxC)
-        #m = (Plim - Pmin) / (uMinC - uMaxC)
-        c = ((Pmin * uMinC) - uMaxC) / (uMinC - uMaxC)
+        p_lim = (1 - q_pv ** 2) ** 0.5 if self._settings.vw_type == VoltWattCurtailmentStrategy.AVAILABLE_POWER else 1
+        m = (1 - p_min) / (u_min_c - u_max_c)
+        #m = (p_lim - p_min) / (u_min_c - u_max_c)
+        c = ((p_min * u_min_c) - u_max_c) / (u_min_c - u_max_c)
 
-        if uIn < uMinC:
-            Pcalc = Plim
-        elif uIn < uMaxC and uIn > uMinC:
-            Pcalc = min(m * uIn + c, Plim)
+        if u_in < u_min_c:
+            p_calc = p_lim
+        elif u_in < u_max_c and u_in > u_min_c:
+            p_calc = min(m * u_in + c, p_lim)
         else:
-            Pcalc = Pmin
+            p_calc = p_min
 
-        if Ppv > Pcalc or (Ppv > 0 and self.Pmppt < 100):
+        if p_pv > p_calc or (p_pv > 0 and self.p_mppt < 100):
             # adding heavy ball term to improve convergence
-            dP = (Ppv - Pcalc) * 0.5 / self.__dampCoef + (self.oldPcalc - Ppv) * 0.1 / self.__dampCoef
-            Pcalc = Ppv - dP
-            self.Pmppt = min(self.Pmppt * Pcalc / Ppv, 100)
-            self.__ControlledElm.SetParameter('%Pmpp', self.Pmppt)
-            self.pf = math.cos(math.atan(Qpv / Pcalc))
-            if Qpv < 0:
+            dp = (p_pv - p_calc) * 0.5 / self._damp_coef + (self.old_p_calc - p_pv) * 0.1 / self._damp_coef
+            p_calc = p_pv - dp
+            self.p_mppt = min(self.p_mppt * p_calc / p_pv, 100)
+            self._controlled_element.SetParameter('%Pmpp', self.p_mppt)
+            self.pf = math.cos(math.atan(q_pv / p_calc))
+            if q_pv < 0:
                 self.pf = -self.pf
-            self.__ControlledElm.SetParameter('pf', self.pf)
+            self._controlled_element.SetParameter('pf', self.pf)
         else:
-            dP = 0
+            dp = 0
 
-        Error = abs(dP)
-        self.oldPcalc = Ppv
-        return Error
+        error = abs(dp)
+        self.old_p_calc = p_pv
+        return error
 
-    def CutoffControl(self):
+    def cutoff_control(self):
         """Over voltage trip implementation
         """
-        uIn = max(self.__ControlledElm.sBus[0].GetVariable('puVmagAngle')[::2])
-        uCut = self.__Settings['%UCutoff']
-        if uIn >= uCut:
-            self.__ControlledElm.SetParameter('%Pmpp', 0)
-            self.__ControlledElm.SetParameter('pf', 1)
-            if self.__vDisconnected:
+        u_in = max(self._controlled_element.sBus[0].GetVariable('puVmagAngle')[::2])
+        u_cut = self._settings['%u_cutoff']
+        if u_in >= u_cut:
+            self._controlled_element.SetParameter('%Pmpp', 0)
+            self._controlled_element.SetParameter('pf', 1)
+            if self._v_disconnected:
                 return 0
             else:
-                self.__vDisconnected = True
-                return self.__Prated
+                self._v_disconnected = True
+                return self._p_rated
 
-        if self.TimeChange and self.__vDisconnected and uIn < uCut:
-            self.__ControlledElm.SetParameter('%Pmpp', self.Pmppt)
-            self.__ControlledElm.SetParameter('pf', self.pf)
-            self.__vDisconnected = False
-            return self.__Prated
+        if self.time_change and self._v_disconnected and u_in < u_cut:
+            self._controlled_element.SetParameter('%Pmpp', self.p_mppt)
+            self._controlled_element.SetParameter('pf', self.pf)
+            self._v_disconnected = False
+            return self._p_rated
 
         return 0
 
-    def CPFcontrol(self):
+    def constant_powerfactor_control(self):
         """Constant power factor implementation
         """
-        PFset = self.__Settings['pf']
-        PFact = self.__ControlledElm.GetParameter('pf')
-        Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2])) / self.__Srated
-        Qpv = -sum(self.__ControlledElm.GetVariable('Powers')[1::2]) / self.__Srated
+        pf_set = self._settings.pf
+        pf_act = self._controlled_element.GetParameter('pf')
+        p_pv = abs(sum(self._controlled_element.GetVariable('Powers')[::2])) / self._s_rated
+        q_pv = -sum(self._controlled_element.GetVariable('Powers')[1::2]) / self._s_rated
 
-        if self.__Settings['cpf-priority'] == 'PF':
-           # if self.TimeChange:
-            Plim = PFset * 100
-            self.__ControlledElm.SetParameter('%Pmpp', Plim)
+        if self._settings.priority == ControlPriority.PF:
+           # if self.time_change:
+            p_lim = pf_set * 100
+            self._controlled_element.SetParameter('%Pmpp', p_lim)
            # else:
         else:
-            if self.__Settings['cpf-priority'] == 'Var':
+            if self._settings.priority == ControlPriority.VAR:
                 #add code for var priority here
-                Plim = 0
+                p_lim = 0
             else:
-                Plim = 1
-            if self.TimeChange:
-                self.Pmppt = 100
+                p_lim = 1
+            if self.time_change:
+                self.p_mppt = 100
             else:
-                self.Pmppt = Plim  * self.__Srated
+                self.p_mppt = p_lim  * self._s_rated
 
-        Error = abs(PFset + PFact)
-        self.__ControlledElm.SetParameter('pf', str(-PFset))
-        return Error
+        error = abs(pf_set + pf_act)
+        self._controlled_element.SetParameter('pf', str(-pf_set))
+        return error
 
-    def VPFcontrol(self):
+    def variable_powerfactor_control(self):
         """Variable power factor control implementation
         """
-        Pmin = self.__Settings['Pmin']
-        Pmax = self.__Settings['Pmax']
-        PFmin = self.__Settings['pfMin']
-        PFmax = self.__Settings['pfMax']
-        self.__dssSolver.reSolve()
-        Pcalc = abs(sum(-(float(x)) for x in self.__ControlledElm.GetVariable('Powers')[0::2]) ) / self.__Srated
-        if Pcalc > 0:
-            if Pcalc < Pmin:
-                PF = PFmax
-            elif Pcalc > Pmax:
-                PF = PFmin
+        p_min = self._settings.p_min
+        p_max = self._settings.p_max
+        pf_min = self._settings.pf_min
+        pf_max = self._settings.pf_max
+        self._dss_solver.reSolve()
+        p_calc = abs(sum(-(float(x)) for x in self._controlled_element.GetVariable('Powers')[0::2]) ) / self._s_rated
+        if p_calc > 0:
+            if p_calc < p_min:
+                pf = pf_max
+            elif p_calc > p_max:
+                pf = pf_min
             else:
-                m = (PFmax - PFmin) / (Pmin - Pmax)
-                c = (PFmin * Pmin - PFmax * Pmax) / (Pmin - Pmax)
-                PF = Pcalc * m + c
+                m = (pf_max - pf_min) / (p_min - p_max)
+                c = (pf_min * p_min - pf_max * p_max) / (p_min - p_max)
+                pf = p_calc * m + c
         else:
-            PF = PFmax
+            pf = pf_max
 
-        self.__ControlledElm.SetParameter('irradiance', 1)
-        self.__ControlledElm.SetParameter('pf', str(-PF))
-        self.__dssSolver.reSolve()
+        self._controlled_element.SetParameter('irradiance', 1)
+        self._controlled_element.SetParameter('pf', str(-pf))
+        self._dss_solver.reSolve()
 
         for i in range(10):
-            Error = PF + float(self.__ControlledElm.GetParameter('pf'))
-            if abs(Error) < 1E-4:
+            error = pf + float(self._controlled_element.GetParameter('pf'))
+            if abs(error) < 1E-4:
                 break
-            Pirr = float(self.__ControlledElm.GetParameter('irradiance'))
-            self.__ControlledElm.SetParameter('pf', str(-PF))
-            self.__ControlledElm.SetParameter('irradiance', Pirr * (1 + Error*1.5))
-            self.__dssSolver.reSolve()
+            p_irr = float(self._controlled_element.GetParameter('irradiance'))
+            self._controlled_element.SetParameter('pf', str(-pf))
+            self._controlled_element.SetParameter('irradiance', p_irr * (1 + error*1.5))
+            self._dss_solver.reSolve()
 
         return 0
 
-    def VVARcontrol(self):
+    def volt_var_control(self):
         """Volt / var control implementation
         """
 
-        Umag = self.__ControlledElm.GetVariable('VoltagesMagAng')[::2]
-        Umag = [i for i in Umag if i != 0]
-        vmea = self._vvar.VmeaMethod
-        if vmea == "max":
-            uIn = max(Umag) / self._vvar.kVBase
-        elif vmea.lower() == "mean":
-            uIn = sum(Umag) / (len(Umag) * self._vvar.kVBase)
-        elif vmea == "min":
-            uIn = min(Umag) / self._vvar.kVBase
-        elif vmea == "1":
-            uIn = Umag[0] / self._vvar.kVBase
-        elif vmea == "2":
-            uIn = Umag[1] / self._vvar.kVBase
-        elif vmea == "3":
-            uIn = Umag[3] / self._vvar.kVBase
+        u_mag = self._controlled_element.GetVariable('VoltagesMagAng')[::2]
+        u_mag = [i for i in u_mag if i != 0]
+        kv_base = self._controlled_element.sBus[0].GetVariable('kVBase') * 1000
+
+        if self._settings.voltage_calc_mode == VoltageCalcModes.MAX:
+            u_in = max(u_mag) / kv_base
+        elif self._settings.voltage_calc_mode == VoltageCalcModes.AVG:
+            u_in = sum(u_mag) / (len(u_mag) * kv_base)
+        elif self._settings.voltage_calc_mode == VoltageCalcModes.MIN:
+            u_in = min(u_mag) / kv_base
+        elif self._settings.voltage_calc_mode == VoltageCalcModes.A:
+            u_in = u_mag[0] / kv_base
+        elif self._settings.voltage_calc_mode == VoltageCalcModes.B:
+            u_in = u_mag[1] / kv_base
+        elif self._settings.voltage_calc_mode == VoltageCalcModes.C:
+            u_in = u_mag[3] / kv_base
         else:
-            uIn = max(Umag) / self._vvar.kVBase
+            u_in = max(u_mag) / kv_base
 
-        Ppv = abs(sum(self.__ControlledElm.GetVariable('Powers')[::2]))
-        Pcalc = Ppv / self.__Srated
-        Qpv = -sum(self.__ControlledElm.GetVariable('Powers')[1::2])
-        Qpv = Qpv / self.__Srated
+        p_pv = abs(sum(self._controlled_element.GetVariable('Powers')[::2]))
+        p_calc = p_pv / self._s_rated
+        q_pv = -sum(self._controlled_element.GetVariable('Powers')[1::2])
+        q_pv = q_pv / self._s_rated
 
-        Qcalc = 0
-        if uIn <= self._vvar.uMin:
-            Qcalc = self.QlimPU
-        elif uIn <= self._vvar.uDbMin and uIn > self._vvar.uMin:
-            m1 = self.QlimPU / (self._vvar.uMin - self._vvar.uDbMin)
-            c1 = self.QlimPU * self._vvar.uDbMin / (self._vvar.uDbMin - self._vvar.uMin)
-            Qcalc = uIn * m1 + c1
-        elif uIn <= self._vvar.uDbMax and uIn > self._vvar.uDbMin:
-            Qcalc = 0
-        elif uIn <= self._vvar.uMax and uIn > self._vvar.uDbMax:
-            m2 = self.QlimPU / (self._vvar.uDbMax - self._vvar.uMax)
-            c2 = self.QlimPU * self._vvar.uDbMax / (self._vvar.uMax - self._vvar.uDbMax)
-            Qcalc = uIn * m2 + c2
-        elif uIn >= self._vvar.uMax:
-            Qcalc = -self.QlimPU
+        q_calc = 0
+        if u_in <= self._settings.u_min:
+            q_calc = self.q_lim_pu
+        elif u_in <= self._settings.u_db_min and u_in > self._settings.u_min:
+            m1 = self.q_lim_pu / (self._settings.u_min - self._settings.u_db_min)
+            c1 = self.q_lim_pu * self._settings.u_db_min / (self._settings.u_db_min - self._settings.u_min)
+            q_calc = u_in * m1 + c1
+        elif u_in <= self._settings.u_db_max and u_in > self._settings.u_db_min:
+            q_calc = 0
+        elif u_in <= self._settings.u_max and u_in > self._settings.u_db_max:
+            m2 = self.q_lim_pu / (self._settings.u_db_max - self._settings.u_max)
+            c2 = self.q_lim_pu * self._settings.u_db_max / (self._settings.u_max - self._settings.u_db_max)
+            q_calc = u_in * m2 + c2
+        elif u_in >= self._settings.u_max:
+            q_calc = -self.q_lim_pu
 
-        Qcalc = Qpv + (Qcalc - Qpv) * 0.5 / self.__dampCoef + (Qpv - self.oldQpv) * 0.1 / self.__dampCoef
+        q_calc = q_pv + (q_calc - q_pv) * 0.5 / self._damp_coef + (q_pv - self.old_q_pv) * 0.1 / self._damp_coef
 
-        if Pcalc > 0:
-            if self.__ControlledElm.NumPhases == 2:
-                self.__ControlledElm.SetParameter('kvar', Qcalc * self.__Srated * 1.3905768334328491495461135972974)
+        if p_calc > 0:
+            if self._controlled_element.NumPhases == 2:
+                self._controlled_element.SetParameter('kvar', q_calc * self._s_rated * 1.3905768334328491495461135972974)
             else:
-                self.__ControlledElm.SetParameter('kvar', Qcalc * self.__Srated)
+                self._controlled_element.SetParameter('kvar', q_calc * self._s_rated)
         else:
             pass
 
-        Error = abs(Qpv- self.oldQpv)
-        self.oldQpv = Qpv
+        error = abs(q_pv- self.old_q_pv)
+        self.old_q_pv = q_pv
 
-        return Error
+        return error

@@ -1,15 +1,13 @@
 """Provides access to PyDSS result data."""
 from collections import defaultdict
-from datetime import datetime
 import json
-import logging
 import os
 import re
-from pathlib import Path
 
 import h5py
 import numpy as np
 import pandas as pd
+from loguru import logger
 
 from PyDSS.common import  DatasetPropertyType
 from PyDSS.dataset_buffer import DatasetBuffer
@@ -22,10 +20,6 @@ from PyDSS.utils.utils import dump_data, load_data, make_json_serializable, \
     make_timestamps
 from PyDSS.value_storage import ValueStorageBase, get_dataset_property_type, \
     get_time_step_path
-
-
-logger = logging.getLogger(__name__)
-
 
 class PyDssResults:
     """Interface to perform analysis on PyDSS output data."""

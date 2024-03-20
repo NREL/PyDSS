@@ -1,13 +1,13 @@
 """Creates reports on data exported by PyDSS"""
 
 from datetime import timedelta
-import abc
-import copy
-import enum
-import logging
-import math
-import os
 import time
+import copy
+import math
+import abc
+import os
+
+from loguru import logger
 
 from PyDSS.common import DataConversion, ReportGranularity
 from PyDSS.exceptions import InvalidConfiguration
@@ -18,9 +18,6 @@ from PyDSS.utils.utils import dump_data, make_json_serializable
 
 
 REPORTS_DIR = "Reports"
-
-logger = logging.getLogger(__name__)
-
 
 class Reports:
     """Generate reports from a PyDSS project"""
@@ -202,7 +199,7 @@ class ReportBase(abc.ABC):
         all_reports = Reports.get_all_reports()
         report_settings = _get_report_settings(settings, name)
         inputs = copy.deepcopy(getattr(all_reports[name], "DEFAULTS"))
-        for key in type(report_settings).__fields__:
+        for key in type(report_settings).model_fields:
             inputs[key] = getattr(report_settings, key)
 
         return inputs

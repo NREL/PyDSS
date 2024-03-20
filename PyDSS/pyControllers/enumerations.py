@@ -7,9 +7,21 @@ class VoltageCalcModes(str, Enum):
     **MAX** - *The the maximum voltage from the available phases as the contoller input*
     
     **AVG** - *The the average voltage from the available phases as the contoller input*
+    
+    **MIN** - *The the minimum voltage from the available phases as the contoller input*
+    
+    **A** - *The voltage from phase A as the contoller input*
+    
+    **B** - *The voltage from phase B as the contoller input*
+    
+    **C** - *The voltage from phase C as the contoller input*
     """
     MAX = "Max"
     AVG = "Avg"
+    MIN = "Min"
+    A = "1"
+    B = "2"
+    C = "3"
 
 class PvStandard(str, Enum):
     """
@@ -155,3 +167,58 @@ class CategoryIII(float, Enum):
     UV1_CT_SEC = 21.0
     UV2_PU = 0.5
     UV2_CT_SEC = 2.0
+
+class SmartControls(str, Enum):
+    """
+    Supported smart control algorithms
+    
+    **NONE** - *No contol algorithm*
+     
+    **CONSTANT_POWER_FACTOR** - *Constant power factor implmentation*
+    
+    **VARIABLE_POWER_FACTOR** - *Variable power factor implmentation* 
+    
+    **VOLT_VAR** - *Volt / Var algorithm implementation*
+    
+    **VOLT_WATT** - *Volt / Watt algorithm implementation* 
+    
+    **TRIP** - *Over voltage trip implementation*
+    
+    """
+    
+    NONE = 'None'           
+    CONSTANT_POWER_FACTOR ='cpf'            
+    VARIABLE_POWER_FACTOR ='vpf'            
+    VOLT_VAR ='VVar'           
+    VOLT_WATT ='vwatt'             
+    TRIP = 'trip'
+    
+class ControlPriority(str, Enum):
+    """
+    Variable to prooritize at inverter capability limit
+    
+    **VAR** - *Var priority*
+     
+    **WATT** - *Watt priority*
+    
+    **PF** - *Powerfactor priority*
+        
+    """
+    
+    VAR = 'Var'           
+    WATT ='Watt' 
+    PF = "PF"           
+
+
+class VoltWattCurtailmentStrategy(str, Enum):
+    """
+    Curtailment strategy for volt / watt algorithm
+    
+    **AVAILABLE_POWER** - *Curtailment is based on available power of the inverter*
+     
+    **RAETED_POWER** - *Curtailment is based on rated power of the inverter*
+        
+    """
+    
+    AVAILABLE_POWER = 'Available Power'           
+    RAETED_POWER ='Rated Power' 

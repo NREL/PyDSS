@@ -1,12 +1,9 @@
 """Utility functions for timing measurements."""
 
 import functools
-import logging
 import time
 
-
-logger = logging.getLogger(__name__)
-
+from loguru import logger
 
 def timed_info(func):
     """Decorator to measure and logger.info a function's execution time."""
@@ -88,7 +85,7 @@ class TimerStats:
         text = "total={:.3f}s avg={:.3f}ms max={:.3f}ms min={:.3f}ms count={}".format(
             x["total"], x["avg"] * 1000, x["max"] * 1000, x["min"] * 1000, x["count"]
         )
-        logger.info("TimerStats summary: %s: %s", self._name, text)
+        logger.info(f"TimerStats summary: {self._name}: {text}")
 
     def update(self, duration):
         """Update the stats with a new timing."""

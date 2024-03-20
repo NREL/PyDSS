@@ -28,7 +28,6 @@
    :recursive:
 
    PyDSS.Extensions
-   PyDSS.NetworkModifier
    PyDSS.ProfileManager
    PyDSS.ResultData
    PyDSS.SolveMode
@@ -53,7 +52,6 @@
    PyDSS.export_list_reader
    PyDSS.get_snapshot_timepoints
    PyDSS.helics_interface
-   PyDSS.loggers
    PyDSS.metrics
    PyDSS.modes
    PyDSS.naerm
@@ -61,9 +59,7 @@
    PyDSS.pyContrReader
    PyDSS.pyControllers
    PyDSS.pyDSS
-   PyDSS.pyLogger
    PyDSS.pyPlotReader
-   PyDSS.pyPlots
    PyDSS.pyPostprocessor
    PyDSS.pyResults
    PyDSS.pydss_fs_interface

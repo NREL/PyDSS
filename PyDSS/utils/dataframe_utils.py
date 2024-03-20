@@ -1,15 +1,12 @@
 
-import gzip
-import logging
-import os
 import shutil
+import gzip
+import os
 
+from loguru import logger
 import pandas as pd
 
 from PyDSS.exceptions import InvalidParameter
-
-
-logger = logging.getLogger(__name__)
 
 
 def read_dataframe(filename, index_col=None, columns=None, parse_dates=False,
@@ -130,7 +127,10 @@ def write_dataframe(df, file_path, compress=False, keep_original=False,
             complevel = 9
         else:
             complevel = 0
-        df.to_hdf(file_path, "data", mode="w", complevel=complevel, **kwargs)
+        kwargs["complevel"] =  complevel
+        kwargs["mode"]="w"
+        kwargs["key"]= "data"
+        df.to_hdf(file_path, **kwargs)
     elif ext == ".json":
         df.to_json(file_path, **kwargs)
     else:

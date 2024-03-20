@@ -1,15 +1,13 @@
 
-import abc
 import copy
-import logging
+import abc
 
+from loguru import logger
 import numpy as np
 
-from PyDSS.common import StoreValuesType
 from PyDSS.utils.simulation_utils import CircularBufferHelper
 from PyDSS.value_storage import ValueContainer
-
-logger = logging.getLogger(__name__)
+from PyDSS.common import StoreValuesType
 
 
 class StorageFilterBase(abc.ABC):

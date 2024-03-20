@@ -283,12 +283,8 @@
                                         "description": "comma separated list of PyDSS scenarios to be created",
                                         "example": "base_case,pv_scenario",
                                         "type": "string"
-                                    },
-                                    "visualization_types": {
-                                        "description": "comma separated list of PyDSS plot names",
-                                        "example": "Histogram,TimeSeries",
-                                        "type": "string"
                                     }
+                                  
                                 },
                                 "type": "object"
                             }

@@ -1,18 +1,18 @@
-from PyDSS.api.src.web.handler import Handler
-import PyDSS.api.schema as schema
-from aiohttp_swagger3 import *
-from aiohttp import web
 import threading
 import requests
-import logging
-import PyDSS
 import json
 import time
 import os
 import io
 import re
 
-logger = logging.getLogger(__name__)
+from aiohttp_swagger3 import *
+from loguru import logger
+from aiohttp import web
+
+from PyDSS.api.src.web.handler import Handler
+import PyDSS.api.schema as schema
+import PyDSS
 
 def read(*names, **kwargs):
     with io.open(

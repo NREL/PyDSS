@@ -1,14 +1,10 @@
 
-import logging
 import os
 
-from PyDSS.exceptions import InvalidParameter
+from loguru import logger
+
 from PyDSS.reports.reports import ReportBase
 from PyDSS.utils.utils import dump_data
-
-
-logger = logging.getLogger(__name__)
-
 
 class CapacitorStateChangeReport(ReportBase):
     """Reports the state changes per Capacitor.

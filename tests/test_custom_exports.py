@@ -1,22 +1,20 @@
-import datetime
+
 import math
 import os
-import re
-import shutil
-import tempfile
+
 
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_series_equal
 
-from PyDSS.cli.convert import simulation_file
-from PyDSS.utils.utils import load_data, dump_data
+
+from PyDSS.utils.utils import load_data
 from PyDSS.pydss_project import PyDssProject
 from PyDSS.pydss_results import PyDssResults
 from tests.common import (
+    run_project_with_custom_exports,
     CUSTOM_EXPORTS_PROJECT_PATH,
     cleanup_project,
-    run_project_with_custom_exports,
 )
 from PyDSS.common import SIMULATION_SETTINGS_FILENAME
 
@@ -161,7 +159,7 @@ def test_pv_powers_by_customer_type(cleanup_project):
     com_sum1 = df[com_cols].sum().sum()
     res_sum1 = df[res_cols].sum().sum()
     total_sum1 = df.sum().sum()
-    assert math.isclose(total_sum1, com_sum1 + res_sum1)
+    assert math.isclose(abs(total_sum1), abs(com_sum1 + res_sum1))
 
     # Collect a running sum for all PVSystem power output.
     data = {

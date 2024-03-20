@@ -1,8 +1,7 @@
-
-import logging
-import os
 from datetime import timedelta
+import os
 
+from loguru import logger
 
 from PyDSS.exceptions import InvalidConfiguration
 from PyDSS.reports.reports import ReportBase
@@ -12,10 +11,6 @@ from PyDSS.thermal_metrics import (
     ThermalMetricsModel,
 )
 from PyDSS.utils.utils import load_data
-
-
-logger = logging.getLogger(__name__)
-
 
 class ThermalMetrics(ReportBase):
     """Reports thermal metrics.

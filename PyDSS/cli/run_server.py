@@ -2,12 +2,11 @@
 CLI to run the PyDSS server
 """
 
-from PyDSS.api.server import pydss_server
-#from aiohttp import web
-import logging
+from loguru import logger
+from aiohttp import web
 import click
 
-logger = logging.getLogger(__name__)
+from PyDSS.api.server import pydss_server
 
 @click.option(
     "-p", "--port",
@@ -20,6 +19,6 @@ logger = logging.getLogger(__name__)
 def serve(ip="127.0.0.1",port=9090):
     """Run a PyDSS RESTful API server."""
     FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
-    logging.basicConfig(level=logging.INFO, format=FORMAT)
+    logger.level("DEBUG")
     pydss = pydss_server(ip, port)
     web.run_app(pydss.app, port=port)

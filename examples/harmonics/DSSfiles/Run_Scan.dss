@@ -1,6 +1,6 @@
 // CHANGE THIS PATH TO MATCH WHERE YOU HAVE THE 123 BUS IEEE TEST FEEEDER
 
-Redirect "C:\Program Files\OpenDSS\IEEETestCases\123Bus\IEEE123Master.dss"
+Redirect "IEEE123Master.dss"
 
 /*
    NOTE: By using Redirect instead of Compile, OpenDSS returns to home directory
@@ -12,7 +12,7 @@ Redirect "C:\Program Files\OpenDSS\IEEETestCases\123Bus\IEEE123Master.dss"
 ! Solve executes the solution for the present solution mode, which is "snapshot".
 
 solve
-Buscoords Buscoords.dat   ! load in bus coordinates (must be local file)
+Buscoords BusCoords.dat   ! load in bus coordinates (must be local file)
 
 Spectrum.DefaultLoad.NumHarm=1   ! This effectively gets rid of LOAD harmonics
 

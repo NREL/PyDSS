@@ -1,16 +1,12 @@
 from typing import Dict, List, Union, Annotated
 from datetime import datetime, timedelta
 from pathlib import Path
-import logging
 
+from loguru import logger
 from pydantic import BaseModel, Field
 from pydantic import ConfigDict
 
 from PyDSS.utils.simulation_utils import CircularBufferHelper
-
-
-logger = logging.getLogger(__name__)
-
 
 class VoltageMetricsBaseModel(BaseModel):
     model_config = ConfigDict(title="VoltageMetricsBaseModel", str_strip_whitespace=True, validate_assignment=True, validate_default=True, extra="forbid", use_enum_values=False)

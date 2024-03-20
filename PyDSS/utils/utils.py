@@ -1,19 +1,18 @@
 """Utility functions for the jade package."""
 
 from datetime import datetime, timedelta
+from pathlib import Path
+import shutil
 import enum
 import gzip
 import json
-import logging
 import os
 import re
-import shutil
 import sys
-from pathlib import Path
 
-import numpy as np
-import opendssdirect as dss
+from loguru import logger
 import pandas as pd
+import numpy as np
 import toml
 
 from PyDSS.exceptions import InvalidParameter
@@ -21,9 +20,6 @@ from PyDSS.exceptions import InvalidParameter
 
 MAX_PATH_LENGTH = 255
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S.%f' # '%Y-%m-%d %H:%M:%S.%f', "%m/%d/%Y %H:%M:%S"
-
-logger = logging.getLogger(__name__)
-
 
 class TomlEnumEncoder(toml.TomlEncoder):
     """Encodes Enum values instead of Enum objects."""
@@ -67,7 +63,7 @@ def dump_data(data, filename, **kwargs):
     with open(filename, "w") as f_out:
         mod.dump(data, f_out, **kwargs)
 
-    logger.debug("Dumped data to %s", filename)
+    logger.debug(f"Dumped data to {filename}", )
 
 
 def load_data(filename, **kwargs):
@@ -87,7 +83,7 @@ def load_data(filename, **kwargs):
     with open(filename) as f_in:
         data = mod.load(f_in)
 
-    logger.debug("Loaded data from %s", filename)
+    logger.debug(f"Loaded data from {filename}", )
     return data
 
 

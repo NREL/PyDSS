@@ -1,7 +1,7 @@
-import os
 from datetime import timedelta
-import logging
+import os
 
+from loguru import logger
 import numpy as np
 
 from PyDSS.common import MinMax, NODE_NAMES_BY_TYPE_FILENAME
@@ -19,10 +19,6 @@ from PyDSS.node_voltage_metrics import (
     VoltageMetric5,
     VoltageMetric6,
 )
-
-
-logger = logging.getLogger(__name__)
-
 
 class VoltageMetrics(ReportBase):
     """Reports voltage metrics.

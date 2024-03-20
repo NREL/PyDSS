@@ -1,9 +1,12 @@
-import enum
-import logging
-import os
-import re
+
+
 from collections import defaultdict
 from pathlib import Path
+import os
+import re
+
+from loguru import logger
+
 
 from PyDSS.common import DataConversion, LimitsFilter, StoreValuesType, \
     DatasetPropertyType, MinMax
@@ -28,8 +31,6 @@ CUSTOM_METRICS = {
     "RegControls.TrackTapNumberChanges": TrackRegControlTapNumberChanges,
     #"Transformers.LoadingPercent": TransformerLoadingPercent,
 }
-
-logger = logging.getLogger(__name__)
 
 
 class ExportListProperty:

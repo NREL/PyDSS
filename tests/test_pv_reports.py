@@ -1,29 +1,33 @@
 
-import datetime
-import logging
+
+from pathlib import Path
 import math
 import os
-import re
-import shutil
-import tempfile
-from pathlib import Path
 
 import numpy as np
-import pandas as pd
 
-from PyDSS.common import SIMULATION_SETTINGS_FILENAME
-from PyDSS.node_voltage_metrics import SimulationVoltageMetricsModel, compare_voltage_metrics
-from PyDSS.pydss_project import PyDssProject
-from PyDSS.pydss_results import PyDssResults
+from tests.common import PV_REPORTS_PROJECT_PATH, PV_REPORTS_PROJECT_STORE_ALL_PATH, cleanup_project
 from PyDSS.reports.feeder_losses import SimulationFeederLossesMetricsModel, compare_feeder_losses
-from PyDSS.reports.reports import ReportGranularity
+from PyDSS.node_voltage_metrics import SimulationVoltageMetricsModel, compare_voltage_metrics
 from PyDSS.thermal_metrics import SimulationThermalMetricsModel, compare_thermal_metrics
 from PyDSS.utils.dataframe_utils import read_dataframe
+from PyDSS.common import SIMULATION_SETTINGS_FILENAME
+from PyDSS.reports.reports import ReportGranularity
 from PyDSS.utils.utils import load_data, dump_data
-from tests.common import PV_REPORTS_PROJECT_PATH, PV_REPORTS_PROJECT_STORE_ALL_PATH, cleanup_project
+from PyDSS.pydss_project import PyDssProject
+from PyDSS.pydss_results import PyDssResults
 
+import traceback
+import warnings
+import sys
 
-logger = logging.getLogger(__name__)
+def warn_with_traceback(message, category, filename, lineno, file=None, line=None):
+
+    log = file if hasattr(file,'write') else sys.stderr
+    traceback.print_stack(file=log)
+    log.write(warnings.formatwarning(message, category, filename, lineno, line))
+
+warnings.showwarning = warn_with_traceback
 
 BASE_FILENAME = os.path.join(PV_REPORTS_PROJECT_PATH, SIMULATION_SETTINGS_FILENAME)
 TEST_SIM_BASE_NAME = "test_sim.toml"

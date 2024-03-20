@@ -2,22 +2,16 @@
 CLI to run a PyDSS project
 """
 
-import ast
-import logging
-import os
-import sys
 from pathlib import Path
+import ast
+import sys
 
+from loguru import logger
 import click
 
-from PyDSS.pydss_project import PyDssProject
-from PyDSS.loggers import setup_logging
 from PyDSS.utils.utils import get_cli_string, make_human_readable_size
 from PyDSS.common import SIMULATION_SETTINGS_FILENAME
-
-
-logger = logging.getLogger(__name__)
-
+from PyDSS.pydss_project import PyDssProject
 
 @click.argument("project-path", type=click.Path(exists=True))
 @click.option(
@@ -70,16 +64,16 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
     settings = PyDssProject.load_simulation_settings(project_path, simulations_file)
     if verbose:
         # Override the config file.
-        settings.logging.logging_level = logging.DEBUG
+        settings.logging.logging_level = "DEBUG"
 
     filename = None
-    console_level = logging.INFO
-    file_level = logging.INFO
+    console_level = "INFO" 
+    file_level = "INFO"
     if not settings.logging.enable_console:
-        console_level = logging.ERROR
+        console_level = "ERROR"
     if verbose:
-        console_level = logging.DEBUG
-        file_level = logging.DEBUG
+        console_level = "DEBUG"
+        file_level = "DEBUG"
     if settings.logging.enable_file:
         logs_path = project_path / "Logs"
         if not logs_path.exists():
@@ -87,13 +81,11 @@ def run(project_path, options=None, tar_project=False, zip_project=False, verbos
             sys.exit(1)
         filename = logs_path / "pydss.log"
 
-    setup_logging(
-        "PyDSS",
-        filename=filename,
-        console_level=console_level,
-        file_level=file_level,
-    )
-    logger.info("CLI: [%s]", get_cli_string())
+    logger.level(console_level)
+    if filename:
+        logger.add(filename)
+
+    logger.info(f"CLI: [{get_cli_string()}]",)
 
     if options is not None:
         options = ast.literal_eval(options)

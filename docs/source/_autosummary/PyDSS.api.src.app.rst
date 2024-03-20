@@ -1,4 +1,4 @@
-﻿PyDSS.api.src.app
+PyDSS.api.src.app
 =================
 
 .. automodule:: PyDSS.api.src.app
