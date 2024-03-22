@@ -41,7 +41,7 @@ Here is an example conda command:
 
 .. code-block:: bash
 
-    $ conda create -n pydss python=3.9
+    $ conda create -n pydss python=3.11
 
 Install shapely with conda. pip, particularly on Windows, often fails to install its dependent
 libraries.
