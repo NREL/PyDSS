@@ -1,5 +1,5 @@
 Export/*
-ProjectFiles/*/PyDSS Settings/*
+ProjectFiles/*/pydss Settings/*
 __pycache__/*
 */__pycache__/*
 __pycache__
@@ -15,4 +15,4 @@ store.h5
 simulation-run.toml
 *.log
 *.bak
-docs/source/PyDSS/*
+docs/source/pydss/*

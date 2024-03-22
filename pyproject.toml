@@ -64,7 +64,7 @@ pydss = "pydss.cli.pydss:cli"
 Homepage = "http://www.github.com/nrel/pydss"
 
 [tool.hatch.version]
-path = "/pydss/__init__.py"
+path = "pydss/__init__.py"
 
 [tool.hatch.build.targets.sdist]
 include = [
