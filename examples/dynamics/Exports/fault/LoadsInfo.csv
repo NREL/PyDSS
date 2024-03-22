@@ -1,9 +1,0 @@
-,phases,bus1,kV,kW,pf,model,yearly,daily,duty,growth,conn,kvar,Rneut,Xneut,status,class,Vminpu,Vmaxpu,Vminnorm,Vminemerg,xfkVA,allocationfactor,kVA,%mean,%stddev,CVRwatts,CVRvars,kwh,kwhdays,Cfactor,CVRcurve,NumCust,ZIPV,%SeriesRL,RelWeight,Vlowpu,puXharm,XRharm,spectrum,basefreq,enabled,like
-Load.ldb0,3,b0,12.47,0.1,1,2,,,,,wye,0,-1,0,Variable,1,0.95,1.05,0,0,0,0.5,0.1,50,10,1,2,0,30,4,,1,['0 0 0 0 0 0 0'],50,1,0.5,0,6,defaultload,60,Yes,
-Load.ldb1,3,b1,12.47,0.1,1,2,,,,,wye,0,-1,0,Variable,1,0.95,1.05,0,0,0,0.5,0.1,50,10,1,2,0,30,4,,1,['0 0 0 0 0 0 0'],50,1,0.5,0,6,defaultload,60,Yes,
-Load.ldb2,3,b2,12.47,0.1,1,2,,,,,wye,0,-1,0,Variable,1,0.95,1.05,0,0,0,0.5,0.1,50,10,1,2,0,30,4,,1,['0 0 0 0 0 0 0'],50,1,0.5,0,6,defaultload,60,Yes,
-Load.ldb3,3,b3,12.47,0.1,1,2,,,,,wye,0,-1,0,Variable,1,0.95,1.05,0,0,0,0.5,0.1,50,10,1,2,0,30,4,,1,['0 0 0 0 0 0 0'],50,1,0.5,0,6,defaultload,60,Yes,
-Load.ldb4,3,b4,12.47,0.1,1,2,,,,,wye,0,-1,0,Variable,1,0.95,1.05,0,0,0,0.5,0.1,50,10,1,2,0,30,4,,1,['0 0 0 0 0 0 0'],50,1,0.5,0,6,defaultload,60,Yes,
-Load.ldb5,3,b5,12.47,0.1,1,2,,,,,wye,0,-1,0,Variable,1,0.95,1.05,0,0,0,0.5,0.1,50,10,1,2,0,30,4,,1,['0 0 0 0 0 0 0'],50,1,0.5,0,6,defaultload,60,Yes,
-Load.ldb6,3,b6,12.47,0.1,1,2,,,,,wye,0,-1,0,Variable,1,0.95,1.05,0,0,0,0.5,0.1,50,10,1,2,0,30,4,,1,['0 0 0 0 0 0 0'],50,1,0.5,0,6,defaultload,60,Yes,
-Load.ldb7,3,b7,12.47,0.1,1,2,,,,,wye,0,-1,0,Variable,1,0.95,1.05,0,0,0,0.5,0.1,50,10,1,2,0,30,4,,1,['0 0 0 0 0 0 0'],50,1,0.5,0,6,defaultload,60,Yes,

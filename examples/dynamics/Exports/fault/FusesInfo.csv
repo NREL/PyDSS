@@ -1,3 +1,0 @@
-,MonitoredObj,MonitoredTerm,SwitchedObj,SwitchedTerm,FuseCurve,RatedCurrent,Delay,Action,Normal,State,basefreq,enabled,like
-Fuse.f1,Line.l6,1,Line.l6,1,klink,65,0,,"['closed', 'closed', 'closed']","['closed', 'closed', 'closed']",60,Yes,
-Fuse.f2,Transformer.tg,1,Transformer.tg,1,tlink,65,0,,"['closed', 'closed', 'closed']","['closed', 'closed', 'closed']",60,Yes,
