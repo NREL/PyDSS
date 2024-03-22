@@ -1,7 +1,7 @@
 ###############
 HDF Data Format
 ###############
-This page describes the format PyDSS uses to export data in an HDF file. PyDSS
+This page describes the format pydss uses to export data in an HDF file. PyDSS
 contains code to convert the raw data to pandas.DataFrame objects or Python
 dictionaries, so normal users should not need to write their own tools to
 interpret the data.
@@ -13,7 +13,7 @@ They are also described in :ref:`tutorial:Analyze results`.
 ******
 Layout
 ******
-Each PyDSS project creates ``<project-path>/store.h5`` to store exported data
+Each pydss project creates ``<project-path>/store.h5`` to store exported data
 for all scenarios.
 
 Each scenario's data is stored under ``Exports/<scenario-name>``.
@@ -45,7 +45,7 @@ the data then a suffix is added to the property name.
 
 Common Metadata
 ===============
-PyDSS stores metadata that is common to all datasets in the root of the
+Pydss stores metadata that is common to all datasets in the root of the
 scenario group. For example, the ``Timestamp`` dataset contains the simulation
 timestamps (seconds since epoch) for all datasets that store values at every
 time point. ::
@@ -56,7 +56,7 @@ time point. ::
 
 Dataset Metadata
 ================
-PyDSS stores metadata for each dataset in HDF attributes as well as other
+Pydss stores metadata for each dataset in HDF attributes as well as other
 datasets. This metadata describes the contents of datasets.
 
 Attributes per dataset

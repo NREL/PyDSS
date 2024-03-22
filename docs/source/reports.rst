@@ -1,7 +1,7 @@
 #######
 Reports
 #######
-This page describes how to generate PyDSS reports from exported simulation data.
+This page describes how to generate pydss reports from exported simulation data.
 
 The following reports can be enabled in the project's ``simulation.toml``
 ``Reports`` section.
@@ -24,7 +24,7 @@ Global settings
 Format
 ======
 Used to control export format for dataframes: ``.csv`` or ``.h5``. In either
-case you can use PyDSS to convert the file back to a dataframe.
+case you can use pydss to convert the file back to a dataframe.
 
 .. code-block:: python
 
@@ -60,7 +60,7 @@ consumes 8 bytes.
 *****************
 Export Parameters
 *****************
-Each report configures its own export parameters. PyDSS will serialize the
+Each report configures its own export parameters. pydss will serialize the
 export parameters used in a simulation to
 ``<project-path>/Exports/<scenario-name>/ExportsActual.toml``.
 
@@ -76,7 +76,7 @@ Adding New Reports
 ******************
 Here's how to create a new report in pydss.
 
-#. Create a new class in a Python file in ``PyDSS/reports``. The class must
+#. Create a new class in a Python file in ``pydss/reports``. The class must
    inherit from ``ReportBase``.
 #. Implement the required methods:
 

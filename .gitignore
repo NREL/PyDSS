@@ -1,5 +1,6 @@
 Export/*
-ProjectFiles/*/pydss Settings/*
+ProjectFiles/*/pydss 
+Settings/*
 __pycache__/*
 */__pycache__/*
 __pycache__

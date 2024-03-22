@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "NREL-pydss"
-dynamic = ["version"]
+version = "3.1.2"
 description = "A high-level python interface for OpenDSS"
 readme = "README.md"
 license = "BSD-3-Clause"
@@ -63,13 +63,11 @@ pydss = "pydss.cli.pydss:cli"
 [project.urls]
 Homepage = "http://www.github.com/nrel/pydss"
 
-[tool.hatch.version]
-path = "pydss/__init__.py"
 
 [tool.hatch.build.targets.sdist]
 include = [
-    "pydss",
+    "src/pydss",
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["pydss"]
+packages = ["src/pydss"]

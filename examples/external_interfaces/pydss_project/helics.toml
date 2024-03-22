@@ -6,7 +6,7 @@
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
 "Control mode" = "Static"
-"Disable PyDSS controllers" = false
+"Disable pydss controllers" = false
 "Simulation Type" = "QSTS"
 "Project Path" = "./examples/external_interfaces"
 "Active Project" = "pydss_project"
@@ -55,7 +55,7 @@ post_process_infos = []
 "Max co-iterations" = 15
 "Broker" = "127.0.0.1"
 "Broker port" = 23404
-"Federate name" = "PyDSS"
+"Federate name" = "pydss"
 "Time delta" = 0.01
 "Core type" = "zmq"
 Uninterruptible = true

@@ -6,7 +6,7 @@ The HELICS interface
 
 Hierarchical Engine for Large-scale Infrastructure Co-Simulation (HELICS) provides an open-source, general-purpose, modular, highly-scalable co-simulation framework that runs cross-platform (Linux, Windows, and Mac OS X). It is not a modeling tool by itself, but rather an integration tool that enables multiple existing simulation tools (and/or multiple instances of the same tool), known as "federates," to exchange data during runtime and stay synchronized in time such that together they act as one large simulation, or "federation". This enables bringing together established (or new/emerging) off-the-shelf tools from multiple domains to form a complex software-simulation without having to change the individual tools (known as "black-box" modeling). All that is required is for someone to write a thin interface layer for each tool that interfaces with existing simulation time control and data value updating, such as through an existing scripting interface. Moreover, the HELICS community has a growing ecosystem of established interfaces for popular tools, such that many users can simply mix and match existing tools with their own data and run complex co-simulations with minimal coding. More information on HELICS can be found here (https://github.com/GMLC-TDC/HELICS).
 
-The HELICS interface for PyDSS is built to reduce complexity of setting up large scale cosimulation scenarios. The user is required to publications and suscriptions.
+The HELICS interface for pydss is built to reduce complexity of setting up large scale cosimulation scenarios. The user is required to publications and suscriptions.
 
 A minimal HELICS example is availble in the ``examples`` folder (top directory of the repository). Enabling the HELICS interface requires user to define additional parammeters in the scenario TOML file.
 
@@ -28,7 +28,7 @@ Following attributes can be configured for the HELICS interface.
 Default values for additional simulation settings are as follows. For more information on how to appropriately set these values please look at HELICS documentaion 
 
 Once the HELICS co-simulation interface has been enabled, the next step is to set up ``publications`` and ``subscriptions`` to set up information exchange with external federates. 
-PyDSS enables zero code setup of these modules. Each scenario can have its publlcation and subscription defination and is managed by two file in the ``ExportLists`` directory for a given scenario.
+Pydss enables zero code setup of these modules. Each scenario can have its publlcation and subscription defination and is managed by two file in the ``ExportLists`` directory for a given scenario.
 
 publication tags (names) follow the following convertion
 
@@ -124,17 +124,17 @@ Within the example folder the project named external interfaces provides an exam
 The socket interface
 ^^^^^^^^^^^^^^^^^^^^
 
-The socket interface is implemented as a PyDSS pyController. Implmentation details and expected inputs are detailed here: :py:class:`pydss.pyControllers.Controllers.SocketController.SocketController`. 
+The socket interface is implemented as a pydss pyController. Implmentation details and expected inputs are detailed here: :py:class:`pydss.pyControllers.Controllers.SocketController.SocketController`. 
 The socket controller is well suited in situatons where an existing controller needs to be integrated to the simulation environment. 
 An exmaple of this would be integrating a controller for thermostatically controlled loads implemeted in say Modelica or Python. 
 This allows user to integrate controller, without making changes to the implemented controller. With a little effort, 
 the same controller can be implemented as a pyController object in pydss.
 
-The socket interface in PyDSS also come in handy, when setting up a hardware-in-loop type simulations and integrating the simulation 
+The socket interface in pydss also come in handy, when setting up a hardware-in-loop type simulations and integrating the simulation 
 engine with actual hardware. Interfaces similar to raw socket implementations have been developed (to be  open-sourced at a later time) 
-for Modbus-TCP and DNP3 communcations have developed and tested with PyDSS with sucess. A minimal socket interfacing example has 
-been provided as a PyDSS project in ~PyDSS/examples/external_interfaces. Within the folder, 
-~/PyDSS/examples/external_interfaces/pydss_project a scenario called 'socket' has been defined. Socket 
+for Modbus-TCP and DNP3 communcations have developed and tested with pydss with sucess. A minimal socket interfacing example has 
+been provided as a pydss project in ~pydss/examples/external_interfaces. Within the folder, 
+~/pydss/examples/external_interfaces/pydss_project a scenario called 'socket' has been defined. Socket 
 controller definations have been detailed with the 'pyControllerList' folder. An example of input requirements can be studied below.
 This example will publish ``voltage magnitude`` (see Even set in Index) and ``real power`` for load ``Load.mpx000635970`` in the model. Subscribed 
 values will be used to update the ``kW`` property of the coupled load (Load.mpx000635970 in this case)

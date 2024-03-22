@@ -15,7 +15,7 @@ pip install sphinx sphinx-rtd-theme
 From docs directory:
 
 ```
-sphinx-apidoc -o source/PyDSS ../PyDSS
+sphinx-apidoc -o source/pydss ../pydss
 ```
 
 ## Build HTML Docs
