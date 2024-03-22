@@ -16,7 +16,7 @@ except ImportError:
     sys.exit(1)
 
 
-from PyDSS.pydss_results import PyDssResults
+from pydss.pydss_results import PyDssResults
 
 
 class DataViewer:

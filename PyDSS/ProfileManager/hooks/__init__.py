@@ -1,1 +1,1 @@
-from PyDSS.ProfileManager import ProfileInterface
+from pydss.ProfileManager import ProfileInterface

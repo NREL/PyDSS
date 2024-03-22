@@ -8,13 +8,13 @@ import tempfile
 import pandas as pd
 import pytest
 
-from PyDSS.common import PROJECT_TAR, PROJECT_ZIP
-from PyDSS.exceptions import InvalidParameter
-from PyDSS.pydss_fs_interface import PROJECT_DIRECTORIES, SCENARIOS, STORE_FILENAME
-from PyDSS.pydss_project import PyDssProject, PyDssScenario, DATA_FORMAT_VERSION
-from PyDSS.pydss_results import PyDssResults, PyDssScenarioResults
+from pydss.common import PROJECT_TAR, PROJECT_ZIP
+from pydss.exceptions import InvalidParameter
+from pydss.pydss_fs_interface import PROJECT_DIRECTORIES, SCENARIOS, STORE_FILENAME
+from pydss.pydss_project import PyDssProject, PyDssScenario, DATA_FORMAT_VERSION
+from pydss.pydss_results import PyDssResults, PyDssScenarioResults
 from tests.common import RUN_PROJECT_PATH, SCENARIO_NAME, cleanup_project
-from PyDSS.common import SIMULATION_SETTINGS_FILENAME
+from pydss.common import SIMULATION_SETTINGS_FILENAME
 
 
 PATH = os.path.join(tempfile.gettempdir(), "pydss-projects")

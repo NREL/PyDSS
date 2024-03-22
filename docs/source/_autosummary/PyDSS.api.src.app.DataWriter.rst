@@ -1,7 +1,7 @@
-PyDSS.api.src.app.DataWriter
+pydss.api.src.app.DataWriter
 ============================
 
-.. automodule:: PyDSS.api.src.app.DataWriter
+.. automodule:: pydss.api.src.app.DataWriter
 
    
    

@@ -21,10 +21,10 @@ import re
 # sys.path.insert(0, os.path.abspath('../PyDSS'))
 
 import sphinx_rtd_theme
-# import PyDSS
-# import PyDSS
-# import PyDSS.simulation_input_models
-#from PyDSS.simulation_input_models import SimulationSettingsModel, ProjectModel
+# import pydss
+# import pydss
+# import pydss.simulation_input_models
+#from pydss.simulation_input_models import SimulationSettingsModel, ProjectModel
 
 # -- Project information -----------------------------------------------------
 

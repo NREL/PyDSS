@@ -1,7 +1,7 @@
-PyDSS.modes.Dynamic
+pydss.modes.Dynamic
 ===================
 
-.. automodule:: PyDSS.modes.Dynamic
+.. automodule:: pydss.modes.Dynamic
 
    
    

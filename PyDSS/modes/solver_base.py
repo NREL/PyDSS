@@ -4,8 +4,8 @@ import abc
 
 from loguru import logger
 
-from PyDSS.common import DATE_FORMAT
-from PyDSS.simulation_input_models import ProjectModel
+from pydss.common import DATE_FORMAT
+from pydss.simulation_input_models import ProjectModel
 
 class solver_base(abc.ABC):
     def __init__(self, dssInstance, settings: ProjectModel):

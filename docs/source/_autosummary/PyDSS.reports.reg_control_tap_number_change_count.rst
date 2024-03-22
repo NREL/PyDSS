@@ -1,7 +1,7 @@
-PyDSS.reports.reg\_control\_tap\_number\_change\_count
+pydss.reports.reg\_control\_tap\_number\_change\_count
 ======================================================
 
-.. automodule:: PyDSS.reports.reg_control_tap_number_change_count
+.. automodule:: pydss.reports.reg_control_tap_number_change_count
 
    
    

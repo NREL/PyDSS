@@ -1,1 +1,1 @@
-from PyDSS.pyControllers import pyController
+from pydss.pyControllers import pyController

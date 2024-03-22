@@ -3,24 +3,24 @@ from shapely.ops import triangulate, unary_union
 import datetime
 import math
 
-from PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
-from PyDSS.pyControllers.models import PvVoltageRideThruModel
-from PyDSS.pyControllers.enumerations import PvStandard, VoltageCalcModes, RideThroughCategory, PermissiveOperation, MayTripOperation, MultipleDisturbances
+from pydss.pyControllers.pyControllerAbstract import ControllerAbstract
+from pydss.pyControllers.models import PvVoltageRideThruModel
+from pydss.pyControllers.enumerations import PvStandard, VoltageCalcModes, RideThroughCategory, PermissiveOperation, MayTripOperation, MultipleDisturbances
 
 
 class PvVoltageRideThru(ControllerAbstract):
-    """Implementation of IEEE1547-2003 and IEEE1547-2018 voltage ride-through standards using the OpenDSS Generator model. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
+    """Implementation of IEEE1547-2003 and IEEE1547-2018 voltage ride-through standards using the OpenDSS Generator model. Subclass of the :class:`pydss.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
 
-            :param pv_object: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS 'Generator' element
-            :type FaultObj: class:`PyDSS.dssElement.dssElement`
+            :param pv_object: A :class:`pydss.dssElement.dssElement` object that wraps around an OpenDSS 'Generator' element
+            :type FaultObj: class:`pydss.dssElement.dssElement`
             :param settings: A dictionary that defines the settings for the PvController.
             :type settings: dict
             :param dss_instance: An :class:`opendssdirect` instance
             :type dss_instance: :class:`opendssdirect`
             :param elm_object_list: Dictionary of all dssElement, dssBus and dssCircuit objects
             :type elm_object_list: dict
-            :param dss_solver: An instance of one of the classed defined in :mod:`PyDSS.SolveMode`.
-            :type dss_solver: :mod:`PyDSS.SolveMode`
+            :param dss_solver: An instance of one of the classed defined in :mod:`pydss.SolveMode`.
+            :type dss_solver: :mod:`pydss.SolveMode`
             :raises: Assertionerror if 'pv_object' is not a wrapped OpenDSS Generator element
 
     """

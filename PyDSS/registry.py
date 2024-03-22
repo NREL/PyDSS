@@ -8,10 +8,10 @@ import os
 
 from loguru import logger
 
-import PyDSS
-from PyDSS.common import ControllerType, CONTROLLER_TYPES
-from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
-from PyDSS.utils.utils import dump_data, load_data
+import pydss
+from pydss.common import ControllerType, CONTROLLER_TYPES
+from pydss.exceptions import InvalidConfiguration, InvalidParameter
+from pydss.utils.utils import dump_data, load_data
 
 
 DEFAULT_REGISTRY = {
@@ -20,21 +20,21 @@ DEFAULT_REGISTRY = {
             {
                 "name": "NO_VRT",
                 "filename": os.path.join(
-                    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+                    os.path.dirname(getattr(pydss, "__path__")[0]),
                     "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
                 ),
             },
             {
                 "name": "cpf",
                 "filename": os.path.join(
-                    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+                    os.path.dirname(getattr(pydss, "__path__")[0]),
                     "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
                 ),
             },
             {
                 "name": "volt-var",
                 "filename": os.path.join(
-                    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+                    os.path.dirname(getattr(pydss, "__path__")[0]),
                     "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
                 ),
             },
@@ -53,7 +53,7 @@ DEFAULT_REGISTRY = {
 REQUIRED_CONTROLLER_FIELDS = ("name", "filename")
 
 class Registry:
-    """Manages controllers registered with PyDSS."""
+    """Manages controllers registered with pydss."""
     _REGISTRY_FILENAME = ".pydss-registry.json"
 
     def __init__(self, registry_filename=None):

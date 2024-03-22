@@ -9,8 +9,8 @@ from loguru import logger
 import click
 
 
-from PyDSS.pydss_results import PyDssResults
-from PyDSS.utils.utils import get_cli_string
+from pydss.pydss_results import PyDssResults
+from pydss.utils.utils import get_cli_string
 
 
 # TODO Make command to list scenarios.

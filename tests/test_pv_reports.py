@@ -7,15 +7,15 @@ import os
 import numpy as np
 
 from tests.common import PV_REPORTS_PROJECT_PATH, PV_REPORTS_PROJECT_STORE_ALL_PATH, cleanup_project
-from PyDSS.reports.feeder_losses import SimulationFeederLossesMetricsModel, compare_feeder_losses
-from PyDSS.node_voltage_metrics import SimulationVoltageMetricsModel, compare_voltage_metrics
-from PyDSS.thermal_metrics import SimulationThermalMetricsModel, compare_thermal_metrics
-from PyDSS.utils.dataframe_utils import read_dataframe
-from PyDSS.common import SIMULATION_SETTINGS_FILENAME
-from PyDSS.reports.reports import ReportGranularity
-from PyDSS.utils.utils import load_data, dump_data
-from PyDSS.pydss_project import PyDssProject
-from PyDSS.pydss_results import PyDssResults
+from pydss.reports.feeder_losses import SimulationFeederLossesMetricsModel, compare_feeder_losses
+from pydss.node_voltage_metrics import SimulationVoltageMetricsModel, compare_voltage_metrics
+from pydss.thermal_metrics import SimulationThermalMetricsModel, compare_thermal_metrics
+from pydss.utils.dataframe_utils import read_dataframe
+from pydss.common import SIMULATION_SETTINGS_FILENAME
+from pydss.reports.reports import ReportGranularity
+from pydss.utils.utils import load_data, dump_data
+from pydss.pydss_project import PyDssProject
+from pydss.pydss_results import PyDssResults
 
 import traceback
 import warnings

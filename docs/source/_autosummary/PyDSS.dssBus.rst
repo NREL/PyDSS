@@ -1,7 +1,7 @@
-PyDSS.dssBus
+pydss.dssBus
 ============
 
-.. automodule:: PyDSS.dssBus
+.. automodule:: pydss.dssBus
 
    
    

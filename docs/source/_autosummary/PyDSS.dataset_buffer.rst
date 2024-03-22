@@ -1,7 +1,7 @@
-PyDSS.dataset\_buffer
+pydss.dataset\_buffer
 =====================
 
-.. automodule:: PyDSS.dataset_buffer
+.. automodule:: pydss.dataset_buffer
 
    
    

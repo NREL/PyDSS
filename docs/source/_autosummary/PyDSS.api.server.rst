@@ -1,7 +1,7 @@
-PyDSS.api.server
+pydss.api.server
 ================
 
-.. automodule:: PyDSS.api.server
+.. automodule:: pydss.api.server
 
    
    

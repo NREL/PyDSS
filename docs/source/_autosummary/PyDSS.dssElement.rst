@@ -1,7 +1,7 @@
-PyDSS.dssElement
+pydss.dssElement
 ================
 
-.. automodule:: PyDSS.dssElement
+.. automodule:: pydss.dssElement
 
    
    

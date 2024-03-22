@@ -1,7 +1,7 @@
-PyDSS.reports.voltage\_metrics
+pydss.reports.voltage\_metrics
 ==============================
 
-.. automodule:: PyDSS.reports.voltage_metrics
+.. automodule:: pydss.reports.voltage_metrics
 
    
    

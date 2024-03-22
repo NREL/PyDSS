@@ -6,7 +6,7 @@ import os
 from loguru import logger
 import pandas as pd
 
-from PyDSS.exceptions import InvalidParameter
+from pydss.exceptions import InvalidParameter
 
 
 def read_dataframe(filename, index_col=None, columns=None, parse_dates=False,

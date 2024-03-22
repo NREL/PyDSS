@@ -1,7 +1,7 @@
-PyDSS.api.src.app.pydss
+pydss.api.src.app.pydss
 =======================
 
-.. automodule:: PyDSS.api.src.app.pydss
+.. automodule:: pydss.api.src.app.pydss
 
    
    

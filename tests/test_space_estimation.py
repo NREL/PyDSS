@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from PyDSS.pydss_project import PyDssProject
+from pydss.pydss_project import PyDssProject
 
 from tests.common import cleanup_project
 

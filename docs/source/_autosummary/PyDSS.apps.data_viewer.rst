@@ -1,7 +1,7 @@
-PyDSS.apps.data\_viewer
+pydss.apps.data\_viewer
 =======================
 
-.. automodule:: PyDSS.apps.data_viewer
+.. automodule:: pydss.apps.data_viewer
 
    
    

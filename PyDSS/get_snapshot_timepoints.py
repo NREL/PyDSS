@@ -8,11 +8,11 @@ import opendssdirect as dss
 import pandas as pd
 import numpy as np
 
-from PyDSS.common import SnapshotTimePointSelectionMode
-from PyDSS.utils.simulation_utils import create_loadshape_pmult_dataframe_for_simulation
-from PyDSS.utils.utils import dump_data
-from PyDSS.reports.reports import logger
-from PyDSS.simulation_input_models import SimulationSettingsModel
+from pydss.common import SnapshotTimePointSelectionMode
+from pydss.utils.simulation_utils import create_loadshape_pmult_dataframe_for_simulation
+from pydss.utils.utils import dump_data
+from pydss.reports.reports import logger
+from pydss.simulation_input_models import SimulationSettingsModel
 
 
 def get_snapshot_timepoint(settings: SimulationSettingsModel, mode: SnapshotTimePointSelectionMode):

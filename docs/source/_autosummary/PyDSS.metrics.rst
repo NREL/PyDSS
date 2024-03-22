@@ -1,7 +1,7 @@
-PyDSS.metrics
+pydss.metrics
 =============
 
-.. automodule:: PyDSS.metrics
+.. automodule:: pydss.metrics
 
    
    

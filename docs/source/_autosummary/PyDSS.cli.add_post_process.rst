@@ -1,7 +1,7 @@
-PyDSS.cli.add\_post\_process
+pydss.cli.add\_post\_process
 ============================
 
-.. automodule:: PyDSS.cli.add_post_process
+.. automodule:: pydss.cli.add_post_process
 
    
    

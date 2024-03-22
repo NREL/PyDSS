@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from PyDSS.common import SIMULATION_SETTINGS_FILENAME
-from PyDSS.pydss_project import PyDssProject
+from pydss.common import SIMULATION_SETTINGS_FILENAME
+from pydss.pydss_project import PyDssProject
 
 base_path = Path(__file__).parent.absolute()
 

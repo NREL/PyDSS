@@ -1,7 +1,7 @@
-PyDSS.pydss\_project
+pydss.pydss\_project
 ====================
 
-.. automodule:: PyDSS.pydss_project
+.. automodule:: pydss.pydss_project
 
    
    

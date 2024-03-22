@@ -1,7 +1,7 @@
-PyDSS.pyPostprocessor.pyPostprocessAbstract
+pydss.pyPostprocessor.pyPostprocessAbstract
 ===========================================
 
-.. automodule:: PyDSS.pyPostprocessor.pyPostprocessAbstract
+.. automodule:: pydss.pyPostprocessor.pyPostprocessAbstract
 
    
    

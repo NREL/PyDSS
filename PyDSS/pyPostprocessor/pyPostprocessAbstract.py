@@ -2,29 +2,29 @@
 import abc
 import os
 
-from PyDSS.exceptions import InvalidParameter
-from PyDSS.utils.utils import load_data
+from pydss.exceptions import InvalidParameter
+from pydss.utils.utils import load_data
 
 
 class AbstractPostprocess(abc.ABC):
-    """An abstract class that serves as template for all pyPlot classes in :mod:`PyDSS.pyPlots.Plots` module.
+    """An abstract class that serves as template for all pyPlot classes in :mod:`pydss.pyPlots.Plots` module.
 
-    :param project: A :class:`PyDSS.pydss_project.PyDssProject` object representing a project
+    :param project: A :class:`pydss.pydss_project.PyDssProject` object representing a project
     :type project: PyDssProject
-    :param scenario: A :class:`PyDSS.pydss_project.PyDssScenario` object representing a scenario
+    :param scenario: A :class:`pydss.pydss_project.PyDssScenario` object representing a scenario
     :type scenario: PyDssScenario
     :param inputs: user inputs
     :type inputs: dict
-    :param dssInstance: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS 'Fault' element
+    :param dssInstance: A :class:`pydss.dssElement.dssElement` object that wraps around an OpenDSS 'Fault' element
     :type dssInstance: dict
-    :param dssBuses: Dictionary of all :class:`PyDSS.dssBus.dssBus` objects in PyDSS
-    :type dssBuses: dict of :class:`PyDSS.dssBus.dssBus` objects
-    :param dssObjects: Dictionary of all :class:`PyDSS.dssElement.dssElement` objects in PyDSS
-    :type dssObjects: dict of :class:`PyDSS.dssElement.dssElement` objects
-    :param dssObjectsByClass:  Dictionary of all :class:`PyDSS.dssElement.dssElement` objects in PyDSS sorted by class
-    :type dssObjectsByClass: dict of :class:`PyDSS.dssElement.dssElement` objects
-    :param dssSolver: An instance of one of the classes defined in :mod:`PyDSS.SolveMode`.
-    :type dssSolver: :mod:`PyDSS.SolveMode`
+    :param dssBuses: Dictionary of all :class:`pydss.dssBus.dssBus` objects in PyDSS
+    :type dssBuses: dict of :class:`pydss.dssBus.dssBus` objects
+    :param dssObjects: Dictionary of all :class:`pydss.dssElement.dssElement` objects in PyDSS
+    :type dssObjects: dict of :class:`pydss.dssElement.dssElement` objects
+    :param dssObjectsByClass:  Dictionary of all :class:`pydss.dssElement.dssElement` objects in PyDSS sorted by class
+    :type dssObjectsByClass: dict of :class:`pydss.dssElement.dssElement` objects
+    :param dssSolver: An instance of one of the classes defined in :mod:`pydss.SolveMode`.
+    :type dssSolver: :mod:`pydss.SolveMode`
 
     """
 

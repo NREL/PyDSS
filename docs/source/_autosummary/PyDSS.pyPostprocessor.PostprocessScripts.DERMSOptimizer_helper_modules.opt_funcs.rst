@@ -1,7 +1,7 @@
-PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer\_helper\_modules.opt\_funcs
+pydss.pyPostprocessor.PostprocessScripts.DERMSOptimizer\_helper\_modules.opt\_funcs
 ===================================================================================
 
-.. automodule:: PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules.opt_funcs
+.. automodule:: pydss.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules.opt_funcs
 
    
    

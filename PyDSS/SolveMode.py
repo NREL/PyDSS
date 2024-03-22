@@ -1,12 +1,12 @@
 from loguru import logger
 import opendssdirect as dss
 
-from PyDSS.common import SimulationType
-from PyDSS.exceptions import InvalidParameter
-from PyDSS.modes.Dynamic import Dynamic
-from PyDSS.modes.Snapshot import Snapshot
-from PyDSS.modes.QSTS import QSTS
-from PyDSS.simulation_input_models import ProjectModel, SimulationSettingsModel
+from pydss.common import SimulationType
+from pydss.exceptions import InvalidParameter
+from pydss.modes.Dynamic import Dynamic
+from pydss.modes.Snapshot import Snapshot
+from pydss.modes.QSTS import QSTS
+from pydss.simulation_input_models import ProjectModel, SimulationSettingsModel
 
 
 def GetSolver(settings: SimulationSettingsModel, dssInstance):

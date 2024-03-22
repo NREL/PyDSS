@@ -1,7 +1,7 @@
-PyDSS.unitDefinations
+pydss.unitDefinations
 =====================
 
-.. automodule:: PyDSS.unitDefinations
+.. automodule:: pydss.unitDefinations
 
    
    

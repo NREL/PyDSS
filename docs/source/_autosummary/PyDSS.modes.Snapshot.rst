@@ -1,7 +1,7 @@
-PyDSS.modes.Snapshot
+pydss.modes.Snapshot
 ====================
 
-.. automodule:: PyDSS.modes.Snapshot
+.. automodule:: pydss.modes.Snapshot
 
    
    

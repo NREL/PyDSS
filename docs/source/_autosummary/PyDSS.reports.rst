@@ -1,7 +1,7 @@
-PyDSS.reports
+pydss.reports
 =============
 
-.. automodule:: PyDSS.reports
+.. automodule:: pydss.reports
 
    
    
@@ -27,11 +27,11 @@ PyDSS.reports
    :toctree:
    :recursive:
 
-   PyDSS.reports.capacitor_change_count
-   PyDSS.reports.feeder_losses
-   PyDSS.reports.pv_reports
-   PyDSS.reports.reg_control_tap_number_change_count
-   PyDSS.reports.reports
-   PyDSS.reports.thermal_metrics
-   PyDSS.reports.voltage_metrics
+   pydss.reports.capacitor_change_count
+   pydss.reports.feeder_losses
+   pydss.reports.pv_reports
+   pydss.reports.reg_control_tap_number_change_count
+   pydss.reports.reports
+   pydss.reports.thermal_metrics
+   pydss.reports.voltage_metrics
 

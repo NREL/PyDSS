@@ -1,7 +1,7 @@
-PyDSS.pyPostprocessor.PostprocessScripts
+pydss.pyPostprocessor.PostprocessScripts
 ========================================
 
-.. automodule:: PyDSS.pyPostprocessor.PostprocessScripts
+.. automodule:: pydss.pyPostprocessor.PostprocessScripts
 
    
    
@@ -27,7 +27,7 @@ PyDSS.pyPostprocessor.PostprocessScripts
    :toctree:
    :recursive:
 
-   PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer
-   PyDSS.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules
-   PyDSS.pyPostprocessor.PostprocessScripts.EdLiFoControl
+   pydss.pyPostprocessor.PostprocessScripts.DERMSOptimizer
+   pydss.pyPostprocessor.PostprocessScripts.DERMSOptimizer_helper_modules
+   pydss.pyPostprocessor.PostprocessScripts.EdLiFoControl
 

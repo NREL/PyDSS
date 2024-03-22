@@ -1,7 +1,7 @@
-PyDSS.ProfileManager.hooks.h5
+pydss.ProfileManager.hooks.h5
 =============================
 
-.. automodule:: PyDSS.ProfileManager.hooks.h5
+.. automodule:: pydss.ProfileManager.hooks.h5
 
    
    

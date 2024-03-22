@@ -6,10 +6,10 @@ import os
 
 import toml
 
-from PyDSS.config_data import convert_config_data_to_toml
-from PyDSS.registry import Registry
-from PyDSS.utils.utils import load_data
-from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
+from pydss.config_data import convert_config_data_to_toml
+from pydss.registry import Registry
+from pydss.utils.utils import load_data
+from pydss.exceptions import InvalidConfiguration, InvalidParameter
 
 class pyContrReader:
     def __init__(self, Path):

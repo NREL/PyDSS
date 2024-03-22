@@ -1,7 +1,7 @@
-PyDSS.export\_list\_reader
+pydss.export\_list\_reader
 ==========================
 
-.. automodule:: PyDSS.export_list_reader
+.. automodule:: pydss.export_list_reader
 
    
    

@@ -1,7 +1,7 @@
-PyDSS.defaults.pyControllerList
+pydss.defaults.pyControllerList
 ===============================
 
-.. automodule:: PyDSS.defaults.pyControllerList
+.. automodule:: pydss.defaults.pyControllerList
 
    
    

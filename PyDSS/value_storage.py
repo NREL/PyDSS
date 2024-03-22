@@ -6,9 +6,9 @@ import re
 from loguru import logger
 import numpy as np
 
-from PyDSS.common import DatasetPropertyType, INTEGER_NAN
-from PyDSS.dataset_buffer import DatasetBuffer
-from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
+from pydss.common import DatasetPropertyType, INTEGER_NAN
+from pydss.dataset_buffer import DatasetBuffer
+from pydss.exceptions import InvalidParameter, InvalidConfiguration
 
 
 class ValueStorageBase(abc.ABC):

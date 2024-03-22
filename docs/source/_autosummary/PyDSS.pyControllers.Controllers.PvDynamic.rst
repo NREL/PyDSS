@@ -1,7 +1,7 @@
-PyDSS.pyControllers.Controllers.PvDynamic
+pydss.pyControllers.Controllers.PvDynamic
 =========================================
 
-.. automodule:: PyDSS.pyControllers.Controllers.PvDynamic
+.. automodule:: pydss.pyControllers.Controllers.PvDynamic
 
    
    

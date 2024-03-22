@@ -11,15 +11,15 @@ from loguru import logger
 import pandas as pd
 import opendssdirect as dss
 
-from PyDSS.common import DataConversion, StoreValuesType
-from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
-from PyDSS.reports.reports import ReportBase
-from PyDSS.storage_filters import STORAGE_TYPE_MAP, StorageFilterBase
-from PyDSS.value_storage import ValueByNumber, ValueStorageBase
-from PyDSS.node_voltage_metrics import NodeVoltageMetrics
-from PyDSS.simulation_input_models import SimulationSettingsModel
-from PyDSS.thermal_metrics import ThermalMetrics
-from PyDSS.utils.simulation_utils import get_start_time, get_simulation_resolution
+from pydss.common import DataConversion, StoreValuesType
+from pydss.exceptions import InvalidConfiguration, InvalidParameter
+from pydss.reports.reports import ReportBase
+from pydss.storage_filters import STORAGE_TYPE_MAP, StorageFilterBase
+from pydss.value_storage import ValueByNumber, ValueStorageBase
+from pydss.node_voltage_metrics import NodeVoltageMetrics
+from pydss.simulation_input_models import SimulationSettingsModel
+from pydss.thermal_metrics import ThermalMetrics
+from pydss.utils.simulation_utils import get_start_time, get_simulation_resolution
 
 class MetricBase(abc.ABC):
     """Base class for all metrics"""

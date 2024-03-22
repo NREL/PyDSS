@@ -1,7 +1,7 @@
-PyDSS.api.schema
+pydss.api.schema
 ================
 
-.. automodule:: PyDSS.api.schema
+.. automodule:: pydss.api.schema
 
    
    

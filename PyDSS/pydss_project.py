@@ -11,22 +11,22 @@ import h5py
 
 from loguru import logger
 
-import PyDSS
-from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, CONTROLLER_TYPES, \
+import pydss
+from pydss.common import PROJECT_TAR, PROJECT_ZIP, CONTROLLER_TYPES, \
     SIMULATION_SETTINGS_FILENAME, DEFAULT_SIMULATION_SETTINGS_FILE, \
     ControllerType, ExportMode, SnapshotTimePointSelectionMode, MONTE_CARLO_SETTINGS_FILENAME,\
     filename_from_enum, DEFAULT_MONTE_CARLO_SETTINGS_FILE,\
     SUBSCRIPTIONS_FILENAME, DEFAULT_SUBSCRIPTIONS_FILE, OPENDSS_MASTER_FILENAME, \
     RUN_SIMULATION_FILENAME
-from PyDSS.exceptions import InvalidParameter, InvalidConfiguration
-from PyDSS.pyDSS import instance
-from PyDSS.pydss_fs_interface import PyDssDirectoryInterface, \
+from pydss.exceptions import InvalidParameter, InvalidConfiguration
+from pydss.pyDSS import instance
+from pydss.pydss_fs_interface import PyDssFileSystemInterface, \
     PyDssArchiveFileInterfaceBase, PyDssTarFileInterface, \
     PyDssZipFileInterface, PROJECT_DIRECTORIES, \
     SCENARIOS, STORE_FILENAME
-from PyDSS.reports.reports import REPORTS_DIR
-from PyDSS.registry import Registry
-from PyDSS.simulation_input_models import (
+from pydss.reports.reports import REPORTS_DIR
+from pydss.registry import Registry
+from pydss.simulation_input_models import (
     ScenarioModel,
     ScenarioPostProcessModel,
     SimulationSettingsModel,
@@ -35,8 +35,8 @@ from PyDSS.simulation_input_models import (
     load_simulation_settings,
     dump_settings,
 )
-from PyDSS.utils.dss_utils import read_pv_systems_from_dss_file
-from PyDSS.utils.utils import dump_data, load_data
+from pydss.utils.dss_utils import read_pv_systems_from_dss_file
+from pydss.utils.utils import dump_data, load_data
 
 from distutils.dir_util import copy_tree
 
@@ -365,7 +365,7 @@ class PyDssProject:
             generate_reports = bool(self._settings.reports)
             if not dry_run and (export_tables or generate_reports):
                 # Hack. Have to import here. Need to re-organize to fix.
-                from PyDSS.pydss_results import PyDssResults
+                from pydss.pydss_results import PyDssResults
                 results = PyDssResults(self._project_dir)
                 if export_tables:
                     for scenario in results.scenarios:
@@ -513,7 +513,7 @@ class PyDssProject:
         elif os.path.exists(os.path.join(path, PROJECT_ZIP)):
             fs_intf = PyDssZipFileInterface(path)
         else:
-            fs_intf = PyDssDirectoryInterface(path, simulation_file)
+            fs_intf = PyDssFileSystemInterface(path, simulation_file)
 
         simulation_config = fs_intf.simulation_config.dict(by_alias=False)
         if options is not None:
@@ -755,7 +755,7 @@ class PyDssScenario:
         """
 
         path = os.path.join(
-            os.path.dirname(getattr(PyDSS, "__path__")[0]),
+            os.path.dirname(getattr(pydss, "__path__")[0]),
             "PyDSS",
             "defaults",
             "pyControllerList",
@@ -778,7 +778,7 @@ class PyDssScenario:
 
         """
         path = os.path.join(
-            os.path.dirname(getattr(PyDSS, "__path__")[0]),
+            os.path.dirname(getattr(pydss, "__path__")[0]),
             "PyDSS",
             "defaults",
             "ExportLists",

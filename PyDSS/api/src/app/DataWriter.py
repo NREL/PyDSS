@@ -1,5 +1,5 @@
-from PyDSS.api.src.app.HDF5 import hdf5Writer
-from PyDSS.api.src.app.JSON_writer import JSONwriter
+from pydss.api.src.app.HDF5 import hdf5Writer
+from pydss.api.src.app.JSON_writer import JSONwriter
 
 class DataWriter:
     modes = {

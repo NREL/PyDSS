@@ -1,16 +1,16 @@
 from os.path import dirname, basename, isfile
 import glob
 
-from  PyDSS.pyControllers import Controllers
+from  pydss.pyControllers import Controllers
 
 modules = glob.glob(Controllers.__path__[0]+"/*.py")
 pythonFiles = [ basename(f)[:-3] for f in modules if isfile(f) and not f.endswith('__init__.py') ]
 
-from PyDSS.dssElement import dssElement
+from pydss.dssElement import dssElement
 ControllerTypes = {}
 
 for file in pythonFiles:
-    exec('from PyDSS.pyControllers.Controllers import {}'.format(file))
+    exec('from pydss.pyControllers.Controllers import {}'.format(file))
     exec('ControllerTypes["{}"] = {}.{}'.format(file, file, file))
 
 def Create(ElmName, ControllerType, Settings, ElmObjectList, dssInstance, dssSolver):

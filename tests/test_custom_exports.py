@@ -8,15 +8,15 @@ import pandas as pd
 from pandas.testing import assert_series_equal
 
 
-from PyDSS.utils.utils import load_data
-from PyDSS.pydss_project import PyDssProject
-from PyDSS.pydss_results import PyDssResults
+from pydss.utils.utils import load_data
+from pydss.pydss_project import PyDssProject
+from pydss.pydss_results import PyDssResults
 from tests.common import (
     run_project_with_custom_exports,
     CUSTOM_EXPORTS_PROJECT_PATH,
     cleanup_project,
 )
-from PyDSS.common import SIMULATION_SETTINGS_FILENAME
+from pydss.common import SIMULATION_SETTINGS_FILENAME
 
 
 def test_custom_exports(cleanup_project):

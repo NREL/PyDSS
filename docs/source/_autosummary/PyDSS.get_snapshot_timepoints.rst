@@ -1,7 +1,7 @@
-PyDSS.get\_snapshot\_timepoints
+pydss.get\_snapshot\_timepoints
 ===============================
 
-.. automodule:: PyDSS.get_snapshot_timepoints
+.. automodule:: pydss.get_snapshot_timepoints
 
    
    

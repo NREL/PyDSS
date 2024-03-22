@@ -1,7 +1,7 @@
-PyDSS.cli.add\_scenario
+pydss.cli.add\_scenario
 =======================
 
-.. automodule:: PyDSS.cli.add_scenario
+.. automodule:: pydss.cli.add_scenario
 
    
    

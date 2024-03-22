@@ -1,6 +1,6 @@
 import opendssdirect as dss
 
-from PyDSS.dssObjectBase import dssObjectBase
+from pydss.dssObjectBase import dssObjectBase
 
 class dssCircuit(dssObjectBase):
 

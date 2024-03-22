@@ -1,7 +1,7 @@
-PyDSS.Extensions
+pydss.Extensions
 ================
 
-.. automodule:: PyDSS.Extensions
+.. automodule:: pydss.Extensions
 
    
    
@@ -27,5 +27,5 @@ PyDSS.Extensions
    :toctree:
    :recursive:
 
-   PyDSS.Extensions.MonteCarlo
+   pydss.Extensions.MonteCarlo
 

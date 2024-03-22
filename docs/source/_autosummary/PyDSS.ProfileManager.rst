@@ -1,7 +1,7 @@
-PyDSS.ProfileManager
+pydss.ProfileManager
 ====================
 
-.. automodule:: PyDSS.ProfileManager
+.. automodule:: pydss.ProfileManager
 
    
    
@@ -27,8 +27,8 @@ PyDSS.ProfileManager
    :toctree:
    :recursive:
 
-   PyDSS.ProfileManager.ProfileInterface
-   PyDSS.ProfileManager.base_definitions
-   PyDSS.ProfileManager.common
-   PyDSS.ProfileManager.hooks
+   pydss.ProfileManager.ProfileInterface
+   pydss.ProfileManager.base_definitions
+   pydss.ProfileManager.common
+   pydss.ProfileManager.hooks
 

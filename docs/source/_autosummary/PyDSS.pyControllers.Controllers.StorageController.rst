@@ -1,7 +1,7 @@
-PyDSS.pyControllers.Controllers.StorageController
+pydss.pyControllers.Controllers.StorageController
 =================================================
 
-.. automodule:: PyDSS.pyControllers.Controllers.StorageController
+.. automodule:: pydss.pyControllers.Controllers.StorageController
 
    
    

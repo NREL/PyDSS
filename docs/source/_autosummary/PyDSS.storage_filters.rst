@@ -1,7 +1,7 @@
-PyDSS.storage\_filters
+pydss.storage\_filters
 ======================
 
-.. automodule:: PyDSS.storage_filters
+.. automodule:: pydss.storage_filters
 
    
    

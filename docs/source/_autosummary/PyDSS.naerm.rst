@@ -1,7 +1,7 @@
-PyDSS.naerm
+pydss.naerm
 ===========
 
-.. automodule:: PyDSS.naerm
+.. automodule:: pydss.naerm
 
    
    

@@ -3,8 +3,8 @@ import enum
 import os
 from collections import namedtuple
 
-import PyDSS
-from PyDSS.utils.utils import load_data
+import pydss
+from pydss.utils.utils import load_data
 
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S.%f' # '%Y-%m-%d %H:%M:%S.%f', "%m/%d/%Y %H:%M:%S"
 TIME_FORMAT = '%H:%M:%S'
@@ -68,77 +68,77 @@ EXPORT_BY_ELEMENT_FILENAME = filename_from_enum(ExportMode.BY_ELEMENT)
 EXPORTS_FILENAME = filename_from_enum(ExportMode.EXPORTS)
 
 DEFAULT_FAULT_CONTROLLER_CONFIG_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    os.path.dirname(getattr(pydss, "__path__")[0]),
     "PyDSS",
     "defaults",
     "pyControllerList",
     FAULT_CONTROLLER_FILENAME,
 )
 DEFAULT_GENERATOR_CONTROLLER_CONFIG_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    os.path.dirname(getattr(pydss, "__path__")[0]),
     "PyDSS",
     "defaults",
     "pyControllerList",
     GENERATOR_CONTROLLER_FILENAME,
 )
 DEFAULT_MOTOR_STALL_CONTROLLER_CONFIG_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    os.path.dirname(getattr(pydss, "__path__")[0]),
     "PyDSS",
     "defaults",
     "pyControllerList",
     MOTOR_STALL_FILENAME,
 )
 DEFAULT_PV_CONTROLLER_CONFIG_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    os.path.dirname(getattr(pydss, "__path__")[0]),
     "PyDSS",
     "defaults",
     "pyControllerList",
     PV_CONTROLLER_FILENAME,
 )
 DEFAULT_PV_DYNAMIC_CONTROLLER_CONFIG_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    os.path.dirname(getattr(pydss, "__path__")[0]),
     "PyDSS",
     "defaults",
     "pyControllerList",
     PV_DYNAMIC_FILENAME,
 )
 DEFAULT_PV_FREQUENCY_RIDETHROUGH_CONTROLLER_CONFIG_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    os.path.dirname(getattr(pydss, "__path__")[0]),
     "PyDSS",
     "defaults",
     "pyControllerList",
     PV_FREQUENCY_RIDETHROUGH_FILENAME,
 )
 DEFAULT_PV_VOLTAGE_RIDETHROUGH_CONTROLLER_CONFIG_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    os.path.dirname(getattr(pydss, "__path__")[0]),
     "PyDSS",
     "defaults",
     "pyControllerList",
     PV_VOLTAGE_RIDETHROUGH_FILENAME,
 )
 DEFAULT_SOCKET_CONTROLLER_CONFIG_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    os.path.dirname(getattr(pydss, "__path__")[0]),
     "PyDSS",
     "defaults",
     "pyControllerList",
     SOCKET_CONTROLLER_FILENAME,
 )
 DEFAULT_STORAGE_CONTROLLER_CONFIG_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    os.path.dirname(getattr(pydss, "__path__")[0]),
     "PyDSS",
     "defaults",
     "pyControllerList",
     STORAGE_CONTROLLER_FILENAME,
 )
 DEFAULT_THERMOSTATIC_LOAD_CONTROLLER_CONFIG_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    os.path.dirname(getattr(pydss, "__path__")[0]),
     "PyDSS",
     "defaults",
     "pyControllerList",
     THERMOSTATIC_LOAD_CONTROLLER_FILENAME,
 )
 DEFAULT_XMFR_CONTROLLER_CONFIG_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    os.path.dirname(getattr(pydss, "__path__")[0]),
     "PyDSS",
     "defaults",
     "pyControllerList",
@@ -146,48 +146,48 @@ DEFAULT_XMFR_CONTROLLER_CONFIG_FILE = os.path.join(
 )
 
 DEFAULT_SUBSCRIPTIONS_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    os.path.dirname(getattr(pydss, "__path__")[0]),
     "PyDSS",
     "defaults",
     "ExportLists",
     SUBSCRIPTIONS_FILENAME,
 )
 DEFAULT_SIMULATION_SETTINGS_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    os.path.dirname(getattr(pydss, "__path__")[0]),
     "PyDSS",
     "defaults",
     SIMULATION_SETTINGS_FILENAME,
 )
 
 DEFAULT_PLOT_SETTINGS_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    os.path.dirname(getattr(pydss, "__path__")[0]),
     "PyDSS",
     "defaults",
     PLOTS_FILENAME
 )
 DEFAULT_EXPORT_BY_CLASS_SETTINGS_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    os.path.dirname(getattr(pydss, "__path__")[0]),
     "PyDSS",
     "defaults",
     "ExportLists",
     EXPORT_BY_CLASS_FILENAME,
 )
 DEFAULT_EXPORT_BY_ELEMENT_SETTINGS_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    os.path.dirname(getattr(pydss, "__path__")[0]),
     "PyDSS",
     "defaults",
     "ExportLists",
     EXPORTS_FILENAME,
 )
 DEFAULT_EXPORTS_SETTINGS_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    os.path.dirname(getattr(pydss, "__path__")[0]),
     "PyDSS",
     "defaults",
     "ExportLists",
     EXPORT_BY_ELEMENT_FILENAME,
 )
 DEFAULT_MONTE_CARLO_SETTINGS_FILE = os.path.join(
-    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+    os.path.dirname(getattr(pydss, "__path__")[0]),
     "PyDSS",
     "defaults",
     "Monte_Carlo",

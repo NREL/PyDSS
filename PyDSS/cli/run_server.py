@@ -6,7 +6,7 @@ from loguru import logger
 from aiohttp import web
 import click
 
-from PyDSS.api.server import pydss_server
+from pydss.api.server import pydss_server
 
 @click.option(
     "-p", "--port",

@@ -1,7 +1,7 @@
-PyDSS.api
+pydss.api
 =========
 
-.. automodule:: PyDSS.api
+.. automodule:: pydss.api
 
    
    
@@ -27,7 +27,7 @@ PyDSS.api
    :toctree:
    :recursive:
 
-   PyDSS.api.schema
-   PyDSS.api.server
-   PyDSS.api.src
+   pydss.api.schema
+   pydss.api.server
+   pydss.api.src
 

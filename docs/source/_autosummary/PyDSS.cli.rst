@@ -1,7 +1,7 @@
-PyDSS.cli
+pydss.cli
 =========
 
-.. automodule:: PyDSS.cli
+.. automodule:: pydss.cli
 
    
    
@@ -27,16 +27,16 @@ PyDSS.cli
    :toctree:
    :recursive:
 
-   PyDSS.cli.add_post_process
-   PyDSS.cli.add_scenario
-   PyDSS.cli.controllers
-   PyDSS.cli.convert
-   PyDSS.cli.create_project
-   PyDSS.cli.edit_scenario
-   PyDSS.cli.export
-   PyDSS.cli.extract
-   PyDSS.cli.pydss
-   PyDSS.cli.reports
-   PyDSS.cli.run
-   PyDSS.cli.run_server
+   pydss.cli.add_post_process
+   pydss.cli.add_scenario
+   pydss.cli.controllers
+   pydss.cli.convert
+   pydss.cli.create_project
+   pydss.cli.edit_scenario
+   pydss.cli.export
+   pydss.cli.extract
+   pydss.cli.pydss
+   pydss.cli.reports
+   pydss.cli.run
+   pydss.cli.run_server
 

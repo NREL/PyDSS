@@ -9,14 +9,14 @@ from pydantic import BaseModel, Field
 from pydantic import ConfigDict
 import opendssdirect as dss
 
-from PyDSS.exceptions import InvalidConfiguration, OpenDssConvergenceError
-from PyDSS.pyControllers.Controllers.PvController import PvController
-from PyDSS.utils.timing_utils import TimerStatsCollector, Timer
-from PyDSS.utils.dss_utils import list_element_names_by_class
-from PyDSS.dssInstance import OpenDSS, CONTROLLER_PRIORITIES
-from PyDSS.SolveMode import get_solver_from_simulation_type
-from PyDSS.simulation_input_models import ProjectModel
-from PyDSS.modes.solver_base import solver_base
+from pydss.exceptions import InvalidConfiguration, OpenDssConvergenceError
+from pydss.pyControllers.Controllers.PvController import PvController
+from pydss.utils.timing_utils import TimerStatsCollector, Timer
+from pydss.utils.dss_utils import list_element_names_by_class
+from pydss.dssInstance import OpenDSS, CONTROLLER_PRIORITIES
+from pydss.SolveMode import get_solver_from_simulation_type
+from pydss.simulation_input_models import ProjectModel
+from pydss.modes.solver_base import solver_base
 
 
 class ControllerBaseModel(BaseModel, abc.ABC):

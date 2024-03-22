@@ -17,8 +17,8 @@ and list_char keyword args. For example, to have the GET/POST variables,
 ``a_1=something`` as a list, you would use a ``list_char='_'``.
 """
 
-import PyDSS.defaults as defaultSettings
-from PyDSS.utils.utils import load_data
+import pydss.defaults as defaultSettings
+from pydss.utils.utils import load_data
 import ast
 import os
 

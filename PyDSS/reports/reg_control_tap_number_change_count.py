@@ -2,8 +2,8 @@ import os
 
 from loguru import logger
 
-from PyDSS.reports.reports import ReportBase
-from PyDSS.utils.utils import dump_data
+from pydss.reports.reports import ReportBase
+from pydss.utils.utils import dump_data
 
 
 class RegControlTapNumberChangeReport(ReportBase):

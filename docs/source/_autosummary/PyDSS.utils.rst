@@ -1,7 +1,7 @@
-PyDSS.utils
+pydss.utils
 ===========
 
-.. automodule:: PyDSS.utils
+.. automodule:: pydss.utils
 
    
    
@@ -27,10 +27,10 @@ PyDSS.utils
    :toctree:
    :recursive:
 
-   PyDSS.utils.dataframe_utils
-   PyDSS.utils.dss_utils
-   PyDSS.utils.pydss_utils
-   PyDSS.utils.simulation_utils
-   PyDSS.utils.timing_utils
-   PyDSS.utils.utils
+   pydss.utils.dataframe_utils
+   pydss.utils.dss_utils
+   pydss.utils.pydss_utils
+   pydss.utils.simulation_utils
+   pydss.utils.timing_utils
+   pydss.utils.utils
 

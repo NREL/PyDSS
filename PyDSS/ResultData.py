@@ -8,28 +8,28 @@ import opendssdirect as dss
 from loguru import logger
 import pandas as pd
 
-from PyDSS.unitDefinations import unit_info
-from PyDSS.common import (
+from pydss.unitDefinations import unit_info
+from pydss.common import (
     PV_LOAD_SHAPE_FILENAME,
     PV_PROFILES_FILENAME,
     NODE_NAMES_BY_TYPE_FILENAME,
     DatasetPropertyType,
 )
-from PyDSS.dataset_buffer import DatasetBuffer
-from PyDSS.utils.dss_utils import get_node_names_by_type
-from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
-from PyDSS.export_list_reader import ExportListReader, StoreValuesType
-from PyDSS.reports.reports import Reports, ReportGranularity
-from PyDSS.simulation_input_models import SimulationSettingsModel
-from PyDSS.utils.dataframe_utils import write_dataframe
-from PyDSS.utils.utils import dump_data
-from PyDSS.utils.simulation_utils import (
+from pydss.dataset_buffer import DatasetBuffer
+from pydss.utils.dss_utils import get_node_names_by_type
+from pydss.exceptions import InvalidConfiguration, InvalidParameter
+from pydss.export_list_reader import ExportListReader, StoreValuesType
+from pydss.reports.reports import Reports, ReportGranularity
+from pydss.simulation_input_models import SimulationSettingsModel
+from pydss.utils.dataframe_utils import write_dataframe
+from pydss.utils.utils import dump_data
+from pydss.utils.simulation_utils import (
     create_datetime_index_from_settings,
     create_loadshape_pmult_dataframe_for_simulation,
 )
-from PyDSS.utils.timing_utils import Timer, timer_stats_collector, track_timing
-from PyDSS.value_storage import ValueContainer, ValueByNumber
-from PyDSS.metrics import (
+from pydss.utils.timing_utils import Timer, timer_stats_collector, track_timing
+from pydss.value_storage import ValueContainer, ValueByNumber
+from pydss.metrics import (
     OpenDssPropertyMetric,
     SummedElementsByGroupOpenDssPropertyMetric,
     SummedElementsOpenDssPropertyMetric,

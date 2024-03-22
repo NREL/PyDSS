@@ -7,8 +7,8 @@ import opendssdirect as dss
 import pandas as pd
 import numpy as np
 
-from PyDSS.simulation_input_models import SimulationSettingsModel
-from PyDSS.common import TIME_FORMAT
+from pydss.simulation_input_models import SimulationSettingsModel
+from pydss.common import TIME_FORMAT
 
 class CircularBufferHelper:
     def __init__(self, window_size):

@@ -1,5 +1,5 @@
 from os.path import dirname, basename, isfile
-from PyDSS.ProfileManager import hooks
+from pydss.ProfileManager import hooks
 import importlib
 import glob
 

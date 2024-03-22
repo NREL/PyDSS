@@ -1,7 +1,7 @@
-PyDSS.pydss\_fs\_interface
+pydss.pydss\_fs\_interface
 ==========================
 
-.. automodule:: PyDSS.pydss_fs_interface
+.. automodule:: pydss.pydss_fs_interface
 
    
    
@@ -18,7 +18,7 @@ PyDSS.pydss\_fs\_interface
    .. autosummary::
    
       PyDssArchiveFileInterfaceBase
-      PyDssDirectoryInterface
+      PyDssFileSystemInterface
       PyDssFileSystemInterface
       PyDssTarFileInterface
       PyDssZipFileInterface

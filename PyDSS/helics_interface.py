@@ -7,9 +7,9 @@ import re
 
 from loguru import logger
 
-from PyDSS.simulation_input_models import SimulationSettingsModel
-from PyDSS.common import SUBSCRIPTIONS_FILENAME, ExportMode
-from PyDSS.utils.utils import load_data
+from pydss.simulation_input_models import SimulationSettingsModel
+from pydss.common import SUBSCRIPTIONS_FILENAME, ExportMode
+from pydss.utils.utils import load_data
 
 TYPE_INFO = {
         'CurrentsMagAng': 'vector',

@@ -1,7 +1,7 @@
-from PyDSS.ProfileManager.base_definitions import BaseProfileManager, BaseProfile
-from PyDSS.ProfileManager.common import PROFILE_TYPES
-from PyDSS.exceptions import InvalidParameter
-from PyDSS.common import DATE_FORMAT
+from pydss.ProfileManager.base_definitions import BaseProfileManager, BaseProfile
+from pydss.ProfileManager.common import PROFILE_TYPES
+from pydss.exceptions import InvalidParameter
+from pydss.common import DATE_FORMAT
 from datetime import datetime
 import pandas as pd
 import numpy as np

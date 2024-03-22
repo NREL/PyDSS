@@ -9,12 +9,12 @@ import os
 
 from loguru import logger
 
-from PyDSS.common import DataConversion, ReportGranularity
-from PyDSS.exceptions import InvalidConfiguration
-from PyDSS.simulation_input_models import SimulationSettingsModel
-from PyDSS.utils.dataframe_utils import write_dataframe
-from PyDSS.utils.simulation_utils import create_time_range_from_settings
-from PyDSS.utils.utils import dump_data, make_json_serializable
+from pydss.common import DataConversion, ReportGranularity
+from pydss.exceptions import InvalidConfiguration
+from pydss.simulation_input_models import SimulationSettingsModel
+from pydss.utils.dataframe_utils import write_dataframe
+from pydss.utils.simulation_utils import create_time_range_from_settings
+from pydss.utils.utils import dump_data, make_json_serializable
 
 
 REPORTS_DIR = "Reports"

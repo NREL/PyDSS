@@ -1,7 +1,7 @@
-PyDSS.pyControllers.Controllers.MotorStallSimple
+pydss.pyControllers.Controllers.MotorStallSimple
 ================================================
 
-.. automodule:: PyDSS.pyControllers.Controllers.MotorStallSimple
+.. automodule:: pydss.pyControllers.Controllers.MotorStallSimple
 
    
    

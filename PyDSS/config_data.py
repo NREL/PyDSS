@@ -6,8 +6,8 @@ import os
 import numpy as np
 import pandas as pd
 
-from PyDSS.exceptions import InvalidParameter
-from PyDSS.utils.utils import dump_data
+from pydss.exceptions import InvalidParameter
+from pydss.utils.utils import dump_data
 
 def convert_config_data_to_toml(filename, name=None):
     """Converts an Excel config file to TOML.

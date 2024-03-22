@@ -9,10 +9,10 @@ from pathlib import Path
 import opendssdirect as dss
 import pytest
 
-from PyDSS.common import PROJECT_TAR, PROJECT_ZIP, RUN_SIMULATION_FILENAME
-from PyDSS.pydss_fs_interface import STORE_FILENAME
-from PyDSS.pydss_project import PyDssProject
-from PyDSS.utils.utils import dump_data
+from pydss.common import PROJECT_TAR, PROJECT_ZIP, RUN_SIMULATION_FILENAME
+from pydss.pydss_fs_interface import STORE_FILENAME
+from pydss.pydss_project import PyDssProject
+from pydss.utils.utils import dump_data
 
 
 RUN_PROJECT_PATH = os.path.join("tests", "data", "project")

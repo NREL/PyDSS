@@ -1,7 +1,7 @@
-PyDSS.pyControllers.Controllers.PvFrequencyRideThru
+pydss.pyControllers.Controllers.PvFrequencyRideThru
 ===================================================
 
-.. automodule:: PyDSS.pyControllers.Controllers.PvFrequencyRideThru
+.. automodule:: pydss.pyControllers.Controllers.PvFrequencyRideThru
 
    
    

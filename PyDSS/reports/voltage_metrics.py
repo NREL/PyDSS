@@ -4,10 +4,10 @@ import os
 from loguru import logger
 import numpy as np
 
-from PyDSS.common import MinMax, NODE_NAMES_BY_TYPE_FILENAME
-from PyDSS.reports.reports import ReportBase, ReportGranularity
-from PyDSS.utils.utils import serialize_timedelta, deserialize_timedelta, load_data
-from PyDSS.node_voltage_metrics import (
+from pydss.common import MinMax, NODE_NAMES_BY_TYPE_FILENAME
+from pydss.reports.reports import ReportBase, ReportGranularity
+from pydss.utils.utils import serialize_timedelta, deserialize_timedelta, load_data
+from pydss.node_voltage_metrics import (
     NodeVoltageMetricsByType,
     SimulationVoltageMetricsModel,
     VoltageMetricsByBusTypeModel,
@@ -36,8 +36,8 @@ class VoltageMetrics(ReportBase):
 
     .. code-block:: python
 
-        from PyDSS.utils.dataframe_utils import read_dataframe
-        from PyDSS.pydss_results import PyDssResults
+        from pydss.utils.dataframe_utils import read_dataframe
+        from pydss.pydss_results import PyDssResults
 
         results = PyDssResults("path_to_project")
         control_mode_scenario = results.scenarios[1]

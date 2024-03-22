@@ -1,7 +1,7 @@
-PyDSS.dssElementFactory
+pydss.dssElementFactory
 =======================
 
-.. automodule:: PyDSS.dssElementFactory
+.. automodule:: pydss.dssElementFactory
 
    
    

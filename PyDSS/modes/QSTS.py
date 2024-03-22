@@ -1,9 +1,9 @@
 from datetime import timedelta
 
-from PyDSS.modes.solver_base import solver_base
-from PyDSS.simulation_input_models import ProjectModel
-from PyDSS.utils.dss_utils import get_load_shape_resolution_secs
-from PyDSS.utils.timing_utils import timer_stats_collector, track_timing
+from pydss.modes.solver_base import solver_base
+from pydss.simulation_input_models import ProjectModel
+from pydss.utils.dss_utils import get_load_shape_resolution_secs
+from pydss.utils.timing_utils import timer_stats_collector, track_timing
 
 
 class QSTS(solver_base):

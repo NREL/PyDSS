@@ -1,0 +1,5 @@
+,MonitoredObj,MonitoredTerm,SwitchedObj,SwitchedTerm,NumFast,PhaseFast,PhaseDelayed,GroundFast,GroundDelayed,PhaseTrip,GroundTrip,PhaseInst,GroundInst,Reset,Shots,RecloseIntervals,Delay,Action,TDPhFast,TDGrFast,TDPhDelayed,TDGrDelayed,Normal,State,basefreq,enabled,like
+Recloser.cb1,Line.l1,1,Line.l1,1,4,ext_inv,ext_inv,ext_inv,ext_inv,800,800,2400,1200,15,4,['0.5 2 2'],0,close,1,1,1,1,closed,closed,60,Yes,
+Recloser.cb2,Line.l7,1,Line.l7,1,4,ext_inv,ext_inv,ext_inv,ext_inv,800,800,2400,1200,15,4,['0.5 2 2'],0,close,1,1,1,1,closed,closed,60,Yes,
+Recloser.rec1,Line.l3,1,Line.l3,1,1,a,c,,,280,1,0,0,15,4,['0.5 2 2'],0,close,1,1,1,1,closed,closed,60,Yes,
+Recloser.rec2,Line.l5,1,Line.l5,1,1,a,c,,,400,1,0,0,15,4,['0.5 2 2'],0,close,1,1,1,1,closed,closed,60,Yes,

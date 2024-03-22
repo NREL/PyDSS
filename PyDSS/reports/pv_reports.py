@@ -7,10 +7,10 @@ from loguru import logger
 import pandas as pd
 import numpy as np
 
-from PyDSS.common import PV_LOAD_SHAPE_FILENAME
-from PyDSS.reports.reports import ReportBase, ReportGranularity
-from PyDSS.utils.dataframe_utils import read_dataframe, write_dataframe
-from PyDSS.utils.utils import dump_data
+from pydss.common import PV_LOAD_SHAPE_FILENAME
+from pydss.reports.reports import ReportBase, ReportGranularity
+from pydss.utils.dataframe_utils import read_dataframe, write_dataframe
+from pydss.utils.utils import dump_data
 
 PF1_SCENARIO = "pf1"
 CONTROL_MODE_SCENARIO = "control_mode"

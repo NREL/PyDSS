@@ -1,7 +1,7 @@
-PyDSS.defaults
+pydss.defaults
 ==============
 
-.. automodule:: PyDSS.defaults
+.. automodule:: pydss.defaults
 
    
    
@@ -27,8 +27,8 @@ PyDSS.defaults
    :toctree:
    :recursive:
 
-   PyDSS.defaults.ExportLists
-   PyDSS.defaults.Monte_Carlo
-   PyDSS.defaults.pyControllerList
-   PyDSS.defaults.pyPlotList
+   pydss.defaults.ExportLists
+   pydss.defaults.Monte_Carlo
+   pydss.defaults.pyControllerList
+   pydss.defaults.pyPlotList
 

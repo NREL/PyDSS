@@ -5,7 +5,7 @@ import shutil
 import toml
 import os
 
-from PyDSS.cli.add_scenario import build_scenario
+from pydss.cli.add_scenario import build_scenario
 
 PYDSS_PROJECT = Path(__file__).parent / "data" / "project"
 MAPPING_FILE = Path(__file__).parent / "data" / "add_scenario" / "controller_map.toml"

@@ -12,11 +12,11 @@ from loguru import logger
 import pandas as pd
 import toml
 
-from PyDSS.common import PLOTS_FILENAME, PROJECT_TAR, PROJECT_ZIP, \
+from pydss.common import PLOTS_FILENAME, PROJECT_TAR, PROJECT_ZIP, \
     ControllerType, ExportMode, SIMULATION_SETTINGS_FILENAME
-from PyDSS.exceptions import InvalidConfiguration
-from PyDSS.simulation_input_models import SimulationSettingsModel, load_simulation_settings
-from PyDSS.utils.utils import load_data
+from pydss.exceptions import InvalidConfiguration
+from pydss.simulation_input_models import SimulationSettingsModel, load_simulation_settings
+from pydss.utils.utils import load_data
 
 
 STORE_FILENAME = "store.h5"
@@ -189,7 +189,7 @@ class PyDssFileSystemInterface(abc.ABC):
         """
 
 
-class PyDssDirectoryInterface(PyDssFileSystemInterface):
+class PyDssFileSystemInterface(PyDssFileSystemInterface):
     """Reads PyDSS files when the project is expanded into directories."""
     def __init__(self, project_dir, simulation_file):
         self._project_dir = project_dir

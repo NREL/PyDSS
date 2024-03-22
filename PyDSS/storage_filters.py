@@ -5,9 +5,9 @@ import abc
 from loguru import logger
 import numpy as np
 
-from PyDSS.utils.simulation_utils import CircularBufferHelper
-from PyDSS.value_storage import ValueContainer
-from PyDSS.common import StoreValuesType
+from pydss.utils.simulation_utils import CircularBufferHelper
+from pydss.value_storage import ValueContainer
+from pydss.common import StoreValuesType
 
 
 class StorageFilterBase(abc.ABC):

@@ -4,7 +4,7 @@ author: Kapil Duwadi
 Version: 1.0
 '''
 
-from PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
+from pydss.pyControllers.pyControllerAbstract import ControllerAbstract
 import matplotlib.pyplot as plt
 import scipy.signal as signal
 import numpy as np
@@ -13,19 +13,19 @@ import math
 import os
 
 class MotorStallBackup(ControllerAbstract):
-    """The controller locks a regulator in the event of reverse power flow. Subclass of the :class:`PyDSS.pyControllers.
+    """The controller locks a regulator in the event of reverse power flow. Subclass of the :class:`pydss.pyControllers.
     pyControllerAbstract.ControllerAbstract` abstract class.
 
-        :param RegulatorObj: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS 'Regulator' element
-        :type FaultObj: class:`PyDSS.dssElement.dssElement`
+        :param RegulatorObj: A :class:`pydss.dssElement.dssElement` object that wraps around an OpenDSS 'Regulator' element
+        :type FaultObj: class:`pydss.dssElement.dssElement`
         :param Settings: A dictionary that defines the settings for the PvController.
         :type Settings: dict
         :param dssInstance: An :class:`opendssdirect` instance
         :type dssInstance: :class:`opendssdirect`
         :param ElmObjectList: Dictionary of all dssElement, dssBus and dssCircuit objects
         :type ElmObjectList: dict
-        :param dssSolver: An instance of one of the classed defined in :mod:`PyDSS.SolveMode`.
-        :type dssSolver: :mod:`PyDSS.SolveMode`
+        :param dssSolver: An instance of one of the classed defined in :mod:`pydss.SolveMode`.
+        :type dssSolver: :mod:`pydss.SolveMode`
         :raises: AssertionError if 'RegulatorObj' is not a wrapped OpenDSS Regulator element
 
     """

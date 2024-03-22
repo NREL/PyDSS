@@ -1,9 +1,9 @@
 
-from PyDSS.dssElement import dssElement
-from PyDSS.value_storage import ValueByNumber
-from PyDSS.value_storage import ValueByList
+from pydss.dssElement import dssElement
+from pydss.value_storage import ValueByNumber
+from pydss.value_storage import ValueByList
 import ast
-from PyDSS.exceptions import InvalidParameter
+from pydss.exceptions import InvalidParameter
 
 class dssTransformer(dssElement):
 

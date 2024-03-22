@@ -1,7 +1,7 @@
-PyDSS.pyControllers.pyController
+pydss.pyControllers.pyController
 ================================
 
-.. automodule:: PyDSS.pyControllers.pyController
+.. automodule:: pydss.pyControllers.pyController
 
    
    

@@ -1,7 +1,7 @@
-PyDSS.cli.run\_server
+pydss.cli.run\_server
 =====================
 
-.. automodule:: PyDSS.cli.run_server
+.. automodule:: pydss.cli.run_server
 
    
    

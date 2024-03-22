@@ -4,9 +4,9 @@ from loguru import logger
 import pandas as pd
 import numpy as np
 
-from PyDSS.exceptions import InvalidConfiguration
-from PyDSS.utils.utils import make_timestamps
-from PyDSS.common import DatasetPropertyType
+from pydss.exceptions import InvalidConfiguration
+from pydss.utils.utils import make_timestamps
+from pydss.common import DatasetPropertyType
 
 
 

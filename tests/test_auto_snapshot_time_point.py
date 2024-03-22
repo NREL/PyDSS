@@ -1,6 +1,6 @@
 from tests.common import AUTO_SNAPSHOT_TIME_POINT_PROJECT_PATH, cleanup_project
-from PyDSS.common import SIMULATION_SETTINGS_FILENAME
-from PyDSS.pydss_project import PyDssProject
+from pydss.common import SIMULATION_SETTINGS_FILENAME
+from pydss.pydss_project import PyDssProject
 
 
 def test_auto_snapshot_time_point(cleanup_project):

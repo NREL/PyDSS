@@ -1,5 +1,5 @@
 from ipaddress import v4_int_to_packed
-from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
+from  pydss.pyControllers.pyControllerAbstract import ControllerAbstract
 from shapely.geometry import MultiPoint, Polygon, Point, MultiPolygon
 from shapely.ops import triangulate, cascaded_union
 import matplotlib.pyplot as plt
@@ -9,18 +9,18 @@ import os
 import pdb
 
 class PvFrequencyRideThru(ControllerAbstract):
-    """Implementation of IEEE1547-2003 and IEEE1547-2018 frequency ride-through standards using the OpenDSS Generator model. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
+    """Implementation of IEEE1547-2003 and IEEE1547-2018 frequency ride-through standards using the OpenDSS Generator model. Subclass of the :class:`pydss.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
 
-            :param PvObj: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS 'Generator' element
-            :type FaultObj: class:`PyDSS.dssElement.dssElement`
+            :param PvObj: A :class:`pydss.dssElement.dssElement` object that wraps around an OpenDSS 'Generator' element
+            :type FaultObj: class:`pydss.dssElement.dssElement`
             :param Settings: A dictionary that defines the settings for the PvController.
             :type Settings: dict
             :param dssInstance: An :class:`opendssdirect` instance
             :type dssInstance: :class:`opendssdirect`
             :param ElmObjectList: Dictionary of all dssElement, dssBus and dssCircuit objects
             :type ElmObjectList: dict
-            :param dssSolver: An instance of one of the classed defined in :mod:`PyDSS.SolveMode`.
-            :type dssSolver: :mod:`PyDSS.SolveMode`
+            :param dssSolver: An instance of one of the classed defined in :mod:`pydss.SolveMode`.
+            :type dssSolver: :mod:`pydss.SolveMode`
             :raises: AssertionError if 'PvObj' is not a wrapped OpenDSS Generator element
 
     """

@@ -1,7 +1,7 @@
-PyDSS.element\_fields
+pydss.element\_fields
 =====================
 
-.. automodule:: PyDSS.element_fields
+.. automodule:: pydss.element_fields
 
    
    

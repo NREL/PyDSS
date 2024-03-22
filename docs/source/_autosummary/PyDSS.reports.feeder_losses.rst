@@ -1,7 +1,7 @@
-PyDSS.reports.feeder\_losses
+pydss.reports.feeder\_losses
 ============================
 
-.. automodule:: PyDSS.reports.feeder_losses
+.. automodule:: pydss.reports.feeder_losses
 
    
    

@@ -3,7 +3,7 @@
 
 import click
 
-from PyDSS.pydss_project import PyDssProject
+from pydss.pydss_project import PyDssProject
 
 
 @click.argument("config-file")

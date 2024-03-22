@@ -1,7 +1,7 @@
-PyDSS.pyControllers.Controllers.MotorStallBackup
+pydss.pyControllers.Controllers.MotorStallBackup
 ================================================
 
-.. automodule:: PyDSS.pyControllers.Controllers.MotorStallBackup
+.. automodule:: pydss.pyControllers.Controllers.MotorStallBackup
 
    
    

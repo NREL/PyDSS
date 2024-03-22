@@ -28,7 +28,7 @@ case you can use PyDSS to convert the file back to a dataframe.
 
 .. code-block:: python
 
-    from PyDSS.utils.dataframe_utils import read_dataframe
+    from pydss.utils.dataframe_utils import read_dataframe
 
     df = read_dataframe("path/to/filename")
 
@@ -74,7 +74,7 @@ PyDSS stores generated reports in ``<project-path>/Reports``.
 ******************
 Adding New Reports
 ******************
-Here's how to create a new report in PyDSS.
+Here's how to create a new report in pydss.
 
 #. Create a new class in a Python file in ``PyDSS/reports``. The class must
    inherit from ``ReportBase``.

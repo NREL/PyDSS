@@ -1,7 +1,7 @@
-PyDSS.pyResults
+pydss.pyResults
 ===============
 
-.. automodule:: PyDSS.pyResults
+.. automodule:: pydss.pyResults
 
    
    

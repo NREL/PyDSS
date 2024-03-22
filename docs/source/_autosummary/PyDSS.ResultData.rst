@@ -1,7 +1,7 @@
-PyDSS.ResultData
+pydss.ResultData
 ================
 
-.. automodule:: PyDSS.ResultData
+.. automodule:: pydss.ResultData
 
    
    

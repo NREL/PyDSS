@@ -2,10 +2,10 @@ import ast
 
 from opendssdirect import DSSException
 
-from PyDSS.dssBus import dssBus
-from PyDSS.dssObjectBase import dssObjectBase
-from PyDSS.exceptions import InvalidParameter
-from PyDSS.value_storage import ValueByNumber
+from pydss.dssBus import dssBus
+from pydss.dssObjectBase import dssObjectBase
+from pydss.exceptions import InvalidParameter
+from pydss.value_storage import ValueByNumber
 
 
 class dssElement(dssObjectBase):

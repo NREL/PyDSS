@@ -1,24 +1,24 @@
 from collections import namedtuple
 import math
 
-from PyDSS.pyControllers.enumerations import SmartControls, ControlPriority, VoltWattCurtailmentStrategy, VoltageCalcModes
-from PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
-from PyDSS.pyControllers.models import PvControllerModel
+from pydss.pyControllers.enumerations import SmartControls, ControlPriority, VoltWattCurtailmentStrategy, VoltageCalcModes
+from pydss.pyControllers.pyControllerAbstract import ControllerAbstract
+from pydss.pyControllers.models import PvControllerModel
 
 
 class PvController(ControllerAbstract):
-    """Implementation of smart control modes of modern inverter systems. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
+    """Implementation of smart control modes of modern inverter systems. Subclass of the :class:`pydss.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
 
-        :param pv_obj: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS 'PVSystem' element
-        :type FaultObj: class:`PyDSS.dssElement.dssElement`
+        :param pv_obj: A :class:`pydss.dssElement.dssElement` object that wraps around an OpenDSS 'PVSystem' element
+        :type FaultObj: class:`pydss.dssElement.dssElement`
         :param settings: A dictionary that defines the settings for the PvController.
         :type settings: dict
         :param dss_instance: An :class:`opendssdirect` instance
         :type dss_instance: :class:`opendssdirect`
         :param element_object_list: Dictionary of all dssElement, dssBus and dssCircuit objects
         :type element_object_list: dict
-        :param dss_solver: An instance of one of the classed defined in :mod:`PyDSS.SolveMode`.
-        :type dss_solver: :mod:`PyDSS.SolveMode`
+        :param dss_solver: An instance of one of the classed defined in :mod:`pydss.SolveMode`.
+        :type dss_solver: :mod:`pydss.SolveMode`
         :raises: Assertionerror if 'pv_obj' is not a wrapped OpenDSS PVSystem element
 
     """

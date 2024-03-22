@@ -1,4 +1,4 @@
-from PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
+from pydss.pyControllers.pyControllerAbstract import ControllerAbstract
 from math import *
 import random
 

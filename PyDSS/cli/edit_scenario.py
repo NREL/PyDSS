@@ -2,8 +2,8 @@
 
 import click
 
-from PyDSS.common import CONTROLLER_TYPES
-from PyDSS.pydss_project import update_pydss_controllers
+from pydss.common import CONTROLLER_TYPES
+from pydss.pydss_project import update_pydss_controllers
 
 
 @click.option(

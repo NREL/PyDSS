@@ -4,8 +4,8 @@ author: Aadil Latif
 Version: 1.0
 '''
 
-from PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
-from PyDSS.pyControllers.models import MotorStallSimpleSettings
+from pydss.pyControllers.pyControllerAbstract import ControllerAbstract
+from pydss.pyControllers.models import MotorStallSimpleSettings
 
 class MotorStallSimple(ControllerAbstract):
 

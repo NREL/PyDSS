@@ -1,7 +1,7 @@
-PyDSS.api.src.web.handler
+pydss.api.src.web.handler
 =========================
 
-.. automodule:: PyDSS.api.src.web.handler
+.. automodule:: pydss.api.src.web.handler
 
    
    

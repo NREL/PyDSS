@@ -1,7 +1,7 @@
-PyDSS.api.src.web.create\_schema
+pydss.api.src.web.create\_schema
 ================================
 
-.. automodule:: PyDSS.api.src.web.create_schema
+.. automodule:: pydss.api.src.web.create_schema
 
    
    

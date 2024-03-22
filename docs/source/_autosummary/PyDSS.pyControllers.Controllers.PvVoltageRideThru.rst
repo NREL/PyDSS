@@ -1,7 +1,7 @@
-PyDSS.pyControllers.Controllers.PvVoltageRideThru
+pydss.pyControllers.Controllers.PvVoltageRideThru
 =================================================
 
-.. automodule:: PyDSS.pyControllers.Controllers.PvVoltageRideThru
+.. automodule:: pydss.pyControllers.Controllers.PvVoltageRideThru
 
    
    
