@@ -50,7 +50,7 @@ post_process_infos = []
 
 [Helics]
 "Co-simulation Mode" = true
-"Federate name" = "PyDSS"
+"Federate name" = "pydss"
 "Time delta" = 0.01
 "Core type" = "zmq"
 Uninterruptible = true

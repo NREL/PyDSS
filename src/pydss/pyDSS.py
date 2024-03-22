@@ -39,7 +39,7 @@ __maintainer__ = "Aadil Latif"
 __email__ = "aadil.latif@nrel.gov, aadil.latif@gmail.com"
 __status__ = "Production"
 
-PYDSS_BASE_DIR = os.path.join(os.path.dirname(getattr(pydss, "__path__")[0]), "PyDSS")
+PYDSS_BASE_DIR = os.path.join(os.path.dirname(getattr(pydss, "__path__")[0]), "pydss")
 
 class instance(object):
 

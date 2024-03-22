@@ -644,7 +644,7 @@ class HelicsModel(InputsBaseModel):
         Field(
             title="federate_name",
             description="Name of the federate",
-            default="PyDSS",
+            default="pydss",
             alias="Federate name",
         )]
     time_delta: Annotated[

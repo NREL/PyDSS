@@ -756,7 +756,7 @@ class PyDssScenario:
 
         path = os.path.join(
             os.path.dirname(getattr(pydss, "__path__")[0]),
-            "PyDSS",
+            "pydss",
             "defaults",
             "pyControllerList",
             filename_from_enum(controller_type),
@@ -779,7 +779,7 @@ class PyDssScenario:
         """
         path = os.path.join(
             os.path.dirname(getattr(pydss, "__path__")[0]),
-            "PyDSS",
+            "pydss",
             "defaults",
             "ExportLists",
             filename_from_enum(export_mode),
