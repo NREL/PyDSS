@@ -1,7 +1,7 @@
-PyDSS.pyControllers.Controllers.Settings
+pydss.pyControllers.Controllers.Settings
 ========================================
 
-.. automodule:: PyDSS.pyControllers.Controllers.Settings
+.. automodule:: pydss.pyControllers.Controllers.Settings
 
    
    

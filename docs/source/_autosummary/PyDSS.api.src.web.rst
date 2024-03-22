@@ -1,7 +1,7 @@
-PyDSS.api.src.web
+pydss.api.src.web
 =================
 
-.. automodule:: PyDSS.api.src.web
+.. automodule:: pydss.api.src.web
 
    
    
@@ -27,7 +27,7 @@ PyDSS.api.src.web
    :toctree:
    :recursive:
 
-   PyDSS.api.src.web.create_schema
-   PyDSS.api.src.web.handler
-   PyDSS.api.src.web.parser
+   pydss.api.src.web.create_schema
+   pydss.api.src.web.handler
+   pydss.api.src.web.parser
 

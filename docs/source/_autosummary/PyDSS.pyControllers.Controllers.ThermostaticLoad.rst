@@ -1,7 +1,7 @@
-PyDSS.pyControllers.Controllers.ThermostaticLoad
+pydss.pyControllers.Controllers.ThermostaticLoad
 ================================================
 
-.. automodule:: PyDSS.pyControllers.Controllers.ThermostaticLoad
+.. automodule:: pydss.pyControllers.Controllers.ThermostaticLoad
 
    
    

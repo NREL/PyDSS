@@ -1,7 +1,7 @@
-PyDSS.exceptions
+pydss.exceptions
 ================
 
-.. automodule:: PyDSS.exceptions
+.. automodule:: pydss.exceptions
 
    
    

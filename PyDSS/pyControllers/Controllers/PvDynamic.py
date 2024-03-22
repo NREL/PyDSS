@@ -1,4 +1,4 @@
-from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
+from  pydss.pyControllers.pyControllerAbstract import ControllerAbstract
 
 try:
     from pvder.simulation_utilities import SimulationResults

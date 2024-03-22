@@ -1,7 +1,7 @@
-PyDSS.ProfileManager.hooks
+pydss.ProfileManager.hooks
 ==========================
 
-.. automodule:: PyDSS.ProfileManager.hooks
+.. automodule:: pydss.ProfileManager.hooks
 
    
    
@@ -27,6 +27,6 @@ PyDSS.ProfileManager.hooks
    :toctree:
    :recursive:
 
-   PyDSS.ProfileManager.hooks.MongoDB
-   PyDSS.ProfileManager.hooks.h5
+   pydss.ProfileManager.hooks.MongoDB
+   pydss.ProfileManager.hooks.h5
 

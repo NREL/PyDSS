@@ -1,7 +1,7 @@
-PyDSS.api.src.app.Tester
+pydss.api.src.app.Tester
 ========================
 
-.. automodule:: PyDSS.api.src.app.Tester
+.. automodule:: pydss.api.src.app.Tester
 
    
    

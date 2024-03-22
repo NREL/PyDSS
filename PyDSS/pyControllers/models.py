@@ -2,7 +2,7 @@ from typing import Union, Annotated
 
 from pydantic import BaseModel, Field, model_validator
 
-from PyDSS.pyControllers.enumerations import (
+from pydss.pyControllers.enumerations import (
     CategoryI, 
     CategoryII, 
     CategoryIII, 

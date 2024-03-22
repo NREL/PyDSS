@@ -10,9 +10,9 @@ from pathlib import Path
 
 import click
 
-from PyDSS import common
-from PyDSS import simulation_input_models
-from PyDSS.simulation_input_models import create_simulation_settings
+from pydss import common
+from pydss import simulation_input_models
+from pydss.simulation_input_models import create_simulation_settings
 
 
 MODEL_ORDER = (
@@ -150,7 +150,7 @@ def get_ordered_class_names():
 
 
 def make_enum_mapping():
-    """Return a mapping of name to class of all enums in the PyDSS.common module.
+    """Return a mapping of name to class of all enums in the pydss.common module.
 
     Returns
     -------

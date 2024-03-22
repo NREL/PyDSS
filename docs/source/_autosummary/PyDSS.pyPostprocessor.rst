@@ -1,7 +1,7 @@
-PyDSS.pyPostprocessor
+pydss.pyPostprocessor
 =====================
 
-.. automodule:: PyDSS.pyPostprocessor
+.. automodule:: pydss.pyPostprocessor
 
    
    
@@ -27,7 +27,7 @@ PyDSS.pyPostprocessor
    :toctree:
    :recursive:
 
-   PyDSS.pyPostprocessor.PostprocessScripts
-   PyDSS.pyPostprocessor.pyPostprocess
-   PyDSS.pyPostprocessor.pyPostprocessAbstract
+   pydss.pyPostprocessor.PostprocessScripts
+   pydss.pyPostprocessor.pyPostprocess
+   pydss.pyPostprocessor.pyPostprocessAbstract
 

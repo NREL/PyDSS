@@ -4,8 +4,8 @@ import scipy.signal as signal
 import numpy as np
 import math
 
-from PyDSS.pyControllers.models import MotorStallSettings
-from PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
+from pydss.pyControllers.models import MotorStallSettings
+from pydss.pyControllers.pyControllerAbstract import ControllerAbstract
 
 class MotorStall(ControllerAbstract):   
     def __init__(self, motor_obj, settings, dss_instance, elm_object_list, dss_solver):

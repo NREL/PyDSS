@@ -1,7 +1,7 @@
-PyDSS.pyControllers.Controllers.FaultController
+pydss.pyControllers.Controllers.FaultController
 ===============================================
 
-.. automodule:: PyDSS.pyControllers.Controllers.FaultController
+.. automodule:: pydss.pyControllers.Controllers.FaultController
 
    
    

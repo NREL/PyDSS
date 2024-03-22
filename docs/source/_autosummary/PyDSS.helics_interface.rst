@@ -1,7 +1,7 @@
-PyDSS.helics\_interface
+pydss.helics\_interface
 =======================
 
-.. automodule:: PyDSS.helics_interface
+.. automodule:: pydss.helics_interface
 
    
    

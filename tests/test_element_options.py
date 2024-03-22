@@ -1,5 +1,5 @@
 
-from PyDSS.element_options import ElementOptions
+from pydss.element_options import ElementOptions
 
 
 def test_element_options__is_option_valid():

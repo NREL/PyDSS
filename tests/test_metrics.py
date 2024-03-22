@@ -11,15 +11,15 @@ import numpy as np
 import pytest
 import h5py
 
-from PyDSS.value_storage import ValueByNumber, ValueByList
-from PyDSS.export_list_reader import ExportListProperty
-from PyDSS.metrics import MultiValueTypeMetricBase
-from PyDSS.dataset_buffer import DatasetBuffer
-from PyDSS.simulation_input_models import (
+from pydss.value_storage import ValueByNumber, ValueByList
+from pydss.export_list_reader import ExportListProperty
+from pydss.metrics import MultiValueTypeMetricBase
+from pydss.dataset_buffer import DatasetBuffer
+from pydss.simulation_input_models import (
     create_simulation_settings, 
     load_simulation_settings
 )
-from PyDSS.common import LimitsFilter
+from pydss.common import LimitsFilter
 from tests.common import FakeElement
 
 

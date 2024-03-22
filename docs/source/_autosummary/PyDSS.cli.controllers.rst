@@ -1,7 +1,7 @@
-PyDSS.cli.controllers
+pydss.cli.controllers
 =====================
 
-.. automodule:: PyDSS.cli.controllers
+.. automodule:: pydss.cli.controllers
 
    
    

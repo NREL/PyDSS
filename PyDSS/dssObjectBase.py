@@ -1,8 +1,8 @@
 
 import abc
  
-from PyDSS.exceptions import InvalidParameter
-from PyDSS.value_storage import ValueByLabel, ValueByList, ValueByNumber
+from pydss.exceptions import InvalidParameter
+from pydss.value_storage import ValueByLabel, ValueByList, ValueByNumber
 import numpy as np
 
 class dssObjectBase(abc.ABC):

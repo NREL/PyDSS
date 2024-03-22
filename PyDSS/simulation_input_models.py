@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field
 
 
 
-from PyDSS.common import (
+from pydss.common import (
     ControlMode,
     FileFormat,
     LoggingLevel,
@@ -23,9 +23,9 @@ from PyDSS.common import (
     SIMULATION_SETTINGS_FILENAME,
     ControllerType
 )
-from PyDSS.dataset_buffer import DEFAULT_MAX_CHUNK_BYTES
-from PyDSS.utils.utils import dump_data, load_data
-from PyDSS.common import DATE_FORMAT
+from pydss.dataset_buffer import DEFAULT_MAX_CHUNK_BYTES
+from pydss.utils.utils import dump_data, load_data
+from pydss.common import DATE_FORMAT
 
 class InputsBaseModel(BaseModel):
     """Base class for all input models"""

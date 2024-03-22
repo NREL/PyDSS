@@ -5,8 +5,8 @@ from loguru import logger
 from scipy import stats
 import numpy as np
 
-from PyDSS.simulation_input_models import SimulationSettingsModel
-from PyDSS.utils import utils
+from pydss.simulation_input_models import SimulationSettingsModel
+from pydss.utils import utils
 
 class MonteCarloSim:
 

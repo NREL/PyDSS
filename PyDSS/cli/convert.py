@@ -4,9 +4,9 @@ import os
 
 import click
 
-from PyDSS.config_data import convert_config_data_to_toml
-from PyDSS.export_list_reader import ExportListReader
-from PyDSS.utils.utils import dump_data
+from pydss.config_data import convert_config_data_to_toml
+from pydss.export_list_reader import ExportListReader
+from pydss.utils.utils import dump_data
 
 
 @click.group("convert")

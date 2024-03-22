@@ -1,7 +1,7 @@
-PyDSS.pyControllers.Controllers.xfmrController
+pydss.pyControllers.Controllers.xfmrController
 ==============================================
 
-.. automodule:: PyDSS.pyControllers.Controllers.xfmrController
+.. automodule:: pydss.pyControllers.Controllers.xfmrController
 
    
    

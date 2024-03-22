@@ -1,7 +1,7 @@
-PyDSS.ProfileManager.base\_definitions
+pydss.ProfileManager.base\_definitions
 ======================================
 
-.. automodule:: PyDSS.ProfileManager.base_definitions
+.. automodule:: pydss.ProfileManager.base_definitions
 
    
    

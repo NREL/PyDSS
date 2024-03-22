@@ -1,7 +1,7 @@
-PyDSS.thermal\_metrics
+pydss.thermal\_metrics
 ======================
 
-.. automodule:: PyDSS.thermal_metrics
+.. automodule:: pydss.thermal_metrics
 
    
    

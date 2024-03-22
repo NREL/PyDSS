@@ -1,7 +1,7 @@
-PyDSS.simulation\_input\_models
+pydss.simulation\_input\_models
 ===============================
 
-.. automodule:: PyDSS.simulation_input_models
+.. automodule:: pydss.simulation_input_models
 
    
    

@@ -4,9 +4,9 @@ import os
 
 from loguru import logger
 
-from PyDSS.simulation_input_models import SimulationSettingsModel
-from PyDSS.api.src.app.JSON_writer import JSONwriter
-from PyDSS.dssInstance import OpenDSS
+from pydss.simulation_input_models import SimulationSettingsModel
+from pydss.api.src.app.JSON_writer import JSONwriter
+from pydss.dssInstance import OpenDSS
 
 
 class PyDSS:

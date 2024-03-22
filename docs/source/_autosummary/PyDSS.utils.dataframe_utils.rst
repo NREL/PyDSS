@@ -1,7 +1,7 @@
-PyDSS.utils.dataframe\_utils
+pydss.utils.dataframe\_utils
 ============================
 
-.. automodule:: PyDSS.utils.dataframe_utils
+.. automodule:: pydss.utils.dataframe_utils
 
    
    

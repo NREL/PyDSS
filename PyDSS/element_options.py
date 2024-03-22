@@ -2,7 +2,7 @@
 
 from loguru import logger
 
-from PyDSS.element_fields import ELEMENT_FIELDS
+from pydss.element_fields import ELEMENT_FIELDS
 
 class ElementOptions:
     """Stores the options available for element classes and properties."""

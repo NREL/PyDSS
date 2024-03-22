@@ -8,10 +8,10 @@ import numbers
 import pandas as pd
 import opendssdirect as dss
 import numpy as np
-from PyDSS.pyPostprocessor.pyPostprocessAbstract import AbstractPostprocess
+from pydss.pyPostprocessor.pyPostprocessAbstract import AbstractPostprocess
 
-# from PyDSS.exceptions import InvalidParameter, OpenDssConvergenceError
-from PyDSS.utils.timing_utils import timed_info
+# from pydss.exceptions import InvalidParameter, OpenDssConvergenceError
+from pydss.utils.timing_utils import timed_info
 
 
 # to get xfmr information

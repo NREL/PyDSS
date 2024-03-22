@@ -1,10 +1,10 @@
-from PyDSS.common import PROFILE_MAPPING
+from pydss.common import PROFILE_MAPPING
 import datetime
 import toml
 import abc
 import os
 
-from PyDSS.simulation_input_models import SimulationSettingsModel
+from pydss.simulation_input_models import SimulationSettingsModel
 
 
 class BaseProfileManager(abc.ABC):

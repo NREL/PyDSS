@@ -1,7 +1,7 @@
-PyDSS.cli.create\_project
+pydss.cli.create\_project
 =========================
 
-.. automodule:: PyDSS.cli.create_project
+.. automodule:: pydss.cli.create_project
 
    
    

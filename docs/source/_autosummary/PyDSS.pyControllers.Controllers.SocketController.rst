@@ -1,7 +1,7 @@
-PyDSS.pyControllers.Controllers.SocketController
+pydss.pyControllers.Controllers.SocketController
 ================================================
 
-.. automodule:: PyDSS.pyControllers.Controllers.SocketController
+.. automodule:: pydss.pyControllers.Controllers.SocketController
 
    
    

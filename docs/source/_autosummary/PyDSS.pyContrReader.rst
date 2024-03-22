@@ -1,7 +1,7 @@
-PyDSS.pyContrReader
+pydss.pyContrReader
 ===================
 
-.. automodule:: PyDSS.pyContrReader
+.. automodule:: pydss.pyContrReader
 
    
    

@@ -6,7 +6,7 @@ import h5py
 import numpy as np
 import pandas as pd
 
-from PyDSS.dataset_buffer import DatasetBuffer
+from pydss.dataset_buffer import DatasetBuffer
 
 
 def test_dataset_buffer__compute_chunk_count():

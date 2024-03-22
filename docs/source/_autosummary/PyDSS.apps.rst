@@ -1,7 +1,7 @@
-PyDSS.apps
+pydss.apps
 ==========
 
-.. automodule:: PyDSS.apps
+.. automodule:: pydss.apps
 
    
    
@@ -27,5 +27,5 @@ PyDSS.apps
    :toctree:
    :recursive:
 
-   PyDSS.apps.data_viewer
+   pydss.apps.data_viewer
 

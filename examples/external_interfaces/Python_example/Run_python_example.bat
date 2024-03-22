@@ -1,3 +1,3 @@
 call activate pydss2
-python run_pyDSS.py
+python run_pydss.py
 pause

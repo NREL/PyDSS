@@ -1,7 +1,7 @@
-PyDSS.pyControllers
+pydss.pyControllers
 ===================
 
-.. automodule:: PyDSS.pyControllers
+.. automodule:: pydss.pyControllers
 
    
    
@@ -27,9 +27,9 @@ PyDSS.pyControllers
    :toctree:
    :recursive:
 
-   PyDSS.pyControllers.Controllers
-   PyDSS.pyControllers.enumerations
-   PyDSS.pyControllers.models
-   PyDSS.pyControllers.pyController
-   PyDSS.pyControllers.pyControllerAbstract
+   pydss.pyControllers.Controllers
+   pydss.pyControllers.enumerations
+   pydss.pyControllers.models
+   pydss.pyControllers.pyController
+   pydss.pyControllers.pyControllerAbstract
 

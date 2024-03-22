@@ -1,7 +1,7 @@
-PyDSS.pyControllers.Controllers.PvController
+pydss.pyControllers.Controllers.PvController
 ============================================
 
-.. automodule:: PyDSS.pyControllers.Controllers.PvController
+.. automodule:: pydss.pyControllers.Controllers.PvController
 
    
    

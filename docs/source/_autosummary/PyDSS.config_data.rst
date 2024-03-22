@@ -1,7 +1,7 @@
-PyDSS.config\_data
+pydss.config\_data
 ==================
 
-.. automodule:: PyDSS.config_data
+.. automodule:: pydss.config_data
 
    
    

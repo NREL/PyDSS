@@ -1,7 +1,7 @@
-PyDSS.pyPostprocessor.PostprocessScripts.EdLiFoControl
+pydss.pyPostprocessor.PostprocessScripts.EdLiFoControl
 ======================================================
 
-.. automodule:: PyDSS.pyPostprocessor.PostprocessScripts.EdLiFoControl
+.. automodule:: pydss.pyPostprocessor.PostprocessScripts.EdLiFoControl
 
    
    

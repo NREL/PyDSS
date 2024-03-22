@@ -1,20 +1,20 @@
-from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
+from  pydss.pyControllers.pyControllerAbstract import ControllerAbstract
 import socket
 import struct
 
 class SocketController(ControllerAbstract):
-    """Allows PyDSS object to inteface with external software using socket communication. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
+    """Allows PyDSS object to inteface with external software using socket communication. Subclass of the :class:`pydss.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
 
-            :param ElmObject: A :class:`PyDSS.dssElement.dssElement` object that wraps around any OpenDSS element
-            :type FaultObj: class:`PyDSS.dssElement.dssElement`
+            :param ElmObject: A :class:`pydss.dssElement.dssElement` object that wraps around any OpenDSS element
+            :type FaultObj: class:`pydss.dssElement.dssElement`
             :param Settings: A dictionary that defines the settings for the PvController.
             :type Settings: dict
             :param dssInstance: An :class:`opendssdirect` instance
             :type dssInstance: :class:`opendssdirect`
             :param ElmObjectList: Dictionary of all dssElement, dssBus and dssCircuit objects
             :type ElmObjectList: dict
-            :param dssSolver: An instance of one of the classed defined in :mod:`PyDSS.SolveMode`.
-            :type dssSolver: :mod:`PyDSS.SolveMode`
+            :param dssSolver: An instance of one of the classed defined in :mod:`pydss.SolveMode`.
+            :type dssSolver: :mod:`pydss.SolveMode`
             :raises: socket.error if the connection fails
 
     """

@@ -3,7 +3,7 @@
 ********
 Tutorial
 ********
-This page describes how to run simulations with PyDSS. If you have not already installed PyDSS,
+This page describes how to run simulations with pydss. If you have not already installed PyDSS,
 please follow the instructions at :ref:`installation_label`.
 
 Create a project
@@ -72,7 +72,7 @@ set in each scenario's ``Exports.toml`` on a per-property basis.
   ``CUSTOM_FUNCTIONS`` in ``PyDSS/export_list_reader.py`` to see the options
   available.
 - Set ``sum_group_file = file_path`` where file_path is a JSON or TOML file
-  relative to the directory from which you will run PyDSS. The contents of the
+  relative to the directory from which you will run pydss. The contents of the
   file should look like this example::
 
     {
@@ -134,7 +134,7 @@ Create a new Python notebook and add this to to the first cell:
 
 .. code-block:: python
 
-    from PyDSS.apps.data_viewer import DataViewer
+    from pydss.apps.data_viewer import DataViewer
     from IPython.display import display, HTML, clear_output
     display(HTML("<style>.container { width:100% !important; }</style>"))
 
@@ -165,7 +165,7 @@ Load element classes and properties
 
 .. code-block:: python
 
-    from PyDSS.pydss_results import PyDssResults
+    from pydss.pydss_results import PyDssResults
 
     path = "."
     results = PyDssResults(path)

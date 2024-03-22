@@ -1,7 +1,7 @@
-PyDSS.Extensions.MonteCarlo
+pydss.Extensions.MonteCarlo
 ===========================
 
-.. automodule:: PyDSS.Extensions.MonteCarlo
+.. automodule:: pydss.Extensions.MonteCarlo
 
    
    

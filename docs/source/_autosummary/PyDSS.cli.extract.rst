@@ -1,7 +1,7 @@
-PyDSS.cli.extract
+pydss.cli.extract
 =================
 
-.. automodule:: PyDSS.cli.extract
+.. automodule:: pydss.cli.extract
 
    
    

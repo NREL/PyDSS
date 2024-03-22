@@ -1,7 +1,7 @@
 import opendssdirect as dss
 
-from PyDSS.dssTransformer import dssTransformer
-from PyDSS.dssElement import dssElement
+from pydss.dssTransformer import dssTransformer
+from pydss.dssElement import dssElement
 
 
 def create_dss_element(element_class, element_name, dss_instance=None):

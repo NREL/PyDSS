@@ -9,16 +9,16 @@ import numpy as np
 import pandas as pd
 from loguru import logger
 
-from PyDSS.common import  DatasetPropertyType
-from PyDSS.dataset_buffer import DatasetBuffer
-from PyDSS.element_options import ElementOptions
-from PyDSS.exceptions import InvalidParameter
-from PyDSS.pydss_project import PyDssProject, RUN_SIMULATION_FILENAME
-from PyDSS.reports.reports import Reports, REPORTS_DIR
-from PyDSS.utils.dataframe_utils import read_dataframe, write_dataframe
-from PyDSS.utils.utils import dump_data, load_data, make_json_serializable, \
+from pydss.common import  DatasetPropertyType
+from pydss.dataset_buffer import DatasetBuffer
+from pydss.element_options import ElementOptions
+from pydss.exceptions import InvalidParameter
+from pydss.pydss_project import PyDssProject, RUN_SIMULATION_FILENAME
+from pydss.reports.reports import Reports, REPORTS_DIR
+from pydss.utils.dataframe_utils import read_dataframe, write_dataframe
+from pydss.utils.utils import dump_data, load_data, make_json_serializable, \
     make_timestamps
-from PyDSS.value_storage import ValueStorageBase, get_dataset_property_type, \
+from pydss.value_storage import ValueStorageBase, get_dataset_property_type, \
     get_time_step_path
 
 class PyDssResults:

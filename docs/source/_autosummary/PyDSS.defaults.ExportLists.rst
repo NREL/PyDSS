@@ -1,7 +1,7 @@
-PyDSS.defaults.ExportLists
+pydss.defaults.ExportLists
 ==========================
 
-.. automodule:: PyDSS.defaults.ExportLists
+.. automodule:: pydss.defaults.ExportLists
 
    
    

@@ -1,7 +1,7 @@
-PyDSS.cli.convert
+pydss.cli.convert
 =================
 
-.. automodule:: PyDSS.cli.convert
+.. automodule:: pydss.cli.convert
 
    
    

@@ -1,26 +1,26 @@
-from PyDSS.common import SimulationType
-from PyDSS.simulation_input_models import SimulationSettingsModel
-from PyDSS.pyContrReader import read_controller_settings_from_registry
-from PyDSS.dssElementFactory import create_dss_element
-from PyDSS.utils.utils import make_human_readable_size
-from PyDSS.pyContrReader import pyContrReader as pcr
-from PyDSS.exceptions import (
+from pydss.common import SimulationType
+from pydss.simulation_input_models import SimulationSettingsModel
+from pydss.pyContrReader import read_controller_settings_from_registry
+from pydss.dssElementFactory import create_dss_element
+from pydss.utils.utils import make_human_readable_size
+from pydss.pyContrReader import pyContrReader as pcr
+from pydss.exceptions import (
     InvalidConfiguration, PyDssConvergenceError, PyDssConvergenceErrorCountExceeded,
     PyDssConvergenceMaxError, OpenDssModelError, OpenDssConvergenceErrorCountExceeded
 )
-from PyDSS.ProfileManager import ProfileInterface
-from PyDSS.pyPostprocessor import pyPostprocess
-import PyDSS.pyControllers as pyControllers
-from PyDSS import helics_interface as HI
-from PyDSS.ResultData import ResultData
-from PyDSS.dssCircuit import dssCircuit
-from PyDSS.common import SnapshotTimePointSelectionMode, DATE_FORMAT
-from PyDSS.dssBus import dssBus
-from PyDSS import SolveMode
-from PyDSS.simulation_input_models import SimulationSettingsModel
-from PyDSS.utils.simulation_utils import SimulationFilteredTimeRange
-from PyDSS.utils.timing_utils import Timer, timer_stats_collector, track_timing
-from PyDSS.get_snapshot_timepoints import get_snapshot_timepoint
+from pydss.ProfileManager import ProfileInterface
+from pydss.pyPostprocessor import pyPostprocess
+import pydss.pyControllers as pyControllers
+from pydss import helics_interface as HI
+from pydss.ResultData import ResultData
+from pydss.dssCircuit import dssCircuit
+from pydss.common import SnapshotTimePointSelectionMode, DATE_FORMAT
+from pydss.dssBus import dssBus
+from pydss import SolveMode
+from pydss.simulation_input_models import SimulationSettingsModel
+from pydss.utils.simulation_utils import SimulationFilteredTimeRange
+from pydss.utils.timing_utils import Timer, timer_stats_collector, track_timing
+from pydss.get_snapshot_timepoints import get_snapshot_timepoint
 
 import opendssdirect as dss
 import numpy as np
@@ -465,7 +465,7 @@ class OpenDSS:
         return step, has_converged
 
     def RunMCsimulation(self, project, scenario, samples):
-        from PyDSS.Extensions.MonteCarlo import MonteCarloSim
+        from pydss.Extensions.MonteCarlo import MonteCarloSim
         MC = MonteCarloSim(self._settings, self._dssPath, self._dssObjects, self._dssObjectsByClass)
         for i in range(samples):
             MC.Create_Scenario()

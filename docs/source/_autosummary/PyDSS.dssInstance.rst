@@ -1,7 +1,7 @@
-PyDSS.dssInstance
+pydss.dssInstance
 =================
 
-.. automodule:: PyDSS.dssInstance
+.. automodule:: pydss.dssInstance
 
    
    

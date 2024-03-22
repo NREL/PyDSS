@@ -1,7 +1,7 @@
-PyDSS.ProfileManager.ProfileInterface
+pydss.ProfileManager.ProfileInterface
 =====================================
 
-.. automodule:: PyDSS.ProfileManager.ProfileInterface
+.. automodule:: pydss.ProfileManager.ProfileInterface
 
    
    

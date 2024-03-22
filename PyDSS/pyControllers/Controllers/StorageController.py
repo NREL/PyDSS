@@ -1,21 +1,21 @@
-from  PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
+from  pydss.pyControllers.pyControllerAbstract import ControllerAbstract
 import calendar
 import math
 import ast
 
 class StorageController(ControllerAbstract):
-    """Numerous control implementation for a storage system from both behind-the-meter and front-of- meter applications. Subclass of the :class:`PyDSS.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
+    """Numerous control implementation for a storage system from both behind-the-meter and front-of- meter applications. Subclass of the :class:`pydss.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
 
-            :param StorageObj: A :class:`PyDSS.dssElement.dssElement` object that wraps around an OpenDSS Storage element
-            :type FaultObj: class:`PyDSS.dssElement.dssElement`
+            :param StorageObj: A :class:`pydss.dssElement.dssElement` object that wraps around an OpenDSS Storage element
+            :type FaultObj: class:`pydss.dssElement.dssElement`
             :param Settings: A dictionary that defines the settings for the PvController.
             :type Settings: dict
             :param dssInstance: An :class:`opendssdirect` instance
             :type dssInstance: :class:`opendssdirect`
             :param ElmObjectList: Dictionary of all dssElement, dssBus and dssCircuit objects
             :type ElmObjectList: dict
-            :param dssSolver: An instance of one of the classed defined in :mod:`PyDSS.SolveMode`.
-            :type dssSolver: :mod:`PyDSS.SolveMode`
+            :param dssSolver: An instance of one of the classed defined in :mod:`pydss.SolveMode`.
+            :type dssSolver: :mod:`pydss.SolveMode`
             :raises: AssertionError if 'StorageObj' is not a wrapped OpenDSS Storage element
 
     """

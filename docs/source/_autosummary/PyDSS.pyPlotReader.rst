@@ -1,7 +1,7 @@
-PyDSS.pyPlotReader
+pydss.pyPlotReader
 ==================
 
-.. automodule:: PyDSS.pyPlotReader
+.. automodule:: pydss.pyPlotReader
 
    
    

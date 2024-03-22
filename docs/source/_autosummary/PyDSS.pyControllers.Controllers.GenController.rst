@@ -1,7 +1,7 @@
-PyDSS.pyControllers.Controllers.GenController
+pydss.pyControllers.Controllers.GenController
 =============================================
 
-.. automodule:: PyDSS.pyControllers.Controllers.GenController
+.. automodule:: pydss.pyControllers.Controllers.GenController
 
    
    

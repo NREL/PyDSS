@@ -1,7 +1,7 @@
-PyDSS.value\_storage
+pydss.value\_storage
 ====================
 
-.. automodule:: PyDSS.value_storage
+.. automodule:: pydss.value_storage
 
    
    

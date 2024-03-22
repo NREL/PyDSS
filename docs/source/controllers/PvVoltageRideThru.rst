@@ -43,28 +43,28 @@ It finally recovers after the third fault
 Controller model
 ----------------
 
-.. autopydantic_model:: PyDSS.pyControllers.models.PvVoltageRideThruModel
+.. autopydantic_model:: pydss.pyControllers.models.PvVoltageRideThruModel
 
 Controller options
 ------------------
 
-.. autoenum:: PyDSS.pyControllers.enumerations.PvStandard
+.. autoenum:: pydss.pyControllers.enumerations.PvStandard
 
-.. autoenum:: PyDSS.pyControllers.enumerations.VoltageCalcModes
+.. autoenum:: pydss.pyControllers.enumerations.VoltageCalcModes
 
-.. autoenum:: PyDSS.pyControllers.enumerations.RideThroughCategory
+.. autoenum:: pydss.pyControllers.enumerations.RideThroughCategory
 
-.. autoenum:: PyDSS.pyControllers.enumerations.PermissiveOperation
+.. autoenum:: pydss.pyControllers.enumerations.PermissiveOperation
 
-.. autoenum:: PyDSS.pyControllers.enumerations.MayTripOperation
+.. autoenum:: pydss.pyControllers.enumerations.MayTripOperation
 
-.. autoenum:: PyDSS.pyControllers.enumerations.MultipleDisturbances
+.. autoenum:: pydss.pyControllers.enumerations.MultipleDisturbances
 
-.. autoenum:: PyDSS.pyControllers.enumerations.CategoryI
+.. autoenum:: pydss.pyControllers.enumerations.CategoryI
 
-.. autoenum:: PyDSS.pyControllers.enumerations.CategoryII
+.. autoenum:: pydss.pyControllers.enumerations.CategoryII
 
-.. autoenum:: PyDSS.pyControllers.enumerations.CategoryIII
+.. autoenum:: pydss.pyControllers.enumerations.CategoryIII
 
 Usage example
 -------------

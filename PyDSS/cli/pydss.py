@@ -1,18 +1,18 @@
-"""Main CLI command for PyDSS."""
+"""Main CLI command for pydss."""
 
 import click
 
-from PyDSS.cli.create_project import create_project
-from PyDSS.cli.add_post_process import add_post_process
-from PyDSS.cli.controllers import controllers
-from PyDSS.cli.convert import convert
-from PyDSS.cli.export import export
-from PyDSS.cli.extract import extract, extract_element_files
-from PyDSS.cli.run import run
-from PyDSS.cli.edit_scenario import edit_scenario
-from PyDSS.cli.run_server import serve
-from PyDSS.cli.reports import reports
-from PyDSS.cli.add_scenario import add_scenario
+from pydss.cli.create_project import create_project
+from pydss.cli.add_post_process import add_post_process
+from pydss.cli.controllers import controllers
+from pydss.cli.convert import convert
+from pydss.cli.export import export
+from pydss.cli.extract import extract, extract_element_files
+from pydss.cli.run import run
+from pydss.cli.edit_scenario import edit_scenario
+from pydss.cli.run_server import serve
+from pydss.cli.reports import reports
+from pydss.cli.add_scenario import add_scenario
 
 @click.group()
 def cli():

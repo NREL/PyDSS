@@ -1,7 +1,7 @@
-PyDSS.cli.reports
+pydss.cli.reports
 =================
 
-.. automodule:: PyDSS.cli.reports
+.. automodule:: pydss.cli.reports
 
    
    

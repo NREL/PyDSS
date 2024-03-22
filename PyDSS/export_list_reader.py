@@ -8,12 +8,12 @@ import re
 from loguru import logger
 
 
-from PyDSS.common import DataConversion, LimitsFilter, StoreValuesType, \
+from pydss.common import DataConversion, LimitsFilter, StoreValuesType, \
     DatasetPropertyType, MinMax
-from PyDSS.pyContrReader import pyExportReader
-from PyDSS.utils.utils import load_data
-from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
-from PyDSS.metrics import (
+from pydss.pyContrReader import pyExportReader
+from pydss.utils.utils import load_data
+from pydss.exceptions import InvalidConfiguration, InvalidParameter
+from pydss.metrics import (
     NodeVoltageMetric, TrackCapacitorChangeCounts,
     TrackRegControlTapNumberChanges, ExportLoadingsMetric, OverloadsMetricInMemory,
     ExportPowersMetric, FeederHeadMetrics

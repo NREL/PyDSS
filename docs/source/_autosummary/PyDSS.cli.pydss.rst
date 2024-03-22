@@ -1,7 +1,7 @@
-PyDSS.cli.pydss
+pydss.cli.pydss
 ===============
 
-.. automodule:: PyDSS.cli.pydss
+.. automodule:: pydss.cli.pydss
 
    
    

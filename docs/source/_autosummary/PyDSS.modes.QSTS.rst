@@ -1,7 +1,7 @@
-PyDSS.modes.QSTS
+pydss.modes.QSTS
 ================
 
-.. automodule:: PyDSS.modes.QSTS
+.. automodule:: pydss.modes.QSTS
 
    
    

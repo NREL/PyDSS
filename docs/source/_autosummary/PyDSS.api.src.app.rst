@@ -1,7 +1,7 @@
-PyDSS.api.src.app
+pydss.api.src.app
 =================
 
-.. automodule:: PyDSS.api.src.app
+.. automodule:: pydss.api.src.app
 
    
    
@@ -27,9 +27,9 @@ PyDSS.api.src.app
    :toctree:
    :recursive:
 
-   PyDSS.api.src.app.DataWriter
-   PyDSS.api.src.app.HDF5
-   PyDSS.api.src.app.JSON_writer
-   PyDSS.api.src.app.Tester
-   PyDSS.api.src.app.pydss
+   pydss.api.src.app.DataWriter
+   pydss.api.src.app.HDF5
+   pydss.api.src.app.JSON_writer
+   pydss.api.src.app.Tester
+   pydss.api.src.app.pydss
 

@@ -1,7 +1,7 @@
-PyDSS.pyControllers.Controllers
+pydss.pyControllers.Controllers
 ===============================
 
-.. automodule:: PyDSS.pyControllers.Controllers
+.. automodule:: pydss.pyControllers.Controllers
 
    
    
@@ -27,18 +27,18 @@ PyDSS.pyControllers.Controllers
    :toctree:
    :recursive:
 
-   PyDSS.pyControllers.Controllers.FaultController
-   PyDSS.pyControllers.Controllers.GenController
-   PyDSS.pyControllers.Controllers.MotorStall
-   PyDSS.pyControllers.Controllers.MotorStallBackup
-   PyDSS.pyControllers.Controllers.MotorStallSimple
-   PyDSS.pyControllers.Controllers.PvController
-   PyDSS.pyControllers.Controllers.PvDynamic
-   PyDSS.pyControllers.Controllers.PvFrequencyRideThru
-   PyDSS.pyControllers.Controllers.PvVoltageRideThru
-   PyDSS.pyControllers.Controllers.Settings
-   PyDSS.pyControllers.Controllers.SocketController
-   PyDSS.pyControllers.Controllers.StorageController
-   PyDSS.pyControllers.Controllers.ThermostaticLoad
-   PyDSS.pyControllers.Controllers.xfmrController
+   pydss.pyControllers.Controllers.FaultController
+   pydss.pyControllers.Controllers.GenController
+   pydss.pyControllers.Controllers.MotorStall
+   pydss.pyControllers.Controllers.MotorStallBackup
+   pydss.pyControllers.Controllers.MotorStallSimple
+   pydss.pyControllers.Controllers.PvController
+   pydss.pyControllers.Controllers.PvDynamic
+   pydss.pyControllers.Controllers.PvFrequencyRideThru
+   pydss.pyControllers.Controllers.PvVoltageRideThru
+   pydss.pyControllers.Controllers.Settings
+   pydss.pyControllers.Controllers.SocketController
+   pydss.pyControllers.Controllers.StorageController
+   pydss.pyControllers.Controllers.ThermostaticLoad
+   pydss.pyControllers.Controllers.xfmrController
 

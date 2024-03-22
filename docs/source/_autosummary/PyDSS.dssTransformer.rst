@@ -1,7 +1,7 @@
-PyDSS.dssTransformer
+pydss.dssTransformer
 ====================
 
-.. automodule:: PyDSS.dssTransformer
+.. automodule:: pydss.dssTransformer
 
    
    

@@ -9,9 +9,9 @@ import sys
 from loguru import logger
 import click
 
-from PyDSS.utils.utils import get_cli_string, make_human_readable_size
-from PyDSS.common import SIMULATION_SETTINGS_FILENAME
-from PyDSS.pydss_project import PyDssProject
+from pydss.utils.utils import get_cli_string, make_human_readable_size
+from pydss.common import SIMULATION_SETTINGS_FILENAME
+from pydss.pydss_project import PyDssProject
 
 @click.argument("project-path", type=click.Path(exists=True))
 @click.option(

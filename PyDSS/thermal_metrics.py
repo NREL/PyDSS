@@ -6,8 +6,8 @@ import os
 from loguru import logger
 from pydantic import BaseModel, Field
 
-from PyDSS.utils.simulation_utils import CircularBufferHelper
-from PyDSS.utils.utils import dump_data, load_data
+from pydss.utils.simulation_utils import CircularBufferHelper
+from pydss.utils.utils import dump_data, load_data
 from pydantic import ConfigDict
 
 class ThermalMetricsBaseModel(BaseModel):

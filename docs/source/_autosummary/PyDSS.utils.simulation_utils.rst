@@ -1,7 +1,7 @@
-PyDSS.utils.simulation\_utils
+pydss.utils.simulation\_utils
 =============================
 
-.. automodule:: PyDSS.utils.simulation_utils
+.. automodule:: pydss.utils.simulation_utils
 
    
    

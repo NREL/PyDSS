@@ -2,12 +2,12 @@
 
 import opendssdirect as dss
 
-from PyDSS.controllers import (
+from pydss.controllers import (
     CircuitElementController,
     ControllerManager,
     PvControllerModel,
 )
-from PyDSS.simulation_input_models import ProjectModel
+from pydss.simulation_input_models import ProjectModel
 
 
 def main():

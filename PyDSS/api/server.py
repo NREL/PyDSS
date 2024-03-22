@@ -10,13 +10,13 @@ from aiohttp_swagger3 import *
 from loguru import logger
 from aiohttp import web
 
-from PyDSS.api.src.web.handler import Handler
-import PyDSS.api.schema as schema
-import PyDSS
+from pydss.api.src.web.handler import Handler
+import pydss.api.schema as schema
+import pydss
 
 def read(*names, **kwargs):
     with io.open(
-        os.path.join(os.path.dirname(PyDSS.__file__), *names),
+        os.path.join(os.path.dirname(pydss.__file__), *names),
         encoding=kwargs.get("encoding", "utf8")
     ) as fp:
         return fp.read()
@@ -31,7 +31,7 @@ def find_version(*file_paths):
 
 def getJSONschema(host, port):
     base_path = schema.__path__._path[0]
-    path = os.path.join(base_path, 'PyDSS.v1.json')
+    path = os.path.join(base_path, 'pydss.v1.json')
     base_url = f"http://{host}:{port}"
     url = base_url + "/docs/swagger.json"
     isValid = False

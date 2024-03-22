@@ -1,7 +1,7 @@
-PyDSS.node\_voltage\_metrics
+pydss.node\_voltage\_metrics
 ============================
 
-.. automodule:: PyDSS.node_voltage_metrics
+.. automodule:: pydss.node_voltage_metrics
 
    
    

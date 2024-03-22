@@ -1,7 +1,7 @@
-PyDSS.utils.timing\_utils
+pydss.utils.timing\_utils
 =========================
 
-.. automodule:: PyDSS.utils.timing_utils
+.. automodule:: pydss.utils.timing_utils
 
    
    

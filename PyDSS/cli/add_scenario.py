@@ -3,9 +3,9 @@ import toml
 import click
 import os
 
-from PyDSS.simulation_input_models import MappedControllers
-from PyDSS.pydss_project import PyDssScenario
-from PyDSS.common import CONTROLLER_TYPES, ControllerType
+from pydss.simulation_input_models import MappedControllers
+from pydss.pydss_project import PyDssScenario
+from pydss.common import CONTROLLER_TYPES, ControllerType
 
 def build_scenario(project_path:str, scenario_name:str, controller_mapping:str):
     project_path = Path(project_path)

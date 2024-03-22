@@ -7,7 +7,7 @@ import os
 from loguru import logger
 import pytest
 
-from PyDSS.pydss_project import PyDssProject
+from pydss.pydss_project import PyDssProject
 
 IN_GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS") == "true"
 EXAMPLES_path = "examples"

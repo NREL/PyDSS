@@ -1,7 +1,7 @@
-PyDSS.api.src.web.parser
+pydss.api.src.web.parser
 ========================
 
-.. automodule:: PyDSS.api.src.web.parser
+.. automodule:: pydss.api.src.web.parser
 
    
    

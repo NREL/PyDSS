@@ -3,8 +3,8 @@ import math
 
 from loguru import logger 
 
-from PyDSS.modes.solver_base import solver_base
-from PyDSS.simulation_input_models import ProjectModel
+from pydss.modes.solver_base import solver_base
+from pydss.simulation_input_models import ProjectModel
 
 
 class Dynamic(solver_base):

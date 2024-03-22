@@ -1,7 +1,7 @@
-PyDSS.cli.export
+pydss.cli.export
 ================
 
-.. automodule:: PyDSS.cli.export
+.. automodule:: pydss.cli.export
 
    
    

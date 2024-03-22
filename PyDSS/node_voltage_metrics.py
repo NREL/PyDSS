@@ -6,7 +6,7 @@ from loguru import logger
 from pydantic import BaseModel, Field
 from pydantic import ConfigDict
 
-from PyDSS.utils.simulation_utils import CircularBufferHelper
+from pydss.utils.simulation_utils import CircularBufferHelper
 
 class VoltageMetricsBaseModel(BaseModel):
     model_config = ConfigDict(title="VoltageMetricsBaseModel", str_strip_whitespace=True, validate_assignment=True, validate_default=True, extra="forbid", use_enum_values=False)

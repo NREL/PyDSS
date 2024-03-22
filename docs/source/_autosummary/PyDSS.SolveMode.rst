@@ -1,7 +1,7 @@
-PyDSS.SolveMode
+pydss.SolveMode
 ===============
 
-.. automodule:: PyDSS.SolveMode
+.. automodule:: pydss.SolveMode
 
    
    

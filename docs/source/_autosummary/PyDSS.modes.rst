@@ -1,7 +1,7 @@
-PyDSS.modes
+pydss.modes
 ===========
 
-.. automodule:: PyDSS.modes
+.. automodule:: pydss.modes
 
    
    
@@ -27,8 +27,8 @@ PyDSS.modes
    :toctree:
    :recursive:
 
-   PyDSS.modes.Dynamic
-   PyDSS.modes.QSTS
-   PyDSS.modes.Snapshot
-   PyDSS.modes.solver_base
+   pydss.modes.Dynamic
+   pydss.modes.QSTS
+   pydss.modes.Snapshot
+   pydss.modes.solver_base
 

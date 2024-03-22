@@ -1,7 +1,7 @@
-PyDSS.modes.solver\_base
+pydss.modes.solver\_base
 ========================
 
-.. automodule:: PyDSS.modes.solver_base
+.. automodule:: pydss.modes.solver_base
 
    
    

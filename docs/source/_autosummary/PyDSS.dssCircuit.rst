@@ -1,7 +1,7 @@
-PyDSS.dssCircuit
+pydss.dssCircuit
 ================
 
-.. automodule:: PyDSS.dssCircuit
+.. automodule:: pydss.dssCircuit
 
    
    

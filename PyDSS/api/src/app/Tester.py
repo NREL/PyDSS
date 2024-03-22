@@ -5,9 +5,9 @@ import os
 
 from loguru import logger
 
-from PyDSS.simulation_input_models import load_simulation_settings
-from PyDSS.api.src.app.DataWriter import DataWriter
-from PyDSS.dssInstance import OpenDSS
+from pydss.simulation_input_models import load_simulation_settings
+from pydss.api.src.app.DataWriter import DataWriter
+from pydss.dssInstance import OpenDSS
 
 
 def run_test(tomlpath):

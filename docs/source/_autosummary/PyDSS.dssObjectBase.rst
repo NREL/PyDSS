@@ -1,7 +1,7 @@
-PyDSS.dssObjectBase
+pydss.dssObjectBase
 ===================
 
-.. automodule:: PyDSS.dssObjectBase
+.. automodule:: pydss.dssObjectBase
 
    
    

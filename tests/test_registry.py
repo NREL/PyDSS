@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from PyDSS.common import ControllerType, CONTROLLER_TYPES
-from PyDSS.registry import Registry, DEFAULT_REGISTRY
+from pydss.common import ControllerType, CONTROLLER_TYPES
+from pydss.registry import Registry, DEFAULT_REGISTRY
 
 
 # Don't change the user's registry.

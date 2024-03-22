@@ -8,9 +8,9 @@ import os
 from loguru import logger
 from aiohttp import web
 
-from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType
-from PyDSS.api.src.web.parser import bytestream_decode
-from PyDSS.api.src.app.pydss import PyDSS
+from pydss.pydss_project import PyDssProject, PyDssScenario, ControllerType
+from pydss.api.src.web.parser import bytestream_decode
+from pydss.api.src.app.pydss import pydss
 
 
 class Handler:
@@ -291,7 +291,7 @@ class Handler:
         p = Process(target=PyDSS, name=pydss_uuid, args=(self.event, q, data))
         # Store queue and process
         self.pydss_instances[pydss_uuid] = {"queue": q, "process": p}
-        # Catching data coming from PyDSS
+        # Catching data coming from pydss
         pydss_t = self.loop.run_in_executor(self.pool, self._post_put_background_task, pydss_uuid)
         pydss_t.add_done_callback(self._post_put_callback)
 

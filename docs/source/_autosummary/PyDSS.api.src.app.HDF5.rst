@@ -1,7 +1,7 @@
-PyDSS.api.src.app.HDF5
+pydss.api.src.app.HDF5
 ======================
 
-.. automodule:: PyDSS.api.src.app.HDF5
+.. automodule:: pydss.api.src.app.HDF5
 
    
    

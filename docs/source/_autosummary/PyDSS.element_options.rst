@@ -1,7 +1,7 @@
-PyDSS.element\_options
+pydss.element\_options
 ======================
 
-.. automodule:: PyDSS.element_options
+.. automodule:: pydss.element_options
 
    
    

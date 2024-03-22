@@ -1,7 +1,7 @@
-PyDSS.ProfileManager.hooks.MongoDB
+pydss.ProfileManager.hooks.MongoDB
 ==================================
 
-.. automodule:: PyDSS.ProfileManager.hooks.MongoDB
+.. automodule:: pydss.ProfileManager.hooks.MongoDB
 
    
    

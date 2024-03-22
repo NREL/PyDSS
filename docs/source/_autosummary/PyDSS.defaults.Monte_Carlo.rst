@@ -1,7 +1,7 @@
-PyDSS.defaults.Monte\_Carlo
+pydss.defaults.Monte\_Carlo
 ===========================
 
-.. automodule:: PyDSS.defaults.Monte_Carlo
+.. automodule:: pydss.defaults.Monte_Carlo
 
    
    

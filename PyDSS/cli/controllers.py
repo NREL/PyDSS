@@ -8,9 +8,9 @@ import os
 import click
 
 
-from PyDSS.common import CONTROLLER_TYPES
-from PyDSS.utils.utils import load_data
-from PyDSS.registry import Registry
+from pydss.common import CONTROLLER_TYPES
+from pydss.utils.utils import load_data
+from pydss.registry import Registry
 
 @click.group()
 def controllers():

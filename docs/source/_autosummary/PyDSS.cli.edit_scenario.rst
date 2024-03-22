@@ -1,7 +1,7 @@
-PyDSS.cli.edit\_scenario
+pydss.cli.edit\_scenario
 ========================
 
-.. automodule:: PyDSS.cli.edit_scenario
+.. automodule:: pydss.cli.edit_scenario
 
    
    

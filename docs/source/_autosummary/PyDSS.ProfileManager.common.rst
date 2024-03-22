@@ -1,7 +1,7 @@
-PyDSS.ProfileManager.common
+pydss.ProfileManager.common
 ===========================
 
-.. automodule:: PyDSS.ProfileManager.common
+.. automodule:: pydss.ProfileManager.common
 
    
    

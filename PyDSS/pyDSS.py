@@ -1,13 +1,13 @@
-import PyDSS
+import pydss
 import os
 
 from loguru import logger
 
-from PyDSS.common import RUN_SIMULATION_FILENAME
-from PyDSS.exceptions import InvalidConfiguration
-from PyDSS.dssInstance import OpenDSS
-from PyDSS.simulation_input_models import SimulationSettingsModel, dump_settings
-from PyDSS.utils.utils import dump_data, load_data
+from pydss.common import RUN_SIMULATION_FILENAME
+from pydss.exceptions import InvalidConfiguration
+from pydss.dssInstance import OpenDSS
+from pydss.simulation_input_models import SimulationSettingsModel, dump_settings
+from pydss.utils.utils import dump_data, load_data
 
 
 __author__ = "Aadil Latif"
@@ -39,7 +39,7 @@ __maintainer__ = "Aadil Latif"
 __email__ = "aadil.latif@nrel.gov, aadil.latif@gmail.com"
 __status__ = "Production"
 
-PYDSS_BASE_DIR = os.path.join(os.path.dirname(getattr(PyDSS, "__path__")[0]), "PyDSS")
+PYDSS_BASE_DIR = os.path.join(os.path.dirname(getattr(pydss, "__path__")[0]), "PyDSS")
 
 class instance(object):
 

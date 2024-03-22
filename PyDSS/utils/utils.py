@@ -15,7 +15,7 @@ import pandas as pd
 import numpy as np
 import toml
 
-from PyDSS.exceptions import InvalidParameter
+from pydss.exceptions import InvalidParameter
 
 
 MAX_PATH_LENGTH = 255

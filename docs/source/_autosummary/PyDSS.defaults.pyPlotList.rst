@@ -1,7 +1,7 @@
-PyDSS.defaults.pyPlotList
+pydss.defaults.pyPlotList
 =========================
 
-.. automodule:: PyDSS.defaults.pyPlotList
+.. automodule:: pydss.defaults.pyPlotList
 
    
    

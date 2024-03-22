@@ -6,8 +6,8 @@ contains code to convert the raw data to pandas.DataFrame objects or Python
 dictionaries, so normal users should not need to write their own tools to
 interpret the data.
 
-Refer to :class:`PyDSS.pydss_results.PyDssResults` and
-:class:`PyDSS.pydss_results.PyDssScenarioResults` for user-friendly interfaces.
+Refer to :class:`pydss.pydss_results.PyDssResults` and
+:class:`pydss.pydss_results.PyDssScenarioResults` for user-friendly interfaces.
 They are also described in :ref:`tutorial:Analyze results`.
 
 ******

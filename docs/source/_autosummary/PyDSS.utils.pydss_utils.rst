@@ -1,7 +1,7 @@
-PyDSS.utils.pydss\_utils
+pydss.utils.pydss\_utils
 ========================
 
-.. automodule:: PyDSS.utils.pydss_utils
+.. automodule:: pydss.utils.pydss_utils
 
    
    

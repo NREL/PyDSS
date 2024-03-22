@@ -1,7 +1,7 @@
 from os.path import dirname, basename, isfile
 import glob
 
-from PyDSS.pyPostprocessor import PostprocessScripts
+from pydss.pyPostprocessor import PostprocessScripts
 
 
 
@@ -11,7 +11,7 @@ pythonFiles = [basename(f)[:-3] for f in modules if isfile(f) and not f.endswith
 
 POST_PROCESSES = {}
 for file in pythonFiles:
-    exec('from PyDSS.pyPostprocessor.PostprocessScripts import {}'.format(file))
+    exec('from pydss.pyPostprocessor.PostprocessScripts import {}'.format(file))
     exec('POST_PROCESSES["{}"] = {}.{}'.format(file, file, file))
 
 def Create(project, scenario, ppInfo, dssInstance, dssSolver, dssObjects, dssObjectsByClass, simulationSettings, Logger):

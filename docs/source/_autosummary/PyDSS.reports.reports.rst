@@ -1,7 +1,7 @@
-PyDSS.reports.reports
+pydss.reports.reports
 =====================
 
-.. automodule:: PyDSS.reports.reports
+.. automodule:: pydss.reports.reports
 
    
    

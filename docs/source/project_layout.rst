@@ -17,7 +17,7 @@ Simulation Settings
 The main configuration file for the simulation is stored at ``<project-name>/simulation.toml``.
 Refer to :ref:`SimulationSettingsModel` for more information. The following model defines all options valid for the simulation.toml file
 
-.. .. autopydantic_settings:: PyDSS.simulation_input_models.SimulationSettingsModel
+.. .. autopydantic_settings:: pydss.simulation_input_models.SimulationSettingsModel
 
 Scenarios
 =========

@@ -1,7 +1,7 @@
-PyDSS.registry
+pydss.registry
 ==============
 
-.. automodule:: PyDSS.registry
+.. automodule:: pydss.registry
 
    
    

@@ -6,7 +6,7 @@ import sys
 
 from loguru import logger
 
-from PyDSS.pydss_project import PyDssProject, PyDssScenario, ControllerType, ExportMode
+from pydss.pydss_project import PyDssProject, PyDssScenario, ControllerType, ExportMode
 
 
 @click.option(

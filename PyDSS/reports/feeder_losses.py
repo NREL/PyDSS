@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 from pydantic import ConfigDict
 from loguru import logger
 
-from PyDSS.reports.reports import ReportBase
+from pydss.reports.reports import ReportBase
 
 class FeederLossesMetricsModel(BaseModel):
     """Data model for metrics describing feeder losses"""

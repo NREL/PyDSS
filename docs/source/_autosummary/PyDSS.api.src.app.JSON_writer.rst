@@ -1,7 +1,7 @@
-PyDSS.api.src.app.JSON\_writer
+pydss.api.src.app.JSON\_writer
 ==============================
 
-.. automodule:: PyDSS.api.src.app.JSON_writer
+.. automodule:: pydss.api.src.app.JSON_writer
 
    
    
