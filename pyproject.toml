@@ -66,8 +66,8 @@ Homepage = "http://www.github.com/nrel/pydss"
 
 [tool.hatch.build.targets.sdist]
 include = [
-    "pydss",
+    "src/pydss",
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["pydss"]
+packages = ["src/pydss"]
