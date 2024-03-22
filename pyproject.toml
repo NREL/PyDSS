@@ -68,8 +68,8 @@ path = "pydss/__init__.py"
 
 [tool.hatch.build.targets.sdist]
 include = [
-    "pydss",
+    "/pydss",
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["pydss"]
+packages = ["/pydss"]
