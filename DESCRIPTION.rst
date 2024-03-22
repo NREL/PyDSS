@@ -1,10 +1,10 @@
-﻿# Welcome to the PyDSS Repository!
+﻿# Welcome to the pydss Repository!
 
 **PyDSS** is a high level python interface for **OpenDSS** and provides the following functionalities
 
-**1] Object oriented programming -** OpenDSS is a text based simulation environment. To improve upon the usability of the Python interface, PyDSS wraps each element (PD elements, PC elements, Bus and Circuits) as a object in python. Each of these objects have functions that facilitate 
+**1] Object oriented programming -** OpenDSS is a text based simulation environment. To improve upon the usability of the Python interface, pydss wraps each element (PD elements, PC elements, Bus and Circuits) as a object in python. Each of these objects have functions that facilitate 
 
-**2]	Dynamic visualization -** PyDSS uses **Bokeh** to render dynamic plots during simulation runs. The current version includes six plots. These include
+**2]	Dynamic visualization -** pydss uses **Bokeh** to render dynamic plots during simulation runs. The current version includes six plots. These include
 	
 	 - time series plots
 	 - XY plots
@@ -12,9 +12,9 @@
 	 - Topology plots
 	 - GIS overlay plots
 	 - Histograms
-**3]	Custom controls -**  The main idea behind PyDSS was to come up with a modular approach for adding custom controls to model real systems. New controllers can be added to PyDSS using very little effort. The tool uses outer loop iteration to converge to a steady state solution.
+**3]	Custom controls -**  The main idea behind pydss was to come up with a modular approach for adding custom controls to model real systems. New controllers can be added to pydss using very little effort. The tool uses outer loop iteration to converge to a steady state solution.
  
-**4]	Simulation parallelization -** PyDSS also facilitates simulating multiple scenarios in parallel thus reducing total computation time
+**4]	Simulation parallelization -** pydss also facilitates simulating multiple scenarios in parallel thus reducing total computation time
  
 **5]	Exporting results -**  The tool provides multiple options for exporting simulation results. These include options like exporting as a single file or separate files, exporting by element or by class etc.
  
@@ -41,7 +41,7 @@ Additionally, GIS overlay maps require installation of PyProj and a Google maps 
 
 # Bokeh rendering bug fix
 
-Some users have experinced PyDSS halting when Bokeh visulation is used. In all cases tornado and bokeh compatability has been the culprit (until now). The following steps have been able to fix the problem
+Some users have experinced pydss halting when Bokeh visulation is used. In all cases tornado and bokeh compatability has been the culprit (until now). The following steps have been able to fix the problem
 	
 	 - pip uninstall bokeh
 	 - pip uninstall tornado

@@ -34,7 +34,7 @@ class PyDSS:
             self.a_writer = JSONwriter(export_path, Steps)
             self.initalized = True
         except:
-            result = {"Status": 500, "Message": f"Failed to create a PyDSS instance"}
+            result = {"Status": 500, "Message": f"Failed to create a pydss instance"}
             self.queue.put(result)
             return
 
@@ -71,8 +71,8 @@ class PyDSS:
                         status, msg = func(parameters)
                         result = {"Status": status, "Message": msg, "UUID": self.uuid}
                     else:
-                        logger.info(f"{command} is not a valid PyDSS command")
-                        result = {"Status": 500, "Message": f"{command} is not a valid PyDSS command"}
+                        logger.info(f"{command} is not a valid pydss command")
+                        result = {"Status": 500, "Message": f"{command} is not a valid pydss command"}
                 self.queue.put(result)
 
             except Empty:

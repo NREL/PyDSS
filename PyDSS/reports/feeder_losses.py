@@ -47,7 +47,7 @@ class FeederLossesMetricsModel(BaseModel):
 class SimulationFeederLossesMetricsModel(BaseModel):
     scenarios: Dict[str, FeederLossesMetricsModel] = Field(
         title="scenarios",
-        description="Feeder losses by PyDSS scenario name",
+        description="Feeder losses by pydss scenario name",
     )
 
 

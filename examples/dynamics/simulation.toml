@@ -6,7 +6,7 @@
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
 "Control mode" = "Time"
-"Disable PyDSS controllers" = false
+"Disable pydss controllers" = false
 "Simulation Type" = "Dynamic"
 "Project Path" = "./examples"
 "Active Project" = "dynamics"

@@ -4,7 +4,7 @@
 Quick Start Guide
 *****************
 
-This page provides a short example to get PyDSS up and running. If you have not already installed
+This page provides a short example to get pydss up and running. If you have not already installed
 PyDSS, please follow the instructions at :ref:`installation_label`.
 
 The basic steps are to create an empty project, copy your OpenDSS model files into that project,

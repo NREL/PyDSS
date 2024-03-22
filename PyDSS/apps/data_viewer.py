@@ -20,7 +20,7 @@ from pydss.pydss_results import PyDssResults
 
 
 class DataViewer:
-    """Provides a UI for viewing PyDSS results."""
+    """Provides a UI for viewing pydss results."""
 
     DEFAULTS = {
         "project_path": os.environ.get("PYDSS_PROJECT_PATH"),

@@ -20,7 +20,7 @@ def Create(ElmName, ControllerType, Settings, ElmObjectList, dssInstance, dssSol
         ControllerType
     )
 
-    assert (ElmName in ElmObjectList), "'{}' does not exist in the PyDSS master object dictionary.".format(ElmName)
+    assert (ElmName in ElmObjectList), "'{}' does not exist in the pydss master object dictionary.".format(ElmName)
     relObject = ElmObjectList[ElmName]
     
     # except:

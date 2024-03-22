@@ -32,7 +32,7 @@ class pyContrReader:
             for name, controller in load_data(filepath).items():
                 if name in self.pyControllers[pyControllerType]:
                     raise InvalidParameter(
-                        f"Multiple PyDSS controller definitions for a single OpenDSS element not allowed: {name}"
+                        f"Multiple pydss controller definitions for a single OpenDSS element not allowed: {name}"
                     )
                 self.pyControllers[pyControllerType][name] = controller
 
@@ -45,7 +45,7 @@ def read_controller_settings_from_registry(path):
     for filename in filenames:
         controller_type, ext = os.path.splitext(filename)
         # This file contains a mapping of controller to an array of names.
-        # The controller settings must be stored in the PyDSS registry.
+        # The controller settings must be stored in the pydss registry.
 
         controller_to_name = load_data(os.path.join(path, filename))
         

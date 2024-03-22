@@ -17,7 +17,7 @@ class Handler:
     """ Handlers for web server. """
 
     def __init__(self):
-        """ Constructor for PyDSS handler. """
+        """ Constructor for pydss handler. """
 
         logger.info("Initializing Handler ....")
 
@@ -35,7 +35,7 @@ class Handler:
         ---
         summary: Returns a dictionary of valid project and scenarios in the provided path
         tags:
-         - PyDSS project
+         - pydss project
         parameters:
          - name: path
            in: query
@@ -54,7 +54,7 @@ class Handler:
                     get_instance_status:
                         value:
                             Status: 200
-                            Message: PyDSS instance with the provided UUID is currently running
+                            Message: pydss instance with the provided UUID is currently running
                             UUID: 96c21e00-cd3c-4943-a914-14451f5f7ab6
                             "Data": {'Project1' : {'Scenario1', 'Scenario2'}, 'Project2' : {'Scenario1'}}
          '406':
@@ -96,15 +96,15 @@ class Handler:
                                       "Data": projects})
         else:
             web.json_response({"Status": 404,
-                               "Message": f"No valid PyDSS project in provided base path",
+                               "Message": f"No valid pydss project in provided base path",
                                "UUID": None})
 
     async def post_pydss_create(self, request):
         """
         ---
-        summary: Creates a new project for PyDSS (User uploads a zipped OpenDSS model)
+        summary: Creates a new project for pydss (User uploads a zipped OpenDSS model)
         tags:
-         - PyDSS project
+         - pydss project
         requestBody:
             content:
                 multipart/form-data:
@@ -119,11 +119,11 @@ class Handler:
                           example: test_project
                         scenarios:
                           type: string
-                          description: comma separated list of PyDSS scenarios to be created
+                          description: comma separated list of pydss scenarios to be created
                           example: base_case,pv_scenario
                         controller_types:
                           type: string
-                          description: comma separated list of PyDSS controller names
+                          description: comma separated list of pydss controller names
                           example: PvController,StorageController
                         fileName:
                           type: string
@@ -139,7 +139,7 @@ class Handler:
                     get_instance_status:
                         value:
                             Status: 200
-                            Message: PyDSS project created
+                            Message: pydss project created
                             UUID: None
          '403':
            description: Provided path does not exist
@@ -220,7 +220,7 @@ class Handler:
     async def post_pydss(self, request):
         """
                 ---
-                summary: Creates an instance of PyDSS and runs the simulation
+                summary: Creates an instance of pydss and runs the simulation
                 tags:
                  - Simulation
                 requestBody:
@@ -266,7 +266,7 @@ class Handler:
                             get_instance_status:
                                 value:
                                     Status: 200
-                                    Message: Starting a PyDSS instance
+                                    Message: Starting a pydss instance
                                     UUID: 96c21e00-cd3c-4943-a914-14451f5f7ab6
                  '500':
                    description: Provided path does not exist
@@ -278,7 +278,7 @@ class Handler:
                             get_instance_status:
                                 value:
                                     Status: 500
-                                    Message: Failed to create a PyDSS instance
+                                    Message: Failed to create a pydss instance
                                     UUID: None
                 """
         data = await request.json()
@@ -287,7 +287,7 @@ class Handler:
         pydss_uuid = str(uuid4())
         q = Queue()
 
-        # Create a process for PyDSS instance
+        # Create a process for pydss instance
         p = Process(target=PyDSS, name=pydss_uuid, args=(self.event, q, data))
         # Store queue and process
         self.pydss_instances[pydss_uuid] = {"queue": q, "process": p}
@@ -299,14 +299,14 @@ class Handler:
         p.start()
         # Return a message to webclient
         result = {'Status': 200,
-                  'Message': 'Starting a PyDSS instance',
+                  'Message': 'Starting a pydss instance',
                   'UUID': pydss_uuid}
 
         return web.json_response(result)
 
     async def put_pydss(self, request):
 
-        """ Running PyDSS app""""""
+        """ Running pydss app""""""
         ---
         summary: Run a command on an active instance of PyDSS
         tags:
@@ -368,7 +368,7 @@ class Handler:
                     get_instance_status:
                         value:
                             Status: 403
-                            Message: Provided UUID is not valid PyDSS instance id
+                            Message: Provided UUID is not valid pydss instance id
                             UUID: None
         """
 
@@ -385,7 +385,7 @@ class Handler:
         pydss_uuid = await self._get_uuid(data=data)
 
         if pydss_uuid:
-            logger.info(f"Running command {data['command']} on PyDSS instance {pydss_uuid}")
+            logger.info(f"Running command {data['command']} on pydss instance {pydss_uuid}")
             pydss_t = self.loop.run_in_executor(self.pool, self._post_put_background_task, pydss_uuid)
             pydss_t.add_done_callback(self._post_put_callback)
 
@@ -400,7 +400,7 @@ class Handler:
             logger.error(f"UUID={pydss_uuid} not found.")
 
             result = {"Status": 403,
-                      "Message": f"{pydss_uuid} is not valid PyDSS instance id ",
+                      "Message": f"{pydss_uuid} is not valid pydss instance id ",
                       "UUID": pydss_uuid
                       }
             return web.json_response(result)
@@ -430,7 +430,7 @@ class Handler:
                     get_instance_status:
                         value:
                             Status: 200
-                            Message: Successfully deleted a PyDSS instance
+                            Message: Successfully deleted a pydss instance
                             UUID: 96c21e00-cd3c-4943-a914-14451f5f7ab6
          '403':
            description: Provided path does not exist
@@ -442,7 +442,7 @@ class Handler:
                     get_instance_status:
                         value:
                             Status: 403
-                            Message: Error closing PyDSS instance
+                            Message: Error closing pydss instance
                             UUID: None
         """
 
@@ -463,17 +463,17 @@ class Handler:
 
                 return web.json_response({
                     "Status": 200,
-                    "Message": f"Successfully deleted a PyDSS instance",
+                    "Message": f"Successfully deleted a pydss instance",
                     "UUID": pydss_uuid
                 })
             except Exception as e:
 
-                logger.error(f"Error closing PyDSS instance {pydss_uuid}")
+                logger.error(f"Error closing pydss instance {pydss_uuid}")
         else:
 
             return web.json_response({
                 "Status": 403,
-                "Message": f"Error closing PyDSS instance",
+                "Message": f"Error closing pydss instance",
                 "UUID": None
             })
 
@@ -485,7 +485,7 @@ class Handler:
          - simulation status
         responses:
          '200':
-           description: UUIDs of all currently running PyDSS instances have been returned
+           description: UUIDs of all currently running pydss instances have been returned
            content:
               application/json:
                 schema:
@@ -494,10 +494,10 @@ class Handler:
                     get_instance_status:
                         value:
                             Status: 200
-                            Message: 2 PyDSS instances currently running
+                            Message: 2 pydss instances currently running
                             UUID: []
          '204':
-           description: No active PyDSS instance found
+           description: No active pydss instance found
            content:
               application/json:
                 schema:
@@ -506,7 +506,7 @@ class Handler:
                     get_instance_status:
                         value:
                             Status: 204
-                            Message: No PyDSS instance currently running
+                            Message: No pydss instance currently running
                             UUID: ["96c21e00-cd3c-4943-a914-14451f5f7ab6", "96c21e045-cd6c-8394-a914-14451f5f7ab6"]
         """
         uuids = [str(k) for k in self.pydss_instances.keys()]
@@ -519,7 +519,7 @@ class Handler:
         else:
             return web.json_response({
                 "Status": 204,
-                "Message": "No PyDSS instance currently running",
+                "Message": "No pydss instance currently running",
                 "Instances": uuids
             })
 
@@ -539,7 +539,7 @@ class Handler:
               example: 96c21e00-cd3c-4943-a914-14451f5f7ab6
         responses:
          '200':
-           description: PyDSS instance with the provided UUID is currently running
+           description: pydss instance with the provided UUID is currently running
            content:
               application/json:
                 schema:
@@ -548,10 +548,10 @@ class Handler:
                     get_instance_status:
                         value:
                             Status: 200
-                            Message: PyDSS instance with the provided UUID is currently running
+                            Message: pydss instance with the provided UUID is currently running
                             UUID: 96c21e00-cd3c-4943-a914-14451f5f7ab6
          '204':
-           description: PyDSS instance with the provided UUID does not exist
+           description: pydss instance with the provided UUID does not exist
            content:
               application/json:
                 schema:
@@ -560,7 +560,7 @@ class Handler:
                     get_instance_status:
                         value:
                             Status: 204
-                            Message: PyDSS instance with the provided UUID does not exist
+                            Message: pydss instance with the provided UUID does not exist
                             UUID: None
         """
 

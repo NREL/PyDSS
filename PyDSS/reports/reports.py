@@ -20,7 +20,7 @@ from pydss.utils.utils import dump_data, make_json_serializable
 REPORTS_DIR = "Reports"
 
 class Reports:
-    """Generate reports from a PyDSS project"""
+    """Generate reports from a pydss project"""
     def __init__(self, results):
         self._results = results
         self._report_names = []

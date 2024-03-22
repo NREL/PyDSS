@@ -1,5 +1,5 @@
 """
-CLI to run the PyDSS server
+CLI to run the pydss server
 """
 
 from loguru import logger
@@ -17,7 +17,7 @@ from pydss.api.server import pydss_server
 
 @click.command()
 def serve(ip="127.0.0.1",port=9090):
-    """Run a PyDSS RESTful API server."""
+    """Run a pydss RESTful API server."""
     FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
     logger.level("DEBUG")
     pydss = pydss_server(ip, port)

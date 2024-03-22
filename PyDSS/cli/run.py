@@ -1,5 +1,5 @@
 """
-CLI to run a PyDSS project
+CLI to run a pydss project
 """
 
 from pathlib import Path
@@ -59,7 +59,7 @@ from pydss.pydss_project import PyDssProject
 @click.command()
 
 def run(project_path, options=None, tar_project=False, zip_project=False, verbose=False, simulations_file=None, dry_run=False):
-    """Run a PyDSS simulation."""
+    """Run a pydss simulation."""
     project_path = Path(project_path)
     settings = PyDssProject.load_simulation_settings(project_path, simulations_file)
     if verbose:

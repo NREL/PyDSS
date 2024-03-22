@@ -1,4 +1,4 @@
-"""Manages PyDSS customized modules."""
+"""Manages pydss customized modules."""
 
 from collections import defaultdict
 from pathlib import Path

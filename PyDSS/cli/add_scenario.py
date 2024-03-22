@@ -11,7 +11,7 @@ def build_scenario(project_path:str, scenario_name:str, controller_mapping:str):
     project_path = Path(project_path)
     controller_mapping_path = Path(controller_mapping)    
     assert project_path.exists(), "Provided project path does not exist"
-    assert (project_path / "Scenarios").exists(), "provided project is not a valid PyDSS project"
+    assert (project_path / "Scenarios").exists(), "provided project is not a valid pydss project"
     assert controller_mapping_path.exists(), "rovided controller_mapping file does not exist"
     assert controller_mapping_path.suffix.lower() == ".toml", "controller_mapping should be a TOML file"
     

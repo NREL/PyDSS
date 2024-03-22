@@ -1,4 +1,4 @@
-"""CLI to create a new PyDSS project"""
+"""CLI to create a new pydss project"""
 
 import click
 import ast
@@ -77,7 +77,7 @@ from pydss.pydss_project import PyDssProject, PyDssScenario, ControllerType, Exp
 def create_project(path=None, project=None, scenarios=None, simulation_file=None, simulation_config=None,
                    controller_types=None, export_modes=None, options=None, 
                    opendss_project_folder=None, master_dss_file=None, force=False):
-    """Create PyDSS project."""
+    """Create pydss project."""
     if controller_types is not None:
         controller_types = [ControllerType(x) for x in controller_types.split(",")]
     if export_modes is not None:

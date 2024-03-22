@@ -1,5 +1,5 @@
 """
-CLI to extract files from an archived PyDSS project.
+CLI to extract files from an archived pydss project.
 """
 
 import sys
@@ -31,7 +31,7 @@ from pydss.utils.utils import get_cli_string
 )
 @click.command()
 def extract(project_path, file_path, output_dir=None, verbose=False):
-    """Extract a file from an archived PyDSS project."""
+    """Extract a file from an archived pydss project."""
     if not os.path.exists(project_path):
         logger.error(f"project-path={project_path} does not exist")
         sys.exit(1)
@@ -82,7 +82,7 @@ def extract(project_path, file_path, output_dir=None, verbose=False):
 )
 @click.command()
 def extract_element_files(project_path, output_dir=None, verbose=False):
-    """Extract the element info files from an archived PyDSS project."""
+    """Extract the element info files from an archived pydss project."""
     if not os.path.exists(project_path):
         logger.error(f"project-path={project_path} does not exist")
         sys.exit(1)

@@ -1,4 +1,4 @@
-"""Contains functionality to configure PyDSS simulations."""
+"""Contains functionality to configure pydss simulations."""
 import os
 import shutil
 import sys
@@ -49,7 +49,7 @@ READ_CONTROLLER_FUNCTIONS = {
 
 
 class PyDssProject:
-    """Represents the project options for a PyDSS simulation."""
+    """Represents the project options for a pydss simulation."""
 
     _SKIP_ARCHIVE = (PROJECT_ZIP, PROJECT_TAR, STORE_FILENAME, REPORTS_DIR)
 
@@ -612,7 +612,7 @@ class PyDssProject:
 
 
 class PyDssScenario:
-    """Represents a PyDSS Scenario."""
+    """Represents a pydss Scenario."""
 
     DEFAULT_CONTROLLER_TYPES = (ControllerType.PV_CONTROLLER,)
     DEFAULT_EXPORT_MODE = ExportMode.EXPORTS
@@ -828,11 +828,11 @@ def update_pydss_controllers(project_path, scenario, controller_type,
     Parameters
     ----------
     project_path : str
-        PyDSS project path.
+        pydss project path.
     scenario : str
-        PyDSS scenario name in project.
+        pydss scenario name in project.
     controller_type : str
-        A type of PyDSS controler
+        A type of pydss controler
     controller : str
         The controller name
     dss_file : str

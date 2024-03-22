@@ -1,4 +1,4 @@
-.. PyDSS documentation master file, created by
+.. pydss documentation master file, created by
    sphinx-quickstart on Mon Oct 21 12:01:13 2019.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -34,7 +34,7 @@ OpenDSS.
 Installation
 ************
 
-Recommendation: Install PyDSS in an Anaconda virtual environment. Specific dependent
+Recommendation: Install pydss in an Anaconda virtual environment. Specific dependent
 packages like shapely will only install successfully on Windows with conda.
 
 Here is an example conda command:
@@ -50,7 +50,7 @@ libraries.
 
     $ conda install shapely
 
-Install the latest supported PyDSS version with this command:
+Install the latest supported pydss version with this command:
 
 .. code-block:: bash
 
@@ -71,10 +71,10 @@ Confirm the installation with this command. It should print the available comman
 *************
 Running PyDSS
 *************
-Refer to the :ref:`quick_start_label` for basic instructions on how to configure PyDSS to run a
+Refer to the :ref:`quick_start_label` for basic instructions on how to configure pydss to run a
 simulation with an existing OpenDSS model.
 
-Refer to :ref:`tutorial_label` for in-depth instructions on how to customize a PyDSS project.
+Refer to :ref:`tutorial_label` for in-depth instructions on how to customize a pydss project.
 
 
 ************************

@@ -14,7 +14,7 @@ from pydss.registry import Registry
 
 @click.group()
 def controllers():
-    """Manage registered PyDSS controllers."""
+    """Manage registered pydss controllers."""
 
 
 @click.argument("filename")
@@ -55,7 +55,7 @@ def show():
 def reset_defaults():
     """Reset defaults."""
     Registry().reset_defaults(controllers_only=True)
-    print("Reset PyDSS defaults")
+    print("Reset pydss defaults")
 
 
 controllers.add_command(register)

@@ -144,7 +144,7 @@ class SimulationThermalMetricsModel(ThermalMetricsBaseModel):
         Dict[str, ThermalMetricsSummaryModel],
         Field(
             title="scenarios",
-            description="thermal metrics by PyDSS scenario name",
+            description="thermal metrics by pydss scenario name",
         )]
 
 

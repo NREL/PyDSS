@@ -16,7 +16,7 @@ class pyContrReader:
                 pyController = {}
                 for pyControllerName in pyControllerNames:
                     pyControllerData = ControllerDataset.loc[pyControllerName]
-                    assert len(pyControllerData == 1), 'Multiple PyDSS controller definitions for a single OpenDSS ' +\
+                    assert len(pyControllerData == 1), 'Multiple pydss controller definitions for a single OpenDSS ' +\
                                                        'element not allowed'
                     pyControllerDict = pyControllerData.to_dict()
                     pyController[pyControllerName] = pyControllerDict

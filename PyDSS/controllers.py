@@ -25,7 +25,7 @@ class ControllerBaseModel(BaseModel, abc.ABC):
     @staticmethod
     @abc.abstractmethod
     def get_controller_class():
-        """Return the PyDSS controller class for the model."""
+        """Return the pydss controller class for the model."""
 
     @staticmethod
     @abc.abstractmethod

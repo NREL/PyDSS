@@ -365,4 +365,4 @@ class helics_interface:
         state = helics.helicsFederateGetState(self._federate)
         helics.helicsFederateInfoFree(self.fedinfo)
         helics.helicsFederateFree(self._federate)
-        logger.info('HELICS federate for PyDSS destroyed')
+        logger.info('HELICS federate for pydss destroyed')

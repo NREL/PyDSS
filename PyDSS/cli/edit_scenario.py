@@ -18,7 +18,7 @@ from pydss.pydss_project import update_pydss_controllers
 )
 @click.group()
 def edit_scenario(project_path=None, scenario=None):
-    """Edit scenario in a PyDSS project."""
+    """Edit scenario in a pydss project."""
 
 
 @click.option(

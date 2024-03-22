@@ -1,5 +1,5 @@
 """
-CLI to run a PyDSS project
+CLI to run a pydss project
 """
 
 import click
@@ -42,7 +42,7 @@ from os.path import normpath, basename
 @click.command()
 
 def reports(project_path, list_reports=False, scenario=None, report=None, index=0):
-    """Explore and print PyDSS reports."""
+    """Explore and print pydss reports."""
     assert not (list_reports and index), "Both 'list' and 'index' options cannot be set to true at the same time"
     assert os.path.exists(project_path), "The provided project path {} does not exist".format(project_path)
     logsPath = os.path.join(project_path, "Logs")
@@ -51,7 +51,7 @@ def reports(project_path, list_reports=False, scenario=None, report=None, index=
     reportList = getAvailableReports(logsPath)
     project = basename(normpath(project_path))
     if list_reports:
-        Table = SingleTable(reportList, title="Available PyDSS reports")
+        Table = SingleTable(reportList, title="Available pydss reports")
         print("")
         print(Table.table)
     elif index:
@@ -77,7 +77,7 @@ def printReport(logsPath, project, scenario, report):
         for l in f:
             data = json.loads(l.strip())
             if "Report" not in data:
-                print("Skipping {}. Not a valid PyDSS report.".format(fileName))
+                print("Skipping {}. Not a valid pydss report.".format(fileName))
                 return None
             elif data["Report"] == report:
                 if report not in Keys:
@@ -121,7 +121,7 @@ def getReportTypes(logsPath, reportFile):
     for l in lines:
         data = json.loads(l.strip())
         if "Report" not in data:
-            print("Skipping {}. Not a valid PyDSS report.".format(fileName))
+            print("Skipping {}. Not a valid pydss report.".format(fileName))
             return None
         else:
             if data["Report"] not in reportTypes:

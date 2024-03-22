@@ -21,7 +21,7 @@ class AbstractPostprocess(abc.ABC):
     :type dssBuses: dict of :class:`pydss.dssBus.dssBus` objects
     :param dssObjects: Dictionary of all :class:`pydss.dssElement.dssElement` objects in PyDSS
     :type dssObjects: dict of :class:`pydss.dssElement.dssElement` objects
-    :param dssObjectsByClass:  Dictionary of all :class:`pydss.dssElement.dssElement` objects in PyDSS sorted by class
+    :param dssObjectsByClass:  Dictionary of all :class:`pydss.dssElement.dssElement` objects in pydss sorted by class
     :type dssObjectsByClass: dict of :class:`pydss.dssElement.dssElement` objects
     :param dssSolver: An instance of one of the classes defined in :mod:`pydss.SolveMode`.
     :type dssSolver: :mod:`pydss.SolveMode`
@@ -56,7 +56,7 @@ class AbstractPostprocess(abc.ABC):
         stepMax : int
             Last step of the simulation
         simulation : OpenDSS
-            PyDSS simulation control class. Provided for access to control algorithms.
+            pydss simulation control class. Provided for access to control algorithms.
             Subclasses should not hold references to this instance after this method exits.
 
         """

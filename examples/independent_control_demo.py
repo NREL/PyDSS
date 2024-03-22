@@ -1,4 +1,4 @@
-"""Example file to demonstrate how to use PyDSS controllers"""
+"""Example file to demonstrate how to use pydss controllers"""
 
 import opendssdirect as dss
 

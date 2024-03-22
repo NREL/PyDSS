@@ -1,6 +1,6 @@
 {
     "info": {
-        "description": "The API enables creating PyDSS instances, running simulations and creation of new projects.",
+        "description": "The API enables creating pydss instances, running simulations and creation of new projects.",
         "title": "PyDSS RESTful API documentation",
         "version": "2.0.0"
     },
@@ -29,7 +29,7 @@
                                 "examples": {
                                     "get_instance_status": {
                                         "value": {
-                                            "Message": "Successfully deleted a PyDSS instance",
+                                            "Message": "Successfully deleted a pydss instance",
                                             "Status": 200,
                                             "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6"
                                         }
@@ -48,7 +48,7 @@
                                 "examples": {
                                     "get_instance_status": {
                                         "value": {
-                                            "Message": "Error closing PyDSS instance",
+                                            "Message": "Error closing pydss instance",
                                             "Status": 403,
                                             "UUID": "None"
                                         }
@@ -118,7 +118,7 @@
                                 "examples": {
                                     "get_instance_status": {
                                         "value": {
-                                            "Message": "Starting a PyDSS instance",
+                                            "Message": "Starting a pydss instance",
                                             "Status": 200,
                                             "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6"
                                         }
@@ -137,7 +137,7 @@
                                 "examples": {
                                     "get_instance_status": {
                                         "value": {
-                                            "Message": "Failed to create a PyDSS instance",
+                                            "Message": "Failed to create a pydss instance",
                                             "Status": 500,
                                             "UUID": "None"
                                         }
@@ -151,7 +151,7 @@
                         "description": "Provided path does not exist"
                     }
                 },
-                "summary": "Creates an instance of PyDSS and runs the simulation",
+                "summary": "Creates an instance of pydss and runs the simulation",
                 "tags": [
                     "Simulation"
                 ]
@@ -235,7 +235,7 @@
                                 "examples": {
                                     "get_instance_status": {
                                         "value": {
-                                            "Message": "Provided UUID is not valid PyDSS instance id",
+                                            "Message": "Provided UUID is not valid pydss instance id",
                                             "Status": 403,
                                             "UUID": "None"
                                         }
@@ -263,7 +263,7 @@
                             "schema": {
                                 "properties": {
                                     "controller_types": {
-                                        "description": "comma separated list of PyDSS controller names",
+                                        "description": "comma separated list of pydss controller names",
                                         "example": "PvController,StorageController",
                                         "type": "string"
                                     },
@@ -280,7 +280,7 @@
                                         "type": "string"
                                     },
                                     "scenarios": {
-                                        "description": "comma separated list of PyDSS scenarios to be created",
+                                        "description": "comma separated list of pydss scenarios to be created",
                                         "example": "base_case,pv_scenario",
                                         "type": "string"
                                     }
@@ -332,7 +332,7 @@
                         "description": "Provided path does not exist"
                     }
                 },
-                "summary": "Creates a new project for PyDSS (User uploads a zipped OpenDSS model)",
+                "summary": "Creates a new project for pydss (User uploads a zipped OpenDSS model)",
                 "tags": [
                     "PyDSS project"
                 ]
@@ -485,7 +485,7 @@
                                 "examples": {
                                     "get_instance_status": {
                                         "value": {
-                                            "Message": "2 PyDSS instances currently running",
+                                            "Message": "2 pydss instances currently running",
                                             "Status": 200,
                                             "UUID": []
                                         }
@@ -496,7 +496,7 @@
                                 }
                             }
                         },
-                        "description": "UUIDs of all currently running PyDSS instances have been returned"
+                        "description": "UUIDs of all currently running pydss instances have been returned"
                     },
                     "204": {
                         "content": {
@@ -504,7 +504,7 @@
                                 "examples": {
                                     "get_instance_status": {
                                         "value": {
-                                            "Message": "No PyDSS instance currently running",
+                                            "Message": "No pydss instance currently running",
                                             "Status": 204,
                                             "UUID": [
                                                 "96c21e00-cd3c-4943-a914-14451f5f7ab6",
@@ -518,7 +518,7 @@
                                 }
                             }
                         },
-                        "description": "No active PyDSS instance found"
+                        "description": "No active pydss instance found"
                     }
                 },
                 "summary": "Returns UUIDs of all the instances currently running on the server",
@@ -534,7 +534,7 @@
                                 "examples": {
                                     "get_instance_status": {
                                         "value": {
-                                            "Message": "2 PyDSS instances currently running",
+                                            "Message": "2 pydss instances currently running",
                                             "Status": 200,
                                             "UUID": []
                                         }
@@ -545,7 +545,7 @@
                                 }
                             }
                         },
-                        "description": "UUIDs of all currently running PyDSS instances have been returned"
+                        "description": "UUIDs of all currently running pydss instances have been returned"
                     },
                     "204": {
                         "content": {
@@ -553,7 +553,7 @@
                                 "examples": {
                                     "get_instance_status": {
                                         "value": {
-                                            "Message": "No PyDSS instance currently running",
+                                            "Message": "No pydss instance currently running",
                                             "Status": 204,
                                             "UUID": [
                                                 "96c21e00-cd3c-4943-a914-14451f5f7ab6",
@@ -567,7 +567,7 @@
                                 }
                             }
                         },
-                        "description": "No active PyDSS instance found"
+                        "description": "No active pydss instance found"
                     }
                 },
                 "summary": "Returns UUIDs of all the instances currently running on the server",

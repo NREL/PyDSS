@@ -22,12 +22,12 @@ class OpenDssModelError(Exception):
 
 
 class PyDssConvergenceError(Exception):
-    """Raised when PyDSS fails to converge on a solution."""
+    """Raised when pydss fails to converge on a solution."""
 
 
 class PyDssConvergenceMaxError(Exception):
-    """Raised when PyDSS exceeds a max convergence error threshold."""
+    """Raised when pydss exceeds a max convergence error threshold."""
 
 
 class PyDssConvergenceErrorCountExceeded(Exception):
-    """Raised when PyDSS exceeds the threshold of convergence error counts."""
+    """Raised when pydss exceeds the threshold of convergence error counts."""

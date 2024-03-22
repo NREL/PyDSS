@@ -12,7 +12,7 @@
 "Convergence error percent threshold" = 0.0
 "Skip export on convergence error" = true
 "Control mode" = "Static"
-"Disable PyDSS controllers" = false
+"Disable pydss controllers" = false
 "Simulation Type" = "QSTS"
 "Project Path" = "./tests/data"
 "Active Project" = "edlifo-project"

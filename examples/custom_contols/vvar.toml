@@ -6,7 +6,7 @@
 "Max Control Iterations" = 50
 "Error tolerance" = 0.001
 "Control mode" = "Static"
-"Disable PyDSS controllers" = false
+"Disable pydss controllers" = false
 "Simulation Type" = "QSTS"
 "Project Path" = "./examples"
 "Active Project" = "custom_contols"

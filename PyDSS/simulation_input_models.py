@@ -303,7 +303,7 @@ class ProjectModel(InputsBaseModel):
         Field(
             title="disable_pydss_controllers",
             description="Allows disabling of the control algorithms",
-            alias="Disable PyDSS controllers",
+            alias="Disable pydss controllers",
             default=False,
         )]
     use_controller_registry: Annotated[
@@ -421,7 +421,7 @@ class ExportsModel(InputsBaseModel):
             title="export_data_tables",
             description="Set to true to export circuit element data in tabular files. While it does "
                         "duplicate data, it provides a way to preserve a human-readable "
-                        "dataset that does not require PyDSS to interpret.",
+                        "dataset that does not require pydss to interpret.",
             default=True,
             alias="Export Data Tables",
         )]

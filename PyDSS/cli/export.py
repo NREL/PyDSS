@@ -1,5 +1,5 @@
 """
-CLI to export data from a PyDSS project
+CLI to export data from a pydss project
 """
 
 import sys
@@ -43,7 +43,7 @@ from pydss.utils.utils import get_cli_string
 )
 @click.command()
 def export(project_path, fmt="csv", compress=False, output_dir=None, verbose=False):
-    """Export data from a PyDSS project."""
+    """Export data from a pydss project."""
     if not os.path.exists(project_path):
         sys.exit(1)
 

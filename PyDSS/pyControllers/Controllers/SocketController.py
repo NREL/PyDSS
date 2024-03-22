@@ -3,7 +3,7 @@ import socket
 import struct
 
 class SocketController(ControllerAbstract):
-    """Allows PyDSS object to inteface with external software using socket communication. Subclass of the :class:`pydss.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
+    """Allows pydss object to inteface with external software using socket communication. Subclass of the :class:`pydss.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
 
             :param ElmObject: A :class:`pydss.dssElement.dssElement` object that wraps around any OpenDSS element
             :type FaultObj: class:`pydss.dssElement.dssElement`

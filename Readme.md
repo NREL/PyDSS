@@ -1,4 +1,4 @@
-﻿# Welcome to the PyDSS Repository!
+﻿# Welcome to the pydss Repository!
 
 **PyDSS** is a high level python interface for **OpenDSS** and provides the following functionalities
 

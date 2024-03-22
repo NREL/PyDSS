@@ -28,7 +28,7 @@ class pyPlotReader:
             for name, plot in load_data(filepath).items():
                 if name in self.pyPlots[pyPlotType]:
                     raise InvalidParameter(
-                        f"Multiple PyDSS dynamic plot definitions of the same type with the same name not allowed: "
+                        f"Multiple pydss dynamic plot definitions of the same type with the same name not allowed: "
                         f"{name} already exists for plot type {pyPlotType}"
                     )
                 self.pyPlots[pyPlotType][name] = plot

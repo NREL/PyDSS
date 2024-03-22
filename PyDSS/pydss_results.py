@@ -1,4 +1,4 @@
-"""Provides access to PyDSS result data."""
+"""Provides access to pydss result data."""
 from collections import defaultdict
 import json
 import os
@@ -22,7 +22,7 @@ from pydss.value_storage import ValueStorageBase, get_dataset_property_type, \
     get_time_step_path
 
 class PyDssResults:
-    """Interface to perform analysis on PyDSS output data."""
+    """Interface to perform analysis on pydss output data."""
     def __init__(
             self, project_path=None, project=None, in_memory=False,
             frequency=False, mode=False
@@ -182,7 +182,7 @@ class PyDssResults:
 
     @property
     def project_path(self):
-        """Return the path to the PyDSS project.
+        """Return the path to the pydss project.
 
         Returns
         -------
@@ -192,7 +192,7 @@ class PyDssResults:
         return self._project.project_path
 
     def read_file(self, path):
-        """Read a file from the PyDSS project.
+        """Read a file from the pydss project.
 
         Parameters
         ----------
@@ -929,7 +929,7 @@ class PyDssScenarioResults:
         return json.loads(self.read_file(f"Exports/{self._name}/FeederHeadInfo.json"))
 
     def read_file(self, path):
-        """Read a file from the PyDSS project.
+        """Read a file from the pydss project.
 
         Parameters
         ----------

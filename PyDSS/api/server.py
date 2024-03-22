@@ -51,7 +51,7 @@ class pydss_server():
             self.app,
             title="PyDSS RESTful API documentation",
             version=find_version("__init__.py"),
-            description = "The API enables creating PyDSS instances, running simulations and creation of new projects.",
+            description = "The API enables creating pydss instances, running simulations and creation of new projects.",
             swagger_ui_settings=SwaggerUiSettings(path="/docs/"),
             # components="components.yaml"
         )

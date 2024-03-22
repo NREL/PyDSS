@@ -1,4 +1,4 @@
-"""Interface to read PyDSS files on differing filesystem structures."""
+"""Interface to read pydss files on differing filesystem structures."""
 
 import abc
 import io
@@ -24,7 +24,7 @@ SCENARIOS = "Scenarios"
 PROJECT_DIRECTORIES = ("DSSfiles", "Exports", "Logs", "Scenarios")
 
 class PyDssFileSystemInterface(abc.ABC):
-    """Interface to read PyDSS files on differing filesystem structures."""
+    """Interface to read pydss files on differing filesystem structures."""
 
     @abc.abstractmethod
     def exists(self, filename):
@@ -190,7 +190,7 @@ class PyDssFileSystemInterface(abc.ABC):
 
 
 class PyDssFileSystemInterface(PyDssFileSystemInterface):
-    """Reads PyDSS files when the project is expanded into directories."""
+    """Reads pydss files when the project is expanded into directories."""
     def __init__(self, project_dir, simulation_file):
         self._project_dir = project_dir
         self._scenarios_dir = os.path.join(self._project_dir, SCENARIOS)
@@ -368,7 +368,7 @@ class PyDssArchiveFileInterfaceBase(PyDssFileSystemInterface):
 
 
 class PyDssTarFileInterface(PyDssArchiveFileInterfaceBase):
-    """Reads PyDSS files when the project is archived in tar file."""
+    """Reads pydss files when the project is archived in tar file."""
     def __init__(self, project_dir):
         tar_path = os.path.join(project_dir, PROJECT_TAR)
         self._tar = tarfile.open(tar_path)
@@ -393,7 +393,7 @@ class PyDssTarFileInterface(PyDssArchiveFileInterfaceBase):
 
 
 class PyDssZipFileInterface(PyDssArchiveFileInterfaceBase):
-    """Reads PyDSS files when the project is archived in zip file."""
+    """Reads pydss files when the project is archived in zip file."""
     def __init__(self, project_dir):
         self._zip = zipfile.ZipFile(os.path.join(project_dir, PROJECT_ZIP))
         super(PyDssZipFileInterface, self).__init__(project_dir)

@@ -259,7 +259,7 @@ class SimulationVoltageMetricsModel(VoltageMetricsBaseModel):
         Dict[str, VoltageMetricsByBusTypeModel],
         Field(
             title="scenarios",
-            description="voltage metrics by PyDSS scenario name",
+            description="voltage metrics by pydss scenario name",
         )]
 
 

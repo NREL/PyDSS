@@ -29,7 +29,7 @@ class DatasetBuffer:
     that all data is flushed.
 
     """
-    # TODO add support for context manager, though PyDSS wouldn't be able to
+    # TODO add support for context manager, though pydss wouldn't be able to
     # take advantage in its current implementation.
 
     def __init__(
