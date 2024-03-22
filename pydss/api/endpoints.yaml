@@ -1,0 +1,90 @@
+## NOTE: These values match the defaults, which will be valid if services
+#        are launched natively or run using a docker-compose environment.
+#        When deploying under kubernetes, this file will be generated and managed
+#        as part of that process.
+services:
+  agc_federate:
+    host: localhost
+    port: 89
+    path: /cosims/federates/agc
+    protocol: http
+  bes_federate:
+    host: localhost
+    port: 88
+    path: /cosims/federates/bes
+    protocol: http
+  bes_scheduler_federate:
+    host: localhost
+    port: 91
+    path: /cosims/federates/bes_scheduler
+    protocol: http
+  powerworld:
+    host: localhost
+    port: 5000
+    path: /simulators/powerworld
+    protocol: http
+  psse:
+    host: localhost
+    port: 5000
+    path: /simulators/psse
+    protocol: http
+  broker:
+    host: localhost
+    port: 8080
+    path: /cosims/broker
+    protocol: http
+  dcat_federate:
+    host: localhost
+    port: 90
+    path: /cosims/federates/dcat
+    protocol: http
+  threat_federate:
+    host: localhost
+    port: 80
+    path: /cosims/federates/threat
+    protocol: http
+  transientgas_federate:
+    host: localhost
+    port: 89
+    path: /cosims/federates/transientgas
+  gasmodels:
+    host: localhost
+    port: 5001
+    path: /simulators/gasmodels
+  naturalgas:
+    host: api.naerm.team
+    port: 3003
+    path: /simulators/naturalgas
+  ngtransient:
+    host: localhost
+    port: 5002
+    path: /simulators/ngtransient
+  metadata:
+    host: localhost
+    port: 3000
+    protocol: http
+  bes_data:
+    host: localhost
+    port: 3002
+    path: /data/bes
+    protocol: http
+  ng_data:
+    host: api.naerm.team
+    port: 443
+    protocol: https
+    path: /data/ng
+  notifications_data:
+    host: api.naerm.team
+    port: 443
+    path: /data/bes/notifications
+    protocol: https
+  ngfast_federate:
+    host: localhost
+    port: 90
+    path: /cosims/federates/ngfast
+    protocol: http
+    
+helics:
+  broker:
+    host: 127.0.0.1
+    port: 23405

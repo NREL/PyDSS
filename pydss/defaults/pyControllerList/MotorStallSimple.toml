@@ -1,0 +1,8 @@
+["Load.motor_p1ulv281"]
+ratedKW = 7.0
+ratedPF = 0.939
+Pfault = 2.737
+Qfault = 4.743
+Vstall = 0.5979
+Tprotection = 19.5
+Treconnect = 7.5

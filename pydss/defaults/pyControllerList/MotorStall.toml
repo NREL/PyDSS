@@ -1,0 +1,24 @@
+["Load.motor_1"]
+Kp1 = 0.0
+Np1 = 1.0
+Kp2 = 12.0
+Np2 = 3.2
+Kq1 = 6.0
+Nq1 = 2.0
+Kq2 = 11.0
+Nq2 = 2.5
+Tth = 4.0
+Frst = 0.20
+LFadj = 0.0
+Tth1t = 0.5
+Tth2t = 1.3
+Pfault = 3.0
+Qfault = 1.0
+Vstall = 0.55
+Vbreak = 0.86
+Vrstrt = 0.95
+Tstall = 0.032
+Trestart = 0.3
+ratedKW = 7.00
+ratedPF = 0.939
+R_stall_pu = 0.10
