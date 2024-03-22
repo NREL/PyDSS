@@ -13,7 +13,7 @@ RUN pip install --upgrade pip
 # Install the python modules
 RUN pip install -e .
 
-ENV PYTHONPATH=/PyDSS/PyDSS
+ENV PYTHONPATH=/pydss/PyDSS
 
 EXPOSE 5000/tcp
 EXPOSE 9090/tcp

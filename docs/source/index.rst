@@ -11,10 +11,10 @@ PyDSS
 #####
 
 ***********
-About PyDSS
+About Pydss
 ***********
 
-PyDSS is a Python wrapper for OpenDSS that aims to expand upon its
+Pydss is a Python wrapper for OpenDSS that aims to expand upon its
 organizational, analytical, and visualization capabilities with these features:
 
 - Allows the user to develop custom control algorithms for specific circuit elements and run them
@@ -25,7 +25,7 @@ organizational, analytical, and visualization capabilities with these features:
 - Automates collection and analysis of circuit element results at each simulation time step.
 - Flexible architecture allows users to develop extensions.
 
-PyDSS uses opendssdirect.py (https://pypi.org/project/OpenDSSDirect.py/) to communicate with
+Pydss uses opendssdirect.py (https://pypi.org/project/OpenDSSDirect.py/) to communicate with
 OpenDSS.
 
 .. _installation_label:
@@ -61,7 +61,7 @@ Alternatively, to get the lastest code from the master branch:
 .. code-block:: bash
 
     $ git clone https://github.com/NREL/PyDSS
-    $ pip install -e PyDSS
+    $ pip install -e NREL-pydss
 
 Confirm the installation with this command. It should print the available commands::
 
@@ -69,7 +69,7 @@ Confirm the installation with this command. It should print the available comman
 
 
 *************
-Running PyDSS
+Running Pydss
 *************
 Refer to the :ref:`quick_start_label` for basic instructions on how to configure pydss to run a
 simulation with an existing OpenDSS model.

@@ -65,7 +65,7 @@ def test_custom_exports(cleanup_project):
     assert "CurrentsMagAng" not in properties
 
     # TODO: This metric no longer stores voltages in a dataframe.
-    # That functionality could be recovered in PyDSS/metrics.py or we could implement this with
+    # That functionality could be recovered in pydss/metrics.py or we could implement this with
     # a different export property.
     #node_names = scenario.list_element_names("Nodes", "VoltageMetric")
     #dfs = scenario.get_filtered_dataframes("Nodes", "VoltageMetric")

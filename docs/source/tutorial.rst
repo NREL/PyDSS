@@ -69,7 +69,7 @@ set in each scenario's ``Exports.toml`` on a per-property basis.
   ``Line.LoadingPercent`` is an example.  In this case pydss will read multiple
   values for a line, compute a loading percentage, and store that. The
   ``limits`` field can be applied to these values. Refer to
-  ``CUSTOM_FUNCTIONS`` in ``PyDSS/export_list_reader.py`` to see the options
+  ``CUSTOM_FUNCTIONS`` in ``pydss/export_list_reader.py`` to see the options
   available.
 - Set ``sum_group_file = file_path`` where file_path is a JSON or TOML file
   relative to the directory from which you will run pydss. The contents of the

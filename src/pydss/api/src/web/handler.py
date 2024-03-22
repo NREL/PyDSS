@@ -42,7 +42,7 @@ class Handler:
            required: true
            schema:
               type: string
-              example: C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples
+              example: C:/Users/alatif/Desktop/PyDSS_2.0/pydss/examples
         responses:
          '200':
            description: Successfully retrieved project information
@@ -156,7 +156,7 @@ class Handler:
         """
 
         from zipfile import ZipFile
-        examples_path = os.path.join("C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/", 'examples')
+        examples_path = os.path.join("C:/Users/alatif/Desktop/PyDSS_2.0/pydss/", 'examples')
         unzip_path = os.path.join(examples_path, "uploaded_opendss_project")
         zip_path = os.path.join(examples_path, "uploaded_opendss_project.zip")
 
@@ -246,7 +246,7 @@ class Handler:
                                                 Error tolerance: 0.001
                                                 Control mode: Static
                                                 Simulation Type: QSTS
-                                                Project Path: "C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples"
+                                                Project Path: "C:/Users/alatif/Desktop/PyDSS_2.0/pydss/examples"
                                                 Active Project: custom_contols
                                                 Active Scenario: base_case
                                                 DSS File: Master_Spohn_existing_VV.dss
