@@ -1,8 +1,0 @@
-,transformer,winding,vreg,band,ptratio,CTprim,R,X,bus,delay,reversible,revvreg,revband,revR,revX,tapdelay,debugtrace,maxtapchange,inversetime,tapwinding,vlimit,PTphase,revThreshold,revDelay,revNeutral,EventLog,RemotePTRatio,TapNum,Reset,LDC_Z,rev_Z,Cogen,basefreq,enabled,like
-RegControl.creg1a,reg1a,2,120,2,20,700,3,7.5,,15,No,120,3,0,0,2,No,16,No,2,0,1,100,60,No,No,20,6,No,0,0,No,60,Yes,
-RegControl.creg2a,reg2a,2,120,2,20,50,0.4,0.4,,15,No,120,3,0,0,2,No,16,No,2,0,1,100,60,No,No,20,0,No,0,0,No,60,Yes,
-RegControl.creg3a,reg3a,2,120,1,20,50,0.4,0.4,,15,No,120,3,0,0,2,No,16,No,2,0,1,100,60,No,No,20,2,No,0,0,No,60,Yes,
-RegControl.creg3c,reg3c,2,120,1,20,50,0.4,0.4,,15,No,120,3,0,0,2,No,16,No,2,0,1,100,60,No,No,20,0,No,0,0,No,60,Yes,
-RegControl.creg4a,reg4a,2,124,2,20,300,0.6,1.3,,15,No,120,3,0,0,2,No,16,No,2,0,1,100,60,No,No,20,10,No,0,0,No,60,Yes,
-RegControl.creg4b,reg4b,2,124,2,20,300,1.4,2.6,,15,No,120,3,0,0,2,No,16,No,2,0,1,100,60,No,No,20,4,No,0,0,No,60,Yes,
-RegControl.creg4c,reg4c,2,124,2,20,300,0.2,1.4,,15,No,120,3,0,0,2,No,16,No,2,0,1,100,60,No,No,20,6,No,0,0,No,60,Yes,
