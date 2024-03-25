@@ -21,21 +21,21 @@ DEFAULT_REGISTRY = {
                 "name": "NO_VRT",
                 "filename": os.path.join(
                     os.path.dirname(getattr(pydss, "__path__")[0]),
-                    "pydss/pyControllers/Controllers/Settings/PvControllers.toml"
+                    "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
                 ),
             },
             {
                 "name": "cpf",
                 "filename": os.path.join(
                     os.path.dirname(getattr(pydss, "__path__")[0]),
-                    "pydss/pyControllers/Controllers/Settings/PvControllers.toml"
+                    "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
                 ),
             },
             {
                 "name": "volt-var",
                 "filename": os.path.join(
                     os.path.dirname(getattr(pydss, "__path__")[0]),
-                    "pydss/pyControllers/Controllers/Settings/PvControllers.toml"
+                    "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
                 ),
             },
             ],

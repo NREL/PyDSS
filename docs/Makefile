@@ -29,8 +29,8 @@ model_tables:
 	python make_model_tables.py -o $(BUILDDIR)/model_tables
 
 github: html
-	rm -rf source/pydss
-	sphinx-apidoc -o source/pydss ../pydss
+	rm -rf source/PyDSS
+	sphinx-apidoc -o source/PyDSS ../PyDSS
 	-git branch -D gh-pages
 	-git push origin --delete gh-pages
 	ghp-import -n -b gh-pages -m "Update documentation" ./build/html

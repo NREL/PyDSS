@@ -43,12 +43,12 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
-project = 'pydss'
+project = 'PyDSS'
 copyright = '2019, Aadil Latif'
 author = 'Aadil Latif'
 
 # The full version, including alpha/beta/rc tags
-release = find_version("../../pydss", "__init__.py")
+release = find_version("../../PyDSS", "__init__.py")
 
 # -- General configuration ---------------------------------------------------
 
@@ -98,7 +98,7 @@ autosectionlabel_prefix_document = True
 
 redoc = [
     {
-        'name': 'pydss API',
+        'name': 'PyDSS API',
         'page': 'api',
         'spec': 'spec/swagger.yml',
         'embed': True,

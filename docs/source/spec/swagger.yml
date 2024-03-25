@@ -160,7 +160,7 @@ paths:
         required: true
         schema:
           type: string
-          example: C:/Users/alatif/Desktop/PyDSS_2.0/pydss/examples
+          example: C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples
         style: form
         explode: true
       responses:
@@ -205,7 +205,7 @@ paths:
         required: true
         schema:
           type: string
-          example: C:/Users/alatif/Desktop/PyDSS_2.0/pydss/examples
+          example: C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples
         style: form
         explode: true
       responses:
@@ -330,7 +330,7 @@ paths:
                     Error tolerance: 0.001
                     Control mode: Static
                     Simulation Type: QSTS
-                    Project Path: C:/Users/alatif/Desktop/PyDSS_2.0/pydss/examples
+                    Project Path: C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples
                     Active Project: custom_contols
                     Active Scenario: base_case
                     DSS File: Master_Spohn_existing_VV.dss

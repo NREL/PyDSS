@@ -89,7 +89,7 @@
                                             "Federate name": "PyDSS_x",
                                             "Log Results": false,
                                             "Max Control Iterations": 50,
-                                            "Project Path": "C:/Users/alatif/Desktop/PyDSS_2.0/pydss/examples",
+                                            "Project Path": "C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples",
                                             "Simulation Type": "QSTS",
                                             "Start Day": 1,
                                             "Start Time (min)": 0,
@@ -347,7 +347,7 @@
                         "name": "path",
                         "required": true,
                         "schema": {
-                            "example": "C:/Users/alatif/Desktop/PyDSS_2.0/pydss/examples",
+                            "example": "C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples",
                             "type": "string"
                         },
                         "style": "form"
@@ -415,7 +415,7 @@
                         "name": "path",
                         "required": true,
                         "schema": {
-                            "example": "C:/Users/alatif/Desktop/PyDSS_2.0/pydss/examples",
+                            "example": "C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples",
                             "type": "string"
                         },
                         "style": "form"
