@@ -19,7 +19,6 @@ pydss.pydss\_fs\_interface
    
       PyDssArchiveFileInterfaceBase
       PyDssFileSystemInterface
-      PyDssFileSystemInterface
       PyDssTarFileInterface
       PyDssZipFileInterface
    
