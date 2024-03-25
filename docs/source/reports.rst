@@ -69,7 +69,7 @@ This can be useful for debugging purposes when you develop your own reports.
 ***********
 Output Data
 ***********
-PyDSS stores generated reports in ``<project-path>/Reports``.
+Pydss stores generated reports in ``<project-path>/Reports``.
 
 ******************
 Adding New Reports

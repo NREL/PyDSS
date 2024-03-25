@@ -1,7 +1,7 @@
 .. _pydss_project_layout:
 
 ********************
-PyDSS Project Layout
+Pydss Project Layout
 ********************
 A pydss project is made up of one or more scenarios that run simulations on a shared OpenDSS
 model. The purpose of scenarios is to allow users to customize inputs, outputs, or controls.

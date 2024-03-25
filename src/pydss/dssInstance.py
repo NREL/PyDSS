@@ -241,7 +241,7 @@ class OpenDSS:
     def RunStep(self, step, updateObjects=None):
         # updating parameters before simulation run
         if self._settings.logging.log_time_step_updates:
-            logger.info(f'PyDSS datetime - {self._dssSolver.GetDateTime()}')
+            logger.info(f'Pydss datetime - {self._dssSolver.GetDateTime()}')
             logger.info(f'OpenDSS time [h] - {self._dssSolver.GetOpenDSSTime()}')
         if self._settings.profiles.use_profile_manager:
             self.profileStore.update()

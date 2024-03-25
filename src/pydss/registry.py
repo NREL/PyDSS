@@ -209,7 +209,7 @@ class Registry:
 
     def show_controllers(self):
         """Show the registered controllers."""
-        print("PyDSS Controllers:")
+        print("Pydss Controllers:")
         for controller_type in self._controllers:
             print(f"Controller Type:  {controller_type}")
             controllers = list(self._controllers[controller_type].values())

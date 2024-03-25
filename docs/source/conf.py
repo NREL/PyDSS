@@ -16,15 +16,8 @@ import io
 import re
 # import sys
 
-# my_path = os.path.abspath('../PyDSS')
-# print(f"{my_path=}")
-# sys.path.insert(0, os.path.abspath('../PyDSS'))
 
 import sphinx_rtd_theme
-# import pydss
-# import pydss
-# import pydss.simulation_input_models
-#from pydss.simulation_input_models import SimulationSettingsModel, ProjectModel
 
 # -- Project information -----------------------------------------------------
 

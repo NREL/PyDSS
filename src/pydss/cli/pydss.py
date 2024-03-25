@@ -27,7 +27,7 @@ except ImportError:
 
 @click.group()
 def cli():
-    """PyDSS commands"""
+    """Pydss commands"""
 
 cli.add_command(create_project)
 cli.add_command(add_post_process)

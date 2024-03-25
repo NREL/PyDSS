@@ -1,4 +1,4 @@
-"""Exceptions used in PyDSS"""
+"""Exceptions used in Pydss"""
 
 
 class InvalidConfiguration(Exception):
