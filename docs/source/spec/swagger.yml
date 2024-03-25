@@ -160,7 +160,7 @@ paths:
         required: true
         schema:
           type: string
-          example: C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples
+          example: C:/Users/alatif/Desktop/pydss_2.0/pydss/examples
         style: form
         explode: true
       responses:
@@ -205,7 +205,7 @@ paths:
         required: true
         schema:
           type: string
-          example: C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples
+          example: C:/Users/alatif/Desktop/pydss_2.0/pydss/examples
         style: form
         explode: true
       responses:
@@ -241,7 +241,7 @@ paths:
                     UUID: None
   "/simulators/pydss":
     put:
-      summary: Run a command on an active instance of PyDSS
+      summary: Run a command on an active instance of pydss
       tags:
       - Simulation
       requestBody:
@@ -330,7 +330,7 @@ paths:
                     Error tolerance: 0.001
                     Control mode: Static
                     Simulation Type: QSTS
-                    Project Path: C:/Users/alatif/Desktop/PyDSS_2.0/PyDSS/examples
+                    Project Path: C:/Users/alatif/Desktop/pydss_2.0/pydss/examples
                     Active Project: custom_contols
                     Active Scenario: base_case
                     DSS File: Master_Spohn_existing_VV.dss
@@ -338,7 +338,7 @@ paths:
                     Log Results: false
                     Export Data Tables: true
                     Export Data In Memory: true
-                    Federate name: PyDSS_x
+                    Federate name: pydss_x
         required: false
       responses:
         '200':
@@ -366,7 +366,7 @@ paths:
                     Message: Failed to create a pydss instance
                     UUID: None
     delete:
-      summary: Deletes an active instance of PyDSS
+      summary: Deletes an active instance of pydss
       tags:
       - Simulation
       parameters:

@@ -702,7 +702,7 @@ class LoggingModel(InputsBaseModel):
         Optional[LoggingLevel],
         Field(
             title="logging_level",
-            description="PyDSS minimum logging level",
+            description="Pydss minimum logging level",
             default=LoggingLevel.INFO,
             alias="Logging Level",
         )]
@@ -1170,7 +1170,7 @@ class ControllerMap(InputsBaseModel):
         ControllerType, 
         Field( 
             title="controller_types",
-            description="Should be a valid controller type registered with PyDSS",
+            description="Should be a valid controller type registered with pydss",
             default=ControllerType.PV_CONTROLLER,
         )]
     

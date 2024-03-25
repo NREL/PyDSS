@@ -31,13 +31,13 @@ from os.path import normpath, basename
 @click.option(
     "-s", "--scenario",
     required=False,
-    help="PyDSS scenario name.",
+    help="Pydss scenario name.",
 )
 
 @click.option(
     "-r", "--report",
     required=False,
-    help="PyDSS report name.",
+    help="Pydss report name.",
 )
 @click.command()
 

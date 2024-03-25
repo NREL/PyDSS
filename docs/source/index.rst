@@ -7,7 +7,7 @@
    :align:   center
 
 #####
-PyDSS
+Pydss
 #####
 
 ***********

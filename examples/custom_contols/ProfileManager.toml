@@ -11,7 +11,7 @@
 "Control mode" = "Static"
 "Disable pydss controllers" = false
 "Simulation Type" = "QSTS"
-"Project Path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS_src\\examples"
+"Project Path" = "C:\\Users\\alatif\\Desktop\\pydss_2.0\\pydss_src\\examples"
 "Active Project" = "custom_contols"
 "Active Scenario" = ""
 "DSS File" = "Master_Spohn_existing_VV.dss"
@@ -78,6 +78,6 @@ Uninterruptible = true
 
 [Profiles]
 "Use profile manager" = false
-"Profile store path" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS_src\\examples\\custom_contols\\Profiles\\profiles.hdf5"
-"Profile mapping" = "C:\\Users\\alatif\\Desktop\\PyDSS_2.0\\PyDSS_src\\examples\\custom_contols\\Profiles\\mapping.toml"
+"Profile store path" = "C:\\Users\\alatif\\Desktop\\pydss_2.0\\pydss_src\\examples\\custom_contols\\Profiles\\profiles.hdf5"
+"Profile mapping" = "C:\\Users\\alatif\\Desktop\\pydss_2.0\\pydss_src\\examples\\custom_contols\\Profiles\\mapping.toml"
 
