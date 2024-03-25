@@ -45,7 +45,7 @@ the data then a suffix is added to the property name.
 
 Common Metadata
 ===============
-Pydss stores metadata that is common to all datasets in the root of the
+PyDSS stores metadata that is common to all datasets in the root of the
 scenario group. For example, the ``Timestamp`` dataset contains the simulation
 timestamps (seconds since epoch) for all datasets that store values at every
 time point. ::
@@ -56,7 +56,7 @@ time point. ::
 
 Dataset Metadata
 ================
-Pydss stores metadata for each dataset in HDF attributes as well as other
+PyDSS stores metadata for each dataset in HDF attributes as well as other
 datasets. This metadata describes the contents of datasets.
 
 Attributes per dataset

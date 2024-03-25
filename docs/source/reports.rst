@@ -76,7 +76,7 @@ Adding New Reports
 ******************
 Here's how to create a new report in pydss.
 
-#. Create a new class in a Python file in ``pydss/reports``. The class must
+#. Create a new class in a Python file in ``PyDSS/reports``. The class must
    inherit from ``ReportBase``.
 #. Implement the required methods:
 

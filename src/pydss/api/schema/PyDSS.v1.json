@@ -348,6 +348,7 @@
                         "required": true,
                         "schema": {
                             "example": "C:/Users/alatif/Desktop/pydss_2.0/pydss/examples",
+
                             "type": "string"
                         },
                         "style": "form"

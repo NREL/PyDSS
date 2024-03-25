@@ -142,9 +142,9 @@ class Reports:
         return filenames
 
 
-# Note to devs:  all subclasses of ReportBase need to reside in pydss/reports
+# Note to devs:  all subclasses of ReportBase need to reside in PyDSS/reports
 # in order to be automatically imported. Otherwise, add a direct import in
-# pydss/reports/__init__.py.
+# PyDSS/reports/__init__.py.
 
 class ReportBase(abc.ABC):
     """Base class for reports"""

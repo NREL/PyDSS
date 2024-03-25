@@ -28,7 +28,7 @@ Following attributes can be configured for the HELICS interface.
 Default values for additional simulation settings are as follows. For more information on how to appropriately set these values please look at HELICS documentaion 
 
 Once the HELICS co-simulation interface has been enabled, the next step is to set up ``publications`` and ``subscriptions`` to set up information exchange with external federates. 
-Pydss enables zero code setup of these modules. Each scenario can have its publlcation and subscription defination and is managed by two file in the ``ExportLists`` directory for a given scenario.
+PyDSS enables zero code setup of these modules. Each scenario can have its publlcation and subscription defination and is managed by two file in the ``ExportLists`` directory for a given scenario.
 
 publication tags (names) follow the following convertion
 
@@ -133,8 +133,8 @@ the same controller can be implemented as a pyController object in pydss.
 The socket interface in pydss also come in handy, when setting up a hardware-in-loop type simulations and integrating the simulation 
 engine with actual hardware. Interfaces similar to raw socket implementations have been developed (to be  open-sourced at a later time) 
 for Modbus-TCP and DNP3 communcations have developed and tested with pydss with sucess. A minimal socket interfacing example has 
-been provided as a pydss project in ~pydss/examples/external_interfaces. Within the folder, 
-~/pydss/examples/external_interfaces/pydss_project a scenario called 'socket' has been defined. Socket 
+been provided as a pydss project in ~PyDSS/examples/external_interfaces. Within the folder, 
+~/PyDSS/examples/external_interfaces/pydss_project a scenario called 'socket' has been defined. Socket 
 controller definations have been detailed with the 'pyControllerList' folder. An example of input requirements can be studied below.
 This example will publish ``voltage magnitude`` (see Even set in Index) and ``real power`` for load ``Load.mpx000635970`` in the model. Subscribed 
 values will be used to update the ``kW`` property of the coupled load (Load.mpx000635970 in this case)
