@@ -10,7 +10,7 @@ from aiohttp import web
 
 from pydss.pydss_project import PyDssProject, PyDssScenario, ControllerType
 from pydss.api.src.web.parser import bytestream_decode
-from pydss.api.src.app.pydss import pydss
+from pydss.api.src.app.pydss import PyDSS
 
 
 class Handler:

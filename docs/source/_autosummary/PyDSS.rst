@@ -1,7 +1,7 @@
-﻿PyDSS
+﻿pydss
 =====
 
-.. automodule:: PyDSS
+.. automodule:: pydss
 
    
    

@@ -6,5 +6,5 @@ Python API interface
    :toctree: _autosummary
    :recursive:
 
-   PyDSS
+   pydss
 

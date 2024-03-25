@@ -21,7 +21,7 @@ class PyDSS:
 
         ''' TODO: work on logging.yaml file'''
 
-        logging.info("{} - initialized ".format({self.uuid}))
+        logger.info("{} - initialized ".format({self.uuid}))
 
         self.shutdownevent = event
         self.queue = queue
