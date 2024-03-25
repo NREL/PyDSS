@@ -3,12 +3,12 @@
 ********
 Tutorial
 ********
-This page describes how to run simulations with pydss. If you have not already installed PyDSS,
+This page describes how to run simulations with pydss. If you have not already installed pydss,
 please follow the instructions at :ref:`installation_label`.
 
 Create a project
 ================
-PyDSS requires a specific directory structure with configuration files that specify how to run a
+Pydss requires a specific directory structure with configuration files that specify how to run a
 simulation. Run this command to create an empty project.
 
 .. code-block:: bash
@@ -120,7 +120,7 @@ column represents.  This can vary by element.
 
 Data Viewer
 -----------
-PyDSS includes a simple Jupyter notebook UI that allows you to plot element results.
+Pydss includes a simple Jupyter notebook UI that allows you to plot element results.
 Here's how to start it. Note that you must be in the directory where you ran
 ``pydss run <my-project>`` when you start the notebook.
 

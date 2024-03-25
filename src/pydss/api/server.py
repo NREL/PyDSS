@@ -49,7 +49,7 @@ class pydss_server():
         self.app = web.Application()
         self.swagger = SwaggerDocs(
             self.app,
-            title="PyDSS RESTful API documentation",
+            title="Pydss RESTful API documentation",
             version=find_version("__init__.py"),
             description = "The API enables creating pydss instances, running simulations and creation of new projects.",
             swagger_ui_settings=SwaggerUiSettings(path="/docs/"),

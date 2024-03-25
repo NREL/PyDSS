@@ -17,9 +17,9 @@ class AbstractPostprocess(abc.ABC):
     :type inputs: dict
     :param dssInstance: A :class:`pydss.dssElement.dssElement` object that wraps around an OpenDSS 'Fault' element
     :type dssInstance: dict
-    :param dssBuses: Dictionary of all :class:`pydss.dssBus.dssBus` objects in PyDSS
+    :param dssBuses: Dictionary of all :class:`pydss.dssBus.dssBus` objects in pydss
     :type dssBuses: dict of :class:`pydss.dssBus.dssBus` objects
-    :param dssObjects: Dictionary of all :class:`pydss.dssElement.dssElement` objects in PyDSS
+    :param dssObjects: Dictionary of all :class:`pydss.dssElement.dssElement` objects in pydss
     :type dssObjects: dict of :class:`pydss.dssElement.dssElement` objects
     :param dssObjectsByClass:  Dictionary of all :class:`pydss.dssElement.dssElement` objects in pydss sorted by class
     :type dssObjectsByClass: dict of :class:`pydss.dssElement.dssElement` objects

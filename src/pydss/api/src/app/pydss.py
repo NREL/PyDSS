@@ -43,7 +43,7 @@ class PyDSS:
 
         result = {
             "Status": 200,
-            "Message": "PyDSS {} successfully initialized.".format(self.uuid),
+            "Message": "Pydss {} successfully initialized.".format(self.uuid),
             "UUID": self.uuid
         }
 
@@ -52,7 +52,7 @@ class PyDSS:
         self.run_process()
 
     def run_process(self):
-        logger.info("PyDSS simulation starting")
+        logger.info("Pydss simulation starting")
         while not self.shutdownevent.is_set():
             try:
                 task = self.queue.get()
@@ -80,11 +80,11 @@ class PyDSS:
 
             except (KeyboardInterrupt, SystemExit):
                 break
-        logger.info(f"PyDSS subprocess {self.uuid} has ended")
+        logger.info(f"Pydss subprocess {self.uuid} has ended")
 
     def close_instance(self):
         del self.pydss_obj
-        logger.info(f'PyDSS case {self.uuid} closed.')
+        logger.info(f'Pydss case {self.uuid} closed.')
 
     def run(self, params):
         if self.initalized:

@@ -57,7 +57,7 @@ class Dynamic(solver_base):
         self._Hour = int(self._dssSolution.DblHour() // 1)
         self._Second = (self._dssSolution.DblHour() % 1) * 60 * 60
         logger.debug('OpenDSS time [h] - ' + str(self._dssSolution.DblHour()))
-        logger.debug('PyDSS datetime - ' + str(self._Time))
+        logger.debug('Pydss datetime - ' + str(self._Time))
         return self._dssSolution.Converged()
 
     def reSolve(self):

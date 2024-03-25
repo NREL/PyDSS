@@ -61,7 +61,7 @@ class DataViewer:
         return self._df
 
     def _make_widgets(self):
-        self._main_label = widgets.HTML("<b>PyDSS Data Viewer</b>")
+        self._main_label = widgets.HTML("<b>Pydss Data Viewer</b>")
         text_layout_long = widgets.Layout(width="400px")
         text_layout_med = widgets.Layout(width="200px")
         text_layout_short = widgets.Layout(width="100px")

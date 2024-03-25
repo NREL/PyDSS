@@ -5,14 +5,14 @@ Quick Start Guide
 *****************
 
 This page provides a short example to get pydss up and running. If you have not already installed
-PyDSS, please follow the instructions at :ref:`installation_label`.
+pydss, please follow the instructions at :ref:`installation_label`.
 
 The basic steps are to create an empty project, copy your OpenDSS model files into that project,
 customize the simuation settings, and then run the simulation.
 
 Create an empty project
 =======================
-PyDSS requires a specific directory structure with configuration files that specify how to run a
+Pydss requires a specific directory structure with configuration files that specify how to run a
 simulation. Run this command to create an empty project.
 
 .. code-block:: bash

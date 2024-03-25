@@ -1,4 +1,5 @@
-﻿pydss
+
+Pydss
 =====
 
 .. automodule:: pydss
