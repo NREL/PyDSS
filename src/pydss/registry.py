@@ -21,26 +21,25 @@ DEFAULT_REGISTRY = {
                 "name": "NO_VRT",
                 "filename": os.path.join(
                     os.path.dirname(getattr(pydss, "__path__")[0]),
-                    "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
+                    "pydss/pyControllers/Controllers/Settings/PvControllers.toml",
                 ),
             },
             {
                 "name": "cpf",
                 "filename": os.path.join(
                     os.path.dirname(getattr(pydss, "__path__")[0]),
-                    "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
+                    "pydss/pyControllers/Controllers/Settings/PvControllers.toml",
                 ),
             },
             {
                 "name": "volt-var",
                 "filename": os.path.join(
                     os.path.dirname(getattr(pydss, "__path__")[0]),
-                    "PyDSS/pyControllers/Controllers/Settings/PvControllers.toml"
+                    "pydss/pyControllers/Controllers/Settings/PvControllers.toml",
                 ),
             },
-            ],
-        ControllerType.PV_VOLTAGE_RIDETHROUGH.value: [
         ],
+        ControllerType.PV_VOLTAGE_RIDETHROUGH.value: [],
         ControllerType.SOCKET_CONTROLLER.value: [],
         ControllerType.STORAGE_CONTROLLER.value: [],
         ControllerType.XMFR_CONTROLLER.value: [],
@@ -52,8 +51,10 @@ DEFAULT_REGISTRY = {
 
 REQUIRED_CONTROLLER_FIELDS = ("name", "filename")
 
+
 class Registry:
     """Manages controllers registered with pydss."""
+
     _REGISTRY_FILENAME = ".pydss-registry.json"
 
     def __init__(self, registry_filename=None):
@@ -61,7 +62,7 @@ class Registry:
             self._registry_filename = Path.home() / self._REGISTRY_FILENAME
         else:
             self._registry_filename = Path(registry_filename)
-         
+
         self._controllers = {x: {} for x in CONTROLLER_TYPES}
         data = copy.deepcopy(DEFAULT_REGISTRY)
         for controller_type, controllers in DEFAULT_REGISTRY["Controllers"].items():
@@ -69,7 +70,7 @@ class Registry:
                 path = Path(controller["filename"])
                 if not path.exists():
                     raise InvalidConfiguration(f"Default controller file={path} does not exist")
-                
+
         # This is written to work with legacy versions where default controllers were
         # written to the registry.
         if self._registry_filename.exists():
@@ -80,15 +81,20 @@ class Registry:
                     path = Path(controller["filename"])
                     if not path.exists():
                         name = controller["name"]
-                        msg = f"The registry contains a controller with an invalid file. " \
-                        f"Type={controller_type} name={name} file={path}.\nWould you like to " \
-                        "delete it? (y/n) -> "
+                        msg = (
+                            f"The registry contains a controller with an invalid file. "
+                            f"Type={controller_type} name={name} file={path}.\nWould you like to "
+                            "delete it? (y/n) -> "
+                        )
                         response = input(msg).lower()
                         if response == "y":
                             to_delete.append((controller_type, i))
                             continue
                         else:
-                            logger.error("Exiting because the registry %s is invalid", self._registry_filename)
+                            logger.error(
+                                "Exiting because the registry %s is invalid",
+                                self._registry_filename,
+                            )
                             sys.exit(1)
                     if not self._is_default_controller(controller_type, controller["name"]):
                         data["Controllers"][controller_type].append(controller)
@@ -231,9 +237,7 @@ class Registry:
 
         """
         if not self.is_controller_registered(controller_type, name):
-            raise InvalidParameter(
-                f"{controller_type} / {name} isn't registered"
-            )
+            raise InvalidParameter(f"{controller_type} / {name} isn't registered")
         if self._is_default_controller(controller_type, name):
             raise InvalidParameter(f"Cannot unregister a default controller")
 
