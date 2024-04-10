@@ -235,7 +235,7 @@ value equal to the prefault kW value.
 UnderVoltage Overvoltage Event Baseline Settings
 ------------------------------------------------
 
-[DVS]
+| [DVS]
 | "Trv" = 0.001
 | "Tinv" = 0.001
 | "dbd1" = -0.1
@@ -313,7 +313,7 @@ of distributed generation.
 
 |image12|
 |image13|
-|iamge14|
+|image14|
 
 In our second set of FIDVR results, we use IEEE 1547-2018 Category I VRT settings, coupled 
 with the same DVS settings described in the scenarios above. Here we see that, with DVS activated 
