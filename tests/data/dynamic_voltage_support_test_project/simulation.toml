@@ -1,7 +1,7 @@
 [Project]
 "Start time" = "2020-1-1 00:00:00.0"
 "Step resolution (sec)" = 0.016666666659999999217
-"Simulation duration (min)" = 0.00277777777666667
+"Simulation duration (min)" = 0.00555555555333333
 "Loadshape start time" = "2020-1-1 00:00:00.0"
 "Max Control Iterations" = 1000
 "Error tolerance" = 0.01
