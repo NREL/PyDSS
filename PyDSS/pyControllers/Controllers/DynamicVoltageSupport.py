@@ -211,10 +211,7 @@ class DynamicVoltageSupport(ControllerAbstract):
     
     def kVA_Limiter(self):
         if self.kw_setting_prev>0:# if there active power generation
-            print('\n\nself.gen_Srated_adjusted:',self.gen_Srated_adjusted)
-            print('self.kvar_setting_prev:',self.kvar_setting_prev)
             new_kw=math.sqrt((self.gen_Srated_adjusted**2)-(self.kvar_setting_prev**2))#calc new kw setting based on current kvar setting
-            print('new_kw:',new_kw,'\n\n')
             if new_kw>0: #if the new kw settings does not cause kw to go negative
                 new_step_kw=new_kw
                 new_step_kvar=self.kvar_setting_prev
@@ -230,7 +227,6 @@ class DynamicVoltageSupport(ControllerAbstract):
     
     def Current_Limiter(self,iter_v):
         adjusted_kva=self.gen_imax_per_phase*(iter_v*math.sqrt(3)) #get the kva limit for the current timestep at the current voltage
-        print('\n\nADJUSTED_KVA:',adjusted_kva,'\n\n')
         if self.kw_setting_prev>0: # if there active power generation
             if self.kvar_setting_prev>adjusted_kva:
                 new_step_kw=0

@@ -110,6 +110,7 @@ Example Results (created using controller version 2.0)
 
 Undervoltage Event Baseline DVS Settings
 ~~~~~~~~~~~~
+
 | [DVS]
 | “Trv” = 0.001
 | “Tinv = 0.001
@@ -128,6 +129,7 @@ Undervoltage Event Baseline DVS Settings
 
 Baseline Results
 ~~~~~~~~~~~~
+
 The results below show a single, 187 kVA DER’s DVS response to a simplified 
 voltage sag lasting less than 1 sec with a minimum, sustained PCC voltage of 
 about 0.6 p.u, and a simulation timestep of 1 cycle (0.0167 sec). We see an 
@@ -152,6 +154,7 @@ controller of about 1 millisecond.
 
 Varying Trv: Trv=0.1
 ~~~~~~~~~~~~
+
 In this scenario, we increase the time constant for our voltage transducer, 
 essentially increasing the lag between when the system voltage drops and when 
 the inverter registers this drop. As such, we see a largely similar response 
@@ -167,6 +170,7 @@ of the initial sag) following the rapid reactive power injection.
 
 Varying T_inv: Tinv=0.1
 ~~~~~~~~~~~~
+
 In this scenario, we return Trv to 0.001 s and instead increase the inverter 
 controller time constant (Tinv) to 0.1. While the DER registers the voltage 
 drop almost immediately, the inverter response is much slower. Increasing Tinv, 
@@ -182,6 +186,7 @@ as we reduce our kVAR contributions and proportionally increase our kW contribut
 
 Varying Kqv: Kqv=10
 ~~~~~~~~~~~~
+
 In this scenario, we return both time constants (Trv and Tinv) to 0.001 s and 
 instead reduce our gain constant from 100 to 10. This effectively slows down the 
 rate at which kVAR contributions are increased (as provided to the inverter controller 
@@ -194,6 +199,7 @@ conditions after the fault.
 
 Varying 1qh1: Iqh1=2.0
 ~~~~~~~~~~~~
+
 Returning all other settings to the baseline, in this scenario we increase our 
 current limit from 1.1 p.u. to 2.0 p.u. In the first set of plots below, we see 
 a larger increase in current (~ 150 A increase vs. 30 A in our baseline). One 
@@ -213,6 +219,7 @@ increase, closer to the 2.0 p.u. current limit. This is shown in the second plot
 
 Varying kvar_max: Kvar_max=1
 ~~~~~~~~~~~~
+
 Returning to the 0.6 p.u. fault voltage and baseline settings, here we increase 
 kvar_max from 0.44 to 1.0 p.u. This represents a theoretical inverter, which can 
 curtail 100% of real power to supply only reactive power. In the first set of results 
@@ -227,6 +234,7 @@ value equal to the prefault kW value.
 
 UnderVoltage Overvoltage Event Baseline Settings
 ~~~~~~~~~~~~
+
 [DVS]
 | "Trv" = 0.001
 | "Tinv" = 0.001
@@ -245,6 +253,7 @@ UnderVoltage Overvoltage Event Baseline Settings
 
 Baseline Results
 ~~~~~~~~~~~~
+
 In the following scenarios we apply both and undervoltage (UV) and an overvoltage (OV) in 
 quick succession, to demonstrate the ability of the DER to provide both capacitive and 
 inductive support. Notice we also set the post_fault_reset period to 0 s, such that the 
@@ -264,6 +273,7 @@ maintaining a total kVA contribution of 187 kVA (3*sqrt((56 kW**2)+((-28)**2))).
 
 Varying Capacitive Support: capacitive_support=False
 ~~~~~~~~~~~~
+
 By setting capacitive_support to False, we prevent the DER from providing capacitive 
 support during an UV event. Instead the DER will simply operate in a current-limited manner, 
 supplying only active power. This UV behavior is akin to using generator model 7 in OpenDSS. OV 
@@ -273,6 +283,7 @@ inductive support is unaffected by this parameter.
 
 Varying Inductive Support: inductive_support=False
 ~~~~~~~~~~~~
+
 Setting inductive_support to False, prevents the DER from providing inductive support during 
 and OV event. UV capacitive support is unaffected by this parameter. 
 
@@ -280,6 +291,7 @@ and OV event. UV capacitive support is unaffected by this parameter.
 
 Combining DVS and VRT for a FIDVR Event
 ~~~~~~~~~~~~
+
 This PyDSS DVS controller can be used alone, or in conjunction with the PyDSS voltage ride-through 
 (VRT) controller. Combining the two can be accomplished using the “Use with Voltage Ride Through” 
 and “Use with Dynamic Voltage Support” parameters in the DVS settings .toml file and the VRT settings 
