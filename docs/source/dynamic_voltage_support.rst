@@ -106,10 +106,10 @@ linked in the controller registry.
   also must be set to true.
 
 Example Results (created using controller version 2.0)
-------------------------------------------------------
+======================================================
 
 Undervoltage Event Baseline DVS Settings
-~~~~~~~~~~~~
+----------------------------------------
 
 | [DVS]
 | “Trv” = 0.001
@@ -128,7 +128,7 @@ Undervoltage Event Baseline DVS Settings
 | “Use with Voltage Ride Through” = false
 
 Baseline Results
-~~~~~~~~~~~~
+----------------
 
 The results below show a single, 187 kVA DER’s DVS response to a simplified 
 voltage sag lasting less than 1 sec with a minimum, sustained PCC voltage of 
@@ -153,7 +153,7 @@ controller of about 1 millisecond.
 |image1| 
 
 Varying Trv: Trv=0.1
-~~~~~~~~~~~~
+--------------------
 
 In this scenario, we increase the time constant for our voltage transducer, 
 essentially increasing the lag between when the system voltage drops and when 
@@ -169,7 +169,7 @@ of the initial sag) following the rapid reactive power injection.
 |image2|
 
 Varying T_inv: Tinv=0.1
-~~~~~~~~~~~~
+-----------------------
 
 In this scenario, we return Trv to 0.001 s and instead increase the inverter 
 controller time constant (Tinv) to 0.1. While the DER registers the voltage 
@@ -185,7 +185,7 @@ as we reduce our kVAR contributions and proportionally increase our kW contribut
 |image3|
 
 Varying Kqv: Kqv=10
-~~~~~~~~~~~~
+-------------------
 
 In this scenario, we return both time constants (Trv and Tinv) to 0.001 s and 
 instead reduce our gain constant from 100 to 10. This effectively slows down the 
@@ -198,7 +198,7 @@ conditions after the fault.
 |image4|
 
 Varying 1qh1: Iqh1=2.0
-~~~~~~~~~~~~
+----------------------
 
 Returning all other settings to the baseline, in this scenario we increase our 
 current limit from 1.1 p.u. to 2.0 p.u. In the first set of plots below, we see 
@@ -218,7 +218,7 @@ increase, closer to the 2.0 p.u. current limit. This is shown in the second plot
 |image6|
 
 Varying kvar_max: Kvar_max=1
-~~~~~~~~~~~~
+----------------------------
 
 Returning to the 0.6 p.u. fault voltage and baseline settings, here we increase 
 kvar_max from 0.44 to 1.0 p.u. This represents a theoretical inverter, which can 
@@ -233,7 +233,7 @@ value equal to the prefault kW value.
 |image8|
 
 UnderVoltage Overvoltage Event Baseline Settings
-~~~~~~~~~~~~
+------------------------------------------------
 
 [DVS]
 | "Trv" = 0.001
@@ -252,7 +252,7 @@ UnderVoltage Overvoltage Event Baseline Settings
 | "Use with Voltage Ride Through" = false
 
 Baseline Results
-~~~~~~~~~~~~
+----------------
 
 In the following scenarios we apply both and undervoltage (UV) and an overvoltage (OV) in 
 quick succession, to demonstrate the ability of the DER to provide both capacitive and 
@@ -272,7 +272,7 @@ maintaining a total kVA contribution of 187 kVA (3*sqrt((56 kW**2)+((-28)**2))).
 |image9|
 
 Varying Capacitive Support: capacitive_support=False
-~~~~~~~~~~~~
+----------------------------------------------------
 
 By setting capacitive_support to False, we prevent the DER from providing capacitive 
 support during an UV event. Instead the DER will simply operate in a current-limited manner, 
@@ -282,7 +282,7 @@ inductive support is unaffected by this parameter.
 |image10|
 
 Varying Inductive Support: inductive_support=False
-~~~~~~~~~~~~
+--------------------------------------------------
 
 Setting inductive_support to False, prevents the DER from providing inductive support during 
 and OV event. UV capacitive support is unaffected by this parameter. 
@@ -290,8 +290,7 @@ and OV event. UV capacitive support is unaffected by this parameter.
 |image11|
 
 Combining DVS and VRT for a FIDVR Event
-~~~~~~~~~~~~
-
+---------------------------------------
 This PyDSS DVS controller can be used alone, or in conjunction with the PyDSS voltage ride-through 
 (VRT) controller. Combining the two can be accomplished using the “Use with Voltage Ride Through” 
 and “Use with Dynamic Voltage Support” parameters in the DVS settings .toml file and the VRT settings 
@@ -341,7 +340,7 @@ due to the addition of DVS and the PCC voltage improvements that result from it.
 .. |image13| image:: ./images/no_vrt_fidvr_2.png
 .. |image14| image:: ./images/no_vrt_fidvr_3.png
 .. |image15| image:: ./images/vrt_cat1_fidvr_1.png
-.. |image16| image:: ./images/vrt_cat2_fidvr_1.png
-.. |image17| image:: ./images/vrt_cat3_fidvr_1.png
+.. |image16| image:: ./images/vrt_cat1_fidvr_2.png
+.. |image17| image:: ./images/vrt_cat1_fidvr_3.png
 
   
