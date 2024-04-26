@@ -665,7 +665,7 @@ class PyDssScenario:
         else:
             assert isinstance(exports, dict)
             self.exports = exports
-
+        print(self.exports)
         if post_process_infos is not None:
             for pp_info in post_process_infos:
                 if isinstance(pp_info, dict):
