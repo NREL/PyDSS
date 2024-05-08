@@ -28,7 +28,6 @@ class ProfileManager(BaseProfileManager):
         self.mapping = usersettings["mapping"]
         #self.one_Time_fix(usersettings['collection'])
         self.setup_profiles()
-        #quit()
         pass
 
     def one_Time_fix(self, collection_name):
