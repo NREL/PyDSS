@@ -402,7 +402,7 @@ class PvVoltageRideThru(ControllerAbstract):
         u_in = max(u_in) / u_base if self._voltage_calc_mode == VoltageCalcModes.MAX else sum(u_in) / (u_base * len(u_in))
 
         if self._is_connected or forceTrip:
-            self._controlled_element.SetParameter('enabled', False)
+            self._controlled_element.SetParameter('kw', 0)
 
             self._is_connected = False
             self._tripped_start_time = self.__dss_solver.GetDateTime()
@@ -410,7 +410,7 @@ class PvVoltageRideThru(ControllerAbstract):
             self._tripped_dead_time = Deadtime
             
         elif permissive_to_trip:
-            self._controlled_element.SetParameter('enabled', False)
+            self._controlled_element.SetParameter('kw', 0)
 
             self._is_connected = False
             self._tripped_start_time = self.__dss_solver.GetDateTime()
