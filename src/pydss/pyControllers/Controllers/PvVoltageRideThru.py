@@ -49,14 +49,14 @@ class PvVoltageRideThru(ControllerAbstract):
             self.phase = None
 
         # Initializing the model
-        pv_object.SetParameter('kvar', 0)
-        pv_object.SetParameter('kva', self.model.kva)
-        self._p_rated = float(pv_object.SetParameter('kW', self.model.max_kw))
+        #pv_object.SetParameter('kvar', 0)
+        #pv_object.SetParameter('kva', self.model.kva)
+        self._p_rated = float(pv_object.GetParameter('kW'))
 
         # MISC settings
         self._trip_deadtime_sec = self.model.reconnect_deadtime_sec
         self._time_to_p_max_sec = self.model.reconnect_pmax_time_sec
-        self._p_rated = self.model.max_kw
+        #self._p_rated = self.model.max_kw
         self._voltage_calc_mode = self.model.voltage_calc_mode
         # initialize deadtimes and other variables
         self._initialize_ride_through_settings()
