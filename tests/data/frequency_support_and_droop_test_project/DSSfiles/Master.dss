@@ -1,0 +1,22 @@
+Clear
+
+New LoadShape.Primary_Frequency_Response_Test npts=120 sInterval=1 mult=(file=PFR_Test.csv)
+
+New Circuit.feeder_p2rdt12627-p2rhs10_25x bus1=p2rdt12627-p2rhs10_25x pu=1.03 basekV=25.0 R1=1e-05 X1=1e-05 R0=1e-05 X0=1e-05 yearly=Primary_Frequency_Response_Test
+
+Redirect LineCodes.dss
+Redirect Lines.dss
+Redirect Transformers.dss
+Redirect Loads.dss
+Redirect DERs.dss
+
+new energymeter.m3 Line.l(r:p2rdt12627-p2rhs10_25)
+
+Set Voltagebases=[0.12, 0.208, 0.48, 14.434, 25.0]
+
+Calcvoltagebases
+
+Buscoords Buscoords.dss
+
+Solve
+

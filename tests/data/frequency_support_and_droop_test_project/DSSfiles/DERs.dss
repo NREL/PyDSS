@@ -1,0 +1,2 @@
+New Generator.pv_system_load_p2rlv29914_1 bus1=p2rlv29914.1.2.3 phases=3 kV=0.48 kva=10 kw=10 kvar=0 model=7 vminpu=0.91 vmaxpu=1.1
+AddBusMarker bus=p2rlv29914.1.2.3 color=red size=10 code=19

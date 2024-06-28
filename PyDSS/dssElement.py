@@ -6,7 +6,7 @@ from PyDSS.dssBus import dssBus
 from PyDSS.dssObjectBase import dssObjectBase
 from PyDSS.exceptions import InvalidParameter
 from PyDSS.value_storage import ValueByNumber
-
+import pdb
 
 class dssElement(dssObjectBase):
 
@@ -154,6 +154,8 @@ class dssElement(dssObjectBase):
 
     def SetParameter(self, Param, Value):
         reply = self._dssInstance.utils.run_command(self._FullName + '.' + Param + ' = ' + str(Value))
+        print('SETTING PARAMETER:',Param, 'to',Value,'reply:',reply)
+        # pdb.set_trace()
         if reply != "":
             raise Exception(f"SetParameter failed: {reply}")
         return self.GetParameter(Param)

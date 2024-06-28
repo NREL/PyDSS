@@ -33,6 +33,9 @@ EDLIFO_PROJECT_PATH = os.path.join(
 DYNAMIC_VOLTAGE_SUPPORT_PATH = os.path.join(
     "tests", "data", "dynamic_voltage_support_test_project"
 )
+FREQUENCY_RIDE_THROUGH_AND_DROOP_PATH = os.path.join(
+    "tests","data","frequency_support_and_droop_test_project"
+)
 
 SCENARIO_NAME = "scenario1"
 
