@@ -1,0 +1,7 @@
+[Generators.class]
+publish = true
+store_values_type = "all"
+
+[Generators.kW]
+publish = true
+store_values_type = "all"

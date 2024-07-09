@@ -19,6 +19,10 @@ use_controller_registry = true
 name = "Frequency_Support_Testing"
 post_process_infos = []
 
+[[Project.Scenarios]]
+name = "Frequency_Ridethrough_Testing"
+post_process_infos = []
+
 [Exports]
 "Export Mode" = "byClass"
 "Export Style" = "Single file"

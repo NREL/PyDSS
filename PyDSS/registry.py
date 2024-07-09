@@ -72,7 +72,14 @@ DEFAULT_REGISTRY = {
                     os.path.dirname(getattr(PyDSS, "__path__")[0]),
                     "PyDSS\pyControllers\Controllers\Settings\PFR.toml"
                 ),
-            },],
+            },
+            {
+                "name": "FRT_Testing",
+                "filename": os.path.join(
+                    os.path.dirname(getattr(PyDSS, "__path__")[0]),
+                    "PyDSS\pyControllers\Controllers\Settings\PFR.toml"
+                ),
+            }],
         ControllerType.FAULT_CONTROLLER.value: [],
         ControllerType.PV_DYNAMIC.value: [],
         ControllerType.DYNAMIC_VOLTAGE_SUPPORT.value:[{
