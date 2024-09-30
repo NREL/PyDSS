@@ -1,15 +1,15 @@
 import re
 import os
-from PyDSS.pydss_project import PyDssProject
-from PyDSS.pydss_results import PyDssResults
+from pydss.pydss_project import PyDssProject
+from pydss.pydss_results import PyDssResults
 from tests.common import (
     DYNAMIC_VOLTAGE_SUPPORT_PATH,
     cleanup_project
 )
-from PyDSS.common import (SIMULATION_SETTINGS_FILENAME,
+from pydss.common import (SIMULATION_SETTINGS_FILENAME,
                           RUN_SIMULATION_FILENAME,
 )
-from PyDSS.pydss_fs_interface import STORE_FILENAME
+from pydss.pydss_fs_interface import STORE_FILENAME
 
 def test_dynamic_voltage_support(cleanup_project):
     PyDssProject.run_project(

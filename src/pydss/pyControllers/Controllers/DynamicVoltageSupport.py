@@ -4,7 +4,7 @@ author: Erik Pohl
 Version: 2.0
 '''
 
-from PyDSS.pyControllers.pyControllerAbstract import ControllerAbstract
+from pydss.pyControllers.pyControllerAbstract import ControllerAbstract
 import matplotlib.pyplot as plt
 import scipy.signal as signal
 import numpy as np

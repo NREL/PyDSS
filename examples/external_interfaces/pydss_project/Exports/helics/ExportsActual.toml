@@ -1,0 +1,71 @@
+[[Generators]]
+property = "Powers"
+data_conversion = "none"
+opendss_classes = []
+sample_interval = 1
+publish = true
+store_values_type = "all"
+sum_elements = false
+sum_groups = []
+
+[[Loads]]
+property = "Powers"
+data_conversion = "none"
+opendss_classes = []
+sample_interval = 1
+publish = true
+store_values_type = "all"
+sum_elements = false
+sum_groups = []
+
+[[PVSystems]]
+property = "Powers"
+data_conversion = "none"
+opendss_classes = []
+sample_interval = 1
+publish = true
+store_values_type = "all"
+sum_elements = false
+sum_groups = []
+
+[[Storages]]
+property = "Powers"
+data_conversion = "none"
+opendss_classes = []
+sample_interval = 1
+publish = true
+store_values_type = "all"
+sum_elements = false
+sum_groups = []
+
+[[Buses]]
+property = "puVmagAngle"
+data_conversion = "none"
+opendss_classes = []
+sample_interval = 1
+publish = true
+store_values_type = "all"
+sum_elements = false
+sum_groups = []
+
+[[Circuits]]
+property = "TotalPower"
+data_conversion = "none"
+opendss_classes = []
+sample_interval = 1
+publish = true
+store_values_type = "all"
+sum_elements = false
+sum_groups = []
+
+[[Lines]]
+property = "VoltagesMagAng"
+data_conversion = "none"
+opendss_classes = []
+sample_interval = 1
+names = [ "Line.sw1", "Line.sw0",]
+publish = true
+store_values_type = "all"
+sum_elements = false
+sum_groups = []
+
