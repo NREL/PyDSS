@@ -1,0 +1,24 @@
+{
+    "event_log": "Exports/DVS_NO_VRT/event_log.csv",
+    "element_info_files": [
+        "Exports/DVS_NO_VRT\\CapacitorsInfo.csv",
+        "Exports/DVS_NO_VRT\\FusesInfo.csv",
+        "Exports/DVS_NO_VRT\\GeneratorsInfo.csv",
+        "Exports/DVS_NO_VRT\\IsourceInfo.csv",
+        "Exports/DVS_NO_VRT\\LinesInfo.csv",
+        "Exports/DVS_NO_VRT\\LoadsInfo.csv",
+        "Exports/DVS_NO_VRT\\MonitorsInfo.csv",
+        "Exports/DVS_NO_VRT\\PVSystemsInfo.csv",
+        "Exports/DVS_NO_VRT\\ReclosersInfo.csv",
+        "Exports/DVS_NO_VRT\\RegControlsInfo.csv",
+        "Exports/DVS_NO_VRT\\RelaysInfo.csv",
+        "Exports/DVS_NO_VRT\\SensorsInfo.csv",
+        "Exports/DVS_NO_VRT\\TransformersInfo.csv",
+        "Exports/DVS_NO_VRT\\VsourcesInfo.csv",
+        "Exports/DVS_NO_VRT\\XYCurvesInfo.csv",
+        "Exports/DVS_NO_VRT\\TransformersPhaseInfo.csv"
+    ],
+    "feeder_head_info_files": [
+        "Exports/DVS_NO_VRT\\FeederHeadInfo.json"
+    ]
+}

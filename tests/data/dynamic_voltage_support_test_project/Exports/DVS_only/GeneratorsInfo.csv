@@ -1,0 +1,2 @@
+,phases,bus1,kv,kW,pf,kvar,model,Vminpu,Vmaxpu,yearly,daily,duty,dispmode,dispvalue,conn,status,class,Vpu,maxkvar,minkvar,pvfactor,forceon,kVA,MVA,Xd,Xdp,Xdpp,H,D,UserModel,UserData,ShaftModel,ShaftData,DutyStart,debugtrace,Balanced,XRdp,UseFuel,FuelkWh,%Fuel,%Reserve,Refuel,DynamicEq,DynOut,spectrum,basefreq,enabled,like
+Generator.test_pv,3,p2rlv29914.1.2.3,0.48,180,1,0,1,0,2,,,,Default,0,wye,Variable,1,1,0,0,0.1,No,200,0.2,1,0.28,0.2,1,0,,,,,0,No,No,20,No,0,100,20,No,,[],defaultgen,60,Yes,

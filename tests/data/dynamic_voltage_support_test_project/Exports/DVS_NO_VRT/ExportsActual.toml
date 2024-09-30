@@ -1,0 +1,20 @@
+[[Generators]]
+property = "class"
+data_conversion = "none"
+opendss_classes = []
+sample_interval = 1
+publish = true
+store_values_type = "all"
+sum_elements = false
+sum_groups = []
+
+[[Generators]]
+property = "kvar"
+data_conversion = "none"
+opendss_classes = []
+sample_interval = 1
+publish = true
+store_values_type = "all"
+sum_elements = false
+sum_groups = []
+
