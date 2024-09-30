@@ -1,28 +1,21 @@
-import logging
-import os
-import shutil
-import tempfile
-from collections import namedtuple
 from pathlib import Path
+import tempfile
+import shutil
+import os
 
-import h5py
-import mock
-import numpy as np
 import pandas as pd
 import pytest
+import h5py
+import mock
 
-import PyDSS.metrics
-from PyDSS.dataset_buffer import DatasetBuffer
-from PyDSS.export_list_reader import ExportListProperty
-from PyDSS.metrics import ExportLoadingsMetric, OpenDssExportMetric
-from PyDSS.simulation_input_models import (
-    SimulationSettingsModel, create_simulation_settings, load_simulation_settings
+from pydss.export_list_reader import ExportListProperty
+from pydss.dataset_buffer import DatasetBuffer
+from pydss.metrics import ExportLoadingsMetric
+from pydss.simulation_input_models import (
+    create_simulation_settings, 
+    load_simulation_settings
 )
-from PyDSS.utils.utils import load_data
 from tests.common import FakeElement
-
-
-logger = logging.getLogger(__name__)
 
 OBJS = [
     FakeElement("Line.one", "one"),
@@ -60,7 +53,7 @@ def mock_run_command():
     return filename
 
 
-@mock.patch("PyDSS.metrics.OpenDssExportMetric._run_command", side_effect=mock_run_command)
+@mock.patch("pydss.metrics.OpenDssExportMetric._run_command", side_effect=mock_run_command)
 def test_export_overloads(mocked_func, simulation_settings):
     data1 = {
         "property": "ExportLoadingsMetric",

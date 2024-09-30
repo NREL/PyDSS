@@ -1,0 +1,41 @@
+[[Generators]]
+property = "Powers"
+sample_interval = 1
+publish = true
+store_values_type = "all"
+
+[[Loads]]
+property = "Powers"
+sample_interval = 1
+publish = true
+store_values_type = "all"
+
+[[PVSystems]]
+property = "Powers"
+sample_interval = 1
+publish = true
+store_values_type = "all"
+
+[[Storages]]
+property = "Powers"
+sample_interval = 1
+publish = true
+store_values_type = "all"
+
+[[Buses]]
+property = "puVmagAngle"
+sample_interval = 1
+publish = true
+store_values_type = "all"
+
+[[Circuits]]
+property = "TotalPower"
+sample_interval = 1
+publish = true
+store_values_type = "all"
+
+[[Lines]]
+property = "CurrentsMagAng"
+sample_interval = 1
+publish = true
+store_values_type = "all"

@@ -1,0 +1,703 @@
+{
+    "info": {
+        "description": "The API enables creating pydss instances, running simulations and creation of new projects.",
+        "title": "Pydss RESTful API documentation",
+        "version": "2.0.0"
+    },
+    "openapi": "3.0.0",
+    "paths": {
+        "/simulators/pydss": {
+            "delete": {
+                "parameters": [
+                    {
+                        "explode": false,
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "example": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+                            "format": "uuid",
+                            "type": "string"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Successfully deleted a pydss instance",
+                                            "Status": 200,
+                                            "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Successfully retrieved project information"
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Error closing pydss instance",
+                                            "Status": 403,
+                                            "UUID": "None"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Provided path does not exist"
+                    }
+                },
+                "summary": "Deletes an active instance of pydss",
+                "tags": [
+                    "Simulation"
+                ]
+            },
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "Example 1": {
+                                    "value": {
+                                        "parameters": {
+                                            "Active Project": "custom_contols",
+                                            "Active Scenario": "base_case",
+                                            "Co-simulation Mode": false,
+                                            "Control mode": "Static",
+                                            "DSS File": "Master_Spohn_existing_VV.dss",
+                                            "Date offset": 0,
+                                            "End Day": 1,
+                                            "End Time (min)": 1439,
+                                            "Error tolerance": 0.001,
+                                            "Export Data In Memory": true,
+                                            "Export Data Tables": true,
+                                            "Federate name": "Pydss_x",
+                                            "Log Results": false,
+                                            "Max Control Iterations": 50,
+                                            "Project Path": "C:/Users/alatif/Desktop/Pydss_2.0/pydss/examples",
+                                            "Simulation Type": "QSTS",
+                                            "Start Day": 1,
+                                            "Start Time (min)": 0,
+                                            "Start Year": 2017,
+                                            "Step resolution (sec)": 900
+                                        }
+                                    }
+                                }
+                            },
+                            "schema": {
+                                "properties": {
+                                    "parameters": {
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "required": false
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Starting a pydss instance",
+                                            "Status": 200,
+                                            "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Successfully retrieved project information"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Failed to create a pydss instance",
+                                            "Status": 500,
+                                            "UUID": "None"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Provided path does not exist"
+                    }
+                },
+                "summary": "Creates an instance of pydss and runs the simulation",
+                "tags": [
+                    "Simulation"
+                ]
+            },
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "Example_1": {
+                                    "value": {
+                                        "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+                                        "command": "run",
+                                        "parameters": {}
+                                    }
+                                }
+                            },
+                            "schema": {
+                                "properties": {
+                                    "command": {
+                                        "example": "initialize",
+                                        "type": "string"
+                                    },
+                                    "parameters": {
+                                        "type": "object"
+                                    },
+                                    "uuid": {
+                                        "example": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+                                        "format": "UUID",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "required": false
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Command submitted, awaiting response",
+                                            "Status": 200,
+                                            "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Successfully retrieved project information"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Please provide a command and parameters",
+                                            "Status": 401,
+                                            "UUID": "None"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Provided path does not exist"
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Provided UUID is not valid pydss instance id",
+                                            "Status": 403,
+                                            "UUID": "None"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Provided path does not exist"
+                    }
+                },
+                "summary": "Run a command on an active instance of pydss",
+                "tags": [
+                    "Simulation"
+                ]
+            }
+        },
+        "/simulators/pydss/create": {
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "controller_types": {
+                                        "description": "comma separated list of pydss controller names",
+                                        "example": "PvController,StorageController",
+                                        "type": "string"
+                                    },
+                                    "fileName": {
+                                        "format": "binary",
+                                        "type": "string"
+                                    },
+                                    "master_file": {
+                                        "example": "Master_Spohn_existing_VV.dss",
+                                        "type": "string"
+                                    },
+                                    "project": {
+                                        "example": "test_project",
+                                        "type": "string"
+                                    },
+                                    "scenarios": {
+                                        "description": "comma separated list of pydss scenarios to be created",
+                                        "example": "base_case,pv_scenario",
+                                        "type": "string"
+                                    }
+                                  
+                                },
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "required": false
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Pydss project created",
+                                            "Status": 200,
+                                            "UUID": "None"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Successfully retrieved project information"
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "User does not have access to delete folders",
+                                            "Status": 403,
+                                            "UUID": "None"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Provided path does not exist"
+                    }
+                },
+                "summary": "Creates a new project for pydss (User uploads a zipped OpenDSS model)",
+                "tags": [
+                    "Pydss project"
+                ]
+            }
+        },
+        "/simulators/pydss/info": {
+            "get": {
+                "parameters": [
+                    {
+                        "explode": true,
+                        "in": "query",
+                        "name": "path",
+                        "required": true,
+                        "schema": {
+                            "example": "C:/Users/alatif/Desktop/pydss_2.0/pydss/examples",
+
+                            "type": "string"
+                        },
+                        "style": "form"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Data": {
+                                                "Project1": {
+                                                    "Scenario1": null,
+                                                    "Scenario2": null
+                                                },
+                                                "Project2": {
+                                                    "Scenario1": null
+                                                }
+                                            },
+                                            "Message": "Pydss instance with the provided UUID is currently running",
+                                            "Status": 200,
+                                            "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Successfully retrieved project information"
+                    },
+                    "406": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Provided path does not exist",
+                                            "Status": 406,
+                                            "UUID": "None"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Provided path does not exist"
+                    }
+                },
+                "summary": "Returns a dictionary of valid project and scenarios in the provided path",
+                "tags": [
+                    "Pydss project"
+                ]
+            },
+            "head": {
+                "parameters": [
+                    {
+                        "explode": true,
+                        "in": "query",
+                        "name": "path",
+                        "required": true,
+                        "schema": {
+                            "example": "C:/Users/alatif/Desktop/pydss_2.0/pydss/examples",
+                            "type": "string"
+                        },
+                        "style": "form"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Data": {
+                                                "Project1": {
+                                                    "Scenario1": null,
+                                                    "Scenario2": null
+                                                },
+                                                "Project2": {
+                                                    "Scenario1": null
+                                                }
+                                            },
+                                            "Message": "Pydss instance with the provided UUID is currently running",
+                                            "Status": 200,
+                                            "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Successfully retrieved project information"
+                    },
+                    "406": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Provided path does not exist",
+                                            "Status": 406,
+                                            "UUID": "None"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Provided path does not exist"
+                    }
+                },
+                "summary": "Returns a dictionary of valid project and scenarios in the provided path",
+                "tags": [
+                    "Pydss project"
+                ]
+            }
+        },
+        "/simulators/pydss/instances": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "2 pydss instances currently running",
+                                            "Status": 200,
+                                            "UUID": []
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "UUIDs of all currently running pydss instances have been returned"
+                    },
+                    "204": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "No pydss instance currently running",
+                                            "Status": 204,
+                                            "UUID": [
+                                                "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+                                                "96c21e045-cd6c-8394-a914-14451f5f7ab6"
+                                            ]
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "No active pydss instance found"
+                    }
+                },
+                "summary": "Returns UUIDs of all the instances currently running on the server",
+                "tags": [
+                    "simulation status"
+                ]
+            },
+            "head": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "2 pydss instances currently running",
+                                            "Status": 200,
+                                            "UUID": []
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "UUIDs of all currently running pydss instances have been returned"
+                    },
+                    "204": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "No pydss instance currently running",
+                                            "Status": 204,
+                                            "UUID": [
+                                                "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+                                                "96c21e045-cd6c-8394-a914-14451f5f7ab6"
+                                            ]
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "No active pydss instance found"
+                    }
+                },
+                "summary": "Returns UUIDs of all the instances currently running on the server",
+                "tags": [
+                    "simulation status"
+                ]
+            }
+        },
+        "/simulators/pydss/status/uuid/{uuid}": {
+            "get": {
+                "parameters": [
+                    {
+                        "explode": false,
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "example": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+                            "format": "uuid",
+                            "type": "string"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Pydss instance with the provided UUID is currently running",
+                                            "Status": 200,
+                                            "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Pydss instance with the provided UUID is currently running"
+                    },
+                    "204": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Pydss instance with the provided UUID does not exist",
+                                            "Status": 204,
+                                            "UUID": "None"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Pydss instance with the provided UUID does not exist"
+                    }
+                },
+                "summary": "Returns states of process of with UUID matching the passed UUID",
+                "tags": [
+                    "simulation status"
+                ]
+            },
+            "head": {
+                "parameters": [
+                    {
+                        "explode": false,
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "example": "96c21e00-cd3c-4943-a914-14451f5f7ab6",
+                            "format": "uuid",
+                            "type": "string"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Pydss instance with the provided UUID is currently running",
+                                            "Status": 200,
+                                            "UUID": "96c21e00-cd3c-4943-a914-14451f5f7ab6"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Pydss instance with the provided UUID is currently running"
+                    },
+                    "204": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "get_instance_status": {
+                                        "value": {
+                                            "Message": "Pydss instance with the provided UUID does not exist",
+                                            "Status": 204,
+                                            "UUID": "None"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Pydss instance with the provided UUID does not exist"
+                    }
+                },
+                "summary": "Returns states of process of with UUID matching the passed UUID",
+                "tags": [
+                    "simulation status"
+                ]
+            }
+        }
+    }
+}

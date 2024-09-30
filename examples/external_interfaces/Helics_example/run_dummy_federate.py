@@ -42,7 +42,7 @@ vfed = h.helicsCreateValueFederate("Test Federate", fedinfo)
 pub1 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.load1.power", "double", "")
 pub2 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.feederhead.voltage", "double", "")
 pub3 = h.helicsFederateRegisterGlobalTypePublication(vfed, "test.feederhead.angle", "double", "")
-sub1 = h.helicsFederateRegisterSubscription(vfed, "PyDSS.Circuit.heco19021.TotalPower", "")
+sub1 = h.helicsFederateRegisterSubscription(vfed, "pydss.Circuit.heco19021.TotalPower", "")
 #h.helicsInputSetMinimumChange(sub1, 0.1)
 
 # Enter execution mode #
@@ -69,5 +69,9 @@ h.helicsFederateFinalize(vfed)
 while h.helicsBrokerIsConnected(broker):
     time.sleep(1)
 
-h.helicsFederateFree(vfed)
+h.helicsFederateDisconnect(vfed)
+h.helicsBrokerDisconnect(broker)
+h.helicsBrokerDestroy(broker)
+h.helicsBrokerFree(broker)
+
 h.helicsCloseLibrary()

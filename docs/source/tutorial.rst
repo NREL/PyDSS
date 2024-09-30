@@ -3,12 +3,12 @@
 ********
 Tutorial
 ********
-This page describes how to run simulations with PyDSS. If you have not already installed PyDSS,
+This page describes how to run simulations with pydss. If you have not already installed pydss,
 please follow the instructions at :ref:`installation_label`.
 
 Create a project
 ================
-PyDSS requires a specific directory structure with configuration files that specify how to run a
+Pydss requires a specific directory structure with configuration files that specify how to run a
 simulation. Run this command to create an empty project.
 
 .. code-block:: bash
@@ -45,7 +45,7 @@ There are several options to limit the amount of data exported. These can be
 set in each scenario's ``Exports.toml`` on a per-property basis.
 
 - Set ``names = ["name1", "name2", "name3"]`` to only export data for these
-  element names. By default PyDSS exports data for all elements.
+  element names. By default pydss exports data for all elements.
 - Set ``name_regexes = ["foo.*", "bar\\d+"]`` to only export data for elements
   with names that match one of the listed Python regular expressions. Note
   that backslashes must be escaped.
@@ -55,24 +55,24 @@ set in each scenario's ``Exports.toml`` on a per-property basis.
 - Set ``limits_filter`` to ``outside`` (default) or ``inside``. Applies to
   filtering action on the ``limits`` parameter.
 - Set ``store_values_type`` to ``"all"`` (default), ``"moving_average"``, or
-  ``"sum"``. If ``moving_average`` then PyDSS will store the average of the
-  last ``window_size`` values. If ``sum`` then PyDSS will keep a
+  ``"sum"``. If ``moving_average`` then pydss will store the average of the
+  last ``window_size`` values. If ``sum`` then pydss will keep a
   running sum of values at each time point and only record the total to disk.
 - Set ``window_size`` to an integer to control the moving average window size.
   Defaults to ``100``.
 - Set ``moving_average_store_interval`` to control how often the moving average
   is recorded. Defaults to ``window_size``.
-- Set ``sample_interval`` to control how often PyDSS reads new values. Defaults
+- Set ``sample_interval`` to control how often pydss reads new values. Defaults
   to ``1``.
 - If the export key is not ``ElementType.Property`` but instead a value mapped
-  to a custom function then PyDSS will run that function at each time point.
-  ``Line.LoadingPercent`` is an example.  In this case PyDSS will read multiple
+  to a custom function then pydss will run that function at each time point.
+  ``Line.LoadingPercent`` is an example.  In this case pydss will read multiple
   values for a line, compute a loading percentage, and store that. The
   ``limits`` field can be applied to these values. Refer to
   ``CUSTOM_FUNCTIONS`` in ``PyDSS/export_list_reader.py`` to see the options
   available.
 - Set ``sum_group_file = file_path`` where file_path is a JSON or TOML file
-  relative to the directory from which you will run PyDSS. The contents of the
+  relative to the directory from which you will run pydss. The contents of the
   file should look like this example::
 
     {
@@ -120,7 +120,7 @@ column represents.  This can vary by element.
 
 Data Viewer
 -----------
-PyDSS includes a simple Jupyter notebook UI that allows you to plot element results.
+Pydss includes a simple Jupyter notebook UI that allows you to plot element results.
 Here's how to start it. Note that you must be in the directory where you ran
 ``pydss run <my-project>`` when you start the notebook.
 
@@ -134,7 +134,7 @@ Create a new Python notebook and add this to to the first cell:
 
 .. code-block:: python
 
-    from PyDSS.apps.data_viewer import DataViewer
+    from pydss.apps.data_viewer import DataViewer
     from IPython.display import display, HTML, clear_output
     display(HTML("<style>.container { width:100% !important; }</style>"))
 
@@ -165,7 +165,7 @@ Load element classes and properties
 
 .. code-block:: python
 
-    from PyDSS.pydss_results import PyDssResults
+    from pydss.pydss_results import PyDssResults
 
     path = "."
     results = PyDssResults(path)
@@ -284,9 +284,9 @@ Performance Considerations
 If your dataset is small enough to fit in your system's memory then you can
 load it all into memory by passing ``in_memory=True`` to ``PyDssResults``.
 
-Estimate space required by PyDSS simulation
+Estimate space required by pydss simulation
 -------------------------------------------
-To estimate the storage space required by PyDSS simulation *before compression*.
+To estimate the storage space required by pydss simulation *before compression*.
 
 If use ``pydss`` CLI, please enable ``dry_run`` flag provided in ``run``,
 

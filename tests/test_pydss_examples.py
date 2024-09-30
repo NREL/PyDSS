@@ -1,65 +1,76 @@
 
-import os
-import sys
-import shutil
-import tempfile
 from distutils.dir_util import copy_tree
-
-import pytest
 import subprocess
-from PyDSS.pydss_project import PyDssProject
+import tempfile
+import os
 
-import logging
+from loguru import logger
+import pytest
 
-logger = logging.getLogger(__name__)
+from pydss.pydss_project import PyDssProject
 
-PATH = os.path.join(tempfile.gettempdir(), "pydss-projects")
+IN_GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS") == "true"
 EXAMPLES_path = "examples"
 
 @pytest.fixture
 def pydss_project():
-    if os.path.exists(PATH):
-        shutil.rmtree(PATH)
-    yield
-    if os.path.exists(PATH):
-        shutil.rmtree(PATH)
-
+    pydss_project = tempfile.mkdtemp() 
+    print(pydss_project)
+    yield pydss_project
+    #shutil.rmtree(pydss_project)
 
 base_projects_path = None
-def copy_examples_to_temp_folder(example_name):
+def copy_examples_to_temp_folder(pydss_project, example_name):
     if "/" in example_name:
         example_name = example_name.split("/")[0]
     #assert os.path.exists(EXAMPLES_path)
     proc = None
-    base_projects_path = os.path.join(PATH,example_name)
+    base_projects_path = os.path.join(pydss_project, example_name)
     os.makedirs(base_projects_path, exist_ok=True)
     assert os.path.exists(base_projects_path)
     copy_tree(EXAMPLES_path, base_projects_path)
     return base_projects_path
 
 @pytest.mark.skip
-def test_external_interfaces_example(pydss_project):
+def test_helics_interface_example(pydss_project):
     example_name = "external_interfaces/pydss_project"
     scenarios = [
         {
             'TOML': 'helics.toml',
-            'file': r"external_interfaces/Helics_example/run_dummy_federate.py",
-        },
-        {
-            'TOML': 'helics_itr.toml',
-            'file': r"external_interfaces/Helics_example/run_dummy_federate.py",
-        },
-        {
-            'TOML': 'simulation.toml',
-            'file': r"external_interfaces/Socket_example/run_socket_controller.py",
-        },
-        {
-            'TOML': None,
-            'file': r"external_interfaces/Python_example/run_pyDSS.py",
+            'file': r"external_interfaces/helics_example/run_dummy_federate.py",
         },
     ]
-    run_example(example_name, scenarios)
+    run_example(pydss_project, example_name, scenarios)
     return
+
+@pytest.mark.skipif(
+    IN_GITHUB_ACTIONS, reason="test runs locally but fails on github actions"
+)
+def test_helics_interface_iterative_example(pydss_project):
+    example_name = "external_interfaces/pydss_project"
+    scenarios = [
+        {
+            'TOML': 'helics_itr.toml',
+            'file': r"external_interfaces/helics_example/run_dummy_federate.py",
+        },
+    ]
+    run_example(pydss_project, example_name, scenarios)
+    return
+
+@pytest.mark.skipif(
+    IN_GITHUB_ACTIONS, reason="test runs locally but fails on github actions"
+)
+def test_socket_interface_example(pydss_project):
+    example_name = "external_interfaces/pydss_project"
+    scenarios = [
+        {
+            'TOML': 'socket.toml',
+            'file': r"external_interfaces/socket_example/run_socket_controller.py",
+        },
+    ]
+    run_example(pydss_project, example_name, scenarios)
+    return
+
 
 def test_monte_carlo_example(pydss_project):
     example_name = "monte_carlo"
@@ -69,26 +80,9 @@ def test_monte_carlo_example(pydss_project):
             'file': None,
         },
     ]
-    run_example(example_name, scenarios)
+    run_example(pydss_project, example_name, scenarios)
     return
 
-@pytest.mark.skip
-def test_dynamic_visualization_example(pydss_project):
-    example_name = "dynamic_visualization"
-    scenarios = [
-        {
-            'TOML' : 'simulation.toml',
-            'file' : None,
-        },
-        {
-            'TOML' : 'networkgraph.toml',
-            'file' : None,
-        },
-    ]
-    run_example(example_name, scenarios)
-    return
-
-@pytest.mark.skip
 def test_custom_contols_example(pydss_project):
     example_name = "custom_contols"
     scenarios = [
@@ -97,24 +91,33 @@ def test_custom_contols_example(pydss_project):
             'file' : None,
         },
     ]
-    run_example(example_name, scenarios)
+    run_example(pydss_project, example_name, scenarios)
     return
 
-@pytest.mark.skip
-def test_harmonics_example(pydss_project):
+
+def test_harmonics_spanshot_example(pydss_project):
+    example_name = "harmonics"
+    scenarios = [
+        {
+            'TOML': 'snapshot.toml',
+            'file': None,
+        },
+    ]
+    run_example(pydss_project, example_name, scenarios)
+    return
+
+
+def test_harmonics_timeseries_example(pydss_project):
     example_name = "harmonics"
     scenarios = [
         {
             'TOML': 'simulation.toml',
             'file': None,
         },
-        {
-            'TOML': 'snapshot.toml',
-            'file': None,
-        },
     ]
-    run_example(example_name, scenarios)
+    run_example(pydss_project, example_name, scenarios)
     return
+
 
 def test_dynamics_example(pydss_project):
     example_name = "dynamics"
@@ -124,15 +127,15 @@ def test_dynamics_example(pydss_project):
             'file': None,
         },
     ]
-    run_example(example_name, scenarios)
+    run_example(pydss_project, example_name, scenarios)
     return
 
-def run_example(example_name, scenarios):
+def run_example(pydss_project, example_name, scenarios):
 
     proc = None
     assert isinstance(example_name, str)
     assert isinstance(scenarios, list)
-    base_projects_path = copy_examples_to_temp_folder(example_name)
+    base_projects_path = copy_examples_to_temp_folder(pydss_project, example_name)
     for S in scenarios:
         assert isinstance(S, dict)
         sim_file = S["TOML"]
@@ -146,9 +149,9 @@ def run_example(example_name, scenarios):
             dir_main = os.getcwd()
             try:
                 os.chdir(dir_path)
-                proc = subprocess.Popen([sys.executable, sup_file_path], shell=True)
+                proc = subprocess.Popen(["python", sup_file_path], shell=True)
             finally:
-                os.chdir(dir_main)
+                os.chdir(dir_main)     
         try:
             if sim_file:
                 project_path = os.path.join(base_projects_path, example_name)
@@ -157,7 +160,8 @@ def run_example(example_name, scenarios):
                                          simulation_file=sim_file)
         finally:
             if proc != None:
+                print("killing process")
                 proc.terminate()
+                #os.kill(proc.pid, signal.SIGTERM)
     return
 
-#test_external_interfaces_example()

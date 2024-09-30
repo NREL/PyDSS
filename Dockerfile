@@ -3,10 +3,10 @@ FROM python:3.7.0-slim
 RUN apt-get update
 
 # Copy the source code
-COPY . /PyDSS
+COPY . /pydss
 
 # Change directory to the src folder
-WORKDIR /PyDSS
+WORKDIR /pydss
 
 RUN pip install --upgrade setuptools
 RUN pip install --upgrade pip

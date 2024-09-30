@@ -1,24 +1,25 @@
 
-import logging
-import os
-import shutil
-import tempfile
+
 from pathlib import Path
+import tempfile
+import shutil
+import os
 
-import h5py
-import numpy as np
+from loguru import logger
 import pandas as pd
+import numpy as np
 import pytest
+import h5py
 
-from PyDSS.common import LimitsFilter
-from PyDSS.dataset_buffer import DatasetBuffer
-from PyDSS.export_list_reader import ExportListProperty
-from PyDSS.metrics import MultiValueTypeMetricBase
-from PyDSS.simulation_input_models import (
-    SimulationSettingsModel, create_simulation_settings, load_simulation_settings
+from pydss.value_storage import ValueByNumber, ValueByList
+from pydss.export_list_reader import ExportListProperty
+from pydss.metrics import MultiValueTypeMetricBase
+from pydss.dataset_buffer import DatasetBuffer
+from pydss.simulation_input_models import (
+    create_simulation_settings, 
+    load_simulation_settings
 )
-from PyDSS.value_storage import ValueByNumber, ValueByList
-from PyDSS.utils.utils import load_data
+from pydss.common import LimitsFilter
 from tests.common import FakeElement
 
 
@@ -35,8 +36,6 @@ LIST_COMPLEX_NUMS = (
     [complex(13, 14), complex(15, 16)],
     [complex(17, 18), complex(19, 20)],
 )
-
-logger = logging.getLogger(__name__)
 
 OBJS = [
     FakeElement("Fake.a", "a"),

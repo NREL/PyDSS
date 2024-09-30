@@ -1,19 +1,17 @@
-.. PyDSS documentation master file, created by
+.. pydss documentation master file, created by
    sphinx-quickstart on Mon Oct 21 12:01:13 2019.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. figure::  _static/Logo.png
-   :align:   center
-
 #####
-PyDSS
+Pydss
 #####
 
 ***********
-About PyDSS
+About Pydss
 ***********
-PyDSS is a Python wrapper for OpenDSS that aims to expand upon its
+
+Pydss is a Python wrapper for OpenDSS that aims to expand upon its
 organizational, analytical, and visualization capabilities with these features:
 
 - Allows the user to develop custom control algorithms for specific circuit elements and run them
@@ -24,7 +22,7 @@ organizational, analytical, and visualization capabilities with these features:
 - Automates collection and analysis of circuit element results at each simulation time step.
 - Flexible architecture allows users to develop extensions.
 
-PyDSS uses opendssdirect.py (https://pypi.org/project/OpenDSSDirect.py/) to communicate with
+Pydss uses opendssdirect.py (https://pypi.org/project/OpenDSSDirect.py/) to communicate with
 OpenDSS.
 
 .. _installation_label:
@@ -33,7 +31,7 @@ OpenDSS.
 Installation
 ************
 
-Recommendation: Install PyDSS in an Anaconda virtual environment. Specific dependent
+Recommendation: Install pydss in an Anaconda virtual environment. Specific dependent
 packages like shapely will only install successfully on Windows with conda.
 
 Here is an example conda command:
@@ -42,18 +40,12 @@ Here is an example conda command:
 
     $ conda create -n pydss python=3.9
 
-Install shapely with conda. pip, particularly on Windows, often fails to install its dependent
-libraries.
+
+Install the latest supported pydss version with this command:
 
 .. code-block:: bash
 
-    $ conda install shapely
-
-Install the latest supported PyDSS version with this command:
-
-.. code-block:: bash
-
-    $ pip install dsspy
+    $ pip install NREL-pydss
 	
 Alternatively, to get the lastest code from the master branch:
 
@@ -70,14 +62,12 @@ Confirm the installation with this command. It should print the available comman
 *************
 Running PyDSS
 *************
-Refer to the :ref:`quick_start_label` for basic instructions on how to configure PyDSS to run a
+Refer to the :ref:`quick_start_label` for basic instructions on how to configure pydss to run a
 simulation with an existing OpenDSS model.
 
-Refer to :ref:`tutorial_label` for in-depth instructions on how to customize a PyDSS project.
+Refer to :ref:`tutorial_label` for in-depth instructions on how to customize a pydss project.
 
-Refer to :ref:`examples_label` for example simulations covering various use cases.
 
-   
 ************************
 Additional Documentation
 ************************
@@ -87,15 +77,13 @@ Additional Documentation
 
    quickstart
    tutorial
+   interfaces
    project_layout
-   simulation_settings
-   examples
-   Result management
    reports
    hdf-data-format
-   controllers
-   PyDSS
-   
+   co-simulation_support
+   controllers_overview
+
 License
 =======
 

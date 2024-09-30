@@ -1,0 +1,73 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "NREL-pydss"
+version = "3.1.7"
+description = "A high-level python interface for OpenDSS"
+readme = "README.md"
+license = "BSD-3-Clause"
+requires-python = ">=3.9"
+authors = [
+    { name = "Aadil Latif", email = "Aadil.Latif@nrel.gov" },
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "click",
+    "h5py",
+    "helics",
+    "loguru",
+    "networkx",
+    "numpy",
+    "OpenDSSDirect.py==0.8.4",
+    "pandas",
+    "pvder",
+    "pydantic~=2.5.2",
+    "pymongo",
+    "requests",
+    "scikit-learn",
+    "scipy",
+    "Shapely",
+    "tables",
+    "terminaltables",
+    "toml",
+]
+
+[project.optional-dependencies]
+dev = [
+    "mock",
+    "pytest",
+    "pytest-cov",
+    "setuptools",
+    "sphinx",
+    "sphinx-rtd-theme",
+]
+server = [
+    "aiohttp_swagger3>=0.4.3",
+    "aiohttp",
+]
+
+[project.scripts]
+pydss = "pydss.cli.pydss:cli"
+
+[project.urls]
+Homepage = "http://www.github.com/nrel/pydss"
+
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/pydss",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pydss"]

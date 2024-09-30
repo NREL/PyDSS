@@ -3,9 +3,9 @@ import os
 
 import pytest
 
-from PyDSS.common import LimitsFilter, StoreValuesType
-from PyDSS.exceptions import InvalidConfiguration, InvalidParameter
-from PyDSS.export_list_reader import ExportListProperty, ExportListReader
+from pydss.common import LimitsFilter, StoreValuesType
+from pydss.exceptions import InvalidConfiguration, InvalidParameter
+from pydss.export_list_reader import ExportListProperty, ExportListReader
 
 
 EXPORT_LIST_FILE = "tests/data/exports/config.toml"

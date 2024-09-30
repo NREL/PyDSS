@@ -1,19 +1,19 @@
 ###############
 HDF Data Format
 ###############
-This page describes the format PyDSS uses to export data in an HDF file. PyDSS
+This page describes the format pydss uses to export data in an HDF file. Pydss
 contains code to convert the raw data to pandas.DataFrame objects or Python
 dictionaries, so normal users should not need to write their own tools to
 interpret the data.
 
-Refer to :class:`PyDSS.pydss_results.PyDssResults` and
-:class:`PyDSS.pydss_results.PyDssScenarioResults` for user-friendly interfaces.
+Refer to :class:`pydss.pydss_results.PyDssResults` and
+:class:`pydss.pydss_results.PyDssScenarioResults` for user-friendly interfaces.
 They are also described in :ref:`tutorial:Analyze results`.
 
 ******
 Layout
 ******
-Each PyDSS project creates ``<project-path>/store.h5`` to store exported data
+Each pydss project creates ``<project-path>/store.h5`` to store exported data
 for all scenarios.
 
 Each scenario's data is stored under ``Exports/<scenario-name>``.

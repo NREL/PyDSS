@@ -10,25 +10,38 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+# from pathlib import Path
 import os
-import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import io
+import re
+# import sys
+
 
 import sphinx_rtd_theme
 
-import PyDSS
-import PyDSS.simulation_input_models
-#from PyDSS.simulation_input_models import SimulationSettingsModel, ProjectModel
-
 # -- Project information -----------------------------------------------------
 
-project = 'PyDSS'
+def read(*names, **kwargs):
+    with io.open(
+        os.path.join(os.path.dirname(__file__), *names),
+        encoding=kwargs.get("encoding", "utf8")
+    ) as fp:
+        return fp.read()
+
+def find_version(*file_paths):
+    version_file = read(*file_paths)
+    version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
+                              version_file, re.M)
+    if version_match:
+        return version_match.group(1)
+    raise RuntimeError("Unable to find version string.")
+
+project = 'Pydss'
 copyright = '2019, Aadil Latif'
 author = 'Aadil Latif'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.1'
-sys.path.append(r'C:\Users\alatif\Desktop\PyDSS')
+release = find_version("../../src/pydss", "__init__.py")
 
 # -- General configuration ---------------------------------------------------
 
@@ -36,12 +49,12 @@ sys.path.append(r'C:\Users\alatif\Desktop\PyDSS')
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc', 'sphinx.ext.coverage', 'sphinx.ext.doctest',
+    'sphinx.ext.napoleon', 'sphinx.ext.ifconfig', "sphinx_click", "sphinxcontrib.openapi", 'sphinxcontrib.redoc',
+    'sphinx.ext.autosectionlabel', 'sphinx.ext.githubpages', 'sphinx.ext.todo', "sphinxcontrib.autodoc_pydantic",
     'sphinx.ext.todo', 'sphinx.ext.autosummary', 'sphinx.ext.extlinks',
-    'sphinx.ext.autodoc', 'sphinx.ext.viewcode',
-    'sphinx.ext.inheritance_diagram', 'sphinx.ext.imgmath',
-    'sphinx.ext.autosectionlabel', 'sphinx.ext.githubpages', 'sphinx.ext.todo',
-    'sphinx.ext.napoleon', 'sphinx.ext.ifconfig'
+    'sphinx.ext.autodoc', 'sphinx.ext.coverage', 'sphinx.ext.doctest',
+    'sphinx.ext.inheritance_diagram', 'sphinx.ext.imgmath', "sphinx_enum_extend",
+    'sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'enum_tools.autoenum',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -59,14 +72,15 @@ exclude_patterns = []
 # a list of builtin themes.
 #
 #html_theme = 'classic'
-html_theme = 'sphinx_rtd_theme'
+#tml_theme = 'sphinx_rtd_theme'
+html_theme = 'furo'
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
-html_theme_options = {
-    'collapse_navigation': False,
-    'sticky_navigation': True,
-    'titles_only': False
-}
+# html_theme_options = {
+#     'collapse_navigation': False,
+#     'sticky_navigation': True,
+#     'titles_only': False
+# }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -74,3 +88,17 @@ html_theme_options = {
 html_static_path = ['_static']
 
 autosectionlabel_prefix_document = True
+
+redoc = [
+    {
+        'name': 'Pydss API',
+        'page': 'api',
+        'spec': 'spec/swagger.yml',
+        'embed': True,
+    },
+]
+
+autosummary_generate = True
+autodoc_pydantic_model_show_json = True
+autodoc_pydantic_settings_show_json = True
+autodoc_pydantic_model_erdantic_figure_collapsed = True

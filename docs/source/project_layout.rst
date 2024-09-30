@@ -1,9 +1,9 @@
 .. _pydss_project_layout:
 
 ********************
-PyDSS Project Layout
+Pydss Project Layout
 ********************
-A PyDSS project is made up of one or more scenarios that run simulations on a shared OpenDSS
+A pydss project is made up of one or more scenarios that run simulations on a shared OpenDSS
 model. The purpose of scenarios is to allow users to customize inputs, outputs, or controls.
 Here are some examples to define multiple scenarios:
 
@@ -15,7 +15,9 @@ Here are some examples to define multiple scenarios:
 Simulation Settings
 ===================
 The main configuration file for the simulation is stored at ``<project-name>/simulation.toml``.
-Refer to :ref:`SimulationSettingsModel` for more information.
+Refer to :ref:`SimulationSettingsModel` for more information. The following model defines all options valid for the simulation.toml file
+
+.. .. autopydantic_settings:: pydss.simulation_input_models.SimulationSettingsModel
 
 Scenarios
 =========

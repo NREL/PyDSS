@@ -1,0 +1,24 @@
+["Load.mpx000635970"]
+k_p1 = 0
+n_p1 = 1.0
+k_p2 = 12.0
+n_p2 = 3.2
+k_q1 = 6.0
+n_q1 = 2.0
+k_q2 = 11.0
+n_q2 = 2.5
+t_th = 4.0
+f_rst = 0.2
+lf_adj = 0.0
+t_th1t = 0.7
+t_th2t = 1.9
+p_fault = 3.5
+q_fault = 5.0
+v_stall = 0.55
+v_break = 0.86
+v_rstrt = 0.95
+t_stall = 0.032
+t_restart = 0.3
+rated_pf = 0.939
+r_stall_pu = 0.1
+x_stall_pu = 0.1
