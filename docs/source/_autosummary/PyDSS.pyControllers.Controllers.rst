@@ -1,4 +1,4 @@
-pydss.pyControllers.Controllers
+﻿pydss.pyControllers.Controllers
 ===============================
 
 .. automodule:: pydss.pyControllers.Controllers
@@ -27,6 +27,7 @@ pydss.pyControllers.Controllers
    :toctree:
    :recursive:
 
+   pydss.pyControllers.Controllers.DynamicVoltageSupport
    pydss.pyControllers.Controllers.FaultController
    pydss.pyControllers.Controllers.GenController
    pydss.pyControllers.Controllers.MotorStall

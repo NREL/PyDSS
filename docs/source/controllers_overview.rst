@@ -18,3 +18,4 @@ Controller Documentation
    controllers/StorageController.rst
    controllers/ThermostaticLoad.rst
    controllers/xfmrController.rst
+   controllers/dynamic_voltage_support.rst

@@ -1,5 +1,6 @@
+**********************************
 Dynamic Voltage Support Controller 
-==================================
+**********************************
 (DynamicVoltageSupport.py)
 
 The DynamicVoltageSupport (DVS) controller will control the DER to

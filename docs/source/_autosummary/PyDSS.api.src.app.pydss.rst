@@ -1,13 +1,23 @@
-pydss.api.src.app.pydss
+﻿pydss.api.src.app.pydss
 =======================
 
 .. automodule:: pydss.api.src.app.pydss
 
+   
+   
+   
+
+   
+   
+   
+
+   
+   
    .. rubric:: Classes
 
    .. autosummary::
    
-      pydss
+      PyDSS
    
    
 

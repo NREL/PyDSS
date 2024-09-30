@@ -1,5 +1,4 @@
-
-Pydss
+﻿pydss
 =====
 
 .. automodule:: pydss
@@ -60,7 +59,6 @@ Pydss
    pydss.pyContrReader
    pydss.pyControllers
    pydss.pyDSS
-   pydss.pyPlotReader
    pydss.pyPostprocessor
    pydss.pyResults
    pydss.pydss_fs_interface
