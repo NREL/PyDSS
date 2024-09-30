@@ -161,7 +161,7 @@ class OpenDSS:
                 Controller = pyControllers.pyController.Create(ElmName, ControllerType, SettingsDict, self._dssObjects,
                                                   self._dssInstance, self._dssSolver)
                 if Controller != -1:
-                    controller_name = 'Controller.'+ ControllerType + '.' + ElmName
+                    controller_name = 'Controller.' + ElmName
                     self._pyControls[controller_name] = Controller
                     class_name, element_name = Controller.ControlledElement().split(".")
                     if controller_name not in self._pyControls_types:
@@ -174,12 +174,12 @@ class OpenDSS:
         maxError = 0
         _pyControls_types = set(self._pyControls_types.values())
 
-        for class_name, controller_type in _pyControls_types:
+        for class_name in _pyControls_types:
             self._dssInstance.Basic.SetActiveClass(class_name)
             elm = self._dssInstance.ActiveClass.First()
             while elm:
                 element_name = self._dssInstance.CktElement.Name()
-                controller_name = 'Controller.' +controller_type+'.' + element_name
+                controller_name = 'Controller.' + element_name
                 if controller_name in self._pyControls:
                     controller = self._pyControls[controller_name]
                     error = controller.Update(Priority, Time, UpdateResults)

@@ -6,7 +6,6 @@
 "Max Control Iterations" = 1000
 "Error tolerance" = 0.01
 "Control mode" = "Static"
-"Disable PyDSS controllers" = false
 "Simulation Type" = "QSTS"
 "Project Path" = "./tests/data"
 "Active Project" = "dynamic_voltage_support_test_project"
@@ -63,7 +62,3 @@ Uninterruptible = true
 
 [MonteCarlo]
 "Number of Monte Carlo scenarios" = -1
-
-[Plots]
-"Create dynamic plots" = false
-"Open plots in browser" = true
