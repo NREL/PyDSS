@@ -34,11 +34,12 @@ Installation
 Recommendation: Install pydss in an Anaconda virtual environment. Specific dependent
 packages like shapely will only install successfully on Windows with conda.
 
-Here is an example conda command:
+Here are conda commands to create and activate the environment:
 
 .. code-block:: bash
 
     $ conda create -n pydss python=3.9
+    $ conda activate pydss
 
 
 Install the latest supported pydss version with this command:
