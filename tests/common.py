@@ -28,9 +28,12 @@ PV_REPORTS_PROJECT_STORE_ALL_PATH = os.path.join(
 AUTO_SNAPSHOT_TIME_POINT_PROJECT_PATH = os.path.join(
     "tests", "data", "auto_snapshot_time_point_project"
 )
-
 EDLIFO_PROJECT_PATH = os.path.join(
-    "tests", "data", "edlifo-project")
+    "tests", "data", "edlifo-project"
+)
+DYNAMIC_VOLTAGE_SUPPORT_PATH = os.path.join(
+    "tests", "data", "dynamic_voltage_support_test_project"
+)
 
 SCENARIO_NAME = "scenario1"
 
@@ -52,6 +55,7 @@ def cleanup_project():
         PV_REPORTS_PROJECT_STORE_ALL_PATH,
         EDLIFO_PROJECT_PATH,
         AUTO_SNAPSHOT_TIME_POINT_PROJECT_PATH,
+        DYNAMIC_VOLTAGE_SUPPORT_PATH
     )
     for project_path in projects:
         export_path = os.path.join(project_path, "Exports")

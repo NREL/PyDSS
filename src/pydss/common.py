@@ -37,6 +37,7 @@ class ControllerType(enum.Enum):
     STORAGE_CONTROLLER = "StorageController"
     THERMOSTATIC_LOAD_CONTROLLER = "ThermostaticLoad"
     XMFR_CONTROLLER = "xmfrController"
+    DYNAMIC_VOLTAGE_SUPPORT = "DynamicVoltageSupport"
 
 CONTROLLER_TYPES = tuple(x.value for x in ControllerType)
 CONFIG_EXT = ".toml"
@@ -62,6 +63,7 @@ SOCKET_CONTROLLER_FILENAME = filename_from_enum(ControllerType.SOCKET_CONTROLLER
 STORAGE_CONTROLLER_FILENAME = filename_from_enum(ControllerType.STORAGE_CONTROLLER)
 THERMOSTATIC_LOAD_CONTROLLER_FILENAME = filename_from_enum(ControllerType.THERMOSTATIC_LOAD_CONTROLLER)
 XMFR_CONTROLLER_FILENAME = filename_from_enum(ControllerType.XMFR_CONTROLLER)
+DYNAMIC_VOLTAGE_SUPPORT = filename_from_enum(ControllerType.DYNAMIC_VOLTAGE_SUPPORT)
 
 EXPORT_BY_CLASS_FILENAME = filename_from_enum(ExportMode.BY_CLASS)
 EXPORT_BY_ELEMENT_FILENAME = filename_from_enum(ExportMode.BY_ELEMENT)

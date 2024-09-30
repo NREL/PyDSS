@@ -1,0 +1,20 @@
+Clear
+
+new LoadShape.trans_fault npts=20 sInterval=0.016666666659999999217 mult=(file=Trans_Fault_quicktest.csv)
+New Circuit.feeder_p2rdt12627-p2rhs10_25x bus1=p2rdt12627-p2rhs10_25x pu=1.03 basekV=25.0 R1=1e-05 X1=1e-05 R0=1e-05 X0=1e-05 yearly=trans_fault
+
+Redirect Linecodes.dss
+Redirect Lines.dss
+Redirect Transformers.dss
+Redirect Loads.dss
+Redirect PVSystems.dss
+
+new energymeter.m3 Line.l(r:p2rdt12627-p2rhs10_25)
+
+Set Voltagebases=[0.12, 0.208, 0.48, 14.434, 25.0]
+Calcvoltagebases
+
+Buscoords Buscoords.dss
+
+Solve
+
