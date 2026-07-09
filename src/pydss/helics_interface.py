@@ -2,6 +2,7 @@ from pydantic import ConfigDict, BaseModel, model_validator
 from typing import List, Optional, Any, Union, Dict
 from enum import Enum
 import helics
+import opendssdirect as dss
 import os
 import re
 import pandas as pd
@@ -303,11 +304,16 @@ class helics_interface:
                     for line_prop, line_value in line_properties.items():
                         subscription.object.SetParameter(line_prop, line_value)
                     # first make sure the switch is in the opendss_models dictionary
-                    self.opendss_models[subscription.model.replace('Line','SwtControl')] = dssElement(subscription.model.replace('Line','SwtControl'))
+                    switch_name = subscription.model.replace('Line.','') #'SwtChontrol'
+                    dss.SwtControls.Name(switch_name)
+                    dss.SwtControls.State(1) # 1 is open and 2 is closed
+                    dss.SwtControls.Normal(1)
+                    logger.info('Line {line_name} modeled with open switch')
+                    #self.opendss_models[switch_name] = dss.SwtControls.Name(line_name)
                     #set the switch to have the same state (open=1, closed=2)
-                    self.opendss_models[subscription.model.replace('Line','SwtControl')].SetParameter('State', value)
+                    #self.opendss_models[switch_name].SetParameter('State', value)
                     # then set the normal state to be the same (open=1, closed=2) so it doesn't reclose
-                    self.opendss_models[subscription.model.replace('Line','SwtControl')].SetParameter('Normal', value)
+                    #self.opendss_models[switch_name].SetParameter('Normal', value)
 
 
                 if self._settings.helics.iterative_mode:
