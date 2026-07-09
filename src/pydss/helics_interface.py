@@ -304,24 +304,16 @@ class helics_interface:
                     for line_prop, line_value in line_properties.items():
                         subscription.object.SetParameter(line_prop, line_value)
                     # check if the switch is in the model
-                    switch_name = subscription.model.replace('Line','SwtControl') #'SwtChontrol'
+                    switch_name = subscription.model.replace('Line','SwtControl')
                     if switch_name.replace('SwtControl.','') in dss.SwtControls.AllNames():
                         dss.SwtControls.Name(switch_name.replace('SwtControl.',''))
                         dss.SwtControls.Delay(0)
-                        dss.SwtControls.State(1) # 1 is open and 2 is closed
-                        dss.SwtControls.NormalState(1)
+                        dss.SwtControls.State(value) # 1 is open and 2 is closed
+                        dss.SwtControls.NormalState(value)
                     else:
                         #if it's not already created, then create the switch and set params with one command line
-                        dss.run_command(f'New {switch_name} Delay=0 enabled=Yes Normal=Open State=Open SwitchedObj={subscription.model}')
-                        logger.info(f'dss.SwtControls.AllNames(): {dss.SwtControls.AllNames()}')
-
+                        dss.run_command(f'New {switch_name} Delay=0 enabled=Yes Normal=Open State={value} SwitchedObj={subscription.model}')
                     logger.info(f'Line {switch_name} modeled with open switch')
-                    #self.opendss_models[switch_name] = dss.SwtControls.Name(line_name)
-                    #set the switch to have the same state (open=1, closed=2)
-                    #self.opendss_models[switch_name].SetParameter('State', value)
-                    # then set the normal state to be the same (open=1, closed=2) so it doesn't reclose
-                    #self.opendss_models[switch_name].SetParameter('Normal', value)
-
 
                 if self._settings.helics.iterative_mode:
                     if self.c_seconds != self.c_seconds_old:
@@ -450,14 +442,3 @@ class helics_interface:
         helics.helicsFederateFree(self._federate)
         logger.info('HELICS federate for pydss destroyed')
 
-
-    def handle_line_outage(line_name=str):
-        dss.Lines.Name(line_name)
-        # making this a switch resets the line properties to this: 
-        #r1 = 1.0; x1 = 1.0; r0 = 1.0; x0 = 1.0; c1 = 1.1 ; c0 = 1.0;  length = 0.001; 
-        dss.Lines.Switch(True)
-        dss.run_command('New SwtControl.line_1 Delay=0 enabled=Yes Normal=Open State=Open SwitchedObj=Line.line_1')
-        dss.SwtControls.Name(line_name)
-        dss.SwtControls.State(1) # 1 is open and 2 is closed
-        dss.SwtControls.Normal(1)
-        logger.info('Line {line_name} modeled as open switch')
