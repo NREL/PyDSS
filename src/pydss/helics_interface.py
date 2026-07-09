@@ -278,7 +278,7 @@ class helics_interface:
 
                 value = value * subscription.multiplier
 
-                if subscription.property == 'IsSwitch':
+                if subscription.property == 'Switch':
                     # converting a line to a switch resets it's properties, so save the line properties
                     # then convert to switch
                     # then re-apply the line properties
@@ -298,7 +298,7 @@ class helics_interface:
                         value
                     ))
                 # if it is a line outage, you've just turned the line into a switch, so set the switch to be open
-                if subscription.property == 'IsSwitch':
+                if subscription.property == 'Switch':
                     # make sure the line properties are maintained
                     for line_prop, line_value in line_properties.items():
                         subscription.object.SetParameter(line_prop, line_value)
@@ -442,7 +442,7 @@ class helics_interface:
         dss.Lines.Name(line_name)
         # making this a switch resets the line properties to this: 
         #r1 = 1.0; x1 = 1.0; r0 = 1.0; x0 = 1.0; c1 = 1.1 ; c0 = 1.0;  length = 0.001; 
-        dss.Lines.IsSwitch(True)
+        dss.Lines.Switch(True)
         dss.SwtControls.Name(line_name)
         dss.SwtControls.State(1) # 1 is open and 2 is closed
         dss.SwtControls.Normal(1)
