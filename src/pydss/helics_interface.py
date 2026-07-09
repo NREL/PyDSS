@@ -309,7 +309,7 @@ class helics_interface:
                         dss.SwtControls.Name(switch_name.replace('SwtControl.',''))
                         dss.SwtControls.Delay(0)
                         dss.SwtControls.State(1) # 1 is open and 2 is closed
-                        dss.SwtControls.Normal(1)
+                        dss.SwtControls.NormalState(1)
                     else:
                         #if it's not already created, then create the switch and set params with one command line
                         dss.run_command(f'New {switch_name} Delay=0 enabled=Yes Normal=Open State=Open SwitchedObj={subscription.model}')
