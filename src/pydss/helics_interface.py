@@ -304,11 +304,13 @@ class helics_interface:
                     for line_prop, line_value in line_properties.items():
                         subscription.object.SetParameter(line_prop, line_value)
                     # first make sure the switch is in the opendss_models dictionary
-                    switch_name = subscription.model.replace('Line.','') #'SwtChontrol'
+                    switch_name = subscription.model.replace('Line.','SwtChontrol') #'SwtChontrol'
+                    logger.info(f'dss.SwtControls.AllNames(): {dss.SwtControls.AllNames()}')
+                    logger.info(f'dss.Lines.Name(): {dss.Lines.Name()}')
                     dss.SwtControls.Name(switch_name)
                     dss.SwtControls.State(1) # 1 is open and 2 is closed
                     dss.SwtControls.Normal(1)
-                    logger.info('Line {line_name} modeled with open switch')
+                    logger.info(f'Line {switch_name} modeled with open switch')
                     #self.opendss_models[switch_name] = dss.SwtControls.Name(line_name)
                     #set the switch to have the same state (open=1, closed=2)
                     #self.opendss_models[switch_name].SetParameter('State', value)
