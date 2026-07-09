@@ -10,6 +10,7 @@ from loguru import logger
 from pydss.simulation_input_models import SimulationSettingsModel
 from pydss.common import SUBSCRIPTIONS_FILENAME, ExportMode
 from pydss.utils.utils import load_data
+from pydss.dssElement import dssElement
 
 TYPE_INFO = {
         'CurrentsMagAng': 'vector',
@@ -276,12 +277,38 @@ class helics_interface:
                         value = 1.0
 
                 value = value * subscription.multiplier
-                subscription.object.SetParameter(subscription.property, value) 
+
+                if subscription.property == 'IsSwitch':
+                    # converting a line to a switch resets it's properties, so save the line properties
+                    # then convert to switch
+                    # then re-apply the line properties
+                    line_properties = {}
+                    line_properties['r0'] = subscription.object.GetParameter('r0')
+                    line_properties['r1'] = subscription.object.GetParameter('r1')
+                    line_properties['x0'] = subscription.object.GetParameter('x0')
+                    line_properties['x1'] = subscription.object.GetParameter('x1')
+                    line_properties['c0'] = subscription.object.GetParameter('c0')
+                    line_properties['c1'] = subscription.object.GetParameter('c1')
+                    line_properties['length'] = subscription.object.GetParameter('length')
+                
+                subscription.object.SetParameter(subscription.property, value) # this redirects to the SetParameter function of the dssElement property in dssElement.py
                 logger.info('Value for "{}.{}" changed to "{}"'.format(
                         subscription.model,
                         subscription.property,
                         value
                     ))
+                # if it is a line outage, you've just turned the line into a switch, so set the switch to be open
+                if subscription.property == 'IsSwitch':
+                    # make sure the line properties are maintained
+                    for line_prop, line_value in line_properties.items():
+                        subscription.object.SetParameter(line_prop, line_value)
+                    # first make sure the switch is in the opendss_models dictionary
+                    self.opendss_models[subscription.model.replace('Line','SwtControl')] = dssElement(subscription.model.replace('Line','SwtControl'))
+                    #set the switch to have the same state (open=1, closed=2)
+                    self.opendss_models[subscription.model.replace('Line','SwtControl')].SetParameter('State', value)
+                    # then set the normal state to be the same (open=1, closed=2) so it doesn't reclose
+                    self.opendss_models[subscription.model.replace('Line','SwtControl')].SetParameter('Normal', value)
+
 
                 if self._settings.helics.iterative_mode:
                     if self.c_seconds != self.c_seconds_old:
@@ -409,3 +436,14 @@ class helics_interface:
         helics.helicsFederateInfoFree(self.fedinfo)
         helics.helicsFederateFree(self._federate)
         logger.info('HELICS federate for pydss destroyed')
+
+
+    def handle_line_outage(line_name=str):
+        dss.Lines.Name(line_name)
+        # making this a switch resets the line properties to this: 
+        #r1 = 1.0; x1 = 1.0; r0 = 1.0; x0 = 1.0; c1 = 1.1 ; c0 = 1.0;  length = 0.001; 
+        dss.Lines.IsSwitch(True)
+        dss.SwtControls.Name(line_name)
+        dss.SwtControls.State(1) # 1 is open and 2 is closed
+        dss.SwtControls.Normal(1)
+        logger.info('Line {line_name} modeled as open switch')
