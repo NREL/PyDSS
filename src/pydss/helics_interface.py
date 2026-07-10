@@ -274,8 +274,10 @@ class helics_interface:
                     
                 if value and value != 0:
                     logger.info(f"value is {value}")
-                    if value > 1e6 or value < -1e6 or pd.isna(value):
-                        value = 1.0
+                    if value > 1e8 or value < -1e6 or pd.isna(value):
+                        logger.info(f"subscription {subscription.model}.{subscription.property} not updated with invalid value, continuing to next subscription")
+                        continue
+                        #value = 1.0
 
                 value = value * subscription.multiplier
 
