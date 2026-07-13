@@ -6,11 +6,12 @@ import math
 import os
 from loguru import logger
 import random
-
 from pydss.pyControllers.models import MotorStallSettings
 from pydss.pyControllers.pyControllerAbstract import ControllerAbstract
 
-class MotorStall(ControllerAbstract):   
+class MotorStall(ControllerAbstract):
+    ACTIVE_PRIORITIES = (0,)
+
     def __init__(self, motor_obj, settings, dss_instance, elm_object_list, dss_solver):
         super(MotorStall, self).__init__(motor_obj, settings, dss_instance, elm_object_list, dss_solver)
 
@@ -90,7 +91,8 @@ class MotorStall(ControllerAbstract):
         return 
 
     def Update(self, Priority, time, update_results):
-        self.t = self._dss_solver.GetTotalSeconds()
+        t_now = self._dss_solver.GetTotalSeconds()
+        self.t = t_now
         logger.debug(f"self.t: {self.t}")
         logger.debug(f"self._controlled_element: {self._controlled_element}")
         logger.debug(f"{self.name} - {self.kw_rated} - {self.kvar_rated} - {self.kvbase} - {self.i_base}")
@@ -99,9 +101,7 @@ class MotorStall(ControllerAbstract):
             self.q = self._controlled_element.GetVariable('Powers')[1] + self._controlled_element.GetVariable('Powers')[3]
             self.voltage = self._controlled_element.GetVariable('VoltagesMagAng')[0]
             self.voltage_pu = self._controlled_element.sBus[0].GetVariable("puVmagAngle")[0]
-            logger.debug(f"CurrentsMagAng: {self._controlled_element.GetVariable('CurrentsMagAng')}")
             logger.debug(f"voltage_pu: {self.voltage_pu}")
-            logger.debug(f"Powers: {self._controlled_element.GetVariable('Powers')}")
             logger.debug(f"self.kw_rated: {self.kw_rated}")
             logger.debug(f"self.kvar_rated: {self.kvar_rated}")
 
@@ -116,22 +116,22 @@ class MotorStall(ControllerAbstract):
                 ## stall and restart time clock
                 if self.voltage_pu < v_stall_adj and not self.stall:
                     if self.stall_counting:
-                        self.stall_time = self._dss_solver.GetTotalSeconds() - self.stall_time_start
+                        self.stall_time = t_now - self.stall_time_start
                         if self.stall_time > self._settings.t_stall and not self.stall:
                             self.stall = True
                             self.rstrt = False
                     else:
-                        self.stall_time_start = self._dss_solver.GetTotalSeconds()
+                        self.stall_time_start = t_now
                         self.stall_counting = True
                 else:
                     self.stall_counting = False
                 if self.voltage_pu > self._settings.v_rstrt and not self.rstrt:
                     if self.rstrt_counting:
-                        self.rstrt_time = self._dss_solver.GetTotalSeconds() - self.rstrt_time_start
+                        self.rstrt_time = t_now - self.rstrt_time_start
                         if self.rstrt_time > self._settings.t_restart:
                             self.rstrt = True
                     else:
-                        self.rstrt_time_start = self._dss_solver.GetTotalSeconds()
+                        self.rstrt_time_start = t_now
                         self.rstrt_counting = True
                 else:
                     self.rstrt_counting = False
@@ -139,12 +139,12 @@ class MotorStall(ControllerAbstract):
                 ## uv trip
                 if self.voltage_pu < self.uv_tr1 and not self.uv_trip:
                     if self.uv_counting:
-                        self.uv_time = self._dss_solver.GetTotalSeconds() - self.uv_time_start
+                        self.uv_time = t_now - self.uv_time_start
                         if self.uv_time > self.t_tr1 and not self.uv_trip:
                             self.uv_trip = True
                             self.uv_counting = False
                     else:
-                        self.uv_time_start = self._dss_solver.GetTotalSeconds()
+                        self.uv_time_start = t_now
                         self.uv_counting = True
                 if self.uv_trip:
                     Kthuv = 1.0 - self.f_uvr
@@ -173,7 +173,7 @@ class MotorStall(ControllerAbstract):
 
                 p0 = 1 - self._settings.k_p1 * (1-v_break_adj)**self._settings.n_p1
                 q0 = ((1 - comp_pf**2)**0.5 / comp_pf)-self._settings.k_q1*(1-v_break_adj)**self._settings.n_q1
-                logger.info(f"self.voltage_pu: {self.voltage_pu}")
+                logger.debug(f"self.voltage_pu: {self.voltage_pu}")
 
                 # the operation model
                 if self.stall:
@@ -182,7 +182,7 @@ class MotorStall(ControllerAbstract):
                     q_stall = self.voltage_pu ** 2 * self.x_stall_pu / (self.r_stall_pu ** 2 + self.x_stall_pu ** 2)
 
                     if self.rstrt:
-                        logger.info(f"Stage III: Motor stall and {self._settings.f_rst} of load is restarted")
+                        logger.debug(f"Stage III: Motor stall and {self._settings.f_rst} of load is restarted")
                         if self.voltage_pu > v_break_adj:
                             p = p0 + self._settings.k_p1*(self.voltage_pu-v_break_adj)**self._settings.n_p1
                             q = q0 + self._settings.k_q1*(self.voltage_pu-v_break_adj)**self._settings.n_q1
@@ -203,7 +203,7 @@ class MotorStall(ControllerAbstract):
                         q_nonrstrt = q_stall * (1 - self._settings.f_rst)
 
                     else:
-                        logger.info(f"Stage III: Motor stall and not restarted load")
+                        logger.debug(f"Stage III: Motor stall and not restarted load")
                         # self._controlled_element.SetParameter('kw', Kth * p_stall * self.kva_rated) 
                         # self._controlled_element.SetParameter('kvar', Kth * q_stall * self.kva_rated)
                         p_rstrt = p_stall * self._settings.f_rst
@@ -225,12 +225,12 @@ class MotorStall(ControllerAbstract):
                 else:
                     if self.voltage_pu > v_break_adj:
                         # stage I
-                        logger.info(f"Stage I: normal operation")
+                        logger.debug(f"Stage I: normal operation")
                         p = p0 + self._settings.k_p1*(self.voltage_pu-v_break_adj)**self._settings.n_p1
                         q = q0 + self._settings.k_q1*(self.voltage_pu-v_break_adj)**self._settings.n_q1
                     else:
                         # stage II or before stall
-                        logger.info(f"Stage II: Motor voltage below the break down voltage")
+                        logger.debug(f"Stage II: Motor voltage below the break down voltage")
                         p = p0 + self._settings.k_p2 * (v_break_adj - self.voltage_pu)**self._settings.n_p2
                         q = q0 + self._settings.k_q2 * (v_break_adj - self.voltage_pu)**self._settings.n_q2
                     current_pu = p / self.voltage_pu
@@ -293,7 +293,7 @@ class MotorStall(ControllerAbstract):
                 self._controlled_element.SetParameter('kw', Kthc * Kthuv * pset ) 
                 self._controlled_element.SetParameter('kvar', Kthc * Kthuv * qset )
                 # os.system("PAUSE")
-            
+
             self.voltage_prev = self.voltage_pu
             self.temp_rstr_prev = self.temp_rstr
             self.i2r_rstr_prev = self.i2r_rstr

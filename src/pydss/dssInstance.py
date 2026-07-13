@@ -171,24 +171,47 @@ class OpenDSS:
                     if controller_name not in self._pyControls_types:
                         self._pyControls_types[controller_name] = class_name
                     logger.info('Created pyController -> Controller.' + ElmName)
+
+        # --- Batch MotorStall controllers ---
+        from pydss.pyControllers.Controllers.MotorStall import MotorStall
+        from pydss.pyControllers.Controllers.MotorStallBatch import MotorStallBatch
+        motor_stall_keys = [k for k, v in self._pyControls.items()
+                            if isinstance(v, MotorStall)]
+        if len(motor_stall_keys) > 0:
+            motor_stall_ctrls = [self._pyControls[k] for k in motor_stall_keys]
+            batch = MotorStallBatch(motor_stall_ctrls)
+            # Remove individual controllers, add the batch
+            for k in motor_stall_keys:
+                del self._pyControls[k]
+            self._pyControls['Controller.MotorStallBatch'] = batch
+            logger.info(f"Batched {len(motor_stall_keys)} MotorStall controllers into MotorStallBatch")
+
+        # --- Batch PvVoltageRideThru controllers ---
+        from pydss.pyControllers.Controllers.PvVoltageRideThru import PvVoltageRideThru
+        from pydss.pyControllers.Controllers.PvVoltageRideThruBatch import PvVoltageRideThruBatch
+        pv_rt_keys = [k for k, v in self._pyControls.items()
+                      if isinstance(v, PvVoltageRideThru)]
+        if len(pv_rt_keys) > 0:
+            pv_rt_ctrls = [self._pyControls[k] for k in pv_rt_keys]
+            pv_batch = PvVoltageRideThruBatch(pv_rt_ctrls)
+            for k in pv_rt_keys:
+                del self._pyControls[k]
+            self._pyControls['Controller.PvVoltageRideThruBatch'] = pv_batch
+            logger.info(f"Batched {len(pv_rt_keys)} PvVoltageRideThru controllers into PvVoltageRideThruBatch")
+
+        self._controller_list = list(self._pyControls.values())
+        self._controllers_by_priority = {p: [] for p in range(CONTROLLER_PRIORITIES)}
+        for controller in self._controller_list:
+            for p in getattr(controller, 'ACTIVE_PRIORITIES', range(CONTROLLER_PRIORITIES)):
+                self._controllers_by_priority[p].append(controller)
         return
 
     def _update_controllers(self, Priority, Time, Iteration, UpdateResults):
-        errors = []
         maxError = 0
-        _pyControls_types = set(self._pyControls_types.values())
-
-        for class_name in _pyControls_types:
-            self._dssInstance.Basic.SetActiveClass(class_name)
-            elm = self._dssInstance.ActiveClass.First()
-            while elm:
-                element_name = self._dssInstance.CktElement.Name()
-                controller_name = 'Controller.' + element_name
-                if controller_name in self._pyControls:
-                    controller = self._pyControls[controller_name]
-                    error = controller.Update(Priority, Time, UpdateResults)
-                    maxError = error if error > maxError else maxError
-                elm = self._dssInstance.ActiveClass.Next()
+        for controller in self._controllers_by_priority[Priority]:
+            error = controller.Update(Priority, Time, UpdateResults)
+            if error > maxError:
+                maxError = error
         return maxError < self._settings.project.error_tolerance, maxError
 
     @staticmethod
@@ -244,6 +267,7 @@ class OpenDSS:
 
     @track_timing(timer_stats_collector)
     def RunStep(self, step, updateObjects=None):
+
         # updating parameters before simulation run
         if self._settings.logging.log_time_step_updates:
             logger.info(f'Pydss datetime - {self._dssSolver.GetDateTime()}')
@@ -262,17 +286,6 @@ class OpenDSS:
                 for object, params in updateObjects.items():
                     cl, name = object.split('.')
                     self._Modifier.Edit_Element(cl, name, params)
-        
-        # pydss_update_agian = "y"
-        # while pydss_update_agian == "y":
-        #     if self._settings.helics.co_simulation_mode:
-        #         self._heilcs_interface.updateHelicsSubscriptions()
-        #     else:
-        #         if updateObjects:
-        #             for object, params in updateObjects.items():
-        #                 cl, name = object.split('.')
-        #                 self._Modifier.Edit_Element(cl, name, params)
-        #     pydss_update_agian = input('enter your pydss update command: ')
 
         # run simulation time step and get results
         time_step_has_converged = True
@@ -300,7 +313,6 @@ class OpenDSS:
                         logger.warning('Control Loop {} no convergence @ {} '.format(priority, step))
                         self._HandleConvergenceErrorChecks(step, error)
 
-
         if self._settings.frequency.enable_frequency_sweep and \
                 self._settings.project.simulation_type != SimulationType.DYNAMIC:
             self._dssSolver.setMode('Harmonic')
@@ -320,6 +332,7 @@ class OpenDSS:
             self._heilcs_interface.updateHelicsPublications()
             # if step < 1:
             #     self._increment_flag, helics_time = self._heilcs_interface.request_time_increment_2()
+
         # os.system("PAUSE")
         return time_step_has_converged
 
@@ -410,16 +423,11 @@ class OpenDSS:
                 within_range = self._simulation_range.is_within_range(self._dssSolver.GetDateTime())
                 if within_range:
                     pydss_has_converged = self.RunStep(step)
-                    # logger.info(f'Finish simulation: step {step} 1')
-                    # pydss_has_converged = self.RunStep(step)
-                    # logger.info(f'Finish simulation: step {step} 2')
-                    # pydss_has_converged = self.RunStep(step)
-                    # logger.info(f'Finish simulation: step {step} 3')
                     opendss_has_converged = dss.Solution.Converged()
                     if not opendss_has_converged:
                         logger.error(f"OpenDSS did not converge at step={step} pydss_converged={pydss_has_converged}")
                         self._HandleOpenDSSConvergenceErrorChecks(step)
-                
+
                 if pydss_has_converged:
                     has_converged = True
                 else:
@@ -432,10 +440,6 @@ class OpenDSS:
                     step, has_converged = self._RunPostProcessors(step, Steps, postprocessors)
                 if self._increment_flag:
                     step += 1
-                    # if step < 1:
-                    #     step += 1
-                    # else:
-                    #     step += 2
 
                 # In the case of a frequency sweep, the code updates results at each frequency.
                 # Doing so again would cause a duplicate result.
@@ -461,6 +465,7 @@ class OpenDSS:
 
                 if self._settings.exports.export_results:
                     current_results = self.ResultContainer.CurrentResults
+
                 yield False, step, has_converged, current_results
 
         finally:

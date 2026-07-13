@@ -11,6 +11,33 @@ from pydss.pyControllers.models import PvVoltageRideThruModel
 from pydss.pyControllers.enumerations import PvStandard, VoltageCalcModes, RideThroughCategory, PermissiveOperation, MayTripOperation, MultipleDisturbances
 
 
+def _extract_poly_coords(region):
+    """Extract exterior coordinate lists from a Polygon or MultiPolygon."""
+    if region is None:
+        return []
+    if hasattr(region, 'geoms'):
+        return [list(g.exterior.coords) for g in region.geoms]
+    else:
+        return [list(region.exterior.coords)]
+
+
+def _point_in_any_polygon(x, y, poly_list):
+    """Ray-casting point-in-polygon test across a list of coordinate rings."""
+    for coords in poly_list:
+        n = len(coords)
+        inside = False
+        j = n - 1
+        for i in range(n):
+            xi, yi = coords[i]
+            xj, yj = coords[j]
+            if ((yi > y) != (yj > y)) and (x < (xj - xi) * (y - yi) / (yj - yi) + xi):
+                inside = not inside
+            j = i
+        if inside:
+            return True
+    return False
+
+
 class PvVoltageRideThru(ControllerAbstract):
     """Implementation of IEEE1547-2003 and IEEE1547-2018 voltage ride-through standards using the OpenDSS Generator model. Subclass of the :class:`pydss.pyControllers.pyControllerAbstract.ControllerAbstract` abstract class.
 
@@ -27,6 +54,7 @@ class PvVoltageRideThru(ControllerAbstract):
             :raises: Assertionerror if 'pv_object' is not a wrapped OpenDSS Generator element
 
     """
+    ACTIVE_PRIORITIES = (0, 2)
 
     def __init__(self, pv_object, settings, dss_instance, elm_object_list, dss_solver):
         super(PvVoltageRideThru, self).__init__(pv_object, settings, dss_instance, elm_object_list, dss_solver)
@@ -59,7 +87,7 @@ class PvVoltageRideThru(ControllerAbstract):
         self._pf_rated = float(pv_object.GetParameter('pf'))
         self._phase_rated = float(pv_object.GetParameter('Phases'))
         
-        logger.info(f"{self._name} -> _p_rated: {self._p_rated }, _pf_rated: {self._pf_rated}, _phase_rated: {self._phase_rated}, dt: {self.dt}")
+        logger.debug(f"{self._name} -> _p_rated: {self._p_rated }, _pf_rated: {self._pf_rated}, _phase_rated: {self._phase_rated}, dt: {self.dt}")
         # os.system("PAUSE")
 
         self.t_rv = 0.02
@@ -324,9 +352,12 @@ class PvVoltageRideThru(ControllerAbstract):
                 self.momentary_sucession_region = unary_union([permissive_ov_region, permissive_uv_region])
                 self.trip_region = unary_union([ov_trip_region, uv_trip_region, may_trip_region])
         self.normal_region = contineous_region
-        
-        
-        
+
+        # Pre-extract polygon coordinates for fast point-in-polygon checks
+        self._curr_lim_polys = _extract_poly_coords(self.curr_lim_region)
+        self._momentary_polys = _extract_poly_coords(self.momentary_sucession_region)
+        self._trip_polys = _extract_poly_coords(self.trip_region)
+
         return V, T
 
     def Update(self, priority, time, update_results):
@@ -334,15 +365,15 @@ class PvVoltageRideThru(ControllerAbstract):
         error = 0
         self.time_change = self.time != (priority, time)
         self.time = time
-        logger.info(f"self._name: {self._name}")
-        logger.info(f"priority: {priority}")
+        logger.debug(f"self._name: {self._name}")
+        logger.debug(f"priority: {priority}")
         if priority == 0:
             self._is_connected = self._connect()
-            logger.info(f"self._is_connected: {self._is_connected}")
+            logger.debug(f"self._is_connected: {self._is_connected}")
   
         if priority == 2:
             u_in = self._update_violaton_timers()
-            logger.info(f"Update u_in: {u_in}")
+            logger.debug(f"Update u_in: {u_in}")
             if self.model.follow_standard == PvStandard.IEEE_1547_2018:
                 self.voltage_ride_through(u_in)
             elif self.model.follow_standard == PvStandard.IEEE_1547_2003:
@@ -371,49 +402,50 @@ class PvVoltageRideThru(ControllerAbstract):
         """
         # self._fault_counter_clearing_time_sec = 1
 
-        Pm = Point(self._u_violation_time, u_in)
-        logger.info(Pm)
-        if Pm.within(self.curr_lim_region):
+        pt_t = self._u_violation_time
+        pt_v = u_in
+        logger.debug(f"Point({pt_t}, {pt_v})")
+        if _point_in_any_polygon(pt_t, pt_v, self._curr_lim_polys):
             region = 0
             is_in_contioeous_region = False
-            logger.info(f"curr_lim_region")
-        elif self.momentary_sucession_region and Pm.within(self.momentary_sucession_region):
+            logger.debug(f"curr_lim_region")
+        elif self._momentary_polys and _point_in_any_polygon(pt_t, pt_v, self._momentary_polys):
             region = 1
             is_in_contioeous_region = False
             self._trip(self.__dss_solver.GetStepSizeSec(), 0.5, False) # rrpt = 2.0
-            logger.info(f"momentary_sucession_region")
-        elif Pm.within(self.trip_region):
+            logger.debug(f"momentary_sucession_region")
+        elif _point_in_any_polygon(pt_t, pt_v, self._trip_polys):
             region = 2
             is_in_contioeous_region = False
             if self.region == [3, 1, 1]:
-                logger.info(f"self.region 3:1:1 {self.region}")
+                logger.debug(f"self.region 3:1:1 {self.region}")
                 self._trip(self._trip_deadtime_sec, self._time_to_p_max_sec, False, True)
             else:
-                logger.info(f"self.region else {self.region}")
+                logger.debug(f"self.region else {self.region}")
                 self._trip(self._trip_deadtime_sec, self._time_to_p_max_sec, True)
-            logger.info(f"trip_region")
+            logger.debug(f"trip_region")
         else:
             is_in_contioeous_region = True
             region = 3
-            logger.info(f"is_in_contioeous_region")
+            logger.debug(f"is_in_contioeous_region")
         
-        logger.info(f"old self.region: {self.region}")
+        logger.debug(f"old self.region: {self.region}")
         self.region = self.region[1:] + self.region[:1] # shift [1,2,3]->[2,3,1]
         self.region[0] = region
-        logger.info(f"new self.region: {self.region}")
+        logger.debug(f"new self.region: {self.region}")
 
         if is_in_contioeous_region and not self._is_in_contioeous_region:
-            logger.info(f"faulr just clear")
+            logger.debug(f"faulr just clear")
             self._fault_window_clearing_start_time = self.__dss_solver.GetDateTime()
         clearing_time = (self.__dss_solver.GetDateTime() - self._fault_window_clearing_start_time).total_seconds()
-        logger.info(f"clearing_time: {clearing_time}")
+        logger.debug(f"clearing_time: {clearing_time}")
 
         if self._is_in_contioeous_region and not is_in_contioeous_region:
             if  clearing_time <= self._fault_counter_clearing_time_sec:
                 self._fault_counter += 1
                 if self._fault_counter > self._fault_counter_max:
                     if self.model.multiple_disturdances == MultipleDisturbances.TRIP: 
-                        logger.info(f"multiple_disturdances trip")
+                        logger.debug(f"multiple_disturdances trip")
                         self._trip(self._trip_deadtime_sec, self._time_to_p_max_sec, True)
                         self._fault_counter = 0
                     else:
@@ -426,7 +458,7 @@ class PvVoltageRideThru(ControllerAbstract):
     def DERA_control(self, mode):
         u_in = self._controlled_element.GetVariable('VoltagesMagAng')[::2]
         u_base = self._controlled_element.sBus[0].GetVariable('kVBase') * 1000
-        logger.info(f"{self._name} -> u_in: {u_in}")
+        logger.debug(f"{self._name} -> u_in: {u_in}")
         Pord = 1.0
 
         if self._phase_rated == 1:
@@ -437,7 +469,7 @@ class PvVoltageRideThru(ControllerAbstract):
             u_in = sum(u_in) / u_base / 3.0
 
         if self.__dss_solver.GetTotalSeconds() < round(self.dt, 5):
-            logger.info(f"OpenDSS Initializatin -> time: {self.__dss_solver.GetTotalSeconds()}")
+            logger.debug(f"OpenDSS Initializatin -> time: {self.__dss_solver.GetTotalSeconds()}")
             self.u_in_prev = u_in
             self.ut_filt_prev = u_in
             self.Vtrip_ctrl_prev = 1.0
@@ -494,15 +526,15 @@ class PvVoltageRideThru(ControllerAbstract):
         if self._fault_counter > 0 and (Ip_out_filt > self.Ip_out_filt_prev + self.rrpwr * self.dt):
                 Ip_out_filt = self.Ip_out_filt_prev + self.rrpwr * self.dt
         
-        logger.info(f"u_in: {u_in}")
-        logger.info(f"Ipcmd: {Ipcmd}")
-        logger.info(f"Ip_out: {Ip_out}")
-        logger.info(f"self.ut_filt: {self.ut_filt}")
-        logger.info(f"Ip_out_filt: {Ip_out_filt}")
-        logger.info(f"Ip_out_filt_prev: {self.Ip_out_filt_prev}")
-        logger.info(f"Iq_out_filt: {Iq_out_filt}")
-        logger.info(f"self.Vmult: {self.Vmult}")
-        logger.info(f"mode: {mode}")
+        logger.debug(f"u_in: {u_in}")
+        logger.debug(f"Ipcmd: {Ipcmd}")
+        logger.debug(f"Ip_out: {Ip_out}")
+        logger.debug(f"self.ut_filt: {self.ut_filt}")
+        logger.debug(f"Ip_out_filt: {Ip_out_filt}")
+        logger.debug(f"Ip_out_filt_prev: {self.Ip_out_filt_prev}")
+        logger.debug(f"Iq_out_filt: {Iq_out_filt}")
+        logger.debug(f"self.Vmult: {self.Vmult}")
+        logger.debug(f"mode: {mode}")
 
         self.DERA_p_limit = math.sqrt(Ip_out_filt*Ip_out_filt + Iq_out_filt*Iq_out_filt) * u_in * self._p_rated
 
@@ -530,11 +562,11 @@ class PvVoltageRideThru(ControllerAbstract):
                 self.voltage[0] = u_in
                 u_in = sum(self.voltage) / len(self.voltage)
             deadtime = (self.__dss_solver.GetDateTime() - self._tripped_start_time).total_seconds()
-            logger.info(f"_connect u_in: {u_in}")
-            logger.info(f"deadtime: {deadtime}")
-            logger.info(f"self._tripped_dead_time: {self._tripped_dead_time}")
+            logger.debug(f"_connect u_in: {u_in}")
+            logger.debug(f"deadtime: {deadtime}")
+            logger.debug(f"self._tripped_dead_time: {self._tripped_dead_time}")
             # self.DERA_control(0.0)
-            # logger.info(f"self.DERA_p_limit: {self.DERA_p_limit}")
+            # logger.debug(f"self.DERA_p_limit: {self.DERA_p_limit}")
             # os.system("PAUSE")
             if u_in < self._rvs[0] and u_in > self._rvs[1] and deadtime >= self._tripped_dead_time:
                 
@@ -546,9 +578,9 @@ class PvVoltageRideThru(ControllerAbstract):
             conntime = (self.__dss_solver.GetDateTime() - self._reconnect_start_time).total_seconds()
             self._p_limit = conntime / self._tripped_p_max_delay * self._p_rated if conntime < self._tripped_p_max_delay \
                 else self._p_rated
-            logger.info(f"self._p_limit: {self._p_limit}")
+            logger.debug(f"self._p_limit: {self._p_limit}")
             # self.DERA_control(1.0)
-            # logger.info(f"self.DERA_p_limit: {self.DERA_p_limit}")
+            # logger.debug(f"self.DERA_p_limit: {self.DERA_p_limit}")
             # os.system("PAUSE")
             self._controlled_element.SetParameter('kw', self._p_limit)
         return self._is_connected
@@ -574,14 +606,14 @@ class PvVoltageRideThru(ControllerAbstract):
             self._tripped_start_time = self.__dss_solver.GetDateTime()
             self._tripped_p_max_delay = time2Pmax
             self._tripped_dead_time = Deadtime
-        logger.info(f"self._tripped_dead_time: {self._tripped_dead_time}")
+        logger.debug(f"self._tripped_dead_time: {self._tripped_dead_time}")
         return
 
     def _update_violaton_timers(self):
         u_in = self._controlled_element.GetVariable('VoltagesMagAng')[::2]
         u_base = self._controlled_element.sBus[0].GetVariable('kVBase') * 1000
         u_in = max(u_in) / u_base if self._voltage_calc_mode == VoltageCalcModes.MAX else sum(u_in) / (u_base * len(u_in))
-        logger.info(f"{self._name}: voltage {u_in}")
+        logger.debug(f"{self._name}: voltage {u_in}")
         if self.use_avg_voltage:
             self.voltage = self.voltage[1:] + self.voltage[:1]
             self.voltage[0] = u_in
