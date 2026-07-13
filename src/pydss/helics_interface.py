@@ -302,6 +302,10 @@ class helics_interface:
                     ))
                 # if it is a line outage, you've just turned the line into a switch, so set the switch to be open
                 if subscription.property == 'Switch':
+                    if value<=1:
+                        state_value = 'Open'
+                    else: 
+                        state_value = 'Closed'
                     # make sure the line properties are maintained
                     for line_prop, line_value in line_properties.items():
                         subscription.object.SetParameter(line_prop, line_value)
@@ -315,7 +319,7 @@ class helics_interface:
                         dss.SwtControls.NormalState(int(value))
                     else:
                         #if it's not already created, then create the switch and set params with one command line
-                        new_switch_command = f'New {switch_name} Delay=0 enabled=Yes Normal=Open State={int(value)} SwitchedObj={subscription.model}'
+                        new_switch_command = f'New {switch_name} Delay=0 enabled=Yes Normal=Open State={state_value} SwitchedObj={subscription.model}'
                         dss.run_command(new_switch_command)
                         logger.info(f'{switch_name} created with {new_switch_command}')
                     logger.info(f'Line {switch_name} modeled with open switch')
