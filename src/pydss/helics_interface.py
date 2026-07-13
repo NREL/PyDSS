@@ -308,13 +308,16 @@ class helics_interface:
                     # check if the switch is in the model
                     switch_name = subscription.model.replace('Line','SwtControl')
                     if switch_name.replace('SwtControl.','') in dss.SwtControls.AllNames():
+                        logger.info(f'{switch_name} already exists. Opening existing switch')
                         dss.SwtControls.Name(switch_name.replace('SwtControl.',''))
                         dss.SwtControls.Delay(0)
                         dss.SwtControls.State(int(value)) # 1 is open and 2 is closed
                         dss.SwtControls.NormalState(int(value))
                     else:
                         #if it's not already created, then create the switch and set params with one command line
-                        dss.run_command(f'New {switch_name} Delay=0 enabled=Yes Normal=Open State={int(value)} SwitchedObj={subscription.model}')
+                        new_switch_command = f'New {switch_name} Delay=0 enabled=Yes Normal=Open State={int(value)} SwitchedObj={subscription.model}'
+                        dss.run_command(new_switch_command)
+                        logger.info(f'{switch_name} created with {new_switch_command}')
                     logger.info(f'Line {switch_name} modeled with open switch')
 
                 if self._settings.helics.iterative_mode:
