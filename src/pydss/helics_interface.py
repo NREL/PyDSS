@@ -307,8 +307,8 @@ class helics_interface:
                     else: 
                         state_value = 'Closed'
                     # make sure the line properties are maintained
-                    for line_prop, line_value in line_properties.items():
-                        subscription.object.SetParameter(line_prop, line_value)
+                    #for line_prop, line_value in line_properties.items():
+                    #    subscription.object.SetParameter(line_prop, line_value)
                     # check if the switch is in the model
                     switch_name = subscription.model.replace('Line','SwtControl')
                     if switch_name.replace('SwtControl.','') in dss.SwtControls.AllNames():
@@ -317,13 +317,14 @@ class helics_interface:
                         dss.SwtControls.Delay(0)
                         dss.SwtControls.State(int(value)) # 1 is open and 2 is closed
                         dss.SwtControls.NormalState(int(value))
-                        dss.SwtControls.Action(int(value))
+                        #dss.SwtControls.Action(state_value)
                     else:
                         #if it's not already created, then create the switch and set params with one command line
                         new_switch_command = f'New {switch_name} Delay=0 enabled=Yes Normal=Open State={state_value} SwitchedObj={subscription.model}'
                         dss.run_command(new_switch_command)
-                        dss.SwtControls.Action(int(value))
+                        #dss.SwtControls.Action(state_value)
                         logger.info(f'{switch_name} created with {new_switch_command}')
+                    logger.info(f'Line switch status: {dss.SwtControls.State()}')
                     logger.info(f'Line {switch_name} modeled with open switch')
 
                 if self._settings.helics.iterative_mode:
