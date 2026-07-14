@@ -159,6 +159,21 @@ class dssElement(dssObjectBase):
 
     def SetParameter(self, Param, Value):
         reply = self._dssInstance.utils.run_command(self._FullName + '.' + Param + ' = ' + str(Value))
+        if Param == 'Switch':
+            switch_name = self._FullName.replace('Line','SwtControl')
+            if switch_name.replace('SwtControl.','') in self._dssInstance.SwtControls.AllNames():
+                logger.info(f'{switch_name} already exists. Opening existing switch')
+                self._dssInstance.SwtControls.Name(switch_name.replace('SwtControl.',''))
+                self._dssInstance.SwtControls.Delay(0)
+                self._dssInstance.SwtControls.State(int(Value)) # 1 is open and 2 is closed
+                self._dssInstance.SwtControls.NormalState(int(Value))
+                #dss.SwtControls.Action(state_value)
+            else:
+                #if it's not already created, then create the switch and set params with one command line
+                new_switch_command = f'New {switch_name} Delay=0 enabled=Yes Normal=Open State=Open SwitchedObj={self._FullName}'
+                self._dssInstance.run_command(new_switch_command)
+                #dss.SwtControls.Action(state_value)
+                logger.info(f'{switch_name} created with {new_switch_command}')
         if reply != "":
             raise Exception(f"SetParameter failed: {reply}")
         return self.GetParameter(Param)
