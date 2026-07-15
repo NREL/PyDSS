@@ -176,7 +176,7 @@ class dssElement(dssObjectBase):
                 #dss.SwtControls.Action(state_value)
                 logger.info(f'{switch_name} created with {new_switch_command}')
                 self._dssInstance.Lines.Name(self._Name)
-                line_status = self._dssInstance.Lines.Switch()
+                line_status = self._dssInstance.Lines.IsSwitch()
                 self._dssInstance.SwtControls.Name(self._Name)
                 swt_status = self._dssInstance.SwtControls.State()
                 logger.info(f'{self._FullName} switch status: {line_status} and switch position: {swt_status}')
