@@ -159,8 +159,10 @@ class dssElement(dssObjectBase):
 
     def SetParameter(self, Param, Value):
         reply = self._dssInstance.utils.run_command(self._FullName + '.' + Param + ' = ' + str(Value))
-        logger.info('parameter update reply: {reply}')
+        logger.info(f'parameter update reply: {reply}')
         if Param == 'IsSwitch' or Param == 'Switch':
+            self._dssInstance.Lines.Name(self._Name)
+            self._dssInstance.Lines.IsSwitch(True)
             switch_name = self._FullName.replace('Line','SwtControl')
             if switch_name.replace('SwtControl.','') in self._dssInstance.SwtControls.AllNames():
                 logger.info(f'{switch_name} already exists. Opening existing switch')
