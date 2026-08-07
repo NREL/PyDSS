@@ -46,7 +46,21 @@ DEFAULT_REGISTRY = {
         ControllerType.MOTOR_STALL.value: [],
         ControllerType.MOTOR_STALL_SIMPLE.value: [],
         ControllerType.FAULT_CONTROLLER.value: [],
-        ControllerType.DYNAMIC_VOLTAGE_SUPPORT.value: [],
+        ControllerType.DYNAMIC_VOLTAGE_SUPPORT.value:[{
+                "name": "DVS_test",
+                "filename": os.path.join(
+                    os.path.dirname(getattr(pydss, "__path__")[0]),
+                    "pydss/pyControllers/Controllers/Settings/DynamicVoltageSupport.toml"
+                ),
+            },
+            {
+                "name": "DVS_VRT_test",
+                "filename": os.path.join(
+                    os.path.dirname(getattr(pydss, "__path__")[0]),
+                    "pydss/pyControllers/Controllers/Settings/DynamicVoltageSupport.toml"
+                ),
+            },
+        ],
     },
 }
 

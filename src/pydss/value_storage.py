@@ -292,7 +292,7 @@ class ValueByList(ValueStorageBase):
 
     def set_nan(self):
         for i in range(len(self._value)):
-            self._value[i] = np.NaN
+            self._value[i] = np.nan
 
     def set_value(self, value):
         self._value = value
@@ -496,7 +496,7 @@ class ValueByLabel(ValueStorageBase):
 
     def set_value_from_raw(self, value):
         if len(value) != self._value_length:
-            value = [np.NaN for i in range(self._value_length)]
+            value = [np.nan for i in range(self._value_length)]
         
         value = self._fix_value(value)
         self._value.clear()

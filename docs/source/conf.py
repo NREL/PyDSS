@@ -16,9 +16,6 @@ import io
 import re
 # import sys
 
-
-import sphinx_rtd_theme
-
 # -- Project information -----------------------------------------------------
 
 def read(*names, **kwargs):
@@ -36,8 +33,8 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
-project = 'Pydss'
-copyright = '2019, Aadil Latif'
+project = 'PyDSS'
+copyright = '2018-2026, Aadil Latif'
 author = 'Aadil Latif'
 
 # The full version, including alpha/beta/rc tags
@@ -72,9 +69,7 @@ exclude_patterns = []
 # a list of builtin themes.
 #
 #html_theme = 'classic'
-#tml_theme = 'sphinx_rtd_theme'
 html_theme = 'furo'
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # html_theme_options = {
 #     'collapse_navigation': False,
