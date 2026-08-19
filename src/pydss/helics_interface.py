@@ -313,6 +313,18 @@ class helics_interface:
             logger.info(str(self.publications.publications))
             for publication in self.publications.publications:
                 logger.info(f"pubscription created: {publication}")
+
+        # Register an aggregate generator total-power publication so that
+        # the co-simulation launcher can subscribe PSSE machines to it.
+        # Published as [P_kW, Q_kvar] with POSITIVE values for generation.
+        self._gen_total_pub = None
+        gen_class = self._objects_by_class.get("Generators", {})
+        if gen_class:
+            gen_pub_name = f"{self._settings.helics.federate_name}.Generators.Total.TotalPower"
+            self._gen_total_pub = helics.helicsFederateRegisterGlobalTypePublication(
+                self._federate, gen_pub_name, "vector", ""
+            )
+            logger.info(f"Registered generator aggregate publication: {gen_pub_name}")
         return
 
     def updateHelicsPublications(self):
@@ -333,6 +345,26 @@ class helics_interface:
             else:
                 raise ValueError("Unsupported data type forr teh HELICS interface")
             logger.info(f"{publication} - {value}")
+
+        # Publish aggregate generator total power [P_kW, Q_kvar].
+        # Sign convention: POSITIVE = generation (negated from OpenDSS
+        # CktElement.Powers which uses load convention, i.e. negative for
+        # power injected by generators).
+        if self._gen_total_pub is not None:
+            total_gen_p = 0.0
+            total_gen_q = 0.0
+            for gen_name, gen_obj in self._objects_by_class.get("Generators", {}).items():
+                powers = gen_obj.GetValue("Powers")
+                if powers is not None and isinstance(powers, list):
+                    for i in range(0, len(powers), 2):
+                        total_gen_p += powers[i]
+                        if i + 1 < len(powers):
+                            total_gen_q += powers[i + 1]
+            # Negate: OpenDSS Powers are negative for gen injection
+            total_gen_p = -total_gen_p
+            total_gen_q = -total_gen_q
+            helics.helicsPublicationPublishVector(self._gen_total_pub, [total_gen_p, total_gen_q])
+            logger.debug(f"Published generator total power: [{total_gen_p:.4f}, {total_gen_q:.4f}]")
         return
 
     def request_time_increment(self):
